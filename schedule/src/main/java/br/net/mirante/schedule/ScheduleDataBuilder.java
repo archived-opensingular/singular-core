@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 public class ScheduleDataBuilder {
 
     private ScheduleDataBuilder() {
+        /* CONSTRUTOR VAZIO */
     }
 
     public static IScheduleData buildHourly(int hours) {
