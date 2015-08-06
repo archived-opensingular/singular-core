@@ -1,4 +1,4 @@
-package com.miranteinfo.xml.util;
+package br.net.mirante.util.xml;
 
 import java.sql.Date;
 import java.sql.Timestamp;

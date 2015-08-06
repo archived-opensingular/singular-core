@@ -1,7 +1,7 @@
 package br.net.mirante.mform;
 
 import br.net.mirante.mform.io.MformPersistenciaXML;
-import com.miranteinfo.xml.util.MElement;
+import br.net.mirante.util.xml.MElement;
 
 public abstract class MInstancia implements MAtributoEnabled {
 

@@ -1,4 +1,4 @@
-package com.miranteinfo.xml.util;
+package br.net.mirante.util.xml;
 
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;

@@ -1,4 +1,4 @@
-package com.miranteinfo.xml.util;
+package br.net.mirante.util.xml;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;

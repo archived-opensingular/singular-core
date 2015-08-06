@@ -4,8 +4,8 @@ import br.net.mirante.mform.MIComposto;
 import br.net.mirante.mform.MILista;
 import br.net.mirante.mform.MISimples;
 import br.net.mirante.mform.MInstancia;
-import com.miranteinfo.xml.util.MDocument;
-import com.miranteinfo.xml.util.MElement;
+import br.net.mirante.util.xml.MDocument;
+import br.net.mirante.util.xml.MElement;
 
 public class MformPersistenciaXML {
 

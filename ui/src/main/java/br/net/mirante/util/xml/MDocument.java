@@ -1,4 +1,4 @@
-package com.miranteinfo.xml.util;
+package br.net.mirante.util.xml;
 
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;

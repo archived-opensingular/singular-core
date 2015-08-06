@@ -1,4 +1,4 @@
-package com.miranteinfo.xml.util;
+package br.net.mirante.util.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,7 +88,7 @@ import org.xml.sax.SAXException;
  * @author Ricardo Campos - Mirante Informática
  * @version 24/08/2000
  * @since 20/04/2000 12:07:27
- * @deprecated Utilize com.miranteinfo.xml.util.MElement (é bem mais simples)
+ * @deprecated Utilize MElement (é bem mais simples)
  */
 
 public final class XMLToolkit {
