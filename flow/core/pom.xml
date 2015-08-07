@@ -15,4 +15,56 @@
     <name>[singular :: flow :: core]</name>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>flow-schedule</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Reflections API -->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.10</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JGraph API -->
+        <dependency>
+            <groupId>jgraph</groupId>
+            <artifactId>jgraph</artifactId>
+            <version>2.1.0.8</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- yEd -->
+        <dependency>
+            <groupId>y.ed</groupId>
+            <artifactId>yfiles</artifactId>
+            <version>2.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>y.ed</groupId>
+            <artifactId>ybpmn</artifactId>
+            <version>2.1</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>
