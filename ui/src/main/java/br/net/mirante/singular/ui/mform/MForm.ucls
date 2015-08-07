@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.8" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true">  
+  <interface id="1" language="java" name="MEscopo" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MEscopo.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="97" y="-108"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="2" language="java" name="MPacote" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MPacote.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="282" y="574"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="MTipo" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MTipo.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="725" y="363"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="MISimples" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MISimples.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1333" y="909"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="MTipoLista" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MTipoLista.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="722" y="1033"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="MInstancia" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MInstancia.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1257" y="291"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="MTipoSimples" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MTipoSimples.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="996" y="994"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="MILista" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MILista.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1640" y="406"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="MIComposto" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MIComposto.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1589" y="-8"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="MDicionario" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MDicionario.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="405" y="-192"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="MTipoComposto" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MTipoComposto.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="383" y="931"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <interface id="12" language="java" name="IContextoTipo" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/IContextoTipo.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="135" width="206" x="8" y="-359"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </interface>  
+  <class id="13" language="java" name="MapaAtributos" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MapaAtributos.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="721" y="-310"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="MAtributo" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MAtributo.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1060" y="-280"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="MEscopoBase" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MEscopoBase.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="326" y="194"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="MapaResolvedorDefinicaoAtributo" project="4_Impl"
+    file="/4_Impl/srcDeveloxForm/br/net/mirante/mform/MapaResolvedorDefinicaoAtributo.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1361" y="-284"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="false" static="true"/>    
+    </display>  
+  </class>  
+  <generalization id="17">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="18">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="19" name="atributosDefinidos">        
+        <position height="0" width="0" x="-11" y="-138"/>      
+      </attribute>      
+      <multiplicity id="20" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-11" y="-138"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="21">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="22" name="tiposLocais">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="23" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <realization id="24">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="1"/>  
+  </realization>  
+  <realization id="25">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="12"/>  
+  </realization>  
+  <association id="26">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="27" name="atributosResolvidos">        
+        <position height="0" width="0" x="20" y="-17"/>      
+      </attribute>      
+      <multiplicity id="28" minimum="0" maximum="1">        
+        <position height="0" width="0" x="20" y="-17"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="16" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="29">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="30">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="31" name="atributos">        
+        <position height="0" width="0" x="-3" y="65"/>      
+      </attribute>      
+      <multiplicity id="32" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-3" y="65"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="6" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="33">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="34">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="35">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <association id="36">    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="37" name="superTipo">        
+        <position height="0" width="0" x="-5" y="100"/>      
+      </attribute>      
+      <multiplicity id="38" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-5" y="100"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="39">    
+    <end type="SOURCE" refId="13" navigable="false">      
+      <attribute id="40" name="atributos">        
+        <position height="0" width="0" x="31" y="-108"/>      
+      </attribute>      
+      <multiplicity id="41" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="31" y="-108"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="42">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="43">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="44" name="mTipo">        
+        <position height="0" width="0" x="-5" y="100"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-5" y="100"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="46">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="15"/>  
+  </generalization>  
+  <generalization id="47">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="6"/>  
+  </generalization>  
+  <generalization id="48">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="3"/>  
+  </generalization>  
+  <association id="49">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="50" name="dono">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </attribute>      
+      <multiplicity id="51" minimum="0" maximum="1">        
+        <position height="0" width="0" x="0" y="0"/>      
+      </multiplicity>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="false" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>
