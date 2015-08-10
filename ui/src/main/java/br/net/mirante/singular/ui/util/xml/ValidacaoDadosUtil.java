@@ -1,8 +1,8 @@
 package br.net.mirante.singular.ui.util.xml;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,8 +14,8 @@ import java.util.logging.Logger;
  */
 public class ValidacaoDadosUtil {
 
-    private static SimpleDateFormat conversorData = new SimpleDateFormat("dd/MM/yyyy");
-    private static SimpleDateFormat conversorHora = new SimpleDateFormat("H:m");
+    private static final String CONVERSOR_DATE_PATTERN = "dd/MM/yyyy";
+    private static final String CONVERSOR_TIME_PATTERN = "H:m";
 
     /**
      * Comentário do construtor ValidacaoDadosUtil.
@@ -42,11 +42,11 @@ public class ValidacaoDadosUtil {
         }
 
         try {
-            Date dataA = conversorData.parse(data1);
-            Date dataB = conversorData.parse(data2);
+            LocalDate dataA = LocalDate.parse(data1, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
+            LocalDate dataB = LocalDate.parse(data2, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
 
-            return dataA.equals(dataB);
-        } catch (ParseException pe) {
+            return dataA.isEqual(dataB);
+        } catch (DateTimeParseException pe) {
             Logger.getLogger(ValidacaoDadosUtil.class.getName())
                     .log(Level.SEVERE, "Data " + data1 + " ou " + data2 + " inválida. Não posso compará-las.");
             Logger.getLogger(ValidacaoDadosUtil.class.getName()).log(Level.SEVERE, pe.getMessage(), pe);
@@ -72,11 +72,11 @@ public class ValidacaoDadosUtil {
         }
 
         try {
-            Date dataA = conversorData.parse(data1);
-            Date dataB = conversorData.parse(data2);
+            LocalDate dataA = LocalDate.parse(data1, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
+            LocalDate dataB = LocalDate.parse(data2, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
 
-            return dataA.before(dataB);
-        } catch (ParseException pe) {
+            return dataA.isBefore(dataB);
+        } catch (DateTimeParseException pe) {
             Logger.getLogger(ValidacaoDadosUtil.class.getName())
                     .log(Level.SEVERE, "Data " + data1 + " ou " + data2 + " inválida. Não posso compará-las.");
             Logger.getLogger(ValidacaoDadosUtil.class.getName()).log(Level.SEVERE, pe.getMessage(), pe);
@@ -102,11 +102,11 @@ public class ValidacaoDadosUtil {
         }
 
         try {
-            Date dataA = conversorData.parse(data1);
-            Date dataB = conversorData.parse(data2);
+            LocalDate dataA = LocalDate.parse(data1, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
+            LocalDate dataB = LocalDate.parse(data2, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN));
 
-            return dataA.before(dataB) || dataA.equals(dataB);
-        } catch (ParseException pe) {
+            return !dataA.isAfter(dataB);
+        } catch (DateTimeParseException pe) {
             Logger.getLogger(ValidacaoDadosUtil.class.getName())
                     .log(Level.SEVERE, "Data " + data1 + " ou " + data2 + " inválida. Não posso compará-las.");
             Logger.getLogger(ValidacaoDadosUtil.class.getName()).log(Level.SEVERE, pe.getMessage(), pe);
@@ -128,10 +128,10 @@ public class ValidacaoDadosUtil {
      */
     public static boolean isData(String data) {
         try {
-            if ((data == null) || (conversorData.parse(data) == null)) {
+            if (data == null || LocalDate.parse(data, DateTimeFormatter.ofPattern(CONVERSOR_DATE_PATTERN)) == null) {
                 return false;
             }
-        } catch (ParseException pe) {
+        } catch (DateTimeParseException pe) {
             return false;
         }
         return true;
@@ -142,10 +142,10 @@ public class ValidacaoDadosUtil {
      */
     public static boolean isHora(String hora) {
         try {
-            if ((hora == null) || (conversorHora.parse(hora) == null)) {
+            if (hora == null || LocalDate.parse(hora, DateTimeFormatter.ofPattern(CONVERSOR_TIME_PATTERN)) == null) {
                 return false;
             }
-        } catch (ParseException pe) {
+        } catch (DateTimeParseException pe) {
             return false;
         }
         return true;
