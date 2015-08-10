@@ -443,7 +443,7 @@ public abstract class ProcessInstance {
         return Collections.emptyList();
     }
 
-    private final void addPapelPessoa(MProcessRole mPapel, MUser pessoa) {
+    private void addPapelPessoa(MProcessRole mPapel, MUser pessoa) {
         if (getPessoaComSiglaPapel(mPapel.getAbbreviation()) == null) {
             getPersistenceService().definirPapelPessoa(getDefinicao().getDadosDefinicao(), getDemanda(), mPapel.getAbbreviation(), pessoa);
         }
@@ -456,7 +456,7 @@ public abstract class ProcessInstance {
         if (pessoaAnterior == null) {
             if (novaPessoa != null) {
                 addPapelPessoa(papel, novaPessoa);
-                getDefinicao().getFluxo().notifyRoleChange(this, papel, pessoaAnterior, novaPessoa);
+                getDefinicao().getFluxo().notifyRoleChange(this, papel, null, novaPessoa);
 
                 final TaskInstance tarefaMaisRecente = getTarefaMaisRecente();
                 if (tarefaMaisRecente != null) {

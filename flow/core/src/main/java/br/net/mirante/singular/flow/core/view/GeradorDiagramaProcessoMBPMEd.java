@@ -86,7 +86,7 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
         super("BPMN Layouter", "Mirante Tecnologia", "Gerência de leiaute para os diagramas de BPM");
     }
 
-    public static GeradorDiagramaProcessoMBPMEd getInstance() {
+    public static synchronized GeradorDiagramaProcessoMBPMEd getInstance() {
         if (instance == null) {
             instance = new GeradorDiagramaProcessoMBPMEd();
         }

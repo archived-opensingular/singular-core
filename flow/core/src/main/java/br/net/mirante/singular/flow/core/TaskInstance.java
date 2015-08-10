@@ -177,7 +177,7 @@ public class TaskInstance {
 
         String acao = (user == null) ? "Desalocação" : "Alocação";
         if (author == null) {
-            log(acao + " Automática", relocationCause, user, author, new Date());
+            log(acao + " Automática", relocationCause, user, null, new Date());
         } else {
             log(acao, relocationCause, user, author, new Date());
         }

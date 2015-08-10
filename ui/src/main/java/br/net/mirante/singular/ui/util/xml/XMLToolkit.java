@@ -13,6 +13,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -314,7 +315,7 @@ public final class XMLToolkit {
      * @param nomeNo o nome de elementos dentro do elemento <i>pai</i>
      * @return o número de ocorrências do elemento
      */
-    public static final int count(Element pai, String nomeNo) {
+    public static int count(Element pai, String nomeNo) {
         int qtd = 0;
         Node node = pai.getFirstChild();
 
@@ -335,7 +336,7 @@ public final class XMLToolkit {
      * @param pai elemento que terá seu filhos contados.
      * @return -
      */
-    public static final int countElement(Element pai) {
+    public static int countElement(Element pai) {
         int qtd = 0;
         Node node = pai.getFirstChild();
         while (node != null) {
@@ -347,16 +348,16 @@ public final class XMLToolkit {
         return qtd;
     }
 
-    public static final byte[] getByteBASE64(Element pai, String nome) {
+    public static byte[] getByteBASE64(Element pai, String nome) {
         String valor = getValor(pai, nome);
         if (valor != null) {
             return null;
         } else {
-            return MElementWrapper.fromBASE64(valor);
+            return MElementWrapper.fromBASE64(null);
         }
     }
 
-    public static final void getByteBASE64(Element pai, String nome, OutputStream out)
+    public static void getByteBASE64(Element pai, String nome, OutputStream out)
             throws IOException {
         String valor = getValor(pai, nome);
 
@@ -397,7 +398,7 @@ public final class XMLToolkit {
      * @throws RuntimeException Se o node no xPath não for um Element
      * @see XPathToolkit
      */
-    public static final Element getElement(Node contexto, String xPath) throws RuntimeException {
+    public static Element getElement(Node contexto, String xPath) throws RuntimeException {
         return XPathToolkit.selectElement(contexto, xPath);
     }
 
@@ -411,7 +412,7 @@ public final class XMLToolkit {
      *
      * @see XPathToolkit
      */
-    public static final Node getNode(Node contexto, String xPath) {
+    public static Node getNode(Node contexto, String xPath) {
         return XPathToolkit.selectNode(contexto, xPath);
     }
 
@@ -424,7 +425,8 @@ public final class XMLToolkit {
      * elemento pai; se nenhum elemento foi encontrado, retorna um
      * array com zero posições
      */
-    public static final Element[] getElementos(Element pai, String nome) {
+    @SuppressWarnings("SuspiciousToArrayCall")
+    public static Element[] getElementos(Element pai, String nome) {
         List<Node> lista = new ArrayList<>();
         Node node = pai.getFirstChild();
 
@@ -437,9 +439,7 @@ public final class XMLToolkit {
         }
 
         //monta o array de Element
-        Element[] elems = (Element[]) lista.toArray(new Element[lista.size()]);
-
-        return elems;
+        return lista.toArray(new Element[lista.size()]);
     }
 
     public static int getInt(Node contexto, String xPath) {
@@ -476,7 +476,7 @@ public final class XMLToolkit {
      * @param nomeElemento o nome de um elemento dentro do elemento <i>pai</i>
      * @return uma string com o valor do elemento
      */
-    public static final String[] getValores(Element pai, String nomeElemento) {
+    public static String[] getValores(Element pai, String nomeElemento) {
         String str;
         List<String> lista = null;
         Node node = pai.getFirstChild();
@@ -501,9 +501,8 @@ public final class XMLToolkit {
         //monta o array de String
         if (lista == null) {
             return LISTA_VAZIA;
-
         }
-        return (String[]) lista.toArray(LISTA_VAZIA);
+        return lista.toArray(new String[lista.size()]);
     }
 
     /**
@@ -513,7 +512,7 @@ public final class XMLToolkit {
      * @param no do qual será extraido o texto
      * @return pdoe ser null
      */
-    public static final String getValorTexto(Node no) {
+    public static String getValorTexto(Node no) {
         return MElement.getValorTexto(no);
     }
 
@@ -560,7 +559,7 @@ public final class XMLToolkit {
     /**
      * Faz parse de uma InputStream.
      *
-     * @see MElement#parse
+     * @see MParser#parseToElement(InputSource, boolean, boolean, EntityResolver)
      * @deprecated Utilizar MElement.parse
      */
     public static Element parse(InputStream in, boolean namespaceAware, boolean validating)
@@ -614,5 +613,4 @@ public final class XMLToolkit {
     public static void printDocumentIndentado(PrintWriter out, Element root) {
         XMLToolkitWriter.printDocumentIndentado(out, root, true);
     }
-
 }

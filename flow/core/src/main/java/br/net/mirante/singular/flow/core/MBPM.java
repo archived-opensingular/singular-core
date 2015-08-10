@@ -29,7 +29,7 @@ public class MBPM {
         getMbpmBean().init();
     }
 
-    public static void setConf(AbstractMbpmBean conf) {
+    public static synchronized void setConf(AbstractMbpmBean conf) {
         mbpmBean = conf;
         init();
     }

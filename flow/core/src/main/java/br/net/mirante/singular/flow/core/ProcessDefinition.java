@@ -113,19 +113,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         }
     }
 
-    public final FlowMap getFluxo() {
+    public final synchronized FlowMap getFluxo() {
         if (fluxo == null) {
-            synchronized (this) {
-                if (fluxo == null) {
-                    FlowMap novo = createFluxo();
-                    if (novo.getDefinicaoProcesso() != this) {
-                        throw new RuntimeException("Mapa com definiçao trocada");
-                    }
-                    novo.validarConsistencia();
-                    fluxo = novo;
-                    MBPMUtil.adicionarIndeceDeOrdem(fluxo);
-                }
+            FlowMap novo = createFluxo();
+            if (novo.getDefinicaoProcesso() != this) {
+                throw new RuntimeException("Mapa com definiçao trocada");
             }
+            novo.validarConsistencia();
+            fluxo = novo;
+            MBPMUtil.adicionarIndeceDeOrdem(fluxo);
         }
         return fluxo;
     }
@@ -389,6 +385,23 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             v = getNome().compareTo(dp2.getNome());
         }
         return v;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProcessDefinition<?> that = (ProcessDefinition<?>) o;
+
+        return grupo.equals(that.grupo) && nome.equals(that.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = grupo.hashCode();
+        result = 31 * result + nome.hashCode();
+        return result;
     }
 
     public final String getNome() {

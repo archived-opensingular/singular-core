@@ -248,7 +248,7 @@ public final class MParser {
     /**
      * Faz parse de uma InputStream.
      */
-    static final Element parseToElement(InputSource in, boolean namespaceAware, boolean validating,
+    static Element parseToElement(InputSource in, boolean namespaceAware, boolean validating,
             EntityResolver entityResolver) throws SAXException,
             IOException {
 
@@ -272,5 +272,4 @@ public final class MParser {
         }
         return result;
     }
-
 }

@@ -1285,7 +1285,7 @@ public abstract class MElement implements Element, Serializable {
         if (s == null) {
             return null;
         }
-        return new Integer(s);
+        return Integer.valueOf(s);
     }
 
     /**

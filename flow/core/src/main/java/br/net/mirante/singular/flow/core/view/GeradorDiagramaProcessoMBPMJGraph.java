@@ -23,10 +23,6 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.FlowMap;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTaskEnd;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
 
 public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
 
@@ -36,7 +32,7 @@ public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
         /* CONSTRUTOR VAZIO */
     }
 
-    public static GeradorDiagramaProcessoMBPMJGraph getInstance() {
+    public static synchronized GeradorDiagramaProcessoMBPMJGraph getInstance() {
         if (instance == null) {
             instance = new GeradorDiagramaProcessoMBPMJGraph();
         }

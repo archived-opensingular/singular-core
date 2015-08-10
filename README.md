@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Dashboard
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:4,0,25,0&cht=p&chl=failure%20%284%29|error%20%280%29|success%20%2825%29|skipped%20%280%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:3,0,28,0&cht=p&chl=failure%20%283%29|error%20%280%29|success%20%2828%29|skipped%20%280%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
@@ -15,4 +15,4 @@ Módulos JAVA do projeto SINGULAR.
         * [Atlassian](https://mirante.atlassian.net/secure/RapidBoard.jspa?rapidView=86&projectKey=MIR)
         * [HipChat](https://miranteteam.hipchat.com)
     * Equipe de Desenvolvimento
-        * [GitBlit](http://10.0.0.22/summary/MIRANTE%2Fpeticoes.git)
+        * [GitBlit](http://10.0.0.22/summary/MIRANTE%2Fsingular.git)

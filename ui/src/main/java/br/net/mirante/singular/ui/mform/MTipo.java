@@ -93,18 +93,14 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return (TT) extender(nomeSimples, getClass());
     }
 
+    @SuppressWarnings("unchecked")
     final void resolverSuperTipo(MDicionario dicionario) {
         if (superTipo != null || getClass() == MTipo.class) {
             return;
         }
         Class<MTipo> c = (Class<MTipo>) getClass().getSuperclass();
-        while (c != null) {
-            MTipo tipo = dicionario.getTipo(c);
-            if (tipo != null) {
-                this.superTipo = tipo;
-                return;
-            }
-            c = (Class<MTipo>) c.getSuperclass();
+        if (c != null) {
+            this.superTipo = dicionario.getTipo(c);
         }
     }
 

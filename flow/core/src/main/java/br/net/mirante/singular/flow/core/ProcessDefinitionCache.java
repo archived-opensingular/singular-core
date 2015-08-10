@@ -57,7 +57,7 @@ public final class ProcessDefinitionCache {
         definitionsByInstanceType = ImmutableMap.copyOf(cacheByInstanceType);
     }
 
-    public static ProcessDefinitionCache get(String packageName) {
+    public static synchronized ProcessDefinitionCache get(String packageName) {
         if (cache == null) {
             cache = new ProcessDefinitionCache(packageName);
         }
@@ -67,7 +67,7 @@ public final class ProcessDefinitionCache {
     /**
      * Discards all entries in the cache.
      */
-    public static void invalidateAll() {
+    public static synchronized void invalidateAll() {
         definitionsByClass.invalidateAll();
         cache = null;
     }

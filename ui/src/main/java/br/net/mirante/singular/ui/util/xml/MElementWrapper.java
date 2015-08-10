@@ -95,7 +95,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      *
      * @return sempre != null
      */
-    static final Document newDocument() {
+    static synchronized Document newDocument() {
 
         if (documentBuilder__ == null) {
             DocumentBuilderFactory f = getDocumentBuilderFactory(true, false);
@@ -924,7 +924,7 @@ public class MElementWrapper extends MElement implements EWrapper {
      */
     @Override
     public boolean isSameNode(Node other) {
-        return isSameNode(other);
+        return original_.isSameNode(other);
     }
 
     /**
