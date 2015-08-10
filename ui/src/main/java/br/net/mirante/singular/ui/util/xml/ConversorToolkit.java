@@ -90,7 +90,7 @@ public final class ConversorToolkit {
         return new java.sql.Date(System.currentTimeMillis());
     }
 
-    private static DateFormat getDateFormat() {
+    private static synchronized DateFormat getDateFormat() {
         if (dateFormatMedium__ == null) {
             dateFormatMedium__ = DateFormat.getDateInstance(DateFormat.MEDIUM, LOCALE);
             dateFormatMedium__.setLenient(false);
@@ -141,8 +141,7 @@ public final class ConversorToolkit {
                 novaHora += ":00";
                 pontos++;
             }
-            java.util.Date hour = getTimeFormat().parse(novaHora);
-            return hour;
+            return getTimeFormat().parse(novaHora);
         } catch (ParseException e) {
             throw new ParseException(
                     "Hora inválida (" + hora + "): Erro na posição " + e.getErrorOffset(),
@@ -207,7 +206,7 @@ public final class ConversorToolkit {
         return numberFormat__[digitos];
     }
 
-    public static DateFormat getDateFormat(String formato) {
+    public static synchronized DateFormat getDateFormat(String formato) {
         if ((formato == null) || "medium".equals(formato)) {
             return getDateFormat();
         } else if ("short".equals(formato)) {
@@ -233,7 +232,7 @@ public final class ConversorToolkit {
         }
     }
 
-    private static DateFormat getTimeFormat() {
+    private static synchronized DateFormat getTimeFormat() {
         if (timeFormat__ == null) {
             timeFormat__ = DateFormat.getTimeInstance(DateFormat.MEDIUM, LOCALE);
             timeFormat__.setLenient(false);
@@ -257,7 +256,7 @@ public final class ConversorToolkit {
         }
     }
 
-    public static String printDataHoraShort(java.util.Date data) {
+    public static synchronized String printDataHoraShort(java.util.Date data) {
         if (data == null) {
             return null;
         }
