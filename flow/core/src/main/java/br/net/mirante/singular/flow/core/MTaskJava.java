@@ -76,6 +76,7 @@ public class MTaskJava extends MTask<MTaskJava> {
         Object result = blockImpl.call(instancias);
 
         if (result == null) {
+            /* XXX: O método "equals" foi implementado em MTask. Ele não deveria ser usado aqui? */
             long qtdAlterado = instancias.stream().filter(i -> i.getEstado() != this).count();
             result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
@@ -84,13 +85,11 @@ public class MTaskJava extends MTask<MTaskJava> {
 
     @FunctionalInterface
     public interface ImplTaskJava extends Serializable {
-
-        public Object call(ExecucaoMTask execucaoTask);
+        Object call(ExecucaoMTask execucaoTask);
     }
 
     @FunctionalInterface
     public interface ImplTaskBlock<K extends ProcessInstance> {
-        public Object call(Collection<K> instanciasProcesso);
+        Object call(Collection<K> instanciasProcesso);
     }
-
 }

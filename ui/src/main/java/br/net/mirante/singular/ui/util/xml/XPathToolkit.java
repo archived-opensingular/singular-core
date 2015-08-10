@@ -132,12 +132,14 @@ public final class XPathToolkit {
         if (parent == null) {
             buffer.append('/');
         } else {
+            /* XXX: O método "isSameNode" não deveria ser usado aqui? */
             if (parent != topo) {
                 getFullPath(buffer, parent, topo);
                 buffer.append('/');
             }
         }
 
+        /* XXX: O método "isSameNode" não deveria ser usado aqui? */
         if (no != topo) {
             switch (no.getNodeType()) {
                 case Node.ELEMENT_NODE:
