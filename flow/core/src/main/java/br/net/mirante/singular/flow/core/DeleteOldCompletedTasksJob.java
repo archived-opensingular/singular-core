@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
-
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
+
+import com.google.common.base.Joiner;
 
 public class DeleteOldCompletedTasksJob implements IScheduledJob {
 
@@ -36,13 +35,13 @@ public class DeleteOldCompletedTasksJob implements IScheduledJob {
         final AbstractMbpmBean mbpmBean = MBPM.getMbpmBean();
         final List<String> resultados = new ArrayList<>();
 
-        for (final ProcessDefinition<?> definicao : mbpmBean.getDefinicoes()) {
-            if (definicao.getFluxo().getCleanupStrategy() != null) {
-                final FlowMap flow = definicao.getFluxo();
+        for (final ProcessDefinition<?> definicao : mbpmBean.getDefinitions()) {
+            if (definicao.getFlowMap().getCleanupStrategy() != null) {
+                final FlowMap flow = definicao.getFlowMap();
                 final List<IEntityTaskDefinition> situacoes = flow.getEndTasks().stream().map(definicao::obterSituacaoPara).collect(Collectors.toList());
 
-                final int qtd = definicao.getPersistenceService().apagarInstanciasProcesso(situacoes, flow.getCleanupStrategy().getTime(), flow.getCleanupStrategy().getTimeUnit());
-                resultados.add(definicao.getSigla() + ": deleted " + qtd);
+                final int qtd = definicao.getPersistenceService().deleteProcessInstancesWithStateOlderThan(situacoes, flow.getCleanupStrategy().toDate());
+                resultados.add(definicao.getAbbreviation() + ": deleted " + qtd);
             }
         }
         return Joiner.on("\n").join(resultados);

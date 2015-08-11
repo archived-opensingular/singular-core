@@ -1,7 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,14 +9,15 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import br.net.mirante.singular.flow.util.vars.VarService;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {
@@ -34,13 +34,11 @@ public class FlowMap implements Serializable {
 
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
-    private MTask<?> initialTask;
+    private MTask<?> startTask;
 
     private InstanceCleanupStrategy instanceCleanupStrategy;
 
     private IRoleChangeListener roleChangeListener;
-
-    private int qtdTaskVisiveis;
 
     public FlowMap(ProcessDefinition<?> processDefinition) {
         this.processDefinition = processDefinition;
@@ -146,153 +144,104 @@ public class FlowMap implements Serializable {
         return task;
     }
 
-    public MTaskPeople addPeopleTask(String nome) {
-        MTaskPeople task = addTask(new MTaskPeople(this, nome));
-        qtdTaskVisiveis++;
-        return task;
+    public MTaskPeople addPeopleTask(String name) {
+        return addTask(new MTaskPeople(this, name));
     }
 
-    public MTaskJava addJavaTask(String nome) {
-        return addTask(new MTaskJava(this, nome));
+    public MTaskJava addJavaTask(String name) {
+        return addTask(new MTaskJava(this, name));
     }
 
-    public MTaskWait addWaitTask(String nome) {
-        return addWaitTask(nome, (IExecutionDateStrategy<ProcessInstance>) null);
+    public MTaskWait addWaitTask(String name) {
+        return addWaitTask(name, (IExecutionDateStrategy<ProcessInstance>) null);
     }
 
-    public <T extends ProcessInstance> MTaskWait addWaitTask(String nome, IExecutionDateStrategy<T> dateExecutionStrategy) {
-        return addTask(new MTaskWait(this, nome, dateExecutionStrategy));
+    public <T extends ProcessInstance> MTaskWait addWaitTask(String name, IExecutionDateStrategy<T> dateExecutionStrategy) {
+        return addTask(new MTaskWait(this, name, dateExecutionStrategy));
     }
 
-    public MTask<?> setInicio(MTask<?> task) {
+    public MTask<?> setStartTask(MTask<?> task) {
         Preconditions.checkNotNull(task);
         if (task.getFlowMap() != this) {
-            throw createError("Essa task não pertence ao mapa");
+            throw createError("The task does not belong to this flow");
         }
-        initialTask = task;
+        startTask = task;
         return task;
     }
 
-    public boolean possuiMaisDeUmaTarefaVisivel() {
-        return (qtdTaskVisiveis > 1);
+    public boolean hasMultiplePeopleTasks() {
+        return (getPeopleTasks().size() > 1);
     }
 
-    public MTask<?> getTaskInicial() {
-        Preconditions.checkNotNull(initialTask);
-        return initialTask;
+    public MTask<?> getStartTask() {
+        Preconditions.checkNotNull(startTask);
+        return startTask;
     }
 
-    public ProcessDefinition<?> getDefinicaoProcesso() {
+    public ProcessDefinition<?> getProcessDefinition() {
         return processDefinition;
     }
 
-    final MTaskEnd getOrCreateTaskFim() {
-        switch (endTasks.size()) {
-            case 0:
-                return addFim();
-            case 1:
-                return endTasks.values().iterator().next();
-            default:
-                throw createError("Existe mais de uma task (nó) de fim. Selecione um explicitamten usando outro método.");
+    public MTaskEnd addFim(String name) {
+        Preconditions.checkNotNull(name);
+        if (endTasks.containsKey(name)) {
+            throw createError("End task '" + name + "' already defined");
         }
-    }
-
-    public MTaskEnd addFim() {
-        return addFim("Fim");
-    }
-
-    public MTaskEnd addFim(String nome) {
-        Preconditions.checkNotNull(nome);
-        if (endTasks.containsKey(nome)) {
-            throw createError("Já existe um ponto de fim com o nome '" + nome + "'");
-        }
-        final MTaskEnd fim = new MTaskEnd(this, nome);
-        endTasks.put(nome, fim);
+        final MTaskEnd fim = new MTaskEnd(this, name);
+        endTasks.put(name, fim);
         tasksByAbbreviation.put(fim.getAbbreviation(), fim);
         return fim;
     }
 
-    public MTask<?> getTaskWithSigla(String sigla) {
-        return tasksByAbbreviation.get(MBPMUtil.convertToJavaIdentity(sigla));
+    public MTask<?> getTaskWithAbbreviation(String abbreviation) {
+        return tasksByAbbreviation.get(MBPMUtil.convertToJavaIdentity(abbreviation));
     }
 
-    public MTaskPeople getTaskPeopleWithSigla(String sigla) {
-        return MTaskPeople.class.cast(getTaskWithSigla(sigla));
+    public MTaskPeople getPeopleTaskWithAbbreviation(String abbreviation) {
+        return MTaskPeople.class.cast(getTaskWithAbbreviation(abbreviation));
     }
 
-    public MTask<?> getTaskWithNome(String nome) {
-        if (tasksByName.containsKey(nome)) {
-            return tasksByName.get(nome);
+    public MTask<?> getTaskWithName(String name) {
+        if (tasksByName.containsKey(name)) {
+            return tasksByName.get(name);
         }
-        return endTasks.get(nome);
+        return endTasks.get(name);
     }
 
-    public void validarConsistencia() {
-        verificarConsitenciaTasks();
-        if (initialTask == null) {
-            throw new RuntimeException("Não foi definida a task de inicio");
-        }
-        // verificarSeTodosAsTaskSaoAtingidas();
-        verificarSetTodasAsTaskPossuemCaminhoParaFim();
-
+    public void verifyConsistency() {
+        verifyTasksConsistency();
+        Preconditions.checkNotNull(startTask, "There is no initial task setted");
+        checkRouteToTheEnd();
     }
 
-    private void verificarConsitenciaTasks() {
-        for (final MTask task : tasksByAbbreviation.values()) {
-            task.verifyConsistency();
-        }
+    private void verifyTasksConsistency() {
+    	tasksByAbbreviation.values().stream().forEach(MTask::verifyConsistency);
     }
 
-    private void verificarSetTodasAsTaskPossuemCaminhoParaFim() {
+    private void checkRouteToTheEnd() {
         final Set<MTask<?>> tasks = new HashSet<>(tasksByName.values());
-        while (removerTasksQueAtingemFim(tasks)) {
+        while (removeIfReachesTheEnd(tasks)) {
         }
         if (!tasks.isEmpty()) {
-            throw createError("As seguintes task não possuem caminho para atingir fim: " + listarNomes(tasks));
+            throw createError("The following tasks have no way to reach the end: " + joinTaskNames(tasks));
         }
     }
 
-    private static boolean removerTasksQueAtingemFim(Set<MTask<?>> tasks) {
-        boolean removeuPeloMenosUm = false;
-        for (final MTask<?> task : new ArrayList<>(tasks)) {
-            for (final MTransition trans : task.getTransicoes()) {
-                if (trans.getDestination().isFim() || !tasks.contains(trans.getDestination())) {
-                    tasks.remove(task);
-                    removeuPeloMenosUm = true;
-                    break;
-                }
-            }
-        }
-        return removeuPeloMenosUm;
-    }
+	private static boolean removeIfReachesTheEnd(Set<MTask<?>> tasks) {
+		boolean removeuPeloMenosUm = tasks.removeIf((task) -> task.getTransicoes().stream()
+				.anyMatch((transition) -> transition.getDestination().isEnd() || !tasks.contains(transition.getDestination())));
+		return removeuPeloMenosUm;
+	}
 
-    private static String listarNomes(Set<MTask<?>> tasks) {
+    private static String joinTaskNames(Set<MTask<?>> tasks) {
         return tasks.stream().map(MTask::getName).collect(Collectors.joining(", "));
     }
 
-    //    private void verificarSeTodosAsTaskSaoAtingidas() {
-    //        final Set<MTask> tasks = new HashSet<>(tasksPorNome.values());
-    //        // tasks.addAll(tasksFim.values());
-    //        percorrerRemovendoDaLista(inicio, tasks);
-    //        if (!tasks.isEmpty()) {
-    //            throw createErro("As seguintes task nunca são atingidas no fluxo: " + listarNomes(tasks));
-    //        }
-    //    }
-    //
-    //    private void percorrerRemovendoDaLista(MTask task, Set<MTask> tasks) {
-    //        if (!tasks.remove(task)) {
-    //            return; // Já foi percorrido
-    //        }
-    //        for (final MTransicao trans : task.getTransicoes()) {
-    //            percorrerRemovendoDaLista(trans.getDestino(), tasks);
-    //        }
-    //    }
-
     final RuntimeException createError(String msg) {
-        return new RuntimeException(getDefinicaoProcesso() + " -> " + msg);
+        return new RuntimeException(getProcessDefinition() + " -> " + msg);
     }
 
-    public InstanceCleanupStrategy deleteInstancesFinalizedMoreThan(int time, TimeUnit timeUnit) {
+    public InstanceCleanupStrategy deleteInstancesFinalizedOlderThan(int time, TimeUnit timeUnit) {
         Preconditions.checkArgument(instanceCleanupStrategy == null, "Instance cleanup strategy already set");
         instanceCleanupStrategy = new InstanceCleanupStrategy(this, time, timeUnit);
         return instanceCleanupStrategy;

@@ -1,88 +1,92 @@
 package br.net.mirante.singular.flow.core.entity.persistence;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskHistoricLog;
+import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
+import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.util.vars.VarInstance;
+import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 
-public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEFINITION extends IEntityProcess, PROCESS_INSTANCE extends IEntityProcessInstance, TASK extends IEntityTaskInstance, TASK_STATE extends IEntityTaskDefinition, INSTANCE_VARIABLE extends IEntityVariableInstance> {
+public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEFINITION extends IEntityProcess, PROCESS_INSTANCE extends IEntityProcessInstance, TASK extends IEntityTaskInstance, TASK_STATE extends IEntityTaskDefinition, INSTANCE_VARIABLE extends IEntityVariableInstance, ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole> {
 
-    PROCESS_INSTANCE criarInstancia(@NotNull PROCESS_DEFINITION definicao, @NotNull TASK_STATE situacaoInicial);
+	PROCESS_INSTANCE createProcessInstance(@NotNull PROCESS_DEFINITION processDefinition, @NotNull TASK_STATE initialState);
 
-    PROCESS_INSTANCE salvarInstancia(@NotNull PROCESS_INSTANCE instancia);
+	PROCESS_INSTANCE saveProcessInstance(@NotNull PROCESS_INSTANCE instance);
 
-    TASK adicionarTarefaInstancia(@NotNull PROCESS_INSTANCE instancia, @NotNull TASK_STATE situacao);
+	TASK addTask(@NotNull PROCESS_INSTANCE instance, @NotNull TASK_STATE state);
 
-    void encerrarTarefaInstancia(@NotNull TASK tarefa, @Nullable String siglaTransicao, @Nullable MUser user);
+	void endTask(@NotNull TASK task, @Nullable String transitionName, @Nullable MUser responsibleUser);
 
-    void definirInstanciaPai(@NotNull PROCESS_INSTANCE instancia, @NotNull PROCESS_INSTANCE instanciaPai);
+	void setProcessInstanceParent(@NotNull PROCESS_INSTANCE instance, @NotNull PROCESS_INSTANCE instanceFather);
 
-    void definirPapelPessoa(@NotNull PROCESS_DEFINITION definicao, @NotNull PROCESS_INSTANCE instancia, String papel, MUser pessoa);
+	ROLE_USER setInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE role, MUser user);
 
-    void removerPapelPessoa(@NotNull PROCESS_INSTANCE instancia, String papel);
+	void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
 
-    Integer updateVariableValue(@NotNull ProcessInstance instancia, @NotNull VarInstance mVariavel, Integer dbVariableCod);
+	Integer updateVariableValue(@NotNull ProcessInstance instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
 
-    void associarInstanciaTarefaPai(@NotNull PROCESS_INSTANCE instanciaFilha, @NotNull TASK tarefaPai);
+	void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK parentTask);
 
-    void atualizarTarefa(@NotNull TASK tarefa);
+	void updateTask(@NotNull TASK task);
 
-    DEFINITION_CATEGORY recuperarOuCriarCategoriaDefinicao(@NotNull String nome);
+	DEFINITION_CATEGORY retrieveOrCreateCategoryWith(@NotNull String name);
 
-    PROCESS_DEFINITION recuperarDefinicaoProcessoPorCod(@NotNull Serializable cod);
+	PROCESS_DEFINITION retrieveProcessDefinitionByCod(@NotNull Serializable cod);
 
-    PROCESS_DEFINITION recuperarDefinicaoProcessoPorSigla(@NotNull String sigla);
+	PROCESS_DEFINITION retrieveProcessDefinitionByAbbreviation(@NotNull String abbreviation);
 
-    PROCESS_DEFINITION recuperarOuCriarDefinicaoProcesso(@NotNull ProcessDefinition<?> definicao);
+	PROCESS_DEFINITION retrieveOrCreateProcessDefinitionFor(@NotNull ProcessDefinition<?> processDefinition);
 
-    PROCESS_INSTANCE recuperarInstanciaPorCod(@NotNull Serializable cod);
+	PROCESS_INSTANCE retrieveProcessInstanceByCod(@NotNull Serializable cod);
 
-    TASK_STATE recuperarSituacaoInstanciaPorCod(@NotNull Serializable cod);
+	TASK_STATE retrieveTaskStateByCod(@NotNull Serializable cod);
 
-    TASK_STATE recuperarOuCriarSituacaoInstancia(@NotNull PROCESS_DEFINITION definicao, @NotNull MTask<?> mTask);
+	TASK_STATE retrieveOrCreateStateFor(@NotNull PROCESS_DEFINITION processDefinition, @NotNull MTask<?> mTask);
 
-    void atualizarDefinicao(@NotNull PROCESS_DEFINITION definicao);
+	void updateProcessDefinition(@NotNull PROCESS_DEFINITION processDefinition);
 
-    int apagarInstanciasProcesso(@NotNull List<TASK_STATE> situacoes, int tempo, @NotNull TimeUnit timeUnit);
+	int deleteProcessInstancesWithStateOlderThan(@NotNull List<TASK_STATE> states, @NotNull Date olderThan);
 
-    TaskHistoricLog salvarlogHistorico(@NotNull TASK tarefa, String tipoHistorico, String detalhamento, MUser alocada,
-            MUser autor, Date dataHora, PROCESS_INSTANCE demandaFilha);
+	TaskHistoricLog saveTaskHistoricLog(@NotNull TASK task, String typeDescription, String detail, MUser allocatedUser, MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
 
-    void salvarHistoricoVariavel(Date dataHora, PROCESS_INSTANCE instancia, TASK tarefaOrigem, TASK tarefaDestino, VarInstanceMap<?> paramIn);
+	void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK originTask, TASK destinationTask, VarInstanceMap<?> instanceMap);
 
-    List<? extends MUser> consultarPessoasPorCod(Collection<Integer> cods);
+	default void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TaskInstance originTask, TaskInstance destinationTask, VarInstanceMap<?> instanceMap){
+        saveVariableHistoric(dateHour, instance, originTask != null ? originTask.getEntityTaskInstance() : null, destinationTask != null ? destinationTask.getEntityTaskInstance() : null, instanceMap);
+	}
 
-    void refreshModel(IEntityByCod model);
+	List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
 
-    void flushSession();
+	void refreshModel(IEntityByCod model);
 
-    void commitTransaction();
+	void flushSession();
 
-    // Consultas
-    List<PROCESS_INSTANCE> consultarInstanciasPorSituacao(@NotNull Collection<? extends TASK_STATE> situacoesAlvo);
+	void commitTransaction();
 
-    List<PROCESS_INSTANCE> consultarInstanciasPorSituacao(@NotNull PROCESS_DEFINITION definicao, @Nullable Date minDataInicio, @Nullable Date maxDataInicio,
-            @Nullable Collection<? extends TASK_STATE> situacoesAlvo);
+	// Consultas
+	List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull Collection<? extends TASK_STATE> states);
 
-    List<PROCESS_INSTANCE> consultarInstanciasPorPessoaCriadora(@NotNull PROCESS_DEFINITION definicao, @Nullable MUser pessoaCriadora,
-            @Nullable Boolean ativas);
+	List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEFINITION processDefinition, @Nullable Date minDataInicio, @Nullable Date maxDataInicio,
+			@Nullable Collection<? extends TASK_STATE> states);
+
+	List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEFINITION processDefinition, @Nullable MUser creatingUser, @Nullable Boolean active);
 }

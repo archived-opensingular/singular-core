@@ -6,10 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import com.google.common.collect.Lists;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
@@ -41,7 +40,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
     @Override
     public boolean canExecute(ProcessInstance instance, MUser user) {
-        for (IEntityRole entityRole : instance.getRoles()) {
+        for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole) && user.is(entityRole.getPessoa())) {
                 return true;
             }
@@ -52,7 +51,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     @Override
     public boolean canVisualize(ProcessInstance instance, MUser user) {
         if (visualizeRole != null) {
-            for (IEntityRole entityRole : instance.getRoles()) {
+            for (IEntityRole entityRole : instance.getUserRoles()) {
                 if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getPessoa())) {
                     return true;
                 }
@@ -68,7 +67,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     @Override
     public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
         final Set<Integer> cods = new HashSet<>();
-        for (IEntityRole entityRole : instance.getRoles()) {
+        for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
                 cods.add(entityRole.getPessoa().getCod());
             }
@@ -79,7 +78,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     @Override
     public List<MUser> listAllocableUsers(ProcessInstance instance) {
         final List<MUser> pessoas = new ArrayList<>();
-        for (IEntityRole entityRole : instance.getRoles()) {
+        for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
                 pessoas.add(entityRole.getPessoa());
             }

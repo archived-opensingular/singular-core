@@ -45,7 +45,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     List<? extends IEntityProcessInstance> getDemandasFilhas();
 
-    default IEntityRole getPapelDemandaComSigla(String siglaPapel) {
+    default IEntityRole getRoleUserByAbbreviation(String siglaPapel) {
         for (IEntityRole dadosPapelInstancia : getPapeis()) {
             if (siglaPapel.equalsIgnoreCase(dadosPapelInstancia.getPapel().getSigla())) {
                 return dadosPapelInstancia;

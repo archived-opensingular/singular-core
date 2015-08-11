@@ -56,7 +56,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public String getId() {
-        return mapa.getDefinicaoProcesso().getSigla() + "::" + getName() + "()";
+        return mapa.getProcessDefinition().getAbbreviation() + "::" + getName() + "()";
     }
 
     public IScheduleData getScheduleData() {

@@ -23,7 +23,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
     VarInstanceTableProcess(ProcessInstance instancia) {
         this(instancia.getDefinicao());
-        bind(instancia.getDemanda());
+        bind(instancia.getEntity());
         this.instancia = instancia;
     }
 

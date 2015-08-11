@@ -3,7 +3,6 @@ package br.net.mirante.singular.flow.core.builder;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.TransitionAccessStrategy;
-import br.net.mirante.singular.flow.core.TransitionAccessStrategy;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface BTransition<SELF extends BTransition<SELF>> {

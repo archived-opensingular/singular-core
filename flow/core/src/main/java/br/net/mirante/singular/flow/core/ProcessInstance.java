@@ -8,68 +8,69 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 
-import br.net.mirante.singular.flow.util.view.Lnk;
-import br.net.mirante.singular.flow.util.vars.ValidationResult;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
+import br.net.mirante.singular.flow.util.vars.ValidationResult;
+import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.util.view.Lnk;
+
+import com.google.common.collect.Lists;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
 
-    private final RefProcessDefinition definicao;
+    private final RefProcessDefinition processDefinitionRef;
 
     private transient MTask<?> estadoAtual;
 
     private transient ExecucaoMTask execucaoTask;
 
-    private transient IEntityProcessInstance demanda;
+    private transient IEntityProcessInstance entity;
 
-    private transient VarInstanceMap<?> variaveis;
+    private transient VarInstanceMap<?> variables;
 
     private transient VariableWrapper variableWrapper;
 
-    protected ProcessInstance(Class<? extends ProcessDefinition<?>> classeDefinicao) {
-        definicao = RefProcessDefinition.loadByClass(classeDefinicao);
-        demanda = getDefinicao().criarDadosInstancia();
+    protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass) {
+        processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
+        entity = getDefinicao().createProcessInstance();
     }
 
-    protected ProcessInstance(Class<? extends ProcessDefinition<?>> classeDefinicao, IEntityProcessInstance dadosInstanciaProcesso) {
-        definicao = RefProcessDefinition.loadByClass(classeDefinicao);
-        demanda = dadosInstanciaProcesso;
+    protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass, IEntityProcessInstance entityProcessInstance) {
+        processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
+        entity = entityProcessInstance;
     }
 
     public <K extends ProcessDefinition<?>> K getDefinicao() {
-        return (K) definicao.get();
+        return (K) processDefinitionRef.get();
     }
 
-    private IEntityProcessInstance getDBInstance() {
-        return demanda;
+    private IEntityProcessInstance getInternalEntity() {
+        return entity;
     }
 
-    protected void setInstanciaPai(ProcessInstance pai) {
-        getPersistenceService().definirInstanciaPai(getDBInstance(), pai.getDBInstance());
-
+    protected void setParent(ProcessInstance pai) {
+        getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
 
     public <K extends ProcessInstance> K getInstanciaPai() {
-        if (getDBInstance().getDemandaPai() != null) {
-            return (K) MBPM.getMbpmBean().getInstancia(getDemanda().getDemandaPai());
+        if (getInternalEntity().getDemandaPai() != null) {
+            return (K) MBPM.getMbpmBean().getProcessInstance(getEntity().getDemandaPai());
         }
         return null;
     }
 
     public List<ProcessInstance> getInstanciasFilhas() {
-        return getDBInstance().getDemandasFilhas().stream().map(MBPM.getMbpmBean()::getInstancia).collect(Collectors.toList());
+        return getInternalEntity().getDemandasFilhas().stream().map(MBPM.getMbpmBean()::getProcessInstance).collect(Collectors.toList());
     }
 
     public <I extends ProcessInstance, K extends ProcessDefinition<I>> List<I> getInstanciasFilhas(Class<K> classe) {
@@ -82,14 +83,14 @@ public abstract class ProcessInstance {
 
     private <I extends ProcessInstance, K extends ProcessDefinition<I>> Stream<I> getStreamFilhas(Class<K> classe) {
         K def = MBPM.getDefinicao(classe);
-        IEntityProcess dadosDefinicaoProcesso = def.getDadosDefinicao();
-        return getDBInstance().getDemandasFilhas().stream().filter(d -> d.getDefinicao().equals(dadosDefinicaoProcesso))
+        IEntityProcess dadosDefinicaoProcesso = def.getEntity();
+        return getInternalEntity().getDemandasFilhas().stream().filter(d -> d.getDefinicao().equals(dadosDefinicaoProcesso))
                 .map(def::dadosToInstancia);
     }
 
     public TaskInstance getTarefaPai() {
-        IEntityTaskInstance dbTaskInstance = getDBInstance().getTarefaPai();
-        return dbTaskInstance == null ? null : MBPM.getInstanciaTarefa(dbTaskInstance);
+        IEntityTaskInstance dbTaskInstance = getInternalEntity().getTarefaPai();
+        return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
     }
 
     public TaskInstance iniciar() {
@@ -99,11 +100,11 @@ public abstract class ProcessInstance {
     public TaskInstance iniciar(VarInstanceMap<?> paramIn) {
         getDescricaoBD(); // Força a geração da descricação
         TaskInstance tarefaAtual = getTarefaPai();
-        if (tarefaAtual == null && getDBInstance().getDemandaPai() != null) {
-            tarefaAtual = MBPM.getMbpmBean().getInstancia(getDBInstance().getDemandaPai()).getTarefaAtual();
+        if (tarefaAtual == null && getInternalEntity().getDemandaPai() != null) {
+            tarefaAtual = MBPM.getMbpmBean().getProcessInstance(getInternalEntity().getDemandaPai()).getTarefaAtual();
         }
         if (tarefaAtual != null) {
-            tarefaAtual.log("Demanda Criada", getDescricaoExtendida(), null, MBPM.getUserSeDisponivel(), null, getDBInstance());
+            tarefaAtual.log("Demanda Criada", getDescricaoExtendida(), null, MBPM.getUserIfAvailable(), null, getInternalEntity());
         }
         return EngineProcessamentoMBPM.iniciar(this, paramIn);
     }
@@ -130,15 +131,15 @@ public abstract class ProcessInstance {
 
     protected final TaskInstance updateEstado(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
         if (tarefaOrigem != null) {
-            String siglaTransicao = null;
+            String transitionName = null;
             if (transicaoOrigem != null) {
-                siglaTransicao = transicaoOrigem.getName();
+                transitionName = transicaoOrigem.getName();
             }
-            getPersistenceService().encerrarTarefaInstancia(tarefaOrigem.getEntityTaskInstance(), siglaTransicao, MBPM.getUserSeDisponivel());
+            getPersistenceService().endTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
         }
         IEntityTaskDefinition situacaoNova = getDefinicao().obterSituacaoPara(task);
 
-        IEntityTaskInstance tarefa = getPersistenceService().adicionarTarefaInstancia(getDemanda(), situacaoNova);
+        IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
 
         TaskInstance tarefaNova = getTarefa(tarefa);
         estadoAtual = task;
@@ -149,27 +150,27 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getDefinicao().retriveTask(getDBInstance());
+            estadoAtual = getDefinicao().retriveTask(getInternalEntity());
         }
         return estadoAtual;
     }
 
     public boolean isFim() {
-        return getDemanda().getSituacao().isFim();
+        return getEntity().getSituacao().isFim();
     }
 
     public boolean isNomeEstado(String nomeEstado) {
-        final MTask<?> task = getDefinicao().getFluxo().getTaskWithNome(nomeEstado);
+        final MTask<?> task = getDefinicao().getFlowMap().getTaskWithName(nomeEstado);
         if (task == null) {
-            getDefinicao().getFluxo().createError("Não existe task com nome '" + nomeEstado + "'");
+            getDefinicao().getFlowMap().createError("Não existe task com nome '" + nomeEstado + "'");
         }
         return getEstado().equals(task);
     }
 
     public boolean isSiglaEstado(String sigla) {
-        final MTask<?> task = getDefinicao().getFluxo().getTaskWithSigla(sigla);
+        final MTask<?> task = getDefinicao().getFlowMap().getTaskWithAbbreviation(sigla);
         if (task == null) {
-            getDefinicao().getFluxo().createError("Não existe task com sigla '" + sigla + "'");
+            getDefinicao().getFlowMap().createError("Não existe task com sigla '" + sigla + "'");
         }
         return getEstado().equals(task);
     }
@@ -182,7 +183,7 @@ public abstract class ProcessInstance {
     }
 
     public String getNomeProcesso() {
-        return getDefinicao().getNome();
+        return getDefinicao().getName();
     }
 
     public String getNomeTarefa() {
@@ -198,18 +199,18 @@ public abstract class ProcessInstance {
     }
 
     public final Lnk getHrefPadrao() {
-        return MBPM.getHrefPadrao(this);
+        return MBPM.getDefaultHrefFor(this);
     }
 
     public Set<Integer> getRhComDireitoTarefa(String nomeTarefa) {
-        return getDefinicao().getFluxo().getTaskPeopleWithSigla(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
+        return getDefinicao().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
     public final String getTitulo() {
         final StringBuilder sb = new StringBuilder();
         sb.append(getNomeProcesso());
         String d;
-        if (getDefinicao().getFluxo().possuiMaisDeUmaTarefaVisivel()) {
+        if (getDefinicao().getFlowMap().hasMultiplePeopleTasks()) {
             d = getNomeTarefa();
             if (d != null) {
                 sb.append(" - ").append(d);
@@ -237,7 +238,7 @@ public abstract class ProcessInstance {
     }
 
     public boolean possuiDireitoVisualizacao(MUser user) {
-        switch (getDBInstance().getSituacao().getTipoTarefa()) {
+        switch (getInternalEntity().getSituacao().getTipoTarefa()) {
             case People:
             case Wait:
                 if (temAlocado() && isAlocado(user.getCod())) {
@@ -269,59 +270,67 @@ public abstract class ProcessInstance {
      * Apenas para uso interno da engine de processo e da persistencia.
      */
     public final void refresh() {
-        getPersistenceService().refreshModel(getDBInstance());
+        getPersistenceService().refreshModel(getInternalEntity());
     }
 
     /**
      * Apenas para uso interno da engine de processo e da persistencia.
      */
     public final <K extends IEntityProcessInstance> K getDemandaSemRefresh() {
-        if (demanda.getCod() == null) {
-            return salvarDemanda();
+        if (entity.getCod() == null) {
+            return saveEntity();
         }
-        return (K) demanda;
+        return (K) entity;
 
     }
 
-    public final <K extends IEntityProcessInstance> K getDemanda() {
-        if (demanda.getCod() == null) {
-            return salvarDemanda();
+    public final IEntityProcessInstance getEntity() {
+        if (entity.getCod() == null) {
+            return saveEntity();
         }
-        demanda = getPersistenceService().recuperarInstanciaPorCod(demanda.getCod());
-        return (K) demanda;
+        entity = getPersistenceService().retrieveProcessInstanceByCod(entity.getCod());
+        return entity;
     }
 
     public MUser getPessoaInteressada() {
-        return getDBInstance().getPessoaCriadora();
+        return getInternalEntity().getPessoaCriadora();
     }
 
-    public MUser getPessoaComSiglaPapel(String siglaPapel) {
-        final IEntityRole dadosPapelInstancia = getDemanda().getPapelDemandaComSigla(siglaPapel);
-        if (dadosPapelInstancia != null) {
-            return dadosPapelInstancia.getPessoa();
+    public MUser getUserWithRole(String roleAbbreviation) {
+        final IEntityRole entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
+        if (entityRole != null) {
+            return entityRole.getPessoa();
         }
         return null;
     }
 
-    public List<? extends IEntityRole> getRoles() {
-        return getDemanda().getPapeis();
+    public List<? extends IEntityRole> getUserRoles() {
+        return getEntity().getPapeis();
+    }
+
+    public IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
+        return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
+    }
+    
+    public boolean hasUserRoles() {
+    	return !getEntity().getPapeis().isEmpty();
     }
 
     public void setPessoaCriadora(MUser pessoaCriadora) {
-        getDBInstance().setPessoaCriadora(pessoaCriadora);
+        getInternalEntity().setPessoaCriadora(pessoaCriadora);
     }
 
     public MUser getPessoaCriadora() {
-        return getDBInstance().getPessoaCriadora();
+        return getInternalEntity().getPessoaCriadora();
     }
 
     protected void setDescricao(String descricao) {
-        getDBInstance().setDescricao(StringUtils.left(descricao, 250));
+        getInternalEntity().setDescricao(StringUtils.left(descricao, 250));
     }
 
-    public final <K extends IEntityProcessInstance> K salvarDemanda() {
-        demanda = getPersistenceService().salvarInstancia(demanda);
-        return (K) demanda;
+    public final <K extends IEntityProcessInstance> K saveEntity() {
+        entity = getPersistenceService().saveProcessInstance(entity);
+        return (K) entity;
     }
 
     public final void forcarEstado(MTask<?> task) {
@@ -331,7 +340,7 @@ public abstract class ProcessInstance {
         TaskInstance tarefaNova = updateEstado(tarefaOrigem, null, task, agora);
         if (tarefaOrigem != null) {
             tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getNome() + "' para '" + task.getName() + "'",
-                    null, MBPM.getUserSeDisponivel(), agora).sendEmail(pessoasAnteriores);
+                    null, MBPM.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         }
 
         ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
@@ -339,7 +348,7 @@ public abstract class ProcessInstance {
     }
 
     public Date getDataAlvoFim() {
-        final IEntityTaskInstance tarefa = getDBInstance().getTarefaAtiva();
+        final IEntityTaskInstance tarefa = getInternalEntity().getTarefaAtiva();
         if (tarefa != null) {
             return tarefa.getDataAlvoFim();
         }
@@ -347,19 +356,19 @@ public abstract class ProcessInstance {
     }
 
     public Date getDataInicio() {
-        return getDBInstance().getDataInicio();
+        return getInternalEntity().getDataInicio();
     }
 
     public Date getDataFim() {
-        return getDBInstance().getDataFim();
+        return getInternalEntity().getDataFim();
     }
 
-    public Integer getCod() {
-        return demanda.getCod();
+    public Integer getEntityCod() {
+        return entity.getCod();
     }
 
     public String getId() {
-        return demanda.getCod().toString();
+        return entity.getCod().toString();
     }
 
     public String getFullId() {
@@ -389,7 +398,7 @@ public abstract class ProcessInstance {
     }
 
     protected final String getDescricaoBD() {
-        String descricao = getDBInstance().getDescricao();
+        String descricao = getInternalEntity().getDescricao();
         if (descricao == null) {
             descricao = criarDescricaoInicial();
             if (!StringUtils.isBlank(descricao)) {
@@ -415,7 +424,7 @@ public abstract class ProcessInstance {
      */
     public final boolean recriarDescricaoInicial() {
         String descricao = criarDescricaoInicial();
-        if (!StringUtils.isBlank(descricao) && !descricao.equalsIgnoreCase(getDBInstance().getDescricao())) {
+        if (!StringUtils.isBlank(descricao) && !descricao.equalsIgnoreCase(getInternalEntity().getDescricao())) {
             setDescricao(descricao);
             return true;
         }
@@ -432,7 +441,7 @@ public abstract class ProcessInstance {
     }
 
     public String getNumeroDisplay() {
-        return getDemanda().getCod().toString();
+        return getEntity().getCod().toString();
     }
 
     public List<MUser> getResponsaveisDiretos() {
@@ -443,39 +452,39 @@ public abstract class ProcessInstance {
         return Collections.emptyList();
     }
 
-    private void addPapelPessoa(MProcessRole mPapel, MUser pessoa) {
-        if (getPessoaComSiglaPapel(mPapel.getAbbreviation()) == null) {
-            getPersistenceService().definirPapelPessoa(getDefinicao().getDadosDefinicao(), getDemanda(), mPapel.getAbbreviation(), pessoa);
+    private void addUserRole(MProcessRole mProcessRole, MUser user) {
+        if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
+            getPersistenceService().setInstanceUserRole(getEntity(), getDefinicao().getEntity().getPapel(mProcessRole.getAbbreviation()), user);
         }
     }
 
-    public final void addOrReplacePapelPessoa(final String siglaPapel, MUser novaPessoa) {
-        MProcessRole papel = getDefinicao().getFluxo().getRoleWithAbbreviation(siglaPapel);
-        MUser pessoaAnterior = getPessoaComSiglaPapel(papel.getAbbreviation());
+    public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
+        MProcessRole mProcessRole = getDefinicao().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        MUser previousUser = getUserWithRole(mProcessRole.getAbbreviation());
 
-        if (pessoaAnterior == null) {
-            if (novaPessoa != null) {
-                addPapelPessoa(papel, novaPessoa);
-                getDefinicao().getFluxo().notifyRoleChange(this, papel, null, novaPessoa);
+        if (previousUser == null) {
+            if (newUser != null) {
+                addUserRole(mProcessRole, newUser);
+                getDefinicao().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
 
-                final TaskInstance tarefaMaisRecente = getTarefaMaisRecente();
-                if (tarefaMaisRecente != null) {
-                    tarefaMaisRecente.log("Papel definido", String.format("%s: %s", papel.getName(), novaPessoa.getNomeGuerra()));
+                final TaskInstance latestTask = getLatestTask();
+                if (latestTask != null) {
+                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
                 }
             }
-        } else if (novaPessoa == null || !pessoaAnterior.equals(novaPessoa)) {
-            getPersistenceService().removerPapelPessoa(getDemanda(), papel.getAbbreviation());
-            if (novaPessoa != null) {
-                addPapelPessoa(papel, novaPessoa);
+        } else if (newUser == null || !previousUser.equals(newUser)) {
+            getPersistenceService().removeInstanceUserRole(getEntity(), getEntity().getRoleUserByAbbreviation(mProcessRole.getAbbreviation()));
+            if (newUser != null) {
+                addUserRole(mProcessRole, newUser);
             }
 
-            getDefinicao().getFluxo().notifyRoleChange(this, papel, pessoaAnterior, novaPessoa);
-            final TaskInstance tarefaMaisRecente = getTarefaMaisRecente();
-            if (tarefaMaisRecente != null) {
-                if (novaPessoa != null) {
-                    tarefaMaisRecente.log("Papel alterado", String.format("%s: %s", papel.getName(), novaPessoa.getNomeGuerra()));
+            getDefinicao().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
+            final TaskInstance latestTask = getLatestTask();
+            if (latestTask != null) {
+                if (newUser != null) {
+                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
                 } else {
-                    tarefaMaisRecente.log("Papel removido", papel.getName());
+                    latestTask.log("Papel removido", mProcessRole.getName());
                 }
             }
         }
@@ -511,14 +520,14 @@ public abstract class ProcessInstance {
     }
 
     public final VarInstanceMap<?> getVariaveis() {
-        if (variaveis == null) {
-            variaveis = new VarInstanceTableProcess(this);
+        if (variables == null) {
+            variables = new VarInstanceTableProcess(this);
         }
-        return variaveis;
+        return variables;
     }
 
     protected void validarPreInicio() {
-        if (variaveis == null && !getDefinicao().getVariaveis().hasRequired()) {
+        if (variables == null && !getDefinicao().getVariaveis().hasRequired()) {
             return;
         }
 
@@ -529,11 +538,11 @@ public abstract class ProcessInstance {
     }
 
     public boolean temAlocado() {
-        return getDemanda().getTarefas().stream().anyMatch(tarefa -> isTarefaAtiva(tarefa) && tarefa.getPessoaAlocada() != null);
+        return getEntity().getTarefas().stream().anyMatch(tarefa -> isTarefaAtiva(tarefa) && tarefa.getPessoaAlocada() != null);
     }
 
     public boolean isAlocado(Integer codPessoa) {
-        return getDemanda()
+        return getEntity()
                 .getTarefas()
                 .stream()
                 .anyMatch(
@@ -542,12 +551,12 @@ public abstract class ProcessInstance {
     }
 
     public List<TaskInstance> getTarefas() {
-        IEntityProcessInstance demanda = getDemanda();
+        IEntityProcessInstance demanda = getEntity();
         return demanda.getTarefas().stream().map(this::getTarefa).collect(Collectors.toList());
     }
 
     private TaskInstance procurarUmFiltroPorDadosTarefa(boolean procuraAPartirDoFim, Predicate<IEntityTaskInstance> condicao) {
-        List<? extends IEntityTaskInstance> lista = getDemanda().getTarefas();
+        List<? extends IEntityTaskInstance> lista = getEntity().getTarefas();
         if (procuraAPartirDoFim) {
             lista = Lists.reverse(lista);
         }
@@ -571,7 +580,7 @@ public abstract class ProcessInstance {
         return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
     }
 
-    public TaskInstance getTarefaMaisRecente() {
+    public TaskInstance getLatestTask() {
         return procurarUmFiltroPorDadosTarefa(true, tarefa -> true);
     }
 
@@ -587,7 +596,7 @@ public abstract class ProcessInstance {
         return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getTipoTarefa().equals(tipoTarefa));
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance> getPersistenceService() {
+    protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getDefinicao().getPersistenceService();
     }
 

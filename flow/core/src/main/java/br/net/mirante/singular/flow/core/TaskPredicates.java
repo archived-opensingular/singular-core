@@ -12,7 +12,7 @@ public class TaskPredicates {
             @Override
             public boolean test(TaskInstance taskInstance) {
                 MUser p = taskInstance.getProcessInstance().getPessoaCriadora();
-                return MBPM.isPessoaAtivaParaTerTarefa(p);
+                return MBPM.canBeAllocated(p);
             }
 
             @Override

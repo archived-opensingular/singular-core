@@ -3,23 +3,31 @@ package br.net.mirante.singular.flow.core;
 import java.util.Date;
 import java.util.function.BiFunction;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-
+import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 
 class EngineProcessamentoMBPM {
 
     public static TaskInstance iniciar(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validarPreInicio();
-        return updateEstado(instancia, null, null, instancia.getDefinicao().getFluxo().getTaskInicial(), paramIn);
+        return updateEstado(instancia, null, null, instancia.getDefinicao().getFlowMap().getStartTask(), paramIn);
     }
 
-    private static TaskInstance updateEstado(ProcessInstance instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
+    private static <P extends ProcessInstance> TaskInstance updateEstado(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
             MTask<?> taskDestino, VarInstanceMap<?> paramIn) {
         boolean primeiroLoop = true;
         while (true) {
@@ -28,7 +36,9 @@ class EngineProcessamentoMBPM {
 
             if (primeiroLoop) {
                 inserirParametrosDaTransicao(instancia, paramIn);
-                salvarHistoricoVariavel(agora, instancia, tarefaOrigem, instanciaTarefa, paramIn);
+                
+                getPersistenceService().saveVariableHistoric(agora, instancia.getEntity(), tarefaOrigem, instanciaTarefa, paramIn);
+                
                 primeiroLoop = false;
             }
 
@@ -53,7 +63,7 @@ class EngineProcessamentoMBPM {
                     final TaskAccessStrategy<ProcessInstance> estrategia = taskPessoa.getAccessStrategy();
                     if (estrategia != null) {
                         MUser pessoa = estrategia.getAutomaticAllocatedUser(instancia, instanciaTarefa);
-                        if (pessoa != null && MBPM.isPessoaAtivaParaTerTarefa(pessoa)) {
+                        if (pessoa != null && MBPM.canBeAllocated(pessoa)) {
                             instanciaTarefa.relocateTask(null, pessoa, estrategia.isNotifyAutomaticAllocation(instancia, instanciaTarefa), null);
                         }
                     }
@@ -64,7 +74,7 @@ class EngineProcessamentoMBPM {
                             instanciaTarefa.setDataAlvoFim(alvo);
                         }
                     }
-                    if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleToSet()) {
+                    if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
                         for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
                             if (papel.isAutomaticUserAllocation()) {
                                 MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
@@ -72,7 +82,7 @@ class EngineProcessamentoMBPM {
                                 Preconditions.checkNotNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
                                         + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
-                                instancia.addOrReplacePapelPessoa(papel.getAbbreviation(), pessoa);
+                                instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
                             }
                         }
                     }
@@ -161,17 +171,10 @@ class EngineProcessamentoMBPM {
         }
     }
 
-    private static void salvarHistoricoVariavel(Date agora, ProcessInstance instancia, TaskInstance tarefaOrigem,
-            TaskInstance tarefaDestino, VarInstanceMap<?> paramIn) {
-        if (paramIn != null) {
-            getPersistenceService().salvarHistoricoVariavel(agora, instancia.getDemanda(),
-                    tarefaOrigem != null ? tarefaOrigem.getEntityTaskInstance() : null,
-                    tarefaDestino != null ? tarefaDestino.getEntityTaskInstance() : null, paramIn);
-        }
-    }
-
-    public static IPersistenceService<?, ?, ?, ?, ?, ?> getPersistenceService() {
-        return MBPM.getMbpmBean().getPersistenceService();
+    @SuppressWarnings("unchecked")
+	private static IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
+                .getMbpmBean().getPersistenceService();
     }
 
     private static void validarParametrosInput(ProcessInstance instancia, MTransition transicao, VarInstanceMap<?> paramIn) {

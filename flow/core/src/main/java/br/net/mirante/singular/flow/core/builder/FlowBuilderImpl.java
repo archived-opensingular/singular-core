@@ -54,8 +54,8 @@ public class FlowBuilderImpl extends
     }
 
     @Override
-    protected BProcessRole<?> newProcessRole(MProcessRole papel) {
-        return new ImplBProcessRole<>(papel);
+    protected BProcessRole<?> newProcessRole(MProcessRole mProcessRole) {
+        return new ImplBProcessRole<>(mProcessRole);
     }
 
     public static class ImplBTask<SELF extends ImplBTask<SELF, TASK>, TASK extends MTask<?>> implements BuilderTaskSelf<SELF, TASK> {

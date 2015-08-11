@@ -69,10 +69,10 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public String getCompleteName() {
-        return getFlowMap().getDefinicaoProcesso().getSigla() + '.' + name;
+        return getFlowMap().getProcessDefinition().getAbbreviation() + '.' + name;
     }
 
-    public final boolean isFim() {
+    public final boolean isEnd() {
         return getTaskType() == TaskType.End;
     }
 
@@ -88,8 +88,8 @@ public abstract class MTask<K extends MTask<?>> {
         return getTaskType() == TaskType.Wait;
     }
 
-    public final boolean is(String nomeEstado) {
-        return getName().equalsIgnoreCase(nomeEstado);
+    public final boolean is(String taskName) {
+        return getName().equalsIgnoreCase(taskName);
     }
 
     public TaskType getEffectiveTaskType() {
@@ -233,7 +233,7 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     final RuntimeException generateError(String message) {
-        return new RuntimeException(getFlowMap().getDefinicaoProcesso() + ":" + this + " -> " + message);
+        return new RuntimeException(getFlowMap().getProcessDefinition() + ":" + this + " -> " + message);
     }
 
     void verifyConsistency() {

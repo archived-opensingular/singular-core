@@ -49,7 +49,7 @@ public interface TransitionAccessStrategy<T extends TaskInstance> {
 
     public static <T extends TaskInstance> TransitionAccessStrategy<T> sameStrategyOf(final MTask<?> task, boolean visible) {
         return (instance) -> {
-            MUser user = MBPM.getUserSeDisponivel();
+            MUser user = MBPM.getUserIfAvailable();
             boolean canExecute = user != null && task.getAccessStrategy().canExecute(instance, user);
             if (canExecute && visible) {
                 return new TransitionAccess(TransitionAccessLevel.ENABLED, null);

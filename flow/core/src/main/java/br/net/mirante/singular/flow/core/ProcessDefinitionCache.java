@@ -46,10 +46,10 @@ public final class ProcessDefinitionCache {
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
             cache.add(def);
-            if (cacheById.containsKey(def.getSigla())) {
-                throw new RuntimeException("Existe duas definições com a mesma sigla: " + def.getSigla());
+            if (cacheById.containsKey(def.getAbbreviation())) {
+                throw new RuntimeException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
             }
-            cacheById.put(def.getSigla(), def);
+            cacheById.put(def.getAbbreviation(), def);
             cacheByInstanceType.put(def.getClasseInstancia(), def);
         }
         definitions = cache.build();

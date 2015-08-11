@@ -1,25 +1,25 @@
 package br.net.mirante.singular.flow.core;
 
 @SuppressWarnings("unchecked")
-public abstract class MTaskExecutavel<K extends MTaskExecutavel<?>> extends MTask<K> {
+public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> extends MTask<K> {
 
     private ITaskPageStrategy executionPage;
     private ITaskPageStrategy backPage;
     private ITaskPageStrategy pageAfterTask;
     private IExecutionDateStrategy<? extends ProcessInstance> targetDateExecutionStrategy;
 
-    public MTaskExecutavel(FlowMap flowMap, String name) {
+    public MTaskUserExecutable(FlowMap flowMap, String name) {
         super(flowMap, name);
     }
 
     @Override
-    public final K addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso) {
-        return (K) super.addAccessStrategy(estrategiaAcesso);
+    public final K addAccessStrategy(TaskAccessStrategy<?> accessStrategy) {
+        return (K) super.addAccessStrategy(accessStrategy);
     }
 
     @Override
-    public K addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso) {
-        return (K) super.addVisualizeStrategy(estrategiaAcesso);
+    public K addVisualizeStrategy(TaskAccessStrategy<?> accessStrategy) {
+        return (K) super.addVisualizeStrategy(accessStrategy);
     }
 
     @Override
@@ -36,6 +36,7 @@ public abstract class MTaskExecutavel<K extends MTaskExecutavel<?>> extends MTas
         return (IExecutionDateStrategy<ProcessInstance>) targetDateExecutionStrategy;
     }
 
+    @Deprecated
     @Override
     public K setApareceNoPainelAtividades(Boolean valor) {
         super.setApareceNoPainelAtividades(valor);

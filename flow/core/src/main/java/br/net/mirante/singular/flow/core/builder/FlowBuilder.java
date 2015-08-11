@@ -22,18 +22,14 @@ import br.net.mirante.singular.flow.core.RoleAccessStrategy;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
 import br.net.mirante.singular.flow.core.TaskPredicate;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
-import br.net.mirante.singular.flow.core.MTaskEnd;
-import br.net.mirante.singular.flow.core.MTaskJava;
-import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.TaskPredicate;
 
 public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_JAVA extends BJava<?>,
         BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>> {
 
     private final MAPA flowMap;
 
-    public FlowBuilder(DEF definicaoProcesso) {
-        flowMap = newFlowMap(definicaoProcesso);
+    public FlowBuilder(DEF processDefinition) {
+        flowMap = newFlowMap(processDefinition);
     }
 
     protected abstract MAPA newFlowMap(DEF processDefinition);
@@ -58,8 +54,8 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return flowMap;
     }
 
-    public void setInicio(BTask inicio) {
-        getFlowMap().setInicio(inicio.getTask());
+    public void setStartTask(BTask initialTask) {
+        getFlowMap().setStartTask(initialTask.getTask());
     }
 
     public <T extends ProcessInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
@@ -84,47 +80,47 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description,
-            UserRoleSettingStrategy<? extends ProcessInstance> estrategiaDefinicaoPapelPessoa,
-            boolean alocarPessoaAutomaticamente) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, estrategiaDefinicaoPapelPessoa, alocarPessoaAutomaticamente));
+            UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
+            boolean automaticUserAllocation) {
+        return newProcessRole(getFlowMap().addRoleDefinition(description, userRoleSettingStrategy, automaticUserAllocation));
     }
 
-    public BUILDER_JAVA addJavaTask(String nome) {
-        return newJavaTask(getFlowMap().addJavaTask(nome));
+    public BUILDER_JAVA addJavaTask(String name) {
+        return newJavaTask(getFlowMap().addJavaTask(name));
     }
 
-    public BUILDER_PEOPLE addPeopleTask(String nome) {
-        return newPeopleTask(getFlowMap().addPeopleTask(nome));
+    public BUILDER_PEOPLE addPeopleTask(String name) {
+        return newPeopleTask(getFlowMap().addPeopleTask(name));
     }
 
-    public BUILDER_PEOPLE addPeopleTask(String nome, TaskAccessStrategy<?> estrategiaAcessoTask) {
-        BUILDER_PEOPLE task = newPeopleTask(getFlowMap().addPeopleTask(nome));
-        if (estrategiaAcessoTask != null) {
-            task.addAccessStrategy(estrategiaAcessoTask);
+    public BUILDER_PEOPLE addPeopleTask(String name, TaskAccessStrategy<?> accessStrategy) {
+        BUILDER_PEOPLE task = newPeopleTask(getFlowMap().addPeopleTask(name));
+        if (accessStrategy != null) {
+            task.addAccessStrategy(accessStrategy);
         }
         return task;
     }
 
-    public BUILDER_PEOPLE addPeopleTask(String nome, BProcessRole<?> mPapelExecucao) {
-        return addPeopleTask(nome, RoleAccessStrategy.of(mPapelExecucao.getProcessRole()));
+    public BUILDER_PEOPLE addPeopleTask(String name, BProcessRole<?> requiredRole) {
+        return addPeopleTask(name, RoleAccessStrategy.of(requiredRole.getProcessRole()));
     }
 
-    public BUILDER_PEOPLE addPeopleTask(String nome, BProcessRole<?> mPapelExecucao, BProcessRole<?> mPapelVisualizacao) {
-        return addPeopleTask(nome, RoleAccessStrategy.of(mPapelExecucao.getProcessRole(), mPapelVisualizacao.getProcessRole()));
+    public BUILDER_PEOPLE addPeopleTask(String name, BProcessRole<?> requiredExecutionRole, BProcessRole<?> requiredVisualizeRole) {
+        return addPeopleTask(name, RoleAccessStrategy.of(requiredExecutionRole.getProcessRole(), requiredVisualizeRole.getProcessRole()));
     }
 
-    public BUILDER_WAIT addWaitTask(String nome) {
-        return newWaitTask(getFlowMap().addWaitTask(nome));
+    public BUILDER_WAIT addWaitTask(String name) {
+        return newWaitTask(getFlowMap().addWaitTask(name));
     }
 
-    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(String nome, IExecutionDateStrategy<T> estrategiaAgendamento) {
-        return newWaitTask(getFlowMap().addWaitTask(nome, estrategiaAgendamento));
+    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(String name, IExecutionDateStrategy<T> executionDateStrategy) {
+        return newWaitTask(getFlowMap().addWaitTask(name, executionDateStrategy));
     }
 
-    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(String nome, IExecutionDateStrategy<T> estrategiaAgendamento,
-            TaskAccessStrategy<?> estrategiaAcessoTask) {
-        BUILDER_WAIT wait = addWaitTask(nome, estrategiaAgendamento);
-        wait.addAccessStrategy(estrategiaAcessoTask);
+    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(String name, IExecutionDateStrategy<T> executionDateStrategy,
+            TaskAccessStrategy<?> accessStrategy) {
+        BUILDER_WAIT wait = addWaitTask(name, executionDateStrategy);
+        wait.addAccessStrategy(accessStrategy);
         return wait;
     }
 
@@ -160,15 +156,15 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return getFlowMap().addScheduledJob(name).call(impl);
     }
 
-    public void deleteInstancesFinalizedMoreThan(int time, TimeUnit timeUnit) {
-        getFlowMap().deleteInstancesFinalizedMoreThan(time, timeUnit);
+    public void deleteInstancesFinalizedOlderThan(int time, TimeUnit timeUnit) {
+        getFlowMap().deleteInstancesFinalizedOlderThan(time, timeUnit);
     }
 
-    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> estrategiaVisualizacao) {
-        getFlowMap().getAllTasks().stream().forEach(t -> t.addVisualizeStrategy(estrategiaVisualizacao));
+    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {
+        getFlowMap().getAllTasks().stream().forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
     }
 
-    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> estrategiaVisualizacao, Predicate<MTask<?>> filtroTipoTask) {
-        getFlowMap().getAllTasks().stream().filter(filtroTipoTask).forEach(t -> t.addVisualizeStrategy(estrategiaVisualizacao));
+    public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<MTask<?>> applyToPredicate) {
+        getFlowMap().getAllTasks().stream().filter(applyToPredicate).forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
     }
 }
