@@ -20,7 +20,7 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.ProcessScheduledJob;
 import br.net.mirante.singular.flow.core.RoleAccessStrategy;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
-import br.net.mirante.singular.flow.core.TaskPredicate;
+import br.net.mirante.singular.flow.core.ITaskPredicate;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 
 public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_JAVA extends BJava<?>,
@@ -144,7 +144,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newTransition(origin.getTask().addTransition(destination.getTask()));
     }
 
-    public BUILDER_TRANSITION addAutomaticTransition(BTask origin, TaskPredicate condition, BTask destination) {
+    public BUILDER_TRANSITION addAutomaticTransition(BTask origin, ITaskPredicate condition, BTask destination) {
         return newTransition(origin.getTask().addAutomaticTransition(condition, destination.getTask()));
     }
 

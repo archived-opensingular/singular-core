@@ -422,22 +422,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return isCreatedByUser();
     }
 
-    protected final void setNome(String grupo, String nome) {
-        setNome(grupo, calcularSigla(), nome);
+    protected final void setName(String category, String name) {
+        setName(category, generateAbbreviation(), name);
     }
 
-    final void setNome(String grupo, String sigla, String nome) {
-        this.category = grupo;
-        this.abbreviation = sigla;
-        this.name = nome;
+    private void setName(String category, String abbreviation, String name) {
+        this.category = category;
+        this.abbreviation = abbreviation;
+        this.name = name;
     }
 
-    final String calcularSigla() {
-        String s = getClass().getSimpleName();
-        if (!s.endsWith("Definicao")) {
+    private String generateAbbreviation() {
+        String className = getClass().getSimpleName();
+        if (!className.endsWith("Definicao")) {
             throw new RuntimeException("O nome da classe " + getClass().getName() + " deveria ter o sufixo 'Definicao'");
         }
-        return s.substring(0, s.length() - "Definicao".length());
+        return className.substring(0, className.length() - "Definicao".length());
     }
 
     final IEntityProcessInstance createProcessInstance() {
