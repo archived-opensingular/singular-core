@@ -71,7 +71,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 	void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK originTask, TASK destinationTask, VarInstanceMap<?> instanceMap);
 
 	default void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TaskInstance originTask, TaskInstance destinationTask, VarInstanceMap<?> instanceMap){
-        saveVariableHistoric(dateHour, instance, originTask != null ? originTask.getEntityTaskInstance() : null, destinationTask != null ? destinationTask.getEntityTaskInstance() : null, instanceMap);
+        saveVariableHistoric(dateHour, instance, originTask != null ? originTask.<TASK>getEntityTaskInstance() : null, destinationTask != null ? destinationTask.<TASK>getEntityTaskInstance() : null, instanceMap);
 	}
 
 	List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
