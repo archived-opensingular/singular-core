@@ -11,15 +11,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 
-import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
-import br.net.mirante.singular.flow.util.view.Lnk;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
+import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.util.view.Lnk;
 
 public class TaskInstance {
 
@@ -30,7 +32,7 @@ public class TaskInstance {
     private transient MTask<?> tipo;
 
     TaskInstance(ProcessInstance processInstance, IEntityTaskInstance task) {
-        if (!processInstance.getDemanda().equals(task.getDemanda())) {
+        if (!processInstance.getEntity().equals(task.getDemanda())) {
             throw processInstance.criarErro("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão");
         }
         this.processInstance = processInstance;
@@ -44,14 +46,14 @@ public class TaskInstance {
     @SuppressWarnings("unchecked")
     public <X extends ProcessInstance> X getProcessInstance() {
         if (processInstance == null) {
-            processInstance = MBPM.getMbpmBean().getInstancia(entityTask.getDemanda());
+            processInstance = MBPM.getMbpmBean().getProcessInstance(entityTask.getDemanda());
         }
         return (X) processInstance;
     }
 
     public MTask<?> getTipo() {
         if (tipo == null) {
-            tipo = getProcessInstance().getDefinicao().getFluxo().getTaskWithSigla(entityTask.getSituacao().getSigla());
+            tipo = getProcessInstance().getDefinicao().getFlowMap().getTaskWithAbbreviation(entityTask.getSituacao().getSigla());
         }
         return tipo;
     }
@@ -65,7 +67,7 @@ public class TaskInstance {
     }
 
     public Lnk getHrefPadrao() {
-        return MBPM.getHrefPadrao(this);
+        return MBPM.getDefaultHrefFor(this);
     }
 
     public MUser getPessoaAlocada() {
@@ -114,7 +116,7 @@ public class TaskInstance {
 
     public boolean isFim() {
         if (getTipo() != null) {
-            return getTipo().isFim();
+            return getTipo().isEnd();
         }
         return entityTask.getSituacao().isFim();
     }
@@ -146,7 +148,7 @@ public class TaskInstance {
             return;
         }
         entityTask.setDataAlvoSuspensao(targetDate);
-        getPersistenceService().atualizarTarefa(entityTask);
+        getPersistenceService().updateTask(entityTask);
 
         String sData = DateFormat.getDateInstance(DateFormat.MEDIUM).format(targetDate);
         String log = (targetDate == null ? "Retirado de suspensão" : "Suspenso até " + sData);
@@ -171,7 +173,7 @@ public class TaskInstance {
         getEntityTaskInstance().setPessoaAlocada(user);
         getEntityTaskInstance().setDataAlvoSuspensao(null);
 
-        getPersistenceService().atualizarTarefa(getEntityTaskInstance());
+        getPersistenceService().updateTask(getEntityTaskInstance());
 
         relocationCause = StringUtils.trimToNull(relocationCause);
 
@@ -183,8 +185,8 @@ public class TaskInstance {
         }
 
         if (notify) {
-            MBPM.getNotificadores().notificarDesalocacaoTarefa(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
-            MBPM.getNotificadores().notificarAlocacaoTarefa(this, author, user, user, pessoaAlocadaAntes, relocationCause);
+            MBPM.getNotifiers().notificarDesalocacaoTarefa(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
+            MBPM.getNotifiers().notificarAlocacaoTarefa(this, author, user, user, pessoaAlocadaAntes, relocationCause);
         }
 
         notificarUpdateEstado();
@@ -192,14 +194,14 @@ public class TaskInstance {
 
     public void setDataAlvoFim(Date dataAlvo) {
         getEntityTaskInstance().setDataAlvoFim(dataAlvo);
-        getPersistenceService().atualizarTarefa(getEntityTaskInstance());
+        getPersistenceService().updateTask(getEntityTaskInstance());
     }
 
     public void createSubTask(String historyType, ProcessInstance childProcessInstance) {
-        getPersistenceService().associarInstanciaTarefaPai(childProcessInstance.getDemanda(), entityTask);
+        getPersistenceService().setParentTask(childProcessInstance.getEntity(), entityTask);
 
         if (historyType != null) {
-            log(historyType, childProcessInstance.getDemanda().getDescricao(), childProcessInstance.getTarefaAtual().getPessoaAlocada())
+            log(historyType, childProcessInstance.getEntity().getDescricao(), childProcessInstance.getTarefaAtual().getPessoaAlocada())
                     .sendEmail();
         }
         notificarUpdateEstado();
@@ -210,11 +212,11 @@ public class TaskInstance {
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento) {
-        return log(tipoHistorico, detalhamento, null, MBPM.getUserSeDisponivel(), null);
+        return log(tipoHistorico, detalhamento, null, MBPM.getUserIfAvailable(), null);
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada) {
-        return log(tipoHistorico, detalhamento, alocada, MBPM.getUserSeDisponivel(), null);
+        return log(tipoHistorico, detalhamento, alocada, MBPM.getUserIfAvailable(), null);
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora) {
@@ -223,10 +225,10 @@ public class TaskInstance {
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora,
             IEntityProcessInstance demandaFilha) {
-        return getPersistenceService().salvarlogHistorico(entityTask, tipoHistorico, detalhamento, alocada, autor, dataHora, demandaFilha);
+        return getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada, autor, dataHora, demandaFilha);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessInstance().getDefinicao().getPersistenceService();
     }
 
@@ -254,14 +256,14 @@ public class TaskInstance {
         }
         if (getTipo() != null && (getTipo().isPeople() || (getTipo().isWait() && getTipo().getAccessStrategy() != null))) {
             Set<Integer> codPessoas = getFirstLevelUsersCodWithAccess();
-            return (List<MUser>) getPersistenceService().consultarPessoasPorCod(codPessoas);
+            return (List<MUser>) getPersistenceService().retrieveUsersByCod(codPessoas);
         }
         return Collections.emptyList();
     }
 
     private Set<Integer> getFirstLevelUsersCodWithAccess() {
         Preconditions.checkNotNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getSigla() + " não encontrada na definição "
-                + getProcessInstance().getDefinicao().getNome());
+                + getProcessInstance().getDefinicao().getName());
         Preconditions.checkNotNull(getTipo().getAccessStrategy(),
                 "Estratégia de acesso da task " + entityTask.getSituacao().getSigla() + " não foi definida");
         return getTipo().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());

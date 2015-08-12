@@ -1,6 +1,9 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import org.joda.time.DateTime;
 
 class InstanceCleanupStrategy {
 
@@ -24,5 +27,12 @@ class InstanceCleanupStrategy {
 
     public FlowMap getFlowMap() {
         return flowMap;
+    }
+
+    /**
+     * @return {@link Date} now minus {@link #getTime()} according to {@link #getTimeUnit()}
+     */
+    public Date toDate() {
+        return DateTime.now().minus(timeUnit.toMillis(time)).toDate();
     }
 }

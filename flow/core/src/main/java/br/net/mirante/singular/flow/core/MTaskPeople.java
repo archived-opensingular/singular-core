@@ -2,7 +2,7 @@ package br.net.mirante.singular.flow.core;
 
 import com.google.common.base.Preconditions;
 
-public class MTaskPeople extends MTaskExecutavel<MTaskPeople> {
+public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
 
     private EstrategiaAlertaTarefa estrategiaAlerta;
 

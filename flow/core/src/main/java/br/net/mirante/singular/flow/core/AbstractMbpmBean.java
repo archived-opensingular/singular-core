@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.net.mirante.singular.flow.util.view.Lnk;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
+import br.net.mirante.singular.flow.util.view.Lnk;
 
 public abstract class AbstractMbpmBean {
 
@@ -19,72 +19,72 @@ public abstract class AbstractMbpmBean {
 
     // ------- Método de recuperação de definições --------------------
 
-    protected abstract ProcessDefinitionCache getCacheDefinicao();
+    protected abstract ProcessDefinitionCache getDefinitionCache();
 
-    public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
-        return ProcessDefinitionCache.getDefinition(classe);
+    public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> processClass) {
+        return ProcessDefinitionCache.getDefinition(processClass);
     }
 
-    public ProcessDefinition<?> getProcessDefinition(String sigla) {
-        return getCacheDefinicao().getDefinition(sigla);
+    public ProcessDefinition<?> getProcessDefinition(String abbreviation) {
+        return getDefinitionCache().getDefinition(abbreviation);
     }
 
-    public List<ProcessDefinition<?>> getDefinicoes() {
-        return getCacheDefinicao().getDefinitions();
+    public List<ProcessDefinition<?>> getDefinitions() {
+        return getDefinitionCache().getDefinitions();
     }
 
-    private <T extends ProcessInstance> ProcessDefinition<?> getDefinicaoForInstanciaOrException(Class<T> classeIntancia) {
-        ProcessDefinition<?> def = getCacheDefinicao().getDefinitionForInstance(classeIntancia);
+    private <T extends ProcessInstance> ProcessDefinition<?> getDefinicaoForInstanciaOrException(Class<T> instanceClass) {
+        ProcessDefinition<?> def = getDefinitionCache().getDefinitionForInstance(instanceClass);
         if (def == null) {
-            throw new RuntimeException("Não existe definição de processo para '" + classeIntancia.getName() + "'");
+            throw new RuntimeException("Não existe definição de processo para '" + instanceClass.getName() + "'");
         }
         return def;
     }
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getInstancia(Integer codDadosInstanciaProcesso) {
-        IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().recuperarInstanciaPorCod(codDadosInstanciaProcesso);
+    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
+        IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getDefinicao().getSigla());
         return def.dadosToInstancia(dadosInstanciaProcesso);
     }
 
-    public ProcessInstance getInstancia(IEntityProcessInstance dadosInstanciaProcesso) {
-        return getInstancia(dadosInstanciaProcesso.getCod());
+    public ProcessInstance getProcessInstance(IEntityProcessInstance entityProcessInstance) {
+        return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    public final <T extends ProcessInstance> T getInstancia(Class<T> classeIntancia, Integer id) {
-        return classeIntancia.cast(getDefinicaoForInstanciaOrException(classeIntancia).recuperarInstancia(id));
+    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
+        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).recuperarInstancia(cod));
     }
 
-    public final <T extends ProcessInstance> T getInstanciaOrException(Class<T> classeIntancia, String id) {
-        T instancia = getInstancia(classeIntancia, id);
-        if (instancia == null) {
-            throw new RuntimeException("Não foi encontrada a instancia '" + id + "' do tipo " + classeIntancia.getName());
+    public final <T extends ProcessInstance> T findProcessInstanceOrException(Class<T> instanceClass, String id) {
+        T instance = findProcessInstance(instanceClass, id);
+        if (instance == null) {
+            throw new RuntimeException("Não foi encontrada a instancia '" + id + "' do tipo " + instanceClass.getName());
         }
-        return instancia;
+        return instance;
     }
 
-    public final <T extends ProcessInstance> T getInstancia(Class<T> classeIntancia, String id) {
+    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return getInstancia(classeIntancia, Integer.parseInt(id));
+            return findProcessInstance(instanceClass, Integer.parseInt(id));
         } else {
-            return classeIntancia.cast(getInstancia(id));
+            return instanceClass.cast(findProcessInstance(id));
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <X extends ProcessInstance> X getInstancia(String instanciaID) {
-        if (instanciaID == null) {
+    public <X extends ProcessInstance> X findProcessInstance(String instanceID) {
+        if (instanceID == null) {
             return null;
         }
-        MapeamentoId mapeamento = parseId(instanciaID);
-        if (mapeamento.sigla == null) {
-            return (X) getInstancia(mapeamento.cod);
+        MappingId mapeamento = parseId(instanceID);
+        if (mapeamento.abbreviation == null) {
+            return (X) getProcessInstanceByEntityCod(mapeamento.cod);
         } else {
-            final ProcessDefinition<?> def = getProcessDefinition(mapeamento.sigla);
+            final ProcessDefinition<?> def = getProcessDefinition(mapeamento.abbreviation);
             if (def == null) {
-                throw new RuntimeException("Não existe definição de processo '" + mapeamento.sigla + "'");
+                throw new RuntimeException("Não existe definição de processo '" + mapeamento.abbreviation + "'");
             }
             return (X) def.recuperarInstancia(mapeamento.cod);
         }
@@ -92,52 +92,52 @@ public abstract class AbstractMbpmBean {
 
     // ------- Manipulação de ID --------------------------------------
 
-    protected abstract String generateID(ProcessInstance instancia);
+    protected abstract String generateID(ProcessInstance instance);
 
-    protected abstract String generateID(TaskInstance instanciaTarefa);
+    protected abstract String generateID(TaskInstance taskInstance);
 
-    protected abstract MapeamentoId parseId(String instanciaID);
+    protected abstract MappingId parseId(String instanceID);
 
-    protected static class MapeamentoId {
-        public final String sigla;
+    protected static class MappingId {
+        public final String abbreviation;
         public final Integer cod;
 
-        public MapeamentoId(String sigla, int cod) {
-            this.sigla = sigla;
+        public MappingId(String abbreviation, int cod) {
+            this.abbreviation = abbreviation;
             this.cod = cod;
         }
     }
 
     // ------- Geração de link ----------------------------------------
 
-    public abstract Lnk getHrefPadrao(ProcessInstance instanciaProcesso);
+    public abstract Lnk getDefaultHrefFor(ProcessInstance INSTANCE);
 
-    public abstract Lnk getHrefPadrao(TaskInstance instanciaTarefa);
+    public abstract Lnk getDefaultHrefFor(TaskInstance taskInstance);
 
     // ------- Manipulação de Usuário ---------------------------------
 
-    public abstract MUser getUserSeDisponivel();
+    public abstract MUser getUserIfAvailable();
 
-    public abstract boolean isPessoaAtivaParaTerTarefa(MUser user);
+    public abstract boolean canBeAllocated(MUser user);
 
-    protected abstract AbstractNotificadores getNotificadores();
+    protected abstract AbstractNotificadores getNotifiers();
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<ProcessDefinition<?>> getProcessosIniciaveis(MUser user) {
-        return getDefinicoes().stream().filter(d -> d.isIniciavelPeloUsuario(user)).sorted().collect(Collectors.toList());
+    public final List<ProcessDefinition<?>> getEnabledProcessForCreationBy(MUser user) {
+        return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
     // ------- Outros -------------------------------------------------
 
-    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?> getPersistenceService();
+    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
     protected abstract IScheduleService getScheduleService();
 
     protected abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
 
     public final Object executeTask(MTaskJava task) {
-        final ProcessDefinition<?> definicao = task.getFlowMap().getDefinicaoProcesso();
+        final ProcessDefinition<?> definicao = task.getFlowMap().getProcessDefinition();
         final Collection<? extends ProcessInstance> instancias = definicao.getInstanciasNoEstado(task);
         if (task.isCalledInBlock()) {
             return task.executarByBloco(instancias);

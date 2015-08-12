@@ -1,7 +1,6 @@
 package br.net.mirante.singular.flow.core.entity;
 
 import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.TaskType;
 
 public interface IEntityTaskDefinition extends IEntityByCod {
 

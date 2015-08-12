@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.StartedTaskListener;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
-import br.net.mirante.singular.flow.core.StartedTaskListener;
 
 public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK extends MTask<?>> extends BTask {
 
@@ -17,6 +16,7 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
         return self();
     }
 
+    @SuppressWarnings("unchecked")
     public default SELF self() {
         return (SELF) this;
     }
@@ -36,11 +36,6 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
     @Override
     public default SELF addStartedTaskListener(StartedTaskListener listenerInicioTarefa) {
         getTask().addStartedTaskListener(listenerInicioTarefa);
-        return self();
-    }
-
-    public default SELF setApareceNoPainelAtividades(Boolean valor) {
-        getTask().setApareceNoPainelAtividades(valor);
         return self();
     }
 }

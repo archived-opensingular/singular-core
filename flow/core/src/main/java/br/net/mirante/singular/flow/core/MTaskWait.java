@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("unchecked")
-public class MTaskWait extends MTaskExecutavel<MTaskWait> {
+public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
 
     private final IExecutionDateStrategy<ProcessInstance> executionDateStrategy;
 

@@ -30,8 +30,8 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         final AbstractMbpmBean mbpmBean = MBPM.getMbpmBean();
         final StringBuilder log = new StringBuilder();
         final Date hoje = new Date();
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinicoes()) {
-            for (final MTaskWait task : definicaoProcessoMBPM.getFluxo().getWaitTasks()) {
+        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+            for (final MTaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 if (task.hasExecutionDateStrategy()) {
                     for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {
                         TaskInstance instanciaTarefa = instancia.getTarefaAtual();
@@ -50,8 +50,8 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
             }
         }
 
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinicoes()) {
-            definicaoProcessoMBPM.getFluxo().getPeopleTasks().stream()
+        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+            definicaoProcessoMBPM.getFlowMap().getPeopleTasks().stream()
                     .filter(task -> task.getTargetDateExecutionStrategy() != null)
                     .forEach(task -> {
                         // Preenche Data Alvo para os casos que estiverem null
@@ -70,8 +70,8 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                     });
         }
 
-        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinicoes()) {
-            for (MTask<?> task : definicaoProcessoMBPM.getFluxo().getTasks()) {
+        for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
+            for (MTask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
                 List<ConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
                     for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {

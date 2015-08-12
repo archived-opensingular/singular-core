@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-
 import java.util.Date;
 
 import org.joda.time.DateTime;
@@ -12,7 +11,7 @@ public class TaskPredicates {
             @Override
             public boolean test(TaskInstance taskInstance) {
                 MUser p = taskInstance.getProcessInstance().getPessoaCriadora();
-                return MBPM.isPessoaAtivaParaTerTarefa(p);
+                return MBPM.canBeAllocated(p);
             }
 
             @Override

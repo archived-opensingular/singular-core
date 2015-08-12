@@ -14,5 +14,5 @@ public abstract class AbstractNotificadores {
 
     public abstract void notifyStartToInterestedUser(TaskInstance instanciaTarefa, ExecucaoMTask execucaoTask);
 
-    public abstract <X extends MUser> void notify(TaskHistoricLog logHistorico, List<X> usersNotificar);
+    public abstract <X extends MUser> void notifyLogToUsers(TaskHistoricLog logHistorico, List<X> users);
 }

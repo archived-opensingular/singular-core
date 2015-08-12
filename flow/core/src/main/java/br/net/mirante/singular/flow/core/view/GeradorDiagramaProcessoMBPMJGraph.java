@@ -1,14 +1,14 @@
 package br.net.mirante.singular.flow.core.view;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import com.google.common.base.Throwables;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
@@ -100,7 +100,7 @@ public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
         graph.getModel().beginUpdate();
         graph.setAutoSizeCells(true);
 
-        final FlowMap fluxo = definicao.getFluxo();
+        final FlowMap fluxo = definicao.getFlowMap();
 
         final Map<String, Object> mapaVertice = new HashMap<>();
         for (final MTask<?> task : fluxo.getTasks()) {
@@ -112,7 +112,7 @@ public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
             mapaVertice.put(task.getAbbreviation(), v);
         }
 
-        addTransicaoInicio(graph, fluxo.getTaskInicial(), mapaVertice);
+        addTransicaoInicio(graph, fluxo.getStartTask(), mapaVertice);
 
         for (final MTask<?> task : fluxo.getTasks()) {
             for (final MTransition transicao : task.getTransicoes()) {
@@ -154,7 +154,7 @@ public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
         graph.updateCellSize(v);
         if (task.isWait()) {
             setStyle(v, "TIMER");
-        } else if (task.isFim()) {
+        } else if (task.isEnd()) {
             setStyle(v, "END");
         } else if (task.isJava()) {
             if (task.getName().startsWith("Notificar")) {

@@ -21,7 +21,7 @@ public class MTransition implements Serializable {
     private final boolean userOption;
 
     private TransitionAccessStrategy<TaskInstance> accessStrategy;
-    private List<MProcessRole> rolesToDefine;
+    private List<MProcessRole> rolesToDefineUser;
 
     private String mensagemConfirmacao;
 
@@ -66,9 +66,9 @@ public class MTransition implements Serializable {
         return accessStrategy.getAccess(taskInstance);
     }
 
-    public boolean hasRolesToSet() {
-        if (rolesToDefine != null) {
-            for (MProcessRole processRole : rolesToDefine) {
+    public boolean hasRoleUsersToSet() {
+        if (rolesToDefineUser != null) {
+            for (MProcessRole processRole : rolesToDefineUser) {
                 if (!processRole.isAutomaticUserAllocation()) {
                     return true;
                 }
@@ -77,27 +77,27 @@ public class MTransition implements Serializable {
         return false;
     }
 
-    public boolean hasAutomaticRoleToSet() {
-        if (rolesToDefine != null) {
-            return rolesToDefine.stream().anyMatch(MProcessRole::isAutomaticUserAllocation);
+    public boolean hasAutomaticRoleUsersToSet() {
+        if (rolesToDefineUser != null) {
+            return rolesToDefineUser.stream().anyMatch(MProcessRole::isAutomaticUserAllocation);
         }
         return false;
     }
 
     public MTransition defineUserRoleInTransition(MProcessRole papel) {
         Preconditions.checkArgument(origin.isPeople() || papel.isAutomaticUserAllocation(), "Only automatic user allocation is allowed in " + origin.getTaskType().toString() + " tasks");
-        if (this.rolesToDefine == null) {
-            this.rolesToDefine = new ArrayList<>();
+        if (this.rolesToDefineUser == null) {
+            this.rolesToDefineUser = new ArrayList<>();
         }
-        this.rolesToDefine.add(papel);
+        this.rolesToDefineUser.add(papel);
         return this;
     }
 
     public List<MProcessRole> getRolesToDefine() {
-        if (rolesToDefine == null) {
+        if (rolesToDefineUser == null) {
             return Collections.emptyList();
         }
-        return rolesToDefine;
+        return rolesToDefineUser;
     }
 
     public MTask<?> getOrigin() {
@@ -126,6 +126,7 @@ public class MTransition implements Serializable {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersProcessInitializer<K> initializerByProcess) {
         return setParametersInitializer((ITransitionParametersInitializer) (ctx, params) -> initializerByProcess.init((K) ctx.getProcessInstance(), params));
     }
@@ -136,6 +137,7 @@ public class MTransition implements Serializable {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
         return setParametersValidator((ITransitionParametersValidator) (ctx, params, result) -> validatorByProcess
                 .validate((K) ctx.getProcessInstance(), params, result));
@@ -181,7 +183,7 @@ public class MTransition implements Serializable {
     }
 
     public MTransition addParameterFromProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getMapa().getDefinicaoProcesso().getVariaveis().getDefinition(ref);
+        VarDefinition defVar = getMapa().getProcessDefinition().getVariaveis().getDefinition(ref);
         if (defVar == null) {
             throw getMapa().createError("Variable '" + ref + "' is not defined in process definition.");
         }

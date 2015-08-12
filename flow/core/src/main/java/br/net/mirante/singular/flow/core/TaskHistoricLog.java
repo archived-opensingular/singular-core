@@ -17,11 +17,11 @@ public final class TaskHistoricLog {
     }
 
     public void sendEmail(List<MUser> users) {
-        MBPM.getNotificadores().notify(this, users);
+        MBPM.getNotifiers().notifyLogToUsers(this, users);
     }
 
     public ProcessInstance getProcessInstance() {
-        return MBPM.getInstancia(historic.getTarefa().getDemanda());
+        return MBPM.getProcessInstance(historic.getTarefa().getDemanda());
     }
 
     public MUser getResponsibleUser() {

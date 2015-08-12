@@ -1,13 +1,13 @@
 package br.net.mirante.singular.flow.core.view;
 
-import javax.imageio.ImageIO;
-
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import com.google.common.base.Throwables;
 import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
@@ -104,7 +104,7 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
         Graph2DView view = new Graph2DView();
         Graph2D graph = view.getGraph2D();
 
-        final FlowMap flow = definicao.getFluxo();
+        final FlowMap flow = definicao.getFlowMap();
         final Map<String, Node> mapaVertice = new HashMap<>();
         for (final MTask<?> task : flow.getTasks()) {
             final Node v = adicionarNode(graph, task);
@@ -114,7 +114,7 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
             final Node v = adicionarNode(graph, task);
             mapaVertice.put(task.getAbbreviation(), v);
         }
-        adicionarStartNode(graph, flow.getTaskInicial(), mapaVertice);
+        adicionarStartNode(graph, flow.getStartTask(), mapaVertice);
         for (final MTask<?> task : flow.getTasks()) {
             for (final MTransition transicao : task.getTransicoes()) {
                 adicionarEdge(graph, transicao, mapaVertice);
@@ -245,7 +245,7 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
                     BpmnTypeEnum.EVENT_TYPE_TIMER,
                     EventCharEnum.EVENT_CHARACTERISTIC_INTERMEDIATE_BOUNDARY_INTERRUPTING));
             graph.getRealizer(node).setLineColor(INTER_LINE_COLOR);
-        } else if (task.isFim()) {
+        } else if (task.isEnd()) {
             node = graph.createNode(BpmnRealizerFactory.createEvent(
                     BpmnTypeEnum.EVENT_TYPE_PLAIN, EventCharEnum.EVENT_CHARACTERISTIC_END));
             graph.getRealizer(node).setLineColor(END_LINE_COLOR);

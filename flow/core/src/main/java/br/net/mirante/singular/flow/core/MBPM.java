@@ -2,9 +2,9 @@ package br.net.mirante.singular.flow.core;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.util.view.Lnk;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
+import br.net.mirante.singular.flow.util.view.Lnk;
 
 public class MBPM {
 
@@ -14,13 +14,13 @@ public class MBPM {
     }
 
     private static void init() {
-        for (final ProcessDefinition<?> processDefinition : getMbpmBean().getDefinicoes()) {
-            for (final MTaskJava task : processDefinition.getFluxo().getJavaTasks()) {
+        for (final ProcessDefinition<?> processDefinition : getMbpmBean().getDefinitions()) {
+            for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
                     getMbpmBean().getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> getMbpmBean().executeTask(task)));
                 }
             }
-            for (ProcessScheduledJob scheduledJob : processDefinition.getFluxo().getScheduledJobs()) {
+            for (ProcessScheduledJob scheduledJob : processDefinition.getFlowMap().getScheduledJobs()) {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }
@@ -46,8 +46,8 @@ public class MBPM {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K extends ProcessDefinition<?>> K getDefinicao(String sigla) {
-        return (K) getMbpmBean().getProcessDefinition(sigla);
+    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String abbreviation) {
+        return (K) getMbpmBean().getProcessDefinition(abbreviation);
     }
 
     public static <T extends VariableWrapper> T newInitialVariables(Class<? extends ProcessDefinition<?>> processDefinitionClass,
@@ -56,17 +56,17 @@ public class MBPM {
         return processDefinition.newInitialVariables(variableWrapperClass);
     }
 
-    public static TaskInstance getInstanciaTarefa(IEntityTaskInstance dadosTarefa) {
-        return new TaskInstance(dadosTarefa);
+    public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {
+        return new TaskInstance(entityTaskInstance);
     }
 
     @SuppressWarnings("unchecked")
-    public static <K extends ProcessInstance> K getInstancia(IEntityProcessInstance dadosInstanciaProcesso) {
-        return (K) getMbpmBean().getInstancia(dadosInstanciaProcesso);
+    public static <K extends ProcessInstance> K getProcessInstance(IEntityProcessInstance dadosInstanciaProcesso) {
+        return (K) getMbpmBean().getProcessInstance(dadosInstanciaProcesso);
     }
 
-    public static <X extends ProcessInstance> X getInstancia(String id) {
-        return getMbpmBean().getInstancia(id);
+    public static <X extends ProcessInstance> X findProcessInstance(String id) {
+        return getMbpmBean().findProcessInstance(id);
     }
 
     public static String generateID(ProcessInstance instancia) {
@@ -77,23 +77,23 @@ public class MBPM {
         return getMbpmBean().generateID(instanciaTarefa);
     }
 
-    public static MUser getUserSeDisponivel() {
-        return getMbpmBean().getUserSeDisponivel();
+    public static MUser getUserIfAvailable() {
+        return getMbpmBean().getUserIfAvailable();
     }
 
-    public static AbstractNotificadores getNotificadores() {
-        return getMbpmBean().getNotificadores();
+    public static AbstractNotificadores getNotifiers() {
+        return getMbpmBean().getNotifiers();
     }
 
-    static boolean isPessoaAtivaParaTerTarefa(MUser pessoa) {
-        return getMbpmBean().isPessoaAtivaParaTerTarefa(pessoa);
+    static boolean canBeAllocated(MUser pessoa) {
+        return getMbpmBean().canBeAllocated(pessoa);
     }
 
-    public static Lnk getHrefPadrao(ProcessInstance instanciaProcesso) {
-        return getMbpmBean().getHrefPadrao(instanciaProcesso);
+    public static Lnk getDefaultHrefFor(ProcessInstance instanciaProcesso) {
+        return getMbpmBean().getDefaultHrefFor(instanciaProcesso);
     }
 
-    public static Lnk getHrefPadrao(TaskInstance instanciaTarefa) {
-        return getMbpmBean().getHrefPadrao(instanciaTarefa);
+    public static Lnk getDefaultHrefFor(TaskInstance instanciaTarefa) {
+        return getMbpmBean().getDefaultHrefFor(instanciaTarefa);
     }
 }
