@@ -1,9 +1,9 @@
 package br.net.mirante.singular.ui.util.xml;
 
-import javax.xml.transform.TransformerException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.TransformerException;
 
 import com.sun.org.apache.xpath.internal.XPathAPI;
 import org.w3c.dom.Attr;

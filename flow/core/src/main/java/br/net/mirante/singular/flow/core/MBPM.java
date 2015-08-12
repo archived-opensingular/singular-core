@@ -2,9 +2,9 @@ package br.net.mirante.singular.flow.core;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.util.view.Lnk;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
+import br.net.mirante.singular.flow.util.view.Lnk;
 
 public class MBPM {
 

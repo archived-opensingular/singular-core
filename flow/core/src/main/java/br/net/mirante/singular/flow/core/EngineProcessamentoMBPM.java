@@ -3,6 +3,9 @@ package br.net.mirante.singular.flow.core;
 import java.util.Date;
 import java.util.function.BiFunction;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -16,9 +19,6 @@ import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 class EngineProcessamentoMBPM {
 
@@ -36,9 +36,9 @@ class EngineProcessamentoMBPM {
 
             if (primeiroLoop) {
                 inserirParametrosDaTransicao(instancia, paramIn);
-                
+
                 getPersistenceService().saveVariableHistoric(agora, instancia.getEntity(), tarefaOrigem, instanciaTarefa, paramIn);
-                
+
                 primeiroLoop = false;
             }
 
@@ -172,7 +172,7 @@ class EngineProcessamentoMBPM {
     }
 
     @SuppressWarnings("unchecked")
-	private static IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private static IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
                 .getMbpmBean().getPersistenceService();
     }

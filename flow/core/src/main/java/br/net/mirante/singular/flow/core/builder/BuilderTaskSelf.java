@@ -17,7 +17,7 @@ public interface BuilderTaskSelf<SELF extends BuilderTaskSelf<SELF, TASK>, TASK 
     }
 
     @SuppressWarnings("unchecked")
-	public default SELF self() {
+    public default SELF self() {
         return (SELF) this;
     }
 

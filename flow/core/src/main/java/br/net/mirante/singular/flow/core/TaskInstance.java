@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -20,9 +22,6 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public class TaskInstance {
 

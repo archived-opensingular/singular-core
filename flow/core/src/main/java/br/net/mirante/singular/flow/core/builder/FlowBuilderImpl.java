@@ -2,19 +2,19 @@ package br.net.mirante.singular.flow.core.builder;
 
 import com.google.common.base.Preconditions;
 
-import br.net.mirante.singular.flow.core.MTaskEnd;
-import br.net.mirante.singular.flow.core.MTaskJava;
-import br.net.mirante.singular.flow.core.MTaskPeople;
-import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.MTaskEnd;
+import br.net.mirante.singular.flow.core.MTaskJava;
+import br.net.mirante.singular.flow.core.MTaskPeople;
 import br.net.mirante.singular.flow.core.MTaskWait;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessInitializer;
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessValidator;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
         FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>> {

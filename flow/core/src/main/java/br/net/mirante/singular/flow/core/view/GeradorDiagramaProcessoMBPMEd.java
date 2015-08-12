@@ -1,13 +1,13 @@
 package br.net.mirante.singular.flow.core.view;
 
-import javax.imageio.ImageIO;
-
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import com.google.common.base.Throwables;
 import com.yworks.yfiles.bpmn.layout.BpmnLayouter;

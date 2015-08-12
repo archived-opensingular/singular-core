@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-
 import java.util.Date;
 
 import org.joda.time.DateTime;

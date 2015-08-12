@@ -15,7 +15,7 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
     }
 
     @SuppressWarnings("unchecked")
-	public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstanciaExecucao<T> impl) {
+    public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstanciaExecucao<T> impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getInstanciaProcesso(), execucaoTask));
     }
 
@@ -24,7 +24,7 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
     }
 
     @SuppressWarnings("unchecked")
-	public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstanciaExecucao<T> impl) {
+    public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstanciaExecucao<T> impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getInstanciaProcesso(), execucaoTask);
             return null;
@@ -39,7 +39,7 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
     }
 
     @SuppressWarnings("unchecked")
-	public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstancia<T> impl) {
+    public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstancia<T> impl) {
         return call((MTaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getInstanciaProcesso())));
     }
 
@@ -48,7 +48,7 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
     }
 
     @SuppressWarnings("unchecked")
-	public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstancia<T> impl) {
+    public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstancia<T> impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
             impl.executar((T) execucaoTask.getInstanciaProcesso());
             return null;

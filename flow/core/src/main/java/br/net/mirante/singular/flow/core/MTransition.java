@@ -127,7 +127,7 @@ public class MTransition implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-	public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersProcessInitializer<K> initializerByProcess) {
+    public <K extends ProcessInstance> MTransition setParametersInitializer(ITransitionParametersProcessInitializer<K> initializerByProcess) {
         return setParametersInitializer((ITransitionParametersInitializer) (ctx, params) -> initializerByProcess.init((K) ctx.getProcessInstance(), params));
     }
 
@@ -138,7 +138,7 @@ public class MTransition implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-	public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
+    public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
         return setParametersValidator((ITransitionParametersValidator) (ctx, params, result) -> validatorByProcess
                 .validate((K) ctx.getProcessInstance(), params, result));
     }

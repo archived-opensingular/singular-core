@@ -28,11 +28,11 @@ class InstanceCleanupStrategy {
     public FlowMap getFlowMap() {
         return flowMap;
     }
-    
+
     /**
      * @return {@link Date} now minus {@link #getTime()} according to {@link #getTimeUnit()}
      */
-    public Date toDate(){
-         return DateTime.now().minus(timeUnit.toMillis(time)).toDate();
+    public Date toDate() {
+        return DateTime.now().minus(timeUnit.toMillis(time)).toDate();
     }
 }

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-
 import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 

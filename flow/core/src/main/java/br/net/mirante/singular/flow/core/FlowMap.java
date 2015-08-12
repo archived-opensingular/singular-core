@@ -9,15 +9,14 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-
-import br.net.mirante.singular.flow.util.vars.VarService;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
+import br.net.mirante.singular.flow.util.vars.VarService;
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {
@@ -215,7 +214,7 @@ public class FlowMap implements Serializable {
     }
 
     private void verifyTasksConsistency() {
-    	tasksByAbbreviation.values().stream().forEach(MTask::verifyConsistency);
+        tasksByAbbreviation.values().stream().forEach(MTask::verifyConsistency);
     }
 
     private void checkRouteToTheEnd() {
@@ -227,11 +226,11 @@ public class FlowMap implements Serializable {
         }
     }
 
-	private static boolean removeIfReachesTheEnd(Set<MTask<?>> tasks) {
-		boolean removeuPeloMenosUm = tasks.removeIf((task) -> task.getTransicoes().stream()
-				.anyMatch((transition) -> transition.getDestination().isEnd() || !tasks.contains(transition.getDestination())));
-		return removeuPeloMenosUm;
-	}
+    private static boolean removeIfReachesTheEnd(Set<MTask<?>> tasks) {
+        boolean removeuPeloMenosUm = tasks.removeIf((task) -> task.getTransicoes().stream()
+                .anyMatch((transition) -> transition.getDestination().isEnd() || !tasks.contains(transition.getDestination())));
+        return removeuPeloMenosUm;
+    }
 
     private static String joinTaskNames(Set<MTask<?>> tasks) {
         return tasks.stream().map(MTask::getName).collect(Collectors.joining(", "));

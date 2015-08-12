@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -22,8 +23,6 @@ import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-
-import com.google.common.collect.Lists;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -311,9 +310,9 @@ public abstract class ProcessInstance {
     public IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
         return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
     }
-    
+
     public boolean hasUserRoles() {
-    	return !getEntity().getPapeis().isEmpty();
+        return !getEntity().getPapeis().isEmpty();
     }
 
     public void setPessoaCriadora(MUser pessoaCriadora) {
