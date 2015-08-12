@@ -122,7 +122,7 @@ public abstract class MTask<K extends MTask<?>> {
         return addTransition(defaultTransition).withAccessControl(TransitionAccessStrategy.enabled(exibirTransicaoNaExecucao));
     }
 
-    public MTransition addAutomaticTransition(TaskPredicate predicate, MTask<?> destino) {
+    public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destino) {
         MTransition transicao = flowMap.newTransition(this, predicate.getName(), destino, false);
         transicao.setPredicate(predicate);
         addAutomaticAction(AcoesTarefa.transitar(predicate, transicao));
@@ -142,7 +142,7 @@ public abstract class MTask<K extends MTask<?>> {
         return mTransicao;
     }
 
-    public void addAutomaticAction(TaskPredicate condicao, TaskAction acao) {
+    public void addAutomaticAction(ITaskPredicate condicao, TaskAction acao) {
         addAutomaticAction(new AcaoTarefaCondicionadaImpl(condicao, acao));
     }
 

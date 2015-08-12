@@ -2,16 +2,16 @@ package br.net.mirante.singular.flow.core;
 
 final class AcaoTarefaCondicionadaImpl extends ConditionalTaskAction {
 
-    private final TaskPredicate condicao;
+    private final ITaskPredicate condicao;
     private final TaskAction acao;
 
-    AcaoTarefaCondicionadaImpl(TaskPredicate condicao, TaskAction acao) {
+    AcaoTarefaCondicionadaImpl(ITaskPredicate condicao, TaskAction acao) {
         this.condicao = condicao;
         this.acao = acao;
     }
 
     @Override
-    public TaskPredicate getCondition() {
+    public ITaskPredicate getCondition() {
         return condicao;
     }
 

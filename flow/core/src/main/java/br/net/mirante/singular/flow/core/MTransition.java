@@ -30,7 +30,7 @@ public class MTransition implements Serializable {
     private ITransitionParametersValidator parametersValidator;
     private List<Object> listenerExecucaoTransicao;
 
-    private TaskPredicate predicate;
+    private ITaskPredicate predicate;
 
     protected MTransition(MTask<?> origin, String name, MTask<?> destination, boolean userOption) {
         Preconditions.checkNotNull(destination);
@@ -200,11 +200,11 @@ public class MTransition implements Serializable {
         return this;
     }
 
-    final void setPredicate(TaskPredicate predicate) {
+    final void setPredicate(ITaskPredicate predicate) {
         this.predicate = predicate;
     }
 
-    public TaskPredicate getPredicate() {
+    public ITaskPredicate getPredicate() {
         return predicate;
     }
 

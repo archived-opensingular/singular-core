@@ -2,15 +2,15 @@ package br.net.mirante.singular.flow.core;
 
 public class AcoesTarefa {
 
-    public static ConditionalTaskAction transitar(final TaskPredicate condicao, final MTransition transicao) {
+    public static ConditionalTaskAction transitar(final ITaskPredicate condicao, final MTransition transicao) {
         return transitar(condicao, transicao.getName());
     }
 
-    public static ConditionalTaskAction transitar(final TaskPredicate condicao, final String nomeDestino) {
+    public static ConditionalTaskAction transitar(final ITaskPredicate condicao, final String nomeDestino) {
         return new ConditionalTaskAction() {
 
             @Override
-            public TaskPredicate getCondition() {
+            public ITaskPredicate getCondition() {
                 return condicao;
             }
 
