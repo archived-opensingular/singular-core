@@ -77,7 +77,7 @@ public class MBPMUtil {
         if (task.getOrder() == 0 || (task.getOrder() < valor && !deque.contains(task))) {
             task.setOrder(valor);
             deque.add(task);
-            for (MTransition transicao : task.getTransicoes()) {
+            for (MTransition transicao : task.getTransitions()) {
                 if (task.getDefaultTransition() == transicao) {
                     orderedVisit(valor, transicao.getDestination(), deque);
                 } else {

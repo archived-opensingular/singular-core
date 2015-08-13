@@ -116,7 +116,7 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
         }
         adicionarStartNode(graph, flow.getStartTask(), mapaVertice);
         for (final MTask<?> task : flow.getTasks()) {
-            for (final MTransition transicao : task.getTransicoes()) {
+            for (final MTransition transicao : task.getTransitions()) {
                 adicionarEdge(graph, transicao, mapaVertice);
             }
         }

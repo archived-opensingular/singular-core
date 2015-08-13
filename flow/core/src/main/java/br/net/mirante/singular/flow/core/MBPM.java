@@ -81,7 +81,7 @@ public class MBPM {
         return getMbpmBean().getUserIfAvailable();
     }
 
-    public static AbstractNotificadores getNotifiers() {
+    public static AbstractProcessNotifiers getNotifiers() {
         return getMbpmBean().getNotifiers();
     }
 

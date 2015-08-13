@@ -140,9 +140,9 @@ class EngineProcessamentoMBPM {
 
         MTransition transicao;
         if (nomeTransicao == null) {
-            if (estadoAtual.getTransicoes().size() == 1) {
-                transicao = estadoAtual.getTransicoes().get(0);
-            } else if (estadoAtual.getTransicoes().size() > 1 && estadoAtual.getDefaultTransition() != null) {
+            if (estadoAtual.getTransitions().size() == 1) {
+                transicao = estadoAtual.getTransitions().get(0);
+            } else if (estadoAtual.getTransitions().size() > 1 && estadoAtual.getDefaultTransition() != null) {
                 transicao = estadoAtual.getDefaultTransition();
             } else {
                 throw new RuntimeException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
@@ -158,7 +158,7 @@ class EngineProcessamentoMBPM {
     }
 
     private static String listarTransicoes(MTask<?> estadoAtual) {
-        return Joiner.on(',').join(estadoAtual.getTransicoes());
+        return Joiner.on(',').join(estadoAtual.getTransitions());
     }
 
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
