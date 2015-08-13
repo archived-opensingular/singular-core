@@ -185,8 +185,8 @@ public class TaskInstance {
         }
 
         if (notify) {
-            MBPM.getNotifiers().notificarDesalocacaoTarefa(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
-            MBPM.getNotifiers().notificarAlocacaoTarefa(this, author, user, user, pessoaAlocadaAntes, relocationCause);
+            MBPM.getNotifiers().notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
+            MBPM.getNotifiers().notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, relocationCause);
         }
 
         notificarUpdateEstado();

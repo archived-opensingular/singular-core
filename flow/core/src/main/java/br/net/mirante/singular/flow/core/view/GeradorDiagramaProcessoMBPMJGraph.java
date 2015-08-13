@@ -115,7 +115,7 @@ public class GeradorDiagramaProcessoMBPMJGraph implements GeradorBPMN {
         addTransicaoInicio(graph, fluxo.getStartTask(), mapaVertice);
 
         for (final MTask<?> task : fluxo.getTasks()) {
-            for (final MTransition transicao : task.getTransicoes()) {
+            for (final MTransition transicao : task.getTransitions()) {
                 criarTransicao(graph, transicao, mapaVertice);
             }
         }

@@ -19,7 +19,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     private final List<MTransition> transitions = new LinkedList<>();
     private final Map<String, MTransition> transitionsByName = new HashMap<>();
-    private List<ConditionalTaskAction> automaticActions;
+    private List<IConditionalTaskAction> automaticActions;
 
     private List<StartedTaskListener> startedTaskListeners;
 
@@ -104,56 +104,51 @@ public abstract class MTask<K extends MTask<?>> {
         return false;
     }
 
-    public MTransition addTransition(String acao, MTask<?> nodeDestino, boolean showTransitionInExecution) {
-        return addTransition(acao, nodeDestino).withAccessControl(TransitionAccessStrategy.enabled(showTransitionInExecution));
+    public MTransition addTransition(String actionName, MTask<?> destination, boolean showTransitionInExecution) {
+        return addTransition(actionName, destination).withAccessControl(TransitionAccessStrategyImpl.enabled(showTransitionInExecution));
     }
 
-    public MTransition addTransition(String acao, MTask<?> nodeDestino) {
-        return addTransition(flowMap.newTransition(this, acao, nodeDestino, true));
+    public MTransition addTransition(String actionName, MTask<?> destination) {
+        return addTransition(flowMap.newTransition(this, actionName, destination, true));
     }
 
-    public MTransition addTransition(MTask<?> destino) {
-        defaultTransition = flowMap.newTransition(this, destino.getName(), destino, true);
+    public MTransition addTransition(MTask<?> destination) {
+        defaultTransition = flowMap.newTransition(this, destination.getName(), destination, true);
         return addTransition(defaultTransition);
     }
 
-    public MTransition addTransition(MTask<?> destino, boolean exibirTransicaoNaExecucao) {
-        defaultTransition = flowMap.newTransition(this, destino.getName(), destino, true);
-        return addTransition(defaultTransition).withAccessControl(TransitionAccessStrategy.enabled(exibirTransicaoNaExecucao));
-    }
-
-    public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destino) {
-        MTransition transicao = flowMap.newTransition(this, predicate.getName(), destino, false);
-        transicao.setPredicate(predicate);
-        addAutomaticAction(AcoesTarefa.transitar(predicate, transicao));
-        return addTransition(transicao);
+    public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destination) {
+        MTransition transition = flowMap.newTransition(this, predicate.getName(), destination, false);
+        transition.setPredicate(predicate);
+        addAutomaticAction(TaskActions.executeTransition(predicate, transition));
+        return addTransition(transition);
     }
 
     public MTransition getDefaultTransition() {
         return defaultTransition;
     }
 
-    private MTransition addTransition(MTransition mTransicao) {
-        if (transitionsByName.containsKey(mTransicao.getName().toLowerCase())) {
-            throw generateError("Transition with name '" + mTransicao.getName() + "' already defined");
+    private MTransition addTransition(MTransition transition) {
+        if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
+            throw generateError("Transition with name '" + transition.getName() + "' already defined");
         }
-        transitions.add(mTransicao);
-        transitionsByName.put(mTransicao.getName().toLowerCase(), mTransicao);
-        return mTransicao;
+        transitions.add(transition);
+        transitionsByName.put(transition.getName().toLowerCase(), transition);
+        return transition;
     }
 
-    public void addAutomaticAction(ITaskPredicate condicao, TaskAction acao) {
-        addAutomaticAction(new AcaoTarefaCondicionadaImpl(condicao, acao));
+    public void addAutomaticAction(ITaskPredicate predicate, ITaskAction action) {
+        addAutomaticAction(TaskActions.conditionalAction(predicate, action));
     }
 
-    private void addAutomaticAction(ConditionalTaskAction action) {
+    private void addAutomaticAction(IConditionalTaskAction action) {
         if (automaticActions == null) {
-            automaticActions = new ArrayList<>();
+            automaticActions = new ArrayList<>(2);
         }
         automaticActions.add(action);
     }
 
-    public List<ConditionalTaskAction> getAutomaticActions() {
+    public List<IConditionalTaskAction> getAutomaticActions() {
         if (automaticActions == null) {
             return Collections.emptyList();
         }
@@ -164,7 +159,7 @@ public abstract class MTask<K extends MTask<?>> {
         throw new RuntimeException("Operation not supported");
     }
 
-    public List<MTransition> getTransicoes() {
+    public List<MTransition> getTransitions() {
         return transitions;
     }
 

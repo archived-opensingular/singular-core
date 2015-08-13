@@ -120,7 +120,7 @@ public abstract class AbstractMbpmBean {
 
     public abstract boolean canBeAllocated(MUser user);
 
-    protected abstract AbstractNotificadores getNotifiers();
+    protected abstract AbstractProcessNotifiers getNotifiers();
 
     // ------- Consultas ----------------------------------------------
 

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+
+import com.google.common.base.Preconditions;
 
 @SuppressWarnings("serial")
 public class MTransition implements Serializable {
@@ -28,7 +28,6 @@ public class MTransition implements Serializable {
     private VarDefinitionMap<?> parameters;
     private ITransitionParametersInitializer parametersInitializer;
     private ITransitionParametersValidator parametersValidator;
-    private List<Object> listenerExecucaoTransicao;
 
     private ITaskPredicate predicate;
 
@@ -59,9 +58,9 @@ public class MTransition implements Serializable {
         return this;
     }
 
-    public TransitionAccessStrategy.TransitionAccess getAccessFor(TaskInstance taskInstance) {
+    public TransitionAccess getAccessFor(TaskInstance taskInstance) {
         if (accessStrategy == null) {
-            return new TransitionAccessStrategy.TransitionAccess(TransitionAccessStrategy.TransitionAccessLevel.ENABLED, null);
+            return new TransitionAccess(TransitionAccess.TransitionAccessLevel.ENABLED, null);
         }
         return accessStrategy.getAccess(taskInstance);
     }
@@ -177,26 +176,17 @@ public class MTransition implements Serializable {
 
     public final VarDefinitionMap<?> getParameters() {
         if (parameters == null) {
-            parameters = getMapa().getVarService().newVarDefinitionMap();
+            parameters = getFlowMap().getVarService().newVarDefinitionMap();
         }
         return parameters;
     }
 
     public MTransition addParameterFromProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getMapa().getProcessDefinition().getVariaveis().getDefinition(ref);
+        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariaveis().getDefinition(ref);
         if (defVar == null) {
-            throw getMapa().createError("Variable '" + ref + "' is not defined in process definition.");
+            throw getFlowMap().createError("Variable '" + ref + "' is not defined in process definition.");
         }
         getParameters().addVariable(defVar.copy()).setRequired(required);
-        return this;
-    }
-
-    //TODO
-    public MTransition addListenerInicioTarefa(ListenerExecucaoTransicao listenerExecucaoTransicao) {
-        if (this.listenerExecucaoTransicao == null) {
-            this.listenerExecucaoTransicao = new ArrayList<>();
-        }
-        this.listenerExecucaoTransicao.add(listenerExecucaoTransicao);
         return this;
     }
 
@@ -208,7 +198,7 @@ public class MTransition implements Serializable {
         return predicate;
     }
 
-    private FlowMap getMapa() {
+    private FlowMap getFlowMap() {
         return destination.getFlowMap();
     }
 

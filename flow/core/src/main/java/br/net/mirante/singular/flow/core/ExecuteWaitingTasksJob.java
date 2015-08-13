@@ -72,14 +72,14 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
 
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (MTask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
-                List<ConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
+                List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
                     for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {
                         TaskInstance instanciaTarefa = instancia.getTarefaAtual();
-                        for (ConditionalTaskAction acao : acoesAutomaticas) {
-                            if (acao.getCondition().test(instanciaTarefa)) {
+                        for (IConditionalTaskAction acao : acoesAutomaticas) {
+                            if (acao.getPredicate().test(instanciaTarefa)) {
                                 log.append(instancia.getFullId()).append(": Condicao Atingida '")
-                                        .append(acao.getCondition().getDescription(instanciaTarefa)).append("' execudando '")
+                                        .append(acao.getPredicate().getDescription(instanciaTarefa)).append("' execudando '")
                                         .append(acao.getCompleteDescription()).append("'\n");
                                 acao.execute(instanciaTarefa);
                                 mbpmBean.getPersistenceService().commitTransaction();

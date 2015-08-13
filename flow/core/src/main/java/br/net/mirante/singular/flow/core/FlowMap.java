@@ -227,7 +227,7 @@ public class FlowMap implements Serializable {
     }
 
     private static boolean removeIfReachesTheEnd(Set<MTask<?>> tasks) {
-        boolean removeuPeloMenosUm = tasks.removeIf((task) -> task.getTransicoes().stream()
+        boolean removeuPeloMenosUm = tasks.removeIf((task) -> task.getTransitions().stream()
                 .anyMatch((transition) -> transition.getDestination().isEnd() || !tasks.contains(transition.getDestination())));
         return removeuPeloMenosUm;
     }
