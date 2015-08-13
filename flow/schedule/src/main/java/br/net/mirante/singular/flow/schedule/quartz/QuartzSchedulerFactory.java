@@ -95,7 +95,6 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * Set the name of the Scheduler to create via the SchedulerFactory.
      * <p>If not specified, the bean name will be used as default scheduler name.
      *
-     * @see #setBeanName
      * @see org.quartz.SchedulerFactory#getScheduler()
      * @see org.quartz.SchedulerFactory#getScheduler(String)
      */
@@ -162,12 +161,6 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      */
     public void setWaitForJobsToCompleteOnShutdown(boolean waitForJobsToCompleteOnShutdown) {
         this.waitForJobsToCompleteOnShutdown = waitForJobsToCompleteOnShutdown;
-    }
-
-    public void setBeanName(String name) {
-        if (this.schedulerName == null) {
-            this.schedulerName = name;
-        }
     }
 
     public void initialize() throws Exception {
