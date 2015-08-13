@@ -9,6 +9,10 @@ import org.quartz.spi.TriggerFiredBundle;
 public class QuartzJobFactory implements JobFactory {
     @Override
     public Job newJob(TriggerFiredBundle triggerFiredBundle, Scheduler scheduler) throws SchedulerException {
-        return null;
+        try {
+            return triggerFiredBundle.getJobDetail().getJobClass().newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SchedulerException(e);
+        }
     }
 }

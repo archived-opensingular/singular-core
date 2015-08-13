@@ -16,11 +16,11 @@
 package br.net.mirante.singular.flow.schedule.quartz;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -52,13 +52,11 @@ import org.quartz.spi.JobFactory;
  * @see org.quartz.SchedulerFactory
  * @see org.quartz.impl.StdSchedulerFactory
  */
-public class QuartzSchedulerFactory {
+public class QuartzSchedulerFactory extends SchedulerAccessor {
 
     public static final String PROP_THREAD_COUNT = "org.quartz.threadPool.threadCount";
 
     public static final int DEFAULT_THREAD_COUNT = 10;
-
-    protected final Log logger = LogFactory.getLog(getClass());
 
     private Class<? extends SchedulerFactory> schedulerFactoryClass = StdSchedulerFactory.class;
 
@@ -177,7 +175,6 @@ public class QuartzSchedulerFactory {
         initSchedulerFactory(schedulerFactory);
 
         this.scheduler = createScheduler(schedulerFactory, this.schedulerName);
-        populateSchedulerContext();
 
         if (!this.jobFactorySet && !(this.scheduler instanceof RemoteScheduler)) {
             /* Use QuartzJobFactory as default for a local Scheduler, unless when
@@ -208,10 +205,10 @@ public class QuartzSchedulerFactory {
             if (logger.isInfoEnabled()) {
                 logger.info("Loading Quartz config from [" + this.configLocation + "]");
             }
-            PropertiesLoaderUtils.fillProperties(mergedProps, this.configLocation);
+            this.fillProperties(mergedProps, this.configLocation);
         }
 
-        CollectionUtils.mergePropertiesIntoMap(this.quartzProperties, mergedProps);
+        this.mergePropertiesIntoMap(this.quartzProperties, mergedProps);
 
         // Make sure to set the scheduler name as configured in the Spring configuration.
         if (this.schedulerName != null) {
@@ -219,6 +216,43 @@ public class QuartzSchedulerFactory {
         }
 
         ((StdSchedulerFactory) schedulerFactory).initialize(mergedProps);
+    }
+
+    private void fillProperties(Properties mergedProps, ResourceBundle configLocation) {
+        if (mergedProps == null) {
+            throw new IllegalArgumentException("Map must not be null");
+        }
+        if (configLocation != null) {
+            for (Enumeration<?> en = configLocation.getKeys(); en.hasMoreElements(); ) {
+                String key = (String) en.nextElement();
+                Object value;
+                try {
+                    value = configLocation.getString(key);
+                } catch (MissingResourceException e) {
+                    logger.info(e.getMessage(), e);
+                    value = null;
+                }
+                assert value != null;
+                mergedProps.put(key, value);
+            }
+        }
+    }
+
+    private void mergePropertiesIntoMap(Properties quartzProperties, Properties mergedProps) {
+        if (mergedProps == null) {
+            throw new IllegalArgumentException("Map must not be null");
+        }
+        if (quartzProperties != null) {
+            for (Enumeration<?> en = quartzProperties.propertyNames(); en.hasMoreElements(); ) {
+                String key = (String) en.nextElement();
+                Object value = quartzProperties.getProperty(key);
+                if (value == null) {
+                    value = quartzProperties.get(key);
+                }
+                assert value != null;
+                mergedProps.put(key, value);
+            }
+        }
     }
 
     /**
@@ -251,27 +285,6 @@ public class QuartzSchedulerFactory {
                 SchedulerRepository.getInstance().remove(newScheduler.getSchedulerName());
             }
             return newScheduler;
-        }
-    }
-
-    /**
-     * Expose the specified context attributes and/or the current
-     * ApplicationContext in the Quartz SchedulerContext.
-     */
-    private void populateSchedulerContext() throws SchedulerException {
-        // Put specified objects into Scheduler context.
-        if (this.schedulerContextMap != null) {
-            this.scheduler.getContext().putAll(this.schedulerContextMap);
-        }
-
-        // Register ApplicationContext in Scheduler context.
-        if (this.applicationContextSchedulerContextKey != null) {
-            if (this.applicationContext == null) {
-                throw new IllegalStateException(
-                        "SchedulerFactoryBean needs to be set up in an ApplicationContext " +
-                                "to be able to handle an 'applicationContextSchedulerContextKey'");
-            }
-            this.scheduler.getContext().put(this.applicationContextSchedulerContextKey, this.applicationContext);
         }
     }
 
@@ -314,6 +327,11 @@ public class QuartzSchedulerFactory {
             schedulerThread.setDaemon(true);
             schedulerThread.start();
         }
+    }
+
+    @Override
+    public Scheduler getScheduler() {
+        return this.scheduler;
     }
 
     public void start() throws SchedulerException {
