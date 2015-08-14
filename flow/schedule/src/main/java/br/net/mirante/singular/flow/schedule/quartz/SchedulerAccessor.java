@@ -238,7 +238,7 @@ public abstract class SchedulerAccessor {
      *
      * @see #setOverwriteExistingJobs
      */
-    private boolean addTriggerToScheduler(Trigger trigger) throws SchedulerException {
+    protected boolean addTriggerToScheduler(Trigger trigger) throws SchedulerException {
         boolean triggerExists = triggerExists(trigger);
         if (!triggerExists || this.overwriteExistingJobs) {
             // Check if the Trigger is aware of an associated JobDetail.

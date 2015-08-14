@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
 import org.quartz.impl.RemoteScheduler;
 import org.quartz.impl.SchedulerRepository;
 import org.quartz.impl.StdSchedulerFactory;
@@ -367,5 +368,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     public void destroy() throws SchedulerException {
         logger.info("Shutting down Quartz Scheduler");
         this.scheduler.shutdown(this.waitForJobsToCompleteOnShutdown);
+    }
+
+    public void addTrigger(Trigger trigger) throws SchedulerException {
+        addTriggerToScheduler(trigger);
     }
 }
