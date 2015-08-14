@@ -219,7 +219,7 @@ public abstract class SchedulerAccessor {
      *
      * @see #setOverwriteExistingJobs
      */
-    private boolean addJobToScheduler(JobDetail jobDetail) throws SchedulerException {
+    protected boolean addJobToScheduler(JobDetail jobDetail) throws SchedulerException {
         if (this.overwriteExistingJobs || !jobDetailExists(jobDetail)) {
             getScheduler().addJob(jobDetail, true);
             return true;

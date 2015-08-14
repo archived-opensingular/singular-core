@@ -21,6 +21,7 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
@@ -370,7 +371,12 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         this.scheduler.shutdown(this.waitForJobsToCompleteOnShutdown);
     }
 
-    public void addTrigger(Trigger trigger) throws SchedulerException {
+    public void addJob(JobDetail jobDetail) throws SchedulerException {
+        addJobToScheduler(jobDetail);
+    }
+
+    public void addTrigger(Trigger trigger, JobDetail jobDetail) throws SchedulerException {
+        trigger.getJobDataMap().put(JOB_DETAIL_KEY, jobDetail);
         addTriggerToScheduler(trigger);
     }
 }

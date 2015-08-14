@@ -1,22 +1,26 @@
 package br.net.mirante.singular.flow.schedule.quartz;
 
-import java.util.function.Supplier;
-
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import br.net.mirante.singular.flow.schedule.IScheduleData;
-import br.net.mirante.singular.flow.schedule.ScheduledJob;
+import br.net.mirante.singular.flow.schedule.IScheduledJob;
 
-public class QuartzScheduledJob extends ScheduledJob implements Job {
+public class QuartzScheduledJob implements Job {
 
-    public QuartzScheduledJob(String id, IScheduleData scheduleData, Supplier<Object> job) {
-        super(id, scheduleData, job);
+    private IScheduledJob job;
+    private Object lastJobRunResult;
+
+    public QuartzScheduledJob(IScheduledJob job) {
+        this.job = job;
     }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        this.run();
+        lastJobRunResult = this.job.run();
+    }
+
+    public Object getLastJobRunResult() {
+        return lastJobRunResult;
     }
 }
