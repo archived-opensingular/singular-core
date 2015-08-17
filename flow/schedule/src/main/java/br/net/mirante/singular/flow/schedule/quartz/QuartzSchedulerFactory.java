@@ -379,4 +379,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         trigger.getJobDataMap().put(JOB_DETAIL_KEY, jobDetail);
         addTriggerToScheduler(trigger);
     }
+
+    public void addTrigger(Trigger trigger) throws SchedulerException {
+        addJobToScheduler((JobDetail) trigger.getJobDataMap().get(JOB_DETAIL_KEY));
+        addTriggerToScheduler(trigger);
+    }
 }

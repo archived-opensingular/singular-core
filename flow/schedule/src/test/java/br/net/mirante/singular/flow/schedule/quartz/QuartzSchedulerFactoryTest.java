@@ -18,7 +18,12 @@ import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class QuartzSchedulerFactoryTest {
 
@@ -98,7 +103,7 @@ public class QuartzSchedulerFactoryTest {
     }
 
     @Test
-    public void testAddTrigger() throws Exception {
+    public void testAddTriggerAndJob() throws Exception {
         try {
             quartzSchedulerFactory.initialize();
             quartzSchedulerFactory.start();
@@ -137,6 +142,26 @@ public class QuartzSchedulerFactoryTest {
         } catch (Exception e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void testAddTrigger() throws Exception {
+        quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(true);
+        quartzSchedulerFactory.initialize();
+        quartzSchedulerFactory.start();
+
+        quartzSchedulerFactory.addTrigger(
+                QuartzTriggerFactory.newTrigger().withIdentity(JOB_ID)
+                        .withIdentity(JOB_NAME, JOB_GROUP).forJob(() -> {
+                    jobRunResult = JOB_ID;
+                    return JOB_ID;
+                }).startNow().build()
+        );
+
+        assertNull(jobRunResult);
+        Thread.sleep(500);
+        assertNotNull(jobRunResult);
+        assertEquals(JOB_ID, jobRunResult);
     }
 
     private JobDetail configureJob(JobDetail jobDetail, IScheduleData scheduleData) {
