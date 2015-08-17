@@ -18,6 +18,7 @@
     <modules>
         <module>core</module>
         <module>schedule</module>
+        <module>ui-admin</module>
     </modules>
 
 </project>
