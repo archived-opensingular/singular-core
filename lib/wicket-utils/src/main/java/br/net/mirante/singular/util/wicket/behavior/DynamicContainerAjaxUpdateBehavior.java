@@ -33,15 +33,23 @@ public class DynamicContainerAjaxUpdateBehavior extends Behavior implements IAja
 
     @Override
     public void bind(Component component) {
+        if (!(component instanceof IOnAfterPopulateItemConfigurable)) {
+            throw new AssertionError("Unexpected type: " + component.getClass().getName());
+        }
+
         this.targetComponent = component;
         IOnAfterPopulateItemConfigurable rootContainer = (IOnAfterPopulateItemConfigurable) component;
-        rootContainer.setOnAfterPopulateItem(item -> {
-            onConfigureInternal(item, (Component & IOnAfterPopulateItemConfigurable) rootContainer);
-        });
+        rootContainer.setOnAfterPopulateItem(item ->
+            onConfigureInternal(item, (Component & IOnAfterPopulateItemConfigurable) rootContainer)
+        );
     }
 
     @Override
     public void onConfigure(Component component) {
+        if (!(component instanceof IOnAfterPopulateItemConfigurable)) {
+            throw new AssertionError("Unexpected type: " + component.getClass().getName());
+        }
+
         IOnAfterPopulateItemConfigurable rootContainer = (IOnAfterPopulateItemConfigurable) component;
 
         rootContainer.setOnAfterPopulateItem(item -> {

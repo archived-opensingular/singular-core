@@ -3,6 +3,7 @@ package br.net.mirante.singular.util.wicket.util;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.feedback.FeedbackCollector;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
@@ -48,8 +49,8 @@ public class WicketUtils {
 
     public static void clearMessagesForComponent(Component component) {
         new FeedbackCollector(component.getPage())
-            .collect(message -> message.getReporter() == component).stream()
-            .forEach(it -> it.markRendered());
+            .collect(message -> message.getReporter().equals(component)).stream()
+            .forEach(FeedbackMessage::markRendered);
     }
 
     public static List<MarkupContainer> listParents(Component reporter) {
