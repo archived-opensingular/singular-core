@@ -18,6 +18,7 @@ import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
 import com.yworks.yfiles.bpmn.view.EventCharEnum;
 import com.yworks.yfiles.bpmn.view.EventPortSupport;
 import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
+
 import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -36,7 +37,6 @@ import y.view.NodePortLayoutConfigurator;
 import y.view.NodeRealizer;
 import y.view.NodeScaledPortLocationModel;
 import y.view.tabular.TableGroupNodeRealizer;
-
 import br.net.mirante.singular.flow.core.EventType;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTask;

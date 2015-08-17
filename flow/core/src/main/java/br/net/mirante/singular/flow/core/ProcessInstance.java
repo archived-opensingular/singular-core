@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.lang.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
