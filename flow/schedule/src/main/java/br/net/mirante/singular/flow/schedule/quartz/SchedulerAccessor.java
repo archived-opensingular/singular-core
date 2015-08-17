@@ -199,14 +199,11 @@ public abstract class SchedulerAccessor {
                     addTriggerToScheduler(trigger);
                 }
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             if (e instanceof SchedulerException) {
                 throw (SchedulerException) e;
             }
-            if (e instanceof Exception) {
-                throw new SchedulerException("Registration of jobs and triggers failed: " + e.getMessage(), e);
-            }
-            throw new SchedulerException("Registration of jobs and triggers failed: " + e.getMessage());
+            throw new SchedulerException("Registration of jobs and triggers failed: " + e.getMessage(), e);
         }
     }
 

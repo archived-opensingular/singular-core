@@ -173,11 +173,11 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
 
     /**
      * This method allows the instance to perform initialization only
-	 * possible when all bean properties have been set and to throw an
-	 * exception in the event of misconfiguration.
+     * possible when all bean properties have been set and to throw an
+     * exception in the event of misconfiguration.
      *
      * @throws Exception in the event of misconfiguration (such
-	 * as failure to set an essential property) or if initialization fails.
+     * as failure to set an essential property) or if initialization fails.
      */
     public void initialize() throws Exception {
         SchedulerFactory schedulerFactory = this.schedulerFactoryClass.newInstance();
@@ -228,11 +228,11 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     }
 
     /**
-	 * Fill the given properties from the given resource (in ISO-8859-1 encoding).
+     * Fill the given properties from the given resource (in ISO-8859-1 encoding).
      *
-	 * @param mergedProps the Properties instance to fill
-	 * @param configLocation the resource to load from
-	 */
+     * @param mergedProps the Properties instance to fill
+     * @param configLocation the resource to load from
+     */
     private void fillProperties(Properties mergedProps, ResourceBundle configLocation) {
         if (mergedProps == null) {
             throw new IllegalArgumentException("Map must not be null");
@@ -253,15 +253,15 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         }
     }
 
-	/**
-	 * Merge the given Properties instance into the given Map,
-	 * copying all properties (key-value pairs) over.
-	 * <p>Uses {@code Properties.propertyNames()} to even catch
-	 * default properties linked into the original Properties instance.
+    /**
+     * Merge the given Properties instance into the given Map,
+     * copying all properties (key-value pairs) over.
+     * <p>Uses {@code Properties.propertyNames()} to even catch
+     * default properties linked into the original Properties instance.
      *
-	 * @param quartzProperties the Properties instance to merge (may be {@code null})
-	 * @param mergedProps the target Map to merge the properties into
-	 */
+     * @param quartzProperties the Properties instance to merge (may be {@code null})
+     * @param mergedProps the target Map to merge the properties into
+     */
     private void mergePropertiesIntoMap(Properties quartzProperties, Properties mergedProps) {
         if (mergedProps == null) {
             throw new IllegalArgumentException("Map must not be null");
@@ -354,9 +354,9 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         }
     }
 
-	/**
-	 * Method that determines the Scheduler to operate on.
-	 */
+    /**
+     * Method that determines the Scheduler to operate on.
+     */
     @Override
     public Scheduler getScheduler() {
         return this.scheduler;
