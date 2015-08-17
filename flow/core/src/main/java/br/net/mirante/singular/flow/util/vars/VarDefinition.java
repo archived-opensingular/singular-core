@@ -1,6 +1,8 @@
 package br.net.mirante.singular.flow.util.vars;
 
-public interface VarDefinition {
+import java.io.Serializable;
+
+public interface VarDefinition extends Serializable{
 
     public String getRef();
 

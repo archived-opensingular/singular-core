@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+
 @SuppressWarnings("unchecked")
 public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> extends MTask<K> {
 
