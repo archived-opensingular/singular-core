@@ -15,6 +15,7 @@
     <modules>
         <module>flow</module>
         <module>form</module>
+        <module>lib</module>
     </modules>
 
     <distributionManagement>
