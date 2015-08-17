@@ -32,6 +32,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerListener;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.quartz.TriggerListener;
 import org.quartz.simpl.SimpleClassLoadHelper;
 import org.quartz.spi.ClassLoadHelper;
@@ -270,18 +271,45 @@ public abstract class SchedulerAccessor {
         }
     }
 
+    /**
+     * Find the job detail of the specified trigger.
+     *
+     * @param trigger the trigger.
+     * @return the job detail.
+     */
     private JobDetail findJobDetail(Trigger trigger) {
         return (JobDetail) trigger.getJobDataMap().remove(JOB_DETAIL_KEY);
     }
 
+    /**
+     * Verify if the job detail exists.
+     *
+     * @param jobDetail the job detail.
+     * @return {@code true} if exists; {@code false} otherwise.
+     */
     private boolean jobDetailExists(JobDetail jobDetail) throws SchedulerException {
         return (getScheduler().getJobDetail(jobDetail.getKey()) != null);
     }
 
+    /**
+     * Verify if the trigger exists.
+     *
+     * @param trigger the trigger.
+     * @return {@code true} if exists; {@code false} otherwise.
+     */
     private boolean triggerExists(Trigger trigger) throws SchedulerException {
         return (getScheduler().getTrigger(trigger.getKey()) != null);
     }
 
+    /**
+     * Remove (delete) the <code>{@link org.quartz.Trigger}</code> with the
+     * given key, and store the new given one - which must be associated
+     * with the same job (the new trigger must have the job name & group specified)
+     * - however, the new trigger need not have the same name as the old trigger.
+     *
+     * @param trigger The new <code>Trigger</code> to be stored.
+     * @see Scheduler#rescheduleJob(TriggerKey, Trigger)
+     */
     private void rescheduleJob(Trigger trigger) throws SchedulerException {
         getScheduler().rescheduleJob(trigger.getKey(), trigger);
     }

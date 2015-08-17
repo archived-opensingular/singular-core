@@ -56,8 +56,14 @@ import org.quartz.spi.JobFactory;
  */
 public class QuartzSchedulerFactory extends SchedulerAccessor {
 
+    /**
+     * The PROP_THREAD_COUNT constant.
+     */
     public static final String PROP_THREAD_COUNT = "org.quartz.threadPool.threadCount";
 
+    /**
+     * The DEFAULT_THREAD_COUNT constant.
+     */
     public static final int DEFAULT_THREAD_COUNT = 10;
 
     private Class<? extends SchedulerFactory> schedulerFactoryClass = StdSchedulerFactory.class;
@@ -165,6 +171,14 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         this.waitForJobsToCompleteOnShutdown = waitForJobsToCompleteOnShutdown;
     }
 
+    /**
+     * This method allows the instance to perform initialization only
+	 * possible when all bean properties have been set and to throw an
+	 * exception in the event of misconfiguration.
+     *
+     * @throws Exception in the event of misconfiguration (such
+	 * as failure to set an essential property) or if initialization fails.
+     */
     public void initialize() throws Exception {
         SchedulerFactory schedulerFactory = this.schedulerFactoryClass.newInstance();
         initSchedulerFactory(schedulerFactory);
@@ -213,6 +227,12 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         ((StdSchedulerFactory) schedulerFactory).initialize(mergedProps);
     }
 
+    /**
+	 * Fill the given properties from the given resource (in ISO-8859-1 encoding).
+     *
+	 * @param mergedProps the Properties instance to fill
+	 * @param configLocation the resource to load from
+	 */
     private void fillProperties(Properties mergedProps, ResourceBundle configLocation) {
         if (mergedProps == null) {
             throw new IllegalArgumentException("Map must not be null");
@@ -233,6 +253,15 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         }
     }
 
+	/**
+	 * Merge the given Properties instance into the given Map,
+	 * copying all properties (key-value pairs) over.
+	 * <p>Uses {@code Properties.propertyNames()} to even catch
+	 * default properties linked into the original Properties instance.
+     *
+	 * @param quartzProperties the Properties instance to merge (may be {@code null})
+	 * @param mergedProps the target Map to merge the properties into
+	 */
     private void mergePropertiesIntoMap(Properties quartzProperties, Properties mergedProps) {
         if (mergedProps == null) {
             throw new IllegalArgumentException("Map must not be null");
@@ -289,6 +318,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
      * @param scheduler the Scheduler to start
      * @param startupDelay the number of seconds to wait before starting
      * the Scheduler asynchronously
+     * @throws SchedulerException if could not start Quartz Scheduler.
      */
     protected void startScheduler(final Scheduler scheduler, final int startupDelay) throws SchedulerException {
         if (startupDelay <= 0) {
@@ -324,32 +354,76 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         }
     }
 
+	/**
+	 * Method that determines the Scheduler to operate on.
+	 */
     @Override
     public Scheduler getScheduler() {
         return this.scheduler;
     }
 
+    /**
+     * Start the scheduler immediately.
+     *
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void start() throws SchedulerException {
         start(0);
     }
 
+
+    /**
+     * Start the scheduler, respecting the "startupDelay" setting.
+     *
+     * @param startupDelay the number of seconds to wait before starting
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void start(int startupDelay) throws SchedulerException {
         if (this.scheduler != null) {
             startScheduler(this.scheduler, startupDelay);
         }
     }
 
+    /**
+     * Temporarily halts the <code>Scheduler</code>'s firing of <code>{@link Trigger}s</code>.
+     *
+     * <p>
+     * When <code>start()</code> is called (to bring the scheduler out of
+     * stand-by mode), trigger misfire instructions will NOT be applied
+     * during the execution of the <code>start()</code> method - any misfires
+     * will be detected immediately afterward (by the <code>JobStore</code>'s
+     * normal process).
+     * </p>
+     *
+     * <p>
+     * The scheduler is not destroyed, and can be re-started at any time.
+     * </p>
+     *
+     * @see #start()
+     */
     public void stop() throws SchedulerException {
         if (this.scheduler != null) {
             this.scheduler.standby();
         }
     }
 
+    /**
+     * Call {@code callback.run()} after {@link #stop()}.
+     *
+     * @param callback the callback.
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void stop(Runnable callback) throws SchedulerException {
         stop();
         callback.run();
     }
 
+    /**
+     * Reports whether the <code>Scheduler</code> is in stand-by mode.
+     *
+     * @see #stop()
+     * @see #start()
+     */
     public boolean isRunning() {
         if (this.scheduler != null) {
             try {
@@ -363,7 +437,7 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
     }
 
     /**
-     * Shut down the Quartz scheduler on bean factory shutdown,
+     * Shut down the Quartz scheduler on factory shutdown,
      * stopping all scheduled jobs.
      */
     public void destroy() throws SchedulerException {
@@ -371,15 +445,34 @@ public class QuartzSchedulerFactory extends SchedulerAccessor {
         this.scheduler.shutdown(this.waitForJobsToCompleteOnShutdown);
     }
 
+    /**
+     * Add a job.
+     *
+     * @param jobDetail the job detail.
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void addJob(JobDetail jobDetail) throws SchedulerException {
         addJobToScheduler(jobDetail);
     }
 
+    /**
+     * Add a trigger with the specified job detail.
+     *
+     * @param trigger the trigger.
+     * @param jobDetail the job detail.
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void addTrigger(Trigger trigger, JobDetail jobDetail) throws SchedulerException {
         trigger.getJobDataMap().put(JOB_DETAIL_KEY, jobDetail);
         addTriggerToScheduler(trigger);
     }
 
+    /**
+     * Add trigger and the trigger's job detail.
+     *
+     * @param trigger the trigger.
+     * @throws SchedulerException if could not start Quartz Scheduler.
+     */
     public void addTrigger(Trigger trigger) throws SchedulerException {
         addJobToScheduler((JobDetail) trigger.getJobDataMap().get(JOB_DETAIL_KEY));
         addTriggerToScheduler(trigger);
