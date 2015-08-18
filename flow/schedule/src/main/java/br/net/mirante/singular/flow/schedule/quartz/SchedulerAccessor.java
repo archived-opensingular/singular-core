@@ -40,7 +40,7 @@ import org.quartz.xml.XMLSchedulingDataProcessor;
 
 /**
  * Common base class for accessing a Quartz Scheduler, i.e. for registering jobs,
- * triggers and listeners on a {@link org.quartz.Scheduler} instance.</p>
+ * triggers and listeners on a {@link org.quartz.Scheduler} instance.
  * <p></p>
  * <p>For concrete usage, check out the {@link QuartzSchedulerFactory}.</p>
  *
