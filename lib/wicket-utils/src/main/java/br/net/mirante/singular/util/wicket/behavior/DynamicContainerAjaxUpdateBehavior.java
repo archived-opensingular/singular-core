@@ -1,9 +1,7 @@
 package br.net.mirante.singular.util.wicket.behavior;
 
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
-import static br.net.mirante.singular.util.wicket.util.Behaviors.*;
-import br.net.mirante.singular.util.wicket.util.IOnAfterPopulateItemConfigurable;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
@@ -14,11 +12,15 @@ import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
+import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
+import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
+import br.net.mirante.singular.util.wicket.util.IOnAfterPopulateItemConfigurable;
+
 
 @SuppressWarnings("serial")
-public class DynamicContainerAjaxUpdateBehavior extends Behavior implements IAjaxUpdateConfiguration {
+public class DynamicContainerAjaxUpdateBehavior extends Behavior implements IAjaxUpdateConfiguration<Component> {
 
-    private final static MetaDataKey<IAjaxUpdateConfiguration> CONFIGURATION_KEY = new MetaDataKey<IAjaxUpdateConfiguration>() {
+    private final static MetaDataKey<IAjaxUpdateConfiguration<Component>> CONFIGURATION_KEY = new MetaDataKey<IAjaxUpdateConfiguration<Component>>() {
     };
 
     private IBiConsumer<AjaxRequestTarget, Component> onUpdate;
@@ -63,7 +65,7 @@ public class DynamicContainerAjaxUpdateBehavior extends Behavior implements IAja
                 visit.dontGoDeeper();
 
             } else {
-                IAjaxUpdateConfiguration updateConfiguration = child.getMetaData(CONFIGURATION_KEY);
+                IAjaxUpdateConfiguration<Component> updateConfiguration = child.getMetaData(CONFIGURATION_KEY);
                 if (updateConfiguration == null) {
                     updateConfiguration = $b.addAjaxUpdate(child, (t, c) -> {
                         onUpdate.accept(t, rootContainer);
@@ -91,17 +93,17 @@ public class DynamicContainerAjaxUpdateBehavior extends Behavior implements IAja
     }
 
     @Override
-    public IAjaxUpdateConfiguration setOnError(ITriConsumer<AjaxRequestTarget, Component, RuntimeException> onError) {
+    public IAjaxUpdateConfiguration<Component> setOnError(ITriConsumer<AjaxRequestTarget, Component, RuntimeException> onError) {
         this.onError = ITriConsumer.noopIfNull(onError);
         return this;
     }
     @Override
-    public IAjaxUpdateConfiguration setUpdateAjaxAttributes(IBiConsumer<Component, AjaxRequestAttributes> updateAjaxAttributes) {
+    public IAjaxUpdateConfiguration<Component> setUpdateAjaxAttributes(IBiConsumer<Component, AjaxRequestAttributes> updateAjaxAttributes) {
         this.updateAjaxAttributes = IBiConsumer.noopIfNull(updateAjaxAttributes);
         return this;
     }
     @Override
-    public IAjaxUpdateConfiguration setRefreshTargetComponent(boolean refresh) {
+    public IAjaxUpdateConfiguration<Component> setRefreshTargetComponent(boolean refresh) {
         this.refreshTargetComponent = refresh;
         return this;
     }

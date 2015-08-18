@@ -1,13 +1,14 @@
 package br.net.mirante.singular.util.wicket.jquery;
 
-import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$L;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static br.net.mirante.singular.util.wicket.util.Lambdas.$L;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+
+import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
 
 public class JQuery {
 

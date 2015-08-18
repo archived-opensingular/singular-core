@@ -1,15 +1,16 @@
 package br.net.mirante.singular.util.wicket.behavior;
 
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
-import br.net.mirante.singular.util.wicket.util.WicketEventUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 
+import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
+import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
+import br.net.mirante.singular.util.wicket.util.WicketEventUtils;
+
 @SuppressWarnings({ "serial" })
-public class FormComponentAjaxUpdateBehavior extends AjaxFormComponentUpdatingBehavior implements IAjaxUpdateConfiguration {
+public class FormComponentAjaxUpdateBehavior extends AjaxFormComponentUpdatingBehavior implements IAjaxUpdateConfiguration<Component> {
 
     private IBiConsumer<AjaxRequestTarget, Component> onUpdate;
     private ITriConsumer<AjaxRequestTarget, Component, RuntimeException> onError = (t, c, e) -> WicketEventUtils.sendAjaxErrorEvent(c, t);
@@ -44,17 +45,17 @@ public class FormComponentAjaxUpdateBehavior extends AjaxFormComponentUpdatingBe
             target.add(getComponent());
     }
     @Override
-    public IAjaxUpdateConfiguration setOnError(ITriConsumer<AjaxRequestTarget, Component, RuntimeException> onError) {
+    public IAjaxUpdateConfiguration<Component> setOnError(ITriConsumer<AjaxRequestTarget, Component, RuntimeException> onError) {
         this.onError = ITriConsumer.noopIfNull(onError);
         return this;
     }
     @Override
-    public IAjaxUpdateConfiguration setUpdateAjaxAttributes(IBiConsumer<Component, AjaxRequestAttributes> updateAjaxAttributes) {
+    public IAjaxUpdateConfiguration<Component> setUpdateAjaxAttributes(IBiConsumer<Component, AjaxRequestAttributes> updateAjaxAttributes) {
         this.updateAjaxAttributes = IBiConsumer.noopIfNull(updateAjaxAttributes);
         return this;
     }
     @Override
-    public IAjaxUpdateConfiguration setRefreshTargetComponent(boolean refresh) {
+    public IAjaxUpdateConfiguration<Component> setRefreshTargetComponent(boolean refresh) {
         this.refreshTargetComponent = refresh;
         return this;
     }

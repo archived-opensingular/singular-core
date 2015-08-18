@@ -1,11 +1,14 @@
 package br.net.mirante.singular;
 
-import br.net.mirante.singular.view.template.Template;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
+import br.net.mirante.singular.view.page.processo.ProcessosPage;
+import br.net.mirante.singular.view.template.Template;
+
 public class UIAdminApplication extends WebApplication {
+
     /**
      * @see org.apache.wicket.Application#getHomePage()
      */
@@ -23,5 +26,7 @@ public class UIAdminApplication extends WebApplication {
 
         // add your configuration here
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+
+        mountPage("processos", ProcessosPage.class);
     }
 }

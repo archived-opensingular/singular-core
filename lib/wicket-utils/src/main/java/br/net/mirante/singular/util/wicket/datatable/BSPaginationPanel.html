@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+
+<nav style="line-height:0;">
+  <ul class="pagination">
+    <li>
+      <a wicket:id="previous" title="Anterior">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <wicket:enclosure>
+      <li><a wicket:id="first">1</a></li>
+    </wicket:enclosure>
+    <li wicket:id="firstEllipse"><a>&hellip;</a></li>
+
+    <li wicket:id="pages"><a wicket:id="page">1</a></li>
+
+    <li wicket:id="lastEllipse"><a>&hellip;</a></li>
+    <wicket:enclosure>
+      <li><a wicket:id="last"></a></li>
+    </wicket:enclosure>
+    <li>
+      <a wicket:id="next" title="Próximo">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+</wicket:panel>
+</body>
+</html>

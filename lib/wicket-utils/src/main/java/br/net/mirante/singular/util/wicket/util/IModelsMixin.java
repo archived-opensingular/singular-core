@@ -1,40 +1,38 @@
 package br.net.mirante.singular.util.wicket.util;
 
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
-import br.net.mirante.singular.util.wicket.lambda.ISupplier;
-import org.apache.commons.lang3.StringUtils;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.nullsFirst;
+
+import java.io.Serializable;
+
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.nullsFirst;
+import br.net.mirante.singular.util.wicket.lambda.IConsumer;
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.util.wicket.lambda.ISupplier;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import br.net.mirante.singular.util.wicket.model.ValueModel;
 
 @SuppressWarnings({ "serial" })
 public interface IModelsMixin extends Serializable {
 
-    default public <T extends Serializable> Model<T> of() {
-        return Model.of();
+    default public <T extends Serializable> ValueModel<T> ofValue() {
+        return ofValue(null);
     }
 
-    default public <T extends Serializable> Model<T> of(T value) {
-        return Model.of(value);
+    default public <T extends Serializable> ValueModel<T> ofValue(T value) {
+        return ofValue(value, it -> it);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    default public <T, L extends List<? extends T> & Serializable> IModel<L> ofList(L list) {
-        return Model.ofList((List) list);
+    default public <T extends Serializable> ValueModel<T> ofValue(T value, IFunction<T, Object> equalsHashArgsFunc) {
+        return new ValueModel<T>(value, equalsHashArgsFunc);
     }
 
-    default public <T> CompoundPropertyModel<T> compoundFrom(T obj) {
+    default public <T> CompoundPropertyModel<T> compoundOf(T obj) {
         return new CompoundPropertyModel<>(obj);
     }
 
@@ -58,33 +56,66 @@ public interface IModelsMixin extends Serializable {
                     ? ifTrue.getObject()
                     : ifFalse.getObject();
             }
-        };
-    }
-
-    default public <ROOT, T, F extends IFunction<ROOT, T> & Serializable> IModel<T> get(IModel<ROOT> root, F function) {
-        return new AbstractReadOnlyModel<T>() {
             @Override
-            public T getObject() {
-                ROOT rootObj = root.getObject();
-                return (rootObj == null) ? null : function.apply(rootObj);
+            public void detach() {
+                test.detach();
+                ifTrue.detach();
+                ifFalse.detach();
             }
         };
     }
 
-    default public <ROOT extends Serializable, T, F extends IFunction<ROOT, T>> IModel<T> getFrom(ROOT root, F function) {
-        return get(Model.of(root), function);
+    default public <T, U> IModel<U> map(IModel<T> rootModel, IFunction<T, U> function) {
+        return new IReadOnlyModel<U>() {
+            @Override
+            public U getObject() {
+                return function.apply(rootModel.getObject());
+            }
+            @Override
+            public void detach() {
+                rootModel.detach();
+            }
+        };
     }
 
-    default public <ROOT extends Serializable, T, F extends IFunction<Optional<ROOT>, Optional<T>>> IModel<T> getFromOptional(ROOT root, F function) {
-        return getOptional(Model.of(root), function);
-    }
-
-    default public <ROOT extends Serializable, T, F extends IFunction<Optional<ROOT>, Optional<T>>> IModel<T> getOptional(IModel<ROOT> root, F function) {
-        return new AbstractReadOnlyModel<T>() {
+    default public <T> IModel<T> get(ISupplier<T> supplier) {
+        return new IReadOnlyModel<T>() {
             @Override
             public T getObject() {
-                ROOT rootObj = root.getObject();
-                return (rootObj == null) ? null : function.apply(Optional.ofNullable(rootObj)).orElse(null);
+                return supplier.get();
+            }
+        };
+    }
+
+    default public <T> IModel<T> getSet(ISupplier<T> getter, IConsumer<T> setter) {
+        return new IModel<T>() {
+            @Override
+            public T getObject() {
+                return getter.get();
+            }
+            @Override
+            public void setObject(T object) {
+                setter.accept(object);
+            }
+            @Override
+            public void detach() {}
+        };
+    }
+
+    default public <T> LoadableDetachableModel<T> loadable(ISupplier<T> supplier) {
+        return new LoadableDetachableModel<T>() {
+            @Override
+            protected T load() {
+                return supplier.get();
+            }
+        };
+    }
+
+    default public <T> LoadableDetachableModel<T> loadable(T initialValue, ISupplier<T> supplier) {
+        return new LoadableDetachableModel<T>(initialValue) {
+            @Override
+            protected T load() {
+                return supplier.get();
             }
         };
     }
@@ -93,80 +124,43 @@ public interface IModelsMixin extends Serializable {
         return new PropertyModel<>(modelObject, expression);
     }
 
-    default IModel<Boolean> startsWith(String prefix, IModel<String> model) {
-        return new AbstractReadOnlyModel<Boolean>() {
-            @Override
-            public Boolean getObject() {
-                String obj = model.getObject();
-                return (obj != null) && obj.startsWith(prefix);
-            }
-        };
+    default IModel<Boolean> isNullOrEmpty(Serializable modelOrValue) {
+        return (IReadOnlyModel<Boolean>) () -> WicketUtils.nullOrEmpty(modelOrValue);
     }
 
-    default IModel<Boolean> not(IModel<Boolean> model) {
-        return new AbstractReadOnlyModel<Boolean>() {
+    default IModel<Boolean> isNotNullOrEmpty(Serializable modelOrValue) {
+        return (IReadOnlyModel<Boolean>) () -> !WicketUtils.nullOrEmpty(modelOrValue);
+    }
+
+    default IReadOnlyModel<Boolean> isNot(IModel<Boolean> model) {
+        return new IReadOnlyModel<Boolean>() {
             @Override
             public Boolean getObject() {
                 return !model.getObject();
             }
-        };
-    }
-
-//    default <C extends Comparable<C>> IModel<Boolean> gt(IModel<C> lower, IModel<C> higher) {
-//        return new AbstractReadOnlyModel<Boolean>() {
-//            @Override
-//            public Boolean getObject() {
-//                return nullsFirst(comparing(IModel<C>::getObject)).compare(lower, higher) > 0;
-//            }
-//        };
-//    }
-
-    default <T> IModel<T> readOnly(ISupplier<T> supplier) {
-        return new AbstractReadOnlyModel<T>() {
             @Override
-            public T getObject() {
-                return supplier.get();
+            public void detach() {
+                model.detach();
             }
         };
     }
 
-    default <T extends Serializable> IModel<T> readOnly(ISupplier<T> supplier, T defaultValue) {
-        return new AbstractReadOnlyModel<T>() {
+    default <C extends Comparable<C>> IReadOnlyModel<Boolean> isGt(IModel<C> lower, IModel<C> higher) {
+        return new IReadOnlyModel<Boolean>() {
             @Override
-            public T getObject() {
-                return Optional.ofNullable(supplier.get()).orElse(defaultValue);
+            public Boolean getObject() {
+                return nullsFirst(comparing(IModel<C>::getObject)).compare(lower, higher) > 0;
+            }
+            @Override
+            public void detach() {
+                lower.detach();
+                higher.detach();
             }
         };
     }
 
     @SuppressWarnings("unchecked")
     default <T extends Serializable> IModel<T> wrapValue(Serializable valueOrModel) {
-        return (valueOrModel instanceof IModel) ? (IModel<T>) valueOrModel : this.of((T) valueOrModel);
-    }
-
-    default IModel<Boolean> empty(IModel<?> model) {
-        return new AbstractReadOnlyModel<Boolean>() {
-            @Override
-            public Boolean getObject() {
-                return isEmpty(model);
-            }
-
-            private Boolean isEmpty(final Object obj) {
-                if (obj == null) {
-                    return true;
-
-                } else if (obj instanceof IModel<?>) {
-                    return isEmpty(((IModel<?>) obj).getObject());
-
-                } else if (obj instanceof CharSequence) {
-                    return StringUtils.isBlank(obj.toString());
-
-                } else if (obj instanceof Collection<?>) {
-                    return ((Collection<?>) obj).isEmpty();
-                } else {
-                    return obj instanceof Map<?, ?> && ((Map<?, ?>) obj).isEmpty();
-                }
-            }
-        };
+        return (valueOrModel instanceof IModel) ? (IModel<T>) valueOrModel : this.ofValue((T) valueOrModel);
     }
 }

@@ -1,13 +1,9 @@
 package br.net.mirante.singular.util.wicket.util;
 
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
-import br.net.mirante.singular.util.wicket.lambda.ISupplier;
-import br.net.mirante.singular.util.wicket.behavior.DynamicContainerAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
-import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -24,9 +20,13 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import java.io.Serializable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.FormComponentAjaxUpdateBehavior;
+import br.net.mirante.singular.util.wicket.behavior.IAjaxUpdateConfiguration;
+import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
+import br.net.mirante.singular.util.wicket.lambda.IConsumer;
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.util.wicket.lambda.ISupplier;
 
 @SuppressWarnings("serial")
 public interface IBehaviorsMixin extends Serializable {
@@ -141,10 +141,12 @@ public interface IBehaviorsMixin extends Serializable {
         };
     }
 
-    default <C extends Component> IAjaxUpdateConfiguration addAjaxUpdate(C component) {
+    default <C extends Component> IAjaxUpdateConfiguration<C> addAjaxUpdate(C component) {
         return addAjaxUpdate(component, null);
     }
-    default <C extends Component> IAjaxUpdateConfiguration addAjaxUpdate(C component, IBiConsumer<AjaxRequestTarget, Component> onUpdate) {
+    
+    @SuppressWarnings("unchecked")
+    default <C extends Component> IAjaxUpdateConfiguration<C> addAjaxUpdate(C component, IBiConsumer<AjaxRequestTarget, Component> onUpdate) {
 
         final Behavior behavior;
 
@@ -152,19 +154,36 @@ public interface IBehaviorsMixin extends Serializable {
             behavior = new FormChoiceAjaxUpdateBehavior(onUpdate);
             component.add(behavior);
 
+//        } else if (component instanceof TypeaheadField<?>) {
+//            TypeaheadField<?> tf = (TypeaheadField<?>) component;
+//            behavior = new TypeaheadAjaxUpdateBehavior(tf, onUpdate);
+//            tf.addToValueField(behavior);
+
+//        } else if (component instanceof MontrealSwitcher) {
+//            behavior = new FormComponentAjaxUpdateBehavior("montrealswitcher.change", onUpdate);
+//            component.add(behavior);
+
+//        } else if (component instanceof LocalDateField) {
+//            behavior = new FormComponentAjaxUpdateBehavior("changedate", onUpdate);
+//            component.add(behavior);
+
+//        } else if (component instanceof TextField && component.getParent() instanceof LocalDateRangePanel) {
+//            behavior = new FormComponentAjaxUpdateBehavior(LocalDateRangePanel.JS_EVENT_CHANGEDATE, onUpdate);
+//            component.add(behavior);
+
         } else if (component instanceof FormComponent<?>) {
             behavior = new FormComponentAjaxUpdateBehavior("change", onUpdate);
             component.add(behavior);
 
-        } else if (component instanceof IOnAfterPopulateItemConfigurable) {
-            behavior = new DynamicContainerAjaxUpdateBehavior(onUpdate);
-            component.add(behavior);
+//        } else if (component instanceof IOnAfterPopulateItemConfigurable) {
+//            behavior = new DynamicContainerAjaxUpdateBehavior(onUpdate);
+//            component.add(behavior);
 
         } else {
             return null;
         }
 
-        return (IAjaxUpdateConfiguration) behavior;
+        return (IAjaxUpdateConfiguration<C>) behavior;
     }
 
     default Behavior onReadyScript(ISupplier<CharSequence> scriptSupplier) {

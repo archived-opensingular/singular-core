@@ -1,0 +1,23 @@
+package br.net.mirante.singular.util.wicket.validator;
+
+import java.time.LocalDate;
+
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.validation.IValidatable;
+
+public class NotFutureDateValidator implements BaseValidator<LocalDate> {
+
+    private final IModel<String> errorMessageModel;
+
+    public NotFutureDateValidator(IModel<String> errorMessageModel) {
+        this.errorMessageModel = errorMessageModel;
+    }
+
+    @Override
+    public void validate(IValidatable<LocalDate> validatable) {
+
+        if (validatable.getValue().isAfter(LocalDate.now())) {
+            validatable.error(validationError(errorMessageModel));
+        }
+    }
+}
