@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.core;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 import org.joda.time.Period;
 
 import br.net.mirante.singular.form.validation.IValidatable;
@@ -22,7 +22,7 @@ public class ValidadorDataBuilder {
             @Override
             public void validate(IValidatable<MIData> validatable) {
                 // TODO implementar
-                throw new NotImplementedException();
+                throw new NotImplementedException("TODO implementar");
             }
         };
     }

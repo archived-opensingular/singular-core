@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.core;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MFormTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;

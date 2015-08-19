@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -253,12 +253,12 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public MTipo<I> with(String valuesExpression) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public MTipo<I> withCode(String pathCampo, IComportamento<I> comportamento) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public MTipo<I> withValorInicial(Object valor) {
@@ -302,12 +302,12 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public <T extends Object> T as(Class<T> classeAlvo) {
@@ -319,22 +319,22 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public MTipo<I> withView(Class<? extends MView> classeAlvo) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public <T extends MView> T setView(Class<T> classeAlvo) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public <T> void addValidacao(IValidator<T> validador) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public I castInstancia(MInstancia instancia) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public I novaInstancia() {

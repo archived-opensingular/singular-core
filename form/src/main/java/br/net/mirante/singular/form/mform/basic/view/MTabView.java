@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.MTipo;
 
@@ -13,7 +13,7 @@ public class MTabView implements MView {
 
     public MTab addTab(String titulo, boolean tabDefault) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public MTab addTab(String titulo) {
@@ -22,7 +22,7 @@ public class MTabView implements MView {
 
     public MTab addTab(MTipo tipo) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     public MTabView withNaoDefinidosVaoParaTabDoIrmaoAnterior() {

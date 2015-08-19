@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("serial")
 public class WebRefImpl implements WebRef {

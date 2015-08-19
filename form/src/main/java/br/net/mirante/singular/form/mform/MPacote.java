@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.NotImplementedException;
 
 public class MPacote extends MEscopoBase {
 
@@ -28,7 +28,7 @@ public class MPacote extends MEscopoBase {
 
     public <T extends MTipo<?>> T createTipo(String nomeSimplesNovoTipo, Class<T> tipoBase) {
         // TODO implementar
-        throw new NotImplementedException();
+        throw new NotImplementedException("TODO implementar");
     }
 
     @Override

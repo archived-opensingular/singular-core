@@ -19,10 +19,10 @@ import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
 
 public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
 
-    public static final Models     $m = Models.$m;
-    public static final Behaviors  $b = Behaviors.$b;
-    public static final Validators $v = Validators.$v;
-    public static final Lambdas    $L = Lambdas.$L;
+    Models     $m = Models.$m;
+    Behaviors  $b = Behaviors.$b;
+    Validators $v = Validators.$v;
+    Lambdas    $L = Lambdas.$L;
 
     default String getContextPath() {
         String rootContext = null;
@@ -37,9 +37,7 @@ public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
     }
 
     /**
-     * Adiciona um model simples à página
-     * 
-     * @param simplemodel
+     * Adiciona um model simples à página.
      */
     @SuppressWarnings("unchecked")
     default CONTAINER setModel(IModel<T> model) {
