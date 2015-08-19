@@ -11,16 +11,16 @@ Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-templa
 License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
 -->
 <!--[if IE 8]>
-<html lang="en" class="ie8 no-js"> <![endif]-->
+<html lang="en" class="ie8 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
 <!--[if IE 9]>
-<html lang="en" class="ie9 no-js"> <![endif]-->
+<html lang="en" class="ie9 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
 <!--[if !IE]><!-->
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
     <meta charset="utf-8"/>
-    <title>Metronic | Admin Dashboard Template</title>
+    <title><wicket:message key="label.page.title.global"/> | <wicket:container wicket:id="pageTitle"/></title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <meta content="" name="description"/>
@@ -1668,4 +1668,6 @@ License: You must have a valid license purchased only from themeforest(the above
 <!-- Validação de  -->
 <!--[if IE 8]> </html> <![endif]-->
 <!--[if IE 9]> </html> <![endif]-->
+<!--[if !IE]><!-->
 </html>
+<!--<![endif]-->
