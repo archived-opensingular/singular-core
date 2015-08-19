@@ -23,10 +23,8 @@ public class UIAdminApplication extends WebApplication {
     @Override
     public void init() {
         super.init();
-
-        // add your configuration here
+        getMarkupSettings().setStripWicketTags(true);
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-
         mountPage("processos", ProcessosPage.class);
     }
 }
