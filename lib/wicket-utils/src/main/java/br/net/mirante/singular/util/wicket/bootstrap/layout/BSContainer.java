@@ -1,7 +1,5 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
@@ -10,12 +8,14 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 @SuppressWarnings("unchecked")
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
-    private String                tagName;
-    private String                cssClass = null;
-    protected final RepeatingView items    = new RepeatingView("_");
+    private String tagName;
+    private String cssClass = null;
+    protected final RepeatingView items = new RepeatingView("_");
 
     public BSContainer(String id) {
         super(id);
@@ -40,10 +40,10 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         super.onInitialize();
         add(items);
         add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
-        	@Override
-        	public String getObject() {
-        		return getCssClass();
-        	}
+            @Override
+            public String getObject() {
+                return getCssClass();
+            }
         }, " "));
     }
 
@@ -84,11 +84,11 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     public TemplatePanel newTag(String tag, boolean closeTag, String attrs, Component component) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, () ->
-            "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
-                + (closeTag ? "</" + tag + ">\n" : "\n")));
+                "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
+                        + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
-            .add(component)
-            .setRenderBodyOnly(true);
+                .add(component)
+                .setRenderBodyOnly(true);
         return container;
     }
 

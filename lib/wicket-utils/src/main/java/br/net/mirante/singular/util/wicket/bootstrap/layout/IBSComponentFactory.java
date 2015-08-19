@@ -8,5 +8,5 @@ import org.apache.wicket.Component;
  * Interface funcional para a criação de um componente com um ID determinado.
  */
 public interface IBSComponentFactory<C extends Component> extends Serializable {
-	C newComponent(String componentId);
+    C newComponent(String componentId);
 }
