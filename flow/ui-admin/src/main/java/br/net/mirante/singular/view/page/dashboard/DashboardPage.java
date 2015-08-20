@@ -9,9 +9,4 @@ public class DashboardPage extends Template {
     protected Content getContent(String id) {
         return new DashboardContent(id);
     }
-
-    @Override
-    protected String getPageTitleLocalKey() {
-        return "label.page.title.local";
-    }
 }
