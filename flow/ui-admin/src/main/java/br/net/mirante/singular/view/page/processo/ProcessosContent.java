@@ -13,7 +13,7 @@ import static org.apache.wicket.util.lang.Generics.newArrayList;
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 
     public ProcessosContent(String id, boolean withSideBar) {
-        super(id, false, withSideBar);
+        super(id, false, withSideBar, true);
     }
 
     @Override
