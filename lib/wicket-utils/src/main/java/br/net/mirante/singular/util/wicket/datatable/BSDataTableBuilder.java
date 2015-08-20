@@ -15,15 +15,17 @@ import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
-    public static interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
+    public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<? extends IColumn<T, S>> columns        = new ArrayList<>();
     private ISortableDataProvider<T, S>         dataProvider;
     private ISortableTreeProvider<T, S>         treeProvider;
     private Long                                rowsPerPage    = null;
 
-    private boolean                             stripedRows    = false;
+    private boolean                             stripedRows    = true;
     private boolean                             hoverRows      = true;
+    private boolean                             advanceTable   = true;
     private boolean                             borderedTable  = true;
     private boolean                             condensedTable = false;
 
@@ -53,7 +55,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         IModel<String> displayModel,
         IFunction<T, Object> propertyFunction)
     {
-        return appendColumn(new BSPropertyColumn<T, S>(displayModel, propertyFunction));
+        return appendColumn(new BSPropertyColumn<>(displayModel, propertyFunction));
     }
 
     public BSDataTableBuilder<T, S, BSPropertyColumn<T, S>> appendPropertyColumn(
@@ -107,6 +109,10 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         this.hoverRows = hoverRows;
         return this;
     }
+    public BSDataTableBuilder<T, S, ?> setAdvancedeTable(boolean advanceTable) {
+        this.advanceTable = advanceTable;
+        return this;
+    }
     public BSDataTableBuilder<T, S, ?> setBorderedTable(boolean borderedTable) {
         this.borderedTable = borderedTable;
         return this;
@@ -126,6 +132,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
             .setRowsPerPage(rowsPerPage)
             .setStripedRows(stripedRows)
             .setHoverRows(hoverRows)
+            .setAdvanceTable(advanceTable)
             .setBorderedTable(borderedTable)
             .setCondensedTable(condensedTable);
     }
@@ -142,12 +149,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
     }
 
     public BSTableTree<T, S> buildTree(String id) {
-        return new BSTableTree<T, S>(id, new ArrayList<>(columns), treeProvider)
-            .setRowsPerPage(rowsPerPage)
-        //        .setStripedRows(stripedRows)
-        //        .setHoverRows(hoverRows)
-        //        .setBorderedTable(borderedTable)
-        //        .setCondensedTable(condensedTable)
-        ;
+        return new BSTableTree<>(id, new ArrayList<>(columns), treeProvider)
+            .setRowsPerPage(rowsPerPage);
     }
 }

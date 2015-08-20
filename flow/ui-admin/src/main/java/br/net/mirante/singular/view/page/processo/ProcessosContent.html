@@ -1,5 +1,26 @@
 <html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <wicket:extend>
-    <table wicket:id="processos"></table>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="icon-list"></i><wicket:message key="label.table.title"/>
+                    </div>
+                    <div class="tools">
+                        <a class="collapse" href="javascript:" data-original-title="" title="">
+                        </a>
+                        <a class="reload" href="javascript:" data-original-title="" title="">
+                        </a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="table-scrollable">
+                        <table wicket:id="processos"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </wicket:extend>
 </html>

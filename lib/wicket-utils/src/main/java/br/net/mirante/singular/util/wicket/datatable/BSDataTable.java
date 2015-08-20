@@ -17,8 +17,9 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
 
     public static final Long DEFAULT_ROWS_PER_PAGE = 10L;
 
-    private boolean          stripedRows           = false;
+    private boolean          stripedRows           = true;
     private boolean          hoverRows             = true;
+    private boolean          advanceTable          = true;
     private boolean          borderedTable         = true;
     private boolean          condensedTable        = false;
 
@@ -48,7 +49,7 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     }
 
     protected AbstractToolbar newHeadersToolbar(ISortableDataProvider<T, S> dataProvider) {
-        return new BSHeadersToolbar<S>(this, dataProvider);
+        return new BSHeadersToolbar<>(this, dataProvider);
     }
 
     protected AbstractToolbar newNoRecordsToolbar() {
@@ -63,11 +64,13 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
         StringBuilder sbClass = new StringBuilder(StringUtils.defaultString(tag.getAttribute("class")));
-        sbClass.append(" table dataTable");
+        sbClass.append(" table");
         if (isStripedRows())
             sbClass.append(" table-striped");
         if (isHoverRows())
             sbClass.append(" table-hover");
+        if (isAdvanceTable())
+            sbClass.append(" table-advance");
         if (isBorderedTable())
             sbClass.append(" table-bordered");
         if (isCondensedTable())
@@ -87,6 +90,13 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     }
     public BSDataTable<T, S> setHoverRows(boolean hoverRows) {
         this.hoverRows = hoverRows;
+        return this;
+    }
+    public boolean isAdvanceTable() {
+        return advanceTable;
+    }
+    public BSDataTable<T, S> setAdvanceTable(boolean advanceTable) {
+        this.advanceTable = advanceTable;
         return this;
     }
     public boolean isBorderedTable() {
