@@ -6,25 +6,23 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
-import br.net.mirante.singular.view.template.Template;
 
 public class UIAdminApplication extends WebApplication {
 
-    /**
-     * @see org.apache.wicket.Application#getHomePage()
-     */
     @Override
     public Class<? extends WebPage> getHomePage() {
         return DashboardPage.class;
     }
 
-    /**
-     * @see org.apache.wicket.Application#init()
-     */
     @Override
     public void init() {
         super.init();
+
+        // add your configuration here
         getMarkupSettings().setStripWicketTags(true);
+        getMarkupSettings().setStripComments(true);
+        getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
+
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         mountPage("processos", ProcessosPage.class);
     }
