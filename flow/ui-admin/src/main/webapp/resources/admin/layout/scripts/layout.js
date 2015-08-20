@@ -3,9 +3,9 @@ Core script to handle the entire theme and core functions
 **/
 var Layout = function() {
 
-    var layoutImgPath = 'admin/layout4/img/';
+    var layoutImgPath = 'admin/layout/img/';
 
-    var layoutCssPath = 'admin/layout4/css/';
+    var layoutCssPath = 'admin/layout/css/';
 
     var resBreakpointMd = Metronic.getResponsiveBreakpoint('md');
 
@@ -440,7 +440,7 @@ var Layout = function() {
             handleSidebarMenu(); // handles main menu
             handleSidebarToggler(); // handles sidebar hide/show
 
-            if (Metronic.isAngularJsApp()) {      
+            if (Metronic.isAngularJsApp()) {
                 handleSidebarMenuActiveLink('match'); // init sidebar active links 
             }
 

@@ -6,15 +6,17 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class Header extends Panel {
 
     private boolean withTopAction;
+    private boolean withSideBar;
 
     public Header(String id) {
         super(id);
         this.withTopAction = true;
     }
 
-    public Header(String id, boolean withTopAction) {
+    public Header(String id, boolean withTopAction, boolean withSideBar) {
         super(id);
         this.withTopAction = withTopAction;
+        this.withSideBar = withSideBar;
     }
 
     @Override
@@ -25,6 +27,6 @@ public class Header extends Panel {
         } else {
             add(new WebMarkupContainer("_TopAction"));
         }
-        add(new TopMenu("_TopMenu"));
+        add(new TopMenu("_TopMenu", withSideBar));
     }
 }

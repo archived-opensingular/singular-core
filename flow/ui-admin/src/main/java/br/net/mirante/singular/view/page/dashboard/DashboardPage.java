@@ -7,7 +7,7 @@ public class DashboardPage extends Template {
 
     @Override
     protected Content getContent(String id) {
-        return new Content(id);
+        return new DashboardContent(id);
     }
 
     @Override
