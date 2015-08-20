@@ -1,7 +1,9 @@
 package br.net.mirante.singular.view.template;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.ResourceModel;
 
 public class Header extends Panel {
 
@@ -28,5 +30,9 @@ public class Header extends Panel {
             add(new WebMarkupContainer("_TopAction"));
         }
         add(new TopMenu("_TopMenu", withSideBar));
+
+        WebMarkupContainer brandLogo = new WebMarkupContainer("brandLogo");
+        brandLogo.add(new AttributeModifier("src", new ResourceModel("header.logo.src")));
+        add(brandLogo);
     }
 }
