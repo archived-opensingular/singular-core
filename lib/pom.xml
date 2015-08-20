@@ -11,8 +11,8 @@
         <version>0.1.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>superpom-lib</artifactId>
-    <name>[singular :: bibliotecas]</name>
+    <artifactId>singular-lib</artifactId>
+    <name>[singular :: libs]</name>
     <packaging>pom</packaging>
 
     <modules>

@@ -7,13 +7,32 @@
 
     <parent>
         <groupId>br.net.mirante</groupId>
-        <artifactId>superpom-lib</artifactId>
+        <artifactId>singular-lib</artifactId>
         <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>wicket-utils</artifactId>
-    <name>[singular :: bibliotecas :: wicket-utils]</name>
+    <name>[singular :: libs :: wicket-utils]</name>
     <packaging>jar</packaging>
+
+    <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
         <dependency>
