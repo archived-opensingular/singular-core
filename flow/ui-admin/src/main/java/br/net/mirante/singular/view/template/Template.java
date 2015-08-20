@@ -37,8 +37,11 @@ public abstract class Template extends WebPage {
         return true;
     }
 
+    protected String getPageTitleLocalKey() {
+        return "label.page.title.process";
+    }
+
     protected abstract Content getContent(String id);
-    protected abstract String getPageTitleLocalKey();
 
     private Content configureContent(String contentId) {
         if (withSideBar()) {

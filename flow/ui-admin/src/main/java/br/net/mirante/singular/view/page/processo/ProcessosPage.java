@@ -11,11 +11,6 @@ public class ProcessosPage extends Template {
     }
 
     @Override
-    protected String getPageTitleLocalKey() {
-        return "label.page.title.local";
-    }
-
-    @Override
     protected boolean withSideBar() {
         return false;
     }
