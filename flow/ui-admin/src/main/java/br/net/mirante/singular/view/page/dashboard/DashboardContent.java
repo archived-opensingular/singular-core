@@ -32,7 +32,7 @@ public class DashboardContent extends Content {
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    Demo.init(); // init demo features\n")
-                .append("    Index.init();")
+                .append("    Index.init();\n")
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }

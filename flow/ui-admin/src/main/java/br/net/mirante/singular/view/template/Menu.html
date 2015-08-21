@@ -12,20 +12,20 @@
             <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
             <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
             <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
-                <li class="start active ">
+                <li id="_menuItemHome" class="start">
                     <a href="/">
                         <i class="icon-home"></i>
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-                <li>
-                    <a href="javascript:;">
+                <li id="_menuSubFlow">
+                    <a href="javascript:">
                         <i class="icon-folder"></i>
                         <span class="title">Flow</span>
                         <span class="arrow "></span>
                     </a>
                     <ul class="sub-menu">
-                        <li>
+                        <li id="_menuItemFlowProcess">
                             <a href="/processos">
                                 <i class="icon-list"></i>
                                 <span class="badge badge-danger">NEW</span>Process Definitions</a>
