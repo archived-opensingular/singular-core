@@ -18,7 +18,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
-import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
+import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
@@ -150,7 +150,7 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getDefinicao().retriveTask(getInternalEntity());
+            estadoAtual = getDefinicao().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getSigla());
         }
         return estadoAtual;
     }

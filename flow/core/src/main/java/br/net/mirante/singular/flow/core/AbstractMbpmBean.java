@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
+import br.net.mirante.singular.flow.core.service.IPersistenceService;
+import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
@@ -54,7 +55,7 @@ public abstract class AbstractMbpmBean {
     }
 
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
-        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).retrieveProcessInstance(cod));
+        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
     public final <T extends ProcessInstance> T findProcessInstanceOrException(Class<T> instanceClass, String id) {
@@ -86,7 +87,7 @@ public abstract class AbstractMbpmBean {
             if (def == null) {
                 throw new RuntimeException("Não existe definição de processo '" + mapeamento.abbreviation + "'");
             }
-            return (X) def.retrieveProcessInstance(mapeamento.cod);
+            return (X) def.getDataService().retrieveInstance(mapeamento.cod);
         }
     }
 
@@ -137,8 +138,8 @@ public abstract class AbstractMbpmBean {
     protected abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
 
     public final Object executeTask(MTaskJava task) {
-        final ProcessDefinition<?> definicao = task.getFlowMap().getProcessDefinition();
-        final Collection<? extends ProcessInstance> instancias = definicao.getInstanciasNoEstado(task);
+        final IProcessDataService<?> dataService = task.getFlowMap().getProcessDefinition().getDataService();
+        final Collection<? extends ProcessInstance> instancias = dataService.retrieveAllInstancesIn(task);
         if (task.isCalledInBlock()) {
             return task.executarByBloco(instancias);
         } else {

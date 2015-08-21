@@ -14,6 +14,7 @@ import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProces
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessValidator;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.util.props.PropRef;
 import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
@@ -193,6 +194,12 @@ public class FlowBuilderImpl extends
             getTransition().setParametersValidator(parametrosValidator);
             return self();
         }
+        
+        public <K extends ProcessInstance,T> SELF setProperty(PropRef<T> propRef, T value) {
+            getTransition().setProperty(propRef, value);
+            return self();
+        }
+        
     }
 
     public static class ImplBProcessRole<SELF extends ImplBProcessRole<SELF>> implements BProcessRole<SELF> {

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.flow.core.entity.persistence;
+package br.net.mirante.singular.flow.core.service;
 
 import java.io.Serializable;
 import java.util.Collection;
