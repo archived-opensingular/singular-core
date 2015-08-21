@@ -10,13 +10,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Sets;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -28,11 +25,17 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.core.view.GeradorDiagramaProcessoMBPM;
+import br.net.mirante.singular.flow.util.props.PropRef;
+import br.net.mirante.singular.flow.util.props.Props;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-@SuppressWarnings({"serial", "unchecked"})
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Sets;
+
+@SuppressWarnings({ "serial", "unchecked" })
 public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>> {
 
     private final Class<I> instanceClass;
@@ -47,7 +50,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private Serializable entityCod;
 
-    private final Map<String, Serializable> mapaSiglaSituacaoCodSituacao = new HashMap<>();
+    private final Map<String, Serializable> entityCodByTaskAbbreviation = new HashMap<>();
 
     private IProcessCreationPageStrategy creationPage;
 
@@ -56,6 +59,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     private VarDefinitionMap<?> variableDefinitions;
 
     private VarService variableService;
+
+    private Props properties;
 
     private transient Constructor<I> construtor;
 
@@ -78,14 +83,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         if (variableWrapperClass != null) {
             if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
                 throw new RuntimeException("A classe " + instanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
-                        + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
+                    + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             // for( Type i : classeInstancia.getGenericInterfaces()) {
             // if (i instanceof Class && VariableEnabled.class.) {
             //
             // }
             // }
-            newVariableWrapper(variableWrapperClass).configVariables(getVariaveis());
+            newVariableWrapper(variableWrapperClass).configVariables(getVariables());
         }
     }
 
@@ -116,7 +121,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     public final synchronized FlowMap getFlowMap() {
         if (flowMap == null) {
-            FlowMap novo = createFluxo();
+            FlowMap novo = createFlowMap();
             if (novo.getProcessDefinition() != this) {
                 throw new RuntimeException("Mapa com definiçao trocada");
             }
@@ -127,12 +132,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return flowMap;
     }
 
-    protected abstract FlowMap createFluxo();
+    protected abstract FlowMap createFlowMap();
 
-    public I recuperarInstancia(Integer pk) {
-        IEntityProcessInstance dadosInstancia = getPersistenceService().retrieveProcessInstanceByCod(pk);
-        if (dadosInstancia != null) {
-            return dadosToInstancia(dadosInstancia);
+    public I retrieveProcessInstance(Integer entityCod) {
+        IEntityProcessInstance entityProcessInstance = getPersistenceService().retrieveProcessInstanceByCod(entityCod);
+        if (entityProcessInstance != null) {
+            return convertToProcessInstance(entityProcessInstance);
         }
         return null;
     }
@@ -145,15 +150,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return task;
     }
 
-    public VarDefinitionMap<?> getVariaveis() {
+    public VarDefinitionMap<?> getVariables() {
         if (variableDefinitions == null) {
             variableDefinitions = getVarService().newVarDefinitionMap();
         }
         return variableDefinitions;
     }
 
-    protected final I dadosToInstancia(IEntityProcessInstance dadosInstancia) {
-        Preconditions.checkNotNull(dadosInstancia);
+    protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
+        Objects.requireNonNull(dadosInstancia);
         try {
             return getConstrutor().newInstance(dadosInstancia);
         } catch (Exception e) {
@@ -162,22 +167,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public List<I> getInstanciasNoEstado(MTask<?> task) {
-        final IEntityTaskDefinition obterSituacaoPara = obterSituacaoPara(task);
+        final IEntityTaskDefinition obterSituacaoPara = getEntityTask(task);
         return getInstanciasPorEstado(obterSituacaoPara != null ? Sets.newHashSet(obterSituacaoPara) : null);
     }
 
     public List<I> getTarefasPorNomeSituacao(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, String... situacoesAlvo) {
-        Set<IEntityTaskDefinition> situacoes = transformTo(situacoesAlvo);
+        Set<IEntityTaskDefinition> situacoes = transformToEntityTaskDefinition(situacoesAlvo);
         return getTarefasPorSituacao(minDataInicio, maxDataInicio, exibirEncerradas,
-                situacoes.toArray(new IEntityTaskDefinition[situacoes.size()]));
+            situacoes.toArray(new IEntityTaskDefinition[situacoes.size()]));
     }
 
     public List<I> getTarefasPorSituacao(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
-            IEntityTaskDefinition... situacoesAlvo) {
+        IEntityTaskDefinition... situacoesAlvo) {
         final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
         for (final IEntityTaskDefinition situacao : situacoesAlvo) {
             if (situacao != null) {
-                estadosAlvo.add(obterSituacaoPara(getFlowMap().getTaskWithName(situacao.getNome())));
+                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithName(situacao.getNome())));
             }
         }
         if (estadosAlvo.isEmpty()) {
@@ -189,50 +194,49 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
                 }
             }
         }
-        return transformToInstance(
-                getPersistenceService().retrieveProcessInstancesWith(getEntity(), minDataInicio, maxDataInicio, estadosAlvo));
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), minDataInicio, maxDataInicio, estadosAlvo));
     }
 
     public final Collection<I> getTarefasAtivas() {
-        return transformToInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, true));
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, true));
     }
 
     public final Collection<I> getTarefasAtivasIniciadasPor(MUser pessoa) {
-        Preconditions.checkNotNull(pessoa);
-        return transformToInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), pessoa, true));
+        Objects.requireNonNull(pessoa);
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), pessoa, true));
     }
 
     public final Collection<I> getTarefasEncerradas() {
-        return transformToInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, false));
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, false));
     }
 
     public final Collection<I> getTarefasEncerradasIniciadasPor(MUser pessoa) {
-        Preconditions.checkNotNull(pessoa);
-        return transformToInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), pessoa, false));
+        Objects.requireNonNull(pessoa);
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), pessoa, false));
     }
 
     public <X extends IEntityTaskDefinition> Set<X> getSituacoesNotJava() {
         final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-        estadosAlvo.addAll(transformTo(getFlowMap().getTasks().stream().filter(t -> !t.isJava())));
-        estadosAlvo.addAll(transformTo(getFlowMap().getEndTasks()));
+        estadosAlvo.addAll(transformToEntityTaskDefinition(getFlowMap().getTasks().stream().filter(t -> !t.isJava())));
+        estadosAlvo.addAll(transformToEntityTaskDefinition(getFlowMap().getEndTasks()));
         return (Set<X>) estadosAlvo;
     }
 
     public Collection<I> getInstanciasAtivasComPessoaOuEspera() {
-        final Set<IEntityTaskDefinition> estadosAlvo = transformTo(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait()));
+        final Set<IEntityTaskDefinition> estadosAlvo = transformToEntityTaskDefinition(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait()));
         return getInstanciasPorEstado(estadosAlvo);
     }
 
     public Collection<I> getInstanciasAtivas() {
-        final Set<IEntityTaskDefinition> estadosAlvo = transformTo(getFlowMap().getTasks());
+        final Set<IEntityTaskDefinition> estadosAlvo = transformToEntityTaskDefinition(getFlowMap().getTasks());
         return getInstanciasPorEstado(estadosAlvo);
     }
 
     public Collection<I> getInstancias(boolean exibirEncerradas) {
         final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-        estadosAlvo.addAll(transformTo(getFlowMap().getTasks()));
+        estadosAlvo.addAll(transformToEntityTaskDefinition(getFlowMap().getTasks()));
         if (exibirEncerradas) {
-            estadosAlvo.addAll(transformTo(getFlowMap().getEndTasks()));
+            estadosAlvo.addAll(transformToEntityTaskDefinition(getFlowMap().getEndTasks()));
         }
         return getInstanciasPorEstado(estadosAlvo);
     }
@@ -242,26 +246,26 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public <X extends IEntityTaskDefinition> Set<X> getSituacoesComPessoa() {
-        return transformTo(getFlowMap().getTasks().stream().filter(MTask::isPeople));
+        return transformToEntityTaskDefinition(getFlowMap().getTasks().stream().filter(MTask::isPeople));
     }
 
     public Collection<I> getInstanciasInativas() {
-        final Set<IEntityTaskDefinition> estadosAlvo = transformTo(getFlowMap().getEndTasks());
+        final Set<IEntityTaskDefinition> estadosAlvo = transformToEntityTaskDefinition(getFlowMap().getEndTasks());
         return getInstanciasPorEstado(estadosAlvo);
     }
 
     public List<I> getInstanciasNoEstado(String... situacoesAlvo) {
-        final Set<IEntityTaskDefinition> estadosAlvo = transformTo(situacoesAlvo);
+        final Set<IEntityTaskDefinition> estadosAlvo = transformToEntityTaskDefinition(situacoesAlvo);
         return getInstanciasPorEstado(estadosAlvo);
     }
 
     public List<I> getInstanciasPorEstado(Collection<? extends IEntityTaskDefinition> situacoesAlvo) {
-        return transformToInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, null, situacoesAlvo));
+        return transformToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntity(), null, null, situacoesAlvo));
     }
 
     final IEntityTaskDefinition getSituacaoInicial() {
         final MTask<?> inicial = getFlowMap().getStartTask();
-        return obterSituacaoPara(inicial);
+        return getEntityTask(inicial);
     }
 
     protected final void setActive(boolean ativo) {
@@ -276,6 +280,26 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return getEntity().isAtivo();
     }
 
+    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
+        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
+    }
+    
+    public <T> T getProperty(PropRef<T> propRef) {
+        return properties == null ? null : getProperties().get(propRef);
+    }
+    
+    protected <T> ProcessDefinition<I> setProperty(PropRef<T> propRef, T value) {
+        getProperties().set(propRef, value);
+        return this;
+    }
+    
+    Props getProperties() {
+        if (properties == null) {
+            properties = new Props();
+        }
+        return properties;
+    }
+    
     public final IEntityProcess getEntity() {
         if (entityCod == null) {
             IEntityProcess def = getPersistenceService().retrieveOrCreateProcessDefinitionFor(this);
@@ -300,44 +324,44 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             try {
                 for (Constructor<?> constructor : getClasseInstancia().getConstructors()) {
                     if (constructor.getParameterTypes().length == 1
-                            && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
+                        && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
                         this.construtor = (Constructor<I>) constructor;
                     }
                 }
-                Preconditions.checkNotNull(this.construtor);
+                Objects.requireNonNull(this.construtor);
             } catch (final Exception e) {
                 throw criarErro("Construtor ausente: " + getClasseInstancia().getName() + "(" + IEntityProcessInstance.class.getName() + ")",
-                        e);
+                    e);
             }
         }
         return construtor;
     }
 
-    public final IEntityTaskDefinition obterSituacaoPorNome(String taskName) {
-        return obterSituacaoPara(getFlowMap().getTaskWithName(taskName));
+    public final IEntityTaskDefinition getEntityTaskWithName(String taskName) {
+        return getEntityTask(getFlowMap().getTaskWithName(taskName));
     }
 
-    public final IEntityTaskDefinition obterSituacaoPorSigla(String sigla) {
-        return obterSituacaoPara(getFlowMap().getTaskWithAbbreviation(sigla));
+    public final IEntityTaskDefinition getEntityTaskWithAbbreviation(String sigla) {
+        return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
     }
 
-    public final IEntityTaskDefinition obterSituacaoPara(MTask<?> task) {
+    public final IEntityTaskDefinition getEntityTask(MTask<?> task) {
         if (task == null) {
             return null;
         }
-        final Serializable codSituacao = mapaSiglaSituacaoCodSituacao.computeIfAbsent(task.getAbbreviation(),
-                sigla -> getPersistenceService().retrieveOrCreateStateFor(getEntity(), task).getCod());
+        final Serializable codSituacao = entityCodByTaskAbbreviation.computeIfAbsent(task.getAbbreviation(),
+            sigla -> getPersistenceService().retrieveOrCreateStateFor(getEntity(), task).getCod());
 
         IEntityTaskDefinition situacao = getPersistenceService().retrieveTaskStateByCod(codSituacao);
         if (situacao == null) {
-            mapaSiglaSituacaoCodSituacao.clear();
+            entityCodByTaskAbbreviation.clear();
             throw new RuntimeException("Dados inconsistentes com o BD");
         }
         return situacao;
     }
 
-    protected List<I> transformToInstance(List<? extends IEntityProcessInstance> demandas) {
-        return demandas.stream().map(this::dadosToInstancia).collect(Collectors.toList());
+    protected List<I> transformToProcessInstance(List<? extends IEntityProcessInstance> demandas) {
+        return demandas.stream().map(this::convertToProcessInstance).collect(Collectors.toList());
     }
 
     public InputStream getFlowImage() {
@@ -352,16 +376,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return new RuntimeException("Processo MBPM '" + getName() + "': " + msg, e);
     }
 
-    private Set<IEntityTaskDefinition> transformTo(Collection<? extends MTask<?>> collection) {
-        return transformTo(collection.stream());
+    private Set<IEntityTaskDefinition> transformToEntityTaskDefinition(Collection<? extends MTask<?>> collection) {
+        return transformToEntityTaskDefinition(collection.stream());
     }
 
-    private <X extends IEntityTaskDefinition> Set<X> transformTo(Stream<? extends MTask<?>> stream) {
-        return (Set<X>) stream.map(this::obterSituacaoPara).collect(Collectors.toSet());
+    private <X extends IEntityTaskDefinition> Set<X> transformToEntityTaskDefinition(Stream<? extends MTask<?>> stream) {
+        return (Set<X>) stream.map(this::getEntityTask).collect(Collectors.toSet());
     }
 
-    private Set<IEntityTaskDefinition> transformTo(String... situacoesAlvo) {
-        return Arrays.stream(situacoesAlvo).map(this::obterSituacaoPorNome).collect(Collectors.toSet());
+    private Set<IEntityTaskDefinition> transformToEntityTaskDefinition(String... situacoesAlvo) {
+        return Arrays.stream(situacoesAlvo).map(this::getEntityTaskWithName).collect(Collectors.toSet());
     }
 
     @Override
@@ -375,8 +399,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         ProcessDefinition<?> that = (ProcessDefinition<?>) o;
 
@@ -446,7 +472,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     protected final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
-                .getMbpmBean().getPersistenceService();
+            .getMbpmBean().getPersistenceService();
     }
 
     protected VarService getVarService() {

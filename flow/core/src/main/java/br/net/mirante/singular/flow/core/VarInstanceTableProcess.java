@@ -18,7 +18,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     private ProcessInstance instancia;
 
     VarInstanceTableProcess(ProcessDefinition<?> definition) {
-        super(definition.getVariaveis());
+        super(definition.getVariables());
     }
 
     VarInstanceTableProcess(ProcessInstance instancia) {

@@ -6,11 +6,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.google.common.base.Preconditions;
+import br.net.mirante.singular.flow.util.props.PropRef;
+import br.net.mirante.singular.flow.util.props.Props;
 
-@SuppressWarnings({"serial", "unchecked"})
+import com.google.common.base.MoreObjects;
+
+@SuppressWarnings({ "serial", "unchecked" })
 public abstract class MTask<K extends MTask<?>> {
 
     private final FlowMap flowMap;
@@ -29,13 +33,11 @@ public abstract class MTask<K extends MTask<?>> {
 
     private transient int order;
 
-    //TODO
-    @Deprecated
-    private Boolean apareceNoPainelAtividades;
+    private Props properties;
 
     public MTask(FlowMap flowMap, String name) {
-        Preconditions.checkNotNull(flowMap);
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(flowMap);
+        Objects.requireNonNull(name);
         this.flowMap = flowMap;
         this.name = name;
     }
@@ -102,6 +104,26 @@ public abstract class MTask<K extends MTask<?>> {
 
     public boolean isExecutable() {
         return false;
+    }
+
+    public <T> MTask<K> setProperty(PropRef<T> propRef, T value) {
+        getProperties().set(propRef, value);
+        return this;
+    }
+
+    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
+        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
+    }
+
+    public <T> T getProperty(PropRef<T> propRef) {
+        return properties == null ? null : getProperties().get(propRef);
+    }
+
+    Props getProperties() {
+        if (properties == null) {
+            properties = new Props();
+        }
+        return properties;
     }
 
     public MTransition addTransition(String actionName, MTask<?> destination, boolean showTransitionInExecution) {
@@ -214,17 +236,6 @@ public abstract class MTask<K extends MTask<?>> {
 
     public final <T extends ProcessInstance> TaskAccessStrategy<T> getAccessStrategy() {
         return (TaskAccessStrategy<T>) accessStrategy;
-    }
-
-    @Deprecated
-    public K setApareceNoPainelAtividades(Boolean apareceNoPainelAtividades) {
-        this.apareceNoPainelAtividades = apareceNoPainelAtividades;
-        return (K) this;
-    }
-
-    @Deprecated
-    public boolean isApareceNoPainelAtividades(boolean defaultAparece) {
-        return apareceNoPainelAtividades == null ? defaultAparece : apareceNoPainelAtividades;
     }
 
     final RuntimeException generateError(String message) {

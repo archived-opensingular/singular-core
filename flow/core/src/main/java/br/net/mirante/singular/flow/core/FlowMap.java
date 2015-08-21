@@ -5,19 +5,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import com.google.common.collect.ImmutableSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.util.vars.VarService;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {
@@ -161,7 +162,7 @@ public class FlowMap implements Serializable {
     }
 
     public MTask<?> setStartTask(MTask<?> task) {
-        Preconditions.checkNotNull(task);
+        Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
             throw createError("The task does not belong to this flow");
         }
@@ -174,7 +175,7 @@ public class FlowMap implements Serializable {
     }
 
     public MTask<?> getStartTask() {
-        Preconditions.checkNotNull(startTask);
+        Objects.requireNonNull(startTask);
         return startTask;
     }
 
@@ -183,7 +184,7 @@ public class FlowMap implements Serializable {
     }
 
     public MTaskEnd addFim(String name) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
         if (endTasks.containsKey(name)) {
             throw createError("End task '" + name + "' already defined");
         }
@@ -210,7 +211,7 @@ public class FlowMap implements Serializable {
 
     public void verifyConsistency() {
         verifyTasksConsistency();
-        Preconditions.checkNotNull(startTask, "There is no initial task setted");
+        Objects.requireNonNull(startTask, "There is no initial task setted");
         checkRouteToTheEnd();
     }
 

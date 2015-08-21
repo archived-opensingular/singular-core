@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
@@ -32,7 +33,7 @@ public class MTransition implements Serializable {
     private ITaskPredicate predicate;
 
     protected MTransition(MTask<?> origin, String name, MTask<?> destination, boolean userOption) {
-        Preconditions.checkNotNull(destination);
+        Objects.requireNonNull(destination);
         this.origin = origin;
         this.name = name;
         this.destination = destination;
@@ -182,7 +183,7 @@ public class MTransition implements Serializable {
     }
 
     public MTransition addParameterFromProcessVariable(String ref, boolean required) {
-        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariaveis().getDefinition(ref);
+        VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
             throw getFlowMap().createError("Variable '" + ref + "' is not defined in process definition.");
         }

@@ -38,7 +38,7 @@ public class DeleteOldCompletedTasksJob implements IScheduledJob {
         for (final ProcessDefinition<?> definicao : mbpmBean.getDefinitions()) {
             if (definicao.getFlowMap().getCleanupStrategy() != null) {
                 final FlowMap flow = definicao.getFlowMap();
-                final List<IEntityTaskDefinition> situacoes = flow.getEndTasks().stream().map(definicao::obterSituacaoPara).collect(Collectors.toList());
+                final List<IEntityTaskDefinition> situacoes = flow.getEndTasks().stream().map(definicao::getEntityTask).collect(Collectors.toList());
 
                 final int qtd = definicao.getPersistenceService().deleteProcessInstancesWithStateOlderThan(situacoes, flow.getCleanupStrategy().toDate());
                 resultados.add(definicao.getAbbreviation() + ": deleted " + qtd);

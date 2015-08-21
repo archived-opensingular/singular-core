@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
 
@@ -39,7 +39,7 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
     @Override
     void verifyConsistency() {
         super.verifyConsistency();
-        Preconditions.checkNotNull(getExecutionPage(), "Não foi definida a estratégia da página para execução da tarefa.");
-        Preconditions.checkNotNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+        Objects.requireNonNull(getExecutionPage(), "Não foi definida a estratégia da página para execução da tarefa.");
+        Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
     }
 }

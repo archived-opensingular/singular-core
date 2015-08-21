@@ -1,6 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.util.Date;
+import java.util.Objects;
 
 import com.google.common.base.Preconditions;
 
@@ -48,7 +49,7 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
     void verifyConsistency() {
         super.verifyConsistency();
         if (getExecutionPage() != null) {
-            Preconditions.checkNotNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
+            Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
         }
     }
 }

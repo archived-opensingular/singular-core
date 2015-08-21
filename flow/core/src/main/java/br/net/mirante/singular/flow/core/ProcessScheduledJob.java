@@ -1,12 +1,13 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.Objects;
 import java.util.function.Supplier;
-
-import com.google.common.base.Preconditions;
 
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
+
+import com.google.common.base.Preconditions;
 
 public class ProcessScheduledJob implements IScheduledJob {
 
@@ -19,7 +20,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     private IScheduleData scheduleData;
 
     ProcessScheduledJob(FlowMap mapa, String name) {
-        Preconditions.checkNotNull(name);
+        Objects.requireNonNull(name);
         this.mapa = mapa;
         this.name = name;
     }
@@ -37,7 +38,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public Object run() {
-        Preconditions.checkNotNull(job, "Job implementation not provided.");
+        Objects.requireNonNull(job, "Job implementation not provided.");
         return job.get();
     }
 

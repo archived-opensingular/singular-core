@@ -3,8 +3,7 @@ package br.net.mirante.singular.flow.util.view;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public class Lnk implements Serializable {
 
@@ -129,7 +128,7 @@ public class Lnk implements Serializable {
 
     public String getUrl(String urlApp) {
         if (urlAppMissing) {
-            Preconditions.checkNotNull(urlApp);
+            Objects.requireNonNull(urlApp);
             return concat(urlApp, url_);
         }
         return url_;
@@ -143,8 +142,8 @@ public class Lnk implements Serializable {
     }
 
     public static String concat(String url, String path) {
-        Preconditions.checkNotNull(url);
-        Preconditions.checkNotNull(path);
+        Objects.requireNonNull(url);
+        Objects.requireNonNull(path);
         String s = url;
         if (s.charAt(s.length() - 1) == '/') {
             if (path.charAt(0) == '/') {

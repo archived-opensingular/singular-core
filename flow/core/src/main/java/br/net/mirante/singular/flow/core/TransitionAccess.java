@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public class TransitionAccess {
 
@@ -8,7 +8,7 @@ public class TransitionAccess {
     private final String message;
 
     public TransitionAccess(TransitionAccessLevel transitionAccessLevel, String message) {
-        Preconditions.checkNotNull(transitionAccessLevel);
+        Objects.requireNonNull(transitionAccessLevel);
         this.level = transitionAccessLevel;
         this.message = message;
     }

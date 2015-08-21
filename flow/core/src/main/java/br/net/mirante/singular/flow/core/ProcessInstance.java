@@ -8,8 +8,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -24,6 +22,8 @@ import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
+
+import com.google.common.collect.Lists;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -85,7 +85,7 @@ public abstract class ProcessInstance {
         K def = MBPM.getDefinicao(classe);
         IEntityProcess dadosDefinicaoProcesso = def.getEntity();
         return getInternalEntity().getDemandasFilhas().stream().filter(d -> d.getDefinicao().equals(dadosDefinicaoProcesso))
-                .map(def::dadosToInstancia);
+                .map(def::convertToProcessInstance);
     }
 
     public TaskInstance getTarefaPai() {
@@ -137,7 +137,7 @@ public abstract class ProcessInstance {
             }
             getPersistenceService().endTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
         }
-        IEntityTaskDefinition situacaoNova = getDefinicao().obterSituacaoPara(task);
+        IEntityTaskDefinition situacaoNova = getDefinicao().getEntityTask(task);
 
         IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
 
@@ -527,7 +527,7 @@ public abstract class ProcessInstance {
     }
 
     protected void validarPreInicio() {
-        if (variables == null && !getDefinicao().getVariaveis().hasRequired()) {
+        if (variables == null && !getDefinicao().getVariables().hasRequired()) {
             return;
         }
 
