@@ -4,6 +4,15 @@
     border-bottom: 1px solid #eee !important;
 }
 
+a {
+    color: #444;
+}
+
+a:hover {
+    color: #444;
+    text-decoration: none;
+}
+
 table.dataTable thead th > a {
     display: block;
     width: 100% !important;
