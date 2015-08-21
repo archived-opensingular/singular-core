@@ -3,3 +3,8 @@
 .portlet > .portlet-title {
     border-bottom: 1px solid #eee !important;
 }
+
+table.dataTable thead th > a {
+    display: block;
+    width: 100% !important;
+}

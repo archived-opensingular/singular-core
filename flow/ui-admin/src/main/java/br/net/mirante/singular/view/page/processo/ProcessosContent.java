@@ -5,7 +5,6 @@ import java.util.List;
 
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
