@@ -46,7 +46,7 @@ public abstract class AbstractMbpmBean {
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getDefinicao().getSigla());
-        return def.dadosToInstancia(dadosInstanciaProcesso);
+        return def.convertToProcessInstance(dadosInstanciaProcesso);
     }
 
     public ProcessInstance getProcessInstance(IEntityProcessInstance entityProcessInstance) {
@@ -54,7 +54,7 @@ public abstract class AbstractMbpmBean {
     }
 
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
-        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).recuperarInstancia(cod));
+        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).retrieveProcessInstance(cod));
     }
 
     public final <T extends ProcessInstance> T findProcessInstanceOrException(Class<T> instanceClass, String id) {
@@ -86,7 +86,7 @@ public abstract class AbstractMbpmBean {
             if (def == null) {
                 throw new RuntimeException("Não existe definição de processo '" + mapeamento.abbreviation + "'");
             }
-            return (X) def.recuperarInstancia(mapeamento.cod);
+            return (X) def.retrieveProcessInstance(mapeamento.cod);
         }
     }
 

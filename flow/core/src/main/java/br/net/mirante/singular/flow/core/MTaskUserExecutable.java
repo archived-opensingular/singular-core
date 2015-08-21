@@ -37,13 +37,6 @@ public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> exte
         return (IExecutionDateStrategy<ProcessInstance>) targetDateExecutionStrategy;
     }
 
-    @Deprecated
-    @Override
-    public K setApareceNoPainelAtividades(Boolean valor) {
-        super.setApareceNoPainelAtividades(valor);
-        return (K) this;
-    }
-
     public ITaskPageStrategy getBackPage() {
         return backPage;
     }

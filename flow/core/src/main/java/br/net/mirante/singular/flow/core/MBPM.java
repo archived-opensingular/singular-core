@@ -1,10 +1,14 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.Objects;
+
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
+
+import com.google.common.base.Preconditions;
 
 public class MBPM {
 
@@ -30,14 +34,13 @@ public class MBPM {
     }
 
     public static synchronized void setConf(AbstractMbpmBean conf) {
+        Preconditions.checkArgument(mbpmBean == null, "O contexto já foi configurado.");
         mbpmBean = conf;
         init();
     }
 
     public static AbstractMbpmBean getMbpmBean() {
-        if (mbpmBean == null) {
-            throw new RuntimeException("Configuração do fluxo não realizada");
-        }
+        Objects.requireNonNull(mbpmBean, "Configuração do fluxo não realizada");
         return mbpmBean;
     }
 

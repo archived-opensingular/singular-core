@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core.builder;
 
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MProcessRole;
@@ -200,7 +200,7 @@ public class FlowBuilderImpl extends
         private final MProcessRole processRole;
 
         public ImplBProcessRole(MProcessRole processRole) {
-            Preconditions.checkNotNull(processRole);
+            Objects.requireNonNull(processRole);
             this.processRole = processRole;
         }
 

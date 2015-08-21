@@ -1,8 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 public final class MProcessRole implements Serializable {
 
@@ -16,8 +15,8 @@ public final class MProcessRole implements Serializable {
 
     @SuppressWarnings("unchecked")
     MProcessRole(String name, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
-        Preconditions.checkNotNull(name);
-        Preconditions.checkNotNull(userRoleSettingStrategy);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(userRoleSettingStrategy);
         this.abbreviation = MBPMUtil.convertToJavaIdentity(name, true);
         this.name = name;
         this.userRoleSettingStrategy = (UserRoleSettingStrategy<ProcessInstance>) userRoleSettingStrategy;

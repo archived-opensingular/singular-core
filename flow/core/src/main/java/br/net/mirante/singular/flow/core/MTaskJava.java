@@ -2,10 +2,11 @@ package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
 import java.util.Collection;
-
-import com.google.common.base.Preconditions;
+import java.util.Objects;
 
 import br.net.mirante.singular.flow.schedule.IScheduleData;
+
+import com.google.common.base.Preconditions;
 
 @SuppressWarnings("unchecked")
 public class MTaskJava extends MTask<MTaskJava> {
@@ -40,15 +41,15 @@ public class MTaskJava extends MTask<MTaskJava> {
     }
 
     public <T extends ProcessInstance> MTaskJava callBlock(ImplTaskBlock<T> implBloco, IScheduleData scheduleData) {
-        Preconditions.checkNotNull(implBloco);
-        Preconditions.checkNotNull(scheduleData);
+        Objects.requireNonNull(implBloco);
+        Objects.requireNonNull(scheduleData);
         this.blockImpl = implBloco;
         this.scheduleData = scheduleData;
         return this;
     }
 
     public MTaskJava call(ImplTaskJava impl) {
-        Preconditions.checkNotNull(impl);
+        Objects.requireNonNull(impl);
         taskImpl = impl;
         return this;
     }

@@ -1,10 +1,8 @@
 package br.net.mirante.singular.flow.core;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.function.BiFunction;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -19,6 +17,8 @@ import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+
+import com.google.common.base.Joiner;
 
 class EngineProcessamentoMBPM {
 
@@ -79,7 +79,7 @@ class EngineProcessamentoMBPM {
                             if (papel.isAutomaticUserAllocation()) {
                                 MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
                                         instanciaTarefa);
-                                Preconditions.checkNotNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
+                                Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
                                         + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
                                 instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
@@ -164,7 +164,7 @@ class EngineProcessamentoMBPM {
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         if (paramIn != null) {
             for (VarInstance variavel : paramIn) {
-                if (instancia.getDefinicao().getVariaveis().contains(variavel.getRef())) {
+                if (instancia.getDefinicao().getVariables().contains(variavel.getRef())) {
                     instancia.setVariavel(variavel.getRef(), variavel.getValor());
                 }
             }

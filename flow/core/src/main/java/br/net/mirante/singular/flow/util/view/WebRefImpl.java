@@ -1,10 +1,11 @@
 package br.net.mirante.singular.flow.util.view;
 
 import java.util.Map;
+import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("serial")
 public class WebRefImpl implements WebRef {
@@ -162,7 +163,7 @@ public class WebRefImpl implements WebRef {
     }
 
     public WebRefImpl setAtributo(String nome, String valor) {
-        Preconditions.checkNotNull(nome);
+        Objects.requireNonNull(nome);
         if (valor == null) {
             if (atributosExtras != null) {
                 atributosExtras.remove(nome);

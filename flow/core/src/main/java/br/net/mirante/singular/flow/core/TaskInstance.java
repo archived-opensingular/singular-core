@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -23,6 +20,8 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.persistence.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
+
+import com.google.common.collect.ImmutableList;
 
 public class TaskInstance {
 
@@ -263,9 +262,9 @@ public class TaskInstance {
     }
 
     private Set<Integer> getFirstLevelUsersCodWithAccess() {
-        Preconditions.checkNotNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getSigla() + " não encontrada na definição "
+        Objects.requireNonNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getSigla() + " não encontrada na definição "
                 + getProcessInstance().getDefinicao().getName());
-        Preconditions.checkNotNull(getTipo().getAccessStrategy(),
+        Objects.requireNonNull(getTipo().getAccessStrategy(),
                 "Estratégia de acesso da task " + entityTask.getSituacao().getSigla() + " não foi definida");
         return getTipo().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
     }
