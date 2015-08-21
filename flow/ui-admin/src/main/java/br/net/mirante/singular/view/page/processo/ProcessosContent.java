@@ -8,6 +8,8 @@ import br.net.mirante.singular.dao.PesquisaDTO;
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
@@ -40,8 +42,11 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                 .appendPropertyColumn(getMessage("label.table.column.name"), "name", PesquisaDTO::getNome)
                 .appendPropertyColumn(getMessage("label.table.column.category"), "category", PesquisaDTO::getCategoria)
                 .appendPropertyColumn(getMessage("label.table.column.version"), "version", PesquisaDTO::getVersion)
-                .appendActionColumn($m.ofValue(""), column -> {
-                }).build("processos"));
+                .appendColumn(new BSActionColumn<PesquisaDTO, String>($m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
+                            // TODO: Implementar...
+                        }))
+                .build("processos"));
     }
 
     @Override

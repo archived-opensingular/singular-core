@@ -14,7 +14,7 @@ public enum Icone {
     CUP /*              */("icon-cup"),
     DIRECTIONS /*       */("icon-directions"),
     EXTERNAL_LINK /*    */("fa fa-external-link"),
-    EYE /*              */("fa fa-eye"),
+    EYE /*              */("icon-eye"),
     FILE_POWERPOINT /*  */("fa fa-file-powerpoint-o"),
     FILE_PDF /*         */("fa fa-file-pdf-o"),
     FILE_TEXT /*        */("fa fa-file-text"),
@@ -44,17 +44,17 @@ public enum Icone {
     HOME/*              */("icon-home"),
     STAR/*              */("icon-star"),
     HOTEL/*             */("fa fa-h-square");
-    
 
     private final String cssClass;
 
-    private Icone(String cssClass) {
+    Icone(String cssClass) {
         this.cssClass = cssClass;
     }
 
     public String getCssClass() {
         return cssClass;
     }
+
     @Override
     public String toString() {
         return getCssClass();
