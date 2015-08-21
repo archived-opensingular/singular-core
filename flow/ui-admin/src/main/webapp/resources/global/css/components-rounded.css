@@ -4610,7 +4610,7 @@ Portlets
   padding: 0 10px;
 }
 .portlet > .portlet-title {
-  border-bottom: 1px solid #eee !important;
+  border-bottom: 1px solid #eee;
   padding: 0;
   margin-bottom: 10px;
   min-height: 41px;
