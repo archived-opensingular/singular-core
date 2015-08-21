@@ -25,8 +25,8 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     private boolean                             stripedRows    = true;
     private boolean                             hoverRows      = true;
-    private boolean                             advanceTable   = true;
     private boolean                             borderedTable  = true;
+    private boolean                             advanceTable   = false;
     private boolean                             condensedTable = false;
 
     public BSDataTableBuilder() {}

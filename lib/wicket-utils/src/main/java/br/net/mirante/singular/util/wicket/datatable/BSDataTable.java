@@ -19,8 +19,8 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
 
     private boolean          stripedRows           = true;
     private boolean          hoverRows             = true;
-    private boolean          advanceTable          = true;
     private boolean          borderedTable         = true;
+    private boolean          advanceTable          = false;
     private boolean          condensedTable        = false;
 
     public BSDataTable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
@@ -71,6 +71,8 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
             sbClass.append(" table-hover");
         if (isAdvanceTable())
             sbClass.append(" table-advance");
+        else
+            sbClass.append(" dataTable");
         if (isBorderedTable())
             sbClass.append(" table-bordered");
         if (isCondensedTable())

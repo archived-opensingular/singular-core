@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
@@ -25,7 +26,11 @@ public class ProcessosContent extends Content implements SingularWicketContainer
             public Iterator<? extends String> iterator(int first, int count, String sortProperty, boolean ascending) {
                 List<String> list = newArrayList();
                 for (int i = first; i < first + count; i++)
-                    list.add(String.valueOf(i));
+                    if (ascending) {
+                        list.add(String.valueOf(i));
+                    } else {
+                        list.add(0, String.valueOf(i));
+                    }
                 return list.iterator();
             }
 
@@ -36,8 +41,11 @@ public class ProcessosContent extends Content implements SingularWicketContainer
         };
 
         add(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn($m.ofValue("A"), String::toString)
-                .build("processos"));
+                .appendPropertyColumn(getMessage("label.table.column.name"), "name", String::toString)
+                .appendPropertyColumn(getMessage("label.table.column.category"), "category", String::toString)
+                .appendPropertyColumn(getMessage("label.table.column.version"), "version", String::toString)
+                .appendActionColumn($m.ofValue(""), column -> {
+                }).build("processos"));
     }
 
     @Override
