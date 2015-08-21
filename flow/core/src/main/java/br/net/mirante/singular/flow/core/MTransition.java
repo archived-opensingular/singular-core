@@ -6,11 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import br.net.mirante.singular.flow.util.props.PropRef;
+import br.net.mirante.singular.flow.util.props.Props;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("serial")
@@ -24,7 +27,7 @@ public class MTransition implements Serializable {
     private TransitionAccessStrategy<TaskInstance> accessStrategy;
     private List<MProcessRole> rolesToDefineUser;
 
-    private String mensagemConfirmacao;
+    private Props properties;
 
     private VarDefinitionMap<?> parameters;
     private ITransitionParametersInitializer parametersInitializer;
@@ -40,20 +43,8 @@ public class MTransition implements Serializable {
         this.userOption = userOption;
     }
 
-    @Deprecated
-    public MTransition comMensagemConfirmacao(String mensagem) {
-        mensagemConfirmacao = mensagem;
-        return this;
-    }
-
-    @Deprecated
-    public String getMensagemConfirmacao() {
-        return mensagemConfirmacao;
-    }
-
     @SuppressWarnings("unchecked")
     public MTransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
-        //TODO - implementar AND
         Preconditions.checkArgument(this.accessStrategy == null, "Access strategy already defined");
         this.accessStrategy = (TransitionAccessStrategy<TaskInstance>) accessStrategy;
         return this;
@@ -100,6 +91,26 @@ public class MTransition implements Serializable {
         return rolesToDefineUser;
     }
 
+    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
+        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
+    }
+
+    public <T> T getProperty(PropRef<T> propRef) {
+        return properties == null ? null : getProperties().get(propRef);
+    }
+
+    public <T> MTransition setProperty(PropRef<T> propRef, T value) {
+        getProperties().set(propRef, value);
+        return this;
+    }
+
+    Props getProperties() {
+        if (properties == null) {
+            properties = new Props();
+        }
+        return properties;
+    }
+    
     public MTask<?> getOrigin() {
         return origin;
     }
@@ -140,7 +151,7 @@ public class MTransition implements Serializable {
     @SuppressWarnings("unchecked")
     public <K extends ProcessInstance> MTransition setParametersValidator(ITransitionParametersProcessValidator<K> validatorByProcess) {
         return setParametersValidator((ITransitionParametersValidator) (ctx, params, result) -> validatorByProcess
-                .validate((K) ctx.getProcessInstance(), params, result));
+            .validate((K) ctx.getProcessInstance(), params, result));
     }
 
     final VarInstanceMap<?> newTransationParameters(TransitionRef transitionRef) {

@@ -33,7 +33,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {
             for (final MTaskWait task : definicaoProcessoMBPM.getFlowMap().getWaitTasks()) {
                 if (task.hasExecutionDateStrategy()) {
-                    for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {
+                    for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                         TaskInstance instanciaTarefa = instancia.getTarefaAtual();
                         Date dataExecucao = task.getExecutionDate(instancia, instanciaTarefa);
                         if (!dataExecucao.equals(instancia.getTarefaAtual().getDataAlvoFim())) {
@@ -55,7 +55,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
                     .filter(task -> task.getTargetDateExecutionStrategy() != null)
                     .forEach(task -> {
                         // Preenche Data Alvo para os casos que estiverem null
-                        for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {
+                        for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                             TaskInstance instanciaTarefa = instancia.getTarefaAtual();
                             if (instanciaTarefa.getDataAlvoFim() == null) {
                                 Date alvo = task.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
@@ -74,7 +74,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
             for (MTask<?> task : definicaoProcessoMBPM.getFlowMap().getTasks()) {
                 List<IConditionalTaskAction> acoesAutomaticas = task.getAutomaticActions();
                 if (!acoesAutomaticas.isEmpty()) {
-                    for (ProcessInstance instancia : definicaoProcessoMBPM.getInstanciasNoEstado(task)) {
+                    for (ProcessInstance instancia : definicaoProcessoMBPM.getDataService().retrieveAllInstancesIn(task)) {
                         TaskInstance instanciaTarefa = instancia.getTarefaAtual();
                         for (IConditionalTaskAction acao : acoesAutomaticas) {
                             if (acao.getPredicate().test(instanciaTarefa)) {
