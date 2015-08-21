@@ -1,16 +1,20 @@
 package br.net.mirante.singular.view.page.processo;
 
 import java.util.Iterator;
-import java.util.List;
 
+import javax.inject.Inject;
+
+import br.net.mirante.singular.dao.PesquisaDTO;
+import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
-import static org.apache.wicket.util.lang.Generics.newArrayList;
-
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
+
+    @Inject
+    private PesquisaService pesquisaService;
 
     public ProcessosContent(String id, boolean withSideBar) {
         super(id, false, withSideBar, true);
@@ -20,29 +24,22 @@ public class ProcessosContent extends Content implements SingularWicketContainer
     protected void onInitialize() {
         super.onInitialize();
 
-        BaseDataProvider<String, String> dataProvider = new BaseDataProvider<String, String>() {
+        BaseDataProvider<PesquisaDTO, String> dataProvider = new BaseDataProvider<PesquisaDTO, String>() {
             @Override
-            public Iterator<? extends String> iterator(int first, int count, String sortProperty, boolean ascending) {
-                List<String> list = newArrayList();
-                for (int i = first; i < first + count; i++)
-                    if (ascending) {
-                        list.add(String.valueOf(i));
-                    } else {
-                        list.add(0, String.valueOf(i));
-                    }
-                return list.iterator();
+            public Iterator<? extends PesquisaDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
+                return pesquisaService.retrieveAll(first, count, sortProperty, ascending).iterator();
             }
 
             @Override
             public long size() {
-                return 100;
+                return pesquisaService.countAll();
             }
         };
 
         add(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.name"), "name", String::toString)
-                .appendPropertyColumn(getMessage("label.table.column.category"), "category", String::toString)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", String::toString)
+                .appendPropertyColumn(getMessage("label.table.column.name"), "name", PesquisaDTO::getNome)
+                .appendPropertyColumn(getMessage("label.table.column.category"), "category", PesquisaDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.version"), "version", PesquisaDTO::getVersion)
                 .appendActionColumn($m.ofValue(""), column -> {
                 }).build("processos"));
     }
