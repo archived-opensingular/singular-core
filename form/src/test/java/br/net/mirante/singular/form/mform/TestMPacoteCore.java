@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 
-import junit.framework.TestCase;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
@@ -15,6 +14,7 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoFormula;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import junit.framework.TestCase;
 
 public class TestMPacoteCore extends TestCase {
 
@@ -120,8 +120,7 @@ public class TestMPacoteCore extends TestCase {
             Assert.assertEquals(valorFinalEsperado, instancia.getValor());
 
             assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
-                    "não consegue converter",
-                    "Deveria dar erro de conversão");
+                    "não consegue converter", "Deveria dar erro de conversão");
         }
     }
 
@@ -136,7 +135,8 @@ public class TestMPacoteCore extends TestCase {
         Assert.assertNull(tipoB.getValorAtributo(MPacoteCore.ATR_DEFAULT_IF_NULL));
         Assert.assertNull(tipoI.getValorAtributo(MPacoteCore.ATR_DEFAULT_IF_NULL));
 
-        assertException(() -> tipoS.withDefaultValueIfNull(new Integer(1)), "abstrato", "Não deveria ser possível atribuir valor em um isntancia abstrata");
+        assertException(() -> tipoS.withDefaultValueIfNull(new Integer(1)), "abstrato",
+                "Não deveria ser possível atribuir valor em um isntancia abstrata");
 
         Assert.assertEquals(null, tipoS.getValorAtributoDefaultValueIfNull());
         Assert.assertEquals(null, tipoB.getValorAtributoDefaultValueIfNull());
@@ -358,10 +358,6 @@ public class TestMPacoteCore extends TestCase {
         assertEquals((Integer) 12, tipo.getValorAtributo(TestPacoteA.ATR_XX));
     }
 
-    public void testRefenciaCircularDePacotes() {
-        Assert.fail("implementar");
-    }
-
     public void testCriarDoisAtributosComMesmoNome() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
@@ -435,7 +431,7 @@ public class TestMPacoteCore extends TestCase {
         tipoEndereco.addCampoString("bairro", true);
         tipoEndereco.addCampoInteger("cep", true);
 
-        MTipoComposto tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
+        MTipoComposto<?> tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
         tipoClassificacao.addCampoInteger("prioridade");
         tipoClassificacao.addCampoString("descricao");
 
@@ -487,13 +483,37 @@ public class TestMPacoteCore extends TestCase {
         assertEquals(valor, registro.getValor(path));
     }
 
-    public void testTipoCompostoReusoTipo() {
-        fail("Implementar");
+    public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {
+        testInicialEDefault(MTipoInteger.class, 10, 11);
+        testInicialEDefault(MTipoString.class, "A", "B");
+        testInicialEDefault(MTipoBoolean.class, true, false);
     }
 
-    public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {
-        // Testar ser o campos de valor são criados com o valor inicial correto
-        fail("Implementar");
+    private static <T extends MTipo<?>> void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
+        assertTrue(!valorInicial.equals(valorIfNull));
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        MTipo<?> tx = pb.createTipo("x", tipo).withValorInicial(valorInicial);
+        MTipo<?> ty = pb.createTipo("y", tipo).withDefaultValueIfNull(valorIfNull);
+        MTipo<?> tz = pb.createTipo("z", tipo).withValorInicial(valorInicial).withDefaultValueIfNull(valorIfNull);
+
+        MInstancia instX = tx.novaInstancia();
+        assertEquals(valorInicial, instX.getValor());
+        assertEquals(valorInicial, instX.getValorWithDefault());
+
+        MInstancia instY = ty.novaInstancia();
+        assertNull(instY.getValor());
+        assertEquals(valorIfNull, instY.getValorWithDefault());
+        instY.setValor(valorInicial);
+        assertEquals(valorInicial, instY.getValorWithDefault());
+        instY.setValor(null);
+        assertEquals(valorIfNull, instY.getValorWithDefault());
+
+        MInstancia instZ = tz.novaInstancia();
+        assertEquals(valorInicial, instZ.getValor());
+        assertEquals(valorInicial, instZ.getValorWithDefault());
+        instZ.setValor(null);
+        assertEquals(valorIfNull, instZ.getValorWithDefault());
     }
 
     private static void assertException(Runnable acao, String trechoMsgEsperada) {
@@ -560,7 +580,7 @@ public class TestMPacoteCore extends TestCase {
         assertException(() -> lista.addValor(""), "Não é permitido");
         assertException(() -> lista.addNovo(), "não é um tipo composto");
 
-        MILista<MIInteger> listaInt = dicionario.getTipo(MTipoInteger.class).novaLista();
+        MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] {10});
         listaInt.addValor("20");

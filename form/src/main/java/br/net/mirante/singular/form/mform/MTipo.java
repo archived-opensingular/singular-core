@@ -3,9 +3,10 @@ package br.net.mirante.singular.form.mform;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -341,7 +342,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return novaInstancia(this);
     }
 
-    public MILista novaLista() {
+    public MILista<?> novaLista() {
         return MILista.of(this);
     }
 
