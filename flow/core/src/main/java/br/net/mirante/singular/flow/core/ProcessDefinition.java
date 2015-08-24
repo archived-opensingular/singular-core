@@ -127,8 +127,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
                 flowMap = novo;
                 MBPMUtil.calculateTaskOrder(flowMap);
             }
+            return flowMap;
         }
-        return flowMap;
     }
 
     public IProcessDataService<I> getDataService() {
