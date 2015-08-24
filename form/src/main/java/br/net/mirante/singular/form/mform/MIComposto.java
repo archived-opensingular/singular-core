@@ -111,7 +111,7 @@ public class MIComposto extends MInstancia {
             }
         }
         MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        return tipo.getValorAtributoDefaultValueIfNull(classeDestino);
+        return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
     }
 
     public final <T extends Object> T getValorInterno(String nomeSimples, Class<T> classeDestino) {

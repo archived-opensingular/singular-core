@@ -44,17 +44,17 @@ public class MPacoteCore extends MPacote {
         pb.createTipo(MTipoBoolean.class);
         pb.createTipo(MTipoData.class);
 
-        pb.createAtributo(MTipo.class, ATR_OBRIGATORIO);
+        pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO);
 
-        pb.createAtributo(MTipoSimples.class, ATR_VALOR_INICIAL);
-        pb.createAtributo(MTipoSimples.class, ATR_DEFAULT_IF_NULL);
+        pb.createTipoAtributo(MTipoSimples.class, ATR_VALOR_INICIAL);
+        pb.createTipoAtributo(MTipoSimples.class, ATR_DEFAULT_IF_NULL);
 
         pb.getAtributo(ATR_OBRIGATORIO).withDefaultValueIfNull(false);
 
-        pb.createAtributo(MTipoString.class, ATR_TRIM).withDefaultValueIfNull(true);
-        pb.createAtributo(MTipoString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
+        pb.createTipoAtributo(MTipoString.class, ATR_TRIM).withDefaultValueIfNull(true);
+        pb.createTipoAtributo(MTipoString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
 
         pb.createTipo(MTipoFormula.class);
-        pb.createAtributo(MTipoSimples.class, ATR_FORMULA);
+        pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
     }
 }

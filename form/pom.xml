@@ -15,4 +15,20 @@
     <name>[singular :: form]</name>
     <packaging>jar</packaging>
 
+    <properties>
+    	<wicket.version>7.0.0</wicket.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-core</artifactId>
+            <version>${wicket.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
 </project>

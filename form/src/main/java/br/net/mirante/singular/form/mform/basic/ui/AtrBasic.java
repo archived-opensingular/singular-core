@@ -24,4 +24,28 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
+    public AtrBasic multiLinha(Boolean valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
+        return this;
+    }
+
+    public String getLabel() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_LABEL);
+    }
+
+    public Integer getTamanhoEdicao() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO);
+    }
+
+    public Integer getTamanhoMaximo() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO);
+    }
+
+    public Boolean isVisivel() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
+    }
+
+    public Boolean isMultiLinha() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_MULTI_LINHA);
+    }
 }
