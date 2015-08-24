@@ -50,17 +50,23 @@ public class PacoteBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    public <T extends MTipo<?>> MAtributo addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr) {
-        return addAtributo(classeTipo, atr, dicionario.getTipo(atr.getClasseTipo()));
+    public <T extends MTipo<?>> void addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr) {
+        addAtributoInterno(classeTipo, atr);
     }
 
     @SuppressWarnings("rawtypes")
-    public <T extends MTipo<?>> MAtributo addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr, T tipoAtributo) {
+    public <T extends MTipo<?>> void addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr, Object valorAtributo) {
+        MAtributo atributo = addAtributoInterno(classeTipo, atr);
+        MTipo<?> tipoAlvo = dicionario.getTipo(classeTipo);
+        tipoAlvo.setValorAtributo(atributo, valorAtributo);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private <T extends MTipo<?>> MAtributo addAtributoInterno(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr) {
         MTipo<?> tipoAlvo = dicionario.getTipo(classeTipo);
 
         MAtributo atributo = findAtributo(atr);
         tipoAlvo.addAtributo(atributo);
-
         return atributo;
     }
 
@@ -78,6 +84,8 @@ public class PacoteBuilder {
     }
 
     private MAtributo getAtributoOpcional(AtrRef<?, ?, ?> atr) {
+        dicionario.garantirPacoteCarregado(atr.getClassePacote());
+
         if (!atr.isBinded()) {
             return null;
         }
@@ -88,17 +96,17 @@ public class PacoteBuilder {
         return (MAtributo) tipo;
     }
 
-    public <T extends MTipo<?>> MAtributo createAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr) {
+    public <T extends MTipo<?>> MAtributo createTipoAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr) {
         T tipoAtributo;
         if (atr.isSelfReference()) {
             tipoAtributo = (T) dicionario.getTipo(classeAlvo);
         } else {
             tipoAtributo = (T) dicionario.getTipo(atr.getClasseTipo());
         }
-        return createAtributo(classeAlvo, atr, tipoAtributo);
+        return createTipoAtributo(classeAlvo, atr, tipoAtributo);
     }
 
-    public MAtributo createAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, Class<? extends MTipo<?>> classeTipoAtributo) {
+    public MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, Class<? extends MTipo<?>> classeTipoAtributo) {
         MTipo<?> tipoAtributo = dicionario.getTipo(classeTipoAtributo);
 
         if (tipoAlvo.getPacote() == pacote) {
@@ -113,7 +121,7 @@ public class PacoteBuilder {
         }
     }
 
-    public <T extends MTipo<?>> MAtributo createAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr, T tipoAtributo) {
+    public <T extends MTipo<?>> MAtributo createTipoAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr, T tipoAtributo) {
         MTipo<?> tipoAlvo = dicionario.getTipo(classeAlvo);
 
         if (tipoAlvo.getPacote() == pacote) {
@@ -139,14 +147,14 @@ public class PacoteBuilder {
         return novo;
     }
 
-    public <T extends MTipo<?>> MAtributo createAtributo(AtrRef<T, ?, ?> atr) {
+    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
         if (atr.isSelfReference()) {
             throw new RuntimeException("Não pode ser criado um atributo global que seja selfReference");
         }
-        return createAtributo(atr, dicionario.getTipo(atr.getClasseTipo()));
+        return createTipoAtributo(atr, dicionario.getTipo(atr.getClasseTipo()));
     }
 
-    public <T extends MTipo<?>> MAtributo createAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
+    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
         resolverBind(pacote, null, atr, tipoAtributo);
         dicionario.getTiposInterno().vericaNaoDeveEstarPresente(atr.getNomeCompleto());
 
@@ -159,7 +167,7 @@ public class PacoteBuilder {
             atr.bind(escopo.getNome());
         } else {
             throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNomeSimples() + "' do pacote " + atr.getClassePacote().getName()
-                    + " durante a construção do pacote " + pacote.getNome());
+ + " durante a construção do pacote " + pacote.getNome());
         }
         if (!atr.isSelfReference() && !(atr.getClasseTipo().isInstance(tipoAtributo))) {
             throw new RuntimeException("O atributo " + atr.getNomeCompleto() + " esperava ser do tipo " + atr.getClasseTipo().getName()

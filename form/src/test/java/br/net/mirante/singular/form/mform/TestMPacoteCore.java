@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 
-import junit.framework.TestCase;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
@@ -16,7 +15,7 @@ import br.net.mirante.singular.form.mform.core.MTipoFormula;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
-public class TestMPacoteCore extends TestCase {
+public class TestMPacoteCore extends TestCaseForm {
 
     public void testBasicLoad() {
         MDicionario.create();
@@ -105,7 +104,7 @@ public class TestMPacoteCore extends TestCase {
         testarAtribuicao(tipoS, true, " true ", "true");
     }
 
-    private void testarAtribuicao(MTipoSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
+    private static void testarAtribuicao(MTipoSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
         MISimples<?> instancia = tipo.novaInstancia();
         if (valorValido) {
             instancia.setValor(valor);
@@ -120,8 +119,7 @@ public class TestMPacoteCore extends TestCase {
             Assert.assertEquals(valorFinalEsperado, instancia.getValor());
 
             assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
-                    "não consegue converter",
-                    "Deveria dar erro de conversão");
+                    "não consegue converter", "Deveria dar erro de conversão");
         }
     }
 
@@ -136,69 +134,35 @@ public class TestMPacoteCore extends TestCase {
         Assert.assertNull(tipoB.getValorAtributo(MPacoteCore.ATR_DEFAULT_IF_NULL));
         Assert.assertNull(tipoI.getValorAtributo(MPacoteCore.ATR_DEFAULT_IF_NULL));
 
-        assertException(() -> tipoS.withDefaultValueIfNull(new Integer(1)), "abstrato", "Não deveria ser possível atribuir valor em um isntancia abstrata");
+        assertException(() -> tipoS.withDefaultValueIfNull(new Integer(1)), "abstrato",
+                "Não deveria ser possível atribuir valor em um isntancia abstrata");
 
-        Assert.assertEquals(null, tipoS.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(null, tipoB.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(null, tipoI.getValorAtributoDefaultValueIfNull());
+        Assert.assertEquals(null, tipoS.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(null, tipoB.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(null, tipoI.getValorAtributoOrDefaultValueIfNull());
 
         tipoI.withDefaultValueIfNull(new Integer(2));
 
-        Assert.assertEquals(null, tipoS.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(null, tipoB.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(2, tipoI.getValorAtributoDefaultValueIfNull());
+        Assert.assertEquals(null, tipoS.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(null, tipoB.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(2, tipoI.getValorAtributoOrDefaultValueIfNull());
 
         tipoB.withDefaultValueIfNull(true);
 
-        Assert.assertEquals(null, tipoS.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(true, tipoB.getValorAtributoDefaultValueIfNull());
-        Assert.assertEquals(2, tipoI.getValorAtributoDefaultValueIfNull());
+        Assert.assertEquals(null, tipoS.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(true, tipoB.getValorAtributoOrDefaultValueIfNull());
+        Assert.assertEquals(2, tipoI.getValorAtributoOrDefaultValueIfNull());
 
         try {
             tipoB.withDefaultValueIfNull("RR");
-            assertEquals(true, tipoB.getValorAtributoDefaultValueIfNull());
+            assertEquals(true, tipoB.getValorAtributoOrDefaultValueIfNull());
             fail("Deveria ocorrer Exception ao atribuir um valor incorreto");
         } catch (RuntimeException e) {
             if (!e.getMessage().contains("não consegue converter")) {
                 throw e;
             }
         }
-        assertEquals(true, tipoB.getValorAtributoDefaultValueIfNull());
-    }
-
-    public void testAtributoValorInicial() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipo<MIString> tipo = pb.createTipo("local", MTipoString.class).withValorInicial("aqui");
-        MTipoString tipoString = dicionario.getTipoOpcional(MTipoString.class);
-
-        assertEquals("aqui", tipo.getValorAtributoValorInicial());
-        assertEquals(null, tipoString.getValorAtributoValorInicial());
-
-        MIString i1 = tipo.novaInstancia();
-        assertEquals("aqui", i1.getValor());
-
-        tipo.withValorInicial("la");
-        assertEquals("aqui", i1.getValor());
-        assertEquals("la", tipo.getValorAtributoValorInicial());
-        assertEquals("la", tipo.novaInstancia().getValor());
-
-        tipo.withValorInicial("none");
-        assertEquals("none", tipo.getValorAtributoValorInicial());
-        assertEquals("none", tipo.novaInstancia().getValor());
-
-        tipo.withValorInicial(null);
-        assertEquals(null, tipo.getValorAtributoValorInicial());
-        assertEquals(null, tipo.novaInstancia().getValor());
-
-        tipoString.withValorInicial("X");
-        assertEquals("X", tipoString.novaInstancia().getValor());
-        assertEquals(null, tipo.novaInstancia().getValor());
-
-        tipo.withValorInicial("Y");
-        assertEquals("X", tipoString.novaInstancia().getValor());
-        assertEquals("Y", tipo.novaInstancia().getValor());
+        assertEquals(true, tipoB.getValorAtributoOrDefaultValueIfNull());
     }
 
     public void testCriacaoDuplicada() {
@@ -217,7 +181,7 @@ public class TestMPacoteCore extends TestCase {
         // MIString.class, String.class);
 
         MTipoString tipoX = pb.createTipo("XXXXX", MTipoString.class);
-        MAtributo atributo = pb.createAtributo(tipoX, "atTeste", MTipoString.class);
+        MAtributo atributo = pb.createTipoAtributo(tipoX, "atTeste", MTipoString.class);
 
         assertNull(pb.getPacote().getTipoLocalOpcional("YYYYYYY"));
 
@@ -256,7 +220,7 @@ public class TestMPacoteCore extends TestCase {
 
         @Override
         protected void carregarDefinicoes(PacoteBuilder pb) {
-            pb.createAtributo(ATR_XX);
+            pb.createTipoAtributo(ATR_XX);
             pb.addAtributo(MTipo.class, ATR_XX);
 
             pb.createTipo(TestTipoA.class);
@@ -294,7 +258,7 @@ public class TestMPacoteCore extends TestCase {
         protected void carregarDefinicoes(PacoteBuilder pb) {
             pb.createTipo("TestTipoB", TestTipoA.class);
 
-            pb.createAtributo(MTipo.class, ATR_LABEL_Y);
+            pb.createTipoAtributo(MTipo.class, ATR_LABEL_Y);
         }
 
     }
@@ -327,24 +291,53 @@ public class TestMPacoteCore extends TestCase {
         MIInteger instancia = dicionario.novaInstancia(TestTipoA.class);
         instancia.setValor(10);
         assertEquals((Integer) 10, instancia.getValor());
-        assertTrue(dicionario.getPacotes().stream().anyMatch(p -> p.getNome().equals("teste.pacoteA")));
-        assertNotNull(dicionario.getTipoOpcional("teste.pacoteA.TestTipoAA"));
+        assertCargaPacoteA(dicionario, true);
     }
 
     public void testCargaAutomaticaPacotePorUsarUmAtributo() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
+        assertCargaPacoteA(dicionario, false);
+
         MTipo<MIString> tipoEndereco = pb.createTipo("endereco", MTipoString.class).with(TestPacoteA.ATR_XX, 10);
+
+        assertCargaPacoteA(dicionario, true);
 
         assertEquals((Integer) 10, tipoEndereco.getValorAtributo(TestPacoteA.ATR_XX));
         assertEquals(null, dicionario.getTipoOpcional(MTipoString.class).getValorAtributo(TestPacoteA.ATR_XX));
         assertEquals(null, dicionario.getTipoOpcional(MTipoSimples.class).getValorAtributo(TestPacoteA.ATR_XX));
         assertEquals(null, dicionario.getTipoOpcional(MTipo.class).getValorAtributo(TestPacoteA.ATR_XX));
+    }
 
-        assertTrue(dicionario.getPacotes().stream().anyMatch(p -> p.getNome().equals("teste.pacoteA")));
-        assertNotNull(dicionario.getTipoOpcional("teste.pacoteA.TestTipoAA"));
-        assertNotNull(dicionario.getTipoOpcional("teste.pacoteA.xx"));
+    public void testCargaAutomaticaPacotePorDarAddEmUmAtributo() {
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+
+        assertCargaPacoteA(dicionario, false);
+        pb.addAtributo(MTipoInteger.class, TestPacoteA.ATR_XX);
+        assertCargaPacoteA(dicionario, true);
+    }
+
+    public void testCargaAutomaticaPacotePorLerUmAtributo() {
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+
+        assertCargaPacoteA(dicionario, false);
+        assertEquals(null, dicionario.getTipo(MTipoString.class).getValorAtributo(TestPacoteA.ATR_XX));
+        assertCargaPacoteA(dicionario, true);
+    }
+
+    private static void assertCargaPacoteA(MDicionario dicionario, boolean carregado) {
+        if (carregado) {
+            assertTrue(dicionario.getPacotes().stream().anyMatch(p -> p.getNome().equals("teste.pacoteA")));
+            assertNotNull(dicionario.getTipoOpcional("teste.pacoteA.TestTipoAA"));
+            assertNotNull(dicionario.getTipoOpcional("teste.pacoteA.xx"));
+        } else {
+            assertFalse(dicionario.getPacotes().stream().anyMatch(p -> p.getNome().equals("teste.pacoteA")));
+            assertNull(dicionario.getTipoOpcional("teste.pacoteA.TestTipoAA"));
+            assertNull(dicionario.getTipoOpcional("teste.pacoteA.xx"));
+        }
     }
 
     public void testSeTipoBaseadoEmClasseCarregaConfiguracaoInternaDaClasse() {
@@ -354,48 +347,8 @@ public class TestMPacoteCore extends TestCase {
 
         assertEquals((Boolean) true, tipo.isObrigatorio());
         assertEquals((Integer) 10, tipo.getValorAtributoValorInicial());
-        assertEquals((Integer) 11, tipo.getValorAtributoDefaultValueIfNull());
+        assertEquals((Integer) 11, tipo.getValorAtributoOrDefaultValueIfNull());
         assertEquals((Integer) 12, tipo.getValorAtributo(TestPacoteA.ATR_XX));
-    }
-
-    public void testRefenciaCircularDePacotes() {
-        Assert.fail("implementar");
-    }
-
-    public void testCriarDoisAtributosComMesmoNome() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipoString tipo = pb.createTipo("X", MTipoString.class);
-        pb.createAtributo(tipo, "a", MTipoInteger.class);
-        assertException(() -> pb.createAtributo(tipo, "a", MTipoString.class), "já está criada",
-                "Deveria ter ocorrido uma exception por ter dois atributo com mesmo nome criado pelo mesmo pacote");
-    }
-
-    public void testCriarDoisAtributosDePacotesDiferentesComMesmoNome() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
-
-        MTipoSimples<?, ?> tipo = pb1.createTipo("X", MTipoSimples.class);
-        MAtributo at1 = pb1.createAtributo(tipo, "a", MTipoInteger.class);
-
-        PacoteBuilder pb2 = dicionario.criarNovoPacote("teste2");
-        MAtributo at2 = pb2.createAtributo(tipo, "a", MTipoInteger.class);
-
-        assertException(() -> pb2.createAtributo(dicionario.getTipo(MTipoSimples.class), "a", MTipoInteger.class), "já está criada");
-
-        assertEquals("teste1.X.a", at1.getNome());
-        assertEquals("teste2.a", at2.getNome());
-
-        tipo.setValorAtributo(at1.getNome(), 1);
-        tipo.setValorAtributo(at2.getNome(), 2);
-        assertEquals((Integer) 1, tipo.getValorAtributo(at1.getNome()));
-        assertEquals((Integer) 2, tipo.getValorAtributo(at2.getNome()));
-
-        tipo.setValorAtributo(at1, 10);
-        tipo.setValorAtributo(at2, 20);
-        assertEquals((Integer) 10, tipo.getValorAtributo(at1.getNome()));
-        assertEquals((Integer) 20, tipo.getValorAtributo(at2.getNome()));
     }
 
     public void testCargaTipoNoPacoteTrocado() {
@@ -409,21 +362,8 @@ public class TestMPacoteCore extends TestCase {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        assertException(() -> pb.createAtributo(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
+        assertException(() -> pb.createTipoAtributo(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
-    }
-
-    public void testCriacaoNovosAtributosNosPacotesCerto() {
-        MDicionario dicionario = MDicionario.create();
-        dicionario.carregarPacote(TestPacoteB.class);
-
-        assertEquals("teste.pacoteB.yy", TestPacoteB.ATR_LABEL_Y.getNomeCompleto());
-
-        MTipo<?> tipoAtributo = dicionario.getTipo(TestPacoteB.ATR_LABEL_Y.getNomeCompleto());
-        assertNotNull(tipoAtributo);
-        assertEquals("teste.pacoteB.yy", tipoAtributo.getNome());
-        assertEquals("teste.pacoteB", tipoAtributo.getPacote().getNome());
-        assertEquals("teste.pacoteB", tipoAtributo.getEscopoPai().getNome());
     }
 
     public void testTipoCompostoCriacao() {
@@ -435,7 +375,7 @@ public class TestMPacoteCore extends TestCase {
         tipoEndereco.addCampoString("bairro", true);
         tipoEndereco.addCampoInteger("cep", true);
 
-        MTipoComposto tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
+        MTipoComposto<?> tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
         tipoClassificacao.addCampoInteger("prioridade");
         tipoClassificacao.addCampoString("descricao");
 
@@ -487,50 +427,6 @@ public class TestMPacoteCore extends TestCase {
         assertEquals(valor, registro.getValor(path));
     }
 
-    public void testTipoCompostoReusoTipo() {
-        fail("Implementar");
-    }
-
-    public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {
-        // Testar ser o campos de valor são criados com o valor inicial correto
-        fail("Implementar");
-    }
-
-    private static void assertException(Runnable acao, String trechoMsgEsperada) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
-    }
-
-    private static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
-        assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
-    }
-
-    private static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
-        assertException(acao, exceptionEsperada, null, null);
-    }
-
-    private static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
-            String msgFailException) {
-        try {
-            acao.run();
-            String msg = "Não ocorreu nenhuma Exception. Era esperado " + exceptionEsperada.getSimpleName() + "'";
-            if (trechoMsgEsperada != null) {
-                msg += " com mensagem contendo '" + trechoMsgEsperada + "'";
-            }
-            if (msgFailException != null) {
-                msg += ", pois " + msgFailException;
-            }
-            fail(msg);
-        } catch (Exception e) {
-            if (exceptionEsperada.isInstance(e)) {
-                if (trechoMsgEsperada == null || e.getMessage().contains(trechoMsgEsperada)) {
-                    return;
-                }
-            }
-            throw e;
-        }
-
-    }
-
     private static void assertLista(MILista lista, Object[] valoresEsperados) {
         assertEquals(valoresEsperados.length, lista.size());
         for (int i = 0; i < valoresEsperados.length; i++) {
@@ -560,7 +456,7 @@ public class TestMPacoteCore extends TestCase {
         assertException(() -> lista.addValor(""), "Não é permitido");
         assertException(() -> lista.addNovo(), "não é um tipo composto");
 
-        MILista<MIInteger> listaInt = dicionario.getTipo(MTipoInteger.class).novaLista();
+        MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] {10});
         listaInt.addValor("20");

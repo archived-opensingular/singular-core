@@ -16,7 +16,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
     public TIPO_NATIVO getValorWithDefault() {
         TIPO_NATIVO v = getValor();
         if (v == null) {
-            return getMTipo().converter(getMTipo().getValorAtributoDefaultValueIfNull());
+            return getMTipo().converter(getMTipo().getValorAtributoOrDefaultValueIfNull());
         }
         return v;
     }

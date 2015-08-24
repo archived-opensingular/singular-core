@@ -41,7 +41,7 @@ public class MDicionario implements IContextoTipo {
     }
 
     final <T extends MPacote> void garantirPacoteCarregado(Class<T> classePacote) {
-        if (pacotes.get(classePacote) == null) {
+        if (classePacote != null && pacotes.get(classePacote) == null) {
             carregarPacote(classePacote);
         }
     }
@@ -58,7 +58,8 @@ public class MDicionario implements IContextoTipo {
     private static Class<? extends MPacote> getAnotacaoPacote(Class<?> classeAlvo) {
         Class<? extends MPacote> pacote = getAnotacaoMFormTipo(classeAlvo).pacote();
         if (pacote == null) {
-            throw new RuntimeException("O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
+            throw new RuntimeException(
+                    "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
                     + MFormTipo.class.getSimpleName());
         }
         return pacote;

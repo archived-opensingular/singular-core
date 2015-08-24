@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -9,8 +12,15 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private MTipo<?> mTipo;
 
+    private Map<String, MInstancia> atributos;
+
     public MTipo<?> getMTipo() {
         return mTipo;
+    }
+
+    @Override
+    public MDicionario getDicionario() {
+        return getMTipo().getDicionario();
     }
 
     final void setPai(MInstancia pai) {
@@ -89,7 +99,33 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        throw new RuntimeException("implementar");
+        MInstancia instanciaAtr = null;
+        if (atributos == null) {
+            atributos = new HashMap<>();
+        } else {
+            instanciaAtr = atributos.get(atr.getNomeCompleto());
+        }
+        if (instanciaAtr == null) {
+            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(atr.getNomeCompleto());
+            instanciaAtr = tipoAtributo.novaInstancia();
+            atributos.put(atr.getNomeCompleto(), instanciaAtr);
+        }
+        if (subPath != null) {
+            instanciaAtr.setValor(subPath, valor);
+        } else {
+            instanciaAtr.setValor(valor);
+        }
+    }
+
+    @Override
+    public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino) {
+        if (atributos != null) {
+            MInstancia inst = atributos.get(nomeCompleto);
+            if (inst != null) {
+                return inst.getValor(classeDestino);
+            }
+        }
+        return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
     }
 
     public <K extends MInstancia> K getPai(MTipo<K> tipoPai) {
