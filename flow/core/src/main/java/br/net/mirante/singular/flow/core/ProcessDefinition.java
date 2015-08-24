@@ -117,17 +117,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     protected abstract FlowMap createFlowMap();
 
     public final FlowMap getFlowMap() {
-        if (flowMap == null) {
-            synchronized (this) {
-                if (flowMap == null) {
-                    FlowMap novo = createFlowMap();
+        synchronized (this) {
+            if (flowMap == null) {
+                FlowMap novo = createFlowMap();
 
-                    Preconditions.checkArgument(novo.getProcessDefinition() == this, "Mapa com definiçao trocada");
+                Preconditions.checkArgument(novo.getProcessDefinition() == this, "Mapa com definiçao trocada");
 
-                    novo.verifyConsistency();
-                    flowMap = novo;
-                    MBPMUtil.calculateTaskOrder(flowMap);
-                }
+                novo.verifyConsistency();
+                flowMap = novo;
+                MBPMUtil.calculateTaskOrder(flowMap);
             }
         }
         return flowMap;
