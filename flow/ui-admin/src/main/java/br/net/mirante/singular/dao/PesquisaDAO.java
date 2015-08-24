@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 public class PesquisaDAO {
 
     private enum columns {
+        cod("d.cod"),
         name("d.nome"),
         category("c.nome"),
         version("1");
@@ -47,15 +48,13 @@ public class PesquisaDAO {
         }
 
         Query query = getSession().createSQLQuery(
-                "select c.cod as COD, d.nome as NOME, c.nome as CATEGORIA, count(d.cod) as QUANTIDADE"
+                "select d.cod as COD, d.nome as NOME, c.nome as CATEGORIA"
                         + " from dbo.DMD_definicao d"
-                        + " inner join dbo.DMD_CATEGORIA c ON c.cod = d.cod_categoria"
-                        + " group by c.cod, d.nome, c.nome "
+                        + " inner join dbo.DMD_CATEGORIA c ON c.cod = d.cod_categoria "
                         + orderByStatement.toString())
                 .addScalar("COD", LongType.INSTANCE)
                 .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("CATEGORIA", StringType.INSTANCE)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+                .addScalar("CATEGORIA", StringType.INSTANCE);
 
         query.setFirstResult(first);
         query.setMaxResults(size);
