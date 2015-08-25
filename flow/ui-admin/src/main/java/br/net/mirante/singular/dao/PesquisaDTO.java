@@ -6,12 +6,14 @@ public class PesquisaDTO implements Serializable {
 
     private Long cod;
     private String nome;
+    private String sigla;
     private String categoria;
     private Long version;
 
-    public PesquisaDTO(Long cod, String nome, String categoria) {
+    public PesquisaDTO(Long cod, String nome, String sigla, String categoria) {
         this.cod = cod;
         this.nome = nome;
+        this.sigla = sigla;
         this.categoria = categoria;
         this.version = 1L;
     }
@@ -30,6 +32,14 @@ public class PesquisaDTO implements Serializable {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getSigla() {
+        return sigla;
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
     }
 
     public String getCategoria() {

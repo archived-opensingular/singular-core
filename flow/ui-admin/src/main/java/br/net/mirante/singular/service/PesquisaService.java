@@ -24,7 +24,7 @@ public class PesquisaService {
     public List<PesquisaDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         List<Object[]> results = pesquisaDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
-                .map(o -> new PesquisaDTO((Long) o[0], (String) o[1], (String) o[2]))
+                .map(o -> new PesquisaDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3]))
                 .collect(Collectors.toList());
     }
 

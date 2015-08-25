@@ -48,12 +48,13 @@ public class PesquisaDAO {
         }
 
         Query query = getSession().createSQLQuery(
-                "select d.cod as COD, d.nome as NOME, c.nome as CATEGORIA"
+                "select d.cod as COD, d.nome as NOME, d.sigla as SIGLA, c.nome as CATEGORIA"
                         + " from dbo.DMD_definicao d"
                         + " inner join dbo.DMD_CATEGORIA c ON c.cod = d.cod_categoria "
                         + orderByStatement.toString())
                 .addScalar("COD", LongType.INSTANCE)
                 .addScalar("NOME", StringType.INSTANCE)
+                .addScalar("SIGLA", StringType.INSTANCE)
                 .addScalar("CATEGORIA", StringType.INSTANCE);
 
         query.setFirstResult(first);
