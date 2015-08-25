@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.dao.PesquisaDAO;
 import br.net.mirante.singular.dao.PesquisaDTO;
@@ -32,9 +33,12 @@ public class PesquisaService {
         return pesquisaDAO.countAll();
     }
 
-    public byte[] retrieveProcessDiagram() {
+    public byte[] retrieveProcessDiagram(String sigla) {
         RestTemplate restTemplate = new RestTemplate();
-        String encodedImage = restTemplate.getForObject("http://localhost:8080/alocpro/rest/diagram", String.class);
+        UriComponentsBuilder uriComponentsBuilder =
+                UriComponentsBuilder.fromHttpUrl("http://localhost:8080/alocpro/rest/diagram")
+                        .queryParam("sigla", sigla);
+        String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
         return Base64.getDecoder().decode(encodedImage);
     }
 }
