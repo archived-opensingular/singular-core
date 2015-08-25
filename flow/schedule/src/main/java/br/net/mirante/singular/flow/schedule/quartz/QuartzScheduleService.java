@@ -29,7 +29,10 @@ public class QuartzScheduleService implements IScheduleService {
     @Override
     public void schedule(IScheduledJob scheduledJob) {
         try {
-            Trigger trigger = QuartzTriggerFactory.newTrigger().forJob(scheduledJob::run).withScheduleData(scheduledJob.getScheduleData()).build();
+            Trigger trigger = QuartzTriggerFactory.newTrigger()
+                .withIdentity(scheduledJob.getId())
+                .forJob(scheduledJob::run)
+                .withScheduleData(scheduledJob.getScheduleData()).build();
 
             getScheduler().scheduleJob(trigger);
         } catch (Exception e) {
