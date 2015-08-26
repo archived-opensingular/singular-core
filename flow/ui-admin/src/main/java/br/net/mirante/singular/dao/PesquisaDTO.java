@@ -10,15 +10,18 @@ public class PesquisaDTO implements Serializable {
     private String categoria;
     private Long quantidade;
     private Long tempoMedio;
+    private Long throughput;
     private Long version;
 
-    public PesquisaDTO(Long cod, String nome, String sigla, String categoria, Long quantidade, Long tempoMedio) {
+    public PesquisaDTO(Long cod, String nome, String sigla, String categoria,
+            Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;
         this.nome = nome;
         this.sigla = sigla;
         this.categoria = categoria;
         this.quantidade = quantidade;
         this.tempoMedio = tempoMedio;
+        this.throughput = throughput;
         this.version = 1L;
     }
 
@@ -122,6 +125,14 @@ public class PesquisaDTO implements Serializable {
             time.append(days).append(" d ");
         }
         return time;
+    }
+
+    public Long getThroughput() {
+        return throughput;
+    }
+
+    public void setThroughput(Long throughput) {
+        this.throughput = throughput;
     }
 
     public Long getVersion() {

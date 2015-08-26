@@ -22,6 +22,7 @@ public class PesquisaDAO {
         category("CATEGORIA"),
         quantity("QUANTIDADE"),
         time("TEMPO"),
+        throu("THROU"),
         version("1");
 
         String code;
@@ -52,7 +53,13 @@ public class PesquisaDAO {
         }
 
         String sql = "SELECT DEF.cod AS CODIGO, DEF.nome AS NOME, DEF.sigla AS SIGLA, CAT.nome AS CATEGORIA,"
-                + " COUNT(DEM.cod) AS QUANTIDADE, AVG(DATEDIFF(SECOND, DEM.data_inicio, DEM.data_fim)) AS TEMPO"
+                + " COUNT(DEM.cod) AS QUANTIDADE, AVG(DATEDIFF(SECOND, DEM.data_inicio, DEM.data_fim)) AS TEMPO,"
+                + "     (SELECT AVG(SUBDEM.THRO) FROM ("
+                + "       SELECT cod_definicao AS COD, MONTH(data_fim) AS MES, COUNT(cod) AS THRO"
+                + "       FROM DMD_DEMANDA"
+                + "       WHERE data_fim IS NOT NULL AND cod_definicao = DEF.cod"
+                + "       GROUP BY cod_definicao, MONTH(data_fim)"
+                + "     ) SUBDEM GROUP BY SUBDEM.COD) AS THROU"
                 + " FROM DMD_DEFINICAO DEF"
                 + "    INNER JOIN DMD_CATEGORIA CAT ON CAT.cod = DEF.cod_categoria"
                 + "  LEFT JOIN DMD_DEMANDA DEM ON DEF.cod = DEM.cod_definicao"
@@ -66,7 +73,8 @@ public class PesquisaDAO {
                 .addScalar("SIGLA", StringType.INSTANCE)
                 .addScalar("CATEGORIA", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
-                .addScalar("TEMPO", LongType.INSTANCE);
+                .addScalar("TEMPO", LongType.INSTANCE)
+                .addScalar("THROU", LongType.INSTANCE);
 
         query.setFirstResult(first);
         query.setMaxResults(size);
