@@ -129,6 +129,13 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Singular -->
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>flow-core</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

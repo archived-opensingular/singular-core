@@ -75,6 +75,8 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                 .appendPropertyColumn(getMessage("label.table.column.code"), "cod", PesquisaDTO::getCod)
                 .appendPropertyColumn(getMessage("label.table.column.name"), "name", PesquisaDTO::getNome)
                 .appendPropertyColumn(getMessage("label.table.column.category"), "category", PesquisaDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", PesquisaDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "time", PesquisaDTO::getTempoMedioString)
                 .appendPropertyColumn(getMessage("label.table.column.version"), "version", PesquisaDTO::getVersion)
                 .appendColumn(new BSActionColumn<PesquisaDTO, String>($m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
