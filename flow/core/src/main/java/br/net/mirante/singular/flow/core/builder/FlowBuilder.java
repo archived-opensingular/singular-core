@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core.builder;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -8,6 +7,7 @@ import java.util.function.Supplier;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
 import br.net.mirante.singular.flow.core.IRoleChangeListener;
+import br.net.mirante.singular.flow.core.ITaskPredicate;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
@@ -20,7 +20,6 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.ProcessScheduledJob;
 import br.net.mirante.singular.flow.core.RoleAccessStrategy;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
-import br.net.mirante.singular.flow.core.ITaskPredicate;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 
 public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_JAVA extends BJava<?>,
@@ -159,10 +158,6 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
 
     public ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
         return getFlowMap().addScheduledJob(name).call(impl);
-    }
-
-    public void deleteInstancesFinalizedOlderThan(int time, TimeUnit timeUnit) {
-        getFlowMap().deleteInstancesFinalizedOlderThan(time, timeUnit);
     }
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {

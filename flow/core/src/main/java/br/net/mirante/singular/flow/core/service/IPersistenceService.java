@@ -64,8 +64,6 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     void updateProcessDefinition(@NotNull PROCESS_DEFINITION processDefinition);
 
-    int deleteProcessInstancesWithStateOlderThan(@NotNull List<TASK_STATE> states, @NotNull Date olderThan);
-
     TaskHistoricLog saveTaskHistoricLog(@NotNull TASK task, String typeDescription, String detail, MUser allocatedUser, MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
 
     void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK originTask, TASK destinationTask, VarInstanceMap<?> instanceMap);

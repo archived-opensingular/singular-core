@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,8 +35,6 @@ public class FlowMap implements Serializable {
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private MTask<?> startTask;
-
-    private InstanceCleanupStrategy instanceCleanupStrategy;
 
     private IRoleChangeListener roleChangeListener;
 
@@ -257,28 +254,6 @@ public class FlowMap implements Serializable {
     //TODO refatorar
     final RuntimeException createError(String msg) {
         return new RuntimeException(getProcessDefinition() + " -> " + msg);
-    }
-
-    /**
-     * @deprecated Essas definições não estão associadas ao fluxo em si mas à definição, deveriam sair dessa classe
-     * @return
-     */
-    @Deprecated
-    //TODO refatorar remover
-    public InstanceCleanupStrategy deleteInstancesFinalizedOlderThan(int time, TimeUnit timeUnit) {
-        Preconditions.checkArgument(instanceCleanupStrategy == null, "Instance cleanup strategy already set");
-        instanceCleanupStrategy = new InstanceCleanupStrategy(this, time, timeUnit);
-        return instanceCleanupStrategy;
-    }
-
-    /**
-     * @deprecated Essas definições não estão associadas ao fluxo em si mas à definição, deveriam sair dessa classe
-     * @return
-     */
-    @Deprecated
-    //TODO refatorar remover
-    public InstanceCleanupStrategy getCleanupStrategy() {
-        return instanceCleanupStrategy;
     }
 
     protected VarService getVarService() {
