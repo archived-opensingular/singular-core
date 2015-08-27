@@ -8,6 +8,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -100,6 +101,11 @@ public class ProcessosContent extends Content implements SingularWicketContainer
 
         queue(diagramForm);
         queue(diagramModal.add(diagram.add(new NonCachingImage("image", imageModel))));
+    }
+
+    @Override
+    protected WebMarkupContainer getBreadcrumbLinks(String id) {
+        return new Fragment(id, "breadcrumbProcess", this);
     }
 
     @Override

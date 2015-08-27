@@ -39,6 +39,7 @@ public abstract class Content extends Panel {
         add(new Label("contentSubtitle", new ResourceModel(getContentSubtitlelKey())));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
+        breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
@@ -52,6 +53,10 @@ public abstract class Content extends Panel {
         } else {
             add(new WebMarkupContainer("_SideBar"));
         }
+    }
+
+    protected WebMarkupContainer getBreadcrumbLinks(String id) {
+        return new WebMarkupContainer(id);
     }
 
     protected abstract String getContentTitlelKey();
