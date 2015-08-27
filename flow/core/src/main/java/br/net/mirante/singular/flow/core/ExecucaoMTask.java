@@ -12,11 +12,6 @@ public class ExecucaoMTask {
 
     private VarInstanceMap<?> input;
 
-    @Deprecated
-    public ExecucaoMTask(ProcessInstance instanciaProcesso, VarInstanceMap<?> input) {
-        this(instanciaProcesso, null, input);
-    }
-
     public ExecucaoMTask(ProcessInstance instanciaProcesso, TaskInstance instanciaTarefa, VarInstanceMap<?> input) {
         this.instanciaProcesso = instanciaProcesso;
         this.instanciaTarefa = instanciaTarefa;

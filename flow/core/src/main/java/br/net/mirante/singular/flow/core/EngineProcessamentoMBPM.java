@@ -87,14 +87,14 @@ class EngineProcessamentoMBPM {
                         }
                     }
                 }
-                final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, paramIn);
+                final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
                 }
                 instanciaTarefa.getTipo().notifyTaskStart(instanciaTarefa, execucaoTask);
                 return instanciaTarefa;
             }
-            final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, paramIn);
+            final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
             instanciaTarefa.getTipo().notifyTaskStart(instanciaTarefa, execucaoTask);
 
             instancia.setContextoExecucao(execucaoTask);
@@ -115,7 +115,7 @@ class EngineProcessamentoMBPM {
     }
 
     public static void executarTransicaoAgendada(MTaskJava taskJava, ProcessInstance instancia) {
-        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, null);
+        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, instancia.getTarefaAtual(), null);
         instancia.setContextoExecucao(execucaoTask);
         try {
             taskJava.execute(execucaoTask);
@@ -156,14 +156,10 @@ class EngineProcessamentoMBPM {
             transicao = estadoAtual.getTransition(nomeTransicao);
             if (transicao == null) {
                 throw new RuntimeException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName() + "] não possui a transição '" + nomeTransicao
-                        + "' solicitada. As opções são: {" + listarTransicoes(estadoAtual) + '}');
+                        + "' solicitada. As opções são: {" + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
             }
         }
         return transicao;
-    }
-
-    private static String listarTransicoes(MTask<?> estadoAtual) {
-        return Joiner.on(',').join(estadoAtual.getTransitions());
     }
 
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {

@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 
 public class ProcessScheduledJob implements IScheduledJob {
 
-    private final FlowMap mapa;
+    private final Class<? extends ProcessDefinition<?>> processDefinition;
 
     private final String name;
 
@@ -19,9 +19,10 @@ public class ProcessScheduledJob implements IScheduledJob {
 
     private IScheduleData scheduleData;
 
-    ProcessScheduledJob(FlowMap mapa, String name) {
+    @SuppressWarnings("unchecked")
+    ProcessScheduledJob(ProcessDefinition<?> processDefinition, String name) {
         Objects.requireNonNull(name);
-        this.mapa = mapa;
+        this.processDefinition = (Class<? extends ProcessDefinition<?>>) processDefinition.getClass();
         this.name = name;
     }
 
@@ -57,7 +58,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public String getId() {
-        return mapa.getProcessDefinition().getAbbreviation() + "::" + getName() + "()";
+        return MBPM.getDefinicao(processDefinition).getAbbreviation() + "::" + getName() + "()";
     }
 
     public IScheduleData getScheduleData() {

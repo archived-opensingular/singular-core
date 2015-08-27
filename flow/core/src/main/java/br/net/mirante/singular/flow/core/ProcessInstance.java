@@ -160,31 +160,25 @@ public abstract class ProcessInstance {
     }
 
     /**
-     * @deprecated A exeção é criada no create error e não é lançada
      * @param nomeEstado
      * @return
      */
-    @Deprecated
-    //TODO corrigir
     public boolean isNomeEstado(String nomeEstado) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithName(nomeEstado);
         if (task == null) {
-            getDefinicao().getFlowMap().createError("Não existe task com nome '" + nomeEstado + "'");
+            throw getDefinicao().getFlowMap().createError("Não existe task com nome '" + nomeEstado + "'");
         }
         return getEstado().equals(task);
     }
 
     /**
-     * @deprecated A exeção é criada no create error e não é lançada
      * @param sigla
      * @return
      */
-    @Deprecated
-    //TODO corrigir
     public boolean isSiglaEstado(String sigla) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithAbbreviation(sigla);
         if (task == null) {
-            getDefinicao().getFlowMap().createError("Não existe task com sigla '" + sigla + "'");
+            throw getDefinicao().getFlowMap().createError("Não existe task com sigla '" + sigla + "'");
         }
         return getEstado().equals(task);
     }
@@ -212,7 +206,7 @@ public abstract class ProcessInstance {
         return null;
     }
 
-    public final Lnk getHrefPadrao() {
+    public final Lnk getDefaultHref() {
         return MBPM.getDefaultHrefFor(this);
     }
 
@@ -237,7 +231,7 @@ public abstract class ProcessInstance {
         return sb.toString();
     }
 
-    public final boolean possuiDireitoExecucao(MUser user) {
+    public final boolean canExecuteTask(MUser user) {
         if (getEstado() == null) {
             return false;
         }
@@ -245,13 +239,13 @@ public abstract class ProcessInstance {
             case People:
             case Wait:
                 return (isAlocado(user.getCod()))
-                        || (getEstrategiaAcesso() != null && getEstrategiaAcesso().canExecute(this, user));
+                        || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
             default:
                 return false;
         }
     }
 
-    public boolean possuiDireitoVisualizacao(MUser user) {
+    public boolean canVisualize(MUser user) {
         switch (getInternalEntity().getSituacao().getTipoTarefa()) {
             case People:
             case Wait:
@@ -260,15 +254,15 @@ public abstract class ProcessInstance {
                 }
             default:
         }
-        return getEstrategiaAcesso() != null && getEstrategiaAcesso().canVisualize(this, user);
+        return getAccessStrategy() != null && getAccessStrategy().canVisualize(this, user);
     }
 
     public Set<Integer> getFirstLevelUsersCodWithAccess() {
-        return getEstrategiaAcesso().getFirstLevelUsersCodWithAccess(this);
+        return getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
     public List<MUser> listAllocableUsers() {
-        return getEstrategiaAcesso().listAllocableUsers(this);
+        return getAccessStrategy().listAllocableUsers(this);
     }
 
     /**
@@ -281,7 +275,7 @@ public abstract class ProcessInstance {
     }
 
     @SuppressWarnings("rawtypes")
-    private TaskAccessStrategy getEstrategiaAcesso() {
+    private TaskAccessStrategy getAccessStrategy() {
         return getEstado().getAccessStrategy();
     }
 
@@ -574,9 +568,9 @@ public abstract class ProcessInstance {
         return demanda.getTarefas().stream().map(this::getTarefa).collect(Collectors.toList());
     }
 
-    private TaskInstance procurarUmFiltroPorDadosTarefa(boolean procuraAPartirDoFim, Predicate<IEntityTaskInstance> condicao) {
+    private TaskInstance findFirstTaskInstance(boolean searchFromEnd, Predicate<IEntityTaskInstance> condicao) {
         List<? extends IEntityTaskInstance> lista = getEntity().getTarefas();
-        if (procuraAPartirDoFim) {
+        if (searchFromEnd) {
             lista = Lists.reverse(lista);
         }
 
@@ -588,31 +582,31 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance getUltimaTarefa() {
-        return procurarUmFiltroPorDadosTarefa(true, t -> true);
+        return findFirstTaskInstance(true, t -> true);
     }
 
     public TaskInstance getTarefaAtual() {
-        return procurarUmFiltroPorDadosTarefa(true, ProcessInstance::isTarefaAtiva);
+        return findFirstTaskInstance(true, ProcessInstance::isTarefaAtiva);
     }
 
     public TaskInstance getTarefaMaisRecenteComNome(final String nomeTipo) {
-        return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getLatestTask() {
-        return procurarUmFiltroPorDadosTarefa(true, tarefa -> true);
+        return findFirstTaskInstance(true, tarefa -> true);
     }
 
     public TaskInstance getUltimaTarefaConcluidaComNome(final String nomeTipo) {
-        return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getUltimaTarefaConcluidaTipo(final MTask<?> tipo) {
-        return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getSigla().equalsIgnoreCase(tipo.getAbbreviation()));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getSigla().equalsIgnoreCase(tipo.getAbbreviation()));
     }
 
     public TaskInstance getUltimaTarefaConcluida(final TaskType tipoTarefa) {
-        return procurarUmFiltroPorDadosTarefa(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getTipoTarefa().equals(tipoTarefa));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getTipoTarefa().equals(tipoTarefa));
     }
 
     protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {

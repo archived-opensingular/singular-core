@@ -2,7 +2,6 @@ package br.net.mirante.singular.flow.core.builder;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
@@ -17,7 +16,6 @@ import br.net.mirante.singular.flow.core.MTaskWait;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.ProcessScheduledJob;
 import br.net.mirante.singular.flow.core.RoleAccessStrategy;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
@@ -150,14 +148,6 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
 
     public BUILDER_TRANSITION addAutomaticTransition(BTask origin, ITaskPredicate condition, BTask destination) {
         return newTransition(origin.getTask().addAutomaticTransition(condition, destination.getTask()));
-    }
-
-    public ProcessScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
-        return getFlowMap().addScheduledJob(name).call(impl);
-    }
-
-    public ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
-        return getFlowMap().addScheduledJob(name).call(impl);
     }
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {

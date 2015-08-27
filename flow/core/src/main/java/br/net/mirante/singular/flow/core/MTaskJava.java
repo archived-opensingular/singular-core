@@ -6,8 +6,6 @@ import java.util.Objects;
 
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 
-import com.google.common.base.Preconditions;
-
 @SuppressWarnings("unchecked")
 public class MTaskJava extends MTask<MTaskJava> {
 

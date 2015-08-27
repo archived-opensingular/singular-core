@@ -24,7 +24,7 @@ public class MBPM {
                     getMbpmBean().getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> getMbpmBean().executeTask(task)));
                 }
             }
-            for (ProcessScheduledJob scheduledJob : processDefinition.getFlowMap().getScheduledJobs()) {
+            for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }

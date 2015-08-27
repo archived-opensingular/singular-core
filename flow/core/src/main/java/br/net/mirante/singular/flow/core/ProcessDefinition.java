@@ -8,8 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -60,9 +64,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     private IProcessDataService<I> processDataService;
 
     private Props properties;
+    
+    private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient Constructor<I> construtor;
-
+    
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
@@ -159,6 +165,28 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return variableDefinitions;
     }
 
+    protected final ProcessScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
+        return addScheduledJob(name).call(impl);
+    }
+
+    protected final ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
+        return addScheduledJob(name).call(impl);
+    }
+    
+    protected final ProcessScheduledJob addScheduledJob(String name) {
+        name = StringUtils.trimToNull(name);
+
+        final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
+
+        Preconditions.checkArgument(!scheduledJobsByName.containsKey(name), "A Job with name '%s' is already defined.", name);
+        scheduledJobsByName.put(name, scheduledJob);
+        return scheduledJob;
+    }
+
+    final Collection<ProcessScheduledJob> getScheduledJobs() {
+        return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
+    }
+    
     protected final void setActive(boolean ativo) {
         IEntityProcess definicaoProcesso = getEntity();
         if (definicaoProcesso.isAtivo() != ativo) {

@@ -10,11 +10,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.util.vars.VarService;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -32,8 +30,6 @@ public class FlowMap implements Serializable {
 
     private final Map<String, MProcessRole> rolesByAbbreviation = new HashMap<>();
 
-    private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
-
     private MTask<?> startTask;
 
     private IRoleChangeListener roleChangeListener;
@@ -47,32 +43,6 @@ public class FlowMap implements Serializable {
      */
     protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, boolean userOption) {
         return new MTransition(origin, name, destinarion, userOption);
-    }
-
-    /**
-     * @deprecated Essas definições não estão associadas ao fluxo em si mas à definição, deveriam sair dessa classe
-     * @return
-     */
-    @Deprecated
-    //TODO refatorar remover
-    public ProcessScheduledJob addScheduledJob(String name) {
-        name = StringUtils.trimToNull(name);
-
-        final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
-
-        Preconditions.checkArgument(!scheduledJobsByName.containsKey(name), "A Job with name '%s' is already defined.", name);
-        scheduledJobsByName.put(name, scheduledJob);
-        return scheduledJob;
-    }
-
-    /**
-     * @deprecated Essas definições não estão associadas ao fluxo em si mas à definição, deveriam sair dessa classe
-     * @return
-     */
-    @Deprecated
-    //TODO refatorar remover
-    public Collection<ProcessScheduledJob> getScheduledJobs() {
-        return scheduledJobsByName.values();
     }
 
     public Collection<MTask<?>> getTasks() {
