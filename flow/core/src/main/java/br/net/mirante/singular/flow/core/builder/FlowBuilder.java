@@ -62,6 +62,11 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         getFlowMap().setRoleChangeListener(roleChangeListener);
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private BTask toBuilder(MTask<?> task) {
         if (task instanceof MTaskPeople) {
             return newPeopleTask((MTaskPeople) task);

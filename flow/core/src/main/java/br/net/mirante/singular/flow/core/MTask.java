@@ -177,6 +177,11 @@ public abstract class MTask<K extends MTask<?>> {
         return automaticActions;
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     public void execute(ExecucaoMTask execucaoTask) {
         throw new RuntimeException("Operation not supported");
     }
@@ -238,6 +243,11 @@ public abstract class MTask<K extends MTask<?>> {
         return (TaskAccessStrategy<T>) accessStrategy;
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     final RuntimeException generateError(String message) {
         return new RuntimeException(getFlowMap().getProcessDefinition() + ":" + this + " -> " + message);
     }

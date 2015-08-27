@@ -88,6 +88,11 @@ public class MBPMUtil {
         }
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private static int calculateTaskOrder(IEntityTaskDefinition entityTaskDefinition, ProcessDefinition<?> processDefinition) {
         if (!processDefinition.getEntity().equals(entityTaskDefinition.getDefinicao())) {
             throw new RuntimeException("Mistura de situações de definições diferrentes");
@@ -107,6 +112,11 @@ public class MBPMUtil {
         }
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private static int calculateWeight(MTask<?> task) {
         switch (task.getTaskType()) {
             case People:
@@ -122,6 +132,11 @@ public class MBPMUtil {
         }
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     public static final RuntimeException generateError(ProcessInstance instance, String message) {
         return new RuntimeException(instance.getClass().getName() + " - " + instance.getFullId() + " : " + message);
     }

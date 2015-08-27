@@ -10,6 +10,11 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
 
+/**
+ * @deprecated não deve ficar no core, específico do alocpro
+ */
+@Deprecated
+//TODO refatorar remover
 public class DeleteOldCompletedTasksJob implements IScheduledJob {
 
     private final IScheduleData scheduleData;

@@ -159,6 +159,13 @@ public abstract class ProcessInstance {
         return getEntity().getSituacao().isFim();
     }
 
+    /**
+     * @deprecated A exeção é criada no create error e não é lançada
+     * @param nomeEstado
+     * @return
+     */
+    @Deprecated
+    //TODO corrigir
     public boolean isNomeEstado(String nomeEstado) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithName(nomeEstado);
         if (task == null) {
@@ -167,6 +174,13 @@ public abstract class ProcessInstance {
         return getEstado().equals(task);
     }
 
+    /**
+     * @deprecated A exeção é criada no create error e não é lançada
+     * @param sigla
+     * @return
+     */
+    @Deprecated
+    //TODO corrigir
     public boolean isSiglaEstado(String sigla) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithAbbreviation(sigla);
         if (task == null) {
@@ -257,6 +271,11 @@ public abstract class ProcessInstance {
         return getEstrategiaAcesso().listAllocableUsers(this);
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     protected final RuntimeException criarErro(String msg) {
         return MBPMUtil.generateError(this, msg);
     }
@@ -600,6 +619,11 @@ public abstract class ProcessInstance {
         return getDefinicao().getPersistenceService();
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getDefinicao().getVariableWrapperClass()) {

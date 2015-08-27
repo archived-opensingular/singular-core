@@ -34,6 +34,11 @@ public abstract class AbstractMbpmBean {
         return getDefinitionCache().getDefinitions();
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private <T extends ProcessInstance> ProcessDefinition<?> getDefinicaoForInstanciaOrException(Class<T> instanceClass) {
         ProcessDefinition<?> def = getDefinitionCache().getDefinitionForInstance(instanceClass);
         if (def == null) {
@@ -58,6 +63,11 @@ public abstract class AbstractMbpmBean {
         return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     public final <T extends ProcessInstance> T findProcessInstanceOrException(Class<T> instanceClass, String id) {
         T instance = findProcessInstance(instanceClass, id);
         if (instance == null) {
@@ -74,6 +84,11 @@ public abstract class AbstractMbpmBean {
         }
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     @SuppressWarnings("unchecked")
     public <X extends ProcessInstance> X findProcessInstance(String instanceID) {
         if (instanceID == null) {

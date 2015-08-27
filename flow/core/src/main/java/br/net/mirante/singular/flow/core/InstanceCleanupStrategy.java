@@ -5,6 +5,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.joda.time.DateTime;
 
+/**
+ * @deprecated não deve ficar no core, específico do alocpro
+ */
+@Deprecated
+//TODO refatorar remover
 class InstanceCleanupStrategy {
 
     private final FlowMap flowMap;

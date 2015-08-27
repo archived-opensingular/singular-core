@@ -30,6 +30,11 @@ public final class ProcessDefinitionCache {
 
     private static ProcessDefinitionCache cache;
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String packageName) {
         ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();

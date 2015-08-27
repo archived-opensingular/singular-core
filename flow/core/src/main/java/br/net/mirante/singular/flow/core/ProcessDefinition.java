@@ -78,6 +78,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return instanceClass;
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
         this.variableWrapperClass = variableWrapperClass;
         if (variableWrapperClass != null) {
@@ -108,6 +113,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return wrapper;
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
         if (expectedVariableWrapperClass != variableWrapperClass) {
             throw new RuntimeException(getClass().getName() + " espera que as variáveis sejam do tipo " + variableWrapperClass);
@@ -215,6 +225,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     public final IEntityTaskDefinition getEntityTask(MTask<?> task) {
         if (task == null) {
             return null;
@@ -230,14 +245,30 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return situacao;
     }
 
+    /**
+     * @deprecated não faz muito sentido ser inputStream, se é um output, o alocpro utiliza esse input stream para ler os
+     * bytes direto, deveria retornar os bytes direto então.
+     */
+    @Deprecated
+    //TODO refatorar
     public InputStream getFlowImage() {
         return GeradorDiagramaProcessoMBPM.gerarDiagrama(this);
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     protected final RuntimeException criarErro(String msg) {
         return new RuntimeException("Processo MBPM '" + getName() + "': " + msg);
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     protected final RuntimeException criarErro(String msg, Exception e) {
         return new RuntimeException("Processo MBPM '" + getName() + "': " + msg, e);
     }

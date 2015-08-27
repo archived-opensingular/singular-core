@@ -135,6 +135,11 @@ class EngineProcessamentoMBPM {
         return updateEstado(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private static MTransition tratarTransicao(TaskInstance tarefaAtual, String nomeTransicao) {
         final MTask<?> estadoAtual = tarefaAtual.getTipo();
 
@@ -177,6 +182,11 @@ class EngineProcessamentoMBPM {
                 .getMbpmBean().getPersistenceService();
     }
 
+    /**
+     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
+     */
+    @Deprecated
+    //TODO refatorar
     private static void validarParametrosInput(ProcessInstance instancia, MTransition transicao, VarInstanceMap<?> paramIn) {
         if (transicao.getParameters().isEmpty()) {
             return;
