@@ -145,14 +145,14 @@ public class Lnk implements Serializable {
         Objects.requireNonNull(url);
         Objects.requireNonNull(path);
         String s = url;
-        if (s.charAt(s.length() - 1) == '/') {
-            if (path.charAt(0) == '/') {
+        if (s.length() > 0 && s.charAt(s.length() - 1) == '/') {
+            if (path.length() > 0 && path.charAt(0) == '/') {
                 s = s.substring(0, s.length() - 1) + path;
             } else {
                 s += path;
             }
         } else {
-            if (path.charAt(0) == '/') {
+            if (path.length() > 0 && path.charAt(0) == '/') {
                 s += path;
             } else {
                 s += "/" + path;
