@@ -11,7 +11,6 @@ import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
 import br.net.mirante.singular.dao.PesquisaDTO;
@@ -19,23 +18,24 @@ import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
-public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
+public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
 
     @Inject
     private PesquisaService pesquisaService;
+
+    private Long processDefinitionId;
 
     private final Form<?> diagramForm = new Form<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
     private final WebMarkupContainer diagram = new WebMarkupContainer("diagram");
 
-    public ProcessosContent(String id, boolean withSideBar) {
+    public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
         super(id, false, withSideBar, true);
+        this.processDefinitionId = processDefinitionId;
     }
 
     @Override
@@ -74,25 +74,11 @@ public class ProcessosContent extends Content implements SingularWicketContainer
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", PesquisaDTO::getCod)
-                .appendPropertyColumn(getMessage("label.table.column.name"), "name", PesquisaDTO::getNome)
-                .appendPropertyColumn(getMessage("label.table.column.category"), "category", PesquisaDTO::getCategoria)
-                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", PesquisaDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.description"), "name", PesquisaDTO::getNome)
                 .appendPropertyColumn(getMessage("label.table.column.time"), "time", PesquisaDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", PesquisaDTO::getThroughput)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", PesquisaDTO::getVersion)
-                .appendColumn(new BSActionColumn<PesquisaDTO, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
-                            getPage().getPageParameters().add("sigla", model.getObject().getSigla());
-                            /* FIXME: Verificar como detectar o fim da carga! */
-                            //target.appendJavaScript("Metronic.blockUI({target:'.modal-body',animate:true});");
-                            diagramModal.show(target);
-                        })
-                        .appendAction(getMessage("label.table.column.detail"), Icone.REDO, (target, model) -> {
-                            setResponsePage(ProcessosPage.class,
-                                    new PageParameters().add(
-                                            ProcessosPage.PROCESS_DEFINITION_ID_PARAM, model.getObject().getCod()));
-                        }))
+                .appendPropertyColumn(getMessage("label.table.column.date"), "category", PesquisaDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.delta"), "quantity", PesquisaDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.user"), "throu", PesquisaDTO::getThroughput)
                 .build("processos"));
 
         diagramModal.setSize(BSModalBorder.Size.FIT);
