@@ -13,8 +13,8 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.PesquisaDTO;
-import br.net.mirante.singular.service.PesquisaService;
+import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -25,7 +25,7 @@ import br.net.mirante.singular.view.template.Content;
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
 
     @Inject
-    private PesquisaService pesquisaService;
+    private ProcessDefinitionService processDefinitionService;
 
     private Long processDefinitionId;
 
@@ -52,7 +52,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                                 String[] siglas = ((ServletWebRequest) attributes.getRequest())
                                         .getContainerRequest().getParameterMap().get("sigla");
                                 String sigla = siglas[siglas.length - 1];
-                                return pesquisaService.retrieveProcessDiagram(sigla);
+                                return processDefinitionService.retrieveProcessDiagram(sigla);
                             }
                         };
                         dir.setFormat("image/png");
@@ -60,25 +60,27 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                     }
                 };
 
-        BaseDataProvider<PesquisaDTO, String> dataProvider = new BaseDataProvider<PesquisaDTO, String>() {
+        BaseDataProvider<InstanceDTO, String> dataProvider = new BaseDataProvider<InstanceDTO, String>() {
             @Override
-            public Iterator<? extends PesquisaDTO> iterator(int first, int count,
+            public Iterator<? extends InstanceDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return pesquisaService.retrieveAll(first, count, sortProperty, ascending).iterator();
+                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending, processDefinitionId)
+                        .iterator();
             }
 
             @Override
             public long size() {
-                return pesquisaService.countAll();
+                return processDefinitionService.countAll(processDefinitionId);
             }
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.description"), "name", PesquisaDTO::getNome)
-                .appendPropertyColumn(getMessage("label.table.column.time"), "time", PesquisaDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.date"), "category", PesquisaDTO::getCategoria)
-                .appendPropertyColumn(getMessage("label.table.column.delta"), "quantity", PesquisaDTO::getQuantidade)
-                .appendPropertyColumn(getMessage("label.table.column.user"), "throu", PesquisaDTO::getThroughput)
+                .appendPropertyColumn(getMessage("label.table.column.description"), "description", InstanceDTO::getDescricao)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "delta", InstanceDTO::getDeltaString)
+                .appendPropertyColumn(getMessage("label.table.column.date"), "date", InstanceDTO::getDataInicialString)
+                .appendPropertyColumn(getMessage("label.table.column.delta"), "deltas", InstanceDTO::getDeltaAtividadeString)
+                .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", InstanceDTO::getDataAtividadeString)
+                .appendPropertyColumn(getMessage("label.table.column.user"), "user", InstanceDTO::getUsuarioAlocado)
                 .build("processos"));
 
         diagramModal.setSize(BSModalBorder.Size.FIT);

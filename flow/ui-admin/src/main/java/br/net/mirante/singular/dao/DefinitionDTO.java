@@ -2,7 +2,9 @@ package br.net.mirante.singular.dao;
 
 import java.io.Serializable;
 
-public class PesquisaDTO implements Serializable {
+import br.net.mirante.singular.util.FormatUtil;
+
+public class DefinitionDTO implements Serializable {
 
     private Long cod;
     private String nome;
@@ -13,7 +15,7 @@ public class PesquisaDTO implements Serializable {
     private Long throughput;
     private Long version;
 
-    public PesquisaDTO(Long cod, String nome, String sigla, String categoria,
+    public DefinitionDTO(Long cod, String nome, String sigla, String categoria,
             Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;
         this.nome = nome;
@@ -76,55 +78,9 @@ public class PesquisaDTO implements Serializable {
     public String getTempoMedioString() {
         StringBuilder tempo = new StringBuilder("");
         if (this.tempoMedio != null) {
-            appendSeconds(tempo, this.tempoMedio);
+            FormatUtil.appendSeconds(tempo, this.tempoMedio);
         }
         return tempo.toString();
-    }
-
-    private StringBuilder appendSeconds(StringBuilder time, long seconds) {
-        if (seconds > 0) {
-            if (seconds < 60) {
-                time.append(seconds);
-            } else {
-                appendMinutes(time, seconds / 60);
-                time.append(seconds % 60);
-            }
-            time.append(" s ");
-        }
-        return time;
-    }
-
-    private StringBuilder appendMinutes(StringBuilder time, long minutes) {
-        if (minutes > 0) {
-            if (minutes < 60) {
-                time.append(minutes);
-            } else {
-                appendHours(time, minutes / 60);
-                time.append(minutes % 60);
-            }
-            time.append(" min ");
-        }
-        return time;
-    }
-
-    private StringBuilder appendHours(StringBuilder time, long hours) {
-        if (hours > 0) {
-            if (hours < 24) {
-                time.append(hours);
-            } else {
-                appendDays(time, hours / 24);
-                time.append(hours % 24);
-            }
-            time.append(" h ");
-        }
-        return time;
-    }
-
-    private StringBuilder appendDays(StringBuilder time, long days) {
-        if (days > 0) {
-            time.append(days).append(" d ");
-        }
-        return time;
     }
 
     public Long getThroughput() {

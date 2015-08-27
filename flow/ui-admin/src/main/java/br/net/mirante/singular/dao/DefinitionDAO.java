@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
-public class PesquisaDAO {
+public class DefinitionDAO {
 
     private enum columns {
         cod("CODIGO"),
@@ -25,7 +25,7 @@ public class PesquisaDAO {
         throu("THROU"),
         version("1");
 
-        String code;
+        private String code;
 
         columns(String code) {
             this.code = code;
@@ -53,7 +53,7 @@ public class PesquisaDAO {
         }
 
         String sql = "SELECT DEF.cod AS CODIGO, DEF.nome AS NOME, DEF.sigla AS SIGLA, CAT.nome AS CATEGORIA,"
-                + " COUNT(DEM.cod) AS QUANTIDADE, AVG(DATEDIFF(SECOND, DEM.data_inicio, DEM.data_fim)) AS TEMPO,"
+                + " COUNT(DISTINCT DEM.cod) AS QUANTIDADE, AVG(DATEDIFF(SECOND, DEM.data_inicio, DEM.data_fim)) AS TEMPO,"
                 + "     (SELECT AVG(SUBDEM.THRO) FROM ("
                 + "       SELECT cod_definicao AS COD, MONTH(data_fim) AS MES, COUNT(cod) AS THRO"
                 + "       FROM DMD_DEMANDA"
@@ -65,7 +65,7 @@ public class PesquisaDAO {
                 + "  LEFT JOIN DMD_DEMANDA DEM ON DEF.cod = DEM.cod_definicao"
                 + "  LEFT JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
                 + " WHERE"
-                + "  (DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal() + ")"
+                + "  DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal()
                 + " GROUP BY DEF.cod, DEF.nome, DEF.sigla, CAT.nome " + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("CODIGO", LongType.INSTANCE)

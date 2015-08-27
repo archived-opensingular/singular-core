@@ -14,8 +14,8 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.PesquisaDTO;
-import br.net.mirante.singular.service.PesquisaService;
+import br.net.mirante.singular.dao.DefinitionDTO;
+import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -28,7 +28,7 @@ import br.net.mirante.singular.view.template.Content;
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 
     @Inject
-    private PesquisaService pesquisaService;
+    private ProcessDefinitionService processDefinitionService;
 
     private final Form<?> diagramForm = new Form<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
@@ -52,7 +52,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                                 String[] siglas = ((ServletWebRequest) attributes.getRequest())
                                         .getContainerRequest().getParameterMap().get("sigla");
                                 String sigla = siglas[siglas.length - 1];
-                                return pesquisaService.retrieveProcessDiagram(sigla);
+                                return processDefinitionService.retrieveProcessDiagram(sigla);
                             }
                         };
                         dir.setFormat("image/png");
@@ -60,28 +60,28 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                     }
                 };
 
-        BaseDataProvider<PesquisaDTO, String> dataProvider = new BaseDataProvider<PesquisaDTO, String>() {
+        BaseDataProvider<DefinitionDTO, String> dataProvider = new BaseDataProvider<DefinitionDTO, String>() {
             @Override
-            public Iterator<? extends PesquisaDTO> iterator(int first, int count,
+            public Iterator<? extends DefinitionDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return pesquisaService.retrieveAll(first, count, sortProperty, ascending).iterator();
+                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending).iterator();
             }
 
             @Override
             public long size() {
-                return pesquisaService.countAll();
+                return processDefinitionService.countAll();
             }
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", PesquisaDTO::getCod)
-                .appendPropertyColumn(getMessage("label.table.column.name"), "name", PesquisaDTO::getNome)
-                .appendPropertyColumn(getMessage("label.table.column.category"), "category", PesquisaDTO::getCategoria)
-                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", PesquisaDTO::getQuantidade)
-                .appendPropertyColumn(getMessage("label.table.column.time"), "time", PesquisaDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", PesquisaDTO::getThroughput)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", PesquisaDTO::getVersion)
-                .appendColumn(new BSActionColumn<PesquisaDTO, String>($m.ofValue(""))
+                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", DefinitionDTO::getCod)
+                .appendPropertyColumn(getMessage("label.table.column.name"), "name", DefinitionDTO::getNome)
+                .appendPropertyColumn(getMessage("label.table.column.category"), "category", DefinitionDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", DefinitionDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "time", DefinitionDTO::getTempoMedioString)
+                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", DefinitionDTO::getThroughput)
+                .appendPropertyColumn(getMessage("label.table.column.version"), "version", DefinitionDTO::getVersion)
+                .appendColumn(new BSActionColumn<DefinitionDTO, String>($m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                             getPage().getPageParameters().add("sigla", model.getObject().getSigla());
                             /* FIXME: Verificar como detectar o fim da carga! */
