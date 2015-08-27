@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -13,9 +14,11 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
+import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -27,7 +30,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     @Inject
     private ProcessDefinitionService processDefinitionService;
 
-    private Long processDefinitionId;
+    private DefinitionDTO processDefinition;
 
     private final Form<?> diagramForm = new Form<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
@@ -35,7 +38,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
 
     public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
         super(id, false, withSideBar, true);
-        this.processDefinitionId = processDefinitionId;
+        this.processDefinition = processDefinitionService.retrieveById(processDefinitionId);
     }
 
     @Override
@@ -60,17 +63,28 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                     }
                 };
 
+        queue(new Label("processNameLabel", processDefinition.getNome()));
+        queue(new ActionAjaxLink<Void>("showDiagramButton") {
+            @Override
+            protected void onAction(AjaxRequestTarget target) {
+                getPage().getPageParameters().add("sigla", processDefinition.getSigla());
+                /* FIXME: Verificar como detectar o fim da carga! */
+                //target.appendJavaScript("Metronic.blockUI({target:'.modal-body',animate:true});");
+                diagramModal.show(target);
+            }
+        });
+
         BaseDataProvider<InstanceDTO, String> dataProvider = new BaseDataProvider<InstanceDTO, String>() {
             @Override
             public Iterator<? extends InstanceDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending, processDefinitionId)
-                        .iterator();
+                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending,
+                        processDefinition.getCod()).iterator();
             }
 
             @Override
             public long size() {
-                return processDefinitionService.countAll(processDefinitionId);
+                return processDefinitionService.countAll(processDefinition.getCod());
             }
         };
 

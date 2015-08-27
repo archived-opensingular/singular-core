@@ -6,7 +6,7 @@
                 <div class="portlet-title">
                     <div class="caption">
                         <i class="icon-list"></i>
-                        <wicket:message key="label.table.title"/>
+                        <wicket:message key="label.table.title"/> <label wicket:id="processNameLabel" class="label label-info"></label>
                     </div>
                     <div class="tools">
                         <a class="collapse" href="javascript:" data-original-title="" title="">
@@ -15,7 +15,7 @@
                         </a>
                     </div>
                     <div class="actions">
-                        <a href="javascript:;" class="btn btn-default btn-sm">
+                        <a wicket:id="showDiagramButton" href="javascript:" class="btn btn-default btn-sm">
                             <i class="icon-eye"></i> <wicket:message key="label.table.header.view"/> </a>
                     </div>
                 </div>

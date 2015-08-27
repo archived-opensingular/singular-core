@@ -44,6 +44,19 @@ public class DefinitionDAO {
         return sessionFactory.getCurrentSession();
     }
 
+    public Object[] retrieveById(Long id) {
+        String sql = "SELECT DEF.cod AS CODIGO, DEF.nome AS NOME, DEF.sigla AS SIGLA"
+                + " FROM DMD_DEFINICAO DEF"
+                + " WHERE DEF.cod = :id";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("CODIGO", LongType.INSTANCE)
+                .addScalar("NOME", StringType.INSTANCE)
+                .addScalar("SIGLA", StringType.INSTANCE)
+                .setParameter("id", id);
+
+        return (Object[]) query.uniqueResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Object[]> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         StringBuilder orderByStatement = new StringBuilder("");

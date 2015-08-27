@@ -27,6 +27,12 @@ public class ProcessDefinitionService {
     private InstanceDAO instanceDAO;
 
     @Transactional
+    public DefinitionDTO retrieveById(Long id) {
+        Object[] result = definitionDAO.retrieveById(id);
+        return new DefinitionDTO((Long) result[0], (String) result[1], (String) result[2], null, null, null, null);
+    }
+
+    @Transactional
     public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
