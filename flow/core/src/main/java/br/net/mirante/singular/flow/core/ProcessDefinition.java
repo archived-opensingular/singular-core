@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -20,9 +19,9 @@ import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
-import br.net.mirante.singular.flow.core.view.GeradorDiagramaProcessoMBPM;
 import br.net.mirante.singular.flow.util.props.PropRef;
 import br.net.mirante.singular.flow.util.props.Props;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
@@ -245,14 +244,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return situacao;
     }
 
-    /**
-     * @deprecated não faz muito sentido ser inputStream, se é um output, o alocpro utiliza esse input stream para ler os
-     * bytes direto, deveria retornar os bytes direto então.
-     */
-    @Deprecated
-    //TODO refatorar
-    public InputStream getFlowImage() {
-        return GeradorDiagramaProcessoMBPM.gerarDiagrama(this);
+    public byte[] getFlowImage() {
+        return FlowRendererFactory.generateImageFor(this);
     }
 
     /**

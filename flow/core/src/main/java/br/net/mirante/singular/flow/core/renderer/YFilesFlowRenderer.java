@@ -1,6 +1,7 @@
-package br.net.mirante.singular.flow.core.view;
+package br.net.mirante.singular.flow.core.renderer;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -8,16 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
-
-import com.google.common.base.Throwables;
-import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
-import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
-import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
-import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
-import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
-import com.yworks.yfiles.bpmn.view.EventCharEnum;
-import com.yworks.yfiles.bpmn.view.EventPortSupport;
-import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
 
 import y.base.Edge;
 import y.base.Node;
@@ -44,7 +35,21 @@ import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 
-public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements GeradorBPMN {
+import com.google.common.base.Throwables;
+import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
+import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
+import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
+import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
+import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
+import com.yworks.yfiles.bpmn.view.EventCharEnum;
+import com.yworks.yfiles.bpmn.view.EventPortSupport;
+import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
+
+/**
+ * https://www.yworks.com/en/products_yfiles_about.html
+ *
+ */
+public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";
@@ -80,21 +85,25 @@ public class GeradorDiagramaProcessoMBPMEd extends LayoutModule implements Gerad
             TOP_TO_BOTTOM
     };
 
-    private static GeradorDiagramaProcessoMBPMEd instance = null;
+    private static YFilesFlowRenderer instance = null;
 
-    private GeradorDiagramaProcessoMBPMEd() {
+    private YFilesFlowRenderer() {
         super("BPMN Layouter", "Mirante Tecnologia", "Gerência de leiaute para os diagramas de BPM");
     }
 
-    public static synchronized GeradorDiagramaProcessoMBPMEd getInstance() {
+    public static YFilesFlowRenderer getInstance() {
         if (instance == null) {
-            instance = new GeradorDiagramaProcessoMBPMEd();
+            synchronized(YFilesFlowRenderer.class){
+                if (instance == null) {
+                    instance = new YFilesFlowRenderer();
+                }
+            }
         }
         return instance;
     }
 
     @Override
-    public byte[] gerarBPMNImage(ProcessDefinition<?> definicao) {
+    public byte[] generateImage(ProcessDefinition<?> definicao) {
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
         drawDiagrama(generateDiagrama(definicao), os);
         return os.toByteArray();

@@ -44,14 +44,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JGraph API -->
-        <dependency>
-            <groupId>jgraph</groupId>
-            <artifactId>jgraph</artifactId>
-            <version>2.1.0.8</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- yEd -->
         <dependency>
             <groupId>y.ed</groupId>

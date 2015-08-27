@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
+import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
@@ -146,6 +148,10 @@ public abstract class AbstractMbpmBean {
 
     // ------- Outros -------------------------------------------------
 
+    public IFlowRenderer getFlowRenderer(){
+        return YFilesFlowRenderer.getInstance();
+    }
+    
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
     protected abstract IScheduleService getScheduleService();
@@ -164,5 +170,4 @@ public abstract class AbstractMbpmBean {
             return null;
         }
     }
-
 }
