@@ -1,11 +1,17 @@
-package br.net.mirante.singular;
+package br.net.mirante.singular.wicket;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class UIAdminApplication extends WebApplication {
 
@@ -25,5 +31,10 @@ public class UIAdminApplication extends WebApplication {
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         mountPage("processos", ProcessosPage.class);
+    }
+
+    @Override
+    public Session newSession(Request request, Response response) {
+        return new UIAdminSession(request, response);
     }
 }

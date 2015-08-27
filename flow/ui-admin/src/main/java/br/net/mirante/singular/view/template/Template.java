@@ -30,11 +30,11 @@ public abstract class Template extends WebPage {
     }
 
     protected boolean withTopAction() {
-        return true;
+        return false;
     }
 
     protected boolean withSideBar() {
-        return true;
+        return false;
     }
 
     protected String getPageTitleLocalKey() {
