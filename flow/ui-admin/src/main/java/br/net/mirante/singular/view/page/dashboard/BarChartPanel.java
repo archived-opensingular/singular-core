@@ -2,7 +2,10 @@ package br.net.mirante.singular.view.page.dashboard;
 
 import br.net.mirante.singular.service.PesquisaService;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -31,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BarChartPanel extends Panel {
 
@@ -40,6 +44,7 @@ public class BarChartPanel extends Panel {
     private List<Map<String, String>> dadosGrafico;
     private String title;
     private String subtitle;
+    private String selected;
 
     public BarChartPanel(String id, String title, String subtitle) {
         super(id);
@@ -67,21 +72,47 @@ public class BarChartPanel extends Panel {
 
     private Component createChartFilter() {
         Form<Object> form = new Form<>("chart-form");
+        form
+            .queue(new WebMarkupContainer("semanal").add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    selected = "semanal";
+
+                }
+            }))
+            .queue(new WebMarkupContainer("mensal").add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    selected = "mensal";
+                }
+            }))
+            .queue(new WebMarkupContainer("anual").add(new AjaxEventBehavior("click") {
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    selected = "anual";
+                }
+            }));
+
+
         List<String> options = Arrays.asList("Semanal", "Mensal", "Anual");
-        RadioChoice<String> chartFilter = new PillChoice<>("chart-filter", Model.of(options));
+        RadioChoice<String> chartFilter = new PillChoice<String>("chart-filter", $m.property(this, "selected"), Model.of(options));
         form.add(chartFilter);
         chartFilter.add($b.classAppender("btn-group btn-group-devided"));
         chartFilter.add($b.attr("data-toggle", "buttons"));
-        chartFilter.add(new AjaxFormComponentUpdatingBehavior("click") {
+        chartFilter.add(new AjaxFormChoiceComponentUpdatingBehavior() {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
 
                 System.out.println("legal " + getComponent().getDefaultModelObjectAsString());
             }
-        });
 
-//        $b.addAjaxUpdate(chartFilter, (ajaxRequestTarget, component) -> System.out.println("legal"));
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.BUBBLE);
+            }
+        });
 
         chartFilter.setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
 
