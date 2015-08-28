@@ -63,7 +63,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                     }
                 };
 
-        queue(new Label("processNameLabel", processDefinition.getNome()));
+        queue(new Label("processNameTitle", processDefinition.getNome()));
         queue(new ActionAjaxLink<Void>("showDiagramButton") {
             @Override
             protected void onAction(AjaxRequestTarget target) {
