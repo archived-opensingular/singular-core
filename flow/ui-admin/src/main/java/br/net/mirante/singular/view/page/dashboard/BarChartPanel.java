@@ -22,22 +22,24 @@ public abstract class BarChartPanel extends Panel {
     private String categoryField;
     private String balloonTextsuffix;
 
+    private boolean withFilter;
     private PeriodType periodType;
     private WebMarkupContainer barChartDiv;
     private List<Map<String, String>> dadosGrafico;
 
     public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
-        this(id, title, subtitle, valueField, categoryField, "");
+        this(id, title, subtitle, valueField, categoryField, "", false);
     }
 
     public BarChartPanel(String id, String title, String subtitle,
-            String valueField, String categoryField, String balloonTextsuffix) {
+            String valueField, String categoryField, String balloonTextsuffix, boolean withFilter) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
         this.valueField = valueField;
         this.categoryField = categoryField;
         this.balloonTextsuffix = balloonTextsuffix;
+        this.withFilter = withFilter;
     }
 
     @Override
@@ -60,9 +62,14 @@ public abstract class BarChartPanel extends Panel {
     }
 
     private void createChartFilter() {
-        add(createFilterOption("weekly"));
-        add(createFilterOption("monthly"));
-        add(createFilterOption("yearly"));
+        WebMarkupContainer actions = new WebMarkupContainer("_Actions");
+        actions.add(createFilterOption("weekly"));
+        actions.add(createFilterOption("monthly"));
+        actions.add(createFilterOption("yearly"));
+        add(actions);
+        if (!withFilter) {
+            actions.add($b.attrAppender("class", "hide", " "));
+        }
     }
 
     private Component createFilterOption(String id) {

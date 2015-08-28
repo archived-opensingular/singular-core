@@ -52,7 +52,7 @@ public class DashboardContent extends Content {
         super.onInitialize();
         add(new FeedPanel("feed"));
         add(new BarChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
-                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)") {
+                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());

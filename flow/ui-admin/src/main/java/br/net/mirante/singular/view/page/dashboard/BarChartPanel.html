@@ -7,14 +7,14 @@
                 <span class="caption-subject bold uppercase font-red-sunglo" wicket:id="title"></span>
                 <span class="caption-helper" wicket:id="subtitle"></span>
             </div>
-            <div class="actions">
+            <div wicket:id="_Actions" class="actions">
                 <div class="btn-group btn-group-devided" data-toggle="buttons">
                     <label wicket:id="weekly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
-                        <input type="radio" name="options" class="toggle" id="processo-opcao1">Semanal</label>
+                        <input type="radio" name="options" class="toggle" id="processo-opcao1"><wicket:message key="label.action.weekly"/></label>
                     <label wicket:id="monthly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
-                        <input type="radio" name="options" class="toggle" id="processo-opcao2">Mensal</label>
+                        <input type="radio" name="options" class="toggle" id="processo-opcao2"><wicket:message key="label.action.monthly"/></label>
                     <label wicket:id="yearly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
-                        <input type="radio" name="options" class="toggle" id="processo-opcao3">Anual</label>
+                        <input type="radio" name="options" class="toggle" id="processo-opcao3"><wicket:message key="label.action.yearly"/></label>
                 </div>
             </div>
         </div>
