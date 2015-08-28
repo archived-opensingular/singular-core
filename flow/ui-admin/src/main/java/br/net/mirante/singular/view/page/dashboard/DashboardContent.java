@@ -52,10 +52,24 @@ public class DashboardContent extends Content {
         super.onInitialize();
         add(new FeedPanel("feed"));
         add(new BarChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
-                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)") {
+                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
+            }
+        });
+        add(new BarChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
+                "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES") {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveNewInstancesQuantityLastYear();
+            }
+        });
+        add(new BarChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
+                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true) {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveStatusQuantityByPeriod(periodType.getPeriod());
             }
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",

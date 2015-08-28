@@ -1,6 +1,7 @@
 package br.net.mirante.singular.dao;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,52 +10,47 @@ import br.net.mirante.singular.util.wicket.resource.FeedIcon;
 public class FeedDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String descricao;
-    private String tempoAtraso;
-    private FeedIcon feedIconColor;
+    private String descricaoInstancia;
+    private String nomeProcesso;
+    private BigDecimal tempoAtraso;
+    private BigDecimal media;
 
-    public FeedDTO(String descricao, String tempoAtraso, FeedIcon feedIconColor) {
-        this.descricao = descricao;
+    public FeedDTO(String nomeProcesso, String descricaoInstancia, BigDecimal tempoAtraso, BigDecimal media) {
+        this.descricaoInstancia = descricaoInstancia;
+        this.nomeProcesso = nomeProcesso;
         this.tempoAtraso = tempoAtraso;
-        this.feedIconColor = feedIconColor;
+        this.media = media;
     }
 
-    public static List<FeedDTO> populaTemporario() {
-        List<FeedDTO> feeds = new ArrayList<>();
-        feeds.add(new FeedDTO("Deve ser refeito", "2 dias", FeedIcon.success));
-        feeds.add(new FeedDTO("Mirante 00", "1 mês", FeedIcon.padrao));
-        feeds.add(new FeedDTO("Feed mais 2", "5 horas", FeedIcon.info));
-        feeds.add(new FeedDTO("Novo feed", "2 semanas", FeedIcon.warning));
-        feeds.add(new FeedDTO("Mais um feed", "24 horas", FeedIcon.danger));
-
-        return feeds;
+    public String getDescricaoInstancia() {
+        return descricaoInstancia;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public void setDescricaoInstancia(String descricaoInstancia) {
+        this.descricaoInstancia = descricaoInstancia;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public String getNomeProcesso() {
+        return nomeProcesso;
     }
 
-    public FeedIcon getFeedIconColor() {
-        return feedIconColor;
+    public void setNomeProcesso(String nomeProcesso) {
+        this.nomeProcesso = nomeProcesso;
     }
 
-    public void setFeedIconColor(FeedIcon feedIconColor) {
-        this.feedIconColor = feedIconColor;
-    }
-
-    public String getTempoAtraso() {
+    public BigDecimal getTempoDecorrido() {
         return tempoAtraso;
     }
 
-    public void setTempoAtraso(String tempoAtraso) {
+    public void setTempoAtraso(BigDecimal tempoAtraso) {
         this.tempoAtraso = tempoAtraso;
     }
 
-    public String getIconSymbol() {
-        return "fa fa-bell-o"; // METODO para mostrar um icone, e deixar aparecendo, deve ser posto como condicao do tempo, e deve ir pra camada de apresentacao
+    public BigDecimal getMedia() {
+        return media;
+    }
+
+    public void setMedia(BigDecimal media) {
+        this.media = media;
     }
 }

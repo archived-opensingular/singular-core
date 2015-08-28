@@ -1,5 +1,10 @@
 <html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <wicket:extend>
+    <div class="row margin-top-10">
+        <div class="col-md-12">
+            <span wicket:id="process-mean-time-chart" />
+        </div>
+    </div>
 
     <div class="row margin-top-10">
         <div class="col-md-12">
@@ -8,18 +13,18 @@
     </div>
 
     <div class="row margin-top-10">
-        <div class="col-md-12">
-            <span wicket:id="process-mean-time-chart" />
+        <div class="col-md-6">
+            <span wicket:id="new-instances-quantity-chart"/>
+        </div>
+        <div class="col-md-6">
+            <span wicket:id="status-hours-quantity-chart"/>
         </div>
     </div>
 
     <div class="row">
-
-
         <div class="col-md-6 col-sm-12">
-            <span wicket:id="feed" />
+            <span wicket:id="feed"/>
         </div>
-
     </div>
 </wicket:extend>
 </html>

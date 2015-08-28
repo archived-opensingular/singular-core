@@ -1,6 +1,7 @@
 package br.net.mirante.singular.service;
 
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,12 @@ public class PesquisaService {
 
     public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
         return instanceDAO.retrieveNewQuantityLastYear();
+    }
+
+    public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
+        return instanceDAO.retrieveStatusQuantityByPeriod(period, 28L, new ArrayList<Long>() {{
+            add(316L);
+        }});
     }
     public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
         return pesquisaDAO.retrieveMeanTimeByTask(processId);
