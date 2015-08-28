@@ -13,7 +13,7 @@ public abstract class Content extends Panel {
     private boolean withSideBar;
 
     public Content(String id) {
-        this(id, true, true);
+        this(id, false, false);
     }
 
     public Content(String id, boolean withSettingsMenu, boolean withSideBar) {
