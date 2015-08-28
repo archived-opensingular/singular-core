@@ -66,12 +66,8 @@ public class PesquisaDAO {
         String sql = " SELECT " +
                 "        s.nome, " +
                 "        d.cod, " +
-                "        d.nome AS , " +
-                "        AVG(DATEDIFF(DAY, " +
-                "        t.data_inicio, " +
-                "        DATEADD(DAY, " +
-                "        1, " +
-                "        t.data_fim))) AS mean  " +
+                "        d.nome AS nome_definicao, " +
+                "        ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS mean  " +
                 "    FROM " +
                 "        dbo.dmd_tarefa t " +
                 "        inner join dbo.dmd_situacao s " +
@@ -88,11 +84,13 @@ public class PesquisaDAO {
                 "    GROUP BY " +
                 "        s.nome, " +
                 "        d.cod, " +
-                "        d.nome;" ;
+                "        d.nome " ;
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
                 .addScalar("COD", StringType.INSTANCE)
+                .addScalar("NOME_DEFINICAO", StringType.INSTANCE)
+                .addScalar("MEAN", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .setParameter("processId", processId);
 

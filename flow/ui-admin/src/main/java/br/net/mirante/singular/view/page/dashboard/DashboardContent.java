@@ -58,5 +58,12 @@ public class DashboardContent extends Content {
                 return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
             }
         });
+        add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
+                "label.chart.mean.time.task.subtitle"/*, "MEAN", "NOME", " dia(s)"*/) {
+            @Override
+            protected List<Map<String, String>> retrieveData(Long processId) {
+                return pesquisaService.retrieveMeanTimeByTask(processId);
+            }
+        });
     }
 }
