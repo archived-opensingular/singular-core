@@ -102,7 +102,7 @@ public class BarChartPanel extends Panel {
                 "                \"gridAboveGraphs\": true, " +
                 "                \"startDuration\": 1, " +
                 "                \"graphs\": [ { " +
-                "                    \"balloonText\": \"[[category]]: <b>[[value]]</b>\", " +
+                "                    \"balloonText\": \"[[category]]: <b>[[value]] dia(s)</b>\", " +
                 "                    \"fillAlphas\": 0.8, " +
                 "                    \"lineAlpha\": 0.2, " +
                 "                    \"type\": \"column\", " +

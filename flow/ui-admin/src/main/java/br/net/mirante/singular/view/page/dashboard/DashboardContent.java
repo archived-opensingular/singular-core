@@ -60,7 +60,7 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         add(new FeedPanel("feed"));
-        add(new BarChartPanel("process-mean-time-chart", "label.chart.title", "label.chart.subtitle"));
+        add(new BarChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title", "label.chart.mean.time.process.subtitle"));
     }
 
 }
