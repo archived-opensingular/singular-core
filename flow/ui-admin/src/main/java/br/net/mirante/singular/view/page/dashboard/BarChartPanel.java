@@ -50,7 +50,6 @@ public abstract class BarChartPanel extends Panel {
         add(new Label("subtitle", new ResourceModel(subtitle)));
         createChartFilter();
         add(createBarChart());
-
     }
 
     private WebMarkupContainer createBarChart() {

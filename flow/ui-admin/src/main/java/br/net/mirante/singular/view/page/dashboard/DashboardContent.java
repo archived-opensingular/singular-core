@@ -58,5 +58,12 @@ public class DashboardContent extends Content {
                 return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
             }
         });
+        add(new BarChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
+                "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES") {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveNewInstancesQuantityLastYear();
+            }
+        });
     }
 }
