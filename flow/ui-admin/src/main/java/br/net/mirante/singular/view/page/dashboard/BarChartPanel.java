@@ -3,8 +3,6 @@ package br.net.mirante.singular.view.page.dashboard;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,16 +12,10 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 
-import br.net.mirante.singular.service.PesquisaService;
-
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-public class BarChartPanel extends Panel {
+public abstract class BarChartPanel extends Panel {
 
-    @Inject
-    private PesquisaService pesquisaService;
-
-    private List<Map<String, String>> dadosGrafico;
     private String title;
     private String subtitle;
     private String valueField;
@@ -32,6 +24,7 @@ public class BarChartPanel extends Panel {
 
     private PeriodType periodType;
     private WebMarkupContainer barChartDiv;
+    private List<Map<String, String>> dadosGrafico;
 
     public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
         this(id, title, subtitle, valueField, categoryField, "");
@@ -91,8 +84,10 @@ public class BarChartPanel extends Panel {
     }
 
     private void updateGraph() {
-        dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
+        dadosGrafico = retrieveData(periodType);
     }
+
+    protected abstract List<Map<String, String>> retrieveData(PeriodType periodType);
 
     private String parseToJson(List<Map<String, String>> dados) {
         return new JSONArray(dados).toString();
@@ -138,5 +133,4 @@ public class BarChartPanel extends Panel {
                 "                } " +
                 "            } ); ";
     }
-
 }
