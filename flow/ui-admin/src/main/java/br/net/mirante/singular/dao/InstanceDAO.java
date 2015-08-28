@@ -89,4 +89,17 @@ public class InstanceDAO {
                 .setParameter("id", id)
                 .uniqueResult()).intValue();
     }
+
+    public List<Object> retrieveStats() {
+        String sql = "SELECT DEF.sigla, AVG(DATEDIFF(HOUR, DEM.data_inicio, DEM.data_fim)) FROM DMD_DEMANDA AS DEM"
+                + "INNER JOIN DMD_DEFINICAO DEF ON (DEM.cod_definicao = DEF.cod)"
+                + "GROUP BY DEF.sigla";
+
+        Query query = getSession().createSQLQuery(sql);
+        query.setMaxResults(20);
+
+        System.out.println(query.list());
+
+        return null; //TODO arrumar retorno
+    }
 }
