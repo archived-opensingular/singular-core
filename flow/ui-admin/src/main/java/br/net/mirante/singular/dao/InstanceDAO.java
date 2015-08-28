@@ -1,5 +1,6 @@
 package br.net.mirante.singular.dao;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -104,5 +105,25 @@ public class InstanceDAO {
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 
         return (List<Map<String, String>>) query.list();
+    }
+
+
+    public List<Map<String,String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
+
+        String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) as DIAS "
+                + " FROM DMD_DEFINICAO DEF"
+                + "  INNER JOIN DMD_DEMANDA DEM ON DEF.cod = DEM.cod_definicao"
+                + "  INNER JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
+                + " WHERE "
+                + "  DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal()
+                + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) > :media   "
+                + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) IS NOT NULL ";
+        Query query;
+        query = getSession().createSQLQuery(sql)
+                .addScalar("DESCRICAO", StringType.INSTANCE)
+                .addScalar("DIAS", StringType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        query.setParameter("media", media);
+        return ( List<Map<String,String>>) query.list();
     }
 }

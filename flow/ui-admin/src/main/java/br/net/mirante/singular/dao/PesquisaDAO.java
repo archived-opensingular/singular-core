@@ -5,10 +5,13 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -21,6 +24,8 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unchecked")
 public class PesquisaDAO {
 
+    private Map<Period, List<Map<String, String>>> cache = new HashMap<>();
+
     @Inject
     private SessionFactory sessionFactory;
 
@@ -29,31 +34,35 @@ public class PesquisaDAO {
     }
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
-        String sql = "SELECT d.nome, " +
-                "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS mean " +
-                "FROM dbo.DMD_DEMANDA dem " +
-                "INNER JOIN dbo.DMD_definicao d " +
-                "   ON d.cod = dem.cod_definicao " +
-                "WHERE dem.data_fim IS NOT NULL ";
+        if (!cache.containsKey(period)) {
+            String sql = "SELECT d.nome, " +
+                    "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS MEAN, " +
+                    "       d.sigla AS SIGLA " +
+                    "FROM dbo.DMD_DEMANDA dem " +
+                    "INNER JOIN dbo.DMD_definicao d " +
+                    "   ON d.cod = dem.cod_definicao " +
+                    "WHERE dem.data_fim IS NOT NULL ";
 
-        if (period != null) {
-            sql += " AND dem.data_inicio >= :startPeriod AND dem.data_inicio <= :endPeriod ";
+            if (period != null) {
+                sql += " AND dem.data_inicio >= :startPeriod AND dem.data_inicio <= :endPeriod ";
+            }
+
+            sql += "GROUP BY d.sigla, d.nome ";
+
+            Query query = getSession().createSQLQuery(
+                    sql)
+                    .addScalar("NOME", StringType.INSTANCE)
+                    .addScalar("MEAN", StringType.INSTANCE)
+                    .addScalar("SIGLA", StringType.INSTANCE)
+                    .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
+            if (period != null) {
+                query.setParameter("startPeriod", periodFromNow(period));
+                query.setParameter("endPeriod", new Date());
+            }
+            cache.put(period, (List<Map<String, String>>) query.list());
         }
-
-        sql += "GROUP BY dem.cod_definicao, d.nome ";
-
-        Query query = getSession().createSQLQuery(
-                sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("MEAN", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
-        if (period != null) {
-            query.setParameter("startPeriod", periodFromNow(period));
-            query.setParameter("endPeriod", new Date());
-        }
-
-        return (List<Map<String, String>>) query.list();
+        return cache.get(period);
     }
 
     private Date periodFromNow(Period period) {

@@ -1,8 +1,10 @@
 package br.net.mirante.singular.service;
 
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -68,4 +70,5 @@ public class ProcessDefinitionService {
         String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
         return Base64.getDecoder().decode(encodedImage);
     }
+
 }
