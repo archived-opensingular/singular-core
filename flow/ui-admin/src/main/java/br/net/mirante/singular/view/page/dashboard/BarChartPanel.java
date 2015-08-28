@@ -3,7 +3,7 @@ package br.net.mirante.singular.view.page.dashboard;
 import br.net.mirante.singular.service.PesquisaService;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -14,7 +14,7 @@ import org.apache.wicket.markup.html.form.IOnChangeListener;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.settings.DebugSettings;
@@ -25,7 +25,8 @@ import org.apache.wicket.util.value.AttributeMap;
 import org.apache.wicket.util.value.IValueMap;
 
 import javax.inject.Inject;
-
+import java.time.Duration;
+import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class BarChartPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        dadosGrafico = pesquisaService.retrieveMeanTimeByProcess();
+        dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(Period.ofWeeks(-1));
         add(new Label("title", new ResourceModel(title)));
         add(new Label("subtitle", new ResourceModel(subtitle)));
         add(createChartFilter());
@@ -65,26 +66,33 @@ public class BarChartPanel extends Panel {
         return barChartDiv;
     }
 
+    private String selected = "Semanal";
+
+    public String getSelected() {
+        return selected;
+    }
+
+    public void setSelected(String selected) {
+        this.selected = selected;
+    }
+
     private Component createChartFilter() {
         Form<Object> form = new Form<>("chart-form");
         List<String> options = Arrays.asList("Semanal", "Mensal", "Anual");
-        RadioChoice<String> chartFilter = new PillChoice<>("chart-filter", Model.of(options));
-        form.add(chartFilter);
+        RadioChoice<String> chartFilter = new PillChoice<>("chart-filter", new PropertyModel<String>(this, "selected" ), options);
+        chartFilter.setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
+
         chartFilter.add($b.classAppender("btn-group btn-group-devided"));
         chartFilter.add($b.attr("data-toggle", "buttons"));
-        chartFilter.add(new AjaxFormComponentUpdatingBehavior("click") {
+        chartFilter.add(new AjaxFormChoiceComponentUpdatingBehavior() {
 
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
-
                 System.out.println("legal " + getComponent().getDefaultModelObjectAsString());
             }
         });
 
-//        $b.addAjaxUpdate(chartFilter, (ajaxRequestTarget, component) -> System.out.println("legal"));
-
-        chartFilter.setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
-
+        form.add(chartFilter);
         return form;
     }
 
@@ -235,6 +243,17 @@ public class BarChartPanel extends Panel {
                 // Allows user to add attributes to the <label..> tag
                 IValueMap labelAttrs = getAdditionalAttributesForLabel(index, choice);
                 StringBuilder extraLabelAttributes = new StringBuilder();
+
+                if (isSelected(choice, index, selected)) {
+                    String classes = (String) labelAttrs.get("class");
+                    if (classes == null) {
+                        classes = "";
+                    }
+
+                    classes += " active";
+                    labelAttrs.put("class", classes);
+                }
+
                 if (labelAttrs != null)
                 {
                     for (Map.Entry<String, Object> attr : labelAttrs.entrySet())
@@ -350,6 +369,11 @@ public class BarChartPanel extends Panel {
                 // Append option suffix
                 buffer.append(getSuffix(index, choice));
             }
+        }
+
+        @Override
+        protected boolean wantOnSelectionChangedNotifications() {
+            return true;
         }
     }
 }
