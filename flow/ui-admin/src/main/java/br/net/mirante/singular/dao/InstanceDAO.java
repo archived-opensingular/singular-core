@@ -1,12 +1,14 @@
 package br.net.mirante.singular.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -90,16 +92,17 @@ public class InstanceDAO {
                 .uniqueResult()).intValue();
     }
 
-    public List<Object> retrieveStats() {
-        String sql = "SELECT DEF.sigla, AVG(DATEDIFF(HOUR, DEM.data_inicio, DEM.data_fim)) FROM DMD_DEMANDA AS DEM"
-                + "INNER JOIN DMD_DEFINICAO DEF ON (DEM.cod_definicao = DEF.cod)"
-                + "GROUP BY DEF.sigla";
+    @SuppressWarnings("unchecked")
+    public List<Map<String, String>> retrieveNewQuantityLastYear() {
+        String sql = "SELECT DATENAME(MONTH, data_inicio) AS MES, COUNT(cod) AS QUANTIDADE"
+                + " FROM DMD_DEMANDA"
+                + " WHERE data_inicio >= (GETDATE() - 365)"
+                + " GROUP BY DATENAME(MONTH, data_inicio)";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("MES", StringType.INSTANCE)
+                .addScalar("QUANTIDADE", LongType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 
-        Query query = getSession().createSQLQuery(sql);
-        query.setMaxResults(20);
-
-        System.out.println(query.list());
-
-        return null; //TODO arrumar retorno
+        return (List<Map<String, String>>) query.list();
     }
 }
