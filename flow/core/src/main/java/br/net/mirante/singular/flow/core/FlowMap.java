@@ -95,7 +95,7 @@ public class FlowMap implements Serializable {
             boolean automaticUserAllocation) {
         final MProcessRole processRole = new MProcessRole(name, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
-            throw createError("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined");
+            throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
         }
         rolesByAbbreviation.put(processRole.getAbbreviation(), processRole);
         return processRole;
@@ -114,11 +114,11 @@ public class FlowMap implements Serializable {
 
     private <T extends MTask> T addTask(T task) {
         if (tasksByName.containsKey(task.getName())) {
-            throw createError("Task with name '" + task.getName() + "' already defined");
+            throw new SingularFlowException(createErrorMsg("Task with name '" + task.getName() + "' already defined"));
         }
         tasksByName.put(task.getName(), task);
         if (tasksByAbbreviation.containsKey(task.getAbbreviation())) {
-            throw createError("Task with abbreviation '" + task.getAbbreviation() + "' already defined");
+            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + task.getAbbreviation() + "' already defined"));
         }
         tasksByAbbreviation.put(task.getAbbreviation(), task);
         return task;
@@ -143,7 +143,7 @@ public class FlowMap implements Serializable {
     public MTask<?> setStartTask(MTask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
-            throw createError("The task does not belong to this flow");
+            throw new SingularFlowException(createErrorMsg("The task does not belong to this flow"));
         }
         startTask = task;
         return task;
@@ -165,7 +165,7 @@ public class FlowMap implements Serializable {
     public MTaskEnd addFim(String name) {
         Objects.requireNonNull(name);
         if (endTasks.containsKey(name)) {
-            throw createError("End task '" + name + "' already defined");
+            throw new SingularFlowException(createErrorMsg("End task '" + name + "' already defined"));
         }
         final MTaskEnd fim = new MTaskEnd(this, name);
         endTasks.put(name, fim);
@@ -203,7 +203,7 @@ public class FlowMap implements Serializable {
         while (removeIfReachesTheEnd(tasks)) {
         }
         if (!tasks.isEmpty()) {
-            throw createError("The following tasks have no way to reach the end: " + joinTaskNames(tasks));
+            throw new SingularFlowException(createErrorMsg("The following tasks have no way to reach the end: " + joinTaskNames(tasks)));
         }
     }
 
@@ -217,16 +217,16 @@ public class FlowMap implements Serializable {
         return tasks.stream().map(MTask::getName).collect(Collectors.joining(", "));
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    final RuntimeException createError(String msg) {
-        return new RuntimeException(getProcessDefinition() + " -> " + msg);
+    final String createErrorMsg(String msg) {
+        return getProcessDefinition() + " -> " + msg;
     }
 
     protected VarService getVarService() {
         return processDefinition.getVarService();
+    }
+
+    @Override
+    public String toString() {
+        return "FlowMap [processDefinition=" + processDefinition.getName() + "]";
     }
 }

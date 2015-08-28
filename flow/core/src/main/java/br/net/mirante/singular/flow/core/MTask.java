@@ -152,7 +152,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     private MTransition addTransition(MTransition transition) {
         if (transitionsByName.containsKey(transition.getName().toLowerCase())) {
-            throw generateError("Transition with name '" + transition.getName() + "' already defined");
+            throw new SingularFlowException(createErrorMsg("Transition with name '" + transition.getName() + "' already defined"));
         }
         transitions.add(transition);
         transitionsByName.put(transition.getName().toLowerCase(), transition);
@@ -177,13 +177,8 @@ public abstract class MTask<K extends MTask<?>> {
         return automaticActions;
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     public void execute(ExecucaoMTask execucaoTask) {
-        throw new RuntimeException("Operation not supported");
+        throw new SingularFlowException("Operation not supported");
     }
 
     public List<MTransition> getTransitions() {
@@ -193,7 +188,7 @@ public abstract class MTask<K extends MTask<?>> {
     public MTransition getTransicaoOrException(String transitionName) {
         MTransition transicao = getTransition(transitionName);
         if (transicao == null) {
-            throw generateError("Transition '" + transitionName + "' is not defined");
+            throw new SingularFlowException(createErrorMsg("Transition '" + transitionName + "' is not defined"));
         }
         return transicao;
     }
@@ -243,13 +238,8 @@ public abstract class MTask<K extends MTask<?>> {
         return (TaskAccessStrategy<T>) accessStrategy;
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    final RuntimeException generateError(String message) {
-        return new RuntimeException(getFlowMap().getProcessDefinition() + ":" + this + " -> " + message);
+    final String createErrorMsg(String message) {
+        return getFlowMap().getProcessDefinition() + ":" + this + " -> " + message;
     }
 
     void verifyConsistency() {
@@ -263,21 +253,34 @@ public abstract class MTask<K extends MTask<?>> {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((flowMap == null) ? 0 : flowMap.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
             return false;
-        }
         MTask<?> other = (MTask<?>) obj;
-        return name.equals(other.name);
+        if (flowMap == null) {
+            if (other.flowMap != null)
+                return false;
+        } else if (!flowMap.equals(other.flowMap))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
+
+    
 }

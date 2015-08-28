@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.flow.core.SingularFlowException;
+
 public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
 
     public K getVariavel(String ref);
@@ -76,7 +78,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         } else if (classeTipo.isInstance(o)) {
             return classeTipo.cast(o);
         }
-        throw new RuntimeException("'" + ref + "' é do tipo " + o.getClass().getName() + " e o esperado era " + classeTipo.getName());
+        throw new SingularFlowException("'" + ref + "' é do tipo " + o.getClass().getName() + " e o esperado era " + classeTipo.getName());
     }
 
     public default void addValues(VarInstanceMap<?> vars, boolean createMissingTypes) {
@@ -215,12 +217,12 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
 
         @Override
         public VarInstance addDefinicao(VarDefinition def) {
-            throw new RuntimeException("Método não suportado");
+            throw new SingularFlowException("Método não suportado");
         }
 
         @Override
         public VarService getVarService() {
-            throw new RuntimeException("Método não suportado");
+            throw new SingularFlowException("Método não suportado");
         }
     };
 }

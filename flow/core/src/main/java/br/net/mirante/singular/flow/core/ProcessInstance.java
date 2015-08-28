@@ -166,7 +166,7 @@ public abstract class ProcessInstance {
     public boolean isNomeEstado(String nomeEstado) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithName(nomeEstado);
         if (task == null) {
-            throw getDefinicao().getFlowMap().createError("Não existe task com nome '" + nomeEstado + "'");
+            throw new SingularFlowException(getDefinicao().getFlowMap().createErrorMsg("Não existe task com nome '" + nomeEstado + "'"));
         }
         return getEstado().equals(task);
     }
@@ -178,14 +178,14 @@ public abstract class ProcessInstance {
     public boolean isSiglaEstado(String sigla) {
         final MTask<?> task = getDefinicao().getFlowMap().getTaskWithAbbreviation(sigla);
         if (task == null) {
-            throw getDefinicao().getFlowMap().createError("Não existe task com sigla '" + sigla + "'");
+            throw new SingularFlowException(getDefinicao().getFlowMap().createErrorMsg("Não existe task com sigla '" + sigla + "'"));
         }
         return getEstado().equals(task);
     }
 
     final void setContextoExecucao(ExecucaoMTask execucaoTask) {
         if (this.execucaoTask != null && execucaoTask != null) {
-            throw criarErro("A instancia já está com um tarefa em processo de execução");
+            throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
         }
         this.execucaoTask = execucaoTask;
     }
@@ -265,13 +265,8 @@ public abstract class ProcessInstance {
         return getAccessStrategy().listAllocableUsers(this);
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    protected final RuntimeException criarErro(String msg) {
-        return MBPMUtil.generateError(this, msg);
+    public final String createErrorMsg(String message) {
+        return getClass().getName() + " - " + getFullId() + " : " + message;
     }
 
     @SuppressWarnings("rawtypes")
@@ -546,7 +541,7 @@ public abstract class ProcessInstance {
 
         ValidationResult result = getVariaveis().validar();
         if (result.hasErros()) {
-            throw criarErro("Erro ao iniciar processo '" + getNomeProcesso() + "': " + result);
+            throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getNomeProcesso() + "': " + result));
         }
     }
 
@@ -613,15 +608,10 @@ public abstract class ProcessInstance {
         return getDefinicao().getPersistenceService();
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getDefinicao().getVariableWrapperClass()) {
-                throw new RuntimeException("A classe do parâmetro (" + variableWrapperClass.getName() + ") é diferente da definida em "
+                throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName() + ") é diferente da definida em "
                         + getDescricao().getClass().getName() + ". A definição do processo informou o wrapper como sendo "
                         + getDefinicao().getVariableWrapperClass());
             }
@@ -629,7 +619,7 @@ public abstract class ProcessInstance {
                 variableWrapper = variableWrapperClass.getConstructor().newInstance();
                 variableWrapper.setVariables(getVariaveis());
             } catch (Exception e) {
-                throw new RuntimeException("Erro instanciando variableWrapper: " + e.getMessage(), e);
+                throw new SingularFlowException("Erro instanciando variableWrapper: " + e.getMessage(), e);
             }
         }
         return variableWrapperClass.cast(variableWrapper);

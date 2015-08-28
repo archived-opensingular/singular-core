@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
 
+import br.net.mirante.singular.flow.core.SingularFlowException;
+
 public class Lnk implements Serializable {
 
     private final boolean urlAppMissing;
@@ -75,7 +77,7 @@ public class Lnk implements Serializable {
             }
             return new Lnk(url_ + separador + parameter + "=" + URLEncoder.encode(value, "UTF-8"), urlAppMissing);
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new SingularFlowException(e);
         }
     }
 
@@ -136,7 +138,7 @@ public class Lnk implements Serializable {
 
     public String getUrl() {
         if (urlAppMissing) {
-            throw new RuntimeException("UrlApp não definida para '" + url_ + "'");
+            throw new SingularFlowException("UrlApp não definida para '" + url_ + "'");
         }
         return url_;
     }

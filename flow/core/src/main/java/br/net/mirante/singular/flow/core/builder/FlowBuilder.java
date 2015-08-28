@@ -17,6 +17,7 @@ import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.RoleAccessStrategy;
+import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 
@@ -59,11 +60,6 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         getFlowMap().setRoleChangeListener(roleChangeListener);
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     private BTask toBuilder(MTask<?> task) {
         if (task instanceof MTaskPeople) {
             return newPeopleTask((MTaskPeople) task);
@@ -74,7 +70,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         } else if (task instanceof MTaskEnd) {
             return newEndTask((MTaskEnd) task);
         }
-        throw new RuntimeException("Task type " + task.getClass().getName() + " not supported");
+        throw new SingularFlowException("Task type " + task.getClass().getName() + " not supported");
     }
 
     public void forEach(Consumer<BTask> consumer) {

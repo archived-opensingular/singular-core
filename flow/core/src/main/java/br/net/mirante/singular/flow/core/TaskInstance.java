@@ -33,7 +33,7 @@ public class TaskInstance {
 
     TaskInstance(ProcessInstance processInstance, IEntityTaskInstance task) {
         if (!processInstance.getEntity().equals(task.getDemanda())) {
-            throw processInstance.criarErro("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão");
+            throw new SingularFlowException(processInstance.createErrorMsg("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão"));
         }
         this.processInstance = processInstance;
         this.entityTask = task;
@@ -163,7 +163,7 @@ public class TaskInstance {
 
     public void relocateTask(MUser author, MUser user, boolean notify, String relocationCause) {
         if (user != null && !isPessoa()) {
-            throw getProcessInstance().criarErro("A tarefa '" + getNome() + "' não pode ser realocada, pois não é do tipo pessoa");
+            throw new SingularFlowException(getProcessInstance().createErrorMsg("A tarefa '" + getNome() + "' não pode ser realocada, pois não é do tipo pessoa"));
         }
         MUser pessoaAlocadaAntes = getPessoaAlocada();
         if (Objects.equals(user, pessoaAlocadaAntes)) {

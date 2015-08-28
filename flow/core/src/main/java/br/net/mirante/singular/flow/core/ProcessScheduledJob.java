@@ -7,8 +7,6 @@ import br.net.mirante.singular.flow.schedule.IScheduleData;
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 
-import com.google.common.base.Preconditions;
-
 public class ProcessScheduledJob implements IScheduledJob {
 
     private final Class<? extends ProcessDefinition<?>> processDefinition;
@@ -52,7 +50,9 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public ProcessScheduledJob withSchedule(IScheduleData scheduleData) {
-        Preconditions.checkArgument(this.scheduleData == null, "Job already scheduled.");
+        if(this.scheduleData != null){
+            throw new SingularFlowException("Job already scheduled.");
+        }
         this.scheduleData = scheduleData;
         return this;
     }

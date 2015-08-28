@@ -14,7 +14,6 @@ import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 
 @SuppressWarnings("serial")
 public class MTransition implements Serializable {
@@ -45,7 +44,9 @@ public class MTransition implements Serializable {
 
     @SuppressWarnings("unchecked")
     public MTransition withAccessControl(TransitionAccessStrategy<? extends TaskInstance> accessStrategy) {
-        Preconditions.checkArgument(this.accessStrategy == null, "Access strategy already defined");
+        if(this.accessStrategy != null){
+            throw new SingularFlowException("Access strategy already defined");
+        }
         this.accessStrategy = (TransitionAccessStrategy<TaskInstance>) accessStrategy;
         return this;
     }
@@ -76,12 +77,15 @@ public class MTransition implements Serializable {
     }
 
     public MTransition defineUserRoleInTransition(MProcessRole papel) {
-        Preconditions.checkArgument(origin.isPeople() || papel.isAutomaticUserAllocation(), "Only automatic user allocation is allowed in " + origin.getTaskType().toString() + " tasks");
-        if (this.rolesToDefineUser == null) {
-            this.rolesToDefineUser = new ArrayList<>();
+        if(origin.isPeople() || papel.isAutomaticUserAllocation()){
+            if (this.rolesToDefineUser == null) {
+                this.rolesToDefineUser = new ArrayList<>();
+            }
+            this.rolesToDefineUser.add(papel);
+            return this;
+        } else {
+            throw new SingularFlowException("Only automatic user allocation is allowed in " + origin.getTaskType().toString() + " tasks");
         }
-        this.rolesToDefineUser.add(papel);
-        return this;
     }
 
     public List<MProcessRole> getRolesToDefine() {
@@ -132,9 +136,12 @@ public class MTransition implements Serializable {
     }
 
     public MTransition setParametersInitializer(ITransitionParametersInitializer parametersInitializer) {
-        Preconditions.checkArgument(this.parametersInitializer == null, "Parameters Initializer already set");
-        this.parametersInitializer = parametersInitializer;
-        return this;
+        if(this.parametersInitializer == null){
+            this.parametersInitializer = parametersInitializer;
+            return this;
+        } else {
+            throw new SingularFlowException("Parameters Initializer already set");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -143,9 +150,12 @@ public class MTransition implements Serializable {
     }
 
     public MTransition setParametersValidator(ITransitionParametersValidator parametersValidator) {
-        Preconditions.checkArgument(this.parametersValidator == null, "Parameters Validator already set");
-        this.parametersValidator = parametersValidator;
-        return this;
+        if(this.parametersValidator == null){
+            this.parametersValidator = parametersValidator;
+            return this;
+        } else {
+            throw new SingularFlowException("Parameters Validator already set");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -196,7 +206,7 @@ public class MTransition implements Serializable {
     public MTransition addParameterFromProcessVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
-            throw getFlowMap().createError("Variable '" + ref + "' is not defined in process definition.");
+            throw new SingularFlowException(getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."));
         }
         getParameters().addVariable(defVar.copy()).setRequired(required);
         return this;

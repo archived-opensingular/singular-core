@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
+import br.net.mirante.singular.flow.core.SingularFlowException;
+
 public abstract class AbstractVarInstanceMap<K extends VarInstance> implements VarInstanceMap<K> {
 
     private LinkedHashMap<String, K> variaveis = new LinkedHashMap<>();
@@ -50,7 +52,7 @@ public abstract class AbstractVarInstanceMap<K extends VarInstance> implements V
     }
 
     protected K newVarInstance(VarDefinition def) {
-        throw new RuntimeException("Esse metodo ou addDefinicao() deve ser sobre escrito");
+        throw new SingularFlowException("Esse metodo ou addDefinicao() deve ser sobre escrito");
     }
 
     @Override

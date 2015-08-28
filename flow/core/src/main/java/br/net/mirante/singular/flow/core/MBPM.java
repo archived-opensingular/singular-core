@@ -8,8 +8,6 @@ import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-import com.google.common.base.Preconditions;
-
 public class MBPM {
 
     private static AbstractMbpmBean mbpmBean;
@@ -33,7 +31,9 @@ public class MBPM {
     }
 
     public static synchronized void setConf(AbstractMbpmBean conf) {
-        Preconditions.checkArgument(mbpmBean == null, "O contexto já foi configurado.");
+        if(mbpmBean != null){
+            throw new SingularFlowException("O contexto já foi configurado.");
+        }
         mbpmBean = conf;
         init();
     }

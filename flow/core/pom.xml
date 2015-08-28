@@ -19,7 +19,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-schedule</artifactId>
-            <version>0.1.2</version>
+            <version>${singular.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-commons</artifactId>
+            <version>${singular.version}</version>
         </dependency>
 
         <dependency>
@@ -59,4 +64,7 @@
         </dependency>
     </dependencies>
 
+    <properties>
+		<singular.version>0.1.2</singular.version>
+    </properties>
 </project>

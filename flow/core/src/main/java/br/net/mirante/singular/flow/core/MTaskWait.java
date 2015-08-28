@@ -3,8 +3,6 @@ package br.net.mirante.singular.flow.core;
 import java.util.Date;
 import java.util.Objects;
 
-import com.google.common.base.Preconditions;
-
 @SuppressWarnings("unchecked")
 public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
 
@@ -25,7 +23,9 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
 
     @Override
     public <T extends ProcessInstance> MTaskWait withTargetDate(IExecutionDateStrategy<T> targetDateExecutionStrategy) {
-        Preconditions.checkArgument(executionDateStrategy == null, "Tarefas agendadas não suportam data alvo.");
+        if(executionDateStrategy != null){
+            throw new SingularFlowException("Tarefas agendadas não suportam data alvo.");
+        }
         super.withTargetDate(targetDateExecutionStrategy);
         return this;
     }

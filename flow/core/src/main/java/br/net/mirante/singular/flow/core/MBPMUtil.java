@@ -88,14 +88,9 @@ public class MBPMUtil {
         }
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     private static int calculateTaskOrder(IEntityTaskDefinition entityTaskDefinition, ProcessDefinition<?> processDefinition) {
         if (!processDefinition.getEntity().equals(entityTaskDefinition.getDefinicao())) {
-            throw new RuntimeException("Mistura de situações de definições diferrentes");
+            throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
         MTask<?> task = processDefinition.getFlowMap().getTaskWithAbbreviation(entityTaskDefinition.getSigla());
         if (task != null) {
@@ -112,11 +107,6 @@ public class MBPMUtil {
         }
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     private static int calculateWeight(MTask<?> task) {
         switch (task.getTaskType()) {
             case People:
@@ -128,17 +118,8 @@ public class MBPMUtil {
             case End:
                 return PESO_TASK_FIM;
             default:
-                throw new RuntimeException(task.getTaskType() + " não tratado");
+                throw new SingularFlowException(task.getTaskType() + " não tratado");
         }
-    }
-
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    public static final RuntimeException generateError(ProcessInstance instance, String message) {
-        return new RuntimeException(instance.getClass().getName() + " - " + instance.getFullId() + " : " + message);
     }
 
     public static String convertToJavaIdentity(String original) {

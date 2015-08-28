@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.reflections.Reflections;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.reflections.Reflections;
 
 public final class ProcessDefinitionCache {
 
@@ -30,11 +31,6 @@ public final class ProcessDefinitionCache {
 
     private static ProcessDefinitionCache cache;
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String packageName) {
         ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();
@@ -52,7 +48,7 @@ public final class ProcessDefinitionCache {
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
             cache.add(def);
             if (cacheById.containsKey(def.getAbbreviation())) {
-                throw new RuntimeException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
+                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
             }
             cacheById.put(def.getAbbreviation(), def);
             cacheByInstanceType.put(def.getClasseInstancia(), def);

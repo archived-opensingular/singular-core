@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
-
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class TaskAccessStrategy<K extends ProcessInstance> {
 
@@ -70,7 +68,9 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         public DisjunctionTaskAccessStrategy(TaskAccessStrategy<K> e1, TaskAccessStrategy<?> e2) {
             add(e1);
             add(e2);
-            Preconditions.checkState(!disjunction.isEmpty());
+            if(disjunction.isEmpty()){
+                throw new SingularFlowException();
+            }
         }
 
         private void add(TaskAccessStrategy<?> e1) {

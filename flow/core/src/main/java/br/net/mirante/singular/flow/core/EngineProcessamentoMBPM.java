@@ -135,11 +135,6 @@ class EngineProcessamentoMBPM {
         return updateEstado(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     private static MTransition tratarTransicao(TaskInstance tarefaAtual, String nomeTransicao) {
         final MTask<?> estadoAtual = tarefaAtual.getTipo();
 
@@ -150,12 +145,12 @@ class EngineProcessamentoMBPM {
             } else if (estadoAtual.getTransitions().size() > 1 && estadoAtual.getDefaultTransition() != null) {
                 transicao = estadoAtual.getDefaultTransition();
             } else {
-                throw new RuntimeException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
+                throw new SingularFlowException("A tarefa [" + estadoAtual.getCompleteName() + "] não definiu resultado para transicao");
             }
         } else {
             transicao = estadoAtual.getTransition(nomeTransicao);
             if (transicao == null) {
-                throw new RuntimeException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName() + "] não possui a transição '" + nomeTransicao
+                throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName() + "] não possui a transição '" + nomeTransicao
                         + "' solicitada. As opções são: {" + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
             }
         }
@@ -178,11 +173,6 @@ class EngineProcessamentoMBPM {
                 .getMbpmBean().getPersistenceService();
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     private static void validarParametrosInput(ProcessInstance instancia, MTransition transicao, VarInstanceMap<?> paramIn) {
         if (transicao.getParameters().isEmpty()) {
             return;
@@ -190,14 +180,14 @@ class EngineProcessamentoMBPM {
         for (VarDefinition p : transicao.getParameters()) {
             if (p.isRequired()) {
                 if (!parametroPresentes(paramIn, p)) {
-                    throw new RuntimeException("O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição "
+                    throw new SingularFlowException("O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição "
                             + transicao.getName());
                 }
             }
         }
         ValidationResult errors = transicao.validate(instancia, paramIn);
         if (errors.hasErros()) {
-            throw new RuntimeException("Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]");
+            throw new SingularFlowException("Erro ao validar os parametros da transição " + transicao.getName() + " [" + errors + "]");
         }
     }
 

@@ -33,7 +33,6 @@ import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 @SuppressWarnings({ "serial", "unchecked" })
@@ -83,16 +82,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return instanceClass;
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
         this.variableWrapperClass = variableWrapperClass;
         if (variableWrapperClass != null) {
             if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
-                throw new RuntimeException("A classe " + instanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
+                throw new SingularFlowException("A classe " + instanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
                     + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             newVariableWrapper(variableWrapperClass).configVariables(getVariables());
@@ -103,7 +97,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         try {
             return variableWrapperClass.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Erro instanciando " + variableWrapperClass.getName(), e);
+            throw new SingularFlowException("Erro instanciando " + variableWrapperClass.getName(), e);
         }
     }
 
@@ -118,14 +112,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return wrapper;
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
         if (expectedVariableWrapperClass != variableWrapperClass) {
-            throw new RuntimeException(getClass().getName() + " espera que as variáveis sejam do tipo " + variableWrapperClass);
+            throw new SingularFlowException(getClass().getName() + " espera que as variáveis sejam do tipo " + variableWrapperClass);
         }
     }
 
@@ -135,8 +124,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         synchronized (this) {
             if (flowMap == null) {
                 FlowMap novo = createFlowMap();
-
-                Preconditions.checkArgument(novo.getProcessDefinition() == this, "Mapa com definiçao trocada");
+                
+                if(novo.getProcessDefinition() != this){
+                    throw new SingularFlowException("Mapa com definiçao trocada");
+                }
 
                 novo.verifyConsistency();
                 flowMap = novo;
@@ -177,8 +168,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         name = StringUtils.trimToNull(name);
 
         final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
-
-        Preconditions.checkArgument(!scheduledJobsByName.containsKey(name), "A Job with name '%s' is already defined.", name);
+        
+        if(scheduledJobsByName.containsKey(name)){
+            throw new SingularFlowException("A Job with name '"+name+"' is already defined.");
+        }
         scheduledJobsByName.put(name, scheduledJob);
         return scheduledJob;
     }
@@ -222,10 +215,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
         if (def == null) {
             entityCod = null;
-            throw criarErro("Definicao demanda incosistente com o BD: codigo não encontrado");
+            throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: codigo não encontrado"));
         } else if (!getAbbreviation().equals(def.getSigla())) {
             entityCod = null;
-            throw criarErro("Definicao demanda incosistente com o BD: sigla recuperada diferente");
+            throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: sigla recuperada diferente"));
         }
 
         return def;
@@ -252,11 +245,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
     public final IEntityTaskDefinition getEntityTask(MTask<?> task) {
         if (task == null) {
             return null;
@@ -267,7 +255,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         IEntityTaskDefinition situacao = getPersistenceService().retrieveTaskStateByCod(codSituacao);
         if (situacao == null) {
             entityCodByTaskAbbreviation.clear();
-            throw new RuntimeException("Dados inconsistentes com o BD");
+            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
         }
         return situacao;
     }
@@ -276,22 +264,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return FlowRendererFactory.generateImageFor(this);
     }
 
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    protected final RuntimeException criarErro(String msg) {
-        return new RuntimeException("Processo MBPM '" + getName() + "': " + msg);
-    }
-
-    /**
-     * @deprecated Deveria ter uma exceção de Runtime do próprio Singular
-     */
-    @Deprecated
-    //TODO refatorar
-    protected final RuntimeException criarErro(String msg, Exception e) {
-        return new RuntimeException("Processo MBPM '" + getName() + "': " + msg, e);
+    protected final String createErrorMsg(String msg) {
+        return "Processo MBPM '" + getName() + "': " + msg;
     }
 
     public final String getName() {
@@ -336,10 +310,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         this.name = name;
     }
 
+    //TODO - verificar se esta logica deve permanecer
     private String generateAbbreviation() {
         String className = getClass().getSimpleName();
         if (!className.endsWith("Definicao")) {
-            throw new RuntimeException("O nome da classe " + getClass().getName() + " deveria ter o sufixo 'Definicao'");
+            throw new SingularFlowException("O nome da classe " + getClass().getName() + " deveria ter o sufixo 'Definicao'");
         }
         return className.substring(0, className.length() - "Definicao".length());
     }
@@ -383,8 +358,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
                 }
                 Objects.requireNonNull(this.construtor);
             } catch (final Exception e) {
-                throw criarErro("Construtor ausente: " + getClasseInstancia().getName() + "(" + IEntityProcessInstance.class.getName() + ")",
-                    e);
+                throw new SingularFlowException(createErrorMsg("Construtor ausente: " + getClasseInstancia().getName() + "(" + IEntityProcessInstance.class.getName() + ")"), e);
             }
         }
         return construtor;

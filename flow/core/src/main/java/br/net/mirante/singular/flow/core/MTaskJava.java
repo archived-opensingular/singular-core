@@ -60,7 +60,7 @@ public class MTaskJava extends MTask<MTaskJava> {
     @Override
     public void execute(ExecucaoMTask execucaoTask) {
         if (taskImpl == null) {
-            throw generateError("Chamada inválida. Não foi configurado o código de execução da tarefa");
+            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"));
         }
         Object result = taskImpl.call(execucaoTask);
         if (result instanceof String) {
@@ -70,13 +70,12 @@ public class MTaskJava extends MTask<MTaskJava> {
 
     public Object executarByBloco(Collection<? extends ProcessInstance> instancias) {
         if (blockImpl == null) {
-            throw generateError("Chamada inválida. Não se aplica execução em bloco nesta tarefa.");
+            throw new SingularFlowException(createErrorMsg("Chamada inválida. Não se aplica execução em bloco nesta tarefa."));
         }
         Object result = blockImpl.call(instancias);
 
         if (result == null) {
-            /* XXX: O método "equals" foi implementado em MTask. Ele não deveria ser usado aqui? */
-            long qtdAlterado = instancias.stream().filter(i -> i.getEstado() != this).count();
+            long qtdAlterado = instancias.stream().filter(i -> !equals(i.getEstado())).count();
             result = "De " + instancias.size() + " instancias no estado [" + getCompleteName() + "], " + qtdAlterado + " mudaram de estado";
         }
         return result;
