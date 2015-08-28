@@ -1,6 +1,11 @@
 package br.net.mirante.singular.dao;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.Temporal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -108,6 +113,25 @@ public class InstanceDAO {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period, Long definitionId,
+            List<Long> excludeStatuses) {
+        String sql = "SELECT SIT.nome AS SITUACAO, COUNT(DEM.cod) AS QUANTIDADE"
+                + " FROM DMD_DEMANDA DEM LEFT JOIN DMD_SITUACAO SIT ON SIT.cod = DEM.cod_situacao"
+                + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEM.cod_definicao = :definitionId"
+                + " AND DEM.cod_situacao NOT IN (:excludeStatuses)"
+                + " GROUP BY SIT.nome";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("SITUACAO", StringType.INSTANCE)
+                .addScalar("QUANTIDADE", LongType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+
+        query.setParameter("definitionId", definitionId);
+        query.setParameter("startPeriod", periodFromNow(period));
+        query.setParameterList("excludeStatuses", excludeStatuses);
+        return (List<Map<String, String>>) query.list();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
         String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio,"
                 + " DATEADD(DAY, 1, DEM.data_fim)) as DIAS"
@@ -125,5 +149,12 @@ public class InstanceDAO {
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("media", media);
         return (List<Map<String, String>>) query.list();
+    }
+
+    private Date periodFromNow(Period period) {
+        Temporal temporal = period.addTo(LocalDateTime.now());
+        LocalDateTime localDateTime = LocalDateTime.from(temporal);
+
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

@@ -27,6 +27,11 @@ public abstract class BarChartPanel extends Panel {
     private WebMarkupContainer barChartDiv;
     private List<Map<String, String>> dadosGrafico;
 
+    public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField,
+            boolean withFilter) {
+        this(id, title, subtitle, valueField, categoryField, "", withFilter);
+    }
+
     public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
         this(id, title, subtitle, valueField, categoryField, "", false);
     }
