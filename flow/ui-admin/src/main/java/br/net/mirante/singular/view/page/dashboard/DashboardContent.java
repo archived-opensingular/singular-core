@@ -1,5 +1,8 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import br.net.mirante.singular.dao.FeedDTO;
+import br.net.mirante.singular.service.FeedService;
+import br.net.mirante.singular.view.template.Content;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -10,10 +13,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import br.net.mirante.singular.dao.FeedDTO;
-import br.net.mirante.singular.service.FeedService;
-import br.net.mirante.singular.view.template.Content;
 
 public class DashboardContent extends Content {
 	
@@ -61,5 +60,11 @@ public class DashboardContent extends Content {
                 .append("    Index.init();\n")
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        add(new BarChartPanel("process-mean-time-chart", "label.chart.title", "label.chart.subtitle"));
     }
 }

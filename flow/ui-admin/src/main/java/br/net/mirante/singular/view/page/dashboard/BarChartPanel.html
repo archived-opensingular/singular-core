@@ -1,0 +1,30 @@
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject bold uppercase font-red-sunglo" wicket:id="title"></span>
+                <span class="caption-helper" wicket:id="subtitle"></span>
+            </div>
+            <div class="actions">
+                <form wicket:id="chart-form">
+                    <div class="btn-group btn-group-devided" data-toggle="buttons">
+                        <label class="btn btn-transparent grey-salsa btn-circle btn-sm active">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao1">Semanal</label>
+                        <label class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao2">Mensal</label>
+                        <label class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao3">Anual</label>
+                    </div>
+                    <div wicket:id="chart-filter" ></div>
+                </form>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div wicket:id="chart-div" class="columnLine" ></div>
+        </div>
+    </div>
+
+</wicket:panel>
+</html>
