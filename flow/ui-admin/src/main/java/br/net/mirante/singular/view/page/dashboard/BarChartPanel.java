@@ -28,15 +28,13 @@ import org.apache.wicket.util.value.AttributeMap;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import br.net.mirante.singular.service.PesquisaService;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class BarChartPanel extends Panel {
 
-    @SpringBean
+    @Inject
     private PesquisaService pesquisaService;
 
     private List<Map<String, String>> dadosGrafico;
