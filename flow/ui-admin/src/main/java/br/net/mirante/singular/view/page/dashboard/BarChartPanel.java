@@ -1,20 +1,20 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import br.net.mirante.singular.service.PesquisaService;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 
-import javax.inject.Inject;
-import java.time.Period;
-import java.util.List;
-import java.util.Map;
+import br.net.mirante.singular.service.PesquisaService;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -26,13 +26,25 @@ public class BarChartPanel extends Panel {
     private List<Map<String, String>> dadosGrafico;
     private String title;
     private String subtitle;
+    private String valueField;
+    private String categoryField;
+    private String balloonTextsuffix;
+
     private PeriodType periodType;
     private WebMarkupContainer barChartDiv;
 
-    public BarChartPanel(String id, String title, String subtitle) {
+    public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
+        this(id, title, subtitle, valueField, categoryField, "");
+    }
+
+    public BarChartPanel(String id, String title, String subtitle,
+            String valueField, String categoryField, String balloonTextsuffix) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
+        this.valueField = valueField;
+        this.categoryField = categoryField;
+        this.balloonTextsuffix = balloonTextsuffix;
     }
 
     @Override
@@ -102,18 +114,18 @@ public class BarChartPanel extends Panel {
                 "                \"gridAboveGraphs\": true, " +
                 "                \"startDuration\": 1, " +
                 "                \"graphs\": [ { " +
-                "                    \"balloonText\": \"[[category]]: <b>[[value]] dia(s)</b>\", " +
+                "                    \"balloonText\": \"[[category]]: <b>[[value]]" + balloonTextsuffix + "</b>\", " +
                 "                    \"fillAlphas\": 0.8, " +
                 "                    \"lineAlpha\": 0.2, " +
                 "                    \"type\": \"column\", " +
-                "                    \"valueField\": \"MEAN\" " +
+                "                    \"valueField\": \"" + valueField + "\" " +
                 "                } ], " +
                 "                \"chartCursor\": { " +
                 "                    \"categoryBalloonEnabled\": false, " +
                 "                    \"cursorAlpha\": 0, " +
                 "                    \"zoomable\": false " +
                 "                }, " +
-                "                \"categoryField\": \"NOME\", " +
+                "                \"categoryField\": \"" + categoryField + "\", " +
                 "                \"categoryAxis\": { " +
                 "                    \"gridPosition\": \"start\", " +
                 "                    \"gridAlpha\": 0, " +

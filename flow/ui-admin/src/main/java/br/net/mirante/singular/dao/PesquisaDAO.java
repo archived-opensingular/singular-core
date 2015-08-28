@@ -1,12 +1,9 @@
 package br.net.mirante.singular.dao;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
-import java.time.temporal.TemporalField;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
