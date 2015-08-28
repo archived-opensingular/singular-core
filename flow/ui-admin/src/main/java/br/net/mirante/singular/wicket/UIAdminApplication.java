@@ -1,5 +1,7 @@
 package br.net.mirante.singular.wicket;
 
+import java.util.Locale;
+
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
@@ -23,6 +25,8 @@ public class UIAdminApplication extends WebApplication {
     @Override
     public void init() {
         super.init();
+
+        Locale.setDefault(new Locale("pt", "BR"));
 
         // add your configuration here
         getMarkupSettings().setStripWicketTags(true);
