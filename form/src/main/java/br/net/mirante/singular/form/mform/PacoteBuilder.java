@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 public class PacoteBuilder {
 
     private final MDicionario dicionario;
-    private final MPacote pacote;
+    private final MPacote     pacote;
 
     PacoteBuilder(MDicionario dicionario, MPacote pacote) {
         this.dicionario = dicionario;
@@ -32,7 +32,8 @@ public class PacoteBuilder {
         return novo;
     }
 
-    public MTipoComposto createTipoComposto(String nomeSimplesNovoTipo) {
+    @SuppressWarnings("unchecked")
+    public MTipoComposto<? extends MIComposto> createTipoComposto(String nomeSimplesNovoTipo) {
         return createTipo(nomeSimplesNovoTipo, MTipoComposto.class);
     }
 
@@ -167,11 +168,11 @@ public class PacoteBuilder {
             atr.bind(escopo.getNome());
         } else {
             throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNomeSimples() + "' do pacote " + atr.getClassePacote().getName()
- + " durante a construção do pacote " + pacote.getNome());
+                + " durante a construção do pacote " + pacote.getNome());
         }
         if (!atr.isSelfReference() && !(atr.getClasseTipo().isInstance(tipoAtributo))) {
             throw new RuntimeException("O atributo " + atr.getNomeCompleto() + " esperava ser do tipo " + atr.getClasseTipo().getName()
-                    + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
+                + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
         }
     }
 

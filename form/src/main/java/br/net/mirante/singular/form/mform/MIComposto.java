@@ -32,6 +32,37 @@ public class MIComposto extends MInstancia {
         return campos.values();
     }
 
+    public MInstancia getCampo(String path) {
+        return getCampo(new LeitorPath(path));
+    }
+
+    public MInstancia getCampo(LeitorPath leitorPath) {
+        if (!leitorPath.isNomeSimplesValido()) {
+            throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um nome de campo válido"));
+        }
+        MInstancia instancia = null;
+        if (campos != null) {
+            instancia = campos.get(leitorPath.getTrecho());
+        }
+        if (instancia == null) {
+            MTipo<?> tipoCampo = getMTipo().getCampo(leitorPath.getTrecho());
+            if (tipoCampo == null) {
+                throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um campo definido"));
+            }
+            instancia = tipoCampo.novaInstancia();
+            instancia.setPai(this);
+            if (campos == null) {
+                campos = new TreeMap<>();
+            }
+            campos.put(leitorPath.getTrecho(), instancia);
+        }
+        if (leitorPath.isUltimo()) {
+            return instancia;
+        } else {
+            return ((MIComposto) instancia).getCampo(leitorPath.proximo());
+        }
+    }
+
     public <T extends MInstancia> T getFilho(MTipo<T> tipoPai) {
         throw new RuntimeException("Método não implementado");
     }

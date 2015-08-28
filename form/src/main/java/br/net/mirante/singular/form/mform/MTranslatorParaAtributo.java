@@ -1,36 +1,36 @@
 package br.net.mirante.singular.form.mform;
 
-public abstract class MTranslatorParaAtributo {
+import com.google.common.base.Function;
 
-    private MAtributoEnabled alvo;
+public abstract class MTranslatorParaAtributo<ALVO extends MAtributoEnabled> {
 
-    static <T extends MTranslatorParaAtributo> T of(MAtributoEnabled original, Class<T> classeAlvo) {
+    private ALVO alvo;
+
+    static <T extends MTranslatorParaAtributo> T of(MAtributoEnabled original, Class<T> classeAspecto) {
         T instancia;
         try {
-            instancia = classeAlvo.newInstance();
+            instancia = classeAspecto.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Erro criando classe de aspecto '" + classeAlvo.getName() + "'", e);
+            throw new RuntimeException("Erro criando classe de aspecto '" + classeAspecto.getName() + "'", e);
         }
         return of(original, instancia);
     }
-
     static <T extends MTranslatorParaAtributo> T of(MAtributoEnabled original, T instancia) {
         instancia.setAlvo(original);
         return instancia;
     }
 
-    protected MTranslatorParaAtributo() {
-    }
+    protected MTranslatorParaAtributo() {}
 
-    protected MTranslatorParaAtributo(MAtributoEnabled alvo) {
+    protected MTranslatorParaAtributo(ALVO alvo) {
         this.alvo = alvo;
     }
 
-    final void setAlvo(MAtributoEnabled alvo) {
+    final void setAlvo(ALVO alvo) {
         this.alvo = alvo;
     }
 
-    public MAtributoEnabled getAlvo() {
+    public ALVO getAlvo() {
         if (alvo == null) {
             throw new RuntimeException("O objeto alvo dos atributos não foi definido");
         }
@@ -45,5 +45,9 @@ public abstract class MTranslatorParaAtributo {
             return (MTipo<?>) alvo;
         }
         return ((MInstancia) alvo).getMTipo();
+    }
+
+    public <TR> TR as(Function<ALVO, TR> wrapper) {
+        return wrapper.apply(getAlvo());
     }
 }

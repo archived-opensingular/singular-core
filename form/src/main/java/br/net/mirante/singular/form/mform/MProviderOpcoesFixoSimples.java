@@ -5,7 +5,7 @@ import java.util.Collection;
 
 class MProviderOpcoesFixoSimples implements MProviderOpcoes {
 
-    private final MILista opcoes;
+    private final MILista<? extends MInstancia> opcoes;
 
     public MProviderOpcoesFixoSimples(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
         if (lista.isEmpty()) {
@@ -21,6 +21,11 @@ class MProviderOpcoesFixoSimples implements MProviderOpcoes {
         }
         this.opcoes = tipoOpcoes.novaLista();
         Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
+    }
+
+    @Override
+    public MILista<? extends MInstancia> getOpcoes() {
+        return opcoes;
     }
 
     @Override

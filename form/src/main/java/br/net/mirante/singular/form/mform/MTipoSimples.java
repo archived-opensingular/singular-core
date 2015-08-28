@@ -107,7 +107,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         return classeTipoNativo.cast(converter.convert(classeTipoNativo, valor));
     }
 
-    final Class<TIPO_NATIVO> getClasseTipoNativo() {
+    public final Class<TIPO_NATIVO> getClasseTipoNativo() {
         return classeTipoNativo;
     }
 

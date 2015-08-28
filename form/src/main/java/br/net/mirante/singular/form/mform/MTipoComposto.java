@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -14,8 +15,9 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     private final Map<String, MTipo<?>> campos = new LinkedHashMap<>();
 
+    @SuppressWarnings("unchecked")
     public MTipoComposto() {
-        super((Class) MIComposto.class);
+        super((Class<? extends TIPO_INSTANCIA>) MIComposto.class);
     }
 
     protected MTipoComposto(Class<TIPO_INSTANCIA> classeInstancia) {
@@ -53,6 +55,10 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipo<?> getCampo(String nomeCampo) {
         return campos.get(nomeCampo);
+    }
+    
+    public Set<String> getCampos() {
+        return campos.keySet();
     }
 
     // --------------------------------------------------------------------------

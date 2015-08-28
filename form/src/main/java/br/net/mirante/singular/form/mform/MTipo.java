@@ -17,15 +17,15 @@ import br.net.mirante.singular.form.validation.IValidator;
 @MFormTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
 
-    private String nomeSimples;
+    private String                          nomeSimples;
 
-    private String nomeCompleto;
+    private String                          nomeCompleto;
 
-    private MDicionario dicionario;
+    private MDicionario                     dicionario;
 
-    private MEscopo escopo;
+    private MEscopo                         escopo;
 
-    private MapaAtributos atributosDefinidos = new MapaAtributos();
+    private MapaAtributos                   atributosDefinidos = new MapaAtributos();
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
@@ -33,19 +33,19 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
      */
-    private boolean apenasCampo;
+    private boolean                         apenasCampo;
 
     /**
      * Representa um campo que não será persistido. Se aplica somente se
      * apenasCampo=true.
      */
-    private boolean seCampoTransiente;
+    private boolean                         seCampoTransiente;
 
-    private Class<MTipo> classeSuperTipo;
+    private Class<MTipo>                    classeSuperTipo;
 
-    private final Class<? extends I> classeInstancia;
+    private final Class<? extends I>        classeInstancia;
 
-    private MTipo<I> superTipo;
+    private MTipo<I>                        superTipo;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -155,7 +155,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -300,11 +300,16 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new NotImplementedException("TODO implementar");
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
+    }
+
+    public <T> T as(Function<? super MTipo<I>, T> aspectFactory) {
+        return aspectFactory.apply(this);
     }
 
     public MTipo<I> withView(Class<? extends MView> classeAlvo) {
@@ -342,7 +347,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -397,13 +402,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
 
         atributosDefinidos
-                .getAtributos()
-                .stream()
-                .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
-                .forEach(
-                        att -> pad(System.out, nivel + 1).println(
-                                "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                                        + (att.isSelfReference() ? " SELF" : "")));
+            .getAtributos()
+            .stream()
+            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+            .forEach(
+                att -> pad(System.out, nivel + 1).println(
+                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
+                        + (att.isSelfReference() ? " SELF" : "")));
 
         super.debug(nivel + 1);
     }
@@ -413,7 +418,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (vals.size() != 0) {
             System.out.append(" {");
             vals.entrySet().stream()
-                    .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
+                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
             System.out.append("}");
         }
     }

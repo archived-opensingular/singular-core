@@ -5,6 +5,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
+import br.net.mirante.singular.view.page.form.FormPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 
 public class UIAdminApplication extends WebApplication {
@@ -25,5 +26,6 @@ public class UIAdminApplication extends WebApplication {
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         mountPage("processos", ProcessosPage.class);
+        mountPage("form", FormPage.class);
     }
 }
