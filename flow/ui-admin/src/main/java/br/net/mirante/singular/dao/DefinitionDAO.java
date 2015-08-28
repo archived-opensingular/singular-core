@@ -1,15 +1,12 @@
 package br.net.mirante.singular.dao;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
@@ -18,7 +15,6 @@ import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
 public class DefinitionDAO {
-
 
     private enum columns {
         cod("CODIGO"),
@@ -102,5 +98,4 @@ public class DefinitionDAO {
     public int countAll() {
         return ((Number) getSession().createSQLQuery("SELECT COUNT(*) FROM DMD_DEFINICAO").uniqueResult()).intValue();
     }
-
 }

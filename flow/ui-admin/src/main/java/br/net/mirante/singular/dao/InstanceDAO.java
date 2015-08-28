@@ -107,10 +107,10 @@ public class InstanceDAO {
         return (List<Map<String, String>>) query.list();
     }
 
-
-    public List<Map<String,String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
-
-        String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) as DIAS "
+    @SuppressWarnings("unchecked")
+    public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
+        String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio,"
+                + " DATEADD(DAY, 1, DEM.data_fim)) as DIAS"
                 + " FROM DMD_DEFINICAO DEF"
                 + "  INNER JOIN DMD_DEMANDA DEM ON DEF.cod = DEM.cod_definicao"
                 + "  INNER JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
@@ -124,6 +124,6 @@ public class InstanceDAO {
                 .addScalar("DIAS", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("media", media);
-        return ( List<Map<String,String>>) query.list();
+        return (List<Map<String, String>>) query.list();
     }
 }

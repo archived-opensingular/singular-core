@@ -1,22 +1,23 @@
 package br.net.mirante.singular.service;
 
-import br.net.mirante.singular.dao.FeedDTO;
-import br.net.mirante.singular.dao.InstanceDAO;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
+import br.net.mirante.singular.dao.FeedDTO;
+import br.net.mirante.singular.dao.InstanceDAO;
+
 @Service
 @Singleton
 public class FeedService {
-
 
     private List<FeedDTO> result;
 
