@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -170,5 +171,10 @@ public abstract class MInstancia implements MAtributoEnabled {
         } else {
             xml.printTabulado();
         }
+    }
+
+    public MInstancia config(Consumer<MInstancia> consumer) {
+        consumer.accept(this);
+        return this;
     }
 }

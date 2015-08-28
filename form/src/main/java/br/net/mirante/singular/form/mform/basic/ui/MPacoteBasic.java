@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -74,5 +75,12 @@ public class MPacoteBasic extends MPacote {
         tipoPosicao.getCampo("lin").as(AtrBasic.class).label("linha").tamanhoEdicao(3);
 
         pb.createTipoAtributo(MTipoSimples.class, ATR_POSICAO_TELA, tipoPosicao);
+    }
+    
+    public static AtrBasic atr(MAtributoEnabled o) {
+        return new AtrBasic(o);
+    }
+    public static MBasicAtr atr() {
+        return MBasicAtr.begin();
     }
 }
