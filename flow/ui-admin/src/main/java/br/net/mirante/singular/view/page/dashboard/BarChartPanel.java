@@ -6,7 +6,6 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -17,7 +16,7 @@ import org.apache.wicket.markup.html.form.IOnChangeListener;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.settings.DebugSettings;
@@ -28,7 +27,6 @@ import org.apache.wicket.util.value.AttributeMap;
 import org.apache.wicket.util.value.IValueMap;
 
 import javax.inject.Inject;
-import java.time.Duration;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +55,7 @@ public class BarChartPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(Period.ofWeeks(-1));
+        setOutputMarkupId(true);
         add(new Label("title", new ResourceModel(title)));
         add(new Label("subtitle", new ResourceModel(subtitle)));
         add(createChartFilter());
@@ -71,16 +70,6 @@ public class BarChartPanel extends Panel {
         return barChartDiv;
     }
 
-    private String selected = "Semanal";
-
-    public String getSelected() {
-        return selected;
-    }
-
-    public void setSelected(String selected) {
-        this.selected = selected;
-    }
-
     private Component createChartFilter() {
         Form<Object> form = new Form<>("chart-form");
         form
@@ -88,43 +77,29 @@ public class BarChartPanel extends Panel {
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     selected = "semanal";
-
+                    dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(Period.ofWeeks(-1));
+                    target.add(form.getParent());
                 }
             }))
             .queue(new WebMarkupContainer("mensal").add(new AjaxEventBehavior("click") {
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     selected = "mensal";
+                    dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(Period.ofMonths(-1));
+                    target.add(form.getParent());
                 }
             }))
             .queue(new WebMarkupContainer("anual").add(new AjaxEventBehavior("click") {
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
                     selected = "anual";
+                    dadosGrafico = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1));
+                    target.add(form.getParent());
                 }
             }));
 
 
         List<String> options = Arrays.asList("Semanal", "Mensal", "Anual");
-        RadioChoice<String> chartFilter = new PillChoice<String>("chart-filter", $m.property(this, "selected"), Model.of(options));
-        form.add(chartFilter);
-        chartFilter.add($b.classAppender("btn-group btn-group-devided"));
-        chartFilter.add($b.attr("data-toggle", "buttons"));
-        chartFilter.add(new AjaxFormChoiceComponentUpdatingBehavior() {
-
-            @Override
-            protected void onUpdate(AjaxRequestTarget target) {
-                System.out.println("legal " + getComponent().getDefaultModelObjectAsString());
-            }
-
-            @Override
-            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                attributes.setEventPropagation(AjaxRequestAttributes.EventPropagation.BUBBLE);
-            }
-        });
-
-        chartFilter.setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
 
         return form;
     }

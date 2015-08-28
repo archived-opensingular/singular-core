@@ -9,7 +9,14 @@
             </div>
             <div class="actions">
                 <form wicket:id="chart-form">
-                    <div wicket:id="chart-filter" ></div>
+                    <div class="btn-group btn-group-devided" data-toggle="buttons">
+                        <label wicket:id="semanal" class="btn btn-transparent grey-salsa btn-circle btn-sm active">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao1">Semanal</label>
+                        <label wicket:id="mensal" class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao2">Mensal</label>
+                        <label wicket:id="anual" class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                            <input type="radio" name="options" class="toggle" id="processo-opcao3">Anual</label>
+                    </div>
                 </form>
             </div>
         </div>
