@@ -53,4 +53,7 @@ public class FeedDTO implements Serializable {
 	public void setTempoAtraso(String tempoAtraso) {
 		this.tempoAtraso = tempoAtraso;
 	}
+	public String getIconSymbol(){
+		return "fa fa-bell-o"; // METODO para mostrar um icone, e deixar aparecendo, deve ser posto como condicao do tempo, e deve ir pra camada de apresentacao
+	}
 }
