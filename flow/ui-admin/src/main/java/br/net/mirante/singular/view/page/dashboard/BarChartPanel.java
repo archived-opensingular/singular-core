@@ -1,29 +1,28 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import br.net.mirante.singular.service.PesquisaService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.util.value.ValueMap;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import br.net.mirante.singular.service.PesquisaService;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class BarChartPanel extends Panel {
 
-    @SpringBean
+    @Inject
     private PesquisaService pesquisaService;
 
     private List<Map<String, String>> dadosGrafico;
@@ -58,11 +57,8 @@ public class BarChartPanel extends Panel {
         Form<Object> form = new Form<>("chart-form");
         List<String> fruits = Arrays.asList("Semanal", "Mensal", "Anual");
         RadioChoice<String> chartFilter = new RadioChoice<>("chart-filter", Model.of(""), fruits);
-        ValueMap markupAttributes = chartFilter.getMarkupAttributes();
-        markupAttributes.add("class", "btn-group btn-group-devided");
-        markupAttributes.add("data-toggle", "buttons");
-
-
+        chartFilter.add($b.attrAppender("class", "btn-group btn-group-devided", " "));
+        chartFilter.add($b.attrAppender("data-toggle", "buttons", " "));
         form.add(chartFilter);
         return form;
     }
