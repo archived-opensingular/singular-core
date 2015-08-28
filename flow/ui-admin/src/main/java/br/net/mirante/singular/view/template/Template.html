@@ -53,6 +53,23 @@ License: You must have a valid license purchased only from themeforest(the above
     <link href="/resources/admin/layout/css/custom.css" rel="stylesheet" type="text/css"/>
     <!-- END PAGE STYLES -->
     <link rel="shortcut icon" href="/resources/admin/page/img/favicon.png"/>
+
+    <style type="text/css">
+        div.blocking_overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999999999;
+            opacity:.0;
+            background: #fff no-repeat center center;
+        }
+    </style>
+
+    <script>
+        var enableAJAXPageBlock = true;
+    </script>
 </head>
 <!-- END HEAD -->
 <!-- BEGIN BODY -->
@@ -121,9 +138,35 @@ License: You must have a valid license purchased only from themeforest(the above
     jQuery(document).ready(function () {
         Metronic.init(); // init metronic core componets
         Layout.init(); // init layout
+
+        Wicket.Event.subscribe('/ajax/call/beforeSend', function(evt, attrs, jqXHR, settings) {
+            if (enableAJAXPageBlock) {
+                $('#blocking_overlay').show();
+                window.blocking_overlay_timeoutId = setTimeout(function () {
+                    Metronic.startPageLoading('Processando...');
+                }, 1200);
+            }
+        });
+        Wicket.Event.subscribe('/ajax/call/complete', function(evt, attrs, jqXHR, textStatus) {
+            if (enableAJAXPageBlock) {
+                $('#blocking_overlay').hide();
+                Metronic.stopPageLoading();
+                if (window.blocking_overlay_timeoutId) {
+                    clearTimeout(window.blocking_overlay_timeoutId);
+                }
+            }
+            if (textStatus !== 'success') {
+                //noinspection BadExpressionStatementJS
+                jsSessionKeepAlivePing();
+            }
+        });
     });
 </script>
 <!-- END JAVASCRIPTS -->
+
+<div id='blocking_overlay' class='blocking_overlay' style='display:none;' onclick='this.getElementsByTagName("a")[0].focus(); return false;'>
+    <a href='#' tabindex='-1' onkeydown='return false;'></a>
+</div>
 </body>
 <!-- END BODY -->
 <!-- Validação de  -->
