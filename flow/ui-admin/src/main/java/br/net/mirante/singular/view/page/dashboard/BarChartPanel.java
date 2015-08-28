@@ -1,9 +1,7 @@
 package br.net.mirante.singular.view.page.dashboard;
 
 import br.net.mirante.singular.service.PesquisaService;
-import br.net.mirante.singular.util.wicket.behavior.FormChoiceAjaxUpdateBehavior;
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.json.JSONArray;
@@ -20,15 +18,17 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.settings.DebugSettings;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.convert.IConverter;
 import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.AttributeMap;
 import org.apache.wicket.util.value.IValueMap;
-import org.apache.wicket.util.value.ValueMap;
 
-import br.net.mirante.singular.service.PesquisaService;
+import javax.inject.Inject;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
