@@ -12,8 +12,6 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
@@ -65,19 +63,8 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        initFeeds();
         add(new BarChartPanel("process-mean-time-chart", "label.chart.title", "label.chart.subtitle"));
-        add(new ListView<FeedDTO>("atividades", feedService.retrieveFeed()) {
-            @Override
-            protected void populateItem(ListItem<FeedDTO> item) {
-                final FeedDTO feedDto = item.getModelObject();
-                item.add(new Label("descricao", feedDto.getDescricao()));
-                item.add(new Label("tempoDeAtraso", feedDto.getTempoAtraso()));
-
-                WebMarkupContainer iconColor = new WebMarkupContainer("feedIconColor");
-                iconColor.add($b.attrAppender("class", feedDto.getFeedIconColor().getDescricao(), " "));
-                item.add(iconColor);
-            }
-        });
     }
 
     private void initFeeds() {
