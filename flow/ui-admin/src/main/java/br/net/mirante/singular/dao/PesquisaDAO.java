@@ -45,8 +45,7 @@ public class PesquisaDAO {
 
         sql += "GROUP BY dem.cod_definicao, d.nome ";
 
-        Query query = getSession().createSQLQuery(
-                sql)
+        Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
                 .addScalar("MEAN", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -64,5 +63,42 @@ public class PesquisaDAO {
         LocalDateTime localDateTime = LocalDateTime.from(temporal);
 
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
+        String sql = " SELECT " +
+                "        s.nome, " +
+                "        d.cod, " +
+                "        d.nome AS , " +
+                "        AVG(DATEDIFF(DAY, " +
+                "        t.data_inicio, " +
+                "        DATEADD(DAY, " +
+                "        1, " +
+                "        t.data_fim))) AS mean  " +
+                "    FROM " +
+                "        dbo.dmd_tarefa t " +
+                "        inner join dbo.dmd_situacao s " +
+                "        on t.cod_situacao = s.cod " +
+                "    inner join " +
+                "        dbo.DMD_DEMANDA dem  " +
+                "        on t.cod_demanda = dem.cod " +
+                "    INNER JOIN " +
+                "        dbo.DMD_definicao d     " +
+                "            ON d.cod = dem.cod_definicao  " +
+                "    WHERE " +
+                "        dem.data_fim IS NOT NULL   " +
+                "        and d.cod = :processId " +
+                "    GROUP BY " +
+                "        s.nome, " +
+                "        d.cod, " +
+                "        d.nome;" ;
+
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("NOME", StringType.INSTANCE)
+                .addScalar("COD", StringType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setParameter("processId", processId);
+
+        return (List<Map<String, String>>) query.list();
     }
 }

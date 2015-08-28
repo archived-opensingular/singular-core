@@ -19,4 +19,7 @@ public class PesquisaService {
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         return pesquisaDAO.retrieveMeanTimeByProcess(period);
     }
+    public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
+        return pesquisaDAO.retrieveMeanTimeByTask(processId);
+    }
 }
