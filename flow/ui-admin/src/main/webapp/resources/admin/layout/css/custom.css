@@ -1,5 +1,9 @@
 /* here you can put your own css to customize and override the theme */
 
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
+    width: 39px;
+}
+
 .portlet {
     border-radius: 4px !important;
 }
