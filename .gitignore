@@ -44,3 +44,4 @@ local.properties
 # Arquivos JRebel    #
 ######################
 **/rebel.xml
+out/**
