@@ -5,6 +5,8 @@ import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -32,16 +34,21 @@ public class TestFormWicketBuild extends TestCase {
     }
 
     public void testVeryBasic() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoString tipoCidade = pb.createTipo("cidade", MTipoString.class);
-        tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
-
-        MIString iCidade = tipoCidade.novaInstancia();
-        iCidade.setValor("Brasilia");
-
         WicketBuildContext ctx = new WicketBuildContext();
-        FormComponent<?> comp = (FormComponent<?>) UIBuilderWicket.createForEdit("cidade", ctx, iCidade);
+        IModel<MIString> mCidade = new LoadableDetachableModel<MIString>() {
+            @Override
+            protected MIString load() {
+                MDicionario dicionario = MDicionario.create();
+                PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+                MTipoString tipoCidade = pb.createTipo("cidade", MTipoString.class);
+                tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
+
+                MIString iCidade = tipoCidade.novaInstancia();
+                iCidade.setValor("Brasilia");
+                return iCidade;
+            }
+        };
+        FormComponent<?> comp = (FormComponent<?>) UIBuilderWicket.createForEdit("cidade", ctx, mCidade);
         assertTrue(comp instanceof TextField);
         assertEquals("Cidade", comp.getLabel().getObject());
         assertEquals("Brasilia", comp.getModelObject());
@@ -61,6 +68,6 @@ public class TestFormWicketBuild extends TestCase {
         //        formTester.submit();
         form.process(null);
 
-        assertEquals("Guará", iCidade.getValor());
+        assertEquals("Guará", mCidade.getObject().getValor());
     }
 }

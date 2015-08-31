@@ -2,6 +2,8 @@ package br.net.mirante.singular.view.page.form;
 
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -35,22 +37,34 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         tipoEndereco.addCampoString("uf").as(MPacoteBasic.aspect()).label("UF");
         tipoEndereco.addCampoInteger("cep").as(MPacoteBasic.aspect()).label("CEP");
 
-        MIComposto iEndereco = tipoEndereco.novaInstancia();
-        iEndereco.setValor("logradouro", "QNA 44");
-        iEndereco.setValor("numero", 17);
-        iEndereco.setValor("complemento", "Taguatinga");
-        iEndereco.setValor("cidade", "Brasília");
-        iEndereco.setValor("uf", "DF");
-        iEndereco.setValor("cep", "72110440");
+        IModel<MIComposto> mEndereco = new LoadableDetachableModel<MIComposto>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            protected MIComposto load() {
+
+                MTipoComposto<? extends MIComposto> tipoEndereco =
+                    (MTipoComposto<? extends MIComposto>) dicionario.getTipo("teste.endereco");
+                MIComposto iEndereco = tipoEndereco.novaInstancia();
+                iEndereco.setValor("logradouro", "QNA 44");
+                iEndereco.setValor("numero", 17);
+                iEndereco.setValor("complemento", "Taguatinga");
+                iEndereco.setValor("cidade", "Brasília");
+                iEndereco.setValor("uf", "DF");
+                iEndereco.setValor("cep", "72110440");
+
+                return iEndereco;
+            }
+        };
 
         WicketBuildContext ctx = new WicketBuildContext();
 
         add(new BSFeedbackPanel("feedback"));
         add(new Form<>("form")
-            .add(UIBuilderWicket.createForEdit("generated", ctx, iEndereco))
+            .add(UIBuilderWicket.createForEdit("generated", ctx, mEndereco))
             .add(new Button("enviar") {
                 @Override
                 public void onSubmit() {
+                    MIComposto iEndereco = mEndereco.getObject();
                     iEndereco.debug();
                     info(iEndereco.getValorString("logradouro"));
                     info(iEndereco.getValorString("numero"));
@@ -61,6 +75,7 @@ public class FormContent extends Content implements SingularWicketContainer<Form
                 }
             }));
     }
+
     @Override
     protected String getContentTitlelKey() {
         return "label.content.title";

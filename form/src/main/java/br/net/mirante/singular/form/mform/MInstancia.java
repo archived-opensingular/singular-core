@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -143,6 +143,9 @@ public abstract class MInstancia implements MAtributoEnabled {
         }
         throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
     }
+    public <T> T as(Function<? super MInstancia, T> aspectFactory) {
+        return aspectFactory.apply(this);
+    }
 
     public String getNome() {
         return getMTipo().getNomeSimples();
@@ -171,10 +174,5 @@ public abstract class MInstancia implements MAtributoEnabled {
         } else {
             xml.printTabulado();
         }
-    }
-
-    public MInstancia config(Consumer<MInstancia> consumer) {
-        consumer.accept(this);
-        return this;
     }
 }

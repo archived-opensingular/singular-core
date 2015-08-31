@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -7,9 +8,9 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public abstract class AbstractMInstanciaCampoModel<T>
-    extends AbstractMInstanciaModel<T>
-    implements IChainingModel<T> {
+public abstract class AbstractMInstanciaCampoModel<I extends MInstancia>
+    extends AbstractReadOnlyModel<I>
+    implements IChainingModel<I> {
 
     private Object rootTarget;
 
@@ -24,8 +25,9 @@ public abstract class AbstractMInstanciaCampoModel<T>
     protected abstract String propertyExpression();
 
     @Override
-    public MInstancia getTarget() {
-        return getRootTarget().getCampo(getPropertyExpression());
+    @SuppressWarnings("unchecked")
+    public I getObject() {
+        return (I) getRootTarget().getCampo(getPropertyExpression());
     }
 
     public MIComposto getRootTarget() {
