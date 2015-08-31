@@ -22,6 +22,8 @@ public enum Icone {
     GLOBE /*            */("fa fa-globe"),
     GRID /*             */("icon-grid"),
     HEART/*             */("fa fa-heart"),
+    HOME/*              */("icon-home"),
+    HOTEL/*             */("fa fa-h-square"),
     INFO_CIRCLE /*      */("fa fa-info-circle"),
     LIST/*              */("fa fa-list"),
     LIST_ALT/*          */("fa fa-list-alt"),
@@ -30,20 +32,20 @@ public enum Icone {
     MONEY /*            */("fa fa-money"),
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
     PIN /*              */("icon-pin"),
+    REDO /*             */("icon-action-redo"),
     SHARE_ALT /*        */("fa fa-share-alt"),
     SHARE_SQUARE /*     */("fa fa-share-square-o"),
+    STAR/*              */("icon-star"),
     SPEECH /*           */("icon-speech"),
-    USER /*             */("fa fa-user"),
-    USERS /*            */("icon-users"),
-    USERS3 /*           */("fa fa-users"),
     TAG /*              */("icon-tag"),
     TAGS /*             */("fa fa-tags"),
     TIMES /*            */("fa fa-times"),
+    UNDO /*             */("icon-action-undo"),
+    USER /*             */("fa fa-user"),
+    USERS /*            */("icon-users"),
+    USERS3 /*           */("fa fa-users"),
     VERTICAL_ELLIPSIS /**/("fa fa-ellipsis-v"),
-    WALLET /*           */("icon-wallet"),
-    HOME/*              */("icon-home"),
-    STAR/*              */("icon-star"),
-    HOTEL/*             */("fa fa-h-square");
+    WALLET /*           */("icon-wallet");
 
     private final String cssClass;
 

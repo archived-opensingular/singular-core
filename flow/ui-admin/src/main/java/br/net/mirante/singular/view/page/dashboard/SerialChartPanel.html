@@ -1,0 +1,28 @@
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject bold uppercase font-red-sunglo" wicket:id="title"></span>
+                <span class="caption-helper" wicket:id="subtitle"></span>
+            </div>
+            <div class="actions">
+                <div wicket:id="_Filter" class="btn-group btn-group-devided" data-toggle="buttons">
+                    <label wicket:id="weekly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                        <input type="radio" name="options" class="toggle" id="processo-opcao1"><wicket:message key="label.action.weekly"/></label>
+                    <label wicket:id="monthly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                        <input type="radio" name="options" class="toggle" id="processo-opcao2"><wicket:message key="label.action.monthly"/></label>
+                    <label wicket:id="yearly" class="btn btn-transparent grey-salsa btn-circle btn-sm">
+                        <input type="radio" name="options" class="toggle" id="processo-opcao3"><wicket:message key="label.action.yearly"/></label>
+                </div>
+                <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="#" data-original-title="" title=""></a>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div wicket:id="chart-div" class="columnLine"></div>
+        </div>
+    </div>
+
+</wicket:panel>
+</html>

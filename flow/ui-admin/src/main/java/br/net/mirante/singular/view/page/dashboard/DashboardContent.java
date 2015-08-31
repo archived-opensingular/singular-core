@@ -1,13 +1,23 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
+import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.view.template.Content;
 
+@SuppressWarnings("serial")
 public class DashboardContent extends Content {
+
+    @Inject
+    private PesquisaService pesquisaService;
 
     public DashboardContent(String id) {
         super(id);
@@ -35,5 +45,39 @@ public class DashboardContent extends Content {
                 .append("    Index.init();\n")
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        add(new FeedPanel("feed"));
+        add(new SerialChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
+                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
+            }
+        });
+        add(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
+                "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveNewInstancesQuantityLastYear();
+            }
+        });
+        add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
+                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true, true) {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveStatusQuantityByPeriod(periodType.getPeriod());
+            }
+        });
+        add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
+                "label.chart.mean.time.task.subtitle", "MEAN", "NOME") {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveMeanTimeByTask(25L);
+            }
+        });
     }
 }

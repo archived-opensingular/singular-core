@@ -1,5 +1,9 @@
 /* here you can put your own css to customize and override the theme */
 
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
+    width: 39px;
+}
+
 .portlet {
     border-radius: 4px !important;
 }
@@ -15,6 +19,18 @@
     border-radius: 0 0 4px 4px !important;
 }
 
+.portlet-fullscreen .portlet-body > .columnLine {
+    height: 90%;
+}
+
+.portlet-fullscreen .portlet-body > .animated-pie-chart {
+    height: 90%;
+}
+
+a.fullscreen {
+    margin-left: 2px;
+}
+
 table.dataTable thead th > a {
     display: block;
     width: 100% !important;
@@ -22,4 +38,11 @@ table.dataTable thead th > a {
 
 .btn.blue-stripe, .btn.green-stripe, .btn.red-stripe, .btn.red-stripe {
     border-left-width: 3px !important;
+}
+
+/*noinspection CssInvalidPropertyValue*/
+.modal-fit.modal-dialog {
+    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+    width: -moz-max-content;    /* Firefox/Gecko */
+    width: -webkit-max-content; /* Chrome */
 }

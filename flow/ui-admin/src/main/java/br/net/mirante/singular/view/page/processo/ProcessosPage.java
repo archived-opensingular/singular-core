@@ -2,15 +2,23 @@ package br.net.mirante.singular.view.page.processo;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
 public class ProcessosPage extends Template {
 
+    public static final String PROCESS_DEFINITION_ID_PARAM = "_PD_ID";
+
     @Override
     protected Content getContent(String id) {
-        return new ProcessosContent(id, withSideBar());
+        StringValue processDefinitionId = getPageParameters().get(PROCESS_DEFINITION_ID_PARAM);
+        if (processDefinitionId.isNull()) {
+            return new ProcessosContent(id, withSideBar());
+        } else {
+            return new InstanciasContent(id, withSideBar(), processDefinitionId.toLong());
+        }
     }
 
     @Override
