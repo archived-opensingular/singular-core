@@ -45,7 +45,7 @@ public abstract class PieChartPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        periodType = PeriodType.WEEKLY;
+        periodType = PeriodType.YEARLY;
         updateGraph();
         setOutputMarkupId(true);
         add(new Label("title", new ResourceModel(title)));
