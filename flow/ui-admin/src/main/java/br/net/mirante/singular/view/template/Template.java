@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class Template extends WebPage {
 
     private List<String> initializerJavascripts = Arrays.asList(new String[]{
-//            "$('.scroller').slimScroll({});"
+            "$('.scroller').slimScroll({});"
     });
 
     @Override
