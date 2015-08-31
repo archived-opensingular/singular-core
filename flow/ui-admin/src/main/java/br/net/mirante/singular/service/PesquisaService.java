@@ -1,40 +1,47 @@
 package br.net.mirante.singular.service;
 
-import java.util.Base64;
+import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.PesquisaDAO;
-import br.net.mirante.singular.dao.PesquisaDTO;
 
 @Service
+@Transactional(readOnly = true)
 public class PesquisaService {
 
     @Inject
     private PesquisaDAO pesquisaDAO;
 
-    @Transactional
-    public List<PesquisaDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        List<Object[]> results = pesquisaDAO.retrieveAll(first, size, orderByProperty, asc);
-        return results.stream()
-                .map(o -> new PesquisaDTO((Long) o[0], (String) o[1], (String) o[2]))
-                .collect(Collectors.toList());
+    @Inject
+    private InstanceDAO instanceDAO;
+
+    @Cacheable(value="retrieveMeanTimeByProcess", key = "#period")
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
+        return pesquisaDAO.retrieveMeanTimeByProcess(period);
     }
 
-    @Transactional
-    public int countAll() {
-        return pesquisaDAO.countAll();
+    @Cacheable(value="retrieveNewInstancesQuantityLastYear")
+    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
+        return instanceDAO.retrieveNewQuantityLastYear();
     }
 
-    public byte[] retrieveProcessDiagram() {
-        RestTemplate restTemplate = new RestTemplate();
-        String encodedImage = restTemplate.getForObject("http://localhost:8080/alocpro/rest/diagram", String.class);
-        return Base64.getDecoder().decode(encodedImage);
+    @Cacheable(value="retrieveStatusQuantityByPeriod", key = "#period")
+    public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
+        return instanceDAO.retrieveStatusQuantityByPeriod(period, 26L, new ArrayList<Long>() {{
+            add(436L);
+        }});
+    }
+    @Cacheable(value="retrieveMeanTimeByTask", key = "#processId")
+    public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
+        return pesquisaDAO.retrieveMeanTimeByTask(processId);
     }
 }

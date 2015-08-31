@@ -58,7 +58,7 @@ public class BSModalBorder extends Border {
     }
 
     public enum Size {
-        NORMAL(""), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full");
+        NORMAL(""), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
         protected final String styleClass;
         private Size(String styleClass) {
             this.styleClass = styleClass;
@@ -215,8 +215,8 @@ public class BSModalBorder extends Border {
 
     public BSModalBorder addLink(ButtonStyle style, IModel<String> label, AjaxLink<?> button) {
         buttonsContainer.addOrReplace(button
-            .add(newLinkLabel(BUTTON_LABEL, button, label))
-            .add(new AttributeAppender("class", style.cssClassModel(), " ")));
+                .add(newLinkLabel(BUTTON_LABEL, button, label))
+                .add(new AttributeAppender("class", style.cssClassModel(), " ")));
         return this;
     }
 
@@ -254,6 +254,10 @@ public class BSModalBorder extends Border {
 
     @Override
     public BSModalBorder add(Component... children) {
+        /* XXX: Verificar o problema que está ocorrendo na página de processos! */
+        if (children.length > 0 && children[0].getId().equals("buttonsFragment")) {
+            return this;
+        }
         return (BSModalBorder) super.add(children);
     }
 
