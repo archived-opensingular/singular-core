@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,19 +24,23 @@ public class PesquisaService {
     @Inject
     private InstanceDAO instanceDAO;
 
+    @Cacheable(value="retrieveMeanTimeByProcess", key = "#period")
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         return pesquisaDAO.retrieveMeanTimeByProcess(period);
     }
 
+    @Cacheable(value="retrieveNewInstancesQuantityLastYear")
     public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
         return instanceDAO.retrieveNewQuantityLastYear();
     }
 
+    @Cacheable(value="retrieveStatusQuantityByPeriod", key = "#period")
     public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
         return instanceDAO.retrieveStatusQuantityByPeriod(period, 28L, new ArrayList<Long>() {{
             add(316L);
         }});
     }
+    @Cacheable(value="retrieveMeanTimeByTask", key = "#processId")
     public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
         return pesquisaDAO.retrieveMeanTimeByTask(processId);
     }

@@ -148,6 +148,7 @@ public class InstanceDAO {
                 .addScalar("DIAS", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("media", media);
+        query.setMaxResults(30);
         return (List<Map<String, String>>) query.list();
     }
 
