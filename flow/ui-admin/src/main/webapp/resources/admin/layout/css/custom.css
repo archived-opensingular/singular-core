@@ -19,6 +19,18 @@
     border-radius: 0 0 4px 4px !important;
 }
 
+.portlet-fullscreen .portlet-body > .columnLine {
+    height: 90%;
+}
+
+.portlet-fullscreen .portlet-body > .animated-pie-chart {
+    height: 90%;
+}
+
+a.fullscreen {
+    margin-left: 2px;
+}
+
 table.dataTable thead th > a {
     display: block;
     width: 100% !important;

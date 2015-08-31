@@ -67,7 +67,7 @@ public abstract class BarChartPanel extends Panel {
     }
 
     private void createChartFilter() {
-        WebMarkupContainer actions = new WebMarkupContainer("_Actions");
+        WebMarkupContainer actions = new WebMarkupContainer("_Filter");
         actions.add(createFilterOption("weekly"));
         actions.add(createFilterOption("monthly"));
         actions.add(createFilterOption("yearly"));

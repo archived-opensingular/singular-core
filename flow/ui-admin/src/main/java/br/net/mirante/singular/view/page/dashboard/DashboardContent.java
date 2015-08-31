@@ -65,18 +65,18 @@ public class DashboardContent extends Content {
                 return pesquisaService.retrieveNewInstancesQuantityLastYear();
             }
         });
-        add(new BarChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
-                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true) {
+        add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
+                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveStatusQuantityByPeriod(periodType.getPeriod());
             }
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
-                "label.chart.mean.time.task.subtitle"/*, "MEAN", "NOME", " dia(s)"*/) {
+                "label.chart.mean.time.task.subtitle", "MEAN", "NOME") {
             @Override
-            protected List<Map<String, String>> retrieveData(Long processId) {
-                return pesquisaService.retrieveMeanTimeByTask(processId);
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveMeanTimeByTask(25L);
             }
         });
     }
