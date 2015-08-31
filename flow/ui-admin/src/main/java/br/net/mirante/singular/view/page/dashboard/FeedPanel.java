@@ -87,11 +87,11 @@ public class FeedPanel extends Panel {
         FeedItem fi = new FeedItem();
         fi.color = "label-default ";
         fi.icon = "fa fa-clock-o ";
-        fi.msg = "menos de 50% ";
+        fi.msg = "até 50% ";
         if (feed.getMedia().multiply(BigDecimal.valueOf(1.5)).compareTo(feed.getTempoDecorrido()) < 0) {
             fi.icon = "fa fa-exclamation-triangle ";
             fi.color = " bg-yellow-lemon ";
-            fi.msg = "até 50% ";
+            fi.msg = "até 100% ";
         }
         if (feed.getMedia().multiply(BigDecimal.valueOf(2)).compareTo(feed.getTempoDecorrido()) < 0) {
             fi.icon = "fa fa-ambulance ";
