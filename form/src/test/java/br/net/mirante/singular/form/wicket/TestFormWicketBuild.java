@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
+import junit.framework.TestCase;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
@@ -16,7 +17,6 @@ import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
-import junit.framework.TestCase;
 
 public class TestFormWicketBuild extends TestCase {
 
