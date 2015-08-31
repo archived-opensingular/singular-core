@@ -390,23 +390,23 @@ var Metronic = function() {
         // portlet tooltips
         $('.portlet > .portlet-title .fullscreen').tooltip({
             container: 'body',
-            title: 'Fullscreen'
+            title: 'Tela Cheia'
         });
         $('.portlet > .portlet-title > .tools > .reload').tooltip({
             container: 'body',
-            title: 'Reload'
+            title: 'Recarregar'
         });
         $('.portlet > .portlet-title > .tools > .remove').tooltip({
             container: 'body',
-            title: 'Remove'
+            title: 'Remover'
         });
         $('.portlet > .portlet-title > .tools > .config').tooltip({
             container: 'body',
-            title: 'Settings'
+            title: 'Configurações'
         });
         $('.portlet > .portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip({
             container: 'body',
-            title: 'Collapse/Expand'
+            title: 'Retrair/Expandir'
         });
     };
 
