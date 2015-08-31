@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform;
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import com.google.common.base.Preconditions;
 
@@ -88,7 +87,7 @@ public abstract class MEscopoBase implements MEscopo {
             if (this instanceof MTipoComposto) {
                 tiposLocais = new LinkedHashMap<>();
             } else {
-                tiposLocais = new TreeMap<>();
+                tiposLocais = new LinkedHashMap<>();
             }
         } else {
             if (tiposLocais.containsKey(tipo.getNomeSimples())) {

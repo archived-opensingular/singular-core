@@ -55,6 +55,10 @@ public class BSRow extends BSContainer<BSRow> {
         return new BSCol(id);
     }
 
+    public BSControls newFormGroup(int colspan) {
+        return newCol(colspan).newFormGroup();
+    }
+
     @Override
     public BSRow add(Behavior... behaviors) {
         return (BSRow) super.add(behaviors);

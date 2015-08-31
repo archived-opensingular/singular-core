@@ -1,10 +1,13 @@
 package br.net.mirante.singular.form.wicket;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import java.util.Collection;
 import java.util.function.Supplier;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
@@ -20,8 +23,9 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSFormHorizontal;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
 public class UIBuilderWicket {
 
@@ -93,19 +97,33 @@ public class UIBuilderWicket {
             MInstancia instancia = model.getObject();
             MIComposto composto = (MIComposto) instancia;
 
-            BSFormHorizontal layout = new BSFormHorizontal(componentId);
+            BSGrid grid = new BSGrid(componentId);
 
             Collection<MInstancia> campos = composto.getCampos();
             for (MInstancia campo : campos) {
-                final String label = StringUtils.defaultString(
-                    campo.getValorAtributo(MPacoteBasic.ATR_LABEL),
-                    campo.getMTipo().getNomeSimples());
+                if (campo instanceof MIComposto) {
+                    final String label = campo.getValorAtributo(MPacoteBasic.ATR_LABEL);
+                    MInstanciaCampoModel<MInstancia> campoModel = new MInstanciaCampoModel<>(model, campo.getNome());
+                    final MICompostoModel<MIComposto> compostoModel = new MICompostoModel<>(campoModel);
 
-                layout.appendGroupLabelControlsFeedback(4, label, 8, controlsId ->
-                    new BSControls(controlsId)
-                        .appendInputText(createForEdit(campo.getNome(), ctx, new MInstanciaCampoModel<>(model, campo.getNome()))));
+                    BSCol col = grid.newRow().newCol(12);
+                    if (isNotBlank(label)) {
+                        col.appendTag("h3", new Label("_title", label));
+                    }
+                    col.appendTag("div", createForEdit(campo.getNome(), ctx, compostoModel));
+
+                } else {
+                    final String label = StringUtils.defaultString(
+                        campo.getValorAtributo(MPacoteBasic.ATR_LABEL),
+                        campo.getMTipo().getNomeSimples());
+
+                    grid.newRow().newFormGroup(12)
+                        .appendLabel(new BSLabel("_label", label))
+                        .appendInputText(createForEdit(campo.getNome(), ctx, new MInstanciaCampoModel<>(model, campo.getNome())))
+                        .appendFeedback();
+                }
             }
-            return layout;
+            return grid;
         }
     }
 }

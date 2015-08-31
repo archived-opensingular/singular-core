@@ -1,15 +1,20 @@
 package br.net.mirante.singular.view.page.form;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.wicket.MInstanciaRaizModel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
@@ -22,37 +27,43 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         super(id, false, withSideBar, true);
     }
 
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-
-        MDicionario dicionario = MDicionario.create();
+    static MDicionario dicionario = MDicionario.create();
+    static {
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<? extends MIComposto> tipoEndereco = pb.createTipoComposto("endereco");
-        tipoEndereco.addCampoString("logradouro").as(MPacoteBasic.aspect()).label("Logradouro");
-        tipoEndereco.addCampoInteger("numero").as(MPacoteBasic.aspect()).label("Número");
-        tipoEndereco.addCampoString("complemento").as(MPacoteBasic.aspect()).label("Complemento");
-        tipoEndereco.addCampoString("cidade").as(MPacoteBasic.aspect()).label("Cidade");
-        tipoEndereco.addCampoString("uf").as(MPacoteBasic.aspect()).label("UF");
-        tipoEndereco.addCampoInteger("cep").as(MPacoteBasic.aspect()).label("CEP");
+        MTipoComposto<? extends MIComposto> tContato = pb.createTipoComposto("contato");
+        tContato.addCampoString("nome").as(MPacoteBasic.aspect()).label("Nome");
 
-        IModel<MIComposto> mEndereco = new LoadableDetachableModel<MIComposto>() {
-            @Override
-            @SuppressWarnings("unchecked")
-            protected MIComposto load() {
+        MTipoComposto<? extends MIComposto> tEndereco = tContato.addCampoComposto("endereco");
+        tEndereco.as(MPacoteBasic.aspect()).label("Endereço residencial");
+        tEndereco.addCampoString("logradouro").as(MPacoteBasic.aspect()).label("Logradouro");
+        tEndereco.addCampoInteger("numero").as(MPacoteBasic.aspect()).label("Número");
+        tEndereco.addCampoString("complemento").as(MPacoteBasic.aspect()).label("Complemento");
+        tEndereco.addCampoString("cidade").as(MPacoteBasic.aspect()).label("Cidade");
+        tEndereco.addCampoString("uf").as(MPacoteBasic.aspect()).label("UF");
+        tEndereco.addCampoInteger("cep").as(MPacoteBasic.aspect()).label("CEP");
+    }
 
-                MTipoComposto<? extends MIComposto> tipoEndereco =
-                    (MTipoComposto<? extends MIComposto>) dicionario.getTipo("teste.endereco");
-                MIComposto iEndereco = tipoEndereco.novaInstancia();
-                iEndereco.setValor("logradouro", "QNA 44");
-                iEndereco.setValor("numero", 17);
-                iEndereco.setValor("complemento", "Taguatinga");
-                iEndereco.setValor("cidade", "Brasília");
-                iEndereco.setValor("uf", "DF");
-                iEndereco.setValor("cep", "72110440");
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void onInitialize() {
+        super.onInitialize();
+        MTipoComposto<? extends MIComposto> tContato =
+            (MTipoComposto<? extends MIComposto>) dicionario.getTipo("teste.contato");
 
-                return iEndereco;
+        MIComposto iContato = tContato.novaInstancia();
+        iContato.setValor("nome", "Fulano de Tal");
+        MIComposto iEndereco = (MIComposto) iContato.getCampo("endereco");
+        iEndereco.setValor("logradouro", "QNA 44");
+        iEndereco.setValor("numero", 17);
+        iEndereco.setValor("complemento", "Taguatinga");
+        iEndereco.setValor("cidade", "Brasília");
+        iEndereco.setValor("uf", "DF");
+        iEndereco.setValor("cep", "72110440");
+
+        IModel<MIComposto> mEndereco = new MInstanciaRaizModel<MIComposto>(iContato) {
+            protected MTipo<MIComposto> getTipoRaiz() {
+                return (MTipo<MIComposto>) dicionario.getTipo("teste.contato");
             }
         };
 
@@ -65,17 +76,12 @@ public class FormContent extends Content implements SingularWicketContainer<Form
                 @Override
                 public void onSubmit() {
                     MIComposto iEndereco = mEndereco.getObject();
-                    iEndereco.debug();
-                    info(iEndereco.getValorString("logradouro"));
-                    info(iEndereco.getValorString("numero"));
-                    info(iEndereco.getValorString("complemento"));
-                    info(iEndereco.getValorString("cidade"));
-                    info(iEndereco.getValorString("uf"));
-                    info(iEndereco.getValorString("cep"));
+                    StringWriter buffer = new StringWriter();
+                    MformPersistenciaXML.toXML(iEndereco).printTabulado(new PrintWriter(buffer));
+                    info(buffer.toString());
                 }
             }));
     }
-
     @Override
     protected String getContentTitlelKey() {
         return "label.content.title";
