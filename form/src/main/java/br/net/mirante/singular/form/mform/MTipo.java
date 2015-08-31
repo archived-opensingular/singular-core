@@ -2,11 +2,10 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -455,10 +454,5 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public <T extends Object> T converter(Object valor, Class<T> classeDestino) {
         throw new RuntimeException("Método não suportado");
-    }
-    
-    public MTipo<I> config(Consumer<? super MTipo<I>> consumer) {
-        consumer.accept(this);
-        return this;
     }
 }
