@@ -65,20 +65,20 @@ public class FeedPanel extends Panel {
                 item.queue(new Label("descricao", getDesc(feedDto)));
                 item.queue(new Label("tempoDeAtraso", getTimeDesc(feedDto)));
 
-                item.add($b.attr("data-placement", "left"));
-                item.add($b.attr("data-html", "true"));
-                item.add($b.attr("data-original-title", fi.msg));
-
-
                 WebMarkupContainer iconColor = new WebMarkupContainer("feedIconColor");
                 iconColor.add($b.classAppender(fi.color));
+
                 iconColor.add($b.classAppender(" tooltips "));
+                iconColor.add($b.attr("data-placement", "left"));
+                iconColor.add($b.attr("data-container", "body"));
+                iconColor.add($b.attr("data-original-title", fi.msg));
+
                 item.queue(iconColor);
 
                 WebMarkupContainer icon = new WebMarkupContainer("icon");
                 icon.add($b.classAppender(fi.icon));
 
-                iconColor.add(icon);
+                iconColor.queue(icon);
             }
         });
     }
