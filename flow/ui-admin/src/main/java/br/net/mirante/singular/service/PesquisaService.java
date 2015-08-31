@@ -36,8 +36,8 @@ public class PesquisaService {
 
     @Cacheable(value="retrieveStatusQuantityByPeriod", key = "#period")
     public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
-        return instanceDAO.retrieveStatusQuantityByPeriod(period, 28L, new ArrayList<Long>() {{
-            add(316L);
+        return instanceDAO.retrieveStatusQuantityByPeriod(period, 26L, new ArrayList<Long>() {{
+            add(436L);
         }});
     }
     @Cacheable(value="retrieveMeanTimeByTask", key = "#processId")
