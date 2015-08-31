@@ -100,7 +100,7 @@ public class InstanceDAO {
 
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveNewQuantityLastYear() {
-        String sql = "SET LANGUAGE Portuguese;SELECT DATENAME(MONTH, data_inicio) AS MES, COUNT(cod) AS QUANTIDADE"
+        String sql = "SET LANGUAGE Portuguese;SELECT UPPER(SUBSTRING(DATENAME(MONTH, data_inicio), 0, 4)) AS MES, COUNT(cod) AS QUANTIDADE"
                 + " FROM DMD_DEMANDA"
                 + " WHERE data_inicio >= (GETDATE() - 365)"
                 + " GROUP BY MONTH(data_inicio), DATENAME(MONTH, data_inicio) ORDER BY MONTH(data_inicio)";
