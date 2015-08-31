@@ -32,6 +32,13 @@ public class FeedPanel extends Panel {
         super(id);
     }
 
+    private class FeedItem {
+        public String icon;
+        public String color;
+        public String msg;
+
+    }
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -53,47 +60,54 @@ public class FeedPanel extends Panel {
             @Override
             protected void populateItem(Item<FeedDTO> item) {
                 final FeedDTO feedDto = item.getModelObject();
+                FeedItem fi = getFeedItem(feedDto);
+
                 item.queue(new Label("descricao", getDesc(feedDto)));
                 item.queue(new Label("tempoDeAtraso", getTimeDesc(feedDto)));
 
+                item.add($b.attr("data-placement", "left"));
+                item.add($b.attr("data-html", "true"));
+                item.add($b.attr("data-original-title", fi.msg));
+
+
                 WebMarkupContainer iconColor = new WebMarkupContainer("feedIconColor");
-                iconColor.add($b.classAppender(getIconColor(feedDto)));
+                iconColor.add($b.classAppender(fi.color));
+                iconColor.add($b.classAppender(" tooltips "));
                 item.queue(iconColor);
 
                 WebMarkupContainer icon = new WebMarkupContainer("icon");
-                icon.add($b.classAppender(getIcon(feedDto)));
+                icon.add($b.classAppender(fi.icon));
+
                 iconColor.add(icon);
             }
         });
     }
 
+    private FeedItem getFeedItem(FeedDTO feed) {
+        FeedItem fi = new FeedItem();
+        fi.color = "label-default ";
+        fi.icon = "fa fa-clock-o ";
+        fi.msg = "menos de 50% ";
+        if (feed.getMedia().multiply(BigDecimal.valueOf(1.5)).compareTo(feed.getTempoDecorrido()) < 0) {
+            fi.icon = "fa fa-exclamation-triangle ";
+            fi.color = " bg-yellow-lemon ";
+            fi.msg = "até 50% ";
+        }
+        if (feed.getMedia().multiply(BigDecimal.valueOf(2)).compareTo(feed.getTempoDecorrido()) < 0) {
+            fi.icon = "fa fa-ambulance ";
+            fi.color = " label-danger ";
+            fi.msg = " 100% ou + ";
+        }
+        return fi;
+    }
+
+
     private String getDesc(FeedDTO feed) {
         return "[" + feed.getNomeProcesso() + "] " + feed.getDescricaoInstancia();
     }
 
-    private String getIcon(FeedDTO feed) {
-        String icon = "fa fa-clock-o ";
-        if (feed.getMedia().multiply(BigDecimal.valueOf(1.3)).compareTo(feed.getTempoDecorrido()) < 0) {
-            icon = "fa fa-exclamation-triangle ";
-        }
-        if (feed.getMedia().multiply(BigDecimal.valueOf(2)).compareTo(feed.getTempoDecorrido()) < 0) {
-            icon = "fa fa-ambulance ";
-        }
-        return icon;
-    }
-
-    private String getIconColor(FeedDTO feed) {
-        String icon = "label-primary ";
-        if (feed.getMedia().multiply(BigDecimal.valueOf(1.3)).compareTo(feed.getTempoDecorrido()) < 0) {
-            icon = " bg-yellow-lemon ";
-        }
-        if (feed.getMedia().multiply(BigDecimal.valueOf(2)).compareTo(feed.getTempoDecorrido()) < 0) {
-            icon = " label-danger ";
-        }
-        return icon;
-    }
 
     private String getTimeDesc(FeedDTO feed) {
-        return String.format(" %s dias", feed.getTempoDecorrido().subtract(feed.getMedia()));
+        return String.format(" + %s dias ", feed.getTempoDecorrido().subtract(feed.getMedia()));
     }
 }
