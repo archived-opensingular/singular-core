@@ -14,30 +14,37 @@ import org.apache.wicket.model.ResourceModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-public abstract class BarChartPanel extends Panel {
+public abstract class SerialChartPanel extends Panel {
 
+    public static final String DEFAULT_GRAPH_TYPE = "column";
     private String title;
     private String subtitle;
     private String valueField;
     private String categoryField;
     private String balloonTextsuffix;
+    private String graphType;
 
     private boolean withFilter;
     private PeriodType periodType;
     private WebMarkupContainer barChartDiv;
     private List<Map<String, String>> dadosGrafico;
 
-    public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField,
-            boolean withFilter) {
+    public SerialChartPanel(String id, String title, String subtitle, String valueField, String categoryField,
+                            boolean withFilter) {
         this(id, title, subtitle, valueField, categoryField, "", withFilter);
     }
 
-    public BarChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
+    public SerialChartPanel(String id, String title, String subtitle, String valueField, String categoryField) {
         this(id, title, subtitle, valueField, categoryField, "", false);
     }
 
-    public BarChartPanel(String id, String title, String subtitle,
-            String valueField, String categoryField, String balloonTextsuffix, boolean withFilter) {
+    public SerialChartPanel(String id, String title, String subtitle, String valueField, String categoryField, String graphType) {
+        this(id, title, subtitle, valueField, categoryField, "", false);
+        this.graphType = graphType;
+    }
+
+    public SerialChartPanel(String id, String title, String subtitle,
+                            String valueField, String categoryField, String balloonTextsuffix, boolean withFilter) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
@@ -45,6 +52,7 @@ public abstract class BarChartPanel extends Panel {
         this.categoryField = categoryField;
         this.balloonTextsuffix = balloonTextsuffix;
         this.withFilter = withFilter;
+        this.graphType = DEFAULT_GRAPH_TYPE;
     }
 
     @Override
@@ -106,7 +114,7 @@ public abstract class BarChartPanel extends Panel {
 
     private CharSequence montarScript(Component comp) {
         String id = comp.getMarkupId();
-        return "            AmCharts.makeChart( \"" + id + "\", { " +
+        String js = "            AmCharts.makeChart( \"" + id + "\", { " +
                 "                \"type\": \"serial\", " +
                 "                \"theme\": \"light\", " +
                 "                \"dataProvider\":  " +
@@ -118,15 +126,25 @@ public abstract class BarChartPanel extends Panel {
                 "                    \"dashLength\": 0 " +
                 "                } ], " +
                 "                \"gridAboveGraphs\": true, " +
-                "                \"startDuration\": 1, " +
-                "                \"graphs\": [ { " +
-                "                    \"balloonText\": \"[[category]]: <b>[[value]]" + balloonTextsuffix + "</b>\", " +
-                "                    \"fillAlphas\": 0.8, " +
-                "                    \"lineAlpha\": 0.2, " +
-                "                    \"type\": \"column\", " +
-                "                    \"valueField\": \"" + valueField + "\" " +
-                "                } ], " +
-                "                \"chartCursor\": { " +
+                "                \"startDuration\": 1, " ;
+
+        if (graphType.equalsIgnoreCase(DEFAULT_GRAPH_TYPE)) {
+            js +=   "                \"graphs\": [ { " +
+                    "                    \"balloonText\": \"[[category]]: <b>[[value]]" + balloonTextsuffix + "</b>\", " +
+                    "                    \"fillAlphas\": 0.8, " +
+                    "                    \"lineAlpha\": 0.2, " +
+                    "                    \"type\": \"" + graphType + "\", " +
+                    "                    \"valueField\": \"" + valueField + "\" " +
+                    "                } ], " ;
+        } else {
+            js +=   "                \"graphs\": [ { " +
+                    "                    \"bullet\": \"square\", " +
+                    "                    \"type\": \"" + graphType + "\", " +
+                    "                    \"valueField\": \"" + valueField + "\" " +
+                    "                } ], " ;
+        }
+
+        js +=   "                \"chartCursor\": { " +
                 "                    \"categoryBalloonEnabled\": false, " +
                 "                    \"cursorAlpha\": 0, " +
                 "                    \"zoomable\": false " +
@@ -143,5 +161,7 @@ public abstract class BarChartPanel extends Panel {
                 "                    \"enabled\": true " +
                 "                } " +
                 "            } ); ";
+
+        return js;
     }
 }
