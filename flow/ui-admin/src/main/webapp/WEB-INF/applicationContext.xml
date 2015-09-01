@@ -11,14 +11,9 @@
                             http://www.springframework.org/schema/cache/spring-cache-4.1.xsd">
 
     <import resource="conf/database.xml"/>
-
     <context:component-scan base-package="br.net.mirante.singular"/>
 
     <cache:annotation-driven/>
-
-
-    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-
-    </bean>
+    <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"/>
 
 </beans>

@@ -2,10 +2,12 @@ package br.net.mirante.singular.view.page.form;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.wicketstuff.annotation.mount.MountPath;
 
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
+@MountPath("form")
 public class FormPage extends Template {
 
     @Override
