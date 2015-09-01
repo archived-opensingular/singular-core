@@ -11,4 +11,8 @@
     <import resource="conf/cache.xml"/>
     <context:component-scan base-package="br.net.mirante.singular"/>
 
+    <bean id="adminWicketFilterContext" class="java.lang.String">
+        <constructor-arg value="/"/>
+    </bean>
+
 </beans>

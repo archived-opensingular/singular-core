@@ -8,7 +8,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
-@MountPath("processos")
+@MountPath("process")
 public class ProcessosPage extends Template {
 
     public static final String PROCESS_DEFINITION_ID_PARAM = "_PD_ID";
