@@ -24,23 +24,24 @@ public class PesquisaService {
     @Inject
     private InstanceDAO instanceDAO;
 
-    @Cacheable(value="retrieveMeanTimeByProcess", key = "#period")
+    @Cacheable(value = "retrieveMeanTimeByProcess", key = "#period", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         return pesquisaDAO.retrieveMeanTimeByProcess(period);
     }
 
-    @Cacheable(value="retrieveNewInstancesQuantityLastYear")
+    @Cacheable(value = "retrieveNewInstancesQuantityLastYear", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
         return instanceDAO.retrieveNewQuantityLastYear();
     }
 
-    @Cacheable(value="retrieveStatusQuantityByPeriod", key = "#period")
+    @Cacheable(value = "retrieveStatusQuantityByPeriod", key = "#period", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
         return instanceDAO.retrieveStatusQuantityByPeriod(period, 26L, new ArrayList<Long>() {{
             add(436L);
         }});
     }
-    @Cacheable(value="retrieveMeanTimeByTask", key = "#processId")
+
+    @Cacheable(value = "retrieveMeanTimeByTask", key = "#processId", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
         return pesquisaDAO.retrieveMeanTimeByTask(processId);
     }

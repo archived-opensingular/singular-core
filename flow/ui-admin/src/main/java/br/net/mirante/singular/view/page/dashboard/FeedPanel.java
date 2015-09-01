@@ -18,8 +18,8 @@ import org.apache.wicket.model.util.ListModel;
 import br.net.mirante.singular.dao.FeedDTO;
 import br.net.mirante.singular.service.FeedService;
 
-import static br.net.mirante.singular.view.Behaviors.$b;
-import static br.net.mirante.singular.view.Models.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class FeedPanel extends Panel {
 

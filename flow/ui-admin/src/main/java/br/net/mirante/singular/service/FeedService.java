@@ -5,6 +5,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,8 +27,8 @@ public class FeedService {
     @Inject
     private PesquisaService pesquisaService;
 
-    @Cacheable("retrieveFeed")
     @Transactional
+    @Cacheable(value = "retrieveFeed", cacheManager = "cacheManager")
     public List<FeedDTO> retrieveFeed() {
 
         List<FeedDTO> result = new ArrayList<>();
@@ -36,14 +37,13 @@ public class FeedService {
             String sigla = mediaPorProcesso.get("SIGLA");
             BigDecimal media = new BigDecimal(mediaPorProcesso.get("MEAN"));
             List<Map<String, String>> instancias = instanceDao.retrieveAllDelayedBySigla(sigla, media);
-
-            for (Map<String, String> instancia : instancias) {
-                result.add(new FeedDTO(mediaPorProcesso.get("NOME"), instancia.get("DESCRICAO"), new BigDecimal(instancia.get("DIAS")), media));
-            }
+            result.addAll(instancias.stream()
+                    .map(instancia -> new FeedDTO(mediaPorProcesso.get("NOME"), instancia.get("DESCRICAO"),
+                            new BigDecimal(instancia.get("DIAS")), media)).collect(Collectors.toList()));
         }
 
         result.sort((f1, f2) -> f2.getTempoDecorrido().subtract(f2.getMedia()).compareTo(
-                                f1.getTempoDecorrido().subtract(f1  .getMedia()))
+                        f1.getTempoDecorrido().subtract(f1.getMedia()))
         );
 
         return result;

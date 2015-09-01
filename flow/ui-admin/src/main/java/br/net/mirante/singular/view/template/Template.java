@@ -1,5 +1,9 @@
 package br.net.mirante.singular.view.template;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -13,16 +17,9 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 public abstract class Template extends WebPage {
 
-    private List<String> initializerJavascripts = Arrays.asList(new String[]{
-            "$('.scroller').slimScroll({});"
-    });
+    private List<String> initializerJavascripts = Collections.singletonList("$('.scroller').slimScroll({});");
 
     @Override
     protected void onInitialize() {
@@ -41,7 +38,7 @@ public abstract class Template extends WebPage {
         if (withSideBar()) {
             addQuickSidebar(response);
         }
-        for (String script : initializerJavascripts){
+        for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
     }
@@ -76,7 +73,6 @@ public abstract class Template extends WebPage {
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
-
 
     @Override
     public void onEvent(IEvent<?> event) {

@@ -22,6 +22,7 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
@@ -81,7 +82,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                 .appendPropertyColumn(getMessage("label.table.column.time"), "time", DefinitionDTO::getTempoMedioString)
                 .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", DefinitionDTO::getThroughput)
                 .appendPropertyColumn(getMessage("label.table.column.version"), "version", DefinitionDTO::getVersion)
-                .appendColumn(new BSActionColumn<DefinitionDTO, String>($m.ofValue(""))
+                .appendColumn(new BSActionColumn<DefinitionDTO, String>(WicketUtils.$m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                             getPage().getPageParameters().add("sigla", model.getObject().getSigla());
                             /* FIXME: Verificar como detectar o fim da carga! */

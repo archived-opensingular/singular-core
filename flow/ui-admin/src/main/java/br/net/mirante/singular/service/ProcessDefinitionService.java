@@ -68,5 +68,4 @@ public class ProcessDefinitionService {
         String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
         return Base64.getDecoder().decode(encodedImage);
     }
-
 }

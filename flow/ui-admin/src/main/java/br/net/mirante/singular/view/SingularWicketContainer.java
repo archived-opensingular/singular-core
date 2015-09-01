@@ -16,13 +16,9 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.springframework.web.util.JavaScriptUtils;
 
 import br.net.mirante.singular.util.wicket.model.FallbackReadOnlyModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
-
-    Models     $m = Models.$m;
-    Behaviors  $b = Behaviors.$b;
-    Validators $v = Validators.$v;
-    Lambdas    $L = Lambdas.$L;
 
     default String getContextPath() {
         String rootContext = null;
@@ -82,7 +78,7 @@ public interface SingularWicketContainer<CONTAINER extends MarkupContainer, T> {
         HashMap<Integer, Object> params = new HashMap<>();
         for (int i = 0; i < positionalPrameters.length; i++)
             params.put(i, positionalPrameters[i]);
-        return new StringResourceModel(prop, null, $m.ofValue(params));
+        return new StringResourceModel(prop, null, WicketUtils.$m.ofValue(params));
     }
 
     /**
