@@ -1,15 +1,16 @@
 package br.net.mirante.singular.flow.core.entity;
 
+import java.util.List;
+
 public interface IEntityCategory extends IEntityByCod {
 
-    String getNome();
+    String getName();
 
-    void setNome(String nome);
+    void setName(String nome);
 
-    String getNomeAbsoluto();
+    IEntityCategory getParent();
 
-    void setNomeAbsoluto(String nomeAbsoluto);
+    List<? extends IEntityCategory> getChildrens();
 
-    IEntityCategory getPai();
-
+    List<? extends IEntityProcessDefinition> getProcessDefinitions();
 }

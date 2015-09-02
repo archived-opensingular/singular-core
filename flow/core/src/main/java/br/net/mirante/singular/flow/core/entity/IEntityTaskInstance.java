@@ -45,5 +45,5 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     IEntityProcessInstance getDemanda();
 
-    IEntityTaskDefinition getSituacao();
+    IEntityTask getSituacao();
 }

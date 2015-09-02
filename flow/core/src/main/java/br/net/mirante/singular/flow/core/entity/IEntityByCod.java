@@ -1,6 +1,8 @@
 package br.net.mirante.singular.flow.core.entity;
 
-public interface IEntityByCod {
+import java.io.Serializable;
+
+public interface IEntityByCod extends Serializable{
 
     Integer getCod();
 }

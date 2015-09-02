@@ -7,7 +7,7 @@ import java.util.List;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 
 /**
  * Service to provide an interface to retrieve data about the process runtime
@@ -30,7 +30,7 @@ public interface IProcessDataService<I extends ProcessInstance> {
 
     List<I> retrieveEndedInstancesCreatedBy(MUser user);
 
-    List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> entityTasks);
+    List<I> retrieveAllInstancesIn(Collection<? extends IEntityTask> entityTasks);
 
     List<I> retrieveAllInstancesIn(String... tasksNames);
 
@@ -38,5 +38,5 @@ public interface IProcessDataService<I extends ProcessInstance> {
 
     List<I> retrieveAllInstancesIn(Date minCreateDate, Date maxCreateDate, boolean showEnded, String... tasksNames);
 
-    List<I> retrieveAllInstancesIn(Date minCreateDate, Date maxCreateDate, boolean showEnded, IEntityTaskDefinition... entityTasks);
+    List<I> retrieveAllInstancesIn(Date minCreateDate, Date maxCreateDate, boolean showEnded, IEntityTask... entityTasks);
 }

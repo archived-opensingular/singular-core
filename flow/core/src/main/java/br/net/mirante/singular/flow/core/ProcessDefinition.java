@@ -20,14 +20,15 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
-import br.net.mirante.singular.flow.util.props.PropRef;
-import br.net.mirante.singular.flow.util.props.Props;
+import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
@@ -50,8 +51,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private Serializable entityCod;
 
-    private final Map<String, Serializable> entityCodByTaskAbbreviation = new HashMap<>();
-
     private IProcessCreationPageStrategy creationPage;
 
     private Class<? extends VariableWrapper> variableWrapperClass;
@@ -62,12 +61,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private IProcessDataService<I> processDataService;
 
-    private Props properties;
-    
+    private MetaData metaData;
+
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
     private transient Constructor<I> construtor;
-    
+
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
@@ -75,10 +74,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
         this.variableService = varService;
-        getConstrutor();
+        Objects.requireNonNull(getConstrutor());
     }
 
-    public final Class<I> getClasseInstancia() {
+    public final Class<I> getInstanceClass() {
         return instanceClass;
     }
 
@@ -121,20 +120,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     protected abstract FlowMap createFlowMap();
 
     public final FlowMap getFlowMap() {
-        synchronized (this) {
-            if (flowMap == null) {
-                FlowMap novo = createFlowMap();
-                
-                if(novo.getProcessDefinition() != this){
-                    throw new SingularFlowException("Mapa com definiçao trocada");
+        if (flowMap == null) {
+            synchronized (this) {
+                if (flowMap == null) {
+                    FlowMap novo = createFlowMap();
+                    
+                    if (novo.getProcessDefinition() != this) {
+                        throw new SingularFlowException("Mapa com definiçao trocada");
+                    }
+                    
+                    novo.verifyConsistency();
+                    MBPMUtil.calculateTaskOrder(novo);
+                    flowMap = novo;
                 }
-
-                novo.verifyConsistency();
-                flowMap = novo;
-                MBPMUtil.calculateTaskOrder(flowMap);
             }
-            return flowMap;
         }
+        return flowMap;
     }
 
     public IProcessDataService<I> getDataService() {
@@ -148,7 +149,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         variableService = variableService.deserialize();
         return variableService;
     }
-    
+
     public final VarDefinitionMap<?> getVariables() {
         if (variableDefinitions == null) {
             variableDefinitions = getVarService().newVarDefinitionMap();
@@ -163,14 +164,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     protected final ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
         return addScheduledJob(name).call(impl);
     }
-    
+
     protected final ProcessScheduledJob addScheduledJob(String name) {
         name = StringUtils.trimToNull(name);
 
         final ProcessScheduledJob scheduledJob = new ProcessScheduledJob(this, name);
-        
-        if(scheduledJobsByName.containsKey(name)){
-            throw new SingularFlowException("A Job with name '"+name+"' is already defined.");
+
+        if (scheduledJobsByName.containsKey(name)) {
+            throw new SingularFlowException("A Job with name '" + name + "' is already defined.");
         }
         scheduledJobsByName.put(name, scheduledJob);
         return scheduledJob;
@@ -179,82 +180,70 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     final Collection<ProcessScheduledJob> getScheduledJobs() {
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
-    
-    protected final void setActive(boolean ativo) {
-        IEntityProcess definicaoProcesso = getEntity();
-        if (definicaoProcesso.isAtivo() != ativo) {
-            definicaoProcesso.setAtivo(ativo);
-            getPersistenceService().updateProcessDefinition(definicaoProcesso);
-        }
+
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
+        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
     }
 
-    public final boolean isActive() {
-        return getEntity().isAtivo();
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
+        return metaData == null ? null : getMetaData().get(propRef);
     }
 
-    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
-        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
-    }
-
-    public <T> T getProperty(PropRef<T> propRef) {
-        return properties == null ? null : getProperties().get(propRef);
-    }
-
-    protected <T> ProcessDefinition<I> setProperty(PropRef<T> propRef, T value) {
-        getProperties().set(propRef, value);
+    protected <T> ProcessDefinition<I> setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getMetaData().set(propRef, value);
         return this;
     }
 
     public final IEntityProcess getEntity() {
         if (entityCod == null) {
-            IEntityProcess def = getPersistenceService().retrieveOrCreateProcessDefinitionFor(this);
-            entityCod = def.getCod();
-            return def;
+            synchronized (this) {
+                if (entityCod == null) {
+                    IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+
+                    entityCod = entityProcess.getCod();
+
+                    return entityProcess;
+                }
+            }
         }
         final IEntityProcess def = getPersistenceService().retrieveProcessDefinitionByCod(entityCod);
 
         if (def == null) {
             entityCod = null;
             throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: codigo não encontrado"));
-        } else if (!getAbbreviation().equals(def.getSigla())) {
-            entityCod = null;
-            throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: sigla recuperada diferente"));
         }
 
         return def;
     }
 
-    public final <X extends IEntityTaskDefinition> Set<X> getEntityNotJavaTask() {
-        return convertToEntityTaskDefinition(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
+    public final Set<IEntityTask> getEntityNotJavaTask() {
+        return convertToEntityTask(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
     }
 
-    public final <X extends IEntityTaskDefinition> Set<X> getEntityPeopleTasks() {
-        return convertToEntityTaskDefinition(getFlowMap().getPeopleTasks().stream());
+    public final Set<IEntityTask> getEntityPeopleTasks() {
+        return convertToEntityTask(getFlowMap().getPeopleTasks().stream());
     }
 
-    public final IEntityTaskDefinition getEntityStartTask() {
+    public final IEntityTask getEntityStartTask() {
         final MTask<?> inicial = getFlowMap().getStartTask();
         return getEntityTask(inicial);
     }
-    
-    public final IEntityTaskDefinition getEntityTaskWithName(String taskName) {
+
+    public final IEntityTask getEntityTaskWithName(String taskName) {
         return getEntityTask(getFlowMap().getTaskWithName(taskName));
     }
 
-    public final IEntityTaskDefinition getEntityTaskWithAbbreviation(String sigla) {
+    public final IEntityTask getEntityTaskWithAbbreviation(String sigla) {
         return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
     }
 
-    public final IEntityTaskDefinition getEntityTask(MTask<?> task) {
+    public final IEntityTask getEntityTask(MTask<?> task) {
         if (task == null) {
             return null;
         }
-        final Serializable codSituacao = entityCodByTaskAbbreviation.computeIfAbsent(task.getAbbreviation(),
-            sigla -> getPersistenceService().retrieveOrCreateStateFor(getEntity(), task).getCod());
 
-        IEntityTaskDefinition situacao = getPersistenceService().retrieveTaskStateByCod(codSituacao);
+        IEntityTask situacao = getEntity().getTask(task.getAbbreviation());
         if (situacao == null) {
-            entityCodByTaskAbbreviation.clear();
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
         }
         return situacao;
@@ -300,6 +289,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return isCreatedByUser();
     }
 
+    protected String generateAbbreviation() {
+        return getClass().getSimpleName();
+    }
+
     protected final void setName(String category, String name) {
         setName(category, generateAbbreviation(), name);
     }
@@ -310,27 +303,18 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         this.name = name;
     }
 
-    //TODO - verificar se esta logica deve permanecer
-    private String generateAbbreviation() {
-        String className = getClass().getSimpleName();
-        if (!className.endsWith("Definicao")) {
-            throw new SingularFlowException("O nome da classe " + getClass().getName() + " deveria ter o sufixo 'Definicao'");
+    final MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
         }
-        return className.substring(0, className.length() - "Definicao".length());
+        return metaData;
     }
 
-    final Props getProperties() {
-        if (properties == null) {
-            properties = new Props();
-        }
-        return properties;
+    final Set<IEntityTask> convertToEntityTask(Collection<? extends MTask<?>> collection) {
+        return convertToEntityTask(collection.stream());
     }
 
-    final Set<IEntityTaskDefinition> convertToEntityTaskDefinition(Collection<? extends MTask<?>> collection) {
-        return convertToEntityTaskDefinition(collection.stream());
-    }
-
-    final <X extends IEntityTaskDefinition> Set<X> convertToEntityTaskDefinition(Stream<? extends MTask<?>> stream) {
+    final <X extends IEntityTask> Set<X> convertToEntityTask(Stream<? extends MTask<?>> stream) {
         return (Set<X>) stream.map(this::getEntityTask).collect(Collectors.toSet());
     }
 
@@ -350,7 +334,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     private Constructor<I> getConstrutor() {
         if (construtor == null) {
             try {
-                for (Constructor<?> constructor : getClasseInstancia().getConstructors()) {
+                for (Constructor<?> constructor : getInstanceClass().getConstructors()) {
                     if (constructor.getParameterTypes().length == 1
                         && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
                         this.construtor = (Constructor<I>) constructor;
@@ -358,7 +342,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
                 }
                 Objects.requireNonNull(this.construtor);
             } catch (final Exception e) {
-                throw new SingularFlowException(createErrorMsg("Construtor ausente: " + getClasseInstancia().getName() + "(" + IEntityProcessInstance.class.getName() + ")"), e);
+                throw new SingularFlowException(createErrorMsg("Construtor ausente: " + getInstanceClass().getName() + "(" + IEntityProcessInstance.class.getName() + ")"), e);
             }
         }
         return construtor;
@@ -368,8 +352,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return getPersistenceService().createProcessInstance(getEntity(), getEntityStartTask());
     }
 
-    final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
+    final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
             .getMbpmBean().getPersistenceService();
     }
 

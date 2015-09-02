@@ -15,6 +15,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
@@ -137,7 +138,7 @@ public abstract class ProcessInstance {
             }
             getPersistenceService().endTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
         }
-        IEntityTaskDefinition situacaoNova = getDefinicao().getEntityTask(task);
+        IEntityTask situacaoNova = getDefinicao().getEntityTask(task);
 
         IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
 
@@ -150,13 +151,13 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getDefinicao().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getSigla());
+            estadoAtual = getDefinicao().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getAbbreviation());
         }
         return estadoAtual;
     }
 
     public boolean isFim() {
-        return getEntity().getSituacao().isFim();
+        return getEntity().getSituacao().isEnd();
     }
 
     /**
@@ -201,7 +202,7 @@ public abstract class ProcessInstance {
         TaskInstance tarefaAtual = getTarefaAtual();
         if (tarefaAtual != null) {
             // Uma situação legada, que não existe mais no fluxo mapeado
-            return tarefaAtual.getEntityTaskInstance().getSituacao().getNome();
+            return tarefaAtual.getEntityTaskInstance().getSituacao().getName();
         }
         return null;
     }
@@ -246,7 +247,7 @@ public abstract class ProcessInstance {
     }
 
     public boolean canVisualize(MUser user) {
-        switch (getInternalEntity().getSituacao().getTipoTarefa()) {
+        switch (getInternalEntity().getSituacao().getType()) {
             case People:
             case Wait:
                 if (temAlocado() && isAlocado(user.getCod())) {
@@ -462,7 +463,7 @@ public abstract class ProcessInstance {
 
     private void addUserRole(MProcessRole mProcessRole, MUser user) {
         if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
-            getPersistenceService().setInstanceUserRole(getEntity(), getDefinicao().getEntity().getPapel(mProcessRole.getAbbreviation()), user);
+            getPersistenceService().setInstanceUserRole(getEntity(), getDefinicao().getEntity().getRole(mProcessRole.getAbbreviation()), user);
         }
     }
 
@@ -585,7 +586,7 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance getTarefaMaisRecenteComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getSituacao().getName().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getLatestTask() {
@@ -593,18 +594,18 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance getUltimaTarefaConcluidaComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getNome().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getName().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getUltimaTarefaConcluidaTipo(final MTask<?> tipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getSigla().equalsIgnoreCase(tipo.getAbbreviation()));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getAbbreviation().equalsIgnoreCase(tipo.getAbbreviation()));
     }
 
     public TaskInstance getUltimaTarefaConcluida(final TaskType tipoTarefa) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getTipoTarefa().equals(tipoTarefa));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getType().equals(tipoTarefa));
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getDefinicao().getPersistenceService();
     }
 

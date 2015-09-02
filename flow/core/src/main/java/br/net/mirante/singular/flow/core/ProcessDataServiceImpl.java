@@ -15,6 +15,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
@@ -55,28 +56,28 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     public final List<I> retrieveAllInstancesIn(MTask<?> task) {
-        final IEntityTaskDefinition obterSituacaoPara = getEntityTask(task);
+        final IEntityTask obterSituacaoPara = getEntityTask(task);
         return retrieveAllInstancesIn(obterSituacaoPara != null ? Sets.newHashSet(obterSituacaoPara) : null);
     }
 
     public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, String... situacoesAlvo) {
-        Set<IEntityTaskDefinition> situacoes = convertToEntityTaskDefinition(situacoesAlvo);
+        Set<IEntityTask> situacoes = convertToEntityTask(situacoesAlvo);
         return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas,
-            situacoes.toArray(new IEntityTaskDefinition[situacoes.size()]));
+            situacoes.toArray(new IEntityTask[situacoes.size()]));
     }
 
-    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, IEntityTaskDefinition... situacoesAlvo) {
+    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, IEntityTask... situacoesAlvo) {
         final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-        for (final IEntityTaskDefinition situacao : situacoesAlvo) {
+        for (final IEntityTask situacao : situacoesAlvo) {
             if (situacao != null) {
-                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithName(situacao.getNome())));
+                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithAbbreviation(situacao.getAbbreviation())).getTaskDefinition());
             }
         }
         if (estadosAlvo.isEmpty()) {
             if (!exibirEncerradas) {
-                for (IEntityTaskDefinition situacao : getEntityProcess().getSituacoes()) {
-                    if (!situacao.isFim()) {
-                        estadosAlvo.add(situacao);
+                for (IEntityTask situacao : getEntityProcess().getTasks()) {
+                    if (!situacao.isEnd()) {
+                        estadosAlvo.add(situacao.getTaskDefinition());
                     }
                 }
             }
@@ -85,29 +86,30 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     public final List<I> retrieveAllInstancesIn(String... situacoesAlvo) {
-        final Set<IEntityTaskDefinition> estadosAlvo = convertToEntityTaskDefinition(situacoesAlvo);
+        final Set<IEntityTask> estadosAlvo = convertToEntityTask(situacoesAlvo);
         return retrieveAllInstancesIn(estadosAlvo);
     }
 
-    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> situacoesAlvo) {
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, null, situacoesAlvo));
+    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTask> situacoesAlvo) {
+        Set<IEntityTaskDefinition> estados = situacoesAlvo.stream().map(IEntityTask::getTaskDefinition).collect(Collectors.toSet());
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, null, estados));
     }
 
     public final List<I> retrieveActiveInstancesWithPeopleOrWaiting() {
-        final Set<IEntityTaskDefinition> estadosAlvo = convertToEntityTaskDefinition(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait()));
+        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait()));
         return retrieveAllInstancesIn(estadosAlvo);
     }
 
     public final List<I> retrieveActiveInstances() {
-        final Set<IEntityTaskDefinition> estadosAlvo = convertToEntityTaskDefinition(getFlowMap().getTasks());
+        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks());
         return retrieveAllInstancesIn(estadosAlvo);
     }
 
     public final List<I> retrieveAllInstances(boolean exibirEncerradas) {
-        final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-        estadosAlvo.addAll(convertToEntityTaskDefinition(getFlowMap().getTasks()));
+        final Set<IEntityTask> estadosAlvo = new HashSet<>();
+        estadosAlvo.addAll(convertToEntityTask(getFlowMap().getTasks()));
         if (exibirEncerradas) {
-            estadosAlvo.addAll(convertToEntityTaskDefinition(getFlowMap().getEndTasks()));
+            estadosAlvo.addAll(convertToEntityTask(getFlowMap().getEndTasks()));
         }
         return retrieveAllInstancesIn(estadosAlvo);
     }
@@ -120,7 +122,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.getEntity();
     }
 
-    protected final IEntityTaskDefinition getEntityTask(MTask<?> task) {
+    protected final IEntityTask getEntityTask(MTask<?> task) {
         return processDefinition.getEntityTask(task);
     }
 
@@ -128,15 +130,15 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.getFlowMap();
     }
 
-    protected final Set<IEntityTaskDefinition> convertToEntityTaskDefinition(Collection<? extends MTask<?>> collection) {
-        return processDefinition.convertToEntityTaskDefinition(collection);
+    protected final Set<IEntityTask> convertToEntityTask(Collection<? extends MTask<?>> collection) {
+        return processDefinition.convertToEntityTask(collection);
     }
 
-    protected final <X extends IEntityTaskDefinition> Set<X> convertToEntityTaskDefinition(Stream<? extends MTask<?>> stream) {
-        return processDefinition.convertToEntityTaskDefinition(stream);
+    protected final <X extends IEntityTask> Set<X> convertToEntityTask(Stream<? extends MTask<?>> stream) {
+        return processDefinition.convertToEntityTask(stream);
     }
 
-    protected final Set<IEntityTaskDefinition> convertToEntityTaskDefinition(String... tasksNames) {
+    protected final Set<IEntityTask> convertToEntityTask(String... tasksNames) {
         return Arrays.stream(tasksNames).map(processDefinition::getEntityTaskWithName).collect(Collectors.toSet());
     }
 
@@ -144,7 +146,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.convertToProcessInstance(entities);
     }
 
-    private final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return processDefinition.getPersistenceService();
     }
 }

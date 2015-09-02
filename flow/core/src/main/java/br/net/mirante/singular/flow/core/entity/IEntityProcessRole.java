@@ -2,14 +2,14 @@ package br.net.mirante.singular.flow.core.entity;
 
 public interface IEntityProcessRole extends IEntityByCod {
 
-    String getNome();
+    String getAbbreviation();
 
-    void setNome(String nome);
+    void setAbbreviation(String abbreviation);
 
-    String getSigla();
+    String getName();
 
-    void setSigla(String sigla);
+    void setName(String name);
 
-    IEntityProcess getDefinicao();
+    IEntityProcessDefinition getProcessDefinition();
 
 }

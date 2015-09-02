@@ -8,7 +8,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 
 public class MBPMUtil {
 
@@ -17,31 +17,32 @@ public class MBPMUtil {
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias,
-            final ProcessDefinition<?> definicao) {
+    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, final ProcessDefinition<?> definicao) {
         instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getSituacao(), s2.getEntity().getSituacao(), definicao));
     }
 
-    private static int compareByDistanceFromBeginning(IEntityTaskDefinition s1, IEntityTaskDefinition s2, ProcessDefinition<?> definicao) {
+    private static int compareByDistanceFromBeginning(IEntityTask s1, IEntityTask s2, ProcessDefinition<?> definicao) {
         int ordem1 = calculateTaskOrder(s1, definicao);
         int ordem2 = calculateTaskOrder(s2, definicao);
         if (ordem1 != ordem2) {
             return ordem1 - ordem2;
         }
-        return s1.getNome().compareTo(s2.getNome());
+        //TODO
+//        return s1.getNome().compareTo(s2.getNome());
+        return s1.getAbbreviation().compareTo(s2.getAbbreviation());
     }
 
-    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTaskDefinition> conversor,
+    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTask> conversor,
             ProcessDefinition<?> definicao) {
         lista.sort(getDistanceFromBeginningComparator(conversor, definicao));
     }
 
-    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskDefinition> conversor,
+    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTask> conversor,
             ProcessDefinition<?> definicao) {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
-    public static <X extends IEntityTaskDefinition> List<X> getSortedByDistanceFromBeginning(List<X> situacoes, ProcessDefinition<?> definicao) {
+    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes, ProcessDefinition<?> definicao) {
         List<X> novo = new ArrayList<>(situacoes);
         novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
         return novo;
@@ -88,19 +89,19 @@ public class MBPMUtil {
         }
     }
 
-    private static int calculateTaskOrder(IEntityTaskDefinition entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntity().equals(entityTaskDefinition.getDefinicao())) {
+    private static int calculateTaskOrder(IEntityTask entityTaskDefinition, ProcessDefinition<?> processDefinition) {
+        if (!processDefinition.getEntity().equals(entityTaskDefinition.getProcess())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
-        MTask<?> task = processDefinition.getFlowMap().getTaskWithAbbreviation(entityTaskDefinition.getSigla());
+        MTask<?> task = processDefinition.getFlowMap().getTaskWithAbbreviation(entityTaskDefinition.getAbbreviation());
         if (task != null) {
             return task.getOrder();
         }
-        if (entityTaskDefinition.isPessoa()) {
+        if (entityTaskDefinition.isPeople()) {
             return 10000000 + PESO_TASK_PESSOA;
         } else if (entityTaskDefinition.isWait()) {
             return 10000000 + PESO_TASK_WAIT;
-        } else if (entityTaskDefinition.isFim()) {
+        } else if (entityTaskDefinition.isEnd()) {
             return 10000000 + PESO_TASK_FIM;
         } else {
             return 10000000 + PESO_TASK_JAVA;

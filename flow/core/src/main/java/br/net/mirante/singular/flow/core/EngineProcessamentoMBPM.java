@@ -9,6 +9,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
@@ -28,7 +29,7 @@ class EngineProcessamentoMBPM {
     }
 
     private static <P extends ProcessInstance> TaskInstance updateEstado(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
-            MTask<?> taskDestino, VarInstanceMap<?> paramIn) {
+        MTask<?> taskDestino, VarInstanceMap<?> paramIn) {
         boolean primeiroLoop = true;
         while (true) {
             Date agora = new Date();
@@ -78,9 +79,9 @@ class EngineProcessamentoMBPM {
                         for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
                             if (papel.isAutomaticUserAllocation()) {
                                 MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
-                                        instanciaTarefa);
+                                    instanciaTarefa);
                                 Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                                        + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
+                                    + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
                                 instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
                             }
@@ -151,7 +152,7 @@ class EngineProcessamentoMBPM {
             transicao = estadoAtual.getTransition(nomeTransicao);
             if (transicao == null) {
                 throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName() + "] não possui a transição '" + nomeTransicao
-                        + "' solicitada. As opções são: {" + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
+                    + "' solicitada. As opções são: {" + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
             }
         }
         return transicao;
@@ -168,9 +169,8 @@ class EngineProcessamentoMBPM {
     }
 
     @SuppressWarnings("unchecked")
-    private static IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
-                .getMbpmBean().getPersistenceService();
+    private static IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM.getMbpmBean().getPersistenceService();
     }
 
     private static void validarParametrosInput(ProcessInstance instancia, MTransition transicao, VarInstanceMap<?> paramIn) {
@@ -181,7 +181,7 @@ class EngineProcessamentoMBPM {
             if (p.isRequired()) {
                 if (!parametroPresentes(paramIn, p)) {
                     throw new SingularFlowException("O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição "
-                            + transicao.getName());
+                        + transicao.getName());
                 }
             }
         }

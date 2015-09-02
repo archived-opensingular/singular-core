@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -46,12 +47,20 @@ public class MBPM {
     public static <K extends ProcessDefinition<?>> K getDefinicao(Class<K> classe) {
         return getMbpmBean().getProcessDefinition(classe);
     }
+    public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
+        return getMbpmBean().getProcessDefinition(abbreviation);
+    }
 
     @SuppressWarnings("unchecked")
     public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String abbreviation) {
         return (K) getMbpmBean().getProcessDefinition(abbreviation);
     }
 
+    @SuppressWarnings("unchecked")
+    public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
+        return (List<K>) getMbpmBean().getDefinitions();
+    }
+    
     public static <T extends VariableWrapper> T newInitialVariables(Class<? extends ProcessDefinition<?>> processDefinitionClass,
             Class<T> variableWrapperClass) {
         ProcessDefinition<?> processDefinition = getDefinicao(processDefinitionClass);

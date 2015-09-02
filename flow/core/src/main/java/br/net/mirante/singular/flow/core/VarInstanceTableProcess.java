@@ -5,13 +5,13 @@ import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
-import br.net.mirante.singular.flow.util.props.PropRef;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMapImpl;
 
 public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
-    private static final PropRef<Integer> PROP_DB_COD = new PropRef<>("persitence.dbCod", Integer.class);
+    private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
 
     // TODO transformar o valor abaixo em RefProcessInstance (igual a
     // RefProcessDefinition)
@@ -36,7 +36,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
                     v = addDefinicao(getVarService().newDefinitionString(dadosVariavel.getNome(), dadosVariavel.getNome(), null));
                 }
                 v.setValor(dadosVariavel.getTextoValor());
-                v.props().set(PROP_DB_COD, dadosVariavel.getCod());
+                v.getMetaData().set(PROP_DB_COD, dadosVariavel.getCod());
             }
         }
     }
@@ -53,10 +53,10 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.props().get(PROP_DB_COD);
+            Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
             Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia, changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
-                changedVar.props().set(PROP_DB_COD, dbCod2);
+                changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
             }
         }
     }

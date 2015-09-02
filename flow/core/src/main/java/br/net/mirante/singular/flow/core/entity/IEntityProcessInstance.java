@@ -37,7 +37,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     IEntityProcessInstance getDemandaPai();
 
-    IEntityTaskDefinition getSituacao();
+    IEntityTask getSituacao();
 
     List<? extends IEntityTaskInstance> getTarefas();
 
@@ -47,7 +47,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     default IEntityRole getRoleUserByAbbreviation(String siglaPapel) {
         for (IEntityRole dadosPapelInstancia : getPapeis()) {
-            if (siglaPapel.equalsIgnoreCase(dadosPapelInstancia.getPapel().getSigla())) {
+            if (siglaPapel.equalsIgnoreCase(dadosPapelInstancia.getPapel().getAbbreviation())) {
                 return dadosPapelInstancia;
             }
         }
@@ -55,10 +55,10 @@ public interface IEntityProcessInstance extends IEntityByCod {
     }
 
     default IEntityTaskInstance getTarefa(String siglaSituacao) {
-        return getTarefa(getDefinicao().getSituacao(siglaSituacao));
+        return getTarefa(getDefinicao().getTask(siglaSituacao));
     }
 
-    default IEntityTaskInstance getTarefa(IEntityTaskDefinition situacaoAlvo) {
+    default IEntityTaskInstance getTarefa(IEntityTask situacaoAlvo) {
         List<? extends IEntityTaskInstance> tarefas = getTarefas();
         for (int i = tarefas.size() - 1; i > -1; i--) {
             if (tarefas.get(i).getSituacao().equals(situacaoAlvo)) {
@@ -68,7 +68,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
         return null;
     }
 
-    default IEntityTaskInstance getTarefaAtiva(IEntityTaskDefinition situacaoAlvo) {
+    default IEntityTaskInstance getTarefaAtiva(IEntityTask situacaoAlvo) {
         List<? extends IEntityTaskInstance> lista = getTarefas();
         for (int i = lista.size() - 1; i != -1; i--) {
             IEntityTaskInstance tarefa = lista.get(i);

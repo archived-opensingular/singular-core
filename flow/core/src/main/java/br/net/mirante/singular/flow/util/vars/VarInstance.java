@@ -2,7 +2,7 @@ package br.net.mirante.singular.flow.util.vars;
 
 import java.io.Serializable;
 
-import br.net.mirante.singular.flow.util.props.Props;
+import br.net.mirante.singular.flow.util.props.MetaData;
 
 public interface VarInstance extends Serializable {
 
@@ -16,7 +16,7 @@ public interface VarInstance extends Serializable {
 
     public String getStringPersistencia();
 
-    public Props props();
+    public MetaData getMetaData();
 
     public default <T> T getValor(T defaultValue) {
         T v = (T) getValor();

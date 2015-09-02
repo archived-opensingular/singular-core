@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+
+import com.google.common.collect.Lists;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
@@ -61,7 +61,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     private boolean isSameRole(MProcessRole processRole, IEntityRole entityRole) {
-        return entityRole.getPapel().getSigla().equalsIgnoreCase(processRole.getAbbreviation());
+        return entityRole.getPapel().getAbbreviation().equalsIgnoreCase(processRole.getAbbreviation());
     }
 
     @Override

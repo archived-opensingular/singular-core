@@ -9,8 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import br.net.mirante.singular.flow.util.props.PropRef;
-import br.net.mirante.singular.flow.util.props.Props;
+import br.net.mirante.singular.flow.core.entity.TransitionType;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import br.net.mirante.singular.flow.util.props.MetaData;
 
 import com.google.common.base.MoreObjects;
 
@@ -33,7 +34,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     private transient int order;
 
-    private Props properties;
+    private MetaData metaData;
 
     public MTask(FlowMap flowMap, String name) {
         Objects.requireNonNull(flowMap);
@@ -106,24 +107,24 @@ public abstract class MTask<K extends MTask<?>> {
         return false;
     }
 
-    public <T> MTask<K> setProperty(PropRef<T> propRef, T value) {
-        getProperties().set(propRef, value);
+    public <T> MTask<K> setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getMetaData().set(propRef, value);
         return this;
     }
 
-    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
-        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
+        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
     }
 
-    public <T> T getProperty(PropRef<T> propRef) {
-        return properties == null ? null : getProperties().get(propRef);
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
+        return metaData == null ? null : getMetaData().get(propRef);
     }
 
-    Props getProperties() {
-        if (properties == null) {
-            properties = new Props();
+    MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
         }
-        return properties;
+        return metaData;
     }
 
     public MTransition addTransition(String actionName, MTask<?> destination, boolean showTransitionInExecution) {
@@ -131,16 +132,16 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public MTransition addTransition(String actionName, MTask<?> destination) {
-        return addTransition(flowMap.newTransition(this, actionName, destination, true));
+        return addTransition(flowMap.newTransition(this, actionName, destination, TransitionType.H));
     }
 
     public MTransition addTransition(MTask<?> destination) {
-        defaultTransition = flowMap.newTransition(this, destination.getName(), destination, true);
+        defaultTransition = flowMap.newTransition(this, destination.getName(), destination, TransitionType.H);
         return addTransition(defaultTransition);
     }
 
     public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destination) {
-        MTransition transition = flowMap.newTransition(this, predicate.getName(), destination, false);
+        MTransition transition = flowMap.newTransition(this, predicate.getName(), destination, TransitionType.A);
         transition.setPredicate(predicate);
         addAutomaticAction(TaskActions.executeTransition(predicate, transition));
         return addTransition(transition);

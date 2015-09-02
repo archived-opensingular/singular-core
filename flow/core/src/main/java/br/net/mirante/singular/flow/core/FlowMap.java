@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.vars.VarService;
 
 import com.google.common.collect.ImmutableList;
@@ -41,8 +42,8 @@ public class FlowMap implements Serializable {
     /**
      * Ponto de extensão para customizações.
      */
-    protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, boolean userOption) {
-        return new MTransition(origin, name, destinarion, userOption);
+    protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, TransitionType type) {
+        return new MTransition(origin, name, destinarion, type);
     }
 
     public Collection<MTask<?>> getTasks() {

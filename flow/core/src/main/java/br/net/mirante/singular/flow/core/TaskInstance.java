@@ -14,6 +14,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
@@ -53,7 +54,7 @@ public class TaskInstance {
 
     public MTask<?> getTipo() {
         if (tipo == null) {
-            tipo = getProcessInstance().getDefinicao().getFlowMap().getTaskWithAbbreviation(entityTask.getSituacao().getSigla());
+            tipo = getProcessInstance().getDefinicao().getFlowMap().getTaskWithAbbreviation(entityTask.getSituacao().getAbbreviation());
         }
         return tipo;
     }
@@ -91,7 +92,7 @@ public class TaskInstance {
         if (getTipo() != null) {
             return getTipo().getName();
         }
-        return entityTask.getSituacao().getNome();
+        return entityTask.getSituacao().getName();
     }
 
     public String getNomeProcesso() {
@@ -118,14 +119,14 @@ public class TaskInstance {
         if (getTipo() != null) {
             return getTipo().isEnd();
         }
-        return entityTask.getSituacao().isFim();
+        return entityTask.getSituacao().isEnd();
     }
 
     public boolean isPessoa() {
         if (getTipo() != null) {
             return getTipo().isPeople();
         }
-        return entityTask.getSituacao().isPessoa();
+        return entityTask.getSituacao().isPeople();
     }
 
     public boolean isWait() {
@@ -228,7 +229,7 @@ public class TaskInstance {
         return getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada, autor, dataHora, demandaFilha);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessInstance().getDefinicao().getPersistenceService();
     }
 
@@ -262,10 +263,10 @@ public class TaskInstance {
     }
 
     private Set<Integer> getFirstLevelUsersCodWithAccess() {
-        Objects.requireNonNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getSigla() + " não encontrada na definição "
+        Objects.requireNonNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getAbbreviation() + " não encontrada na definição "
                 + getProcessInstance().getDefinicao().getName());
         Objects.requireNonNull(getTipo().getAccessStrategy(),
-                "Estratégia de acesso da task " + entityTask.getSituacao().getSigla() + " não foi definida");
+                "Estratégia de acesso da task " + entityTask.getSituacao().getAbbreviation() + " não foi definida");
         return getTipo().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
     }
 
