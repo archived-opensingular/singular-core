@@ -22,8 +22,7 @@ public class TopMenu extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         add(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
-        queue(new Label("nome", $m.ofValue(UIAdminSession.get().getNome())));
-        queue(new WebMarkupContainer("codrh").add($b.attr("src", "/alocpro/wicket/imagemPessoa?codRh="
-                + UIAdminSession.get().getCodRh())));
+        queue(new Label("nome", $m.ofValue(UIAdminSession.get().getName())));
+        queue(new WebMarkupContainer("codrh").add($b.attr("src", UIAdminSession.get().getAvatar())));
     }
 }

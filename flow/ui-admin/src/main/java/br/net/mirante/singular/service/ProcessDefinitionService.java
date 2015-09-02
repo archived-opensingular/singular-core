@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,9 @@ public class ProcessDefinitionService {
 
     @Inject
     private InstanceDAO instanceDAO;
+
+    @Value("#{admin['retrieve.process.diagram.restful.url']}")
+    private String retrieveProcessDiagramRestURL;
 
     @Transactional
     public DefinitionDTO retrieveById(Long id) {
@@ -63,8 +67,7 @@ public class ProcessDefinitionService {
     public byte[] retrieveProcessDiagram(String sigla) {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder uriComponentsBuilder =
-                UriComponentsBuilder.fromHttpUrl("http://localhost:8080/alocpro/rest/diagram")
-                        .queryParam("sigla", sigla);
+                UriComponentsBuilder.fromHttpUrl(retrieveProcessDiagramRestURL).queryParam("sigla", sigla);
         String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
         return Base64.getDecoder().decode(encodedImage);
     }
