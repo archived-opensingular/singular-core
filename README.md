@@ -1,4 +1,4 @@
-![Versão](https://img.shields.io/badge/version-0.2.2-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-warn-yellow.svg) ![Test](https://img.shields.io/badge/test-95%-yellow.svg)
+![Versão](https://img.shields.io/badge/version-0.2.3--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-warn-yellow.svg) ![Test](https://img.shields.io/badge/test-95%-yellow.svg)
 
 # Projeto SINGULAR
 
