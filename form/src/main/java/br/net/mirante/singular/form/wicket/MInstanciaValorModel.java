@@ -7,12 +7,20 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
-public abstract class AbstractMInstanciaModel<T>
+public class MInstanciaValorModel<T>
     implements
     IModel<T>,
     IObjectClassAwareModel<T> {
 
-    public abstract MInstancia getTarget();
+    private IModel<? extends MInstancia> instanciaModel;
+
+    public MInstanciaValorModel(IModel<? extends MInstancia> instanciaModel) {
+        this.instanciaModel = instanciaModel;
+    }
+
+    public MInstancia getTarget() {
+        return instanciaModel.getObject();
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -33,5 +41,10 @@ public abstract class AbstractMInstanciaModel<T>
             return (Class<T>) ((MTipoSimples<?, ?>) mtipo).getClasseTipoNativo();
         }
         return (Class<T>) mtipo.getClasseInstancia();
+    }
+
+    @Override
+    public void detach() {
+        this.instanciaModel.detach();
     }
 }

@@ -1,14 +1,17 @@
 package br.net.mirante.singular.form.wicket;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IComponentInheritedModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public class MICompostoModel<T> extends AbstractMInstanciaModel<T>
+public class MICompostoModel<T extends MIComposto>
+    extends AbstractReadOnlyModel<T>
     implements IComponentInheritedModel<T> {
 
     private Object target;
@@ -18,8 +21,9 @@ public class MICompostoModel<T> extends AbstractMInstanciaModel<T>
     }
 
     @Override
-    public MInstancia getTarget() {
-        return (MInstancia) ((target instanceof IModel<?>)
+    @SuppressWarnings("unchecked")
+    public T getObject() {
+        return (T) ((target instanceof IModel<?>)
             ? ((IModel<?>) target).getObject()
             : target);
     }
@@ -39,19 +43,15 @@ public class MICompostoModel<T> extends AbstractMInstanciaModel<T>
     }
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public <W> IWrapModel<W> wrapOnInheritance(Component component) {
-        return new AttachedCompoundPropertyModel<>(component);
+        return new AttachedCompoundPropertyModel(component);
     }
-    public <S> IModel<S> bind(String property) {
-        return new AbstractMInstanciaCampoModel<S>(this) {
-            @Override
-            protected String propertyExpression() {
-                return property;
-            }
-        };
+    public <S extends MInstancia> IModel<S> bind(String property) {
+        return new MInstanciaCampoModel<S>(this, property);
     }
 
-    private class AttachedCompoundPropertyModel<C> extends AbstractMInstanciaCampoModel<C>
+    private class AttachedCompoundPropertyModel<C extends MInstancia> extends AbstractMInstanciaCampoModel<C>
         implements IWrapModel<C> {
         private final Component owner;
         public AttachedCompoundPropertyModel(Component owner) {

@@ -5,38 +5,38 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
-public class AtrBasic<ALVO extends MAtributoEnabled> extends MTranslatorParaAtributo<ALVO> {
+public class AtrBasic extends MTranslatorParaAtributo {
 
     public AtrBasic() {}
-    public AtrBasic(ALVO alvo) {
+    public AtrBasic(MAtributoEnabled alvo) {
         super(alvo);
     }
 
-    public static <A extends MAtributoEnabled> Function<A, AtrBasic<A>> factory() {
-        return a -> new AtrBasic<>(a);
+    public static <A extends MAtributoEnabled> Function<A, AtrBasic> factory() {
+        return a -> new AtrBasic(a);
     }
 
-    public AtrBasic<ALVO> label(String valor) {
+    public AtrBasic label(String valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_LABEL, valor);
         return this;
     }
 
-    public AtrBasic<ALVO> tamanhoEdicao(Integer valor) {
+    public AtrBasic tamanhoEdicao(Integer valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO, valor);
         return this;
     }
 
-    public AtrBasic<ALVO> tamanhoMaximo(Integer valor) {
+    public AtrBasic tamanhoMaximo(Integer valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO, valor);
         return this;
     }
 
-    public AtrBasic<ALVO> visivel(Boolean valor) {
+    public AtrBasic visivel(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIVEL, valor);
         return this;
     }
 
-    public AtrBasic<ALVO> multiLinha(Boolean valor) {
+    public AtrBasic multiLinha(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
         return this;
     }

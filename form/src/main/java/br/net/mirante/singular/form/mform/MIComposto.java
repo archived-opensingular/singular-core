@@ -2,9 +2,9 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 
 public class MIComposto extends MInstancia {
 
@@ -52,7 +52,7 @@ public class MIComposto extends MInstancia {
             instancia = tipoCampo.novaInstancia();
             instancia.setPai(this);
             if (campos == null) {
-                campos = new TreeMap<>();
+                campos = new LinkedHashMap<>();
             }
             campos.put(leitorPath.getTrecho(), instancia);
         }
@@ -87,7 +87,7 @@ public class MIComposto extends MInstancia {
             instancia = tipoCampo.novaInstancia();
             instancia.setPai(this);
             if (campos == null) {
-                campos = new TreeMap<>();
+                campos = new LinkedHashMap<>();
             }
             campos.put(leitorPath.getTrecho(), instancia);
         }

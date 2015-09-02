@@ -13,7 +13,7 @@
             <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
             <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
                 <li id="_menuItemHome" class="start">
-                    <a href="/">
+                    <a wicket:id="dashboard">
                         <i class="icon-home"></i>
                         <span class="title"><wicket:message key="main.menu.dashboard"/></span>
                     </a>
@@ -26,7 +26,7 @@
                     </a>
                     <ul class="sub-menu">
                         <li id="_menuItemFlowProcess">
-                            <a href="/processos">
+                            <a wicket:id="process">
                                 <i class="icon-list"></i>
                                 <span class="badge badge-danger"><wicket:message key="label.tag.new"/></span><wicket:message key="main.menu.flow.definitions"/></a>
                         </li>

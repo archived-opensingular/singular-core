@@ -1,13 +1,45 @@
 package br.net.mirante.singular.form.mform.io;
 
+import br.net.mirante.singular.form.mform.MAtributo;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoCode;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.util.xml.MDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public class MformPersistenciaXML {
+
+    public static void fromXML(MTipo<?> tipo, MInstancia instancia, MElement xml) {
+        if (tipo instanceof MTipoComposto<?>) {
+            MTipoComposto<?> tipoc = (MTipoComposto<?>) tipo;
+            MIComposto instc = (MIComposto) instancia;
+            for (String campo : tipoc.getCampos()) {
+                fromXML(
+                    tipoc.getCampo(campo),
+                    instc.getCampo(campo),
+                    xml.getElement(campo));
+            }
+
+        } else if (tipo instanceof MTipoSimples) {
+            MTipoSimples<?, ?> tipos = (MTipoSimples<?, ?>) tipo;
+            instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
+
+        } else if (tipo instanceof MTipoLista<?>) {
+
+        } else if (tipo instanceof MAtributo) {
+
+        } else if (tipo instanceof MTipoCode) {
+
+        } else {
+            throw new UnsupportedOperationException(tipo.getClass().getName());
+        }
+    }
 
     public static MElement toXML(MInstancia instancia) {
         return toXML(null, null, instancia, false);

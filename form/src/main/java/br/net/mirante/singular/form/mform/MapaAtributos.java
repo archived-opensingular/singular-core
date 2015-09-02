@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.mform;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 class MapaAtributos implements Iterable<MAtributo> {
 
@@ -12,7 +12,7 @@ class MapaAtributos implements Iterable<MAtributo> {
 
     final void add(MAtributo atributo) {
         if (atributos == null) {
-            atributos = new TreeMap<>();
+            atributos = new LinkedHashMap<>();
         } else if (atributos.containsKey(atributo.getNome())) {
             throw new RuntimeException("Já existe um atributo '" + atributo.getNome() + "' definido");
         }

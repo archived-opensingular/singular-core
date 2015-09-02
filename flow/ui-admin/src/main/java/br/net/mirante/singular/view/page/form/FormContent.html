@@ -2,8 +2,15 @@
 <wicket:extend>
 <div wicket:id="feedback"></div>
 <form wicket:id="form">
-  <div wicket:id="generated"></div>
-  <input type="submit" wicket:id="enviar">
+
+  <div class="panel panel-default">
+    <div class="panel-heading">Formulário</div>
+    <div class="panel-body">
+      <div wicket:id="generated"></div>
+      <input type="submit" class="btn btn-primary" wicket:id="enviar">
+    </div>
+  </div>
+
 </form>
 </wicket:extend>
 </html>
