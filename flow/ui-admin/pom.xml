@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>flow-ui-admin</artifactId>
@@ -79,17 +79,17 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-form</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.2.1-SNAPSHOT</version>
+            <version>0.2.2-SNAPSHOT</version>
         </dependency>
 
         <!-- HIBERNATE -->
