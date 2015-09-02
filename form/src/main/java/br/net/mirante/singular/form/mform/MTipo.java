@@ -2,10 +2,10 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;

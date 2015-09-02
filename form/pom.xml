@@ -15,6 +15,9 @@
     <name>[singular :: form]</name>
     <packaging>jar</packaging>
 
+  <properties>
+    <wicket.version>7.0.0</wicket.version>
+  </properties>
     <dependencies>
         <dependency>
             <groupId>br.net.mirante</groupId>

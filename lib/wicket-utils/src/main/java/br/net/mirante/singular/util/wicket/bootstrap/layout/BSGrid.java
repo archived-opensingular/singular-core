@@ -78,10 +78,10 @@ Ambos os códigos acima geram algo do tipo:
  */
 public class BSGrid extends BSContainer<BSGrid> {
 
-    private static final AttributeModifier CONTAINER_BEHAVIOR = new AttributeAppender("class", "container", " ");
+    private static final AttributeModifier CONTAINER_BEHAVIOR       = new AttributeAppender("class", "container", " ");
     private static final AttributeModifier CONTAINER_FLUID_BEHAVIOR = new AttributeAppender("class", "container-fluid", " ");
 
-    private BSGridSize defaultGridSize = BSGridSize.MD;
+    private BSGridSize                     defaultGridSize          = BSGridSize.MD;
 
     public BSGrid(String id) {
         super(id);

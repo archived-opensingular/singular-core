@@ -7,28 +7,28 @@ public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
 
     private final Class<? extends MPacote> classePacote;
 
-    private final String nomeSimples;
+    private final String                   nomeSimples;
 
-    private final Class<T> classeTipo;
+    private final Class<T>                 classeTipo;
 
-    private final Class<I> classeInstancia;
+    private final Class<I>                 classeInstancia;
 
-    private final Class<V> classeValor;
+    private final Class<V>                 classeValor;
 
-    private Class<MTipo> classeDono;
+    private Class<? extends MTipo<?>>      classeDono;
 
-    private String nomeEscopo;
+    private String                         nomeEscopo;
 
-    private String nomeCompleto;
+    private String                         nomeCompleto;
 
-    private final boolean selfReference;
+    private final boolean                  selfReference;
 
     public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends MPacote> classePacote, String nomeSimples) {
         return new AtrRef(classePacote, nomeSimples, null, null, null);
     }
 
     public AtrRef(Class<? extends MPacote> classePacote, String nomeSimples, Class<T> classeTipo, Class<I> classeInstancia,
-            Class<V> classeValor) {
+        Class<V> classeValor) {
         MFormUtil.checkNomeSimplesValido(nomeSimples);
         this.classePacote = classePacote;
         this.nomeSimples = nomeSimples;
@@ -74,7 +74,7 @@ public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
         } else {
             if (!this.nomeEscopo.equals(nomeEscopo)) {
                 throw new RuntimeException("O Atributo '" + nomeSimples + "' já está associado ao pacote '" + this.nomeEscopo
-                        + "' não podendo ser reassoaciado ao pacote " + nomeEscopo);
+                    + "' não podendo ser reassoaciado ao pacote " + nomeEscopo);
             }
         }
     }

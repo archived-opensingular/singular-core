@@ -2,9 +2,9 @@ package br.net.mirante.singular.form.mform;
 
 import com.google.common.base.Function;
 
-public abstract class MTranslatorParaAtributo<ALVO extends MAtributoEnabled> {
+public abstract class MTranslatorParaAtributo {
 
-    private ALVO alvo;
+    private MAtributoEnabled alvo;
 
     static <T extends MTranslatorParaAtributo> T of(MAtributoEnabled original, Class<T> classeAspecto) {
         T instancia;
@@ -22,15 +22,15 @@ public abstract class MTranslatorParaAtributo<ALVO extends MAtributoEnabled> {
 
     protected MTranslatorParaAtributo() {}
 
-    protected MTranslatorParaAtributo(ALVO alvo) {
+    protected MTranslatorParaAtributo(MAtributoEnabled alvo) {
         this.alvo = alvo;
     }
 
-    final void setAlvo(ALVO alvo) {
+    final void setAlvo(MAtributoEnabled alvo) {
         this.alvo = alvo;
     }
 
-    public ALVO getAlvo() {
+    public MAtributoEnabled getAlvo() {
         if (alvo == null) {
             throw new RuntimeException("O objeto alvo dos atributos não foi definido");
         }
@@ -47,7 +47,7 @@ public abstract class MTranslatorParaAtributo<ALVO extends MAtributoEnabled> {
         return ((MInstancia) alvo).getMTipo();
     }
 
-    public <TR> TR as(Function<ALVO, TR> wrapper) {
+    public <TR> TR as(Function<MAtributoEnabled, TR> wrapper) {
         return wrapper.apply(getAlvo());
     }
 }

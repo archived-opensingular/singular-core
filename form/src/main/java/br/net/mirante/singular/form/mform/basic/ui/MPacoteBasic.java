@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
+import java.util.function.Function;
+
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -16,23 +19,23 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 
 public class MPacoteBasic extends MPacote {
 
-    public static final String NOME = "mform.basic";
+    public static final String                                    NOME               = "mform.basic";
 
-    public static final AtrRef<MTipoString, MIString, String> ATR_LABEL = new AtrRef<>(MPacoteBasic.class, "label", MTipoString.class,
-            MIString.class, String.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_TAMANHO_MAXIMO = new AtrRef<>(MPacoteBasic.class, "tamanhoMaximo",
-            MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_TAMANHO_EDICAO = new AtrRef<>(MPacoteBasic.class, "tamanhoEdicao",
-            MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_VISIVEL = new AtrRef<>(MPacoteBasic.class, "visivel",
-            MTipoBoolean.class, MIBoolean.class, Boolean.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_ORDEM = new AtrRef<>(MPacoteBasic.class, "ordemExibicao",
-            MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoComposto, MIComposto, Object> ATR_POSICAO_TELA = new AtrRef<>(MPacoteBasic.class, "posicaoTela",
-            MTipoComposto.class, MIComposto.class, null);
+    public static final AtrRef<MTipoString, MIString, String>     ATR_LABEL          = new AtrRef<>(MPacoteBasic.class, "label", MTipoString.class,
+                                                                                         MIString.class, String.class);
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>  ATR_TAMANHO_MAXIMO = new AtrRef<>(MPacoteBasic.class, "tamanhoMaximo",
+                                                                                         MTipoInteger.class, MIInteger.class, Integer.class);
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>  ATR_TAMANHO_EDICAO = new AtrRef<>(MPacoteBasic.class, "tamanhoEdicao",
+                                                                                         MTipoInteger.class, MIInteger.class, Integer.class);
+    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>  ATR_VISIVEL        = new AtrRef<>(MPacoteBasic.class, "visivel",
+                                                                                         MTipoBoolean.class, MIBoolean.class, Boolean.class);
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>  ATR_ORDEM          = new AtrRef<>(MPacoteBasic.class, "ordemExibicao",
+                                                                                         MTipoInteger.class, MIInteger.class, Integer.class);
+    public static final AtrRef<MTipoComposto, MIComposto, Object> ATR_POSICAO_TELA   = new AtrRef<>(MPacoteBasic.class, "posicaoTela",
+                                                                                         MTipoComposto.class, MIComposto.class, null);
 
-    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_MULTI_LINHA = new AtrRef<>(MPacoteBasic.class, "multiLinha",
-            MTipoBoolean.class, MIBoolean.class, Boolean.class);
+    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>  ATR_MULTI_LINHA    = new AtrRef<>(MPacoteBasic.class, "multiLinha",
+                                                                                         MTipoBoolean.class, MIBoolean.class, Boolean.class);
 
     public MPacoteBasic() {
         super(NOME);
@@ -74,5 +77,9 @@ public class MPacoteBasic extends MPacote {
         tipoPosicao.getCampo("lin").as(AtrBasic.class).label("linha").tamanhoEdicao(3);
 
         pb.createTipoAtributo(MTipoSimples.class, ATR_POSICAO_TELA, tipoPosicao);
+    }
+
+    public static Function<MAtributoEnabled, AtrBasic> aspect() {
+        return AtrBasic::new;
     }
 }

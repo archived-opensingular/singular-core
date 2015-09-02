@@ -19,8 +19,13 @@ import br.net.mirante.singular.util.wicket.jquery.JQuery;
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
     public BSControls(String id) {
+        this(id, true);
+    }
+
+    public BSControls(String id, boolean addGridBehavior) {
         super(id);
-        add(newBSGridColBehavior());
+        if (addGridBehavior)
+            add(newBSGridColBehavior());
     }
 
     public BSControls appendCheckbox(Component checkbox) {
@@ -39,6 +44,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
             );
 
         return this;
+    }
+
+    public BSControls appendLabel(Component label) {
+        return this.appendTag("label", label);
     }
 
     public BSControls appendInputEmail(Component input) {
