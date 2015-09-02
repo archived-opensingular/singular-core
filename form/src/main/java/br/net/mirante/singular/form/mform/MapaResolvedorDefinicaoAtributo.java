@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 final class MapaResolvedorDefinicaoAtributo {
 
@@ -30,7 +30,7 @@ final class MapaResolvedorDefinicaoAtributo {
             if (atributo != null) {
                 MInstancia novo = atributo.novaInstanciaPara(dono);
                 if (atributos == null) {
-                    atributos = new TreeMap<>();
+                    atributos = new LinkedHashMap<>();
                 }
                 atributos.put(pathAtributo, novo);
                 return novo;
