@@ -1,7 +1,6 @@
 package br.net.mirante.singular.wicket;
 
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -9,14 +8,10 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
-import br.net.mirante.singular.view.page.form.FormPage;
-import br.net.mirante.singular.view.page.processo.ProcessosPage;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class UIAdminApplication extends WebApplication {
 
@@ -37,8 +32,7 @@ public class UIAdminApplication extends WebApplication {
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
-        mountPage("processos", ProcessosPage.class);
-        mountPage("form", FormPage.class);
+        new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
     }
 
     @Override

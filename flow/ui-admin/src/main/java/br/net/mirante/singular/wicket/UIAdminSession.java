@@ -1,25 +1,22 @@
 package br.net.mirante.singular.wicket;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.Session;
-import org.apache.wicket.ThreadContext;
 import org.apache.wicket.core.request.ClientInfo;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.RequestCycle;
 
 public class UIAdminSession extends Session {
 
-    private String nome;
-    private String codRh;
+    private String name;
+    private String avatar;
 
-
-    public UIAdminSession(Request request, Response response) {
+    public UIAdminSession(Request request, @SuppressWarnings("UnusedParameters") Response response) {
         super(request);
-        this.nome = request.getRequestParameters().getParameterValue("nome").toString("Daniel");
-        this.codRh = request.getRequestParameters().getParameterValue("codRh").toString("10");
+        this.name = request.getRequestParameters()
+                .getParameterValue("name").toString("Admin");
+        this.avatar = request.getRequestParameters()
+                .getParameterValue("avatar").toString("/resources/admin/layout/img/avatar.png");
     }
-
 
     public static UIAdminSession get() {
         return (UIAdminSession) Session.get();
@@ -30,19 +27,19 @@ public class UIAdminSession extends Session {
         return null;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCodRh() {
-        return codRh;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setCodRh(String codRh) {
-        this.codRh = codRh;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }
