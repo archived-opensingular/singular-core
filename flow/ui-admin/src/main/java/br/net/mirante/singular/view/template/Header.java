@@ -30,9 +30,6 @@ public class Header extends Panel {
             add(new WebMarkupContainer("_TopAction"));
         }
         add(new TopMenu("_TopMenu", withSideBar));
-
-        WebMarkupContainer brandLogo = new WebMarkupContainer("brandLogo");
-        brandLogo.add(new AttributeModifier("src", new ResourceModel("header.logo.src")));
-        add(brandLogo);
+        add(new WebMarkupContainer("brandLogo"));
     }
 }

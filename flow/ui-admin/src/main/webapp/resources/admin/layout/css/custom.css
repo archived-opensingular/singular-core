@@ -34,6 +34,7 @@ a.fullscreen {
 table.dataTable thead th > a {
     display: block;
     width: 100% !important;
+    padding-right: 10px;
 }
 
 .btn.blue-stripe, .btn.green-stripe, .btn.red-stripe, .btn.red-stripe {

@@ -66,7 +66,7 @@ public abstract class Template extends WebPage {
     }
 
     private void addQuickSidebar(IHeaderResponse response) {
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/resources/admin/layout/scripts/quick-sidebar.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/layout/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    QuickSidebar.init(); // init quick sidebar\n")
