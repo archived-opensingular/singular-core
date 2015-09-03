@@ -36,12 +36,12 @@ public class DashboardContent extends Content {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssReferenceHeaderItem.forUrl("/resources/admin/page/css/page.css"));
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/resources/admin/page/scripts/demo.js"));
-        response.render(JavaScriptReferenceHeaderItem.forUrl("/resources/admin/page/scripts/page.js"));
+        response.render(CssReferenceHeaderItem.forUrl("resources/admin/page/css/page.css"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/page.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/settings.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
-                .append("    Demo.init(); // init demo features\n")
+                .append("    SettingUI.init(); // init settings features\n")
                 .append("    Index.init();\n")
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));

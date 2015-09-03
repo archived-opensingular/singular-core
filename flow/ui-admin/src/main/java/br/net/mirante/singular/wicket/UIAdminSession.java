@@ -15,7 +15,7 @@ public class UIAdminSession extends Session {
         this.name = request.getRequestParameters()
                 .getParameterValue("name").toString("Admin");
         this.avatar = request.getRequestParameters()
-                .getParameterValue("avatar").toString("/resources/admin/layout/img/avatar.png");
+                .getParameterValue("avatar").toString("resources/admin/layout/img/avatar.png");
     }
 
     public static UIAdminSession get() {
