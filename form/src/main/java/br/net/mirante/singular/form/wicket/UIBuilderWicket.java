@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -98,7 +97,7 @@ public class UIBuilderWicket {
     static class BooleanMapper implements IWicketComponentMapper {
         @Override
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-            String label = StringUtils.trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
+            String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
             BSControls formGroup = ctx.getContainer()
                 .newComponent(BSControls::new);
             IModel<String> labelModel = $m.ofValue(label);
@@ -114,9 +113,8 @@ public class UIBuilderWicket {
         void appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
         @Override
         default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-            String label = StringUtils.trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
-            BSControls formGroup = ctx.getContainer()
-                .newFormGroup();
+            String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
+            BSControls formGroup = ctx.getContainer().newFormGroup();
             ValueModel<String> labelModel = $m.ofValue(label);
             formGroup.appendLabel(new BSLabel("label", labelModel));
             appendInput(formGroup, model, labelModel);
@@ -180,9 +178,7 @@ public class UIBuilderWicket {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
                 final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(iModel, tCampo.getNomeSimples());
                 final MInstancia iCampo = mCampo.getObject();
-                final IModel<String> label = $m.ofValue(
-                    StringUtils.trimToEmpty(
-                        iCampo.getValorAtributo(MPacoteBasic.ATR_LABEL)));
+                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.getValorAtributo(MPacoteBasic.ATR_LABEL)));
                 if (iCampo instanceof MIComposto) {
                     final MICompostoModel<MIComposto> mCampoComposto = new MICompostoModel<>(mCampo);
 
@@ -201,13 +197,19 @@ public class UIBuilderWicket {
     static class DefaultListaMapper implements IWicketComponentMapper {
         @Override
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-            final MInstancia instancia = model.getObject();
-            final MILista<?> iLista = (MILista<?>) instancia;
+            MInstancia instancia = model.getObject();
+            MILista<?> iLista = (MILista<?>) instancia;
+
             if (iLista.isEmpty()) {
                 iLista.addNovo();
             }
 
-            final BSGrid grid = ctx.getContainer().newGrid();
+            final IModel<String> label = $m.ofValue(trimToEmpty(iLista.getValorAtributo(MPacoteBasic.ATR_LABEL)));
+            BSCol parentCol = ctx.getContainer();
+            if (isNotBlank(label.getObject()))
+                parentCol.appendTag("h3", new Label("_title", label));
+
+            BSGrid grid = parentCol.newGrid();
             for (int i = 0; i < iLista.size(); i++) {
                 MInstanciaItemListaModel<MInstancia> mCampo = new MInstanciaItemListaModel<>(model, i);
                 BSCol col = grid.newColInRow();

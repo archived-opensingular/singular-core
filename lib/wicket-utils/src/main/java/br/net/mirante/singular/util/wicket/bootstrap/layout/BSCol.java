@@ -19,7 +19,7 @@ public class BSCol extends BSContainer<BSCol> implements IBSGridCol<BSCol> {
             @Override
             public BSControls newComponent(String componentId) {
                 BSControls controls = new BSControls(componentId, false)
-                    .setCssClass("form-group");
+                    .setCssClass("form-group form-group-sm");
                 controls.add(new AttributeAppender("class", "can-have-error", " "));
                 return controls;
             }
