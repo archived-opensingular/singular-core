@@ -10,15 +10,21 @@ import br.net.mirante.singular.form.util.xml.MElement;
 public abstract class MInstanciaRaizModel<I extends MInstancia> implements IModel<I> {
     private MElement    serial;
     private transient I object;
+    private String      nomeTipo;
     public MInstanciaRaizModel() {}
     public MInstanciaRaizModel(I object) {
-        serial = dehydrate(object);
+        setObject(object);
     }
-    protected abstract MTipo<I> getTipoRaiz();
-    protected I hydrate(MElement xml) {
-        MTipo<I> tipoRaiz = getTipoRaiz();
+    protected abstract MTipo<I> getTipoRaiz(String nomeTipo);
+    protected MTipo<I> getTipoRaiz() {
+        if (this.nomeTipo == null)
+            return null;
+        return getTipoRaiz(this.nomeTipo);
+    }
+    protected I hydrate(MTipo<I> tipoRaiz, MElement xml) {
         I instancia = tipoRaiz.novaInstancia();
-        MformPersistenciaXML.fromXML(tipoRaiz, instancia, xml);
+        if (xml != null)
+            MformPersistenciaXML.fromXML(tipoRaiz, instancia, xml);
         return instancia;
     }
     protected MElement dehydrate(I raiz) {
@@ -27,7 +33,7 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
     @Override
     public I getObject() {
         if (this.object == null) {
-            this.object = hydrate(this.serial);
+            this.object = hydrate(getTipoRaiz(), this.serial);
         }
         return this.object;
     }
@@ -35,6 +41,7 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
     public void setObject(I object) {
         this.serial = dehydrate(object);
         this.object = object;
+        this.nomeTipo = (object == null) ? null : object.getMTipo().getNome();
     }
     @Override
     public void detach() {

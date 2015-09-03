@@ -78,6 +78,8 @@ Ambos os códigos acima geram algo do tipo:
  */
 public class BSGrid extends BSContainer<BSGrid> {
 
+    public static final int                MAX_COLS                 = IBSGridCol.MAX_COLS;
+
     private static final AttributeModifier CONTAINER_BEHAVIOR       = new AttributeAppender("class", "container", " ");
     private static final AttributeModifier CONTAINER_FLUID_BEHAVIOR = new AttributeAppender("class", "container-fluid", " ");
 

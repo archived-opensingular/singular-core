@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -17,6 +18,9 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     public MTipo<?> getMTipo() {
         return mTipo;
+    }
+    public MView getView() {
+        return getMTipo().getView();
     }
 
     @Override

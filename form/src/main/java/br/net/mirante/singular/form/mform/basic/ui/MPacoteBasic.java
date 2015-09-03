@@ -4,11 +4,9 @@ import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.MIBoolean;
 import br.net.mirante.singular.form.mform.core.MIInteger;
@@ -31,9 +29,6 @@ public class MPacoteBasic extends MPacote {
                                                                                          MTipoBoolean.class, MIBoolean.class, Boolean.class);
     public static final AtrRef<MTipoInteger, MIInteger, Integer>  ATR_ORDEM          = new AtrRef<>(MPacoteBasic.class, "ordemExibicao",
                                                                                          MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoComposto, MIComposto, Object> ATR_POSICAO_TELA   = new AtrRef<>(MPacoteBasic.class, "posicaoTela",
-                                                                                         MTipoComposto.class, MIComposto.class, null);
-
     public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>  ATR_MULTI_LINHA    = new AtrRef<>(MPacoteBasic.class, "multiLinha",
                                                                                          MTipoBoolean.class, MIBoolean.class, Boolean.class);
 
@@ -75,8 +70,6 @@ public class MPacoteBasic extends MPacote {
         tipoPosicao.addCampo("colSpan", MTipoInteger.class).withDefaultValueIfNull(1);
 
         tipoPosicao.getCampo("lin").as(AtrBasic.class).label("linha").tamanhoEdicao(3);
-
-        pb.createTipoAtributo(MTipoSimples.class, ATR_POSICAO_TELA, tipoPosicao);
     }
 
     public static Function<MAtributoEnabled, AtrBasic> aspect() {

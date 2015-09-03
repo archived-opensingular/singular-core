@@ -13,9 +13,9 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 @SuppressWarnings("unchecked")
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
-    private String tagName;
-    private String cssClass = null;
-    protected final RepeatingView items = new RepeatingView("_");
+    private String                tagName;
+    private String                cssClass = null;
+    protected final RepeatingView items    = new RepeatingView("_");
 
     public BSContainer(String id) {
         super(id);
@@ -81,14 +81,17 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     public TemplatePanel newTag(String tag, Component component) {
         return newTag(tag, true, "", component);
     }
+    public TemplatePanel newTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<Component> factory) {
+        return newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
+    }
 
     public TemplatePanel newTag(String tag, boolean closeTag, String attrs, Component component) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, () ->
-                "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
-                        + (closeTag ? "</" + tag + ">\n" : "\n")));
+            "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
+                + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
-                .add(component)
-                .setRenderBodyOnly(true);
+            .add(component)
+            .setRenderBodyOnly(true);
         return container;
     }
 

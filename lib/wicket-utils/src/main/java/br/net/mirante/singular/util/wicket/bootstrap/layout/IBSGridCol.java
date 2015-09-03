@@ -15,7 +15,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 @SuppressWarnings("unchecked")
 public interface IBSGridCol<THIS extends Component> {
 
-    static final int MAX_COLS = 12;
+    public static final int MAX_COLS = 12;
 
     public enum BSGridSize {
         XS(IBSGridCol::xs, IBSGridCol::xsOffset, IBSGridCol::xsHidden),
