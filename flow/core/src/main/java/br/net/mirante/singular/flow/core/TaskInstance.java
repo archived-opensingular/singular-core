@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.text.DateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -30,10 +29,10 @@ public class TaskInstance {
 
     private ProcessInstance processInstance;
 
-    private transient MTask<?> tipo;
+    private transient MTask<?> flowTask;
 
     TaskInstance(ProcessInstance processInstance, IEntityTaskInstance task) {
-        if (!processInstance.getEntity().equals(task.getDemanda())) {
+        if (!processInstance.getEntity().equals(task.getProcessInstance())) {
             throw new SingularFlowException(processInstance.createErrorMsg("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão"));
         }
         this.processInstance = processInstance;
@@ -47,16 +46,16 @@ public class TaskInstance {
     @SuppressWarnings("unchecked")
     public <X extends ProcessInstance> X getProcessInstance() {
         if (processInstance == null) {
-            processInstance = MBPM.getMbpmBean().getProcessInstance(entityTask.getDemanda());
+            processInstance = MBPM.getMbpmBean().getProcessInstance(entityTask.getProcessInstance());
         }
         return (X) processInstance;
     }
 
-    public MTask<?> getTipo() {
-        if (tipo == null) {
-            tipo = getProcessInstance().getDefinicao().getFlowMap().getTaskWithAbbreviation(entityTask.getSituacao().getAbbreviation());
+    public MTask<?> getFlowTask() {
+        if (flowTask == null) {
+            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskWithAbbreviation(entityTask.getTask().getAbbreviation());
         }
-        return tipo;
+        return flowTask;
     }
 
     public Integer getId() {
@@ -67,20 +66,20 @@ public class TaskInstance {
         return MBPM.generateID(this);
     }
 
-    public Lnk getHrefPadrao() {
+    public Lnk getDefaultHref() {
         return MBPM.getDefaultHrefFor(this);
     }
 
-    public MUser getPessoaAlocada() {
-        return entityTask.getPessoaAlocada();
+    public MUser getAllocatedUser() {
+        return entityTask.getAllocatedUser();
     }
 
-    public MUser getAutorFim() {
-        return entityTask.getAutorFim();
+    public MUser getResponsibleUser() {
+        return entityTask.getResponsibleUser();
     }
 
-    public Date getDataAlvoFim() {
-        return entityTask.getDataAlvoFim();
+    public Date getTargetEndDate() {
+        return entityTask.getTargetEndDate();
     }
 
     @SuppressWarnings("unchecked")
@@ -88,52 +87,52 @@ public class TaskInstance {
         return (X) entityTask;
     }
 
-    public String getNome() {
-        if (getTipo() != null) {
-            return getTipo().getName();
+    public String getName() {
+        if (getFlowTask() != null) {
+            return getFlowTask().getName();
         }
-        return entityTask.getSituacao().getName();
+        return entityTask.getTask().getName();
     }
 
-    public String getNomeProcesso() {
-        return getProcessInstance().getNomeProcesso();
+    public String getProcessName() {
+        return getProcessInstance().getProcessName();
     }
 
-    public String getNomeTarefa() {
-        return getNome();
+    public String getTaskName() {
+        return getName();
     }
 
     public String getDescricao() {
-        return getProcessInstance().getDescricao();
+        return getProcessInstance().getDescription();
     }
 
-    public Date getDataInicio() {
-        return entityTask.getDataInicio();
+    public Date getBeginDate() {
+        return entityTask.getBeginDate();
     }
 
-    public Date getDataFim() {
-        return entityTask.getDataFim();
+    public Date getEndDate() {
+        return entityTask.getEndDate();
     }
 
-    public boolean isFim() {
-        if (getTipo() != null) {
-            return getTipo().isEnd();
+    public boolean isEnd() {
+        if (getFlowTask() != null) {
+            return getFlowTask().isEnd();
         }
-        return entityTask.getSituacao().isEnd();
+        return entityTask.getTask().isEnd();
     }
 
-    public boolean isPessoa() {
-        if (getTipo() != null) {
-            return getTipo().isPeople();
+    public boolean isPeople() {
+        if (getFlowTask() != null) {
+            return getFlowTask().isPeople();
         }
-        return entityTask.getSituacao().isPeople();
+        return entityTask.getTask().isPeople();
     }
 
     public boolean isWait() {
-        if (getTipo() != null) {
-            return getTipo().isWait();
+        if (getFlowTask() != null) {
+            return getFlowTask().isWait();
         }
-        return entityTask.getSituacao().isWait();
+        return entityTask.getTask().isWait();
     }
 
     public TransitionCall prepareTransition(String transitionName) {
@@ -141,40 +140,19 @@ public class TaskInstance {
     }
 
     public TransitionRef getTransition(String transitionName) {
-        return new TransitionRef(this, getTipo().getTransicaoOrException(transitionName));
-    }
-
-    public final void suspend(Date targetDate, String cause) {
-        if (Objects.equals(entityTask.getDataAlvoSuspensao(), targetDate) && cause == null) {
-            return;
-        }
-        entityTask.setDataAlvoSuspensao(targetDate);
-        getPersistenceService().updateTask(entityTask);
-
-        String sData = DateFormat.getDateInstance(DateFormat.MEDIUM).format(targetDate);
-        String log = (targetDate == null ? "Retirado de suspensão" : "Suspenso até " + sData);
-        if (!StringUtils.isBlank(cause)) {
-            log += "\nExplicação=" + cause.trim();
-        }
-
-        log("Colocado em Espera", log);
-
-        notificarUpdateEstado();
+        return new TransitionRef(this, getFlowTask().getTransicaoOrException(transitionName));
     }
 
     public void relocateTask(MUser author, MUser user, boolean notify, String relocationCause) {
-        if (user != null && !isPessoa()) {
-            throw new SingularFlowException(getProcessInstance().createErrorMsg("A tarefa '" + getNome() + "' não pode ser realocada, pois não é do tipo pessoa"));
+        if (user != null && !isPeople()) {
+            throw new SingularFlowException(getProcessInstance().createErrorMsg("A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa"));
         }
-        MUser pessoaAlocadaAntes = getPessoaAlocada();
+        MUser pessoaAlocadaAntes = getAllocatedUser();
         if (Objects.equals(user, pessoaAlocadaAntes)) {
             return;
         }
 
-        getEntityTaskInstance().setPessoaAlocada(user);
-        getEntityTaskInstance().setDataAlvoSuspensao(null);
-
-        getPersistenceService().updateTask(getEntityTaskInstance());
+        getPersistenceService().relocateTask(getEntityTaskInstance(), user);
 
         relocationCause = StringUtils.trimToNull(relocationCause);
 
@@ -190,25 +168,24 @@ public class TaskInstance {
             MBPM.getNotifiers().notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, relocationCause);
         }
 
-        notificarUpdateEstado();
+        notifyStateUpdate();
     }
 
-    public void setDataAlvoFim(Date dataAlvo) {
-        getEntityTaskInstance().setDataAlvoFim(dataAlvo);
-        getPersistenceService().updateTask(getEntityTaskInstance());
+    public void setTargetEndDate(Date targetEndDate) {
+        getPersistenceService().updateTargetEndDate(getEntityTaskInstance(), targetEndDate);
     }
 
     public void createSubTask(String historyType, ProcessInstance childProcessInstance) {
         getPersistenceService().setParentTask(childProcessInstance.getEntity(), entityTask);
 
         if (historyType != null) {
-            log(historyType, childProcessInstance.getEntity().getDescricao(), childProcessInstance.getTarefaAtual().getPessoaAlocada())
+            log(historyType, childProcessInstance.getEntity().getDescription(), childProcessInstance.getCurrentTask().getAllocatedUser())
                     .sendEmail();
         }
-        notificarUpdateEstado();
+        notifyStateUpdate();
     }
 
-    private void notificarUpdateEstado() {
+    private void notifyStateUpdate() {
         MBPM.getMbpmBean().notifyStateUpdate(getProcessInstance());
     }
 
@@ -230,18 +207,18 @@ public class TaskInstance {
     }
 
     private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return getProcessInstance().getDefinicao().getPersistenceService();
+        return getProcessInstance().getProcessDefinition().getPersistenceService();
     }
 
     public StringBuilder getDescricaoExtendida(boolean adicionarAlocado) {
         StringBuilder sb = new StringBuilder(250);
-        sb.append(getProcessInstance().getNomeProcesso()).append(" - ").append(getNome());
-        String descricao = getProcessInstance().getDescricao();
+        sb.append(getProcessInstance().getProcessName()).append(" - ").append(getName());
+        String descricao = getProcessInstance().getDescription();
         if (descricao != null) {
             sb.append(" - ").append(descricao);
         }
         if (adicionarAlocado) {
-            MUser p = getPessoaAlocada();
+            MUser p = getAllocatedUser();
             if (p != null) {
                 sb.append(" (").append(p.getNomeGuerra()).append(")");
             }
@@ -251,11 +228,11 @@ public class TaskInstance {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MUser> getDirectlyResponsible() {
-        if (getPessoaAlocada() != null) {
-            return ImmutableList.of(getPessoaAlocada());
+    public List<MUser> getDirectlyResponsibles() {
+        if (getAllocatedUser() != null) {
+            return ImmutableList.of(getAllocatedUser());
         }
-        if (getTipo() != null && (getTipo().isPeople() || (getTipo().isWait() && getTipo().getAccessStrategy() != null))) {
+        if (getFlowTask() != null && (getFlowTask().isPeople() || (getFlowTask().isWait() && getFlowTask().getAccessStrategy() != null))) {
             Set<Integer> codPessoas = getFirstLevelUsersCodWithAccess();
             return (List<MUser>) getPersistenceService().retrieveUsersByCod(codPessoas);
         }
@@ -263,22 +240,22 @@ public class TaskInstance {
     }
 
     private Set<Integer> getFirstLevelUsersCodWithAccess() {
-        Objects.requireNonNull(getTipo(), "Task com a sigla " + entityTask.getSituacao().getAbbreviation() + " não encontrada na definição "
-                + getProcessInstance().getDefinicao().getName());
-        Objects.requireNonNull(getTipo().getAccessStrategy(),
-                "Estratégia de acesso da task " + entityTask.getSituacao().getAbbreviation() + " não foi definida");
-        return getTipo().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
+        Objects.requireNonNull(getFlowTask(), "Task com a sigla " + entityTask.getTask().getAbbreviation() + " não encontrada na definição "
+                + getProcessInstance().getProcessDefinition().getName());
+        Objects.requireNonNull(getFlowTask().getAccessStrategy(),
+                "Estratégia de acesso da task " + entityTask.getTask().getAbbreviation() + " não foi definida");
+        return getFlowTask().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
     }
 
-    public void executarTransicao() {
+    public void executeTransition() {
         EngineProcessamentoMBPM.executeTransition(this, null, null);
     }
 
-    public void executarTransicao(String destino) {
+    public void executeTransition(String destino) {
         EngineProcessamentoMBPM.executeTransition(this, destino, null);
     }
 
-    public void executarTransicao(String destino, VarInstanceMap<?> param) {
+    public void executeTransition(String destino, VarInstanceMap<?> param) {
         EngineProcessamentoMBPM.executeTransition(this, destino, param);
     }
 }

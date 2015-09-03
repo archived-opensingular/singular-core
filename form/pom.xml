@@ -8,21 +8,18 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.2.2</version>
+        <version>0.2.3</version>
     </parent>
 
     <artifactId>singular-form</artifactId>
     <name>[singular :: form]</name>
     <packaging>jar</packaging>
 
-  <properties>
-    <wicket.version>7.0.0</wicket.version>
-  </properties>
     <dependencies>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.2.2</version>
+            <version>0.2.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>

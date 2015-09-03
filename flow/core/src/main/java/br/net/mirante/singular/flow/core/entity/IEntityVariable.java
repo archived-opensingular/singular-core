@@ -8,18 +8,18 @@ public interface IEntityVariable extends IEntityByCod {
 
     void setData(Date data);
 
-    String getNome();
+    String getName();
 
-    void setNome(String nome);
+    void setName(String nome);
 
-    String getTextoValor();
+    String getValue();
 
-    void setTextoValor(String textoValor);
+    void setValue(String textoValor);
 
     IEntityTaskInstance getTarefaOrigem();
 
     IEntityTaskInstance getTarefaDestino();
 
-    IEntityProcessInstance getDemanda();
+    IEntityProcessInstance getProcessInstance();
 
 }

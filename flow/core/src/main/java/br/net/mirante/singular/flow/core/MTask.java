@@ -9,9 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 
 import com.google.common.base.MoreObjects;
 
@@ -20,7 +21,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     private final FlowMap flowMap;
     private final String name;
-    private String abbreviation;
+    private final String abbreviation;
 
     private final List<MTransition> transitions = new LinkedList<>();
     private final Map<String, MTransition> transitionsByName = new HashMap<>();
@@ -36,11 +37,12 @@ public abstract class MTask<K extends MTask<?>> {
 
     private MetaData metaData;
 
-    public MTask(FlowMap flowMap, String name) {
+    public MTask(FlowMap flowMap, String name, String abbreviation) {
         Objects.requireNonNull(flowMap);
         Objects.requireNonNull(name);
         this.flowMap = flowMap;
         this.name = name;
+        this.abbreviation = abbreviation;
     }
 
     public K with(Consumer<K> consumer) {
@@ -60,14 +62,11 @@ public abstract class MTask<K extends MTask<?>> {
         return String.format("(%s) %s", getTaskType().getAbbreviation(), getName());
     }
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
-    public String getAbbreviation() {
-        if (abbreviation == null) {
-            abbreviation = MBPMUtil.convertToJavaIdentity(name);
-        }
+    public final String getAbbreviation() {
         return abbreviation;
     }
 
@@ -91,8 +90,13 @@ public abstract class MTask<K extends MTask<?>> {
         return getTaskType() == TaskType.Wait;
     }
 
-    public final boolean is(String taskName) {
-        return getName().equalsIgnoreCase(taskName);
+    @Deprecated
+    public final boolean is(String name) {
+        return getName().equalsIgnoreCase(name);
+    }
+    
+    public final boolean is(ITaskDefinition taskDefinition) {
+        return getAbbreviation().equalsIgnoreCase(taskDefinition.getKey());
     }
 
     public TaskType getEffectiveTaskType() {

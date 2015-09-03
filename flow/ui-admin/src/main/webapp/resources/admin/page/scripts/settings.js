@@ -1,7 +1,7 @@
 /**
-Demo script to handle the theme demo
+Setting script to handle the theme ui
 **/
-var Demo = function () {
+var SettingUI = function () {
 
     // Handle Theme Settings
     var handleTheme = function () {

@@ -21,7 +21,7 @@ public final class TaskHistoricLog {
     }
 
     public ProcessInstance getProcessInstance() {
-        return MBPM.getProcessInstance(historic.getTarefa().getDemanda());
+        return MBPM.getProcessInstance(historic.getTarefa().getProcessInstance());
     }
 
     public MUser getResponsibleUser() {

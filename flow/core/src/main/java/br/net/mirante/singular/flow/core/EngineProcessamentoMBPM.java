@@ -23,9 +23,9 @@ import com.google.common.base.Joiner;
 
 class EngineProcessamentoMBPM {
 
-    public static TaskInstance iniciar(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
-        instancia.validarPreInicio();
-        return updateEstado(instancia, null, null, instancia.getDefinicao().getFlowMap().getStartTask(), paramIn);
+    public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
+        instancia.validadeStart();
+        return updateEstado(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
     }
 
     private static <P extends ProcessInstance> TaskInstance updateEstado(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
@@ -33,7 +33,7 @@ class EngineProcessamentoMBPM {
         boolean primeiroLoop = true;
         while (true) {
             Date agora = new Date();
-            final TaskInstance instanciaTarefa = instancia.updateEstado(tarefaOrigem, transicaoOrigem, taskDestino, agora);
+            final TaskInstance instanciaTarefa = instancia.updateState(tarefaOrigem, transicaoOrigem, taskDestino, agora);
 
             if (primeiroLoop) {
                 inserirParametrosDaTransicao(instancia, paramIn);
@@ -49,14 +49,14 @@ class EngineProcessamentoMBPM {
                     final MTaskWait mTaskWait = (MTaskWait) taskDestino;
                     if (mTaskWait.hasExecutionDateStrategy()) {
                         final Date dataExecucao = mTaskWait.getExecutionDate(instancia, instanciaTarefa);
-                        instanciaTarefa.setDataAlvoFim(dataExecucao);
+                        instanciaTarefa.setTargetEndDate(dataExecucao);
                         if (dataExecucao.before(new Date())) {
-                            instancia.executarTransicao();
+                            instancia.executeTransition();
                         }
                     } else if (mTaskWait.getTargetDateExecutionStrategy() != null) {
                         Date alvo = mTaskWait.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
                         if (alvo != null) {
-                            instanciaTarefa.setDataAlvoFim(alvo);
+                            instanciaTarefa.setTargetEndDate(alvo);
                         }
                     }
                 } else if (taskDestino.isPeople()) {
@@ -72,7 +72,7 @@ class EngineProcessamentoMBPM {
                     if (estrategiaData != null) {
                         Date alvo = estrategiaData.apply(instancia, instanciaTarefa);
                         if (alvo != null) {
-                            instanciaTarefa.setDataAlvoFim(alvo);
+                            instanciaTarefa.setTargetEndDate(alvo);
                         }
                     }
                     if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
@@ -92,13 +92,13 @@ class EngineProcessamentoMBPM {
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
                 }
-                instanciaTarefa.getTipo().notifyTaskStart(instanciaTarefa, execucaoTask);
+                instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
                 return instanciaTarefa;
             }
             final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
-            instanciaTarefa.getTipo().notifyTaskStart(instanciaTarefa, execucaoTask);
+            instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
 
-            instancia.setContextoExecucao(execucaoTask);
+            instancia.setExecutionContext(execucaoTask);
             try {
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
@@ -106,38 +106,38 @@ class EngineProcessamentoMBPM {
                 taskDestino.execute(execucaoTask);
                 getPersistenceService().flushSession();
             } finally {
-                instancia.setContextoExecucao(null);
+                instancia.setExecutionContext(null);
             }
             final String nomeTransicao = execucaoTask.getTransicaoResultado();
-            transicaoOrigem = tratarTransicao(instanciaTarefa, nomeTransicao);
+            transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
         }
     }
 
-    public static void executarTransicaoAgendada(MTaskJava taskJava, ProcessInstance instancia) {
-        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, instancia.getTarefaAtual(), null);
-        instancia.setContextoExecucao(execucaoTask);
+    public static void executeScheduledTransition(MTaskJava taskJava, ProcessInstance instancia) {
+        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, instancia.getCurrentTask(), null);
+        instancia.setExecutionContext(execucaoTask);
         try {
             taskJava.execute(execucaoTask);
         } finally {
-            instancia.setContextoExecucao(null);
+            instancia.setExecutionContext(null);
         }
 
-        executarTransicao(instancia, execucaoTask.getTransicaoResultado(), null);
+        executeTransition(instancia, execucaoTask.getTransicaoResultado(), null);
     }
 
-    static TaskInstance executarTransicao(ProcessInstance instancia, String nomeTransicao, VarInstanceMap<?> param) {
-        return executeTransition(instancia.getTarefaAtual(), nomeTransicao, param);
+    static TaskInstance executeTransition(ProcessInstance instancia, String nomeTransicao, VarInstanceMap<?> param) {
+        return executeTransition(instancia.getCurrentTask(), nomeTransicao, param);
     }
 
     static TaskInstance executeTransition(TaskInstance tarefaAtual, String nomeTransicao, VarInstanceMap<?> param) {
-        MTransition transicao = tratarTransicao(tarefaAtual, nomeTransicao);
+        MTransition transicao = searchTransition(tarefaAtual, nomeTransicao);
         return updateEstado(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 
-    private static MTransition tratarTransicao(TaskInstance tarefaAtual, String nomeTransicao) {
-        final MTask<?> estadoAtual = tarefaAtual.getTipo();
+    private static MTransition searchTransition(TaskInstance tarefaAtual, String nomeTransicao) {
+        final MTask<?> estadoAtual = tarefaAtual.getFlowTask();
 
         MTransition transicao;
         if (nomeTransicao == null) {
@@ -161,7 +161,7 @@ class EngineProcessamentoMBPM {
     private static void inserirParametrosDaTransicao(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         if (paramIn != null) {
             for (VarInstance variavel : paramIn) {
-                if (instancia.getDefinicao().getVariables().contains(variavel.getRef())) {
+                if (instancia.getProcessDefinition().getVariables().contains(variavel.getRef())) {
                     instancia.setVariavel(variavel.getRef(), variavel.getValor());
                 }
             }

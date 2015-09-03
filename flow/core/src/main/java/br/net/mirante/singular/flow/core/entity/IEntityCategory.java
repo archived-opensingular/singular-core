@@ -6,11 +6,5 @@ public interface IEntityCategory extends IEntityByCod {
 
     String getName();
 
-    void setName(String nome);
-
-    IEntityCategory getParent();
-
-    List<? extends IEntityCategory> getChildrens();
-
     List<? extends IEntityProcessDefinition> getProcessDefinitions();
 }

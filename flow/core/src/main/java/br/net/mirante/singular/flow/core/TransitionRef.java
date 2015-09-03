@@ -30,7 +30,7 @@ public class TransitionRef {
 
     public TaskInstance getTaskInstance() {
         if (taskInstance == null) {
-            return processInstance.getTarefaAtual();
+            return processInstance.getCurrentTask();
         }
         return taskInstance;
     }

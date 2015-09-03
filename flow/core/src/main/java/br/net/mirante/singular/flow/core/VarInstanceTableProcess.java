@@ -22,20 +22,20 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     }
 
     VarInstanceTableProcess(ProcessInstance instancia) {
-        this(instancia.getDefinicao());
+        this(instancia.getProcessDefinition());
         bind(instancia.getEntity());
         this.instancia = instancia;
     }
 
     private void bind(IEntityProcessInstance iModelProcessInstance) {
-        List<? extends IEntityVariableInstance> variaveis_ = iModelProcessInstance.getVariaveis();
+        List<? extends IEntityVariableInstance> variaveis_ = iModelProcessInstance.getVariables();
         if (variaveis_ != null) {
             for (IEntityVariableInstance dadosVariavel : variaveis_) {
-                VarInstance v = getVariavel(dadosVariavel.getNome());
+                VarInstance v = getVariavel(dadosVariavel.getName());
                 if (v == null) {
-                    v = addDefinicao(getVarService().newDefinitionString(dadosVariavel.getNome(), dadosVariavel.getNome(), null));
+                    v = addDefinicao(getVarService().newDefinitionString(dadosVariavel.getName(), dadosVariavel.getName(), null));
                 }
-                v.setValor(dadosVariavel.getTextoValor());
+                v.setValor(dadosVariavel.getValue());
                 v.getMetaData().set(PROP_DB_COD, dadosVariavel.getCod());
             }
         }
@@ -54,7 +54,7 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
             Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
-            Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia, changedVar, dbCod);
+            Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
                 changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
             }

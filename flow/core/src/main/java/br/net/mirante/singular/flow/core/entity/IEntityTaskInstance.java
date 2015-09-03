@@ -7,43 +7,30 @@ import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityTaskInstance extends IEntityByCod {
 
-    boolean isSuspensa();
+    IEntityProcessInstance getProcessInstance();
 
-    Date getDataAlvoSuspensao();
+    IEntityTask getTask();
 
-    void setDataAlvoSuspensao(Date dataAlvoSuspensao);
+    Date getBeginDate();
 
-    Date getDataInicio();
+    Date getEndDate();
 
-    Date getDataAlvoFim();
+    Date getTargetEndDate();
 
-    void setDataAlvoFim(Date dataAlvoFim);
+    void setTargetEndDate(Date targetEndDate);
+    
+    MUser getAllocatedUser();
 
-    void setDataInicio(Date dataInicio);
+    MUser getResponsibleUser();
 
-    Date getDataFim();
+    IEntityTaskTransition getExecutedTransition();
+    
+    List<? extends IEntityVariable> getInputVariables();
 
-    void setDataFim(Date dataFim);
+    List<? extends IEntityVariable> getOutputVariables();
+    
+    List<? extends IEntityTaskHistoric> getTaskHistoric();
 
-    MUser getPessoaAlocada();
+    List<? extends IEntityProcessInstance> getChildProcesses();
 
-    void setPessoaAlocada(MUser pessoaAlocada);
-
-    MUser getAutorFim();
-
-    void setAutorFim(MUser autorFim);
-
-    String getSiglaTransicaoResultado();
-
-    void setSiglaTransicaoResultado(String siglaTransicaoResultado);
-
-    List<? extends IEntityTaskHistoric> getHistoricoAlocacao();
-
-    List<? extends IEntityVariable> getVariaveisGeradas();
-
-    List<? extends IEntityVariable> getVariaveisEntrada();
-
-    IEntityProcessInstance getDemanda();
-
-    IEntityTask getSituacao();
 }

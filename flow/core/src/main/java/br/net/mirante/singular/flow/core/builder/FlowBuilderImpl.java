@@ -18,7 +18,7 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>> {
+        FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
         super(processDefinition);

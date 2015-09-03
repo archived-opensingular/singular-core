@@ -199,8 +199,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             synchronized (this) {
                 if (entityCod == null) {
                     IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+                    
+                    IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
+                    if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
 
-                    entityCod = entityProcess.getCod();
+                        entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
+                    } else {
+                        entityCod = oldEntity.getCod();
+                    }
 
                     return entityProcess;
                 }

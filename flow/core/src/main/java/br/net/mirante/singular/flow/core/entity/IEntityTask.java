@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core.entity;
 
+import java.util.Date;
 import java.util.List;
 
 import br.net.mirante.singular.flow.core.TaskType;
@@ -15,6 +16,10 @@ public interface IEntityTask extends IEntityByCod {
     IEntityTaskDefinition getTaskDefinition();
 
     List<? extends IEntityTaskTransition> getTransitions();
+    
+    default Date getVersionDate(){
+        return getProcess().getVersionDate();
+    }
     
     default IEntityTaskTransition getTransition(String abbreviation) {
         for (IEntityTaskTransition entityTaskTransition : getTransitions()) {

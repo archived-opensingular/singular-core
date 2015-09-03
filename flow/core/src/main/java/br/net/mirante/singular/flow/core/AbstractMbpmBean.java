@@ -49,7 +49,7 @@ public abstract class AbstractMbpmBean {
 
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
-        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getDefinicao().getAbbreviation());
+        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
     }
 
@@ -134,15 +134,15 @@ public abstract class AbstractMbpmBean {
 
     // ------- Outros -------------------------------------------------
 
-    public IFlowRenderer getFlowRenderer(){
+    public IFlowRenderer getFlowRenderer() {
         return YFilesFlowRenderer.getInstance();
     }
-    
+
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
     protected abstract IScheduleService getScheduleService();
 
-    protected abstract IProcessEntityService getProcessEntityService();
+    protected abstract IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService();
 
     protected abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
 
@@ -153,7 +153,7 @@ public abstract class AbstractMbpmBean {
             return task.executarByBloco(instancias);
         } else {
             for (final ProcessInstance instanciaProcessoMBPM : instancias) {
-                EngineProcessamentoMBPM.executarTransicaoAgendada(task, instanciaProcessoMBPM);
+                EngineProcessamentoMBPM.executeScheduledTransition(task, instanciaProcessoMBPM);
             }
             return null;
         }

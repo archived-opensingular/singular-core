@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
@@ -42,7 +42,7 @@ public class MTransition implements Serializable {
         this.name = name;
         this.destination = destination;
         this.type = type;
-        this.abbreviation = MBPMUtil.convertToJavaIdentity(name);
+        this.abbreviation = MBPMUtil.convertToJavaIdentity(name, true);
     }
 
     @SuppressWarnings("unchecked")

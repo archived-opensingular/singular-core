@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +32,7 @@ public abstract class ProcessInstance {
 
     private transient MTask<?> estadoAtual;
 
-    private transient ExecucaoMTask execucaoTask;
+    private transient ExecucaoMTask executionContext;
 
     private transient IEntityProcessInstance entity;
 
@@ -43,7 +42,7 @@ public abstract class ProcessInstance {
 
     protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass) {
         processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
-        entity = getDefinicao().createProcessInstance();
+        entity = getProcessDefinition().createProcessInstance();
     }
 
     protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass, IEntityProcessInstance entityProcessInstance) {
@@ -51,158 +50,71 @@ public abstract class ProcessInstance {
         entity = entityProcessInstance;
     }
 
-    public <K extends ProcessDefinition<?>> K getDefinicao() {
+    public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         return (K) processDefinitionRef.get();
     }
 
-    private IEntityProcessInstance getInternalEntity() {
-        return entity;
+    public TaskInstance start() {
+        return start(null);
     }
 
-    protected void setParent(ProcessInstance pai) {
-        getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
+    public TaskInstance start(VarInstanceMap<?> paramIn) {
+        getPersistedDescription(); // Força a geração da descricação
+        return EngineProcessamentoMBPM.start(this, paramIn);
     }
 
-    public <K extends ProcessInstance> K getInstanciaPai() {
-        if (getInternalEntity().getDemandaPai() != null) {
-            return (K) MBPM.getMbpmBean().getProcessInstance(getEntity().getDemandaPai());
-        }
-        return null;
+    public void executeTransition() {
+        EngineProcessamentoMBPM.executeTransition(this, null, null);
     }
 
-    public List<ProcessInstance> getInstanciasFilhas() {
-        return getInternalEntity().getDemandasFilhas().stream().map(MBPM.getMbpmBean()::getProcessInstance).collect(Collectors.toList());
+    public void executeTransition(String destino) {
+        EngineProcessamentoMBPM.executeTransition(this, destino, null);
     }
 
-    public <I extends ProcessInstance, K extends ProcessDefinition<I>> List<I> getInstanciasFilhas(Class<K> classe) {
-        return getStreamFilhas(classe).collect(Collectors.toList());
-    }
-
-    public <I extends ProcessInstance, K extends ProcessDefinition<I>> I getInstanciaFilha(Class<K> classe) {
-        return getStreamFilhas(classe).findFirst().orElse(null);
-    }
-
-    private <I extends ProcessInstance, K extends ProcessDefinition<I>> Stream<I> getStreamFilhas(Class<K> classe) {
-        K def = MBPM.getDefinicao(classe);
-        IEntityProcess dadosDefinicaoProcesso = def.getEntity();
-        return getInternalEntity().getDemandasFilhas().stream().filter(d -> d.getDefinicao().equals(dadosDefinicaoProcesso))
-                .map(def::convertToProcessInstance);
-    }
-
-    public TaskInstance getTarefaPai() {
-        IEntityTaskInstance dbTaskInstance = getInternalEntity().getTarefaPai();
-        return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
-    }
-
-    public TaskInstance iniciar() {
-        return iniciar(null);
-    }
-
-    public TaskInstance iniciar(VarInstanceMap<?> paramIn) {
-        getDescricaoBD(); // Força a geração da descricação
-        TaskInstance tarefaAtual = getTarefaPai();
-        if (tarefaAtual == null && getInternalEntity().getDemandaPai() != null) {
-            tarefaAtual = MBPM.getMbpmBean().getProcessInstance(getInternalEntity().getDemandaPai()).getTarefaAtual();
-        }
-        if (tarefaAtual != null) {
-            tarefaAtual.log("Demanda Criada", getDescricaoExtendida(), null, MBPM.getUserIfAvailable(), null, getInternalEntity());
-        }
-        return EngineProcessamentoMBPM.iniciar(this, paramIn);
-    }
-
-    public void completarTarefa() {
-        executarTransicao();
-    }
-
-    public void executarTransicao() {
-        EngineProcessamentoMBPM.executarTransicao(this, null, null);
-    }
-
-    public void executarTransicao(String destino) {
-        EngineProcessamentoMBPM.executarTransicao(this, destino, null);
-    }
-
-    public void executarTransicao(String destino, VarInstanceMap<?> param) {
-        EngineProcessamentoMBPM.executarTransicao(this, destino, param);
+    public void executeTransition(String destino, VarInstanceMap<?> param) {
+        EngineProcessamentoMBPM.executeTransition(this, destino, param);
     }
 
     public TransitionCall prepareTransition(String transitionName) {
-        return getTarefaAtual().prepareTransition(transitionName);
+        return getCurrentTask().prepareTransition(transitionName);
     }
-
-    protected final TaskInstance updateEstado(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
-        if (tarefaOrigem != null) {
-            String transitionName = null;
-            if (transicaoOrigem != null) {
-                transitionName = transicaoOrigem.getName();
-            }
-            getPersistenceService().endTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
-        }
-        IEntityTask situacaoNova = getDefinicao().getEntityTask(task);
-
-        IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
-
-        TaskInstance tarefaNova = getTarefa(tarefa);
-        estadoAtual = task;
-
-        MBPM.getMbpmBean().notifyStateUpdate(this);
-        return tarefaNova;
+    
+    IEntityProcessInstance getInternalEntity() {
+        return entity;
+    }
+    
+    protected void setParent(ProcessInstance pai) {
+        getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
+    }
+    
+    public TaskInstance getParentTask() {
+        IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
+        return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
     }
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getDefinicao().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getAbbreviation());
+            estadoAtual = getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getAbbreviation());
         }
         return estadoAtual;
     }
 
-    public boolean isFim() {
+    public boolean isEnd() {
         return getEntity().getSituacao().isEnd();
     }
 
-    /**
-     * @param nomeEstado
-     * @return
-     */
-    public boolean isNomeEstado(String nomeEstado) {
-        final MTask<?> task = getDefinicao().getFlowMap().getTaskWithName(nomeEstado);
-        if (task == null) {
-            throw new SingularFlowException(getDefinicao().getFlowMap().createErrorMsg("Não existe task com nome '" + nomeEstado + "'"));
-        }
-        return getEstado().equals(task);
+    public String getProcessName() {
+        return getProcessDefinition().getName();
     }
 
-    /**
-     * @param sigla
-     * @return
-     */
-    public boolean isSiglaEstado(String sigla) {
-        final MTask<?> task = getDefinicao().getFlowMap().getTaskWithAbbreviation(sigla);
-        if (task == null) {
-            throw new SingularFlowException(getDefinicao().getFlowMap().createErrorMsg("Não existe task com sigla '" + sigla + "'"));
-        }
-        return getEstado().equals(task);
-    }
-
-    final void setContextoExecucao(ExecucaoMTask execucaoTask) {
-        if (this.execucaoTask != null && execucaoTask != null) {
-            throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
-        }
-        this.execucaoTask = execucaoTask;
-    }
-
-    public String getNomeProcesso() {
-        return getDefinicao().getName();
-    }
-
-    public String getNomeTarefa() {
+    public String getCurrentTaskName() {
         if (getEstado() != null) {
             return getEstado().getName();
         }
-        TaskInstance tarefaAtual = getTarefaAtual();
+        TaskInstance tarefaAtual = getCurrentTask();
         if (tarefaAtual != null) {
             // Uma situação legada, que não existe mais no fluxo mapeado
-            return tarefaAtual.getEntityTaskInstance().getSituacao().getName();
+            return tarefaAtual.getEntityTaskInstance().getTask().getName();
         }
         return null;
     }
@@ -211,25 +123,8 @@ public abstract class ProcessInstance {
         return MBPM.getDefaultHrefFor(this);
     }
 
-    public Set<Integer> getRhComDireitoTarefa(String nomeTarefa) {
-        return getDefinicao().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
-    }
-
-    public final String getTitulo() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getNomeProcesso());
-        String d;
-        if (getDefinicao().getFlowMap().hasMultiplePeopleTasks()) {
-            d = getNomeTarefa();
-            if (d != null) {
-                sb.append(" - ").append(d);
-            }
-        }
-        d = getDescricao();
-        if (d != null) {
-            sb.append(" - ").append(d);
-        }
-        return sb.toString();
+    public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
+        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
     public final boolean canExecuteTask(MUser user) {
@@ -239,7 +134,7 @@ public abstract class ProcessInstance {
         switch (getEstado().getTaskType()) {
             case People:
             case Wait:
-                return (isAlocado(user.getCod()))
+                return (isAllocated(user.getCod()))
                         || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
             default:
                 return false;
@@ -250,7 +145,7 @@ public abstract class ProcessInstance {
         switch (getInternalEntity().getSituacao().getType()) {
             case People:
             case Wait:
-                if (temAlocado() && isAlocado(user.getCod())) {
+                if (hasAllocatedUser() && isAllocated(user.getCod())) {
                     return true;
                 }
             default:
@@ -278,19 +173,8 @@ public abstract class ProcessInstance {
     /**
      * Apenas para uso interno da engine de processo e da persistencia.
      */
-    public final void refresh() {
+    public final void refreshEntity() {
         getPersistenceService().refreshModel(getInternalEntity());
-    }
-
-    /**
-     * Apenas para uso interno da engine de processo e da persistencia.
-     */
-    public final <K extends IEntityProcessInstance> K getDemandaSemRefresh() {
-        if (entity.getCod() == null) {
-            return saveEntity();
-        }
-        return (K) entity;
-
     }
 
     public final IEntityProcessInstance getEntity() {
@@ -301,40 +185,32 @@ public abstract class ProcessInstance {
         return entity;
     }
 
-    public MUser getPessoaInteressada() {
-        return getInternalEntity().getPessoaCriadora();
-    }
-
-    public MUser getUserWithRole(String roleAbbreviation) {
+    public final MUser getUserWithRole(String roleAbbreviation) {
         final IEntityRole entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
         if (entityRole != null) {
-            return entityRole.getPessoa();
+            return entityRole.getUser();
         }
         return null;
     }
 
-    public List<? extends IEntityRole> getUserRoles() {
-        return getEntity().getPapeis();
+    public final List<? extends IEntityRole> getUserRoles() {
+        return getEntity().getRoles();
     }
 
-    public IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
+    public final IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
         return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
     }
 
-    public boolean hasUserRoles() {
-        return !getEntity().getPapeis().isEmpty();
+    public final boolean hasUserRoles() {
+        return !getEntity().getRoles().isEmpty();
     }
 
-    public void setPessoaCriadora(MUser pessoaCriadora) {
-        getInternalEntity().setPessoaCriadora(pessoaCriadora);
+    public final MUser getUserCreator() {
+        return getInternalEntity().getUserCreator();
     }
 
-    public MUser getPessoaCriadora() {
-        return getInternalEntity().getPessoaCriadora();
-    }
-
-    protected void setDescricao(String descricao) {
-        getInternalEntity().setDescricao(StringUtils.left(descricao, 250));
+    protected final void setDescription(String descricao) {
+        getInternalEntity().setDescription(StringUtils.left(descricao, 250));
     }
 
     public final <K extends IEntityProcessInstance> K saveEntity() {
@@ -342,76 +218,89 @@ public abstract class ProcessInstance {
         return (K) entity;
     }
 
-    public final void forcarEstado(MTask<?> task) {
-        final TaskInstance tarefaOrigem = getTarefaAtual();
+    public final void forceStateUpdate(MTask<?> task) {
+        final TaskInstance tarefaOrigem = getCurrentTask();
         List<MUser> pessoasAnteriores = getResponsaveisDiretos();
         final Date agora = new Date();
-        TaskInstance tarefaNova = updateEstado(tarefaOrigem, null, task, agora);
+        TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
         if (tarefaOrigem != null) {
-            tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getNome() + "' para '" + task.getName() + "'",
+            tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
                     null, MBPM.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         }
 
         ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
         task.notifyTaskStart(getTarefaMaisRecenteComNome(task.getName()), execucaoMTask);
     }
-
-    public Date getDataAlvoFim() {
-        final IEntityTaskInstance tarefa = getInternalEntity().getTarefaAtiva();
-        if (tarefa != null) {
-            return tarefa.getDataAlvoFim();
+    
+    protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
+        synchronized (this) {
+            if (tarefaOrigem != null) {
+                String transitionName = null;
+                if (transicaoOrigem != null) {
+                    transitionName = transicaoOrigem.getName();
+                }
+                getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
+            }
+            IEntityTask situacaoNova = getProcessDefinition().getEntityTask(task);
+            
+            IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
+            
+            TaskInstance tarefaNova = getTaskInstance(tarefa);
+            estadoAtual = task;
+            
+            MBPM.getMbpmBean().notifyStateUpdate(this);
+            return tarefaNova;
         }
-        return null;
     }
 
-    public Date getDataInicio() {
-        return getInternalEntity().getDataInicio();
+    public final Date getBeginDate() {
+        return getInternalEntity().getBeginDate();
     }
 
-    public Date getDataFim() {
-        return getInternalEntity().getDataFim();
+    public final Date getEndDate() {
+        return getInternalEntity().getEndDate();
     }
 
-    public Integer getEntityCod() {
+    public final Integer getEntityCod() {
         return entity.getCod();
     }
 
-    public String getId() {
+    public final String getId() {
         return entity.getCod().toString();
     }
 
-    public String getFullId() {
+    public final String getFullId() {
         return MBPM.generateID(this);
     }
 
-    public TaskInstance getTarefa(final IEntityTaskInstance tarefa) {
+    public TaskInstance getTaskInstance(final IEntityTaskInstance tarefa) {
         return tarefa != null ? new TaskInstance(this, tarefa) : null;
     }
 
     /**
      * O mesmo que getDescricaoCompleta.
      */
-    public String getDescricao() {
-        return getDescricaoCompleta();
+    public String getDescription() {
+        return getCompleteDescription();
     }
 
     /**
      * Nome do processo seguido da descrição completa.
      */
-    public final String getDescricaoExtendida() {
-        String descricao = getDescricao();
+    public final String getExtendedDescription() {
+        String descricao = getDescription();
         if (descricao == null) {
-            return getNomeProcesso();
+            return getProcessName();
         }
-        return getNomeProcesso() + " - " + descricao;
+        return getProcessName() + " - " + descricao;
     }
 
-    protected final String getDescricaoBD() {
-        String descricao = getInternalEntity().getDescricao();
+    protected final String getPersistedDescription() {
+        String descricao = getInternalEntity().getDescription();
         if (descricao == null) {
-            descricao = criarDescricaoInicial();
+            descricao = generateInitialDescription();
             if (!StringUtils.isBlank(descricao)) {
-                setDescricao(descricao);
+                setDescription(descricao);
             }
         }
         return descricao;
@@ -421,20 +310,20 @@ public abstract class ProcessInstance {
      * Cria a descrição que vai gravada no banco de dados. Deve ser sobreescrito
      * para ter efeito
      */
-    protected String criarDescricaoInicial() {
+    protected String generateInitialDescription() {
         return null;
     }
 
     /**
      * Sobrescreve a descrição da demanda a partir do método
-     * {@link #criarDescricaoInicial()}
+     * {@link #generateInitialDescription()}
      *
      * @return true caso tenha sido alterada a descrição
      */
-    public final boolean recriarDescricaoInicial() {
-        String descricao = criarDescricaoInicial();
-        if (!StringUtils.isBlank(descricao) && !descricao.equalsIgnoreCase(getInternalEntity().getDescricao())) {
-            setDescricao(descricao);
+    public final boolean regenerateInitialDescription() {
+        String descricao = generateInitialDescription();
+        if (!StringUtils.isBlank(descricao) && !descricao.equalsIgnoreCase(getInternalEntity().getDescription())) {
+            setDescription(descricao);
             return true;
         }
         return false;
@@ -445,36 +334,32 @@ public abstract class ProcessInstance {
      * Geralmente são adicionadas informações que não precisam ter cache feito
      * em banco de dados.
      */
-    protected String getDescricaoCompleta() {
-        return getDescricaoBD();
-    }
-
-    public String getNumeroDisplay() {
-        return getEntity().getCod().toString();
+    protected String getCompleteDescription() {
+        return getPersistedDescription();
     }
 
     public List<MUser> getResponsaveisDiretos() {
-        TaskInstance tarefa = getTarefaAtual();
+        TaskInstance tarefa = getCurrentTask();
         if (tarefa != null) {
-            return tarefa.getDirectlyResponsible();
+            return tarefa.getDirectlyResponsibles();
         }
         return Collections.emptyList();
     }
 
     private void addUserRole(MProcessRole mProcessRole, MUser user) {
         if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
-            getPersistenceService().setInstanceUserRole(getEntity(), getDefinicao().getEntity().getRole(mProcessRole.getAbbreviation()), user);
+            getPersistenceService().setInstanceUserRole(getEntity(), getProcessDefinition().getEntity().getRole(mProcessRole.getAbbreviation()), user);
         }
     }
 
     public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
-        MProcessRole mProcessRole = getDefinicao().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
         MUser previousUser = getUserWithRole(mProcessRole.getAbbreviation());
 
         if (previousUser == null) {
             if (newUser != null) {
                 addUserRole(mProcessRole, newUser);
-                getDefinicao().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
+                getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, null, newUser);
 
                 final TaskInstance latestTask = getLatestTask();
                 if (latestTask != null) {
@@ -487,7 +372,7 @@ public abstract class ProcessInstance {
                 addUserRole(mProcessRole, newUser);
             }
 
-            getDefinicao().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
+            getProcessDefinition().getFlowMap().notifyRoleChange(this, mProcessRole, previousUser, newUser);
             final TaskInstance latestTask = getLatestTask();
             if (latestTask != null) {
                 if (newUser != null) {
@@ -504,7 +389,7 @@ public abstract class ProcessInstance {
     }
 
     public final void setVariables(VariableWrapper newVariableSet) {
-        getDefinicao().verifyVariableWrapperClass(newVariableSet.getClass());
+        getProcessDefinition().verifyVariableWrapperClass(newVariableSet.getClass());
         getVariaveis().addValues(newVariableSet.getVariables(), true);
     }
 
@@ -535,58 +420,58 @@ public abstract class ProcessInstance {
         return variables;
     }
 
-    protected void validarPreInicio() {
-        if (variables == null && !getDefinicao().getVariables().hasRequired()) {
+    protected void validadeStart() {
+        if (variables == null && !getProcessDefinition().getVariables().hasRequired()) {
             return;
         }
 
         ValidationResult result = getVariaveis().validar();
         if (result.hasErros()) {
-            throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getNomeProcesso() + "': " + result));
+            throw new SingularFlowException(createErrorMsg("Erro ao iniciar processo '" + getProcessName() + "': " + result));
         }
     }
 
-    public boolean temAlocado() {
-        return getEntity().getTarefas().stream().anyMatch(tarefa -> isTarefaAtiva(tarefa) && tarefa.getPessoaAlocada() != null);
+    public boolean hasAllocatedUser() {
+        return getEntity().getTasks().stream().anyMatch(tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null);
     }
 
-    public boolean isAlocado(Integer codPessoa) {
+    public boolean isAllocated(Integer codPessoa) {
         return getEntity()
-                .getTarefas()
+                .getTasks()
                 .stream()
                 .anyMatch(
-                        tarefa -> isTarefaAtiva(tarefa) && tarefa.getPessoaAlocada() != null
-                                && tarefa.getPessoaAlocada().getCod().equals(codPessoa));
+                        tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null
+                                && tarefa.getAllocatedUser().getCod().equals(codPessoa));
     }
 
-    public List<TaskInstance> getTarefas() {
+    public List<TaskInstance> getTasks() {
         IEntityProcessInstance demanda = getEntity();
-        return demanda.getTarefas().stream().map(this::getTarefa).collect(Collectors.toList());
+        return demanda.getTasks().stream().map(this::getTaskInstance).collect(Collectors.toList());
     }
 
     private TaskInstance findFirstTaskInstance(boolean searchFromEnd, Predicate<IEntityTaskInstance> condicao) {
-        List<? extends IEntityTaskInstance> lista = getEntity().getTarefas();
+        List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
         if (searchFromEnd) {
             lista = Lists.reverse(lista);
         }
 
-        return getTarefa(lista.stream().filter(condicao).findFirst().orElse(null));
+        return getTaskInstance(lista.stream().filter(condicao).findFirst().orElse(null));
     }
 
-    private static boolean isTarefaAtiva(IEntityTaskInstance tarefa) {
-        return tarefa.getDataFim() == null;
+    private static boolean isActiveTask(IEntityTaskInstance tarefa) {
+        return tarefa.getEndDate() == null;
     }
 
     public TaskInstance getUltimaTarefa() {
         return findFirstTaskInstance(true, t -> true);
     }
 
-    public TaskInstance getTarefaAtual() {
-        return findFirstTaskInstance(true, ProcessInstance::isTarefaAtiva);
+    public TaskInstance getCurrentTask() {
+        return findFirstTaskInstance(true, ProcessInstance::isActiveTask);
     }
 
     public TaskInstance getTarefaMaisRecenteComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getSituacao().getName().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getTask().getName().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getLatestTask() {
@@ -594,27 +479,34 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance getUltimaTarefaConcluidaComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getName().equalsIgnoreCase(nomeTipo));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getName().equalsIgnoreCase(nomeTipo));
     }
 
     public TaskInstance getUltimaTarefaConcluidaTipo(final MTask<?> tipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getAbbreviation().equalsIgnoreCase(tipo.getAbbreviation()));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getAbbreviation().equalsIgnoreCase(tipo.getAbbreviation()));
     }
 
     public TaskInstance getUltimaTarefaConcluida(final TaskType tipoTarefa) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getDataFim() != null && tarefa.getSituacao().getType().equals(tipoTarefa));
+        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getType().equals(tipoTarefa));
     }
 
     protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return getDefinicao().getPersistenceService();
+        return getProcessDefinition().getPersistenceService();
     }
 
+    final void setExecutionContext(ExecucaoMTask execucaoTask) {
+        if (this.executionContext != null && execucaoTask != null) {
+            throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
+        }
+        this.executionContext = execucaoTask;
+    }
+    
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
-            if (variableWrapperClass != getDefinicao().getVariableWrapperClass()) {
+            if (variableWrapperClass != getProcessDefinition().getVariableWrapperClass()) {
                 throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName() + ") é diferente da definida em "
-                        + getDescricao().getClass().getName() + ". A definição do processo informou o wrapper como sendo "
-                        + getDefinicao().getVariableWrapperClass());
+                        + getDescription().getClass().getName() + ". A definição do processo informou o wrapper como sendo "
+                        + getProcessDefinition().getVariableWrapperClass());
             }
             try {
                 variableWrapper = variableWrapperClass.getConstructor().newInstance();

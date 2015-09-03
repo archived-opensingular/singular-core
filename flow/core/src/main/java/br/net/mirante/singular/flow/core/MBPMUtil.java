@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.text.Normalizer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,9 +28,7 @@ public class MBPMUtil {
         if (ordem1 != ordem2) {
             return ordem1 - ordem2;
         }
-        //TODO
-//        return s1.getNome().compareTo(s2.getNome());
-        return s1.getAbbreviation().compareTo(s2.getAbbreviation());
+        return s1.getName().compareTo(s2.getName());
     }
 
     public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTask> conversor,
@@ -90,7 +89,7 @@ public class MBPMUtil {
     }
 
     private static int calculateTaskOrder(IEntityTask entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntity().equals(entityTaskDefinition.getProcess())) {
+        if (!processDefinition.getEntity().getProcessDefinition().equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
         MTask<?> task = processDefinition.getFlowMap().getTaskWithAbbreviation(entityTaskDefinition.getAbbreviation());
@@ -123,11 +122,14 @@ public class MBPMUtil {
         }
     }
 
-    public static String convertToJavaIdentity(String original) {
-        return convertToJavaIdentity(original, false);
+    public static String convertToJavaIdentity(String original, boolean normalize) {
+        return convertToJavaIdentity(original, false, normalize);
     }
 
-    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase) {
+    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
+        if(normalize){
+            original = normalize(original);
+        }
         StringBuilder sb = new StringBuilder(original.length());
         boolean nextUpper = false;
         for (char c : original.toCharArray()) {
@@ -150,5 +152,9 @@ public class MBPMUtil {
             }
         }
         return sb.toString();
+    }
+
+    public static String normalize(String original) {
+        return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 }

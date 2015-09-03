@@ -9,18 +9,19 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskHistoricLog;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
@@ -33,7 +34,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     TASK_INSTANCE addTask(@NotNull PROCESS_INSTANCE instance, @NotNull TASK state);
 
-    void endTask(@NotNull TASK_INSTANCE task, @Nullable String transitionName, @Nullable MUser responsibleUser);
+    void completeTask(@NotNull TASK_INSTANCE task, @Nullable String transitionName, @Nullable MUser responsibleUser);
 
     void setProcessInstanceParent(@NotNull PROCESS_INSTANCE instance, @NotNull PROCESS_INSTANCE instanceFather);
 
@@ -41,7 +42,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
 
-    Integer updateVariableValue(@NotNull ProcessInstance instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
+    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
 
     void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK_INSTANCE parentTask);
 
@@ -63,6 +64,20 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
 
+    /**
+     * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcess},
+     * {@link IEntityTaskDefinition}, {@link IEntityTask},
+     * {@link IEntityTaskTransition}
+     * 
+     * @param entityProcess
+     * @return
+     */
+    PROCESS_DEFINITION saveOrUpdateProcessDefinition(PROCESS_DEFINITION entityProcess);
+
+    void relocateTask(TASK_INSTANCE taskInstance, MUser user);
+    
+    void updateTargetEndDate(TASK_INSTANCE taskInstance, Date targetEndDate);
+    
     void refreshModel(IEntityByCod model);
 
     void flushSession();
