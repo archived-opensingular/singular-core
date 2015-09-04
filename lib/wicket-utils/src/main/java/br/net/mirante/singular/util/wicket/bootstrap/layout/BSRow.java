@@ -38,7 +38,7 @@ public class BSRow extends BSContainer<BSRow> {
     }
 
     public BSCol newCol() {
-        return newCol(12);
+        return newCol(BSCol.MAX_COLS);
     }
 
     public BSCol newCol(int colspan) {

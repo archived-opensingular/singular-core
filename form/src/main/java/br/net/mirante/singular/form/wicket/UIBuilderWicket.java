@@ -3,8 +3,12 @@ package br.net.mirante.singular.form.wicket;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,6 +28,8 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MListaMultiPanelView;
+import br.net.mirante.singular.form.mform.basic.view.MListaSimpleTableView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -32,15 +38,19 @@ import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
+import br.net.mirante.singular.util.wicket.util.IBehaviorsMixin;
 import br.net.mirante.singular.util.wicket.util.IModelsMixin;
 
 public class UIBuilderWicket {
 
     private static final IModelsMixin      $m = new IModelsMixin() {};
+    private static final IBehaviorsMixin   $b = new IBehaviorsMixin() {};
 
     private static final List<MapperEntry> MAPPERS;
     static {
@@ -55,6 +65,8 @@ public class UIBuilderWicket {
             .add(new MapperEntry(MTipoComposto.class, MTabView.class, CompostoMapper::new))
 
             .add(new MapperEntry(MTipoLista.class, MView.class, DefaultListaMapper::new))
+            .add(new MapperEntry(MTipoLista.class, MListaSimpleTableView.class, () -> new DefaultListaMapper(true)))
+            .add(new MapperEntry(MTipoLista.class, MListaMultiPanelView.class, ListaMultiPanelMapper::new))
             .build();
     }
 
@@ -63,7 +75,7 @@ public class UIBuilderWicket {
         MInstancia instancia = (MInstancia) obj;
         MView view = instancia.getView();
         IWicketComponentMapper mapper = getMapper(instancia)
-            .orElseThrow(() -> createErro(instancia, "Não há mappeamento de componente Wicket para o tipo"));
+            .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
         mapper.buildView(ctx, view, model);
     }
 
@@ -72,10 +84,12 @@ public class UIBuilderWicket {
         MView view = instancia.getMTipo().getView();
         int bestScore = MAPPERS.stream()
             .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
+            .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
             .mapToInt(it -> it.score(tipo, view))
             .min().orElse(Integer.MAX_VALUE);
         return MAPPERS.stream()
             .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
+            .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
             .filter(it -> it.score(tipo, view) == bestScore)
             .sorted((a, b) -> ComparisonChain.start()
                 .compare(a.tipoType.getName(), b.tipoType.getName())
@@ -85,12 +99,13 @@ public class UIBuilderWicket {
             .map(it -> it.factory.get());
     }
 
-    private static RuntimeException createErro(MInstancia instancia, String msg) {
+    private static RuntimeException createErro(MInstancia instancia, MView view, String msg) {
         return new RuntimeException(
             msg + " (instancia=" + instancia.getCaminhoCompleto()
                 + ", tipo=" + instancia.getMTipo().getNome()
                 + ", classeInstancia=" + instancia.getClass()
-                + ", classeTipo=" + instancia.getMTipo().getClass()
+                + ", tipo=" + instancia.getMTipo()
+                + ", view=" + view
                 + ")");
     }
 
@@ -110,15 +125,24 @@ public class UIBuilderWicket {
     }
 
     static interface ControlsFieldComponentMapper extends IWicketComponentMapper {
+        static final HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {};
         void appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
         @Override
         default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+            final boolean hintNoDecoration = ctx.getHint(NO_DECORATION, false);
+
             String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
-            BSControls formGroup = ctx.getContainer().newFormGroup();
             ValueModel<String> labelModel = $m.ofValue(label);
-            formGroup.appendLabel(new BSLabel("label", labelModel));
-            appendInput(formGroup, model, labelModel);
-            formGroup.appendFeedback();
+            BSControls formGroup = ctx.getContainer().newFormGroup();
+            if (hintNoDecoration) {
+                formGroup.appendLabel(new BSLabel("label", labelModel)
+                    .add($b.classAppender("visible-sm visible-xs")));
+                appendInput(formGroup, model, labelModel);
+            } else {
+                formGroup.appendLabel(new BSLabel("label", labelModel));
+                appendInput(formGroup, model, labelModel);
+                formGroup.appendFeedback();
+            }
         }
     }
 
@@ -164,43 +188,57 @@ public class UIBuilderWicket {
     }
 
     static class CompostoMapper implements IWicketComponentMapper {
+        static final HintKey<Map<String, Integer>> COL_WIDTHS = new HintKey<Map<String, Integer>>() {};
         @Override
         @SuppressWarnings("unchecked")
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> iModel) {
+            final Map<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS, new HashMap<>());
+
             MInstancia instancia = iModel.getObject();
             MIComposto composto = (MIComposto) instancia;
             MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
 
             BSCol parentCol = ctx.getContainer();
             BSGrid grid = parentCol.newGrid();
+            BSRow row = grid.newRow();
 
             for (String nomeCampo : tComposto.getCampos()) {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
                 final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(iModel, tCampo.getNomeSimples());
                 final MInstancia iCampo = mCampo.getObject();
                 final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.getValorAtributo(MPacoteBasic.ATR_LABEL)));
+                final int colspan = (hintColWidths.containsKey(nomeCampo)) ? hintColWidths.get(nomeCampo) : BSCol.MAX_COLS;
                 if (iCampo instanceof MIComposto) {
                     final MICompostoModel<MIComposto> mCampoComposto = new MICompostoModel<>(mCampo);
 
-                    final BSCol col = grid.newRow().newCol(12);
+                    final BSCol col = row.newCol().md(colspan);
                     if (isNotBlank(label.getObject()))
                         col.appendTag("h3", new Label("_title", label));
-                    buildForEdit(ctx.createChild(col.newGrid().newColInRow()), mCampoComposto);
+                    buildForEdit(ctx.createChild(col.newGrid().newColInRow(), true), mCampoComposto);
 
                 } else {
-                    buildForEdit(ctx.createChild(grid.newRow().newCol()), mCampo);
+                    buildForEdit(ctx.createChild(row.newCol().md(colspan), true), mCampo);
                 }
             }
         }
     }
 
     static class DefaultListaMapper implements IWicketComponentMapper {
+        private final boolean viewAsTable;
+        public DefaultListaMapper() {
+            this(false);
+        }
+        public DefaultListaMapper(boolean viewAsTable) {
+            this.viewAsTable = viewAsTable;
+        }
         @Override
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
             MInstancia instancia = model.getObject();
             MILista<?> iLista = (MILista<?>) instancia;
 
             if (iLista.isEmpty()) {
+                iLista.addNovo();
+                iLista.addNovo();
                 iLista.addNovo();
             }
 
@@ -209,11 +247,60 @@ public class UIBuilderWicket {
             if (isNotBlank(label.getObject()))
                 parentCol.appendTag("h3", new Label("_title", label));
 
+            MTipo<?> tElementos = iLista.getTipoElementos();
+            if (viewAsTable && (tElementos instanceof MTipoComposto<?>)) {
+                Set<String> camposElemento = ((MTipoComposto<?>) tElementos).getCampos();
+                if (!camposElemento.isEmpty()) {
+                    int baseColWidth = BSCol.MAX_COLS / camposElemento.size();
+                    int largerColWidth = baseColWidth + (BSCol.MAX_COLS - camposElemento.size() * baseColWidth);
+                    Map<String, Integer> colWidths = new HashMap<>();
+                    Iterator<String> iter = camposElemento.iterator();
+                    while (iter.hasNext()) {
+                        String nome = iter.next();
+                        int colWidth = (iter.hasNext()) ? baseColWidth : largerColWidth;
+                        colWidths.put(nome, colWidth);
+                    }
+                    ctx.setHint(CompostoMapper.COL_WIDTHS, colWidths);
+                }
+            }
+
             BSGrid grid = parentCol.newGrid();
             for (int i = 0; i < iLista.size(); i++) {
                 MInstanciaItemListaModel<MInstancia> mCampo = new MInstanciaItemListaModel<>(model, i);
                 BSCol col = grid.newColInRow();
-                buildForEdit(ctx.createChild(col), mCampo);
+                WicketBuildContext childCtx = ctx.createChild(col, true);
+                if (viewAsTable)
+                    childCtx.setHint(ControlsFieldComponentMapper.NO_DECORATION, i > 0);
+                buildForEdit(childCtx, mCampo);
+            }
+        }
+    }
+
+    static class ListaMultiPanelMapper implements IWicketComponentMapper {
+        @Override
+        public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+            MInstancia instancia = model.getObject();
+            MILista<?> iLista = (MILista<?>) instancia;
+
+            if (iLista.isEmpty()) {
+                iLista.addNovo();
+                iLista.addNovo();
+                iLista.addNovo();
+            }
+
+            final IModel<String> label = $m.ofValue(trimToEmpty(iLista.getValorAtributo(MPacoteBasic.ATR_LABEL)));
+            BSCol parentCol = ctx.getContainer();
+            if (isNotBlank(label.getObject()))
+                parentCol.appendTag("h3", new Label("_title", label));
+
+            for (int i = 0; i < iLista.size(); i++) {
+                MInstanciaItemListaModel<MInstancia> mCampo = new MInstanciaItemListaModel<>(model, i);
+                BSContainer<?> panel = parentCol.newTag("div", true, "class='panel panel-default'", id -> new BSContainer<>(id));
+                BSGrid panelBody = panel.newTag("div", true, "class='panel-body'", id -> new BSGrid(id));
+                BSGrid grid = panelBody;
+                BSCol col = grid.newColInRow();
+                WicketBuildContext childCtx = ctx.createChild(col, true);
+                buildForEdit(childCtx, mCampo);
             }
         }
     }

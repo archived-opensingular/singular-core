@@ -64,7 +64,7 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         };
 
         BSGrid container = new BSGrid("generated");
-        WicketBuildContext ctx = new WicketBuildContext(null, container.newColInRow());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
         add(new BSFeedbackPanel("feedback"));
         add(new Form<>("form")

@@ -7,6 +7,10 @@ import br.net.mirante.singular.form.mform.basic.view.MView;
 
 @FunctionalInterface
 public interface IWicketComponentMapper {
+    
+    public interface HintKey<T> {
+    }
+    
     void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model);
 }
 //{ public Component create(String componentId, WicketBuildContext<?> ctx, IModel<? extends MInstancia> model);}
