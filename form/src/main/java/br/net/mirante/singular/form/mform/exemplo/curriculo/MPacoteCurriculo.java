@@ -72,10 +72,8 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
-            formacao.withView(MListaSimpleTableView::new)
-                .as(AtrBasic.class).label("Formação Acadêmica");
-            academicoTipo.withView(MSelecaoPorRadioView::new)
-                .as(AtrBasic.class).label("Tipo");
+            formacao.withView(MListaSimpleTableView::new).as(AtrBasic.class).label("Formação Acadêmica").tamanhoInicial(5);
+            academicoTipo.withView(MSelecaoPorRadioView::new).as(AtrBasic.class).label("Tipo");
             academicoNome.as(AtrBasic.class).label("Nome");
             academicoInstituicao.as(AtrBasic.class).label("Instituição");
             academicoMesConclusao.as(AtrBasic.class).label("Mês conclusão");
@@ -90,7 +88,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString cargo = experiencia.addCampoString("cargo", true);
         final MTipoString atividades = experiencia.addCampoString("atividades");
         {
-            experiencias.withView(MListaMultiPanelView::new).as(AtrBasic.class).label("Experiências profissionais");
+            experiencias.withView(MListaMultiPanelView::new).as(AtrBasic.class).label("Experiências profissionais").tamanhoInicial(2);
             dtInicioExperiencia.as(AtrBasic.class).label("Data inicial");
             dtFimExperiencia.as(AtrBasic.class).label("Data final");
             empresa.as(AtrBasic.class).label("Empresa");
@@ -105,7 +103,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
         {
-            certificacoes.as(AtrBasic.class).label("Certificações");
+            certificacoes.as(AtrBasic.class).label("Certificações").tamanhoInicial(1);
             certificacao.as(AtrBasic.class);
             dataCertificacao.as(AtrBasic.class).label("Data");
             entidadeCertificacao.as(AtrBasic.class).label("Entidade");

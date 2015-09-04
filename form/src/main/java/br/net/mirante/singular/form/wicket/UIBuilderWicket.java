@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -134,16 +135,15 @@ public class UIBuilderWicket {
 
             String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
             ValueModel<String> labelModel = $m.ofValue(label);
-            BSControls formGroup = ctx.getContainer().newFormGroup();
-            if (hintNoDecoration) {
-                formGroup.appendLabel(new BSLabel("label", labelModel)
-                    .add($b.classAppender("visible-sm visible-xs")));
-                appendInput(formGroup, model, labelModel);
-            } else {
-                formGroup.appendLabel(new BSLabel("label", labelModel));
-                appendInput(formGroup, model, labelModel);
-                formGroup.appendFeedback();
-            }
+            BSControls controls = ctx.getContainer().newFormGroup();
+
+            BSLabel bsLabel = new BSLabel("label", labelModel);
+            if (hintNoDecoration)
+                bsLabel.add($b.classAppender("visible-sm visible-xs"));
+
+            controls.appendLabel(bsLabel);
+            appendInput(controls, model, labelModel);
+            controls.appendFeedback();
         }
     }
 
@@ -233,9 +233,9 @@ public class UIBuilderWicket {
             configureCurrentContext(ctx, iLista);
 
             if (iLista.isEmpty()) {
-                iLista.addNovo();
-                iLista.addNovo();
-                iLista.addNovo();
+                int tamanhoInicial = ObjectUtils.defaultIfNull(iLista.as(AtrBasic.class).getTamanhoInicial(), 0);
+                for (int i = tamanhoInicial; i > 0; i--)
+                    iLista.addNovo();
             }
 
             final IModel<String> label = $m.ofValue(trimToEmpty(iLista.getValorAtributo(MPacoteBasic.ATR_LABEL)));
