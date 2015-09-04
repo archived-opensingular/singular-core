@@ -5,11 +5,8 @@ import static org.apache.commons.lang3.StringUtils.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,9 +15,6 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
-
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
@@ -51,54 +45,29 @@ import br.net.mirante.singular.util.wicket.util.IModelsMixin;
 
 public class UIBuilderWicket {
 
-    private static final IModelsMixin      $m = new IModelsMixin() {};
-    private static final IBehaviorsMixin   $b = new IBehaviorsMixin() {};
-
-    private static final List<MapperEntry> MAPPERS;
+    private static final IModelsMixin         $m              = new IModelsMixin() {};
+    private static final IBehaviorsMixin      $b              = new IBehaviorsMixin() {};
+    private static final WicketMapperRegistry MAPPER_REGISTRY = new WicketMapperRegistry();
     static {
-        MAPPERS = ImmutableList.<MapperEntry> builder()
-            .add(new MapperEntry(MTipoBoolean.class, MView.class, BooleanMapper::new))
-            .add(new MapperEntry(MTipoInteger.class, MView.class, IntegerMapper::new))
-            .add(new MapperEntry(MTipoString.class, MView.class, StringMapper::new))
-            .add(new MapperEntry(MTipoData.class, MView.class, DateMapper::new))
-            .add(new MapperEntry(MTipoAnoMes.class, MView.class, YearMonthMapper::new))
-
-            .add(new MapperEntry(MTipoComposto.class, MView.class, CompostoMapper::new))
-            .add(new MapperEntry(MTipoComposto.class, MTabView.class, CompostoMapper::new))
-
-            .add(new MapperEntry(MTipoLista.class, MView.class, DefaultListaMapper::new))
-            .add(new MapperEntry(MTipoLista.class, MListaSimpleTableView.class, ListaSimpleTableMapper::new))
-            .add(new MapperEntry(MTipoLista.class, MListaMultiPanelView.class, ListaMultiPanelMapper::new))
-            .build();
+        MAPPER_REGISTRY.registerMapper(MTipoBoolean.class, MView.class, BooleanMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoInteger.class, MView.class, IntegerMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoString.class, MView.class, StringMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoData.class, MView.class, DateMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, MView.class, YearMonthMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, MView.class, CompostoMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, MTabView.class, CompostoMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, MView.class, DefaultListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, MListaSimpleTableView.class, ListaSimpleTableMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, MListaMultiPanelView.class, ListaMultiPanelMapper::new);
     }
 
     public static void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
         Object obj = model.getObject();
         MInstancia instancia = (MInstancia) obj;
         MView view = instancia.getView();
-        IWicketComponentMapper mapper = getMapper(instancia)
+        IWicketComponentMapper mapper = MAPPER_REGISTRY.getMapper(instancia)
             .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
         mapper.buildView(ctx, view, model);
-    }
-
-    private static Optional<IWicketComponentMapper> getMapper(MInstancia instancia) {
-        MTipo<?> tipo = instancia.getMTipo();
-        MView view = instancia.getMTipo().getView();
-        int bestScore = MAPPERS.stream()
-            .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
-            .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
-            .mapToInt(it -> it.score(tipo, view))
-            .min().orElse(Integer.MAX_VALUE);
-        return MAPPERS.stream()
-            .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
-            .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
-            .filter(it -> it.score(tipo, view) == bestScore)
-            .sorted((a, b) -> ComparisonChain.start()
-                .compare(a.tipoType.getName(), b.tipoType.getName())
-                .compare(a.viewType.getName(), b.viewType.getName())
-                .result())
-            .findFirst()
-            .map(it -> it.factory.get());
     }
 
     private static RuntimeException createErro(MInstancia instancia, MView view, String msg) {
@@ -301,39 +270,4 @@ public class UIBuilderWicket {
         }
     }
 
-    private static final class MapperEntry implements Comparable<MapperEntry> {
-        final Class<?>                         tipoType;
-        final Class<?>                         viewType;
-        final Supplier<IWicketComponentMapper> factory;
-        MapperEntry(
-            Class<?> tipoType,
-            Class<?> viewType,
-            Supplier<IWicketComponentMapper> factory)
-        {
-            this.tipoType = tipoType;
-            this.viewType = viewType;
-            this.factory = factory;
-        }
-        int score(MTipo<?> tipo, MView view) {
-            return (1 * score(this.viewType, view.getClass()))
-                + (10 * score(this.tipoType, tipo.getClass()));
-        }
-        static int score(Class<?> candidate, Class<?> instanceType) {
-            if (instanceType == candidate)
-                return 0;
-            if (instanceType.isAssignableFrom(candidate))
-                return Short.MAX_VALUE;
-            int s;
-            for (s = 0; candidate.isAssignableFrom(instanceType); s++)
-                instanceType = instanceType.getSuperclass();
-            return s;
-        }
-        @Override
-        public int compareTo(MapperEntry o) {
-            return ComparisonChain.start()
-                .compare(this.tipoType.getName(), o.tipoType.getName())
-                .compare(this.viewType.getName(), o.viewType.getName())
-                .result();
-        }
-    }
 }
