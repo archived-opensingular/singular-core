@@ -11,7 +11,7 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("process")
 public class ProcessosPage extends Template {
 
-    public static final String PROCESS_DEFINITION_ID_PARAM = "_PD_ID";
+    public static final String PROCESS_DEFINITION_ID_PARAM = "pdId";
 
     @Override
     protected Content getContent(String id) {

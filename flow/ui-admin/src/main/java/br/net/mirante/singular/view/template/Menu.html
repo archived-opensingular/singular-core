@@ -28,13 +28,36 @@
                         <li id="_menuItemFlowProcess">
                             <a wicket:id="process">
                                 <i class="icon-list"></i>
-                                <span class="badge badge-danger"><wicket:message key="label.tag.new"/></span><wicket:message key="main.menu.flow.definitions"/></a>
+                                <span class="badge badge-danger"><wicket:message key="label.tag.new"/></span>
+                                <wicket:message key="main.menu.flow.definitions"/>
+                            </a>
                         </li>
                     </ul>
                 </li>
+                <wicket:container wicket:id="categoriesContainer"/>
             </ul>
             <!-- END SIDEBAR MENU -->
         </div>
     </div>
 </wicket:panel>
+
+<wicket:fragment wicket:id="categoriesFragment">
+    <li wicket:id="categories">
+        <a href="javascript:">
+            <i class="icon-notebook"></i>
+            <span wicket:id="categoryLabel" class="title"></span>
+            <span class="arrow"></span>
+        </a>
+        <ul class="sub-menu">
+            <li wicket:id="definitions">
+                <a wicket:id="link">
+                    <i class="icon-grid"></i>
+                    <span wicket:id="counter" class="badge badge-info"></span>
+                    <wicket:container wicket:id="definitionLabel"/>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+</wicket:fragment>
 </html>
