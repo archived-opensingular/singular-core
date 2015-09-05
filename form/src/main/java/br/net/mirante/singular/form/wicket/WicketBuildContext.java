@@ -1,18 +1,18 @@
 package br.net.mirante.singular.form.wicket;
 
+import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 
-public class WicketBuildContext {
+public class WicketBuildContext implements Serializable {
 
     private final WicketBuildContext      parent;
     private final BSCol                   container;
-    private final Map<HintKey<?>, Object> hints = new HashMap<>();
+    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean                 hintsInherited;
 
     public WicketBuildContext(BSCol container) {
@@ -30,7 +30,7 @@ public class WicketBuildContext {
         return container;
     }
 
-    public <T> WicketBuildContext setHint(HintKey<T> key, T value) {
+    public <T extends Serializable> WicketBuildContext setHint(HintKey<T> key, T value) {
         hints.put(key, value);
         return this;
     }

@@ -6,67 +6,31 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.ImmutableList;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.basic.view.MListaMultiPanelView;
-import br.net.mirante.singular.form.mform.basic.view.MListaSimpleTableView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.BooleanMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.CompostoMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.DateMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.DefaultListaMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.IntegerMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.ListaMultiPanelMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.ListaSimpleTableMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.StringMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket.YearMonthMapper;
 
 public class WicketMapperRegistry {
 
-    private final List<MapperEntry> MAPPERS;
-    {
-        MAPPERS = new ArrayList<>(ImmutableList.<MapperEntry> builder()
-            .add(new MapperEntry(MTipoBoolean.class, MView.class, BooleanMapper::new))
-            .add(new MapperEntry(MTipoInteger.class, MView.class, IntegerMapper::new))
-            .add(new MapperEntry(MTipoString.class, MView.class, StringMapper::new))
-            .add(new MapperEntry(MTipoData.class, MView.class, DateMapper::new))
-            .add(new MapperEntry(MTipoAnoMes.class, MView.class, YearMonthMapper::new))
-
-            .add(new MapperEntry(MTipoComposto.class, MView.class, CompostoMapper::new))
-            .add(new MapperEntry(MTipoComposto.class, MTabView.class, CompostoMapper::new))
-
-            .add(new MapperEntry(MTipoLista.class, MView.class, DefaultListaMapper::new))
-            .add(new MapperEntry(MTipoLista.class, MListaSimpleTableView.class, ListaSimpleTableMapper::new))
-            .add(new MapperEntry(MTipoLista.class, MListaMultiPanelView.class, ListaMultiPanelMapper::new))
-            .build());
-    }
+    private final List<MapperEntry> mappers = new ArrayList<>();
 
     public void registerMapper(
         Class<?> tipoType,
         Class<?> viewType,
         Supplier<IWicketComponentMapper> factory) {
-        MAPPERS.add(new MapperEntry(tipoType, viewType, factory));
+        mappers.add(new MapperEntry(tipoType, viewType, factory));
     }
 
     public Optional<IWicketComponentMapper> getMapper(MInstancia instancia) {
         MTipo<?> tipo = instancia.getMTipo();
         MView view = instancia.getMTipo().getView();
-        int bestScore = MAPPERS.stream()
+        int bestScore = mappers.stream()
             .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
             .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
             .mapToInt(it -> it.score(tipo, view))
             .min().orElse(Integer.MAX_VALUE);
-        return MAPPERS.stream()
+        return mappers.stream()
             .filter(it -> it.tipoType.isAssignableFrom(tipo.getClass()))
             .filter(it -> it.viewType.isAssignableFrom(view.getClass()))
             .filter(it -> it.score(tipo, view) == bestScore)
