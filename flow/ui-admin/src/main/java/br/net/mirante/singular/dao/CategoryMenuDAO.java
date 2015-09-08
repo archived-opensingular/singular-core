@@ -104,4 +104,16 @@ public class CategoryMenuDAO {
 
         return query.list();
     }
+
+    public Object[] retrieveCategoryDefinitionIdsByCode(String processCode) {
+        String sql = "SELECT CAT.CO_CATEGORIA AS COC, DEF.CO_DEFINICAO_PROCESSO AS COD"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "  INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + " WHERE DEF.SG_PROCESSO = :processCode";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar(ResultColumn.categoryId.getAlias(), LongType.INSTANCE)
+                .addScalar(ResultColumn.definitionId.getAlias(), LongType.INSTANCE)
+                .setParameter("processCode", processCode);
+        return (Object[]) query.uniqueResult();
+    }
 }
