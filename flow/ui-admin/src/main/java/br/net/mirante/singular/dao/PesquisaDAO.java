@@ -70,8 +70,8 @@ public class PesquisaDAO {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
-        String sql = "SELECT TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO AS NOME_DEFINICAO," +
+    public List<Map<String, String>> retrieveMeanTimeByTask(String processCode) {
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD, d.NO_PROCESSO AS NOME_DEFINICAO," +
                 " ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS MEAN" +
                 " FROM DMD_TAREFA t" +
                 " INNER JOIN TB_DEFINICAO_TAREFA s ON s.CO_DEFINICAO_TAREFA = t.cod_situacao" +
@@ -79,7 +79,7 @@ public class PesquisaDAO {
                 " INNER JOIN TB_INSTANCIA_PROCESSO dem ON t.cod_demanda = dem.CO_INSTANCIA_PROCESSO" +
                 " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = dem.CO_PROCESSO" +
                 " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO" +
-                " WHERE dem.DT_FIM IS NOT NULL AND d.CO_DEFINICAO_PROCESSO = :processId" +
+                " WHERE dem.DT_FIM IS NOT NULL AND d.SG_PROCESSO = :processCode" +
                 " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO";
 
         Query query = getSession().createSQLQuery(sql)
@@ -88,7 +88,7 @@ public class PesquisaDAO {
                 .addScalar("NOME_DEFINICAO", StringType.INSTANCE)
                 .addScalar("MEAN", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .setParameter("processId", processId);
+                .setParameter("processCode", processCode);
 
         return (List<Map<String, String>>) query.list();
     }
