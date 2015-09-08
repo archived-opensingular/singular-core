@@ -16,7 +16,7 @@ public class WicketBuildContext implements Serializable {
     private final boolean                 hintsInherited;
 
     public WicketBuildContext(BSCol container) {
-        this(null, container, true);
+        this(null, container, false);
     }
     public WicketBuildContext(WicketBuildContext parent, BSCol container, boolean hintsInherited) {
         this.parent = parent;

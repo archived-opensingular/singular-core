@@ -6,7 +6,6 @@ import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.MIBoolean;
@@ -69,12 +68,6 @@ public class MPacoteBasic extends MPacote {
         pb.getAtributo(ATR_VISIVEL).as(AtrBasic.class).label("Visível");
         pb.getAtributo(ATR_ORDEM).as(AtrBasic.class).label("Ordem");
 
-        MTipoComposto<?> tipoPosicao = pb.createTipoComposto("PosicaoTela");
-        tipoPosicao.addCampo("lin", MTipoInteger.class);
-        tipoPosicao.addCampo("col", MTipoInteger.class);
-        tipoPosicao.addCampo("colSpan", MTipoInteger.class).withDefaultValueIfNull(1);
-
-        tipoPosicao.getCampo("lin").as(AtrBasic.class).label("linha").tamanhoEdicao(3);
     }
 
     public static Function<MAtributoEnabled, AtrBasic> aspect() {

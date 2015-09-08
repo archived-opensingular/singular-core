@@ -47,4 +47,33 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
     public void detach() {
         this.serial = dehydrate(this.object);
     }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((nomeTipo == null) ? 0 : nomeTipo.hashCode());
+        result = prime * result + ((serial == null) ? 0 : serial.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MInstanciaRaizModel<?> other = (MInstanciaRaizModel<?>) obj;
+        if (nomeTipo == null) {
+            if (other.nomeTipo != null)
+                return false;
+        } else if (!nomeTipo.equals(other.nomeTipo))
+            return false;
+        if (serial == null) {
+            if (other.serial != null)
+                return false;
+        } else if (!serial.equals(other.serial))
+            return false;
+        return true;
+    }
 }

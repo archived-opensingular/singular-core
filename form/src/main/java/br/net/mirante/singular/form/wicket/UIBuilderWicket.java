@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
+import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -165,6 +166,8 @@ public class UIBuilderWicket {
 
     static class DefaultCompostoMapper implements IWicketComponentMapper {
         static final HintKey<HashMap<String, Integer>> COL_WIDTHS = new HintKey<HashMap<String, Integer>>() {};
+        static final HintKey<Integer>                  COL        = new HintKey<Integer>() {};
+
         @Override
         @SuppressWarnings("unchecked")
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
@@ -182,8 +185,10 @@ public class UIBuilderWicket {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
                 final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
                 final MInstancia iCampo = mCampo.getObject();
-                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.getValorAtributo(MPacoteBasic.ATR_LABEL)));
-                final int colspan = (hintColWidths.containsKey(nomeCampo)) ? hintColWidths.get(nomeCampo) : BSCol.MAX_COLS;
+                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.as(AtrBasic.class).getLabel()));
+                final int colspan = (hintColWidths.containsKey(nomeCampo))
+                    ? hintColWidths.get(nomeCampo)
+                    : BSCol.MAX_COLS;
                 if (iCampo instanceof MIComposto) {
                     final BSCol col = row.newCol().md(colspan);
                     if (isNotBlank(label.getObject()))
@@ -246,6 +251,7 @@ public class UIBuilderWicket {
             private ConfigureChildContext configureChildContext;
             private ItemsView(String id, IModel<?> model, WicketBuildContext ctx, NewElementCol newElementCol, ConfigureChildContext configureChildContext) {
                 super(id, model);
+                setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
                 this.ctx = ctx;
                 this.newElementCol = newElementCol;
                 this.configureChildContext = configureChildContext;
