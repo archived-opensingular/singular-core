@@ -14,6 +14,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import br.net.mirante.singular.dao.MenuItemDTO;
 import br.net.mirante.singular.service.MenuService;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 
 public class Menu extends Panel {
 
@@ -63,7 +64,10 @@ public class Menu extends Panel {
             definitionMenu.add(new WebMarkupContainer("link")
                     .add(new Label("counter", item.getCounter()))
                     .add(new Label("definitionLabel", item.getName()))
-                    .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#" : item.getCode()))));
+                    .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#"
+                            : adminWicketFilterContext.concat("dashboard")
+                            .concat("?").concat(DashboardPage.PROCESS_DEFINITION_COD_PARAM)
+                            .concat("=").concat(item.getCode())))));
             definitionsMenu.add(definitionMenu);
         }
         return definitionsMenu;

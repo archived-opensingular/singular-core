@@ -33,7 +33,6 @@ public class ProcessosPage extends Template {
         super.renderHead(response);
         StringBuilder script = new StringBuilder();
         script.append("$('#_menuSubFlow').addClass('open');")
-                .append("$('#_menuSubFlow').addClass('open');")
                 .append("$('#_menuSubFlow>a>span.arrow').addClass('open');")
                 .append("$('#_menuSubFlow>ul').show();")
                 .append("$('#_menuItemFlowProcess').addClass('active');");
