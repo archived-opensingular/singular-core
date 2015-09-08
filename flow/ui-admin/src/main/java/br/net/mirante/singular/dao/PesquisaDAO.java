@@ -36,8 +36,8 @@ public class PesquisaDAO {
             String sql = "SELECT d.nome, " +
                     "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS MEAN, " +
                     "       d.sigla AS SIGLA " +
-                    "FROM dbo.DMD_DEMANDA dem " +
-                    "INNER JOIN dbo.DMD_definicao d " +
+                    "FROM DMD_DEMANDA dem " +
+                    "INNER JOIN DMD_definicao d " +
                     "   ON d.cod = dem.cod_definicao " +
                     "WHERE dem.data_fim IS NOT NULL ";
 
@@ -77,22 +77,22 @@ public class PesquisaDAO {
                 "        d.nome AS nome_definicao, " +
                 "        ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS mean  " +
                 "    FROM " +
-                "        dbo.dmd_tarefa t " +
-                "        inner join dbo.dmd_situacao s " +
-                "        on t.cod_situacao = s.cod " +
-                "    inner join " +
-                "        dbo.DMD_DEMANDA dem  " +
-                "        on t.cod_demanda = dem.cod " +
+                "        dmd_tarefa t " +
+                "        INNER JOIN dmd_situacao s " +
+                "        ON t.cod_situacao = s.cod " +
                 "    INNER JOIN " +
-                "        dbo.DMD_definicao d     " +
+                "        DMD_DEMANDA dem  " +
+                "        ON t.cod_demanda = dem.cod " +
+                "    INNER JOIN " +
+                "        DMD_definicao d     " +
                 "            ON d.cod = dem.cod_definicao  " +
                 "    WHERE " +
                 "        dem.data_fim IS NOT NULL   " +
-                "        and d.cod = :processId " +
+                "        AND d.cod = :processId " +
                 "    GROUP BY " +
                 "        s.nome, " +
                 "        d.cod, " +
-                "        d.nome " ;
+                "        d.nome ";
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
