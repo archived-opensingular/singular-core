@@ -33,7 +33,7 @@ public class PesquisaDAO {
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         if (!cache.containsKey(period)) {
-            String sql = "SELECT d.NO_PROCESSO, " +
+            String sql = "SELECT d.NO_PROCESSO AS NOME," +
                     "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS MEAN, " +
                     "       d.SG_PROCESSO AS SIGLA " +
                     "FROM DMD_DEMANDA dem " +
