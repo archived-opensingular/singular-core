@@ -48,7 +48,7 @@ public class Menu extends Panel {
             final WebMarkupContainer categoryMenu = new WebMarkupContainer(categoriesMenu.newChildId());
             categoryMenu.setOutputMarkupId(true);
             categoryMenu.setMarkupId(String.format("_categoryMenu_%d", item.getId()));
-            categoryMenu.add(new Label("categoryLabel", item.getLabel())).add(createDefinitionsMenu(item.getItens()));
+            categoryMenu.add(new Label("categoryLabel", item.getName())).add(createDefinitionsMenu(item.getItens()));
             categoriesMenu.add(categoryMenu);
         }
         return categoriesMenu;
@@ -62,8 +62,8 @@ public class Menu extends Panel {
             definitionMenu.setMarkupId(String.format("_definitionMenu_%d", item.getId()));
             definitionMenu.add(new WebMarkupContainer("link")
                     .add(new Label("counter", item.getCounter()))
-                    .add(new Label("definitionLabel", item.getLabel()))
-                    .add(WicketUtils.$b.attr("href", item.getHref())));
+                    .add(new Label("definitionLabel", item.getName()))
+                    .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#" : item.getCode()))));
             definitionsMenu.add(definitionMenu);
         }
         return definitionsMenu;

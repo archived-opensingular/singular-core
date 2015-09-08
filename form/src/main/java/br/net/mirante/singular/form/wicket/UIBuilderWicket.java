@@ -101,8 +101,8 @@ public class UIBuilderWicket {
         }
     }
 
-    static interface ControlsFieldComponentMapper extends IWicketComponentMapper {
-        static final HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {};
+    interface ControlsFieldComponentMapper extends IWicketComponentMapper {
+        HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {};
         void appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
         @Override
         default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {

@@ -10,7 +10,7 @@ public class MTipoLista<E extends MTipo<?>> extends MTipo<MILista<?>> {
 
     @SuppressWarnings("unchecked")
     public MTipoLista() {
-        super((Class<? extends MILista<?>>) MILista.class);
+        super((Class<? extends MILista<?>>) (Class<? extends MILista>) MILista.class);
     }
 
     @Override
