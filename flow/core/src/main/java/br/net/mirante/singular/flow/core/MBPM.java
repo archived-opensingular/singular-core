@@ -26,7 +26,7 @@ public class MBPM {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }
-        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        //getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
         getMbpmBean().init();
     }
 

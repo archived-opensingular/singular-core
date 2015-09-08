@@ -19,6 +19,8 @@
         <module>core</module>
         <module>schedule</module>
         <module>ui-admin</module>
+        <module>persistence</module>
+        <module>test</module>
     </modules>
 
 </project>

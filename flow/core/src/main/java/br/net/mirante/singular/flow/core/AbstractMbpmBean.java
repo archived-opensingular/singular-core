@@ -113,7 +113,7 @@ public abstract class AbstractMbpmBean {
 
     // ------- Geração de link ----------------------------------------
 
-    public abstract Lnk getDefaultHrefFor(ProcessInstance INSTANCE);
+    public abstract Lnk getDefaultHrefFor(ProcessInstance processInstance);
 
     public abstract Lnk getDefaultHrefFor(TaskInstance taskInstance);
 

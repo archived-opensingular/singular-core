@@ -1,5 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+
 public interface MUser extends Comparable<MUser> {
 
     public Integer getCod();
