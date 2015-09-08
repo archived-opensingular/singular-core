@@ -33,19 +33,19 @@ public class PesquisaDAO {
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         if (!cache.containsKey(period)) {
-            String sql = "SELECT d.nome, " +
+            String sql = "SELECT d.NO_PROCESSO, " +
                     "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS MEAN, " +
-                    "       d.sigla AS SIGLA " +
+                    "       d.SG_PROCESSO AS SIGLA " +
                     "FROM DMD_DEMANDA dem " +
-                    "INNER JOIN DMD_definicao d " +
-                    "   ON d.cod = dem.cod_definicao " +
+                    "INNER JOIN TB_DEFINICAO_PROCESSO d " +
+                    "   ON d.CO_DEFINICAO_PROCESSO = dem.cod_definicao " +
                     "WHERE dem.data_fim IS NOT NULL ";
 
             if (period != null) {
                 sql += " AND dem.data_inicio >= :startPeriod AND dem.data_inicio <= :endPeriod ";
             }
 
-            sql += "GROUP BY d.sigla, d.nome ";
+            sql += "GROUP BY d.SG_PROCESSO, d.NO_PROCESSO ";
 
             Query query = getSession().createSQLQuery(
                     sql)
@@ -71,28 +71,15 @@ public class PesquisaDAO {
     }
 
     public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
-        String sql = " SELECT " +
-                "        s.nome, " +
-                "        d.cod, " +
-                "        d.nome AS nome_definicao, " +
-                "        ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS mean  " +
-                "    FROM " +
-                "        dmd_tarefa t " +
-                "        INNER JOIN dmd_situacao s " +
-                "        ON t.cod_situacao = s.cod " +
-                "    INNER JOIN " +
-                "        DMD_DEMANDA dem  " +
-                "        ON t.cod_demanda = dem.cod " +
-                "    INNER JOIN " +
-                "        DMD_definicao d     " +
-                "            ON d.cod = dem.cod_definicao  " +
-                "    WHERE " +
-                "        dem.data_fim IS NOT NULL   " +
-                "        AND d.cod = :processId " +
-                "    GROUP BY " +
-                "        s.nome, " +
-                "        d.cod, " +
-                "        d.nome ";
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD, d.NO_PROCESSO AS NOME_DEFINICAO," +
+                " ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS MEAN" +
+                " FROM DMD_TAREFA t" +
+                " INNER JOIN TB_DEFINICAO_TAREFA s ON s.CO_DEFINICAO_TAREFA = t.cod_situacao" +
+                " INNER JOIN TB_TAREFA TAR ON s.CO_DEFINICAO_TAREFA = TAR.CO_DEFINICAO_TAREFA" +
+                " INNER JOIN DMD_DEMANDA dem ON t.cod_demanda = dem.cod" +
+                " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = dem.cod_definicao" +
+                " WHERE dem.data_fim IS NOT NULL AND d.CO_DEFINICAO_PROCESSO = :processId" +
+                " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO";
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)

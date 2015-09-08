@@ -65,10 +65,11 @@ public class InstanceDAO {
                 + " DATEDIFF(SECOND, data_situacao_atual, GETDATE()) AS DELTAS, data_situacao_atual AS DS,"
                 + " PES.nome_guerra AS USUARIO"
                 + " FROM DMD_DEMANDA DEM"
-                + "  LEFT JOIN DMD_DEFINICAO DEF ON DEF.cod = DEM.cod_definicao"
-                + "  LEFT JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
+                + "  LEFT JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
+                + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                + "  LEFT JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
                 + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = DEM.cod_pessoa_alocada"
-                + " WHERE (DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal()
+                + " WHERE (DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + ") AND DEM.cod_definicao = :id " + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("CODIGO", LongType.INSTANCE)
@@ -89,10 +90,11 @@ public class InstanceDAO {
     public int countAll(Long id) {
         return ((Number) getSession().createSQLQuery(
                 "SELECT COUNT(DISTINCT DEM.cod) FROM DMD_DEMANDA DEM"
-                        + "  LEFT JOIN DMD_DEFINICAO DEF ON DEF.cod = DEM.cod_definicao"
-                        + "  LEFT JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
+                        + "  LEFT JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
+                        + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                        + "  LEFT JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
                         + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = DEM.cod_pessoa_alocada"
-                        + " WHERE (DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal()
+                        + " WHERE (DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                         + ") AND DEM.cod_definicao = :id")
                 .setParameter("id", id)
                 .uniqueResult()).intValue();
@@ -115,11 +117,11 @@ public class InstanceDAO {
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period, Long definitionId,
             List<Long> excludeStatuses) {
-        String sql = "SELECT SIT.nome AS SITUACAO, COUNT(DEM.cod) AS QUANTIDADE"
-                + " FROM DMD_DEMANDA DEM LEFT JOIN DMD_SITUACAO SIT ON SIT.cod = DEM.cod_situacao"
+        String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.cod) AS QUANTIDADE"
+                + " FROM DMD_DEMANDA DEM LEFT JOIN TB_TAREFA SIT ON SIT.CO_TAREFA = DEM.cod_situacao"
                 + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEM.cod_definicao = :definitionId"
                 + " AND DEM.cod_situacao NOT IN (:excludeStatuses)"
-                + " GROUP BY SIT.nome";
+                + " GROUP BY SIT.NO_TAREFA";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("SITUACAO", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
@@ -135,11 +137,12 @@ public class InstanceDAO {
     public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
         String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio,"
                 + " DATEADD(DAY, 1, DEM.data_fim)) as DIAS"
-                + " FROM DMD_DEFINICAO DEF"
-                + "  INNER JOIN DMD_DEMANDA DEM ON DEF.cod = DEM.cod_definicao"
-                + "  INNER JOIN DMD_SITUACAO SIT ON DEF.cod = SIT.cod_definicao"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "  INNER JOIN DMD_DEMANDA DEM ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
+                + "  INNER JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                + "  INNER JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
                 + " WHERE "
-                + "  DEM.cod_situacao IS NULL OR SIT.cod_tipo_situacao != " + TaskType.End.ordinal()
+                + "  DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) > :media   "
                 + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) IS NOT NULL ";
         Query query;
