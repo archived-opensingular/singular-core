@@ -25,7 +25,7 @@ import br.net.mirante.singular.flow.core.TaskType;
 @Repository
 public class InstanceDAO {
 
-    private enum columns {
+    private enum Columns {
         description("DESCRICAO"),
         delta("DELTA"),
         date("DIN"),
@@ -35,7 +35,7 @@ public class InstanceDAO {
 
         private String code;
 
-        columns(String code) {
+        Columns(String code) {
             this.code = code;
         }
 
@@ -56,7 +56,7 @@ public class InstanceDAO {
     public List<Object[]> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id) {
         StringBuilder orderByStatement = new StringBuilder("");
         if (orderByProperty != null) {
-            orderByStatement.append("ORDER BY ").append(columns.valueOf(orderByProperty)).append(" ");
+            orderByStatement.append("ORDER BY ").append(Columns.valueOf(orderByProperty)).append(" ");
             orderByStatement.append(asc ? "ASC" : "DESC");
         }
 

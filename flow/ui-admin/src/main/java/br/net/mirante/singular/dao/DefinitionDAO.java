@@ -16,7 +16,7 @@ import br.net.mirante.singular.flow.core.TaskType;
 @Repository
 public class DefinitionDAO {
 
-    private enum columns {
+    private enum Columns {
         cod("CODIGO"),
         name("NOME"),
         category("CATEGORIA"),
@@ -27,7 +27,7 @@ public class DefinitionDAO {
 
         private String code;
 
-        columns(String code) {
+        Columns(String code) {
             this.code = code;
         }
 
@@ -61,7 +61,7 @@ public class DefinitionDAO {
     public List<Object[]> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         StringBuilder orderByStatement = new StringBuilder("");
         if (orderByProperty != null) {
-            orderByStatement.append("ORDER BY ").append(columns.valueOf(orderByProperty)).append(" ");
+            orderByStatement.append("ORDER BY ").append(Columns.valueOf(orderByProperty)).append(" ");
             orderByStatement.append(asc ? "ASC" : "DESC");
         }
 
@@ -97,6 +97,7 @@ public class DefinitionDAO {
     }
 
     public int countAll() {
-        return ((Number) getSession().createSQLQuery("SELECT COUNT(*) FROM TB_DEFINICAO_PROCESSO").uniqueResult()).intValue();
+        return ((Number) getSession()
+                .createSQLQuery("SELECT COUNT(*) FROM TB_DEFINICAO_PROCESSO").uniqueResult()).intValue();
     }
 }

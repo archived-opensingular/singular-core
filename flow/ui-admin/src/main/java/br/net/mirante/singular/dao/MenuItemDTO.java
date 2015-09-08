@@ -8,15 +8,15 @@ public class MenuItemDTO implements Serializable {
     private static final long serialVersionUID = 25234058060013546L;
 
     private Long id;
-    private String label;
-    private String href;
+    private String name;
+    private String code;
     private Integer counter;
     private List<MenuItemDTO> itens;
 
-    public MenuItemDTO(Long id, String label, String href, Integer counter) {
+    public MenuItemDTO(Long id, String name, String code, Integer counter) {
         this.id = id;
-        this.label = label;
-        this.href = href;
+        this.name = name;
+        this.code = code;
         this.counter = counter;
         this.itens = new ArrayList<>();
     }
@@ -25,12 +25,12 @@ public class MenuItemDTO implements Serializable {
         return id;
     }
 
-    public String getLabel() {
-        return label;
+    public String getName() {
+        return name;
     }
 
-    public String getHref() {
-        return href;
+    public String getCode() {
+        return code;
     }
 
     public Integer getCounter() {

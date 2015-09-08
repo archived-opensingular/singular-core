@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.CategoryMenuDAO;
@@ -18,6 +19,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
+    @Cacheable(value = "retrieveAllCategoriesMenu", cacheManager = "cacheManager")
     public List<MenuItemDTO> retrieveAllCategories() {
         return categoryMenuDAO.retrieveAll();
     }
