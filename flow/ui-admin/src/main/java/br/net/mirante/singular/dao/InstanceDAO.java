@@ -60,17 +60,17 @@ public class InstanceDAO {
             orderByStatement.append(asc ? "ASC" : "DESC");
         }
 
-        String sql = "SELECT DISTINCT DEM.cod AS CODIGO, DEM.descricao AS DESCRICAO,"
-                + " DATEDIFF(SECOND, data_inicio, GETDATE()) AS DELTA, data_inicio AS DIN,"
+        String sql = "SELECT DISTINCT DEM.CO_INSTANCIA_PROCESSO AS CODIGO, DEM.DS_INSTANCIA_PROCESSO AS DESCRICAO,"
+                + " DATEDIFF(SECOND, DT_INICIO, GETDATE()) AS DELTA, DT_INICIO AS DIN,"
                 + " DATEDIFF(SECOND, data_situacao_atual, GETDATE()) AS DELTAS, data_situacao_atual AS DS,"
                 + " PES.nome_guerra AS USUARIO"
-                + " FROM DMD_DEMANDA DEM"
-                + "  LEFT JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
-                + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "  LEFT JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
+                + " FROM TB_INSTANCIA_PROCESSO DEM"
+                + "  INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "  LEFT JOIN TB_TAREFA SIT ON PRO.CO_PROCESSO = SIT.CO_PROCESSO"
                 + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = DEM.cod_pessoa_alocada"
                 + " WHERE (DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + ") AND DEM.cod_definicao = :id " + orderByStatement.toString();
+                + ") AND PRO.CO_DEFINICAO_PROCESSO = :id " + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("CODIGO", LongType.INSTANCE)
                 .addScalar("DESCRICAO", StringType.INSTANCE)
@@ -89,23 +89,25 @@ public class InstanceDAO {
 
     public int countAll(Long id) {
         return ((Number) getSession().createSQLQuery(
-                "SELECT COUNT(DISTINCT DEM.cod) FROM DMD_DEMANDA DEM"
-                        + "  LEFT JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
+                "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO)"
+                        + " FROM TB_INSTANCIA_PROCESSO DEM"
+                        + "  INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                        + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                         + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
                         + "  LEFT JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
-                        + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = DEM.cod_pessoa_alocada"
                         + " WHERE (DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                        + ") AND DEM.cod_definicao = :id")
+                        + ") AND PRO.CO_DEFINICAO_PROCESSO = :id")
                 .setParameter("id", id)
                 .uniqueResult()).intValue();
     }
 
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveNewQuantityLastYear() {
-        String sql = "SET LANGUAGE Portuguese;SELECT UPPER(SUBSTRING(DATENAME(MONTH, data_inicio), 0, 4)) AS MES, COUNT(cod) AS QUANTIDADE"
-                + " FROM DMD_DEMANDA"
-                + " WHERE data_inicio >= (GETDATE() - 365)"
-                + " GROUP BY MONTH(data_inicio), DATENAME(MONTH, data_inicio) ORDER BY MONTH(data_inicio)";
+        String sql = "SET LANGUAGE Portuguese;"
+                + "SELECT DATENAME(MONTH, DT_INICIO) AS MES, COUNT(CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_INSTANCIA_PROCESSO"
+                + " WHERE DT_INICIO >= (GETDATE() - 365)"
+                + " GROUP BY MONTH(DT_INICIO), DATENAME(MONTH, DT_INICIO) ORDER BY MONTH(DT_INICIO)";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("MES", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
@@ -117,9 +119,11 @@ public class InstanceDAO {
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period, Long definitionId,
             List<Long> excludeStatuses) {
-        String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.cod) AS QUANTIDADE"
-                + " FROM DMD_DEMANDA DEM LEFT JOIN TB_TAREFA SIT ON SIT.CO_TAREFA = DEM.cod_situacao"
-                + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEM.cod_definicao = :definitionId"
+        String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_INSTANCIA_PROCESSO DEM"
+                + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + " LEFT JOIN TB_TAREFA SIT ON SIT.CO_TAREFA = DEM.cod_situacao"
+                + " WHERE DEM.data_situacao_atual >= :startPeriod AND PRO.CO_DEFINICAO_PROCESSO = :definitionId"
                 + " AND DEM.cod_situacao NOT IN (:excludeStatuses)"
                 + " GROUP BY SIT.NO_TAREFA";
         Query query = getSession().createSQLQuery(sql)
@@ -135,22 +139,25 @@ public class InstanceDAO {
 
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
-        String sql = "SELECT DEM.descricao AS DESCRICAO, DATEDIFF(DAY, DEM.data_inicio,"
-                + " DATEADD(DAY, 1, DEM.data_fim)) as DIAS"
+        String sql = "SELECT DEM.DS_INSTANCIA_PROCESSO AS DESCRICAO,"
+                + " DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) as DIAS"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "  INNER JOIN DMD_DEMANDA DEM ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
+                + "  INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "  INNER JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
                 + "  INNER JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
                 + "  INNER JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
-                + " WHERE "
+                + " WHERE"
                 + "  DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) > :media   "
-                + "  AND DATEDIFF(DAY, DEM.data_inicio, DATEADD(DAY, 1, DEM.data_fim)) IS NOT NULL ";
+                + "  AND DEF.SG_PROCESSO = :sigla"
+                + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) > :media"
+                + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) IS NOT NULL";
         Query query;
         query = getSession().createSQLQuery(sql)
                 .addScalar("DESCRICAO", StringType.INSTANCE)
                 .addScalar("DIAS", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("media", media);
+        query.setParameter("sigla", sigla);
         query.setMaxResults(30);
         return (List<Map<String, String>>) query.list();
     }

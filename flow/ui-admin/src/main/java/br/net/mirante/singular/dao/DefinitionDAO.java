@@ -65,22 +65,26 @@ public class DefinitionDAO {
             orderByStatement.append(asc ? "ASC" : "DESC");
         }
 
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA, CAT.NO_CATEGORIA AS CATEGORIA,"
-                + " COUNT(DISTINCT DEM.cod) AS QUANTIDADE, AVG(DATEDIFF(SECOND, DEM.data_inicio, DEM.data_fim)) AS TEMPO,"
-                + "     (SELECT AVG(SUBDEM.THRO) FROM ("
-                + "       SELECT cod_definicao AS COD, MONTH(data_fim) AS MES, COUNT(cod) AS THRO"
-                + "       FROM DMD_DEMANDA"
-                + "       WHERE data_fim IS NOT NULL AND cod_definicao = DEF.CO_DEFINICAO_PROCESSO"
-                + "       GROUP BY cod_definicao, MONTH(data_fim)"
-                + "     ) SUBDEM GROUP BY SUBDEM.COD) AS THROU"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "    INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
-                + "  LEFT JOIN DMD_DEMANDA DEM ON DEF.CO_DEFINICAO_PROCESSO = DEM.cod_definicao"
-                + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "  LEFT JOIN TB_TAREFA SIT ON DFT.CO_DEFINICAO_TAREFA = SIT.CO_DEFINICAO_TAREFA"
-                + " WHERE"
-                + "  DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + " GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA " + orderByStatement.toString();
+        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
+                + "          CAT.NO_CATEGORIA AS CATEGORIA, COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
+                + "          AVG(DATEDIFF(SECOND, DEM.DT_INICIO, DEM.DT_FIM)) AS TEMPO,"
+                + "          (SELECT AVG(SUBDEM.THRO) FROM ("
+                + "             SELECT CO_DEFINICAO_PROCESSO AS COD, MONTH(DT_FIM) AS MES,"
+                + "                    COUNT(CO_INSTANCIA_PROCESSO) AS THRO"
+                + "             FROM TB_INSTANCIA_PROCESSO TBIP"
+                + "               INNER JOIN TB_PROCESSO TBP ON TBP.CO_PROCESSO = TBIP.CO_PROCESSO"
+                + "             WHERE DT_FIM IS NOT NULL AND TBP.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                + "             GROUP BY CO_DEFINICAO_PROCESSO, MONTH(DT_FIM)"
+                + "          ) SUBDEM GROUP BY SUBDEM.COD) AS THROU"
+                + "   FROM TB_DEFINICAO_PROCESSO DEF"
+                + "     INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + "     INNER JOIN TB_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                + "     LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "     LEFT JOIN TB_TAREFA SIT ON PRO.CO_PROCESSO = SIT.CO_PROCESSO"
+                + "   WHERE"
+                + "     DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
+                + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA "
+                + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("CODIGO", LongType.INSTANCE)
                 .addScalar("NOME", StringType.INSTANCE)
