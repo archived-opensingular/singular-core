@@ -84,10 +84,10 @@ public class DashboardContent extends Content {
                 "label.chart.mean.time.task.subtitle",
                 processDefinitionCode == null
                         ? new StringResourceModel("label.chart.mean.time.task.default", this).getString() : null,
-                "MEAN", "NOME") {
+                "MEAN", "NOME", true, false) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveMeanTimeByTask(
+                return pesquisaService.retrieveMeanTimeByTask(periodType.getPeriod(),
                         processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
             }
         });
