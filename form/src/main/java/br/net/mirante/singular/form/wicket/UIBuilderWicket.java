@@ -45,6 +45,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
 import br.net.mirante.singular.util.wicket.util.IBehaviorsMixin;
@@ -326,14 +327,17 @@ public class UIBuilderWicket {
         }
         static BSCol newElementCol(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index) {
             BSContainer<?> panel = grid.newColInRow()
-                .newTag("div", true, "class='panel panel-default'", id -> new BSContainer<>(id));
+                .newTag("div", true, "class='panel panel-default'",
+                        (IBSComponentFactory<BSContainer<?>>) id -> new BSContainer<>(id));
 
             MInstancia iItem = itemModel.getObject();
             String label = iItem.as(AtrBasic.class).getLabel();
             if (StringUtils.isNotBlank(label)) {
-                panel.newTag("div", true, "class='panel-heading'", id -> new Label(id, label));
+                panel.newTag("div", true, "class='panel-heading'",
+                        (IBSComponentFactory<Label>) id -> new Label(id, label));
             }
-            BSGrid panelBody = panel.newTag("div", true, "class='panel-body'", id -> new BSGrid(id));
+            BSGrid panelBody = panel.newTag("div", true, "class='panel-body'",
+                    (IBSComponentFactory<BSGrid>) BSGrid::new);
             return panelBody.newColInRow();
         }
     }
