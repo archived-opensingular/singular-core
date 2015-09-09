@@ -5,26 +5,18 @@ import java.util.Date;
 import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityTaskHistoric extends IEntityByCod {
+    
+    IEntityTaskInstance getTaskInstance();
 
-    Date getData();
+    Date getBeginDateAllocation();
 
-    void setData(Date data);
+    Date getEndDateAllocation();
 
-    MUser getPessoaAlocada();
+    MUser getAllocatedUser();
 
-    void setPessoaAlocada(MUser pessoaAlocada);
+    MUser getAllocatorUser();
 
-    MUser getPessoaAlocadora();
+    String getDescription();
 
-    void setPessoaAlocadora(MUser pessoaAlocadora);
-
-    String getTextoDetalhamento();
-
-    void setTextoDetalhamento(String textoDetalhamento);
-
-    IEntityTaskInstance getTarefa();
-
-    IEntityProcessInstance getDemanda();
-
-    String getDescricaoTipo();
+    IEntityTaskHistoricType getType();
 }

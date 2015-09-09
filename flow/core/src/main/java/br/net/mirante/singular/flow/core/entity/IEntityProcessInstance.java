@@ -25,7 +25,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     List<? extends IEntityVariableInstance> getVariables();
 
-    List<? extends IEntityVariable> getHistoricalVariables();
+    List<? extends IEntityExecutionVariable> getHistoricalVariables();
 
     List<? extends IEntityRole> getRoles();
 
@@ -75,5 +75,9 @@ public interface IEntityProcessInstance extends IEntityByCod {
             }
         }
         return null;
+    }
+    
+    default IEntityVariableInstance getVariable(String ref) {
+        return getVariables().stream().filter(var -> var.getName().equalsIgnoreCase(ref)).findAny().orElse(null);
     }
 }

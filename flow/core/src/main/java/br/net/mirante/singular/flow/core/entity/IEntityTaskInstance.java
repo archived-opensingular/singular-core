@@ -25,9 +25,9 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     IEntityTaskTransition getExecutedTransition();
     
-    List<? extends IEntityVariable> getInputVariables();
+    List<? extends IEntityExecutionVariable> getInputVariables();
 
-    List<? extends IEntityVariable> getOutputVariables();
+    List<? extends IEntityExecutionVariable> getOutputVariables();
     
     List<? extends IEntityTaskHistoric> getTaskHistoric();
 
