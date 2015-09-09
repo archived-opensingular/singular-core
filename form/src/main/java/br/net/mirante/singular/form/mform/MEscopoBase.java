@@ -57,20 +57,23 @@ public abstract class MEscopoBase implements MEscopo {
         return registrarTipo(novo, null);
     }
 
+    @SuppressWarnings("unchecked")
     final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, Class<T> classePai) {
-        MTipo<?> tipoPai = resolverTipo((Class) classePai);
+        MTipo<?> tipoPai = resolverTipo((Class<MTipo<MInstancia>>) classePai);
 
         T novo = tipoPai.extender(nomeSimplesNovoTipo, classePai);
 
         return registrarTipo(novo, null);
     }
 
+    @SuppressWarnings("unchecked")
     final MTipoLista<MTipoComposto<?>> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
         MTipoLista<MTipoComposto<?>> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
         tipoLista.setTipoElementosNovoTipoComposto(nomeSimplesNovoTipoComposto);
         return tipoLista;
     }
 
+    @SuppressWarnings("unchecked")
     final <T extends MTipo<?>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         Preconditions.checkNotNull(tipoElementos);
         MTipoLista<T> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);

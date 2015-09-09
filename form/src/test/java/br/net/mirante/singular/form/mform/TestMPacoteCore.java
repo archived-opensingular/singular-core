@@ -440,7 +440,7 @@ public class TestMPacoteCore extends TestCaseForm {
 
         MTipoLista<MTipoString> nomes = pb.createTipoListaOf("nomes", MTipoString.class);
 
-        MILista<MIString> lista = nomes.novaInstancia();
+        MILista<MIString> lista = (MILista<MIString>) nomes.novaInstancia();
         lista.addValor("Paulo");
         assertLista(lista, new String[] {"Paulo"});
         lista.addValor("Joao");
@@ -477,7 +477,7 @@ public class TestMPacoteCore extends TestCaseForm {
         tipoPedidos.getTipoElementos().addCampoString("descricao");
         tipoPedidos.getTipoElementos().addCampoInteger("qtd");
 
-        MILista<MIComposto> pedidos = tipoPedidos.novaInstancia();
+        MILista<MIComposto> pedidos = (MILista<MIComposto>) tipoPedidos.novaInstancia();
         MIComposto pedido;
         assertException(() -> pedidos.addValor("Paulo"), "Método não suportado");
         pedido = pedidos.addNovo();
@@ -512,7 +512,7 @@ public class TestMPacoteCore extends TestCaseForm {
 
         MTipoLista<MTipoFormula> tipoFormulas = pb.createTipoListaOf("formulas", MTipoFormula.class);
 
-        MILista<MIFormula> formulas = tipoFormulas.novaInstancia();
+        MILista<MIFormula> formulas = (MILista<MIFormula>) tipoFormulas.novaInstancia();
 
         MIFormula formula = formulas.addNovo();
         formula.setSciptJS("XXX");

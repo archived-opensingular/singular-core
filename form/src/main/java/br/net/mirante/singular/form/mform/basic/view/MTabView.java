@@ -1,48 +1,44 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
-public class MTabView implements MView {
+public class MTabView extends MView {
+
+    private MTab tabDefault;
 
     @Override
     public boolean aplicavelEm(MTipo<?> tipo) {
         return true;
     }
 
-    public MTab addTab(String titulo, boolean tabDefault) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
-    }
-
     public MTab addTab(String titulo) {
-        return addTab(titulo, false);
+        MTab tab = new MTab(titulo);
+        if (tabDefault == null) {
+            tabDefault = tab;
+        }
+        return tab;
     }
 
-    public MTab addTab(MTipo tipo) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
-    }
-
-    public MTabView withNaoDefinidosVaoParaTabDoIrmaoAnterior() {
-        return this;
-    }
-
-    public MTabView withNaoDefinidosVaoParaTabDefault() {
-        return this;
+    public MTab addTab(MTipo<?> tipo) {
+        return addTab(tipo.as(AtrBasic.class).getLabel())
+            .add(tipo);
     }
 
     public final class MTab {
-
-        private MTab() {
+        private final String titulo;
+        private MTab(String titulo) {
+            this.titulo = titulo;
         }
-
-        ;
-
         public MTab add(MTipo<?> campo) {
             return this;
         }
-
+        public String getTitulo() {
+            return titulo;
+        }
+        public MTab setDefault() {
+            MTabView.this.tabDefault = this;
+            return this;
+        }
     }
 }

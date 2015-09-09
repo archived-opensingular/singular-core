@@ -16,6 +16,8 @@ import br.net.mirante.singular.form.util.xml.MElement;
 public class MformPersistenciaXML {
 
     public static void fromXML(MTipo<?> tipo, MInstancia instancia, MElement xml) {
+        if (xml == null)
+            return;
         if (tipo instanceof MTipoComposto<?>) {
             MTipoComposto<?> tipoc = (MTipoComposto<?>) tipo;
             MIComposto instc = (MIComposto) instancia;

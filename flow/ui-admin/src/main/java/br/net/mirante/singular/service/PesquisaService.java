@@ -12,5 +12,5 @@ public interface PesquisaService {
 
     List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period);
 
-    List<Map<String, String>> retrieveMeanTimeByTask(Long processId);
+    List<Map<String, String>> retrieveMeanTimeByTask(String processCode);
 }

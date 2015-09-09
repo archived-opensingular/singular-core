@@ -19,8 +19,11 @@ public class DashboardContent extends Content {
     @Inject
     private PesquisaService pesquisaService;
 
-    public DashboardContent(String id) {
+    private String processDefinitionCode;
+
+    public DashboardContent(String id, String processDefinitionCode) {
         super(id);
+        this.processDefinitionCode = processDefinitionCode;
     }
 
     @Override
@@ -76,7 +79,8 @@ public class DashboardContent extends Content {
                 "label.chart.mean.time.task.subtitle", "MEAN", "NOME") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveMeanTimeByTask(25L);
+                return pesquisaService.retrieveMeanTimeByTask(
+                        processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
             }
         });
     }

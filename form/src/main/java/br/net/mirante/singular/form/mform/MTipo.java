@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -46,6 +47,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     private final Class<? extends I>        classeInstancia;
 
     private MTipo<I>                        superTipo;
+
+    private MView                           view;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -312,16 +315,19 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return aspectFactory.apply(this);
     }
 
-    public MTipo<I> withView(Class<? extends MView> classeAlvo) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+    public MTipo<I> withView(Supplier<MView> factory) {
+        this.view = factory.get();
+        return this;
     }
 
-    public <T extends MView> T setView(Class<T> classeAlvo) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+    public <T extends MView> T setView(Supplier<T> factory) {
+        T v = factory.get();
+        this.view = v;
+        return v;
     }
-
+    public MView getView() {
+        return (this.view != null) ? this.view : MView.DEFAULT;
+    }
     public <T> void addValidacao(IValidator<T> validador) {
         // TODO implementar
         throw new NotImplementedException("TODO implementar");

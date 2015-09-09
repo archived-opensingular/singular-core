@@ -33,19 +33,19 @@ public class PesquisaDAO {
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
         if (!cache.containsKey(period)) {
-            String sql = "SELECT d.nome, " +
-                    "       AVG(DATEDIFF(DAY, dem.data_inicio, DATEADD(DAY, 1, dem.data_fim))) AS MEAN, " +
-                    "       d.sigla AS SIGLA " +
-                    "FROM dbo.DMD_DEMANDA dem " +
-                    "INNER JOIN dbo.DMD_definicao d " +
-                    "   ON d.cod = dem.cod_definicao " +
-                    "WHERE dem.data_fim IS NOT NULL ";
+            String sql = "SELECT d.NO_PROCESSO AS NOME,"
+                    + " AVG(DATEDIFF(DAY, dem.DT_INICIO, DATEADD(DAY, 1, dem.DT_FIM))) AS MEAN,"
+                    + " d.SG_PROCESSO AS SIGLA"
+                    + " FROM TB_INSTANCIA_PROCESSO dem"
+                    + "  INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = dem.CO_PROCESSO"
+                    + "  INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                    + " WHERE dem.DT_FIM IS NOT NULL";
 
             if (period != null) {
-                sql += " AND dem.data_inicio >= :startPeriod AND dem.data_inicio <= :endPeriod ";
+                sql += " AND dem.DT_INICIO >= :startPeriod AND dem.DT_FIM <= :endPeriod";
             }
 
-            sql += "GROUP BY d.sigla, d.nome ";
+            sql += " GROUP BY d.SG_PROCESSO, d.NO_PROCESSO";
 
             Query query = getSession().createSQLQuery(
                     sql)
@@ -70,29 +70,16 @@ public class PesquisaDAO {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public List<Map<String, String>> retrieveMeanTimeByTask(Long processId) {
-        String sql = " SELECT " +
-                "        s.nome, " +
-                "        d.cod, " +
-                "        d.nome AS nome_definicao, " +
-                "        ISNULL(AVG(DATEDIFF(DAY, t.data_inicio, DATEADD(DAY, 1, t.data_fim))), 0) AS mean  " +
-                "    FROM " +
-                "        dbo.dmd_tarefa t " +
-                "        inner join dbo.dmd_situacao s " +
-                "        on t.cod_situacao = s.cod " +
-                "    inner join " +
-                "        dbo.DMD_DEMANDA dem  " +
-                "        on t.cod_demanda = dem.cod " +
-                "    INNER JOIN " +
-                "        dbo.DMD_definicao d     " +
-                "            ON d.cod = dem.cod_definicao  " +
-                "    WHERE " +
-                "        dem.data_fim IS NOT NULL   " +
-                "        and d.cod = :processId " +
-                "    GROUP BY " +
-                "        s.nome, " +
-                "        d.cod, " +
-                "        d.nome " ;
+    public List<Map<String, String>> retrieveMeanTimeByTask(String processCode) {
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD, d.NO_PROCESSO AS NOME_DEFINICAO," +
+                " ISNULL(AVG(DATEDIFF(DAY, t.DT_INICIO, DATEADD(DAY, 1, t.DT_FIM))), 0) AS MEAN" +
+                " FROM TB_INSTANCIA_TAREFA t" +
+                " INNER JOIN TB_TAREFA TAR ON TAR.CO_TAREFA = t.CO_TAREFA" +
+                " INNER JOIN TB_INSTANCIA_PROCESSO dem ON t.CO_INSTANCIA_PROCESSO = dem.CO_INSTANCIA_PROCESSO" +
+                " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = dem.CO_PROCESSO" +
+                " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO" +
+                " WHERE dem.DT_FIM IS NOT NULL AND d.SG_PROCESSO = :processCode" +
+                " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO";
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
@@ -100,7 +87,7 @@ public class PesquisaDAO {
                 .addScalar("NOME_DEFINICAO", StringType.INSTANCE)
                 .addScalar("MEAN", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .setParameter("processId", processId);
+                .setParameter("processCode", processCode);
 
         return (List<Map<String, String>>) query.list();
     }
