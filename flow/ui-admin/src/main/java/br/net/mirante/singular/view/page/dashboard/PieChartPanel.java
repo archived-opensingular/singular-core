@@ -38,6 +38,11 @@ public abstract class PieChartPanel extends Panel {
         this(id, title, subtitle, valueField, titleField, titleGraph, false, false, false);
     }
 
+    public PieChartPanel(String id, String title, String subtitle, String titleGraph,
+            String valueField, String titleField, boolean withFilter, boolean isDonut) {
+        this(id, title, subtitle, valueField, titleField, titleGraph, withFilter, false, isDonut);
+    }
+
     public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
             boolean withFilter, boolean isDonut) {
         this(id, title, subtitle, valueField, titleField, null, withFilter, false, isDonut);
@@ -54,8 +59,8 @@ public abstract class PieChartPanel extends Panel {
         this.withLegend = withLegend;
         this.isDonut = isDonut;
         this.titleGraph = (titleGraph != null
-                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph)
-                : null);
+                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}",
+                new ResourceModel(titleGraph).getObject()) : null);
     }
 
     @Override
@@ -123,13 +128,13 @@ public abstract class PieChartPanel extends Panel {
                 "                \"marginTop\": -50," +
                 "                \"balloonText\": \"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>\"," +
                 "                \"depth3D\": 15," +
-     (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
+                (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
                 "                \"labelRadius\": 50," +
                 "                \"titleField\": \"" + titleField + "\"," +
                 "                \"valueField\": \"" + valueField + "\"," +
                 "                \"allLabels\": []," +
                 "                \"balloon\": {}," +
-  (withLegend ? "                \"legend\": {\"align\": \"center\", \"markerType\": \"circle\"}," : "") +
+                (withLegend ? "                \"legend\": {\"align\": \"center\", \"markerType\": \"circle\"}," : "") +
                 "                \"titles\": [" + (titleGraph != null ? titleGraph : "") + "]," +
                 "                \"dataProvider\": " + parseToJson(dadosGrafico) +
                 "           });";

@@ -69,7 +69,9 @@ public class DashboardContent extends Content {
             }
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
-                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true, true) {
+                "label.chart.status.hour.quantity.subtitle",
+                processDefinitionCode == null ? "label.chart.status.hour.quantity.default" : null,
+                "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
@@ -77,7 +79,8 @@ public class DashboardContent extends Content {
             }
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
-                "label.chart.mean.time.task.subtitle", "MEAN", "NOME") {
+                "label.chart.mean.time.task.subtitle",
+                processDefinitionCode == null ? "label.chart.mean.time.task.default" : null, "MEAN", "NOME") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveMeanTimeByTask(
