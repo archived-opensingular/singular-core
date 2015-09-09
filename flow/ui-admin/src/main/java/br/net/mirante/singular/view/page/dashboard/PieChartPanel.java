@@ -59,8 +59,7 @@ public abstract class PieChartPanel extends Panel {
         this.withLegend = withLegend;
         this.isDonut = isDonut;
         this.titleGraph = (titleGraph != null
-                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}",
-                new ResourceModel(titleGraph).getObject()) : null);
+                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph) : null);
     }
 
     @Override

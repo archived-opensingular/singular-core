@@ -9,6 +9,7 @@ import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.view.template.Content;
@@ -70,7 +71,8 @@ public class DashboardContent extends Content {
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
                 "label.chart.status.hour.quantity.subtitle",
-                processDefinitionCode == null ? "label.chart.status.hour.quantity.default" : null,
+                processDefinitionCode == null
+                        ? new StringResourceModel("label.chart.status.hour.quantity.default", this).getString() : null,
                 "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
@@ -80,7 +82,9 @@ public class DashboardContent extends Content {
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
                 "label.chart.mean.time.task.subtitle",
-                processDefinitionCode == null ? "label.chart.mean.time.task.default" : null, "MEAN", "NOME") {
+                processDefinitionCode == null
+                        ? new StringResourceModel("label.chart.mean.time.task.default", this).getString() : null,
+                "MEAN", "NOME") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveMeanTimeByTask(
