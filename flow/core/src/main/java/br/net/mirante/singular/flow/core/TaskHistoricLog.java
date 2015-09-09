@@ -21,22 +21,22 @@ public final class TaskHistoricLog {
     }
 
     public ProcessInstance getProcessInstance() {
-        return MBPM.getProcessInstance(historic.getTarefa().getProcessInstance());
+        return MBPM.getProcessInstance(historic.getTaskInstance().getProcessInstance());
     }
 
-    public MUser getResponsibleUser() {
-        return historic.getPessoaAlocadora();
+    public MUser getAllocatorUser() {
+        return historic.getAllocatorUser();
     }
 
     public MUser getAllocatedUser() {
-        return historic.getPessoaAlocada();
+        return historic.getAllocatedUser();
     }
 
     public String getTypeDescription() {
-        return historic.getDescricaoTipo();
+        return historic.getType().getDescription();
     }
 
-    public String getDetail() {
-        return historic.getTextoDetalhamento();
+    public String getDescription() {
+        return historic.getDescription();
     }
 }

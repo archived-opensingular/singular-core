@@ -93,9 +93,9 @@ public class FlowMap implements Serializable {
         return ImmutableSet.copyOf(rolesByAbbreviation.values());
     }
 
-    public MProcessRole addRoleDefinition(String name, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
+    public MProcessRole addRoleDefinition(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
-        final MProcessRole processRole = new MProcessRole(name, userRoleSettingStrategy, automaticUserAllocation);
+        final MProcessRole processRole = new MProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
         }

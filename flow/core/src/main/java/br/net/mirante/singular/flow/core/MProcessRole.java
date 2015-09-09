@@ -14,10 +14,11 @@ public final class MProcessRole implements Serializable {
     private final UserRoleSettingStrategy<ProcessInstance> userRoleSettingStrategy;
 
     @SuppressWarnings("unchecked")
-    MProcessRole(String name, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
+    MProcessRole(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy, boolean automaticUserAllocation) {
         Objects.requireNonNull(name);
+        Objects.requireNonNull(abbreviation);
         Objects.requireNonNull(userRoleSettingStrategy);
-        this.abbreviation = MBPMUtil.convertToJavaIdentity(name, true);
+        this.abbreviation = abbreviation;
         this.name = name;
         this.userRoleSettingStrategy = (UserRoleSettingStrategy<ProcessInstance>) userRoleSettingStrategy;
         this.automaticUserAllocation = automaticUserAllocation;
