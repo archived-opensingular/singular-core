@@ -12,6 +12,8 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.service.PesquisaService;
+import br.net.mirante.singular.util.wicket.resource.Color;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
@@ -54,10 +56,14 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", 1));
-        add(new StatusPanel("active-average-status-panel", "label.active.average.status", 2));
-        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 3));
-        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status", 4));
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", 15)
+                .setIcon(Icone.SPEEDOMETER));
+        add(new StatusPanel("active-average-status-panel", "label.active.average.status", 22)
+                .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
+        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
+                .setColor(Color.GREEN_SHARP));
+        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status", 47)
+                .setColor(Color.RED_SUNGLO));
         add(new FeedPanel("feed"));
         add(new SerialChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
                 "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {

@@ -5,6 +5,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 
+import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -15,6 +16,7 @@ public class StatusPanel extends Panel {
     private String labelKey;
     private Integer value;
     private Icone icon;
+    private Color color;
 
     private boolean withProgress;
     private String progressLabelKey;
@@ -25,6 +27,7 @@ public class StatusPanel extends Panel {
         this.labelKey = labelKey;
         this.value = value;
         this.icon = Icone.PIE;
+        this.color = Color.BLUE_SHARP;
         this.withProgress = false;
         this.progressLabelKey = "label.progress.label";
         this.progressValue = 0;
@@ -32,6 +35,11 @@ public class StatusPanel extends Panel {
 
     public StatusPanel setIcon(Icone icon) {
         this.icon = icon;
+        return this;
+    }
+
+    public StatusPanel setColor(Color color) {
+        this.color = color;
         return this;
     }
 
@@ -56,13 +64,14 @@ public class StatusPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         add(new Label("label", new ResourceModel(labelKey)));
-        add(new Label("value", $m.ofValue(value)));
+        add(new Label("value", $m.ofValue(value)).add($b.attr("class", color.getFontCssClass())));
         add(new WebMarkupContainer("icon").add($b.attr("class", icon.getCssClass())));
         WebMarkupContainer progress = new WebMarkupContainer("progress");
         if (!withProgress) {
             progress.add($b.attrAppender("class", "hide", " "));
         }
         WebMarkupContainer progressBar = new WebMarkupContainer("progressCSSValue");
+        progressBar.add($b.attrAppender("class", color.getCssClass(), " "));
         progressBar.add($b.attr("style", String.format("width: %d%%;", progressValue)));
         progressBar.add(new Label("progressLabelValue", $m.ofValue(String.format("%d%%", progressValue))));
         progress.add(progressBar);
