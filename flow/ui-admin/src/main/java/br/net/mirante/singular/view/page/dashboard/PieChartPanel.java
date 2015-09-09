@@ -24,6 +24,7 @@ public abstract class PieChartPanel extends Panel {
 
     private boolean isDonut;
     private boolean withFilter;
+    private boolean withLegend;
     private PeriodType periodType;
     private WebMarkupContainer pieChartDiv;
     private List<Map<String, String>> dadosGrafico;
@@ -34,22 +35,23 @@ public abstract class PieChartPanel extends Panel {
 
     public PieChartPanel(String id, String title, String subtitle, String titleGraph,
             String valueField, String titleField) {
-        this(id, title, subtitle, valueField, titleField, titleGraph, false, false);
+        this(id, title, subtitle, valueField, titleField, titleGraph, false, false, false);
     }
 
     public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
             boolean withFilter, boolean isDonut) {
-        this(id, title, subtitle, valueField, titleField, null, withFilter, isDonut);
+        this(id, title, subtitle, valueField, titleField, null, withFilter, false, isDonut);
     }
 
     public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
-            String titleGraph, boolean withFilter, boolean isDonut) {
+            String titleGraph, boolean withFilter, boolean withLegend, boolean isDonut) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
         this.valueField = valueField;
         this.titleField = titleField;
         this.withFilter = withFilter;
+        this.withLegend = withLegend;
         this.isDonut = isDonut;
         this.titleGraph = (titleGraph != null
                 ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph)
@@ -121,16 +123,13 @@ public abstract class PieChartPanel extends Panel {
                 "                \"marginTop\": -50," +
                 "                \"balloonText\": \"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>\"," +
                 "                \"depth3D\": 15," +
-                (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
+     (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
                 "                \"labelRadius\": 50," +
                 "                \"titleField\": \"" + titleField + "\"," +
                 "                \"valueField\": \"" + valueField + "\"," +
                 "                \"allLabels\": []," +
                 "                \"balloon\": {}," +
-                "                \"legend\": {" +
-                "                    \"align\": \"center\"," +
-                "                    \"markerType\": \"circle\"" +
-                "                }," +
+  (withLegend ? "                \"legend\": {\"align\": \"center\", \"markerType\": \"circle\"}," : "") +
                 "                \"titles\": [" + (titleGraph != null ? titleGraph : "") + "]," +
                 "                \"dataProvider\": " + parseToJson(dadosGrafico) +
                 "           });";
