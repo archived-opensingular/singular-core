@@ -43,16 +43,19 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
 
     public final List<I> retrieveActiveInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), pessoa, true));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
+                pessoa, true));
     }
 
     public final List<I> retrieveEndedInstances() {
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
+                null, false));
     }
 
     public final List<I> retrieveEndedInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), pessoa, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
+                pessoa, false));
     }
 
     public final List<I> retrieveAllInstancesIn(MTask<?> task) {
@@ -60,29 +63,31 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return retrieveAllInstancesIn(obterSituacaoPara != null ? Sets.newHashSet(obterSituacaoPara) : null);
     }
 
-    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, String... situacoesAlvo) {
+    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+            String... situacoesAlvo) {
         Set<IEntityTask> situacoes = convertToEntityTask(situacoesAlvo);
         return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas,
-            situacoes.toArray(new IEntityTask[situacoes.size()]));
+                situacoes.toArray(new IEntityTask[situacoes.size()]));
     }
 
-    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas, IEntityTask... situacoesAlvo) {
+    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+            IEntityTask... situacoesAlvo) {
         final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
         for (final IEntityTask situacao : situacoesAlvo) {
             if (situacao != null) {
-                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithAbbreviation(situacao.getAbbreviation())).getTaskDefinition());
+                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithAbbreviation(situacao.getAbbreviation()))
+                        .getTaskDefinition());
             }
         }
         if (estadosAlvo.isEmpty()) {
             if (!exibirEncerradas) {
-                for (IEntityTask situacao : getEntityProcess().getTasks()) {
-                    if (!situacao.isEnd()) {
-                        estadosAlvo.add(situacao.getTaskDefinition());
-                    }
-                }
+                estadosAlvo.addAll(getEntityProcess().getTasks()
+                        .stream().filter(situacao -> !situacao.isEnd())
+                        .map(IEntityTask::getTaskDefinition).collect(Collectors.toList()));
             }
         }
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), minDataInicio, maxDataInicio, estadosAlvo));
+        return convertToProcessInstance(getPersistenceService()
+                .retrieveProcessInstancesWith(getEntityProcess(), minDataInicio, maxDataInicio, estadosAlvo));
     }
 
     public final List<I> retrieveAllInstancesIn(String... situacoesAlvo) {
@@ -91,12 +96,17 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTask> situacoesAlvo) {
-        Set<IEntityTaskDefinition> estados = situacoesAlvo.stream().map(IEntityTask::getTaskDefinition).collect(Collectors.toSet());
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, null, estados));
+        Set<IEntityTaskDefinition> estados = null;
+        if (situacoesAlvo != null) {
+            estados = situacoesAlvo.stream().map(IEntityTask::getTaskDefinition).collect(Collectors.toSet());
+        }
+        return convertToProcessInstance(getPersistenceService()
+                .retrieveProcessInstancesWith(getEntityProcess(), null, null, estados));
     }
 
     public final List<I> retrieveActiveInstancesWithPeopleOrWaiting() {
-        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait()));
+        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks()
+                .stream().filter(t -> t.isPeople() || t.isWait()));
         return retrieveAllInstancesIn(estadosAlvo);
     }
 
@@ -146,7 +156,9 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.convertToProcessInstance(entities);
     }
 
-    private final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance,
+            IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole,
+            IEntityRole> getPersistenceService() {
         return processDefinition.getPersistenceService();
     }
 }

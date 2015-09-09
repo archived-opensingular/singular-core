@@ -195,25 +195,23 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public final IEntityProcess getEntity() {
-        if (entityCod == null) {
-            synchronized (this) {
-                if (entityCod == null) {
-                    IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
-                    
-                    IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
-                    if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
+        synchronized (this) {
+            if (entityCod == null) {
+                IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
 
-                        entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
-                    } else {
-                        entityCod = oldEntity.getCod();
-                    }
+                IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
+                if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
 
-                    return entityProcess;
+                    entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
+                } else {
+                    entityCod = oldEntity.getCod();
                 }
+
+                return entityProcess;
             }
         }
-        final IEntityProcess def = getPersistenceService().retrieveProcessDefinitionByCod(entityCod);
 
+        final IEntityProcess def = getPersistenceService().retrieveProcessDefinitionByCod(entityCod);
         if (def == null) {
             entityCod = null;
             throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: codigo não encontrado"));
