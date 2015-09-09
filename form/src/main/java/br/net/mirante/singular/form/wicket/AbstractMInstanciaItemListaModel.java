@@ -55,4 +55,29 @@ public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
     public IModel<?> getChainedModel() {
         return (rootTarget instanceof IModel) ? (IModel<?>) rootTarget : null;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((rootTarget == null) ? 0 : rootTarget.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AbstractMInstanciaItemListaModel<?> other = (AbstractMInstanciaItemListaModel<?>) obj;
+        if (rootTarget == null) {
+            if (other.rootTarget != null)
+                return false;
+        } else if (!rootTarget.equals(other.rootTarget))
+            return false;
+        return true;
+    }
 }

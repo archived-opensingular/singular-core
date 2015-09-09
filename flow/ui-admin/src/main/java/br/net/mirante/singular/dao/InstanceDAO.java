@@ -118,23 +118,22 @@ public class InstanceDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period, Long definitionId,
-            List<Long> excludeStatuses) {
+    public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCod) {
         String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
                 + " FROM TB_INSTANCIA_PROCESSO DEM"
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " LEFT JOIN TB_TAREFA SIT ON SIT.CO_TAREFA = DEM.cod_situacao"
-                + " WHERE DEM.data_situacao_atual >= :startPeriod AND PRO.CO_DEFINICAO_PROCESSO = :definitionId"
-                + " AND DEM.cod_situacao NOT IN (:excludeStatuses)"
+                + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEF.SG_PROCESSO = :processCod"
+                + " AND SIT.CO_TIPO_TAREFA = " + TaskType.End.ordinal()
                 + " GROUP BY SIT.NO_TAREFA";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("SITUACAO", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 
-        query.setParameter("definitionId", definitionId);
+        query.setParameter("processCod", processCod);
         query.setParameter("startPeriod", periodFromNow(period));
-        query.setParameterList("excludeStatuses", excludeStatuses);
         return (List<Map<String, String>>) query.list();
     }
 

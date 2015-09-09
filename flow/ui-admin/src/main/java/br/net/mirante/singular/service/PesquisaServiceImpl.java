@@ -37,11 +37,11 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
-    @Cacheable(value = "retrieveStatusQuantityByPeriod", key = "#period", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveStatusQuantityByPeriod(Period period) {
-        return instanceDAO.retrieveStatusQuantityByPeriod(period, 26L, new ArrayList<Long>() {{
-            add(436L);
-        }});
+    @Cacheable(value = "retrieveEndStatusQuantityByPeriod",
+            key = "#period.toString().concat(#processCode)",
+            cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode) {
+        return instanceDAO.retrieveEndStatusQuantityByPeriod(period, processCode);
     }
 
     @Override

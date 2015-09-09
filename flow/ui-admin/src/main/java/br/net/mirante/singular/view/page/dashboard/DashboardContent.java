@@ -72,7 +72,8 @@ public class DashboardContent extends Content {
                 "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveStatusQuantityByPeriod(periodType.getPeriod());
+                return pesquisaService.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
+                        processDefinitionCode != null ? processDefinitionCode : "LiberarLancamentoAtv");
             }
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",

@@ -20,6 +20,7 @@ public abstract class PieChartPanel extends Panel {
     private String subtitle;
     private String valueField;
     private String titleField;
+    private String titleGraph;
 
     private boolean isDonut;
     private boolean withFilter;
@@ -31,8 +32,18 @@ public abstract class PieChartPanel extends Panel {
         this(id, title, subtitle, valueField, titleField, false, false);
     }
 
+    public PieChartPanel(String id, String title, String subtitle, String titleGraph,
+            String valueField, String titleField) {
+        this(id, title, subtitle, valueField, titleField, titleGraph, false, false);
+    }
+
     public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
             boolean withFilter, boolean isDonut) {
+        this(id, title, subtitle, valueField, titleField, null, withFilter, isDonut);
+    }
+
+    public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
+            String titleGraph, boolean withFilter, boolean isDonut) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
@@ -40,6 +51,9 @@ public abstract class PieChartPanel extends Panel {
         this.titleField = titleField;
         this.withFilter = withFilter;
         this.isDonut = isDonut;
+        this.titleGraph = (titleGraph != null
+                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph)
+                : null);
     }
 
     @Override
@@ -101,26 +115,24 @@ public abstract class PieChartPanel extends Panel {
 
     private CharSequence montarScript(Component comp) {
         String id = comp.getMarkupId();
-        return "            AmCharts.makeChart( \"" + id + "\", { " +
+        return "            AmCharts.makeChart( \"" + id + "\", {" +
                 "                \"type\": \"pie\", " +
-                "                \"angle\": 12, " +
+                "                \"angle\": 12," +
                 "                \"marginTop\": -50," +
-                "                \"balloonText\": \"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>\", " +
-                "                \"depth3D\": 15, " +
-     (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
-                "                \"labelRadius\": 50, " +
-                "                \"titleField\": \"" + titleField + "\", " +
-                "                \"valueField\": \"" + valueField + "\", " +
-                "                \"allLabels\": [], " +
-                "                \"balloon\": {}, " +
-                "                \"legend\": { " +
-                "                    \"align\": \"center\", " +
-                "                    \"markerType\": \"circle\" " +
-                "                }, " +
-                "                \"titles\": [], " +
-                "                \"dataProvider\":  " +
-                parseToJson(dadosGrafico) +
-                "                 " +
-                "            } ); ";
+                "                \"balloonText\": \"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>\"," +
+                "                \"depth3D\": 15," +
+                (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
+                "                \"labelRadius\": 50," +
+                "                \"titleField\": \"" + titleField + "\"," +
+                "                \"valueField\": \"" + valueField + "\"," +
+                "                \"allLabels\": []," +
+                "                \"balloon\": {}," +
+                "                \"legend\": {" +
+                "                    \"align\": \"center\"," +
+                "                    \"markerType\": \"circle\"" +
+                "                }," +
+                "                \"titles\": [" + (titleGraph != null ? titleGraph : "") + "]," +
+                "                \"dataProvider\": " + parseToJson(dadosGrafico) +
+                "           });";
     }
 }

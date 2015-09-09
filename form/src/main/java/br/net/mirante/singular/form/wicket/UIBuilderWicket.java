@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -18,6 +19,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
+import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -165,6 +167,8 @@ public class UIBuilderWicket {
 
     static class DefaultCompostoMapper implements IWicketComponentMapper {
         static final HintKey<HashMap<String, Integer>> COL_WIDTHS = new HintKey<HashMap<String, Integer>>() {};
+        static final HintKey<Integer>                  COL        = new HintKey<Integer>() {};
+
         @Override
         @SuppressWarnings("unchecked")
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
@@ -182,8 +186,10 @@ public class UIBuilderWicket {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
                 final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
                 final MInstancia iCampo = mCampo.getObject();
-                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.getValorAtributo(MPacoteBasic.ATR_LABEL)));
-                final int colspan = (hintColWidths.containsKey(nomeCampo)) ? hintColWidths.get(nomeCampo) : BSCol.MAX_COLS;
+                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.as(AtrBasic.class).getLabel()));
+                final int colspan = (hintColWidths.containsKey(nomeCampo))
+                    ? hintColWidths.get(nomeCampo)
+                    : BSCol.MAX_COLS;
                 if (iCampo instanceof MIComposto) {
                     final BSCol col = row.newCol().md(colspan);
                     if (isNotBlank(label.getObject()))
@@ -197,14 +203,14 @@ public class UIBuilderWicket {
     }
 
     static class DefaultListaMapper implements IWicketComponentMapper {
+        interface NewElementCol extends Serializable {
+            BSCol create(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index);
+        }
         interface ConfigureCurrentContext extends Serializable {
             void configure(WicketBuildContext ctx, IModel<MILista<MInstancia>> model);
         }
         interface ConfigureChildContext extends Serializable {
             void configure(WicketBuildContext ctx, IModel<MILista<MInstancia>> model, int index);
-        }
-        interface NewElementCol extends Serializable {
-            BSCol create(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index);
         }
         private final ConfigureCurrentContext configureCurrentContext;
         private final ConfigureChildContext   configureChildContext;
@@ -217,22 +223,17 @@ public class UIBuilderWicket {
             ConfigureCurrentContext configureCurrentContext,
             ConfigureChildContext configureChildContext)
         {
-            this.newElementCol = (newElementCol != null)
-                ? newElementCol
-                : (ctx, grid, model, index) -> grid.newColInRow();
-            this.configureCurrentContext = (configureCurrentContext != null)
-                ? configureCurrentContext
-                : (ctx, model) -> {};
-            this.configureChildContext = (configureChildContext != null)
-                ? configureChildContext
-                : (ctx, model, index) -> {};
+            this.newElementCol = newElementCol;
+            this.configureCurrentContext = configureCurrentContext;
+            this.configureChildContext = configureChildContext;
         }
         @Override
         @SuppressWarnings("unchecked")
         public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
             IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
 
-            configureCurrentContext.configure(ctx, mLista);
+            if (configureCurrentContext != null)
+                configureCurrentContext.configure(ctx, mLista);
 
             MILista<?> iLista = mLista.getObject();
             final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(AtrBasic.class).getLabel()));
@@ -243,22 +244,15 @@ public class UIBuilderWicket {
             TemplatePanel template = parentCol.newTag("div", new TemplatePanel("t", () ->
                 "<div wicket:id='lista'><div wicket:id='grid'></div></div>"));
             template.add(new ItemsView("lista", mLista, ctx, newElementCol, configureChildContext));
-
-            //            BSGrid grid = parentCol.newGrid();
-            //            for (int i = 0; i < iLista.size(); i++) {
-            //                MInstanciaItemListaModel<MInstancia> mItem = new MInstanciaItemListaModel<>(model, i);
-            //                BSCol col = newElementCol(ctx, grid, iLista, mItem, i);
-            //                WicketBuildContext childCtx = ctx.createChild(col, true);
-            //                configureChildContext(childCtx, iLista, i);
-            //                buildForEdit(childCtx, mItem);
-            //            }
         }
+
         private static final class ItemsView extends RefreshingView<MInstancia> {
             private WicketBuildContext    ctx;
             private NewElementCol         newElementCol;
             private ConfigureChildContext configureChildContext;
             private ItemsView(String id, IModel<?> model, WicketBuildContext ctx, NewElementCol newElementCol, ConfigureChildContext configureChildContext) {
                 super(id, model);
+                setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
                 this.ctx = ctx;
                 this.newElementCol = newElementCol;
                 this.configureChildContext = configureChildContext;
@@ -277,14 +271,19 @@ public class UIBuilderWicket {
                 item.add(grid);
 
                 int index = item.getIndex();
-                BSCol col = newElementCol.create(ctx, grid, item.getModel(), index);
+                BSCol col = ObjectUtils.defaultIfNull(newElementCol, ItemsView::defaultNewElementCol)
+                    .create(ctx, grid, item.getModel(), index);
                 WicketBuildContext childCtx = ctx.createChild(col, true);
-                configureChildContext.configure(childCtx, ItemsView.this.getModel(), index);
+                if (configureChildContext != null)
+                    configureChildContext.configure(childCtx, this.getModel(), index);
                 buildForEdit(childCtx, item.getModel());
             }
             @SuppressWarnings("unchecked")
             public IModel<MILista<MInstancia>> getModel() {
                 return (IModel<MILista<MInstancia>>) getDefaultModel();
+            }
+            static BSCol defaultNewElementCol(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index) {
+                return grid.newColInRow();
             }
         }
     }
@@ -293,48 +292,53 @@ public class UIBuilderWicket {
         public ListaSimpleTableMapper() {
             super(
                 null,
-                (ctx, model) -> {
-                    MTipo<?> tElementos = model.getObject().getTipoElementos();
-                    if (tElementos instanceof MTipoComposto<?>) {
-                        Set<String> camposElemento = ((MTipoComposto<?>) tElementos).getCampos();
-                        if (!camposElemento.isEmpty()) {
-                            int baseColWidth = BSCol.MAX_COLS / camposElemento.size();
-                            int largerColWidth = baseColWidth + (BSCol.MAX_COLS - camposElemento.size() * baseColWidth);
-                            HashMap<String, Integer> colWidths = new HashMap<>();
-                            Iterator<String> iter = camposElemento.iterator();
-                            while (iter.hasNext()) {
-                                String nome = iter.next();
-                                int colWidth = (iter.hasNext()) ? baseColWidth : largerColWidth;
-                                colWidths.put(nome, colWidth);
-                            }
-                            ctx.setHint(DefaultCompostoMapper.COL_WIDTHS, colWidths);
-                        }
+                ListaSimpleTableMapper::configureCurrentContext,
+                ListaSimpleTableMapper::configureChildContext);
+        }
+        static void configureCurrentContext(WicketBuildContext ctx, IModel<MILista<MInstancia>> model) {
+            MTipo<?> tElementos = model.getObject().getTipoElementos();
+            if (tElementos instanceof MTipoComposto<?>) {
+                Set<String> camposElemento = ((MTipoComposto<?>) tElementos).getCampos();
+                if (!camposElemento.isEmpty()) {
+                    int baseColWidth = BSCol.MAX_COLS / camposElemento.size();
+                    int largerColWidth = baseColWidth + (BSCol.MAX_COLS - camposElemento.size() * baseColWidth);
+                    HashMap<String, Integer> colWidths = new HashMap<>();
+                    Iterator<String> iter = camposElemento.iterator();
+                    while (iter.hasNext()) {
+                        String nome = iter.next();
+                        int colWidth = (iter.hasNext()) ? baseColWidth : largerColWidth;
+                        colWidths.put(nome, colWidth);
                     }
-                },
-                (ctx, model, index) -> ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, index > 0));
+                    ctx.setHint(DefaultCompostoMapper.COL_WIDTHS, colWidths);
+                }
+            }
+        }
+        static void configureChildContext(WicketBuildContext ctx, IModel<MILista<MInstancia>> model, int index) {
+            ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, index > 0);
         }
     }
 
     static class ListaMultiPanelMapper extends DefaultListaMapper {
         public ListaMultiPanelMapper() {
             super(
-                (ctx, grid, model, index) -> {
-                    BSContainer<?> panel = grid.newColInRow()
-                        .newTag("div", true, "class='panel panel-default'",
-                                (IBSComponentFactory<BSContainer<?>>) id -> new BSContainer<>(id));
-
-                    MInstancia iItem = model.getObject();
-                    String label = iItem.as(AtrBasic.class).getLabel();
-                    if (StringUtils.isNotBlank(label)) {
-                        panel.newTag("div", true, "class='panel-heading'",
-                                (IBSComponentFactory<Label>) id -> new Label(id, label));
-                    }
-                    BSGrid panelBody = panel.newTag("div", true, "class='panel-body'",
-                            (IBSComponentFactory<BSGrid>) BSGrid::new);
-                    return panelBody.newColInRow();
-                },
+                ListaMultiPanelMapper::newElementCol,
                 null,
                 null);
+        }
+        static BSCol newElementCol(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index) {
+            BSContainer<?> panel = grid.newColInRow()
+                .newTag("div", true, "class='panel panel-default'",
+                        (IBSComponentFactory<BSContainer<?>>) id -> new BSContainer<>(id));
+
+            MInstancia iItem = itemModel.getObject();
+            String label = iItem.as(AtrBasic.class).getLabel();
+            if (StringUtils.isNotBlank(label)) {
+                panel.newTag("div", true, "class='panel-heading'",
+                        (IBSComponentFactory<Label>) id -> new Label(id, label));
+            }
+            BSGrid panelBody = panel.newTag("div", true, "class='panel-body'",
+                    (IBSComponentFactory<BSGrid>) BSGrid::new);
+            return panelBody.newColInRow();
         }
     }
 }

@@ -65,7 +65,7 @@
         <persistence strategy="localTempSwap"/>
     </cache>
 
-    <cache name="retrieveStatusQuantityByPeriod"
+    <cache name="retrieveEndStatusQuantityByPeriod"
            maxEntriesLocalHeap="10000"
            maxEntriesLocalDisk="1000"
            eternal="false"

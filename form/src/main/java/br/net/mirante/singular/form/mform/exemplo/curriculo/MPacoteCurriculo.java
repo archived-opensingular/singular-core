@@ -72,7 +72,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
-            formacao.withView(MListaSimpleTableView::new).as(AtrBasic.class).label("Formação Acadêmica").tamanhoInicial(5);
+            formacao.withView(MListaSimpleTableView::new).as(AtrBasic.class).label("Formação Acadêmica").tamanhoInicial(1);
             academicoTipo.withView(MSelecaoPorRadioView::new).as(AtrBasic.class).label("Tipo");
             academicoNome.as(AtrBasic.class).label("Nome");
             academicoInstituicao.as(AtrBasic.class).label("Instituição");
