@@ -1,0 +1,26 @@
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+    <div class="dashboard-stat2">
+        <div class="display">
+            <div class="number">
+                <h3 wicket:id="value" class="font-blue-sharp"></h3>
+                <small wicket:id="label"></small>
+            </div>
+            <div class="icon">
+                <i wicket:id="icon"></i>
+            </div>
+        </div>
+        <div wicket:id="progress" class="progress-info">
+            <div class="progress">
+                <span wicket:id="progressCSSValue" class="progress-bar progress-bar-success blue-sharp">
+                    <span wicket:id="progressLabelValue" class="sr-only"></span>
+                </span>
+            </div>
+            <div class="status">
+                <div wicket:id="progressLabel" class="status-title"></div>
+                <div wicket:id="progressValue" class="status-number"></div>
+            </div>
+        </div>
+    </div>
+</wicket:panel>
+</html>

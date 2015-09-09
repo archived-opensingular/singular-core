@@ -32,6 +32,7 @@ public enum Icone {
     MONEY /*            */("fa fa-money"),
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
     PIN /*              */("icon-pin"),
+    PIE /*              */("icon-pie-chart"),
     REDO /*             */("icon-action-redo"),
     SHARE_ALT /*        */("fa fa-share-alt"),
     SHARE_SQUARE /*     */("fa fa-share-square-o"),
