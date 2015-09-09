@@ -12,7 +12,6 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.service.PesquisaService;
-import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
