@@ -9,8 +9,11 @@ import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.service.PesquisaService;
+import br.net.mirante.singular.util.wicket.resource.Color;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
@@ -53,6 +56,14 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", 15)
+                .setIcon(Icone.SPEEDOMETER));
+        add(new StatusPanel("active-average-status-panel", "label.active.average.status", 22)
+                .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
+        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
+                .setColor(Color.GREEN_SHARP));
+        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status", 47)
+                .setColor(Color.RED_SUNGLO));
         add(new FeedPanel("feed"));
         add(new SerialChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
                 "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
@@ -69,7 +80,10 @@ public class DashboardContent extends Content {
             }
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
-                "label.chart.status.hour.quantity.subtitle", "QUANTIDADE", "SITUACAO", true, true) {
+                "label.chart.status.hour.quantity.subtitle",
+                processDefinitionCode == null
+                        ? new StringResourceModel("label.chart.status.hour.quantity.default", this).getString() : null,
+                "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
@@ -77,10 +91,13 @@ public class DashboardContent extends Content {
             }
         });
         add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
-                "label.chart.mean.time.task.subtitle", "MEAN", "NOME") {
+                "label.chart.mean.time.task.subtitle",
+                processDefinitionCode == null
+                        ? new StringResourceModel("label.chart.mean.time.task.default", this).getString() : null,
+                "MEAN", "NOME", true, false) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveMeanTimeByTask(
+                return pesquisaService.retrieveMeanTimeByTask(periodType.getPeriod(),
                         processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
             }
         });

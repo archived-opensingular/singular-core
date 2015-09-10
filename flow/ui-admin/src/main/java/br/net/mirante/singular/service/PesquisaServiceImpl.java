@@ -45,8 +45,10 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
-    @Cacheable(value = "retrieveMeanTimeByTask", key = "#processCode", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveMeanTimeByTask(String processCode) {
-        return pesquisaDAO.retrieveMeanTimeByTask(processCode);
+    @Cacheable(value = "retrieveMeanTimeByTask",
+            key = "#period.toString().concat(#processCode)",
+            cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode) {
+        return pesquisaDAO.retrieveMeanTimeByTask(period, processCode);
     }
 }
