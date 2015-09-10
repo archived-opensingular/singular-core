@@ -1,5 +1,7 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -11,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_TIPO_VARIAVEL")
 @NamedQuery(name="TipoVariavel.findAll", query="SELECT t FROM TipoVariavel t")
-public class TipoVariavel  {
+public class TipoVariavel implements IEntityVariableType {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -52,4 +54,13 @@ public class TipoVariavel  {
 		this.nome = nome;
 	}
 
+	@Override
+	public String getTypeClassName() {
+		return null;
+	}
+
+	@Override
+	public String getDescription() {
+		return null;
+	}
 }

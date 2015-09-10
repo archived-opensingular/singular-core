@@ -1,6 +1,13 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 
@@ -11,7 +18,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_TAREFA")
 @NamedQuery(name="Tarefa.findAll", query="SELECT t FROM Tarefa t")
-public class Tarefa  {
+public class Tarefa implements IEntityTask {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -80,4 +87,28 @@ public class Tarefa  {
 		this.tipoTarefa = tipoTarefa;
 	}
 
+	@Override
+	public IEntityProcess getProcess() {
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public TaskType getType() {
+		return null;
+	}
+
+	@Override
+	public IEntityTaskDefinition getTaskDefinition() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityTaskTransition> getTransitions() {
+		return null;
+	}
 }

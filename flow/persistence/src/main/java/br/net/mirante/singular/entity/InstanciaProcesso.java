@@ -1,5 +1,9 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -13,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_INSTANCIA_PROCESSO")
 @NamedQuery(name="InstanciaProcesso.findAll", query="SELECT i FROM InstanciaProcesso i")
-public class InstanciaProcesso  {
+public class InstanciaProcesso implements IEntityProcess {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -210,4 +214,18 @@ public class InstanciaProcesso  {
 		return variaveisExecucaoTransicao;
 	}
 
+	@Override
+	public IEntityProcessDefinition getProcessDefinition() {
+		return null;
+	}
+
+	@Override
+	public Date getVersionDate() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityTask> getTasks() {
+		return null;
+	}
 }

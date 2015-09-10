@@ -1,5 +1,8 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -11,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_TIPO_HISTORICO_TAREFA")
 @NamedQuery(name="TipoHistoricoTarefa.findAll", query="SELECT t FROM TipoHistoricoTarefa t")
-public class TipoHistoricoTarefa  {
+public class TipoHistoricoTarefa implements IEntityTaskHistoricType {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -41,4 +44,8 @@ public class TipoHistoricoTarefa  {
 		this.descricao = descricao;
 	}
 
+	@Override
+	public String getDescription() {
+		return null;
+	}
 }

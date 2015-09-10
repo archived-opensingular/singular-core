@@ -1,6 +1,10 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 
@@ -11,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_CATEGORIA")
 @NamedQuery(name="Categoria.findAll", query="SELECT c FROM Categoria c")
-public class Categoria  {
+public class Categoria implements IEntityCategory {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -41,4 +45,13 @@ public class Categoria  {
 		this.nome = nome;
 	}
 
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityProcessDefinition> getProcessDefinitions() {
+		return null;
+	}
 }

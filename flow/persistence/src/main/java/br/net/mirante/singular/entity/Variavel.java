@@ -1,5 +1,9 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_VARIAVEL")
 @NamedQuery(name="Variavel.findAll", query="SELECT v FROM Variavel v")
-public class Variavel  {
+public class Variavel implements IEntityVariableInstance {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -105,4 +109,23 @@ public class Variavel  {
 		return variaveisExecucaoTransicao;
 	}
 
+	@Override
+	public IEntityVariableType getType() {
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public String getValue() {
+		return null;
+	}
+
+	@Override
+	public IEntityProcessInstance getProcessInstance() {
+		return null;
+	}
 }

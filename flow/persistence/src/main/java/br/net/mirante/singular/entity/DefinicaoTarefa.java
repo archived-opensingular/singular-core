@@ -1,5 +1,9 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_DEFINICAO_TAREFA")
 @NamedQuery(name="DefinicaoTarefa.findAll", query="SELECT d FROM DefinicaoTarefa d")
-public class DefinicaoTarefa  {
+public class DefinicaoTarefa implements IEntityTaskDefinition {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -81,4 +85,18 @@ public class DefinicaoTarefa  {
 		this.definicaoProcesso = definicaoProcesso;
 	}
 
+	@Override
+	public IEntityProcessDefinition getProcessDefinition() {
+		return null;
+	}
+
+	@Override
+	public String getAbbreviation() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityTask> getVersions() {
+		return null;
+	}
 }

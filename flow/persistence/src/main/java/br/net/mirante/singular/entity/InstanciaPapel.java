@@ -1,5 +1,10 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,7 +17,7 @@ import java.util.Date;
 @Entity
 @Table(name="TB_INSTANCIA_PAPEL")
 @NamedQuery(name="InstanciaPapel.findAll", query="SELECT i FROM InstanciaPapel i")
-public class InstanciaPapel  {
+public class InstanciaPapel implements IEntityRole {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -95,4 +100,28 @@ public class InstanciaPapel  {
 		this.papel = papel;
 	}
 
+	@Override
+	public IEntityProcessRole getRole() {
+		return null;
+	}
+
+	@Override
+	public MUser getUser() {
+		return null;
+	}
+
+	@Override
+	public Date getCreateDate() {
+		return null;
+	}
+
+	@Override
+	public MUser getAllocatorUser() {
+		return null;
+	}
+
+	@Override
+	public IEntityProcessInstance getProcessInstance() {
+		return null;
+	}
 }
