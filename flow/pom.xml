@@ -23,4 +23,12 @@
         <module>test</module>
     </modules>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-commons</artifactId>
+            <version>0.2.4-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 </project>
