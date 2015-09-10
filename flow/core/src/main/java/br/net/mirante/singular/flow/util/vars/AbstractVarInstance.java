@@ -1,10 +1,10 @@
 package br.net.mirante.singular.flow.util.vars;
 
-import br.net.mirante.singular.flow.util.props.Props;
+import br.net.mirante.singular.flow.util.props.MetaData;
 
 public abstract class AbstractVarInstance implements VarInstance {
 
-    private Props props;
+    private MetaData metaData;
 
     private final VarDefinition definition;
 
@@ -30,11 +30,11 @@ public abstract class AbstractVarInstance implements VarInstance {
     }
 
     @Override
-    public Props props() {
-        if (props == null) {
-            props = new Props();
+    public MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
         }
-        return props;
+        return metaData;
     }
 
     @Override

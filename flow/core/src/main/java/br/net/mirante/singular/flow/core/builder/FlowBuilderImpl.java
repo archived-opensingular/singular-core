@@ -14,11 +14,11 @@ import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProces
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessValidator;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.util.props.PropRef;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>> {
+        FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
         super(processDefinition);
@@ -195,8 +195,8 @@ public class FlowBuilderImpl extends
             return self();
         }
         
-        public <K extends ProcessInstance,T> SELF setProperty(PropRef<T> propRef, T value) {
-            getTransition().setProperty(propRef, value);
+        public <K extends ProcessInstance,T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
+            getTransition().setMetaDataValue(propRef, value);
             return self();
         }
         

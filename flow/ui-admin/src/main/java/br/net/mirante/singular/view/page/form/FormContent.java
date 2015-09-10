@@ -9,6 +9,8 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
@@ -30,19 +32,6 @@ public class FormContent extends Content implements SingularWicketContainer<Form
     static MDicionario dicionario = MDicionario.create();
     static {
         dicionario.carregarPacote(MPacoteCurriculo.class);
-        //        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        //
-        //        MTipoComposto<? extends MIComposto> tContato = pb.createTipoComposto("contato");
-        //        tContato.addCampoString("nome").as(MPacoteBasic.aspect()).label("Nome");
-        //
-        //        MTipoComposto<? extends MIComposto> tEndereco = tContato.addCampoComposto("endereco");
-        //        tEndereco.as(MPacoteBasic.aspect()).label("Endereço residencial");
-        //        tEndereco.addCampoString("logradouro").as(MPacoteBasic.aspect()).label("Logradouro");
-        //        tEndereco.addCampoInteger("numero").as(MPacoteBasic.aspect()).label("Número");
-        //        tEndereco.addCampoString("complemento").as(MPacoteBasic.aspect()).label("Complemento");
-        //        tEndereco.addCampoString("cidade").as(MPacoteBasic.aspect()).label("Cidade");
-        //        tEndereco.addCampoString("uf").as(MPacoteBasic.aspect()).label("UF");
-        //        tEndereco.addCampoInteger("cep").as(MPacoteBasic.aspect()).label("CEP");
     }
 
     @Override
@@ -51,8 +40,6 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         super.onInitialize();
         MTipoComposto<? extends MIComposto> tCurriculo = (MTipoComposto<? extends MIComposto>)
             dicionario.getTipo("mform.exemplo.curriculo.Curriculo");
-        //            dicionario.getTipo("teste.contato");
-        //
 
         MIComposto iCurriculo = tCurriculo.novaInstancia();
 
@@ -64,7 +51,7 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         };
 
         BSGrid container = new BSGrid("generated");
-        WicketBuildContext ctx = new WicketBuildContext(null, container.newColInRow());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
         add(new BSFeedbackPanel("feedback"));
         add(new Form<>("form")
@@ -72,13 +59,18 @@ public class FormContent extends Content implements SingularWicketContainer<Form
             .add(new Button("enviar") {
                 @Override
                 public void onSubmit() {
-                    MIComposto iEndereco = mCurriculo.getObject();
+
+                    MIComposto iCurriculo = mCurriculo.getObject();
                     StringWriter buffer = new StringWriter();
-                    MformPersistenciaXML.toXML(iEndereco).printTabulado(new PrintWriter(buffer));
+                    MformPersistenciaXML.toXML(iCurriculo).printTabulado(new PrintWriter(buffer));
                     info(buffer.toString());
+
+                    MILista<MInstancia> listaCurso = (MILista<MInstancia>) iCurriculo.getCampo("formacaoAcademica");
+                    listaCurso.addNovo();
                 }
             }));
     }
+
     @Override
     protected String getContentTitlelKey() {
         return "label.content.title";

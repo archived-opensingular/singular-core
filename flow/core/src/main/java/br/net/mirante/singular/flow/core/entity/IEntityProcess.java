@@ -1,48 +1,46 @@
 package br.net.mirante.singular.flow.core.entity;
 
-import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
-public interface IEntityProcess extends IEntityByCod, Serializable {
+public interface IEntityProcess extends IEntityByCod {
 
-    String getNome();
+    IEntityProcessDefinition getProcessDefinition();
 
-    void setNome(String nome);
+    Date getVersionDate();
 
-    String getNomeClasseDefinicao();
+    List<? extends IEntityTask> getTasks();
+    
+    default String getDefinitionClassName() {
+        return getProcessDefinition().getDefinitionClassName();
+    }
 
-    void setNomeClasseDefinicao(String nomeClasseDefinicao);
+    default String getAbbreviation() {
+        return getProcessDefinition().getAbbreviation();
+    }
 
-    String getSigla();
+    default String getName() {
+        return getProcessDefinition().getName();
+    }
 
-    void setSigla(String sigla);
+    default IEntityCategory getCategory() {
+        return getProcessDefinition().getCategory();
+    }
 
-    void setAtivo(boolean ativo);
-
-    boolean isAtivo();
-
-    IEntityCategory getCategoria();
-
-    List<? extends IEntityTaskDefinition> getSituacoes();
-
-    List<? extends IEntityProcessRole> getPapeis();
-
-    default IEntityTaskDefinition getSituacao(String sigla) {
-        for (IEntityTaskDefinition situacao : getSituacoes()) {
-            if (situacao.getSigla().equalsIgnoreCase(sigla)) {
+    default IEntityTask getTask(String abbreviation) {
+        for (IEntityTask situacao : getTasks()) {
+            if (situacao.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return situacao;
             }
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    default <X extends IEntityProcessRole> X getPapel(String sigla) {
-        for (IEntityProcessRole papel : getPapeis()) {
-            if (papel.getSigla().equalsIgnoreCase(sigla)) {
-                return (X) papel;
-            }
-        }
-        return null;
+    default IEntityTaskDefinition getTaskDefinition(String abbreviation) {
+        return getProcessDefinition().getTaskDefinition(abbreviation);
+    }
+    
+    default <X extends IEntityProcessRole> X getRole(String abbreviation) {
+        return getProcessDefinition().getRole(abbreviation);
     }
 }

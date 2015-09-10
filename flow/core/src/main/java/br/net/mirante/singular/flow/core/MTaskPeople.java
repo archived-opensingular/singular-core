@@ -8,8 +8,8 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
 
     private boolean podeRealocar = true;
 
-    public MTaskPeople(FlowMap mapa, String nome) {
-        super(mapa, nome);
+    public MTaskPeople(FlowMap mapa, String nome, String abbreviation) {
+        super(mapa, nome, abbreviation);
     }
 
     @Override

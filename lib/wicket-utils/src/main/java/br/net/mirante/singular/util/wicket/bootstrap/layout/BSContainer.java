@@ -78,21 +78,21 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         return (THIS) this;
     }
 
-    public TemplatePanel newTag(String tag, Component component) {
+    public <C extends Component> C newTag(String tag, C component) {
         return newTag(tag, true, "", component);
     }
-    public TemplatePanel newTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<Component> factory) {
+    public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<C> factory) {
         return newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
     }
 
-    public TemplatePanel newTag(String tag, boolean closeTag, String attrs, Component component) {
+    public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, C component) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, () ->
             "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
                 + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
             .add(component)
             .setRenderBodyOnly(true);
-        return container;
+        return component;
     }
 
     public <C extends Component> THIS appendComponent(IBSComponentFactory<C> factory) {

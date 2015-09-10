@@ -1,11 +1,11 @@
 package br.net.mirante.singular.flow.util.props;
 
-public class PropRef<K> {
+public class MetaDataRef<K> {
 
     private final String name;
     private final Class<K> valueClass;
 
-    public PropRef(String name, Class<K> valueClass) {
+    public MetaDataRef(String name, Class<K> valueClass) {
         this.name = name;
         this.valueClass = valueClass;
     }
@@ -31,6 +31,6 @@ public class PropRef<K> {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        return name.equals(((PropRef<?>) obj).name);
+        return name.equals(((MetaDataRef<?>) obj).name);
     }
 }

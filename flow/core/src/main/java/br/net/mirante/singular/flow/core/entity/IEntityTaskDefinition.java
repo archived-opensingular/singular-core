@@ -1,34 +1,18 @@
 package br.net.mirante.singular.flow.core.entity;
 
-import br.net.mirante.singular.flow.core.TaskType;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public interface IEntityTaskDefinition extends IEntityByCod {
 
-    String getNome();
+    IEntityProcessDefinition getProcessDefinition();
 
-    String getSigla();
+    String getAbbreviation();
+    
+    List<? extends IEntityTask> getVersions();
 
-    TaskType getTipoTarefa();
-
-    IEntityProcess getDefinicao();
-
-    default boolean isFim() {
-        return TaskType.End.equals(getTipoTarefa());
-    }
-
-    default boolean isPessoa() {
-        return TaskType.People.equals(getTipoTarefa());
-    }
-
-    default boolean isWait() {
-        return TaskType.Wait.equals(getTipoTarefa());
-    }
-
-    default boolean isJava() {
-        return TaskType.Java.equals(getTipoTarefa());
-    }
-
-    default String getDescricao() {
-        return "(" + getTipoTarefa().getAbbreviation() + ") " + getNome();
+    default IEntityTask getLastVersion(){
+        return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityTask::getVersionDate))).get();
     }
 }

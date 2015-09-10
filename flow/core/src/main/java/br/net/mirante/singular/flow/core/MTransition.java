@@ -6,8 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import br.net.mirante.singular.flow.util.props.PropRef;
-import br.net.mirante.singular.flow.util.props.Props;
+import br.net.mirante.singular.flow.core.entity.TransitionType;
+import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
@@ -21,12 +22,13 @@ public class MTransition implements Serializable {
     private final MTask<?> origin;
     private final String name;
     private final MTask<?> destination;
-    private final boolean userOption;
+    private final TransitionType type;
+    private final String abbreviation;
 
     private TransitionAccessStrategy<TaskInstance> accessStrategy;
     private List<MProcessRole> rolesToDefineUser;
 
-    private Props properties;
+    private MetaData metaData;
 
     private VarDefinitionMap<?> parameters;
     private ITransitionParametersInitializer parametersInitializer;
@@ -34,12 +36,13 @@ public class MTransition implements Serializable {
 
     private ITaskPredicate predicate;
 
-    protected MTransition(MTask<?> origin, String name, MTask<?> destination, boolean userOption) {
+    protected MTransition(MTask<?> origin, String name, MTask<?> destination, TransitionType type) {
         Objects.requireNonNull(destination);
         this.origin = origin;
         this.name = name;
         this.destination = destination;
-        this.userOption = userOption;
+        this.type = type;
+        this.abbreviation = MBPMUtil.convertToJavaIdentity(name, true);
     }
 
     @SuppressWarnings("unchecked")
@@ -95,24 +98,24 @@ public class MTransition implements Serializable {
         return rolesToDefineUser;
     }
 
-    public <T> T getProperty(PropRef<T> propRef, T defaultValue) {
-        return properties == null ? defaultValue : MoreObjects.firstNonNull(getProperties().get(propRef), defaultValue);
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
+        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
     }
 
-    public <T> T getProperty(PropRef<T> propRef) {
-        return properties == null ? null : getProperties().get(propRef);
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
+        return metaData == null ? null : getMetaData().get(propRef);
     }
 
-    public <T> MTransition setProperty(PropRef<T> propRef, T value) {
-        getProperties().set(propRef, value);
+    public <T> MTransition setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getMetaData().set(propRef, value);
         return this;
     }
 
-    Props getProperties() {
-        if (properties == null) {
-            properties = new Props();
+    MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
         }
-        return properties;
+        return metaData;
     }
     
     public MTask<?> getOrigin() {
@@ -123,6 +126,10 @@ public class MTransition implements Serializable {
         return name;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+    
     public MTask<?> getDestination() {
         return destination;
     }
@@ -229,8 +236,8 @@ public class MTransition implements Serializable {
         return name + "(" + destination.getName() + ")";
     }
 
-    public boolean isUserOption() {
-        return userOption;
+    public TransitionType getType() {
+        return type;
     }
 
     @FunctionalInterface

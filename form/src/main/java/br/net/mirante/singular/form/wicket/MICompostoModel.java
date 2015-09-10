@@ -51,6 +51,31 @@ public class MICompostoModel<T extends MIComposto>
         return new MInstanciaCampoModel<S>(this, property);
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((target == null) ? 0 : target.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MICompostoModel<?> other = (MICompostoModel<?>) obj;
+        if (target == null) {
+            if (other.target != null)
+                return false;
+        } else if (!target.equals(other.target))
+            return false;
+        return true;
+    }
+
     private class AttachedCompoundPropertyModel<C extends MInstancia> extends AbstractMInstanciaCampoModel<C>
         implements IWrapModel<C> {
         private final Component owner;
@@ -71,6 +96,36 @@ public class MICompostoModel<T extends MIComposto>
         public void detach() {
             super.detach();
             MICompostoModel.this.detach();
+        }
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+            return result;
+        }
+        @Override
+        @SuppressWarnings("unchecked")
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (!super.equals(obj))
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            AttachedCompoundPropertyModel<?> other = (AttachedCompoundPropertyModel<?>) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (owner == null) {
+                if (other.owner != null)
+                    return false;
+            } else if (!owner.equals(other.owner))
+                return false;
+            return true;
+        }
+        private MICompostoModel<?> getOuterType() {
+            return MICompostoModel.this;
         }
     }
 }

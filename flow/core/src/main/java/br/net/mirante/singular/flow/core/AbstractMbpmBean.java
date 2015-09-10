@@ -11,6 +11,7 @@ import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
+import br.net.mirante.singular.flow.core.service.IProcessEntityService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
@@ -28,11 +29,11 @@ public abstract class AbstractMbpmBean {
         return ProcessDefinitionCache.getDefinition(processClass);
     }
 
-    public ProcessDefinition<?> getProcessDefinition(String abbreviation) {
+    protected ProcessDefinition<?> getProcessDefinition(String abbreviation) {
         return getDefinitionCache().getDefinition(abbreviation);
     }
 
-    public List<ProcessDefinition<?>> getDefinitions() {
+    protected List<ProcessDefinition<?>> getDefinitions() {
         return getDefinitionCache().getDefinitions();
     }
 
@@ -48,7 +49,7 @@ public abstract class AbstractMbpmBean {
 
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
-        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getDefinicao().getSigla());
+        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
     }
 
@@ -127,19 +128,21 @@ public abstract class AbstractMbpmBean {
 
     // ------- Consultas ----------------------------------------------
 
-    public final List<ProcessDefinition<?>> getEnabledProcessForCreationBy(MUser user) {
+    public final List<? extends ProcessDefinition<?>> getEnabledProcessForCreationBy(MUser user) {
         return getDefinitions().stream().filter(d -> d.canBeCreatedBy(user)).sorted().collect(Collectors.toList());
     }
 
     // ------- Outros -------------------------------------------------
 
-    public IFlowRenderer getFlowRenderer(){
+    public IFlowRenderer getFlowRenderer() {
         return YFilesFlowRenderer.getInstance();
     }
-    
-    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
+
+    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
     protected abstract IScheduleService getScheduleService();
+
+    protected abstract IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService();
 
     protected abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
 
@@ -150,7 +153,7 @@ public abstract class AbstractMbpmBean {
             return task.executarByBloco(instancias);
         } else {
             for (final ProcessInstance instanciaProcessoMBPM : instancias) {
-                EngineProcessamentoMBPM.executarTransicaoAgendada(task, instanciaProcessoMBPM);
+                EngineProcessamentoMBPM.executeScheduledTransition(task, instanciaProcessoMBPM);
             }
             return null;
         }

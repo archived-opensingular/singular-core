@@ -16,8 +16,8 @@ public class MTaskJava extends MTask<MTaskJava> {
     @SuppressWarnings("rawtypes")
     private ImplTaskBlock blockImpl;
 
-    public MTaskJava(FlowMap mapa, String nome) {
-        super(mapa, nome);
+    public MTaskJava(FlowMap mapa, String nome, String abbreviation) {
+        super(mapa, nome, abbreviation);
     }
 
     @Override
