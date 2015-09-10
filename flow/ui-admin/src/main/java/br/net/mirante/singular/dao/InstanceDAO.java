@@ -179,7 +179,7 @@ public class InstanceDAO {
                 + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
                 + "   LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
-                + " WHERE (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + + TaskType.End.ordinal() + ")"
+                + " WHERE (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal() + ")"
                 + "   AND DEF.se_ativo = 1"
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
@@ -190,6 +190,41 @@ public class InstanceDAO {
             query.setParameter("processCode", processCode);
         }
         query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
-        return (StatusDTO) query.uniqueResult();
+        StatusDTO status = (StatusDTO) query.uniqueResult();
+        status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
+        status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
+        return status;
+    }
+
+    public Integer countOpenedInstancesLast30Days(String processCode) {
+        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + " WHERE DEM.DT_INICIO >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        return ((Number) query.uniqueResult()).intValue();
+    }
+
+    public Integer countFinishedInstancesLast30Days(String processCode) {
+        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "   LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                + " WHERE DEM.DT_FIM >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + "   AND (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal() + ")"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        return ((Number) query.uniqueResult()).intValue();
     }
 }

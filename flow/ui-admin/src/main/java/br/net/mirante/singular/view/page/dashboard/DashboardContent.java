@@ -64,10 +64,10 @@ public class DashboardContent extends Content {
                 statusDTO.getAverageTimeInDays()).setUnit(
                 new StringResourceModel("label.active.average.status.unit", this).getString())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
-        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
-                .setColor(Color.GREEN_SHARP));
-        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status", 47)
-                .setColor(Color.RED_SUNGLO));
+        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
+                statusDTO.getOpenedInstancesLast30Days()).setColor(Color.GREEN_SHARP));
+        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
+                statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
         add(new FeedPanel("feed"));
         add(new SerialChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
                 "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
