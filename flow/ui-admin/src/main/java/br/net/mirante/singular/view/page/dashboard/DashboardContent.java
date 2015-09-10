@@ -102,13 +102,13 @@ public class DashboardContent extends Content {
     private void addStatusesPanel() {
         StatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
         add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
-                .setIcon(Icone.SPEEDOMETER));
+                .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
         add(new StatusPanel("active-average-status-panel", "label.active.average.status",
                 statusDTO.getAverageTimeInDays()).setUnit(
                 new StringResourceModel("label.active.average.status.unit", this).getString())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
-                statusDTO.getOpenedInstancesLast30Days()).setColor(Color.GREEN_SHARP));
+                statusDTO.getOpenedInstancesLast30Days()));
         add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
                 statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
     }
