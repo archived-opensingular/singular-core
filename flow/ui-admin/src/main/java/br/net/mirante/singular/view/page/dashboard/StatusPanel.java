@@ -68,6 +68,7 @@ public class StatusPanel extends Panel {
         add(new WebMarkupContainer("icon").add($b.attr("class", icon.getCssClass())));
         WebMarkupContainer progress = new WebMarkupContainer("progress");
         if (!withProgress) {
+            add($b.attr("class", "without-progress-bar"));
             progress.add($b.attrAppender("class", "hide", " "));
         }
         WebMarkupContainer progressBar = new WebMarkupContainer("progressCSSValue");

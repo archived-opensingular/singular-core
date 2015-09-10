@@ -13,4 +13,6 @@ public interface PesquisaService {
     List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode);
 
     List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
+
+    Integer countActiveInstance(String processCode);
 }

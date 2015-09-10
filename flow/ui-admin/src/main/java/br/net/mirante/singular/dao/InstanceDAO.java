@@ -153,8 +153,7 @@ public class InstanceDAO {
                 + "  AND DEF.SG_PROCESSO = :sigla"
                 + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) > :media"
                 + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) IS NOT NULL";
-        Query query;
-        query = getSession().createSQLQuery(sql)
+        Query query = getSession().createSQLQuery(sql)
                 .addScalar("DESCRICAO", StringType.INSTANCE)
                 .addScalar("DIAS", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -169,5 +168,22 @@ public class InstanceDAO {
         LocalDateTime localDateTime = LocalDateTime.from(temporal);
 
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public Integer countActiveInstance(String processCode) {
+        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "   LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                + " WHERE (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + + TaskType.End.ordinal() + ")"
+                + "   AND DEF.se_ativo = 1"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        return ((Number) query.uniqueResult()).intValue();
     }
 }

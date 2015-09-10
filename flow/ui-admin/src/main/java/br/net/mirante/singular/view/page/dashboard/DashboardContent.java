@@ -56,8 +56,8 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", 15)
-                .setIcon(Icone.SPEEDOMETER));
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status",
+                pesquisaService.countActiveInstance(processDefinitionCode)).setIcon(Icone.SPEEDOMETER));
         add(new StatusPanel("active-average-status-panel", "label.active.average.status", 22)
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
