@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +59,7 @@ public class TaskInstance {
         return flowTask;
     }
 
-    public Integer getId() {
+    public Serializable getId() {
         return entityTask.getCod();
     }
 

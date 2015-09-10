@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public abstract class AbstractMbpmBean {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
+    private ProcessInstance getProcessInstanceByEntityCod(Serializable cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);

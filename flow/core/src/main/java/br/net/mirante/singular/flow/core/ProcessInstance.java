@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -261,7 +262,7 @@ public abstract class ProcessInstance {
         return getInternalEntity().getEndDate();
     }
 
-    public final Integer getEntityCod() {
+    public final Serializable getEntityCod() {
         return entity.getCod();
     }
 

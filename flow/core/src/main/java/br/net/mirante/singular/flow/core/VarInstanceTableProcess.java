@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMapImpl;
 
 public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
-    private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
+    private static final MetaDataRef<Serializable> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Serializable.class);
 
     // TODO transformar o valor abaixo em RefProcessInstance (igual a
     // RefProcessDefinition)
@@ -53,8 +54,8 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
-            Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
+            Serializable dbCod = changedVar.getMetaData().get(PROP_DB_COD);
+            Serializable dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
                 changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
             }

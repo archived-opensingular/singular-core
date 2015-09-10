@@ -23,8 +23,10 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.util.vars.VarType;
 
 public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEFINITION extends IEntityProcess, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask, INSTANCE_VARIABLE extends IEntityVariableInstance, ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole> {
 
@@ -42,7 +44,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
 
-    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
+    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Serializable dbVariableCod);
 
     void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK_INSTANCE parentTask);
 
@@ -74,6 +76,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
      */
     PROCESS_DEFINITION saveOrUpdateProcessDefinition(PROCESS_DEFINITION entityProcess);
 
+    IEntityVariableType retrieveOrCreateEntityVariableType(VarType varType);
+    
     void relocateTask(TASK_INSTANCE taskInstance, MUser user);
     
     void updateTargetEndDate(TASK_INSTANCE taskInstance, Date targetEndDate);
