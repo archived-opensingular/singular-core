@@ -8,6 +8,10 @@ public class StatusDTO implements Serializable {
     private Integer amount;
     private Integer averageTimeInDays;
 
+    public StatusDTO() {
+        /* CONSTRUTOR VAZIO */
+    }
+
     public StatusDTO(String processCode, Integer amount, Integer averageTimeInDays) {
         this.processCode = processCode;
         this.amount = amount;
@@ -18,11 +22,23 @@ public class StatusDTO implements Serializable {
         return processCode;
     }
 
+    public void setProcessCode(String processCode) {
+        this.processCode = processCode;
+    }
+
     public Integer getAmount() {
         return amount;
     }
 
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+    }
+
     public Integer getAverageTimeInDays() {
         return averageTimeInDays;
+    }
+
+    public void setAverageTimeInDays(Integer averageTimeInDays) {
+        this.averageTimeInDays = averageTimeInDays;
     }
 }

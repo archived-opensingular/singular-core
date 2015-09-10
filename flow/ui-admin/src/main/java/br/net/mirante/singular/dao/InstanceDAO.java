@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -171,7 +172,7 @@ public class InstanceDAO {
     }
 
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
-        String sql = "SELECT '" + processCode + "' AS processCode"
+        String sql = "SELECT '" + processCode + "' AS processCode,"
                 + " COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS amount,"
                 + " AVG(DATEDIFF(DAY, DEM.DT_INICIO, GETDATE())) AS averageTimeInDays"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
@@ -183,8 +184,8 @@ public class InstanceDAO {
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("processCode", StringType.INSTANCE)
-                .addScalar("amount", LongType.INSTANCE)
-                .addScalar("averageTimeInDays", LongType.INSTANCE);
+                .addScalar("amount", IntegerType.INSTANCE)
+                .addScalar("averageTimeInDays", IntegerType.INSTANCE);
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }

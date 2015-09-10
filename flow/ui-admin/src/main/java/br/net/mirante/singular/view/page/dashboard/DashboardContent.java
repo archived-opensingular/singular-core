@@ -60,7 +60,9 @@ public class DashboardContent extends Content {
         StatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
         add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER));
-        add(new StatusPanel("active-average-status-panel", "label.active.average.status", statusDTO.getAmount())
+        add(new StatusPanel("active-average-status-panel", "label.active.average.status",
+                statusDTO.getAverageTimeInDays()).setUnit(
+                new StringResourceModel("label.active.average.status.unit", this).getString())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
                 .setColor(Color.GREEN_SHARP));
