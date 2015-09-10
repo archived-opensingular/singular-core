@@ -1,14 +1,7 @@
 package br.net.mirante.singular.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 
 
 /**
@@ -18,13 +11,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_TRANSICAO")
 @NamedQuery(name="Transicao.findAll", query="SELECT t FROM Transicao t")
-public class Transicao implements EntidadeBasica {
+public class Transicao  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_TRANSICAO")
-	private Integer cod;
+	private Long cod;
 
 	@Column(name="NO_TRANSICAO")
 	private String nome;
@@ -48,11 +41,11 @@ public class Transicao implements EntidadeBasica {
 	public Transicao() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 

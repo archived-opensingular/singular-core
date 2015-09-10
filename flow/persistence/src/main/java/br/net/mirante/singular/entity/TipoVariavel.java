@@ -1,12 +1,7 @@
 package br.net.mirante.singular.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 
 
 /**
@@ -16,13 +11,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_TIPO_VARIAVEL")
 @NamedQuery(name="TipoVariavel.findAll", query="SELECT t FROM TipoVariavel t")
-public class TipoVariavel implements EntidadeBasica {
+public class TipoVariavel  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_TIPO_VARIAVEL")
-	private Integer cod;
+	private Long cod;
 
 	@Column(name="DS_TIPO_VARIAVEL")
 	private String descricao;
@@ -33,11 +28,11 @@ public class TipoVariavel implements EntidadeBasica {
 	public TipoVariavel() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 

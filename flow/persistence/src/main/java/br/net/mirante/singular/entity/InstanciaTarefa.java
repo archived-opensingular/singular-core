@@ -1,28 +1,9 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityVariable;
-
-import java.sql.Time;
+import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
 /**
@@ -32,13 +13,13 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="TB_INSTANCIA_TAREFA")
 @NamedQuery(name="InstanciaTarefa.findAll", query="SELECT i FROM InstanciaTarefa i")
-public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
+public class InstanciaTarefa  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_INSTANCIA_TAREFA")
-	private Integer cod;
+	private Long cod;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALVO_FIM")
@@ -49,11 +30,16 @@ public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
 	private Date dataAlvoSuspensao;
 
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="DT_ESPERADA_FIM")
+	private Date dataEsperadaFim;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_FIM")
 	private Date dataFim;
 
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_INICIO")
-	private Time dataInicio;
+	private Date dataInicio;
 
 	@Column(name="SE_SUSPENSA")
 	private Boolean suspensa;
@@ -94,11 +80,11 @@ public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
 	public InstanciaTarefa() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
@@ -118,6 +104,14 @@ public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
 		this.dataAlvoSuspensao = dataAlvoSuspensao;
 	}
 
+	public Date getDataEsperadaFim() {
+		return this.dataEsperadaFim;
+	}
+
+	public void setDataEsperadaFim(Date dataEsperadaFim) {
+		this.dataEsperadaFim = dataEsperadaFim;
+	}
+
 	public Date getDataFim() {
 		return this.dataFim;
 	}
@@ -126,11 +120,11 @@ public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
 		this.dataFim = dataFim;
 	}
 
-	public Time getDataInicio() {
+	public Date getDataInicio() {
 		return this.dataInicio;
 	}
 
-	public void setDataInicio(Time dataInicio) {
+	public void setDataInicio(Date dataInicio) {
 		this.dataInicio = dataInicio;
 	}
 
@@ -226,68 +220,4 @@ public class InstanciaTarefa implements EntidadeBasica, IEntityTaskInstance {
 		this.transicao = transicao;
 	}
 
-	@Override
-	public boolean isSuspensa() {
-		return false;
-	}
-
-	@Override
-	public void setDataInicio(Date dataInicio) {
-
-	}
-
-	@Override
-	public MUser getPessoaAlocada() {
-		return null;
-	}
-
-	@Override
-	public void setPessoaAlocada(MUser pessoaAlocada) {
-
-	}
-
-	@Override
-	public MUser getAutorFim() {
-		return null;
-	}
-
-	@Override
-	public void setAutorFim(MUser autorFim) {
-
-	}
-
-	@Override
-	public String getSiglaTransicaoResultado() {
-		return null;
-	}
-
-	@Override
-	public void setSiglaTransicaoResultado(String siglaTransicaoResultado) {
-
-	}
-
-	@Override
-	public List<? extends IEntityTaskHistoric> getHistoricoAlocacao() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityVariable> getVariaveisGeradas() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityVariable> getVariaveisEntrada() {
-		return null;
-	}
-
-	@Override
-	public IEntityProcessInstance getDemanda() {
-		return null;
-	}
-
-	@Override
-	public IEntityTaskDefinition getSituacao() {
-		return null;
-	}
 }

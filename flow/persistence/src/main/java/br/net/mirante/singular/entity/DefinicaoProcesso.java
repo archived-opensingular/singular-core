@@ -1,20 +1,8 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-
+import java.io.Serializable;
+import javax.persistence.*;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 
 /**
@@ -24,13 +12,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_DEFINICAO_PROCESSO")
 @NamedQuery(name="DefinicaoProcesso.findAll", query="SELECT d FROM DefinicaoProcesso d")
-public class DefinicaoProcesso implements EntidadeBasica, IEntityProcess {
+public class DefinicaoProcesso  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_DEFINICAO_PROCESSO")
-	private Integer cod;
+	private Long cod;
 
 	@Column(name="NO_CLASSE_JAVA")
 	private String nomeClasseJava;
@@ -61,11 +49,11 @@ public class DefinicaoProcesso implements EntidadeBasica, IEntityProcess {
 	public DefinicaoProcesso() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
@@ -167,48 +155,4 @@ public class DefinicaoProcesso implements EntidadeBasica, IEntityProcess {
 		return papei;
 	}
 
-	@Override
-	public String getNome() {
-		return null;
-	}
-
-	@Override
-	public void setNome(String nome) {
-
-	}
-
-	@Override
-	public String getNomeClasseDefinicao() {
-		return null;
-	}
-
-	@Override
-	public void setNomeClasseDefinicao(String nomeClasseDefinicao) {
-
-	}
-
-	@Override
-	public String getSigla() {
-		return null;
-	}
-
-	@Override
-	public void setSigla(String sigla) {
-
-	}
-
-	@Override
-	public void setAtivo(boolean ativo) {
-
-	}
-
-	@Override
-	public boolean isAtivo() {
-		return false;
-	}
-
-	@Override
-	public List<? extends IEntityTaskDefinition> getSituacoes() {
-		return null;
-	}
 }

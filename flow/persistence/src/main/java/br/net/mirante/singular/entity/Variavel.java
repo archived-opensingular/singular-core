@@ -1,17 +1,8 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -21,15 +12,15 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_VARIAVEL")
 @NamedQuery(name="Variavel.findAll", query="SELECT v FROM Variavel v")
-public class Variavel implements EntidadeBasica, IEntityVariableInstance {
+public class Variavel  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_VARIAVEL")
-	private Integer cod;
+	private Long cod;
 
-	@Column(name="DS_NOME")
+	@Column(name="NO_VARIAVEL")
 	private String nome;
 
 	@Column(name="VL_VARIAVEL")
@@ -45,14 +36,18 @@ public class Variavel implements EntidadeBasica, IEntityVariableInstance {
 	@JoinColumn(name="CO_TIPO_VARIAVEL")
 	private TipoVariavel tipoVariavel;
 
+	//bi-directional many-to-one association to VariavelExecucaoTransicao
+	@OneToMany(mappedBy="variavel")
+	private List<VariavelExecucaoTransicao> variaveisExecucaoTransicao;
+
 	public Variavel() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
@@ -88,18 +83,26 @@ public class Variavel implements EntidadeBasica, IEntityVariableInstance {
 		this.tipoVariavel = tipoVariavel;
 	}
 
-	@Override
-	public String getTextoValor() {
-		return null;
+	public List<VariavelExecucaoTransicao> getVariaveisExecucaoTransicao() {
+		return this.variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public void setTextoValor(String textoValor) {
-
+	public void setVariaveisExecucaoTransicao(List<VariavelExecucaoTransicao> variaveisExecucaoTransicao) {
+		this.variaveisExecucaoTransicao = variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public IEntityProcessInstance getDemanda() {
-		return null;
+	public VariavelExecucaoTransicao addVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+		getVariaveisExecucaoTransicao().add(variaveisExecucaoTransicao);
+		variaveisExecucaoTransicao.setVariavel(this);
+
+		return variaveisExecucaoTransicao;
 	}
+
+	public VariavelExecucaoTransicao removeVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+		getVariaveisExecucaoTransicao().remove(variaveisExecucaoTransicao);
+		variaveisExecucaoTransicao.setVariavel(null);
+
+		return variaveisExecucaoTransicao;
+	}
+
 }

@@ -1,22 +1,8 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-
+import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
 /**
@@ -26,13 +12,13 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="TB_INSTANCIA_PAPEL")
 @NamedQuery(name="InstanciaPapel.findAll", query="SELECT i FROM InstanciaPapel i")
-public class InstanciaPapel implements EntidadeBasica, IEntityRole {
+public class InstanciaPapel  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_INSTANCIA_PAPEL")
-	private Integer cod;
+	private Long cod;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_CRIACAO")
@@ -61,11 +47,11 @@ public class InstanciaPapel implements EntidadeBasica, IEntityRole {
 	public InstanciaPapel() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
@@ -109,28 +95,4 @@ public class InstanciaPapel implements EntidadeBasica, IEntityRole {
 		this.papel = papel;
 	}
 
-	@Override
-	public MUser getPessoa() {
-		return null;
-	}
-
-	@Override
-	public void setPessoa(MUser pessoa) {
-
-	}
-
-	@Override
-	public MUser getPessoaAtribuidora() {
-		return null;
-	}
-
-	@Override
-	public void setPessoaAtribuidora(MUser pessoaAtribuidora) {
-
-	}
-
-	@Override
-	public IEntityProcessInstance getDemanda() {
-		return null;
-	}
 }
