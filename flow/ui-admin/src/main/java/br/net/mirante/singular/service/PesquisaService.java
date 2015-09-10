@@ -10,7 +10,7 @@ public interface PesquisaService {
 
     List<Map<String, String>> retrieveMeanTimeByProcess(Period period);
 
-    List<Map<String, String>> retrieveNewInstancesQuantityLastYear();
+    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode);
 
     List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode);
 

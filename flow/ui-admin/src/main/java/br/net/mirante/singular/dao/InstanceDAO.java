@@ -103,20 +103,25 @@ public class InstanceDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveNewQuantityLastYear() {
+    public List<Map<String, String>> retrieveNewQuantityLastYear(String processCode) {
         String sql = "SET LANGUAGE Portuguese;"
                 + "SELECT UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/'"
                 + " + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
                 + " COUNT(CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_INSTANCIA_PROCESSO"
+                + " FROM TB_INSTANCIA_PROCESSO INS"
+                + "   LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_INICIO >= (GETDATE() - 365)"
+                + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
                 + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("MES", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
         return (List<Map<String, String>>) query.list();
     }
 

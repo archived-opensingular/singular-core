@@ -32,9 +32,11 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
-    @Cacheable(value = "retrieveNewInstancesQuantityLastYear", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
-        return instanceDAO.retrieveNewQuantityLastYear();
+    @Cacheable(value = "retrieveNewInstancesQuantityLastYear",
+            key = "#processCode?:'NULL'",
+            cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode) {
+        return instanceDAO.retrieveNewQuantityLastYear(processCode);
     }
 
     @Override
