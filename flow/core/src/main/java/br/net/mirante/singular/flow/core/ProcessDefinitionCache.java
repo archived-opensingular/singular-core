@@ -21,13 +21,13 @@ public final class ProcessDefinitionCache {
     private final ImmutableMap<Class<? extends ProcessInstance>, ProcessDefinition<?>> definitionsByInstanceType;
 
     private static LoadingCache<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>> definitionsByClass = CacheBuilder
-            .newBuilder().weakValues()
-            .build(new CacheLoader<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>>() {
-                @Override
-                public ProcessDefinition<?> load(Class<? extends ProcessDefinition<?>> classeDefinicao) throws Exception {
-                    return classeDefinicao.newInstance();
-                }
-            });
+        .newBuilder().weakValues()
+        .build(new CacheLoader<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>>() {
+            @Override
+            public ProcessDefinition<?> load(Class<? extends ProcessDefinition<?>> classeDefinicao) throws Exception {
+                return classeDefinicao.newInstance();
+            }
+        });
 
     private static ProcessDefinitionCache cache;
 
@@ -51,16 +51,20 @@ public final class ProcessDefinitionCache {
                 throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
             }
             cacheById.put(def.getAbbreviation(), def);
-            cacheByInstanceType.put(def.getClasseInstancia(), def);
+            cacheByInstanceType.put(def.getInstanceClass(), def);
         }
         definitions = cache.build();
         definitionsById = ImmutableMap.copyOf(cacheById);
         definitionsByInstanceType = ImmutableMap.copyOf(cacheByInstanceType);
     }
 
-    public static synchronized ProcessDefinitionCache get(String packageName) {
+    public static ProcessDefinitionCache get(String packageName) {
         if (cache == null) {
-            cache = new ProcessDefinitionCache(packageName);
+            synchronized (ProcessDefinitionCache.class) {
+                if (cache == null) {
+                    cache = new ProcessDefinitionCache(packageName);
+                }
+            }
         }
         return cache;
     }
@@ -68,9 +72,11 @@ public final class ProcessDefinitionCache {
     /**
      * Discards all entries in the cache.
      */
-    public static synchronized void invalidateAll() {
-        definitionsByClass.invalidateAll();
-        cache = null;
+    public static void invalidateAll() {
+        synchronized (ProcessDefinitionCache.class) {
+            definitionsByClass.invalidateAll();
+            cache = null;
+        }
     }
 
     public static <T extends ProcessDefinition<?>> T getDefinition(Class<T> definitionClass) {

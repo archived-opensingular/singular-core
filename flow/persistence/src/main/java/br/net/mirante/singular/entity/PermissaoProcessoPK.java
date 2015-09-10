@@ -1,9 +1,7 @@
 package br.net.mirante.singular.entity;
 
 import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 /**
  * The primary key class for the RL_PERMISSAO_PROCESSO database table.

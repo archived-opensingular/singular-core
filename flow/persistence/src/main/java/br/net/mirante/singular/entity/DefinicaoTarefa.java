@@ -1,21 +1,8 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-
+import java.io.Serializable;
+import javax.persistence.*;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 
 /**
@@ -25,13 +12,16 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_DEFINICAO_TAREFA")
 @NamedQuery(name="DefinicaoTarefa.findAll", query="SELECT d FROM DefinicaoTarefa d")
-public class DefinicaoTarefa implements EntidadeBasica {
+public class DefinicaoTarefa  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_DEFINICAO_TAREFA")
-	private Integer cod;
+	private Long cod;
+
+	@Column(name="SG_TAREFA")
+	private String sigla;
 
 	//bi-directional many-to-one association to PermissaoTarefa
 	@OneToMany(mappedBy="definicaoTarefa")
@@ -45,12 +35,20 @@ public class DefinicaoTarefa implements EntidadeBasica {
 	public DefinicaoTarefa() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
+	}
+
+	public String getSigla() {
+		return this.sigla;
+	}
+
+	public void setSigla(String sigla) {
+		this.sigla = sigla;
 	}
 
 	public List<PermissaoTarefa> getPermissoesTarefas() {

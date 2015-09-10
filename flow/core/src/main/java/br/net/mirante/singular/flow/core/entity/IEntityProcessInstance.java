@@ -6,87 +6,78 @@ import java.util.List;
 import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod {
+    
+    IEntityProcess getProcess();
 
-    String getDescricao();
+    String getDescription();
 
-    void setDescricao(String descricao);
+    void setDescription(String description);
 
-    MUser getPessoaCriadora();
+    MUser getUserCreator();
 
-    void setPessoaCriadora(MUser pessoaCriadora);
+    Date getBeginDate();
 
-    Date getDataInicio();
+    Date getEndDate();
 
-    void setDataInicio(Date dataInicio);
+    IEntityTaskInstance getParentTask();
+    
+    List<? extends IEntityTaskInstance> getTasks();
 
-    Date getDataFim();
+    List<? extends IEntityVariableInstance> getVariables();
 
-    void setDataFim(Date dataFim);
+    List<? extends IEntityExecutionVariable> getHistoricalVariables();
 
-    Date getDataSituacaoAtual();
+    List<? extends IEntityRole> getRoles();
 
-    void setDataSituacaoAtual(Date dataSituacaoAtual);
+    @Deprecated//Remover do CORE
+    IEntityTask getSituacao();
 
-    IEntityTaskInstance getTarefaPai();
-
-    List<? extends IEntityVariableInstance> getVariaveis();
-
-    List<? extends IEntityVariable> getHistoricoVariaveis();
-
-    List<? extends IEntityRole> getPapeis();
-
-    IEntityProcessInstance getDemandaPai();
-
-    IEntityTaskDefinition getSituacao();
-
-    List<? extends IEntityTaskInstance> getTarefas();
-
-    IEntityProcess getDefinicao();
-
-    List<? extends IEntityProcessInstance> getDemandasFilhas();
-
-    default IEntityRole getRoleUserByAbbreviation(String siglaPapel) {
-        for (IEntityRole dadosPapelInstancia : getPapeis()) {
-            if (siglaPapel.equalsIgnoreCase(dadosPapelInstancia.getPapel().getSigla())) {
+    default IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
+        for (IEntityRole dadosPapelInstancia : getRoles()) {
+            if (roleAbbreviation.equalsIgnoreCase(dadosPapelInstancia.getRole().getAbbreviation())) {
                 return dadosPapelInstancia;
             }
         }
         return null;
     }
 
-    default IEntityTaskInstance getTarefa(String siglaSituacao) {
-        return getTarefa(getDefinicao().getSituacao(siglaSituacao));
+    default IEntityTaskInstance getTaskByAbbreviation(String taskAbbreviation) {
+        return getTask(getProcess().getTask(taskAbbreviation));
     }
 
-    default IEntityTaskInstance getTarefa(IEntityTaskDefinition situacaoAlvo) {
-        List<? extends IEntityTaskInstance> tarefas = getTarefas();
+    default IEntityTaskInstance getTask(IEntityTask entityTask) {
+        List<? extends IEntityTaskInstance> tarefas = getTasks();
         for (int i = tarefas.size() - 1; i > -1; i--) {
-            if (tarefas.get(i).getSituacao().equals(situacaoAlvo)) {
+            if (tarefas.get(i).getTask().equals(entityTask)) {
                 return tarefas.get(i);
             }
         }
         return null;
     }
 
-    default IEntityTaskInstance getTarefaAtiva(IEntityTaskDefinition situacaoAlvo) {
-        List<? extends IEntityTaskInstance> lista = getTarefas();
+    default IEntityTaskInstance getCurrentTask(IEntityTask entityTask) {
+        List<? extends IEntityTaskInstance> lista = getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
             IEntityTaskInstance tarefa = lista.get(i);
-            if (tarefa.getDataFim() == null && tarefa.getSituacao().equals(situacaoAlvo)) {
+            if (tarefa.getEndDate() == null && tarefa.getTask().equals(entityTask)) {
                 return tarefa;
             }
         }
         return null;
     }
 
-    default IEntityTaskInstance getTarefaAtiva() {
-        List<? extends IEntityTaskInstance> lista = getTarefas();
+    default IEntityTaskInstance getCurrentTask() {
+        List<? extends IEntityTaskInstance> lista = getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
             IEntityTaskInstance tarefa = lista.get(i);
-            if (tarefa.getDataFim() == null) {
+            if (tarefa.getEndDate() == null) {
                 return tarefa;
             }
         }
         return null;
+    }
+    
+    default IEntityVariableInstance getVariable(String ref) {
+        return getVariables().stream().filter(var -> var.getName().equalsIgnoreCase(ref)).findAny().orElse(null);
     }
 }

@@ -34,6 +34,7 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 
 import com.google.common.base.Throwables;
 import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
@@ -51,6 +52,8 @@ import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
  */
 public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
+    public static final MetaDataRef<Boolean> SEND_EMAIL = new MetaDataRef<>("SEND_EMAIL", Boolean.class);
+    
     private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";
     private static final String MINIMUM_LABEL_MARGIN = "Minimum Label Margin";
@@ -259,7 +262,7 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
                     BpmnTypeEnum.EVENT_TYPE_PLAIN, EventCharEnum.EVENT_CHARACTERISTIC_END));
             graph.getRealizer(node).setLineColor(END_LINE_COLOR);
         } else if (task.isJava()) {
-            if (task.getName().startsWith("Notificar")) {
+            if (task.getMetaDataValue(YFilesFlowRenderer.SEND_EMAIL, false)) {
                 node = graph.createNode(BpmnRealizerFactory.createEvent(
                         BpmnTypeEnum.EVENT_TYPE_MESSAGE,
                         EventCharEnum.EVENT_CHARACTERISTIC_INTERMEDIATE_BOUNDARY_INTERRUPTING));

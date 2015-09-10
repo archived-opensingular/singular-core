@@ -5,21 +5,15 @@ import java.util.Date;
 import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityRole extends IEntityByCod {
+    
+    IEntityProcessRole getRole();
 
-    MUser getPessoa();
+    MUser getUser();
 
-    void setPessoa(MUser pessoa);
+    Date getCreateDate();
 
-    Date getDataCriacao();
+    MUser getAllocatorUser();
 
-    void setDataCriacao(Date dataCriacao);
-
-    MUser getPessoaAtribuidora();
-
-    void setPessoaAtribuidora(MUser pessoaAtribuidora);
-
-    IEntityProcessRole getPapel();
-
-    IEntityProcessInstance getDemanda();
+    IEntityProcessInstance getProcessInstance();
 
 }

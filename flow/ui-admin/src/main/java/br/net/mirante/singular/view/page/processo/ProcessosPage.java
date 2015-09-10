@@ -11,7 +11,7 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("process")
 public class ProcessosPage extends Template {
 
-    public static final String PROCESS_DEFINITION_ID_PARAM = "_PD_ID";
+    public static final String PROCESS_DEFINITION_ID_PARAM = "pdId";
 
     @Override
     protected Content getContent(String id) {
@@ -33,7 +33,6 @@ public class ProcessosPage extends Template {
         super.renderHead(response);
         StringBuilder script = new StringBuilder();
         script.append("$('#_menuSubFlow').addClass('open');")
-                .append("$('#_menuSubFlow').addClass('open');")
                 .append("$('#_menuSubFlow>a>span.arrow').addClass('open');")
                 .append("$('#_menuSubFlow>ul').show();")
                 .append("$('#_menuItemFlowProcess').addClass('active');");

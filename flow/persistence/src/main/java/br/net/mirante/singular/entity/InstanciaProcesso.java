@@ -1,28 +1,9 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityVariable;
-
+import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 
 /**
@@ -32,13 +13,13 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="TB_INSTANCIA_PROCESSO")
 @NamedQuery(name="InstanciaProcesso.findAll", query="SELECT i FROM InstanciaProcesso i")
-public class InstanciaProcesso implements EntidadeBasica, IEntityProcessInstance {
+public class InstanciaProcesso  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_INSTANCIA_PROCESSO")
-	private Integer cod;
+	private Long cod;
 
 	@Column(name="DS_INSTANCIA_PROCESSO")
 	private String descricao;
@@ -71,6 +52,11 @@ public class InstanciaProcesso implements EntidadeBasica, IEntityProcessInstance
 	@JoinColumn(name="CO_PROCESSO")
 	private Processo processo;
 
+	//uni-directional many-to-one association to Tarefa
+	@ManyToOne
+	@JoinColumn(name="CO_TAREFA_ATUAL")
+	private Tarefa tarefa;
+
 	//bi-directional many-to-one association to InstanciaTarefa
 	@OneToMany(mappedBy="instanciaProcesso")
 	private List<InstanciaTarefa> instanciasTarefa;
@@ -79,14 +65,18 @@ public class InstanciaProcesso implements EntidadeBasica, IEntityProcessInstance
 	@OneToMany(mappedBy="instanciaProcesso")
 	private List<Variavel> variaveis;
 
+	//bi-directional many-to-one association to VariavelExecucaoTransicao
+	@OneToMany(mappedBy="instanciaProcesso")
+	private List<VariavelExecucaoTransicao> variaveisExecucaoTransicao;
+
 	public InstanciaProcesso() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
@@ -146,6 +136,14 @@ public class InstanciaProcesso implements EntidadeBasica, IEntityProcessInstance
 		this.processo = processo;
 	}
 
+	public Tarefa getTarefa() {
+		return this.tarefa;
+	}
+
+	public void setTarefa(Tarefa tarefa) {
+		this.tarefa = tarefa;
+	}
+
 	public List<InstanciaTarefa> getInstanciasTarefa() {
 		return this.instanciasTarefa;
 	}
@@ -190,63 +188,26 @@ public class InstanciaProcesso implements EntidadeBasica, IEntityProcessInstance
 		return variavei;
 	}
 
-	@Override
-	public MUser getPessoaCriadora() {
-		return null;
+	public List<VariavelExecucaoTransicao> getVariaveisExecucaoTransicao() {
+		return this.variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public void setPessoaCriadora(MUser pessoaCriadora) {
-
+	public void setVariaveisExecucaoTransicao(List<VariavelExecucaoTransicao> variaveisExecucaoTransicao) {
+		this.variaveisExecucaoTransicao = variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public Date getDataSituacaoAtual() {
-		return null;
+	public VariavelExecucaoTransicao addVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+		getVariaveisExecucaoTransicao().add(variaveisExecucaoTransicao);
+		variaveisExecucaoTransicao.setInstanciaProcesso(this);
+
+		return variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public void setDataSituacaoAtual(Date dataSituacaoAtual) {
+	public VariavelExecucaoTransicao removeVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+		getVariaveisExecucaoTransicao().remove(variaveisExecucaoTransicao);
+		variaveisExecucaoTransicao.setInstanciaProcesso(null);
 
+		return variaveisExecucaoTransicao;
 	}
 
-	@Override
-	public IEntityTaskInstance getTarefaPai() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityVariable> getHistoricoVariaveis() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityRole> getPapeis() {
-		return null;
-	}
-
-	@Override
-	public IEntityProcessInstance getDemandaPai() {
-		return null;
-	}
-
-	@Override
-	public IEntityTaskDefinition getSituacao() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityTaskInstance> getTarefas() {
-		return null;
-	}
-
-	@Override
-	public IEntityProcess getDefinicao() {
-		return null;
-	}
-
-	@Override
-	public List<? extends IEntityProcessInstance> getDemandasFilhas() {
-		return null;
-	}
 }

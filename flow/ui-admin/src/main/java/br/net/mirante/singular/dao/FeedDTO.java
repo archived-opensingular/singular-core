@@ -2,10 +2,6 @@ package br.net.mirante.singular.dao;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import br.net.mirante.singular.util.wicket.resource.FeedIcon;
 
 public class FeedDTO implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -1,11 +1,7 @@
 package br.net.mirante.singular.entity;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
 
 
 /**
@@ -15,11 +11,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name="RL_PERMISSAO_PROCESSO")
 @NamedQuery(name="PermissaoProcesso.findAll", query="SELECT p FROM PermissaoProcesso p")
-public class PermissaoProcesso {
+public class PermissaoProcesso  {
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
-	private PermissaoProcessoPK cod;
+	private PermissaoProcessoPK id;
 
 	//bi-directional many-to-one association to DefinicaoProcesso
 	@ManyToOne
@@ -29,12 +25,12 @@ public class PermissaoProcesso {
 	public PermissaoProcesso() {
 	}
 
-	public PermissaoProcessoPK getCod() {
-		return this.cod;
+	public PermissaoProcessoPK getId() {
+		return this.id;
 	}
 
-	public void setCod(PermissaoProcessoPK cod) {
-		this.cod = cod;
+	public void setId(PermissaoProcessoPK id) {
+		this.id = id;
 	}
 
 	public DefinicaoProcesso getDefinicaoProcesso() {

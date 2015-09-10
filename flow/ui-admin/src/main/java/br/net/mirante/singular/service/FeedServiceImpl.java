@@ -31,7 +31,6 @@ public class FeedServiceImpl implements FeedService {
     @Transactional
     @Cacheable(value = "retrieveFeed", cacheManager = "cacheManager")
     public List<FeedDTO> retrieveFeed() {
-
         List<FeedDTO> result = new ArrayList<>();
         List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1));
         for (Map<String, String> mediaPorProcesso : medias) {

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+
+import com.google.common.collect.Lists;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
@@ -41,7 +41,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     @Override
     public boolean canExecute(ProcessInstance instance, MUser user) {
         for (IEntityRole entityRole : instance.getUserRoles()) {
-            if (isSameRole(executionRole, entityRole) && user.is(entityRole.getPessoa())) {
+            if (isSameRole(executionRole, entityRole) && user.is(entityRole.getUser())) {
                 return true;
             }
         }
@@ -52,7 +52,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     public boolean canVisualize(ProcessInstance instance, MUser user) {
         if (visualizeRole != null) {
             for (IEntityRole entityRole : instance.getUserRoles()) {
-                if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getPessoa())) {
+                if (isSameRole(visualizeRole, entityRole) && user.is(entityRole.getUser())) {
                     return true;
                 }
             }
@@ -61,7 +61,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     private boolean isSameRole(MProcessRole processRole, IEntityRole entityRole) {
-        return entityRole.getPapel().getSigla().equalsIgnoreCase(processRole.getAbbreviation());
+        return entityRole.getRole().getAbbreviation().equalsIgnoreCase(processRole.getAbbreviation());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
         final Set<Integer> cods = new HashSet<>();
         for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
-                cods.add(entityRole.getPessoa().getCod());
+                cods.add(entityRole.getUser().getCod());
             }
         }
         return cods;
@@ -80,7 +80,7 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
         final List<MUser> pessoas = new ArrayList<>();
         for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
-                pessoas.add(entityRole.getPessoa());
+                pessoas.add(entityRole.getUser());
             }
         }
         Collections.sort(pessoas);

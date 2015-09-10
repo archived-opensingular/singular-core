@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public class Prop implements Serializable {
+public class MetaDataValue implements Serializable {
 
     private final String name;
     private Object value;
@@ -16,7 +16,7 @@ public class Prop implements Serializable {
         return value;
     }
 
-    public Prop(PropRef<?> propRef) {
+    public MetaDataValue(MetaDataRef<?> propRef) {
         this.name = propRef.getName();
     }
 

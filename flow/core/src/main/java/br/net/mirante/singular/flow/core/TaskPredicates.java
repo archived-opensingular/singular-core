@@ -10,12 +10,12 @@ import org.joda.time.Days;
 public class TaskPredicates {
 
     public static ITaskPredicate disabledCreator() {
-        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !MBPM.canBeAllocated(taskInstance.getProcessInstance().getPessoaCriadora()));
+        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !MBPM.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));
     }
 
     public static ITaskPredicate timeLimitInDays(final int numberOfDays) {
         TaskPredicateImpl taskPredicateImpl = new TaskPredicateImpl("Prazo Extrapolado", (taskInstance) -> {
-            Date date = taskInstance.getDataAlvoFim();
+            Date date = taskInstance.getTargetEndDate();
             if (date != null) {
                 return Days.daysBetween(new DateTime(date), DateTime.now()).getDays() > numberOfDays;
             }

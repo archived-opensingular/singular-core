@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.vars.VarService;
 
 import com.google.common.collect.ImmutableList;
@@ -41,8 +43,8 @@ public class FlowMap implements Serializable {
     /**
      * Ponto de extensão para customizações.
      */
-    protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, boolean userOption) {
-        return new MTransition(origin, name, destinarion, userOption);
+    protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, TransitionType type) {
+        return new MTransition(origin, name, destinarion, type);
     }
 
     public Collection<MTask<?>> getTasks() {
@@ -91,9 +93,9 @@ public class FlowMap implements Serializable {
         return ImmutableSet.copyOf(rolesByAbbreviation.values());
     }
 
-    public MProcessRole addRoleDefinition(String name, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
+    public MProcessRole addRoleDefinition(String name, String abbreviation, UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
-        final MProcessRole processRole = new MProcessRole(name, userRoleSettingStrategy, automaticUserAllocation);
+        final MProcessRole processRole = new MProcessRole(name, abbreviation, userRoleSettingStrategy, automaticUserAllocation);
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
         }
@@ -124,20 +126,20 @@ public class FlowMap implements Serializable {
         return task;
     }
 
-    public MTaskPeople addPeopleTask(String name) {
-        return addTask(new MTaskPeople(this, name));
+    public MTaskPeople addPeopleTask(ITaskDefinition definition) {
+        return addTask(new MTaskPeople(this, definition.getName(), definition.getKey()));
     }
 
-    public MTaskJava addJavaTask(String name) {
-        return addTask(new MTaskJava(this, name));
+    public MTaskJava addJavaTask(ITaskDefinition definition) {
+        return addTask(new MTaskJava(this, definition.getName(), definition.getKey()));
     }
 
-    public MTaskWait addWaitTask(String name) {
-        return addWaitTask(name, (IExecutionDateStrategy<ProcessInstance>) null);
+    public MTaskWait addWaitTask(ITaskDefinition definition) {
+        return addWaitTask(definition, (IExecutionDateStrategy<ProcessInstance>) null);
     }
 
-    public <T extends ProcessInstance> MTaskWait addWaitTask(String name, IExecutionDateStrategy<T> dateExecutionStrategy) {
-        return addTask(new MTaskWait(this, name, dateExecutionStrategy));
+    public <T extends ProcessInstance> MTaskWait addWaitTask(ITaskDefinition definition, IExecutionDateStrategy<T> dateExecutionStrategy) {
+        return addTask(new MTaskWait(this, definition.getName(), definition.getKey(), dateExecutionStrategy));
     }
 
     public MTask<?> setStartTask(MTask<?> task) {
@@ -162,25 +164,30 @@ public class FlowMap implements Serializable {
         return processDefinition;
     }
 
-    public MTaskEnd addFim(String name) {
-        Objects.requireNonNull(name);
-        if (endTasks.containsKey(name)) {
-            throw new SingularFlowException(createErrorMsg("End task '" + name + "' already defined"));
+    public MTaskEnd addEnd(ITaskDefinition definition) {
+        Objects.requireNonNull(definition.getKey());
+        Objects.requireNonNull(definition.getName());
+        if (endTasks.containsKey(definition.getName())) {
+            throw new SingularFlowException(createErrorMsg("End task '" + definition.getName() + "' already defined"));
         }
-        final MTaskEnd fim = new MTaskEnd(this, name);
-        endTasks.put(name, fim);
+        final MTaskEnd fim = new MTaskEnd(this, definition.getName(), definition.getKey());
+        endTasks.put(definition.getName(), fim);
         tasksByAbbreviation.put(fim.getAbbreviation(), fim);
         return fim;
     }
 
     public MTask<?> getTaskWithAbbreviation(String abbreviation) {
-        return tasksByAbbreviation.get(MBPMUtil.convertToJavaIdentity(abbreviation));
+        return tasksByAbbreviation.get(abbreviation);
     }
 
     public MTaskPeople getPeopleTaskWithAbbreviation(String abbreviation) {
         return MTaskPeople.class.cast(getTaskWithAbbreviation(abbreviation));
     }
 
+    public MTask<?> getTask(ITaskDefinition taskDefinition) {
+        return getTaskWithName(taskDefinition.getName());
+    }
+    
     public MTask<?> getTaskWithName(String name) {
         if (tasksByName.containsKey(name)) {
             return tasksByName.get(name);
@@ -190,7 +197,9 @@ public class FlowMap implements Serializable {
 
     public void verifyConsistency() {
         verifyTasksConsistency();
-        Objects.requireNonNull(startTask, "There is no initial task setted");
+        if(startTask == null){
+            throw new SingularFlowException(createErrorMsg("There is no initial task setted"));
+        }
         checkRouteToTheEnd();
     }
 

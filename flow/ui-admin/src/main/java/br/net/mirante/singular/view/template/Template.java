@@ -27,7 +27,7 @@ public abstract class Template extends WebPage {
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody"));
         queue(new Header("_Header", withTopAction(), withSideBar()));
-        queue(new Menu("_Menu"));
+        queue(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"));
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
     }
@@ -51,6 +51,10 @@ public abstract class Template extends WebPage {
         return false;
     }
 
+    protected boolean withMenu() {
+        return true;
+    }
+
     protected String getPageTitleLocalKey() {
         return "label.page.title.local";
     }
@@ -69,8 +73,8 @@ public abstract class Template extends WebPage {
         response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/layout/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
-                .append("    QuickSidebar.init(); // init quick sidebar\n")
-                .append("});");
+            .append("    QuickSidebar.init(); // init quick sidebar\n")
+            .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
@@ -82,8 +86,7 @@ public abstract class Template extends WebPage {
             AjaxRequestTarget target = (AjaxRequestTarget) payload;
             target.addListener(new AjaxRequestTarget.IListener() {
                 @Override
-                public void onBeforeRespond(Map<String, Component> map, AjaxRequestTarget target) {
-                }
+                public void onBeforeRespond(Map<String, Component> map, AjaxRequestTarget target) {}
 
                 @Override
                 public void onAfterRespond(Map<String, Component> map, AjaxRequestTarget.IJavaScriptResponse response) {

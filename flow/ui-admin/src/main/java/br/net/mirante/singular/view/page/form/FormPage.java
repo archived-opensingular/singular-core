@@ -19,16 +19,20 @@ public class FormPage extends Template {
     protected boolean withSideBar() {
         return false;
     }
+    @Override
+    protected boolean withMenu() {
+        return false;
+    }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
         StringBuilder script = new StringBuilder();
         script.append("$('#_menuSubFlow').addClass('open');")
-                .append("$('#_menuSubFlow').addClass('open');")
-                .append("$('#_menuSubFlow>a>span.arrow').addClass('open');")
-                .append("$('#_menuSubFlow>ul').show();")
-                .append("$('#_menuItemFlowProcess').addClass('active');");
+            .append("$('#_menuSubFlow').addClass('open');")
+            .append("$('#_menuSubFlow>a>span.arrow').addClass('open');")
+            .append("$('#_menuSubFlow>ul').show();")
+            .append("$('#_menuItemFlowProcess').addClass('active');");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 }

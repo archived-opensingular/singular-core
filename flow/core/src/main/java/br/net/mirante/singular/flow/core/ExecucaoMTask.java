@@ -31,7 +31,7 @@ public class ExecucaoMTask {
 
     public TaskInstance getInstanciaTarefa() {
         if (instanciaTarefa == null) {
-            return instanciaProcesso.getTarefaAtual();
+            return instanciaProcesso.getCurrentTask();
         }
         return instanciaTarefa;
     }

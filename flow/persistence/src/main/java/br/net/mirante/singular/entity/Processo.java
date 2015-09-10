@@ -1,16 +1,8 @@
 package br.net.mirante.singular.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import java.io.Serializable;
+import javax.persistence.*;
+import java.util.Date;
 
 
 /**
@@ -20,13 +12,17 @@ import javax.persistence.Table;
 @Entity
 @Table(name="TB_PROCESSO")
 @NamedQuery(name="Processo.findAll", query="SELECT p FROM Processo p")
-public class Processo implements EntidadeBasica {
+public class Processo  {
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="CO_PROCESSO")
-	private Integer cod;
+	private Long cod;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="DT_VERSAO")
+	private Date dataVersao;
 
 	//uni-directional many-to-one association to DefinicaoProcesso
 	@ManyToOne
@@ -36,12 +32,20 @@ public class Processo implements EntidadeBasica {
 	public Processo() {
 	}
 
-	public Integer getCod() {
+	public Long getCod() {
 		return this.cod;
 	}
 
-	public void setCod(Integer cod) {
+	public void setCod(Long cod) {
 		this.cod = cod;
+	}
+
+	public Date getDataVersao() {
+		return this.dataVersao;
+	}
+
+	public void setDataVersao(Date dataVersao) {
+		this.dataVersao = dataVersao;
 	}
 
 	public DefinicaoProcesso getDefinicaoProcesso() {

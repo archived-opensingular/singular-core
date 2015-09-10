@@ -8,8 +8,8 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
 
     private final IExecutionDateStrategy<ProcessInstance> executionDateStrategy;
 
-    public MTaskWait(FlowMap flowMap, String name, IExecutionDateStrategy<?> executionDateStrategy) {
-        super(flowMap, name);
+    public MTaskWait(FlowMap flowMap, String name, String abbreviation, IExecutionDateStrategy<?> executionDateStrategy) {
+        super(flowMap, name, abbreviation);
         this.executionDateStrategy = (IExecutionDateStrategy<ProcessInstance>) executionDateStrategy;
     }
 

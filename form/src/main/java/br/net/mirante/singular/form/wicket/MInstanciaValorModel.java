@@ -47,4 +47,29 @@ public class MInstanciaValorModel<T>
     public void detach() {
         this.instanciaModel.detach();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((instanciaModel == null) ? 0 : instanciaModel.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MInstanciaValorModel<?> other = (MInstanciaValorModel<?>) obj;
+        if (instanciaModel == null) {
+            if (other.instanciaModel != null)
+                return false;
+        } else if (!instanciaModel.equals(other.instanciaModel))
+            return false;
+        return true;
+    }
 }

@@ -9,8 +9,8 @@ public abstract class MTaskUserExecutable<K extends MTaskUserExecutable<?>> exte
     private ITaskPageStrategy pageAfterTask;
     private IExecutionDateStrategy<? extends ProcessInstance> targetDateExecutionStrategy;
 
-    public MTaskUserExecutable(FlowMap flowMap, String name) {
-        super(flowMap, name);
+    public MTaskUserExecutable(FlowMap flowMap, String name, String abbreviation) {
+        super(flowMap, name, abbreviation);
     }
 
     @Override
