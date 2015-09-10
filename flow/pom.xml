@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.2.7</version>
+        <version>0.2.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-flow</artifactId>
