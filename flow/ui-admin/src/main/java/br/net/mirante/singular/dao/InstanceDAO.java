@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
@@ -102,20 +103,25 @@ public class InstanceDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveNewQuantityLastYear() {
+    public List<Map<String, String>> retrieveNewQuantityLastYear(String processCode) {
         String sql = "SET LANGUAGE Portuguese;"
                 + "SELECT UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/'"
                 + " + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
                 + " COUNT(CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_INSTANCIA_PROCESSO"
+                + " FROM TB_INSTANCIA_PROCESSO INS"
+                + "   LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_INICIO >= (GETDATE() - 365)"
+                + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
                 + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("MES", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
         return (List<Map<String, String>>) query.list();
     }
 
@@ -153,8 +159,7 @@ public class InstanceDAO {
                 + "  AND DEF.SG_PROCESSO = :sigla"
                 + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) > :media"
                 + "  AND DATEDIFF(DAY, DEM.DT_INICIO, DATEADD(DAY, 1, DEM.DT_FIM)) IS NOT NULL";
-        Query query;
-        query = getSession().createSQLQuery(sql)
+        Query query = getSession().createSQLQuery(sql)
                 .addScalar("DESCRICAO", StringType.INSTANCE)
                 .addScalar("DIAS", StringType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
@@ -169,5 +174,62 @@ public class InstanceDAO {
         LocalDateTime localDateTime = LocalDateTime.from(temporal);
 
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
+        String sql = "SELECT '" + processCode + "' AS processCode,"
+                + " COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS amount,"
+                + " AVG(DATEDIFF(DAY, DEM.DT_INICIO, GETDATE())) AS averageTimeInDays"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "   LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                + " WHERE (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal() + ")"
+                + "   AND DEF.se_ativo = 1"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("processCode", StringType.INSTANCE)
+                .addScalar("amount", IntegerType.INSTANCE)
+                .addScalar("averageTimeInDays", IntegerType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
+        StatusDTO status = (StatusDTO) query.uniqueResult();
+        status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
+        status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
+        return status;
+    }
+
+    public Integer countOpenedInstancesLast30Days(String processCode) {
+        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + " WHERE DEM.DT_INICIO >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        return ((Number) query.uniqueResult()).intValue();
+    }
+
+    public Integer countFinishedInstancesLast30Days(String processCode) {
+        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
+                + "   LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                + " WHERE DEM.DT_FIM >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + "   AND (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal() + ")"
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
+        }
+        return ((Number) query.uniqueResult()).intValue();
     }
 }

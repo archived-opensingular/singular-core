@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.PesquisaDAO;
+import br.net.mirante.singular.dao.StatusDTO;
 
 @Service("pesquisaService")
 @Transactional(readOnly = true)
@@ -31,9 +32,11 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
-    @Cacheable(value = "retrieveNewInstancesQuantityLastYear", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear() {
-        return instanceDAO.retrieveNewQuantityLastYear();
+    @Cacheable(value = "retrieveNewInstancesQuantityLastYear",
+            key = "#processCode?:'NULL'",
+            cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode) {
+        return instanceDAO.retrieveNewQuantityLastYear(processCode);
     }
 
     @Override
@@ -50,5 +53,11 @@ public class PesquisaServiceImpl implements PesquisaService {
             cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode) {
         return pesquisaDAO.retrieveMeanTimeByTask(period, processCode);
+    }
+
+    @Override
+    @Cacheable(value = "retrieveActiveInstanceStatus", key = "#processCode?:'NULL'", cacheManager = "cacheManager")
+    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
+        return instanceDAO.retrieveActiveInstanceStatus(processCode);
     }
 }

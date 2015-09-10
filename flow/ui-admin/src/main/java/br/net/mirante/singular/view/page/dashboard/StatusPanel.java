@@ -15,6 +15,7 @@ public class StatusPanel extends Panel {
 
     private String labelKey;
     private Integer value;
+    private String unit;
     private Icone icon;
     private Color color;
 
@@ -26,11 +27,17 @@ public class StatusPanel extends Panel {
         super(id);
         this.labelKey = labelKey;
         this.value = value;
+        this.unit = null;
         this.icon = Icone.PIE;
         this.color = Color.BLUE_SHARP;
         this.withProgress = false;
         this.progressLabelKey = "label.progress.label";
         this.progressValue = 0;
+    }
+
+    public StatusPanel setUnit(String unit) {
+        this.unit = unit;
+        return this;
     }
 
     public StatusPanel setIcon(Icone icon) {
@@ -64,10 +71,11 @@ public class StatusPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         add(new Label("label", new ResourceModel(labelKey)));
-        add(new Label("value", $m.ofValue(value)).add($b.attr("class", color.getFontCssClass())));
+        add(new Label("value", $m.property(this, "valueWithUnit")).add($b.attr("class", color.getFontCssClass())));
         add(new WebMarkupContainer("icon").add($b.attr("class", icon.getCssClass())));
         WebMarkupContainer progress = new WebMarkupContainer("progress");
         if (!withProgress) {
+            add($b.attr("class", "without-progress-bar"));
             progress.add($b.attrAppender("class", "hide", " "));
         }
         WebMarkupContainer progressBar = new WebMarkupContainer("progressCSSValue");
@@ -78,5 +86,10 @@ public class StatusPanel extends Panel {
         progress.add(new Label("progressLabel", new ResourceModel(progressLabelKey)));
         progress.add(new Label("progressValue", $m.ofValue(String.format("%d%%", progressValue))));
         add(progress);
+    }
+
+    public String getValueWithUnit() {
+        String pattern = value == null ? "---" : unit == null ? "%d" : "%d %s";
+        return String.format(pattern, value, unit);
     }
 }
