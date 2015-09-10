@@ -87,7 +87,7 @@
         <persistence strategy="localTempSwap"/>
     </cache>
 
-    <cache name="countActiveInstance"
+    <cache name="retrieveActiveInstanceStatus"
            maxEntriesLocalHeap="10000"
            maxEntriesLocalDisk="1000"
            eternal="false"

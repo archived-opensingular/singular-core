@@ -11,6 +11,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.StringResourceModel;
 
+import br.net.mirante.singular.dao.StatusDTO;
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -56,9 +57,10 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status",
-                pesquisaService.countActiveInstance(processDefinitionCode)).setIcon(Icone.SPEEDOMETER));
-        add(new StatusPanel("active-average-status-panel", "label.active.average.status", 22)
+        StatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
+                .setIcon(Icone.SPEEDOMETER));
+        add(new StatusPanel("active-average-status-panel", "label.active.average.status", statusDTO.getAmount())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
                 .setColor(Color.GREEN_SHARP));

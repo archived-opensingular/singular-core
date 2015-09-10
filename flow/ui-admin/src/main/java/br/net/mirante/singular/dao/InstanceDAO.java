@@ -170,8 +170,10 @@ public class InstanceDAO {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public Integer countActiveInstance(String processCode) {
-        String sql = "SELECT COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
+        String sql = "SELECT '" + processCode + "' AS processCode"
+                + " COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS amount,"
+                + " AVG(DATEDIFF(DAY, DEM.DT_INICIO, GETDATE())) AS averageTimeInDays"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
                 + "   INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + "   LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
@@ -180,10 +182,13 @@ public class InstanceDAO {
                 + "   AND DEF.se_ativo = 1"
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+                .addScalar("processCode", StringType.INSTANCE)
+                .addScalar("amount", LongType.INSTANCE)
+                .addScalar("averageTimeInDays", LongType.INSTANCE);
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }
-        return ((Number) query.uniqueResult()).intValue();
+        query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
+        return (StatusDTO) query.uniqueResult();
     }
 }
