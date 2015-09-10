@@ -66,4 +66,10 @@ public class PesquisaServiceImpl implements PesquisaService {
     public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
         return instanceDAO.retrieveMeanTimeActiveInstances(processCode);
     }
+
+    @Override
+    @Cacheable(value = "retrieveMeanTimeFinishedInstances", key = "#processCode", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
+        return instanceDAO.retrieveMeanTimeFinishedInstances(processCode);
+    }
 }

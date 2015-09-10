@@ -139,7 +139,7 @@ public class DashboardContent extends Content {
                     "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine") {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return pesquisaService.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                    return pesquisaService.retrieveMeanTimeFinishedInstances(processDefinitionCode);
                 }
             });
             globalContainer.add($b.visibleIf($m.ofValue(false)));

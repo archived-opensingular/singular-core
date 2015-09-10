@@ -235,7 +235,7 @@ public class InstanceDAO {
         return ((Number) query.uniqueResult()).intValue();
     }
 
-    private static final String DATE_DIST_SQL =
+    private static final String ACTIVE_DATE_DIST_SQL =
             "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
             + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
             + "       ISNULL(AVG(DATEDIFF(DAY, INS.DT_INICIO, INS.DT_FIM)), 0) AS TEMPO%n"
@@ -243,8 +243,18 @@ public class InstanceDAO {
             + "  LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO%n"
             + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
             + "WHERE DT_FIM > CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) AND SG_PROCESSO = :processCode";
+    private static final String FINISHED_DATE_DIST_SQL =
+            "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
+            + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
+            + "       ISNULL(AVG(DATEDIFF(DAY, INS.DT_INICIO, INS.DT_FIM)), 0) AS TEMPO%n"
+            + "FROM TB_INSTANCIA_PROCESSO INS%n"
+            + "  LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO%n"
+            + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
+            + "WHERE DT_FIM >= CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
+            + "      AND DT_FIM < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
+            + "      AND SG_PROCESSO = :processCode";
 
-    private String mountDateDistSQL() {
+    private String mountDateDistSQL(boolean active) {
         List<String> sqls = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 1);
@@ -254,7 +264,7 @@ public class InstanceDAO {
             calendar.add(Calendar.MONTH, -1);
             int month = calendar.get(Calendar.MONTH) + 1;
             int year = calendar.get(Calendar.YEAR);
-            sqls.add(String.format(DATE_DIST_SQL, pos, year, month, year, month, yearPlus1, monthPlus1));
+            formatDateDistSQL(sqls, pos, month, year, monthPlus1, yearPlus1, active);
         }
         int pos = 13;
         StringBuilder result = new StringBuilder("SET LANGUAGE Portuguese;");
@@ -264,14 +274,32 @@ public class InstanceDAO {
         return result.toString();
     }
 
+    private void formatDateDistSQL(List<String> sqls, int pos, int month, int year,
+            int monthPlus1, int yearPlus1, boolean active) {
+        if (active) {
+            sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, yearPlus1, monthPlus1));
+        } else {
+            sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, year, month,
+                    yearPlus1, monthPlus1));
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
-        Query query = getSession().createSQLQuery(mountDateDistSQL())
+    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode) {
+        Query query = getSession().createSQLQuery(sql)
                 .addScalar("POS", IntegerType.INSTANCE)
                 .addScalar("MES", StringType.INSTANCE)
                 .addScalar("TEMPO", LongType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("processCode", processCode);
         return (List<Map<String, String>>) query.list();
+    }
+
+    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(true), processCode);
+    }
+
+    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(false), processCode);
     }
 }
