@@ -17,4 +17,6 @@ public interface PesquisaService {
     List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
 
     StatusDTO retrieveActiveInstanceStatus(String processCode);
+
+    List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode);
 }

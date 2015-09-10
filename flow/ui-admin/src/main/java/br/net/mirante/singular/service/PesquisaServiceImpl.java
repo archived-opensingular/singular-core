@@ -60,4 +60,10 @@ public class PesquisaServiceImpl implements PesquisaService {
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         return instanceDAO.retrieveActiveInstanceStatus(processCode);
     }
+
+    @Override
+    @Cacheable(value = "retrieveMeanTimeActiveInstances", key = "#processCode", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
+        return instanceDAO.retrieveMeanTimeActiveInstances(processCode);
+    }
 }

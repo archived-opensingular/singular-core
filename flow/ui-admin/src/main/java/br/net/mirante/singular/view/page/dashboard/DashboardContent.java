@@ -126,8 +126,23 @@ public class DashboardContent extends Content {
             });
             localContainer.add($b.visibleIf($m.ofValue(false)));
         } else {
+            localContainer.add(new SerialChartPanel("active-instances-mean-time-chart",
+                    "label.chart.active.instances.mean.time.title", "label.chart.active.instances.mean.time.subtitle",
+                    "TEMPO", "MES", "smoothedLine") {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                }
+            });
+            localContainer.add(new SerialChartPanel("finished-instances-mean-time-chart",
+                    "label.chart.finished.instances.mean.time.title",
+                    "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine") {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                }
+            });
             globalContainer.add($b.visibleIf($m.ofValue(false)));
-            localContainer.add($b.visibleIf($m.ofValue(false)));
         }
         add(globalContainer);
         add(localContainer);
