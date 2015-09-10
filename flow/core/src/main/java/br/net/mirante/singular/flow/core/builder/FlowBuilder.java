@@ -7,6 +7,7 @@ import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
 import br.net.mirante.singular.flow.core.IRoleChangeListener;
 import br.net.mirante.singular.flow.core.ITaskPredicate;
+import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
@@ -78,9 +79,15 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description,
+        UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
+        boolean automaticUserAllocation) {
+        return addRoleDefinition(description, MBPMUtil.convertToJavaIdentity(description, true), userRoleSettingStrategy, automaticUserAllocation);
+    }
+    
+    public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
             UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
-        return newProcessRole(getFlowMap().addRoleDefinition(description, userRoleSettingStrategy, automaticUserAllocation));
+        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, userRoleSettingStrategy, automaticUserAllocation));
     }
 
     public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {

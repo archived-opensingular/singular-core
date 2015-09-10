@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>0.2.7-SNAPSHOT</version>
+        <version>0.2.7</version>
     </parent>
 
     <artifactId>wicket-utils</artifactId>
