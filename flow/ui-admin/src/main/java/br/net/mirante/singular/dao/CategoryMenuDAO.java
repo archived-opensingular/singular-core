@@ -16,8 +16,6 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-import br.net.mirante.singular.flow.core.TaskType;
-
 @Repository
 public class CategoryMenuDAO {
 
@@ -84,14 +82,12 @@ public class CategoryMenuDAO {
     @SuppressWarnings("unchecked")
     private List<Object[]> retrieveCategories() {
         String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS COD, DEF.NO_PROCESSO AS NOD, DEF.SG_PROCESSO AS SGD,"
-                + " CAT.CO_CATEGORIA AS COC, CAT.NO_CATEGORIA AS NOC, COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QTD"
+                + " CAT.CO_CATEGORIA AS COC, CAT.NO_CATEGORIA AS NOC, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QTD"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
                 + " INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
                 + " INNER JOIN TB_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
-                + " LEFT JOIN TB_TAREFA TAR ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
-                + " WHERE (DEM.cod_situacao IS NULL OR TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + ") AND DEF.se_ativo = 1"
+                + " LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
                 + " GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO,"
                 + " CAT.CO_CATEGORIA, CAT.NO_CATEGORIA";
         Query query = getSession().createSQLQuery(sql)

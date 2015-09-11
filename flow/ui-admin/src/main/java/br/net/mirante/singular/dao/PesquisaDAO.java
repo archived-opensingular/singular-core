@@ -5,7 +5,6 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unchecked")
 public class PesquisaDAO {
 
-    private Map<Period, List<Map<String, String>>> cache = new HashMap<>();
-
     @Inject
     private SessionFactory sessionFactory;
 
@@ -32,35 +29,29 @@ public class PesquisaDAO {
     }
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
-        if (!cache.containsKey(period)) {
-            String sql = "SELECT d.NO_PROCESSO AS NOME,"
-                    + " AVG(DATEDIFF(DAY, dem.DT_INICIO, DATEADD(DAY, 1, dem.DT_FIM))) AS MEAN,"
-                    + " d.SG_PROCESSO AS SIGLA"
-                    + " FROM TB_INSTANCIA_PROCESSO dem"
-                    + "  INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = dem.CO_PROCESSO"
-                    + "  INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                    + " WHERE dem.DT_FIM IS NOT NULL";
+        String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
+                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
+                + " FROM TB_INSTANCIA_PROCESSO INS"
+                + "  INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " WHERE INS.DT_FIM IS NOT NULL"
+                + (period != null ? " AND INS.DT_INICIO >= :startPeriod AND INS.DT_FIM <= :endPeriod" : "")
+                + " GROUP BY DEF.SG_PROCESSO, DEF.NO_PROCESSO ORDER BY MEAN DESC";
 
-            if (period != null) {
-                sql += " AND dem.DT_INICIO >= :startPeriod AND dem.DT_FIM <= :endPeriod";
-            }
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("NOME", StringType.INSTANCE)
+                .addScalar("MEAN", StringType.INSTANCE)
+                .addScalar("SIGLA", StringType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 
-            sql += " GROUP BY d.SG_PROCESSO, d.NO_PROCESSO";
-
-            Query query = getSession().createSQLQuery(
-                    sql)
-                    .addScalar("NOME", StringType.INSTANCE)
-                    .addScalar("MEAN", StringType.INSTANCE)
-                    .addScalar("SIGLA", StringType.INSTANCE)
-                    .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
-            if (period != null) {
-                query.setParameter("startPeriod", periodFromNow(period));
-                query.setParameter("endPeriod", new Date());
-            }
-            cache.put(period, (List<Map<String, String>>) query.list());
+        if (period != null) {
+            query.setParameter("startPeriod", periodFromNow(period));
+            query.setParameter("endPeriod", new Date());
         }
-        return cache.get(period);
+
+        query.setMaxResults(15);
+
+        return (List<Map<String, String>>) query.list();
     }
 
     private Date periodFromNow(Period period) {
@@ -72,13 +63,13 @@ public class PesquisaDAO {
 
     public List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode) {
         String sql = "SELECT TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD, d.NO_PROCESSO AS NOME_DEFINICAO," +
-                " ISNULL(AVG(DATEDIFF(DAY, t.DT_INICIO, DATEADD(DAY, 1, t.DT_FIM))), 0) AS MEAN" +
+                " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, t.DT_INICIO, t.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN" +
                 " FROM TB_INSTANCIA_TAREFA t" +
                 " INNER JOIN TB_TAREFA TAR ON TAR.CO_TAREFA = t.CO_TAREFA" +
-                " INNER JOIN TB_INSTANCIA_PROCESSO dem ON t.CO_INSTANCIA_PROCESSO = dem.CO_INSTANCIA_PROCESSO" +
-                " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = dem.CO_PROCESSO" +
+                " INNER JOIN TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO" +
+                " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO" +
                 " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO" +
-                " WHERE dem.DT_FIM IS NOT NULL AND dem.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode" +
+                " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode" +
                 " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO";
 
         Query query = getSession().createSQLQuery(sql)
