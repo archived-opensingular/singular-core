@@ -82,11 +82,11 @@ public class FlowMap implements Serializable {
     }
 
     public boolean hasRoleWithAbbreviation(String sigla) {
-        return rolesByAbbreviation.containsKey(sigla);
+        return rolesByAbbreviation.containsKey(sigla.toLowerCase());
     }
 
     public MProcessRole getRoleWithAbbreviation(String abbreviation) {
-        return rolesByAbbreviation.get(abbreviation);
+        return rolesByAbbreviation.get(abbreviation.toLowerCase());
     }
 
     public Collection<MProcessRole> getRoles() {
@@ -99,7 +99,7 @@ public class FlowMap implements Serializable {
         if (hasRoleWithAbbreviation(processRole.getAbbreviation())) {
             throw new SingularFlowException(createErrorMsg("Role with abbreviation '" + processRole.getAbbreviation() + "' already defined"));
         }
-        rolesByAbbreviation.put(processRole.getAbbreviation(), processRole);
+        rolesByAbbreviation.put(processRole.getAbbreviation().toLowerCase(), processRole);
         return processRole;
     }
 

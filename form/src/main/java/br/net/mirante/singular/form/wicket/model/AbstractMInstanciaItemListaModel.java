@@ -1,37 +1,41 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.wicket.model;
 
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public abstract class AbstractMInstanciaCampoModel<I extends MInstancia>
+public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
     extends AbstractReadOnlyModel<I>
     implements IChainingModel<I> {
 
     private Object rootTarget;
 
-    public AbstractMInstanciaCampoModel(Object rootTarget) {
+    public AbstractMInstanciaItemListaModel(Object rootTarget) {
         this.rootTarget = rootTarget;
     }
 
-    public String getPropertyExpression() {
-        return propertyExpression();
+    public int getIndex() {
+        return index();
     }
 
-    protected abstract String propertyExpression();
+    protected abstract int index();
 
     @Override
     @SuppressWarnings("unchecked")
     public I getObject() {
-        return (I) getRootTarget().getCampo(getPropertyExpression());
+        MILista<I> iLista = getRootTarget();
+        if (getIndex() >= iLista.size())
+            return null;
+        return (I) iLista.get(getIndex());
     }
 
-    public MIComposto getRootTarget() {
-        return (MIComposto) ((rootTarget instanceof IModel<?>)
+    @SuppressWarnings("unchecked")
+    public MILista<I> getRootTarget() {
+        return (MILista<I>) ((rootTarget instanceof IModel<?>)
             ? ((IModel<?>) rootTarget).getObject()
             : rootTarget);
     }
@@ -68,7 +72,7 @@ public abstract class AbstractMInstanciaCampoModel<I extends MInstancia>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractMInstanciaCampoModel<?> other = (AbstractMInstanciaCampoModel<?>) obj;
+        AbstractMInstanciaItemListaModel<?> other = (AbstractMInstanciaItemListaModel<?>) obj;
         if (rootTarget == null) {
             if (other.rootTarget != null)
                 return false;

@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public interface IEntityByCod extends Serializable{
 
-    Long getCod();
+    Serializable getCod();
 }

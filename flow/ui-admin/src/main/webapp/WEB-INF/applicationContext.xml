@@ -16,7 +16,7 @@
     <import resource="conf/cache.xml"/>
     <context:component-scan base-package="br.net.mirante.singular"/>
 
-    <bean id="adminWicketFilterContext" class="java.lang.String">
+    <bean id="adminWicketFilterContext" class="br.net.mirante.singular.wicket.AdminWicketFilterContext">
         <constructor-arg value="/"/>
     </bean>
 

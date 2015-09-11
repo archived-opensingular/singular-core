@@ -47,3 +47,7 @@ table.dataTable thead th > a {
     width: -moz-max-content;    /* Firefox/Gecko */
     width: -webkit-max-content; /* Chrome */
 }
+
+.without-progress-bar > .dashboard-stat2 {
+    padding-bottom: 1px;
+}

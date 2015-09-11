@@ -9,12 +9,17 @@ import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.StringResourceModel;
 
+import br.net.mirante.singular.dao.StatusDTO;
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.template.Content;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
@@ -56,27 +61,18 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", 15)
-                .setIcon(Icone.SPEEDOMETER));
-        add(new StatusPanel("active-average-status-panel", "label.active.average.status", 22)
-                .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
-        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status", 35)
-                .setColor(Color.GREEN_SHARP));
-        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status", 47)
-                .setColor(Color.RED_SUNGLO));
+        addStatusesPanel();
+        addWelcomeChart();
+        addDefaultCharts();
         add(new FeedPanel("feed"));
-        add(new SerialChartPanel("process-mean-time-chart", "label.chart.mean.time.process.title",
-                "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
-            @Override
-            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
-            }
-        });
+    }
+
+    private void addDefaultCharts() {
         add(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
                 "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveNewInstancesQuantityLastYear();
+                return pesquisaService.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
             }
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
@@ -101,5 +97,54 @@ public class DashboardContent extends Content {
                         processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
             }
         });
+    }
+
+    private void addStatusesPanel() {
+        StatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
+                .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
+        add(new StatusPanel("active-average-status-panel", "label.active.average.status",
+                statusDTO.getAverageTimeInDays()).setUnit(
+                new StringResourceModel("label.active.average.status.unit", this).getString())
+                .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
+        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
+                statusDTO.getOpenedInstancesLast30Days()));
+        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
+                statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
+    }
+
+    private void addWelcomeChart() {
+        WebMarkupContainer globalContainer = new WebMarkupContainer("welcomeChartGlobal");
+        WebMarkupContainer localContainer = new WebMarkupContainer("welcomeChartLocal");
+        if (processDefinitionCode == null) {
+            globalContainer.add(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
+                    "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
+                }
+            });
+            localContainer.add($b.visibleIf($m.ofValue(false)));
+        } else {
+            localContainer.add(new SerialChartPanel("active-instances-mean-time-chart",
+                    "label.chart.active.instances.mean.time.title", "label.chart.active.instances.mean.time.subtitle",
+                    "TEMPO", "MES", "smoothedLine") {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                }
+            });
+            localContainer.add(new SerialChartPanel("finished-instances-mean-time-chart",
+                    "label.chart.finished.instances.mean.time.title",
+                    "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine") {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveMeanTimeFinishedInstances(processDefinitionCode);
+                }
+            });
+            globalContainer.add($b.visibleIf($m.ofValue(false)));
+        }
+        add(globalContainer);
+        add(localContainer);
     }
 }

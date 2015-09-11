@@ -25,7 +25,7 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO, valor);
         return this;
     }
-    
+
     public AtrBasic tamanhoInicial(Integer valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL, valor);
         return this;
@@ -57,7 +57,7 @@ public class AtrBasic extends MTranslatorParaAtributo {
     public Integer getTamanhoInicial() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL);
     }
-    
+
     public Integer getTamanhoMaximo() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO);
     }

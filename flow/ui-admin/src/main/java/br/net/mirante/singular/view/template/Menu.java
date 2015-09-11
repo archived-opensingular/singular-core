@@ -15,14 +15,15 @@ import br.net.mirante.singular.dao.MenuItemDTO;
 import br.net.mirante.singular.service.MenuService;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
+import br.net.mirante.singular.wicket.AdminWicketFilterContext;
 
 public class Menu extends Panel {
 
     @Inject
-    private MenuService menuService;
+    private AdminWicketFilterContext adminWicketFilterContext;
 
     @Inject
-    private String adminWicketFilterContext;
+    private MenuService menuService;
 
     public Menu(String id) {
         super(id);
@@ -32,9 +33,9 @@ public class Menu extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         queue(new WebMarkupContainer("dashboard").add(
-                WicketUtils.$b.attr("href", adminWicketFilterContext.concat("dashboard"))));
+                WicketUtils.$b.attr("href", adminWicketFilterContext.getRelativeContext().concat("dashboard"))));
         queue(new WebMarkupContainer("process").add(
-                WicketUtils.$b.attr("href", adminWicketFilterContext.concat("process"))));
+                WicketUtils.$b.attr("href", adminWicketFilterContext.getRelativeContext().concat("process"))));
         queue(mountCategories());
     }
 
@@ -65,7 +66,7 @@ public class Menu extends Panel {
                     .add(new Label("counter", item.getCounter()))
                     .add(new Label("definitionLabel", item.getName()))
                     .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#"
-                            : adminWicketFilterContext.concat("dashboard")
+                            : adminWicketFilterContext.getRelativeContext().concat("dashboard")
                             .concat("?").concat(DashboardPage.PROCESS_DEFINITION_COD_PARAM)
                             .concat("=").concat(item.getCode())))));
             definitionsMenu.add(definitionMenu);

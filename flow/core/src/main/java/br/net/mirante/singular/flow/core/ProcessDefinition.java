@@ -197,17 +197,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     public final IEntityProcess getEntity() {
         synchronized (this) {
             if (entityCod == null) {
-                IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
-
-                IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
-                if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
-
-                    entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
-                } else {
-                    entityCod = oldEntity.getCod();
+                try {
+                    IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+                    
+                    IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
+                    if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
+                        
+                        entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
+                    } else {
+                        entityCod = oldEntity.getCod();
+                    }
+                    
+                    return entityProcess;
+                } catch (Exception e) {
+                    throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
                 }
-
-                return entityProcess;
             }
         }
 
