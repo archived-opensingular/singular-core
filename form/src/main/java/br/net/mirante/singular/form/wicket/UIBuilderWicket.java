@@ -40,6 +40,9 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -48,6 +51,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.form.YearMonthField;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
 import br.net.mirante.singular.util.wicket.util.IBehaviorsMixin;
 import br.net.mirante.singular.util.wicket.util.IModelsMixin;
@@ -128,7 +132,7 @@ public class UIBuilderWicket {
     static class StringMapper implements ControlsFieldComponentMapper {
         @Override
         public void appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
-            if (model.getObject().as(AtrBasic.class).isMultiLinha())
+            if (model.getObject().as(AtrBasic::new).isMultiLinha())
                 formGroup
                     .appendTextarea(new TextArea<>(model.getObject().getNome(), new MInstanciaValorModel<>(model))
                         .setLabel(labelModel));
@@ -187,10 +191,10 @@ public class UIBuilderWicket {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
                 final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
                 final MInstancia iCampo = mCampo.getObject();
-                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.as(AtrBasic.class).getLabel()));
+                final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.as(AtrBasic::new).getLabel()));
                 final int colspan = (hintColWidths.containsKey(nomeCampo))
                     ? hintColWidths.get(nomeCampo)
-                    : iCampo.as(AtrBasic.class).getLarguraPref(BSCol.MAX_COLS);
+                    : iCampo.as(AtrWicket::new).getLarguraPref(BSCol.MAX_COLS);
                 if (iCampo instanceof MIComposto) {
                     final BSCol col = row.newCol().md(colspan);
                     if (isNotBlank(label.getObject()))
@@ -237,7 +241,7 @@ public class UIBuilderWicket {
                 configureCurrentContext.configure(ctx, mLista);
 
             MILista<?> iLista = mLista.getObject();
-            final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(AtrBasic.class).getLabel()));
+            final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(AtrBasic::new).getLabel()));
             BSCol parentCol = ctx.getContainer();
             if (isNotBlank(label.getObject()))
                 parentCol.appendTag("h3", new Label("_title", label));
@@ -313,7 +317,7 @@ public class UIBuilderWicket {
             int colunasRestantes = BSCol.MAX_COLS;
             for (String nomeCampo : tElemento.getCampos()) {
                 MTipo<?> tCampo = tElemento.getCampo(nomeCampo);
-                int larguraPref = tCampo.as(AtrBasic.class).getLarguraPref(-1);
+                int larguraPref = tCampo.as(AtrWicket::new).getLarguraPref(-1);
                 if (larguraPref >= 0) {
                     colWidths.put(nomeCampo, larguraPref);
                     colunasRestantes -= larguraPref;
@@ -354,7 +358,7 @@ public class UIBuilderWicket {
                     (IBSComponentFactory<BSContainer<?>>) id -> new BSContainer<>(id));
 
             MInstancia iItem = itemModel.getObject();
-            String label = iItem.as(AtrBasic.class).getLabel();
+            String label = iItem.as(AtrBasic::new).getLabel();
             if (StringUtils.isNotBlank(label)) {
                 panel.newTag("div", true, "class='panel-heading'",
                     (IBSComponentFactory<Label>) id -> new Label(id, label));

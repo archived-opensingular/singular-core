@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.wicket.model;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.model.AbstractReadOnlyModel;

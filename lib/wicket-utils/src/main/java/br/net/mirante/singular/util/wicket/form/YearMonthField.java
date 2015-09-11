@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.util.wicket.form;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
