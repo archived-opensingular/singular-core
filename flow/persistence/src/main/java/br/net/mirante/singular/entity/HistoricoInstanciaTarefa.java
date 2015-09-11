@@ -1,5 +1,10 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,7 +17,7 @@ import java.util.Date;
 @Entity
 @Table(name="TB_HISTORICO_INSTANCIA_TAREFA")
 @NamedQuery(name="HistoricoInstanciaTarefa.findAll", query="SELECT h FROM HistoricoInstanciaTarefa h")
-public class HistoricoInstanciaTarefa  {
+public class HistoricoInstanciaTarefa implements IEntityTaskHistoric {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -118,4 +123,38 @@ public class HistoricoInstanciaTarefa  {
 		this.tipoHistoricoTarefa = tipoHistoricoTarefa;
 	}
 
+	@Override
+	public IEntityTaskInstance getTaskInstance() {
+		return null;
+	}
+
+	@Override
+	public Date getBeginDateAllocation() {
+		return null;
+	}
+
+	@Override
+	public Date getEndDateAllocation() {
+		return null;
+	}
+
+	@Override
+	public MUser getAllocatedUser() {
+		return null;
+	}
+
+	@Override
+	public MUser getAllocatorUser() {
+		return null;
+	}
+
+	@Override
+	public String getDescription() {
+		return null;
+	}
+
+	@Override
+	public IEntityTaskHistoricType getType() {
+		return null;
+	}
 }

@@ -1,5 +1,8 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -11,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_PAPEL")
 @NamedQuery(name="Papel.findAll", query="SELECT p FROM Papel p")
-public class Papel  {
+public class Papel implements IEntityProcessRole {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -65,4 +68,28 @@ public class Papel  {
 		this.definicaoProcesso = definicaoProcesso;
 	}
 
+	@Override
+	public String getAbbreviation() {
+		return null;
+	}
+
+	@Override
+	public void setAbbreviation(String abbreviation) {
+
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public void setName(String name) {
+
+	}
+
+	@Override
+	public IEntityProcessDefinition getProcessDefinition() {
+		return null;
+	}
 }

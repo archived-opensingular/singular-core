@@ -1,5 +1,11 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
@@ -12,7 +18,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_DEFINICAO_PROCESSO")
 @NamedQuery(name="DefinicaoProcesso.findAll", query="SELECT d FROM DefinicaoProcesso d")
-public class DefinicaoProcesso  {
+public class DefinicaoProcesso implements IEntityProcessDefinition {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -155,4 +161,38 @@ public class DefinicaoProcesso  {
 		return papei;
 	}
 
+	@Override
+	public String getAbbreviation() {
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	public String getDefinitionClassName() {
+		return null;
+	}
+
+	@Override
+	public IEntityCategory getCategory() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityTaskDefinition> getTaskDefinitions() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityProcessRole> getRoles() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityProcess> getVersions() {
+		return null;
+	}
 }

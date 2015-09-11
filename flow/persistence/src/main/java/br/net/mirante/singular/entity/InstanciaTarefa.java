@@ -1,5 +1,13 @@
 package br.net.mirante.singular.entity;
 
+import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -13,7 +21,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_INSTANCIA_TAREFA")
 @NamedQuery(name="InstanciaTarefa.findAll", query="SELECT i FROM InstanciaTarefa i")
-public class InstanciaTarefa  {
+public class InstanciaTarefa implements IEntityTaskInstance {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -220,4 +228,68 @@ public class InstanciaTarefa  {
 		this.transicao = transicao;
 	}
 
+	@Override
+	public IEntityProcessInstance getProcessInstance() {
+		return null;
+	}
+
+	@Override
+	public IEntityTask getTask() {
+		return null;
+	}
+
+	@Override
+	public Date getBeginDate() {
+		return null;
+	}
+
+	@Override
+	public Date getEndDate() {
+		return null;
+	}
+
+	@Override
+	public Date getTargetEndDate() {
+		return null;
+	}
+
+	@Override
+	public void setTargetEndDate(Date targetEndDate) {
+
+	}
+
+	@Override
+	public MUser getAllocatedUser() {
+		return null;
+	}
+
+	@Override
+	public MUser getResponsibleUser() {
+		return null;
+	}
+
+	@Override
+	public IEntityTaskTransition getExecutedTransition() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityExecutionVariable> getInputVariables() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityExecutionVariable> getOutputVariables() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityTaskHistoric> getTaskHistoric() {
+		return null;
+	}
+
+	@Override
+	public List<? extends IEntityProcessInstance> getChildProcesses() {
+		return null;
+	}
 }
