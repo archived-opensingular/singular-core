@@ -48,4 +48,8 @@ public class UIAdminApplication extends WebApplication {
             return RuntimeConfigurationType.DEVELOPMENT;
         }
     }
+
+    public static UIAdminApplication get() {
+        return (UIAdminApplication) WebApplication.get();
+    }
 }

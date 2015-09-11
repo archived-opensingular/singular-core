@@ -9,11 +9,12 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.ResourceModel;
 
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import br.net.mirante.singular.wicket.AdminWicketFilterContext;
 
 public abstract class Content extends Panel {
 
     @Inject
-    private String adminWicketFilterContext;
+    private AdminWicketFilterContext adminWicketFilterContext;
 
     private boolean withBreadcrumb;
     private boolean withSettingsMenu;
@@ -47,7 +48,7 @@ public abstract class Content extends Panel {
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
-                WicketUtils.$b.attr("href", adminWicketFilterContext.concat("dashboard"))));
+                WicketUtils.$b.attr("href", adminWicketFilterContext.getRelativeContext().concat("dashboard"))));
         breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
@@ -69,5 +70,6 @@ public abstract class Content extends Panel {
     }
 
     protected abstract String getContentTitlelKey();
+
     protected abstract String getContentSubtitlelKey();
 }
