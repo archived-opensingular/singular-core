@@ -67,7 +67,6 @@ public class MPacoteBasic extends MPacote {
         pb.getAtributo(ATR_MULTI_LINHA).as(AtrBasic.class).label("Multi linha");
         pb.getAtributo(ATR_VISIVEL).as(AtrBasic.class).label("Visível");
         pb.getAtributo(ATR_ORDEM).as(AtrBasic.class).label("Ordem");
-
     }
 
     public static Function<MAtributoEnabled, AtrBasic> aspect() {
