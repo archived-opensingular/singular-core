@@ -33,6 +33,8 @@ public class MPacoteBasic extends MPacote {
                                                                                          MTipoInteger.class, MIInteger.class, Integer.class);
     public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_MULTI_LINHA     = new AtrRef<>(MPacoteBasic.class, "multiLinha",
                                                                                          MTipoBoolean.class, MIBoolean.class, Boolean.class);
+    public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_LARGURA_PREF    = new AtrRef<>(MPacoteBasic.class, "larguraColuna",
+                                                                                         MTipoInteger.class, MIInteger.class, Integer.class);
 
     public MPacoteBasic() {
         super(NOME);
@@ -51,6 +53,7 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_LABEL);
         pb.createTipoAtributo(MTipo.class, ATR_VISIVEL).withDefaultValueIfNull(true);
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
+        pb.createTipoAtributo(MTipo.class, ATR_LARGURA_PREF);
 
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_MAXIMO, 100);
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_EDICAO, 50);
@@ -67,6 +70,7 @@ public class MPacoteBasic extends MPacote {
         pb.getAtributo(ATR_MULTI_LINHA).as(AtrBasic.class).label("Multi linha");
         pb.getAtributo(ATR_VISIVEL).as(AtrBasic.class).label("Visível");
         pb.getAtributo(ATR_ORDEM).as(AtrBasic.class).label("Ordem");
+        pb.getAtributo(ATR_LARGURA_PREF).as(AtrBasic.class).label("Largura preferencial");
 
     }
 

@@ -33,13 +33,13 @@ public class MPacoteCurriculo extends MPacote {
 
         final MTipoComposto<?> informacoesPessoais = curriculo.addCampoComposto("informacoesPessoais");
         final MTipoNomePessoa nome = informacoesPessoais.addCampo("nome", MTipoNomePessoa.class, true);
-        final MTipoCPF cpf = informacoesPessoais.addCampo(MTipoCPF.class);
+        final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class);
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         {
             informacoesPessoais.as(AtrBasic.class).label("Informações Pessoais");
-            nome.as(AtrBasic.class).label("Nome").tamanhoMaximo(50);
-            cpf.as(AtrBasic.class).label("CPF");
-            dtNasc.as(AtrBasic.class).label("Dt. Nasc.");
+            nome.as(AtrBasic.class).label("Nome").tamanhoMaximo(50).larguraPref(7);
+            cpf.as(AtrBasic.class).label("CPF").larguraPref(3);
+            dtNasc.as(AtrBasic.class).label("Dt.Nasc.").larguraPref(2);
         }
 
         final MTipoComposto<?> contatos = informacoesPessoais.addCampoComposto("contatos");
@@ -49,10 +49,10 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoTelefoneNacional telCel = contatos.addCampo("telefoneCelular", MTipoTelefoneNacional.class);
         {
             contatos.as(AtrBasic.class).label("Contatos");
-            email.as(AtrBasic.class).label("e-Mail");
-            telFixo.as(AtrBasic.class).label("Tel.Fixo");
-            telFixo2.as(AtrBasic.class).label("Tel.Fixo");
-            telCel.as(AtrBasic.class).label("Tel.Celular");
+            email.as(AtrBasic.class).label("e-Mail").larguraPref(6);
+            telFixo.as(AtrBasic.class).label("Tel.Fixo").larguraPref(2);
+            telFixo2.as(AtrBasic.class).label("Tel.Fixo").larguraPref(2);
+            telCel.as(AtrBasic.class).label("Tel.Celular").larguraPref(2);
         }
 
         final MTipoComposto<?> referencia = curriculo.addCampoComposto("referencia");
@@ -60,24 +60,23 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString refQuemNaEmpresa = referencia.addCampoString("colaboradorContato");
         {
             referencia.as(AtrBasic.class).label("Referência");
-            refTemNaEmpresa.as(AtrBasic.class).label("Conhece colaborador na empresa");
-            refQuemNaEmpresa.as(AtrBasic.class).label("Colaborador");
+            refTemNaEmpresa.as(AtrBasic.class).label("Conhece colaborador na empresa").larguraPref(4);
+            refQuemNaEmpresa.as(AtrBasic.class).label("Colaborador").larguraPref(8);
         }
 
         final MTipoLista<MTipoComposto<?>> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
         final MTipoComposto<?> cursoAcademico = formacao.getTipoElementos();
         final MTipoString academicoTipo = cursoAcademico.addCampoString("tipo", true)
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
-        final MTipoString academicoNome = cursoAcademico.addCampoString("nomeCurso", true);
+        final MTipoString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
             formacao.withView(MListaSimpleTableView::new).as(AtrBasic.class).label("Formação Acadêmica").tamanhoInicial(1);
-            academicoTipo.withView(MSelecaoPorRadioView::new).as(AtrBasic.class).label("Tipo");
-            academicoNome.as(AtrBasic.class).label("Nome");
-            academicoInstituicao.as(AtrBasic.class).label("Instituição");
-            academicoMesConclusao.as(AtrBasic.class).label("Mês conclusão");
-
+            academicoTipo.withView(MSelecaoPorRadioView::new).as(AtrBasic.class).label("Tipo").larguraPref(2);
+            academicoNomeCurso.as(AtrBasic.class).label("Nome");
+            academicoInstituicao.as(AtrBasic.class).label("Instituição").larguraPref(3);
+            academicoMesConclusao.as(AtrBasic.class).label("Mês conclusão").larguraPref(2);
         }
 
         final MTipoLista<MTipoComposto<?>> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
@@ -89,29 +88,32 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString atividades = experiencia.addCampoString("atividades");
         {
             experiencias.withView(MListaMultiPanelView::new).as(AtrBasic.class).label("Experiências profissionais").tamanhoInicial(2);
-            dtInicioExperiencia.as(AtrBasic.class).label("Data inicial");
-            dtFimExperiencia.as(AtrBasic.class).label("Data final");
-            empresa.as(AtrBasic.class).label("Empresa");
+            dtInicioExperiencia.as(AtrBasic.class).label("Data inicial").larguraPref(2);
+            dtFimExperiencia.as(AtrBasic.class).label("Data final").larguraPref(2);
+            empresa.as(AtrBasic.class).label("Empresa").larguraPref(8);
             cargo.as(AtrBasic.class).label("Cargo");
-            atividades.as(AtrBasic.class).label("Atividades");
+            atividades.as(AtrBasic.class).label("Atividades").multiLinha(true);
         }
 
         final MTipoLista<MTipoComposto<?>> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
         final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
         final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
         final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);
-        final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
+        final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes.as(AtrBasic.class).label("Certificações").tamanhoInicial(1);
             certificacao.as(AtrBasic.class);
-            dataCertificacao.as(AtrBasic.class).label("Data");
-            entidadeCertificacao.as(AtrBasic.class).label("Entidade");
-            nomeCertificacao.as(AtrBasic.class).label("Nome");
-            validadeCertificacao.as(AtrBasic.class).label("Validade");
+            dataCertificacao.as(AtrBasic.class).label("Data").larguraPref(2);
+            entidadeCertificacao.as(AtrBasic.class).label("Entidade").larguraPref(10);
+            validadeCertificacao.as(AtrBasic.class).label("Validade").larguraPref(2);
+            nomeCertificacao.as(AtrBasic.class).label("Nome").larguraPref(10);
         }
 
         final MTipoString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
+        {
+            informacoesAdicionais.as(AtrBasic.class).multiLinha(true);
+        }
 
         pb.debug();
 
