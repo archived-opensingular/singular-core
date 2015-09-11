@@ -47,7 +47,7 @@ public abstract class AbstractMbpmBean {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
+    private ProcessInstance getProcessInstanceByEntityCod(Long cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
@@ -57,7 +57,7 @@ public abstract class AbstractMbpmBean {
         return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
+    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Long cod) {
         return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractMbpmBean {
 
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return findProcessInstance(instanceClass, Integer.parseInt(id));
+            return findProcessInstance(instanceClass, Long.parseLong(id));
         } else {
             return instanceClass.cast(findProcessInstance(id));
         }
@@ -104,9 +104,9 @@ public abstract class AbstractMbpmBean {
 
     protected static class MappingId {
         public final String abbreviation;
-        public final Integer cod;
+        public final Long cod;
 
-        public MappingId(String abbreviation, int cod) {
+        public MappingId(String abbreviation, long cod) {
             this.abbreviation = abbreviation;
             this.cod = cod;
         }

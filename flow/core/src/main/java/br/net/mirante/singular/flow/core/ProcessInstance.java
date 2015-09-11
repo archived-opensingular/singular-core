@@ -261,7 +261,7 @@ public abstract class ProcessInstance {
         return getInternalEntity().getEndDate();
     }
 
-    public final Integer getEntityCod() {
+    public final Long getEntityCod() {
         return entity.getCod();
     }
 

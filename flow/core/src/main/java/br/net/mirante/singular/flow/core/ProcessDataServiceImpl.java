@@ -33,7 +33,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         this.processDefinition = processDefinition;
     }
 
-    public final I retrieveInstance(Integer entityCod) {
+    public final I retrieveInstance(Long entityCod) {
         IEntityProcessInstance entityProcessInstance = getPersistenceService().retrieveProcessInstanceByCod(entityCod);
         if (entityProcessInstance != null) {
             return processDefinition.convertToProcessInstance(entityProcessInstance);

@@ -42,7 +42,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
 
-    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
+    Long updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Long dbVariableCod);
 
     void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK_INSTANCE parentTask);
 

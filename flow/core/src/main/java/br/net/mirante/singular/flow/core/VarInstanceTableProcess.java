@@ -11,7 +11,7 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMapImpl;
 
 public class VarInstanceTableProcess extends VarInstanceMapImpl {
 
-    private static final MetaDataRef<Integer> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Integer.class);
+    private static final MetaDataRef<Long> PROP_DB_COD = new MetaDataRef<>("persitence.dbCod", Long.class);
 
     // TODO transformar o valor abaixo em RefProcessInstance (igual a
     // RefProcessDefinition)
@@ -53,8 +53,8 @@ public class VarInstanceTableProcess extends VarInstanceMapImpl {
     @Override
     public void onValueChanged(VarInstance changedVar) {
         if (isBinded()) {
-            Integer dbCod = changedVar.getMetaData().get(PROP_DB_COD);
-            Integer dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
+            Long dbCod = changedVar.getMetaData().get(PROP_DB_COD);
+            Long dbCod2 = instancia.getPersistenceService().updateVariableValue(instancia.getInternalEntity(), changedVar, dbCod);
             if (!Objects.equals(dbCod, dbCod2)) {
                 changedVar.getMetaData().set(PROP_DB_COD, dbCod2);
             }

@@ -14,7 +14,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTask;
  */
 public interface IProcessDataService<I extends ProcessInstance> {
 
-    I retrieveInstance(Integer entityCod);
+    I retrieveInstance(Long entityCod);
 
     List<I> retrieveActiveInstancesCreatedBy(MUser user);
 

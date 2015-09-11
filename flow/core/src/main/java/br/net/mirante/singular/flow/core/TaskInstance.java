@@ -58,7 +58,7 @@ public class TaskInstance {
         return flowTask;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return entityTask.getCod();
     }
 
