@@ -1,10 +1,9 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
 
@@ -30,19 +29,19 @@ public class Variavel implements IEntityVariableInstance {
 	@Column(name="VL_VARIAVEL")
 	private String valor;
 
-	//bi-directional many-to-one association to InstanciaProcesso
+	//bi-directional many-to-one association to ProcessInstance
 	@ManyToOne
 	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
-	private InstanciaProcesso instanciaProcesso;
+	private ProcessInstance processInstance;
 
-	//uni-directional many-to-one association to TipoVariavel
+	//uni-directional many-to-one association to VariableType
 	@ManyToOne
 	@JoinColumn(name="CO_TIPO_VARIAVEL")
-	private TipoVariavel tipoVariavel;
+	private VariableType variableType;
 
-	//bi-directional many-to-one association to VariavelExecucaoTransicao
+	//bi-directional many-to-one association to ExecutionVariable
 	@OneToMany(mappedBy="variavel")
-	private List<VariavelExecucaoTransicao> variaveisExecucaoTransicao;
+	private List<ExecutionVariable> variaveisExecucaoTransicao;
 
 	public Variavel() {
 	}
@@ -71,40 +70,40 @@ public class Variavel implements IEntityVariableInstance {
 		this.valor = valor;
 	}
 
-	public InstanciaProcesso getInstanciaProcesso() {
-		return this.instanciaProcesso;
+	public ProcessInstance getProcessInstance() {
+		return this.processInstance;
 	}
 
-	public void setInstanciaProcesso(InstanciaProcesso instanciaProcesso) {
-		this.instanciaProcesso = instanciaProcesso;
+	public void setProcessInstance(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
 	}
 
-	public TipoVariavel getTipoVariavel() {
-		return this.tipoVariavel;
+	public VariableType getVariableType() {
+		return this.variableType;
 	}
 
-	public void setTipoVariavel(TipoVariavel tipoVariavel) {
-		this.tipoVariavel = tipoVariavel;
+	public void setVariableType(VariableType variableType) {
+		this.variableType = variableType;
 	}
 
-	public List<VariavelExecucaoTransicao> getVariaveisExecucaoTransicao() {
+	public List<ExecutionVariable> getVariaveisExecucaoTransicao() {
 		return this.variaveisExecucaoTransicao;
 	}
 
-	public void setVariaveisExecucaoTransicao(List<VariavelExecucaoTransicao> variaveisExecucaoTransicao) {
+	public void setVariaveisExecucaoTransicao(List<ExecutionVariable> variaveisExecucaoTransicao) {
 		this.variaveisExecucaoTransicao = variaveisExecucaoTransicao;
 	}
 
-	public VariavelExecucaoTransicao addVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+	public ExecutionVariable addVariaveisExecucaoTransicao(ExecutionVariable variaveisExecucaoTransicao) {
 		getVariaveisExecucaoTransicao().add(variaveisExecucaoTransicao);
-		variaveisExecucaoTransicao.setVariavel(this);
+		variaveisExecucaoTransicao.setVariable(this);
 
 		return variaveisExecucaoTransicao;
 	}
 
-	public VariavelExecucaoTransicao removeVariaveisExecucaoTransicao(VariavelExecucaoTransicao variaveisExecucaoTransicao) {
+	public ExecutionVariable removeVariaveisExecucaoTransicao(ExecutionVariable variaveisExecucaoTransicao) {
 		getVariaveisExecucaoTransicao().remove(variaveisExecucaoTransicao);
-		variaveisExecucaoTransicao.setVariavel(null);
+		variaveisExecucaoTransicao.setVariable(null);
 
 		return variaveisExecucaoTransicao;
 	}
@@ -124,8 +123,4 @@ public class Variavel implements IEntityVariableInstance {
 		return null;
 	}
 
-	@Override
-	public IEntityProcessInstance getProcessInstance() {
-		return null;
-	}
 }

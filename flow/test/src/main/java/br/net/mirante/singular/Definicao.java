@@ -17,10 +17,10 @@ public class Definicao extends ProcessDefinition {
     protected FlowMap createFlowMap() {
         FlowBuilder flow = new FlowBuilderImpl(this);
 
-        flow.addPeopleTask("Solicitar definição");
-        flow.addJavaTask("Aprovar Definiçâo")
+        flow.addPeopleTask(() -> "Solicitar definição");
+        flow.addJavaTask(() -> "Aprovar Definiçâo")
                 .call(this::print);
-        flow.addEnd("Aprovado");
+        flow.addEnd(() -> "Aprovado");
 
         return flow.build();
     }

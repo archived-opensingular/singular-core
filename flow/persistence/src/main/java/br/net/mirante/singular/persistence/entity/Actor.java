@@ -1,4 +1,6 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
+
+import br.net.mirante.singular.flow.core.MUser;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_ATOR")
 @NamedQuery(name="Ator.findAll", query="SELECT a FROM Ator a")
-public class Ator  {
+public class Actor {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -19,7 +21,7 @@ public class Ator  {
 	@Column(name="CO_ATOR")
 	private Long cod;
 
-	public Ator() {
+	public Actor() {
 	}
 
 	public Long getCod() {

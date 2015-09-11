@@ -1,11 +1,10 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -29,25 +28,25 @@ public class InstanciaPapel implements IEntityRole {
 	@Column(name="DT_CRIACAO")
 	private Date dataCriacao;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR")
-	private Ator ator;
+	private Actor actor;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADOR")
-	private Ator atorAlocador;
+	private Actor actorAlocador;
 
-	//uni-directional many-to-one association to InstanciaProcesso
+	//uni-directional many-to-one association to ProcessInstance
 	@ManyToOne
 	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
-	private InstanciaProcesso instanciaProcesso;
+	private ProcessInstance processInstance;
 
-	//uni-directional many-to-one association to Papel
+	//uni-directional many-to-one association to Role
 	@ManyToOne
 	@JoinColumn(name="CO_PAPEL")
-	private Papel papel;
+	private Role role;
 
 	public InstanciaPapel() {
 	}
@@ -68,42 +67,38 @@ public class InstanciaPapel implements IEntityRole {
 		this.dataCriacao = dataCriacao;
 	}
 
-	public Ator getAtor() {
-		return this.ator;
+	public Actor getActor() {
+		return this.actor;
 	}
 
-	public void setAtor(Ator ator) {
-		this.ator = ator;
+	public void setActor(Actor actor) {
+		this.actor = actor;
 	}
 
-	public Ator getAtorAlocador() {
-		return this.atorAlocador;
+	public Actor getActorAlocador() {
+		return this.actorAlocador;
 	}
 
-	public void setAtorAlocador(Ator atorAlocador) {
-		this.atorAlocador = atorAlocador;
+	public void setActorAlocador(Actor actorAlocador) {
+		this.actorAlocador = actorAlocador;
 	}
 
-	public InstanciaProcesso getInstanciaProcesso() {
-		return this.instanciaProcesso;
+	public ProcessInstance getProcessInstance() {
+		return this.processInstance;
 	}
 
-	public void setInstanciaProcesso(InstanciaProcesso instanciaProcesso) {
-		this.instanciaProcesso = instanciaProcesso;
+	public void setProcessInstance(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
 	}
 
-	public Papel getPapel() {
-		return this.papel;
+	public Role getRole() {
+		return this.role;
 	}
 
-	public void setPapel(Papel papel) {
-		this.papel = papel;
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
-	@Override
-	public IEntityProcessRole getRole() {
-		return null;
-	}
 
 	@Override
 	public MUser getUser() {
@@ -120,8 +115,6 @@ public class InstanciaPapel implements IEntityRole {
 		return null;
 	}
 
-	@Override
-	public IEntityProcessInstance getProcessInstance() {
-		return null;
-	}
+
+
 }

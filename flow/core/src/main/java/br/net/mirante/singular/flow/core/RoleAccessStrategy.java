@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -65,8 +66,8 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
-        final Set<Integer> cods = new HashSet<>();
+    public Set<Serializable> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
+        final Set<Serializable> cods = new HashSet<>();
         for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
                 cods.add(entityRole.getUser().getCod());

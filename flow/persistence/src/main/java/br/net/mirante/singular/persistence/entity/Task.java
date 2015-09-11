@@ -1,4 +1,4 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -6,7 +6,6 @@ import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.*;
 
@@ -18,7 +17,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_TAREFA")
 @NamedQuery(name="Tarefa.findAll", query="SELECT t FROM Tarefa t")
-public class Tarefa implements IEntityTask {
+public class Task implements IEntityTask {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -29,22 +28,22 @@ public class Tarefa implements IEntityTask {
 	@Column(name="NO_TAREFA")
 	private String nome;
 
-	//uni-directional many-to-one association to DefinicaoTarefa
+	//uni-directional many-to-one association to TaskDefinition
 	@ManyToOne
 	@JoinColumn(name="CO_DEFINICAO_TAREFA")
-	private DefinicaoTarefa definicaoTarefa;
+	private TaskDefinition taskDefinition;
 
 	//uni-directional many-to-one association to Processo
 	@ManyToOne
 	@JoinColumn(name="CO_PROCESSO")
-	private Processo processo;
+	private Process process;
 
 	//uni-directional many-to-one association to TipoTarefa
 	@ManyToOne
 	@JoinColumn(name="CO_TIPO_TAREFA")
 	private TipoTarefa tipoTarefa;
 
-	public Tarefa() {
+	public Task() {
 	}
 
 	public Long getCod() {
@@ -63,20 +62,20 @@ public class Tarefa implements IEntityTask {
 		this.nome = nome;
 	}
 
-	public DefinicaoTarefa getDefinicaoTarefa() {
-		return this.definicaoTarefa;
+	public TaskDefinition getTaskDefinition() {
+		return this.taskDefinition;
 	}
 
-	public void setDefinicaoTarefa(DefinicaoTarefa definicaoTarefa) {
-		this.definicaoTarefa = definicaoTarefa;
+	public void setTaskDefinition(TaskDefinition taskDefinition) {
+		this.taskDefinition = taskDefinition;
 	}
 
-	public Processo getProcesso() {
-		return this.processo;
+	public Process getProcess() {
+		return this.process;
 	}
 
-	public void setProcesso(Processo processo) {
-		this.processo = processo;
+	public void setProcess(Process process) {
+		this.process = process;
 	}
 
 	public TipoTarefa getTipoTarefa() {
@@ -88,22 +87,12 @@ public class Tarefa implements IEntityTask {
 	}
 
 	@Override
-	public IEntityProcess getProcess() {
-		return null;
-	}
-
-	@Override
 	public String getName() {
 		return null;
 	}
 
 	@Override
 	public TaskType getType() {
-		return null;
-	}
-
-	@Override
-	public IEntityTaskDefinition getTaskDefinition() {
 		return null;
 	}
 

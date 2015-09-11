@@ -1,4 +1,4 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import java.io.Serializable;
 import javax.persistence.*;

@@ -1,10 +1,9 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 
-import java.io.Serializable;
 import javax.persistence.*;
 
 
@@ -32,15 +31,15 @@ public class Transicao implements IEntityTaskTransition {
 	@Column(name="TP_TRANSICAO")
 	private String tipoTransicao;
 
-	//uni-directional many-to-one association to Tarefa
+	//uni-directional many-to-one association to Task
 	@ManyToOne
 	@JoinColumn(name="CO_TAREFA_DESTINO")
-	private Tarefa tarefaDestino;
+	private Task taskDestino;
 
-	//uni-directional many-to-one association to Tarefa
+	//uni-directional many-to-one association to Task
 	@ManyToOne
 	@JoinColumn(name="CO_TAREFA_ORIGEM")
-	private Tarefa tarefaOrigem;
+	private Task taskOrigem;
 
 	public Transicao() {
 	}
@@ -77,20 +76,20 @@ public class Transicao implements IEntityTaskTransition {
 		this.tipoTransicao = tipoTransicao;
 	}
 
-	public Tarefa getTarefaDestino() {
-		return this.tarefaDestino;
+	public Task getTaskDestino() {
+		return this.taskDestino;
 	}
 
-	public void setTarefaDestino(Tarefa tarefaDestino) {
-		this.tarefaDestino = tarefaDestino;
+	public void setTaskDestino(Task taskDestino) {
+		this.taskDestino = taskDestino;
 	}
 
-	public Tarefa getTarefaOrigem() {
-		return this.tarefaOrigem;
+	public Task getTaskOrigem() {
+		return this.taskOrigem;
 	}
 
-	public void setTarefaOrigem(Tarefa tarefaOrigem) {
-		this.tarefaOrigem = tarefaOrigem;
+	public void setTaskOrigem(Task taskOrigem) {
+		this.taskOrigem = taskOrigem;
 	}
 
 	@Override

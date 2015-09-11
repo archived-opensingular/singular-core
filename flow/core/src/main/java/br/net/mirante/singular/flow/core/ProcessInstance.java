@@ -95,13 +95,13 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getSituacao().getAbbreviation());
+            estadoAtual = getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
         }
         return estadoAtual;
     }
 
     public boolean isEnd() {
-        return getEntity().getSituacao().isEnd();
+        return getEntity().getCurrentTask().getTask().isEnd();
     }
 
     public String getProcessName() {
@@ -124,7 +124,7 @@ public abstract class ProcessInstance {
         return MBPM.getDefaultHrefFor(this);
     }
 
-    public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
+    public Set<Serializable> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
         return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
@@ -143,7 +143,7 @@ public abstract class ProcessInstance {
     }
 
     public boolean canVisualize(MUser user) {
-        switch (getInternalEntity().getSituacao().getType()) {
+        switch (getInternalEntity().getCurrentTask().getTask().getType()) {
             case People:
             case Wait:
                 if (hasAllocatedUser() && isAllocated(user.getCod())) {
@@ -436,7 +436,7 @@ public abstract class ProcessInstance {
         return getEntity().getTasks().stream().anyMatch(tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null);
     }
 
-    public boolean isAllocated(Integer codPessoa) {
+    public boolean isAllocated(Serializable codPessoa) {
         return getEntity()
                 .getTasks()
                 .stream()

@@ -1,6 +1,5 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
-import java.io.Serializable;
 import javax.persistence.*;
 
 
@@ -11,18 +10,18 @@ import javax.persistence.*;
 @Entity
 @Table(name="RL_PERMISSAO_PROCESSO")
 @NamedQuery(name="PermissaoProcesso.findAll", query="SELECT p FROM PermissaoProcesso p")
-public class PermissaoProcesso  {
+public class ProcessRight {
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
 	private PermissaoProcessoPK id;
 
-	//bi-directional many-to-one association to DefinicaoProcesso
+	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
 	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
-	private DefinicaoProcesso definicaoProcesso;
+	private ProcessDefinition processDefinition;
 
-	public PermissaoProcesso() {
+	public ProcessRight() {
 	}
 
 	public PermissaoProcessoPK getId() {
@@ -33,12 +32,12 @@ public class PermissaoProcesso  {
 		this.id = id;
 	}
 
-	public DefinicaoProcesso getDefinicaoProcesso() {
-		return this.definicaoProcesso;
+	public ProcessDefinition getProcessDefinition() {
+		return this.processDefinition;
 	}
 
-	public void setDefinicaoProcesso(DefinicaoProcesso definicaoProcesso) {
-		this.definicaoProcesso = definicaoProcesso;
+	public void setProcessDefinition(ProcessDefinition processDefinition) {
+		this.processDefinition = processDefinition;
 	}
 
 }

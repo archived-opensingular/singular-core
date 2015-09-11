@@ -269,6 +269,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return name;
     }
 
+    /**
+     *
+     * @return
+     * @deprecated o termo sigla deve ser substituido por key
+     */
+    //TODO renomear
+    @Deprecated
     public final String getAbbreviation() {
         return abbreviation;
     }

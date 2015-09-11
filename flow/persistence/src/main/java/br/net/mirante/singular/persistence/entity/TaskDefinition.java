@@ -1,10 +1,9 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name="TB_DEFINICAO_TAREFA")
 @NamedQuery(name="DefinicaoTarefa.findAll", query="SELECT d FROM DefinicaoTarefa d")
-public class DefinicaoTarefa implements IEntityTaskDefinition {
+public class TaskDefinition implements IEntityTaskDefinition {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -31,12 +30,12 @@ public class DefinicaoTarefa implements IEntityTaskDefinition {
 	@OneToMany(mappedBy="definicaoTarefa")
 	private List<PermissaoTarefa> permissoesTarefas;
 
-	//bi-directional many-to-one association to DefinicaoProcesso
+	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
 	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
-	private DefinicaoProcesso definicaoProcesso;
+	private ProcessDefinition processDefinition;
 
-	public DefinicaoTarefa() {
+	public TaskDefinition() {
 	}
 
 	public Long getCod() {
@@ -65,30 +64,26 @@ public class DefinicaoTarefa implements IEntityTaskDefinition {
 
 	public PermissaoTarefa addPermissoesTarefa(PermissaoTarefa permissoesTarefa) {
 		getPermissoesTarefas().add(permissoesTarefa);
-		permissoesTarefa.setDefinicaoTarefa(this);
+		permissoesTarefa.setTaskDefinition(this);
 
 		return permissoesTarefa;
 	}
 
 	public PermissaoTarefa removePermissoesTarefa(PermissaoTarefa permissoesTarefa) {
 		getPermissoesTarefas().remove(permissoesTarefa);
-		permissoesTarefa.setDefinicaoTarefa(null);
+		permissoesTarefa.setTaskDefinition(null);
 
 		return permissoesTarefa;
 	}
 
-	public DefinicaoProcesso getDefinicaoProcesso() {
-		return this.definicaoProcesso;
+	public ProcessDefinition getProcessDefinition() {
+		return this.processDefinition;
 	}
 
-	public void setDefinicaoProcesso(DefinicaoProcesso definicaoProcesso) {
-		this.definicaoProcesso = definicaoProcesso;
+	public void setProcessDefinition(ProcessDefinition processDefinition) {
+		this.processDefinition = processDefinition;
 	}
 
-	@Override
-	public IEntityProcessDefinition getProcessDefinition() {
-		return null;
-	}
 
 	@Override
 	public String getAbbreviation() {

@@ -1,14 +1,13 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -20,8 +19,8 @@ import java.util.List;
  */
 @Entity
 @Table(name="TB_INSTANCIA_TAREFA")
-@NamedQuery(name="InstanciaTarefa.findAll", query="SELECT i FROM InstanciaTarefa i")
-public class InstanciaTarefa implements IEntityTaskInstance {
+@NamedQuery(name="TaskInstance.findAll", query="SELECT i FROM TaskInstance i")
+public class TaskInstance implements IEntityTaskInstance {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -52,40 +51,40 @@ public class InstanciaTarefa implements IEntityTaskInstance {
 	@Column(name="SE_SUSPENSA")
 	private Boolean suspensa;
 
-	//bi-directional many-to-one association to InstanciaProcesso
+	//bi-directional many-to-one association to ProcessInstance
 	@OneToMany(mappedBy="instanciaTarefaPai")
-	private List<InstanciaProcesso> instanciasTarefaFilhas;
+	private List<ProcessInstance> instanciasTarefaFilhas;
 
-	//bi-directional many-to-one association to InstanciaProcesso
+	//bi-directional many-to-one association to ProcessInstance
 	@OneToMany(mappedBy="instanciaTarefa")
-	private List<InstanciaProcesso> instanciasProcesso;
+	private List<ProcessInstance> instanciasProcesso;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADO")
-	private Ator atorAlocado;
+	private Actor actorAlocado;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_CONCLUSAO")
-	private Ator atorConclusao;
+	private Actor actorConclusao;
 
-	//bi-directional many-to-one association to InstanciaProcesso
+	//bi-directional many-to-one association to ProcessInstance
 	@ManyToOne
 	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
-	private InstanciaProcesso instanciaProcesso;
+	private ProcessInstance processInstance;
 
-	//uni-directional many-to-one association to Tarefa
+	//uni-directional many-to-one association to Task
 	@ManyToOne
 	@JoinColumn(name="CO_TAREFA")
-	private Tarefa tarefa;
+	private Task task;
 
 	//uni-directional many-to-one association to Transicao
 	@ManyToOne
 	@JoinColumn(name="CO_TRANSICAO_EXECUTADA")
 	private Transicao transicao;
 
-	public InstanciaTarefa() {
+	public TaskInstance() {
 	}
 
 	public Long getCod() {
@@ -144,80 +143,49 @@ public class InstanciaTarefa implements IEntityTaskInstance {
 		this.suspensa = suspensa;
 	}
 
-	public List<InstanciaProcesso> getInstanciasTarefaFilhas() {
+	public List<ProcessInstance> getInstanciasTarefaFilhas() {
 		return this.instanciasTarefaFilhas;
 	}
 
-	public void setInstanciasTarefaFilhas(List<InstanciaProcesso> instanciasTarefaFilhas) {
+	public void setInstanciasTarefaFilhas(List<ProcessInstance> instanciasTarefaFilhas) {
 		this.instanciasTarefaFilhas = instanciasTarefaFilhas;
 	}
 
-	public InstanciaProcesso addInstanciasTarefaFilha(InstanciaProcesso instanciasTarefaFilha) {
-		getInstanciasTarefaFilhas().add(instanciasTarefaFilha);
-		instanciasTarefaFilha.setInstanciaTarefaPai(this);
-
-		return instanciasTarefaFilha;
-	}
-
-	public InstanciaProcesso removeInstanciasTarefaFilha(InstanciaProcesso instanciasTarefaFilha) {
-		getInstanciasTarefaFilhas().remove(instanciasTarefaFilha);
-		instanciasTarefaFilha.setInstanciaTarefaPai(null);
-
-		return instanciasTarefaFilha;
-	}
-
-	public List<InstanciaProcesso> getInstanciasProcesso() {
+	public List<ProcessInstance> getInstanciasProcesso() {
 		return this.instanciasProcesso;
 	}
 
-	public void setInstanciasProcesso(List<InstanciaProcesso> instanciasProcesso) {
+	public void setInstanciasProcesso(List<ProcessInstance> instanciasProcesso) {
 		this.instanciasProcesso = instanciasProcesso;
 	}
 
-	public InstanciaProcesso addInstanciasProcesso(InstanciaProcesso instanciasProcesso) {
-		getInstanciasProcesso().add(instanciasProcesso);
-		instanciasProcesso.setInstanciaTarefa(this);
 
-		return instanciasProcesso;
+	public Actor getActorAlocado() {
+		return this.actorAlocado;
 	}
 
-	public InstanciaProcesso removeInstanciasProcesso(InstanciaProcesso instanciasProcesso) {
-		getInstanciasProcesso().remove(instanciasProcesso);
-		instanciasProcesso.setInstanciaTarefa(null);
-
-		return instanciasProcesso;
+	public void setActorAlocado(Actor actorAlocado) {
+		this.actorAlocado = actorAlocado;
 	}
 
-	public Ator getAtorAlocado() {
-		return this.atorAlocado;
+	public Actor getActorConclusao() {
+		return this.actorConclusao;
 	}
 
-	public void setAtorAlocado(Ator atorAlocado) {
-		this.atorAlocado = atorAlocado;
+	public void setActorConclusao(Actor actorConclusao) {
+		this.actorConclusao = actorConclusao;
 	}
 
-	public Ator getAtorConclusao() {
-		return this.atorConclusao;
+
+
+	public void setProcessInstance(ProcessInstance processInstance) {
+		this.processInstance = processInstance;
 	}
 
-	public void setAtorConclusao(Ator atorConclusao) {
-		this.atorConclusao = atorConclusao;
-	}
 
-	public InstanciaProcesso getInstanciaProcesso() {
-		return this.instanciaProcesso;
-	}
 
-	public void setInstanciaProcesso(InstanciaProcesso instanciaProcesso) {
-		this.instanciaProcesso = instanciaProcesso;
-	}
-
-	public Tarefa getTarefa() {
-		return this.tarefa;
-	}
-
-	public void setTarefa(Tarefa tarefa) {
-		this.tarefa = tarefa;
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 	public Transicao getTransicao() {
@@ -284,7 +252,7 @@ public class InstanciaTarefa implements IEntityTaskInstance {
 	}
 
 	@Override
-	public List<? extends IEntityTaskHistoric> getTaskHistoric() {
+	public List<? extends IEntityTaskInstanceHistory> getTaskHistoric() {
 		return null;
 	}
 

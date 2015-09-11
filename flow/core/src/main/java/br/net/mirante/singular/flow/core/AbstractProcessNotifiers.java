@@ -4,9 +4,11 @@ import java.util.List;
 
 public abstract class AbstractProcessNotifiers {
 
+    //TODO sugestão: responsibleUser -> userInCharge
     public abstract void notifyUserTaskRelocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser,
             MUser removedUser);
 
+    //TODO sugestão: responsibleUser -> userInCharge
     public abstract void notifyUserTaskAllocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser,
             MUser removedUser, String justification);
 

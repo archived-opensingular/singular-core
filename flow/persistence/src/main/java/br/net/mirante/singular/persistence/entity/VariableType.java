@@ -1,4 +1,4 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 
@@ -12,8 +12,8 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="TB_TIPO_VARIAVEL")
-@NamedQuery(name="TipoVariavel.findAll", query="SELECT t FROM TipoVariavel t")
-public class TipoVariavel implements IEntityVariableType {
+@NamedQuery(name="VariableType.findAll", query="SELECT t FROM VariableType t")
+public class VariableType implements IEntityVariableType {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -22,12 +22,12 @@ public class TipoVariavel implements IEntityVariableType {
 	private Long cod;
 
 	@Column(name="DS_TIPO_VARIAVEL")
-	private String descricao;
+	private String description;
 
 	@Column(name="NO_CLASSE_JAVA")
-	private String nome;
+	private String typeClassName;
 
-	public TipoVariavel() {
+	public VariableType() {
 	}
 
 	public Long getCod() {
@@ -38,29 +38,21 @@ public class TipoVariavel implements IEntityVariableType {
 		this.cod = cod;
 	}
 
-	public String getDescricao() {
-		return this.descricao;
+	@Override
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public String getNome() {
-		return this.nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
 	public String getTypeClassName() {
-		return null;
+		return typeClassName;
 	}
 
-	@Override
-	public String getDescription() {
-		return null;
+	public void setTypeClassName(String typeClassName) {
+		this.typeClassName = typeClassName;
 	}
 }

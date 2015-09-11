@@ -1,9 +1,7 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
 
-import java.io.Serializable;
 import javax.persistence.*;
 
 

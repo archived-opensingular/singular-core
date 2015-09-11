@@ -1,6 +1,5 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
-import java.io.Serializable;
 import javax.persistence.*;
 
 
@@ -19,10 +18,10 @@ public class PermissaoTarefa  {
 	@Column(name="CO_TAREFA")
 	private Long cod;
 
-	//bi-directional many-to-one association to DefinicaoTarefa
+	//bi-directional many-to-one association to TaskDefinition
 	@ManyToOne
 	@JoinColumn(name="CO_DEFINICAO_TAREFA")
-	private DefinicaoTarefa definicaoTarefa;
+	private TaskDefinition taskDefinition;
 
 	public PermissaoTarefa() {
 	}
@@ -35,12 +34,12 @@ public class PermissaoTarefa  {
 		this.cod = cod;
 	}
 
-	public DefinicaoTarefa getDefinicaoTarefa() {
-		return this.definicaoTarefa;
+	public TaskDefinition getTaskDefinition() {
+		return this.taskDefinition;
 	}
 
-	public void setDefinicaoTarefa(DefinicaoTarefa definicaoTarefa) {
-		this.definicaoTarefa = definicaoTarefa;
+	public void setTaskDefinition(TaskDefinition taskDefinition) {
+		this.taskDefinition = taskDefinition;
 	}
 
 }

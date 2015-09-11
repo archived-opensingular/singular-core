@@ -1,9 +1,8 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 
-import java.io.Serializable;
 import javax.persistence.*;
 
 
@@ -14,7 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="TB_PAPEL")
 @NamedQuery(name="Papel.findAll", query="SELECT p FROM Papel p")
-public class Papel implements IEntityProcessRole {
+public class Role implements IEntityProcessRole {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -28,12 +27,12 @@ public class Papel implements IEntityProcessRole {
 	@Column(name="SG_PAPEL")
 	private String sigla;
 
-	//bi-directional many-to-one association to DefinicaoProcesso
+	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
 	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
-	private DefinicaoProcesso definicaoProcesso;
+	private ProcessDefinition processDefinition;
 
-	public Papel() {
+	public Role() {
 	}
 
 	public Long getCod() {
@@ -60,12 +59,12 @@ public class Papel implements IEntityProcessRole {
 		this.sigla = sigla;
 	}
 
-	public DefinicaoProcesso getDefinicaoProcesso() {
-		return this.definicaoProcesso;
+	public ProcessDefinition getProcessDefinition() {
+		return this.processDefinition;
 	}
 
-	public void setDefinicaoProcesso(DefinicaoProcesso definicaoProcesso) {
-		this.definicaoProcesso = definicaoProcesso;
+	public void setProcessDefinition(ProcessDefinition processDefinition) {
+		this.processDefinition = processDefinition;
 	}
 
 	@Override
@@ -88,8 +87,4 @@ public class Papel implements IEntityProcessRole {
 
 	}
 
-	@Override
-	public IEntityProcessDefinition getProcessDefinition() {
-		return null;
-	}
 }

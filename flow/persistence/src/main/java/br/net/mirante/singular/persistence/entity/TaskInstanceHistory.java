@@ -1,11 +1,10 @@
-package br.net.mirante.singular.entity;
+package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 
-import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -17,7 +16,7 @@ import java.util.Date;
 @Entity
 @Table(name="TB_HISTORICO_INSTANCIA_TAREFA")
 @NamedQuery(name="HistoricoInstanciaTarefa.findAll", query="SELECT h FROM HistoricoInstanciaTarefa h")
-public class HistoricoInstanciaTarefa implements IEntityTaskHistoric {
+public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -36,27 +35,27 @@ public class HistoricoInstanciaTarefa implements IEntityTaskHistoric {
 	@Column(name="DT_INICIO_ALOCACAO")
 	private Date dataInicioAlocacao;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADO")
-	private Ator atorAlocado;
+	private Actor actorAlocado;
 
-	//uni-directional many-to-one association to Ator
+	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADOR")
-	private Ator atorAlocador;
+	private Actor actorAlocador;
 
-	//uni-directional many-to-one association to InstanciaTarefa
+	//uni-directional many-to-one association to TaskInstance
 	@ManyToOne
 	@JoinColumn(name="CO_INSTANCIA_TAREFA")
-	private InstanciaTarefa instanciaTarefa;
+	private TaskInstance taskInstance;
 
 	//uni-directional many-to-one association to TipoHistoricoTarefa
 	@ManyToOne
 	@JoinColumn(name="CO_TIPO_HISTORICO_TAREFA")
 	private TipoHistoricoTarefa tipoHistoricoTarefa;
 
-	public HistoricoInstanciaTarefa() {
+	public TaskInstanceHistory() {
 	}
 
 	public Long getCod() {
@@ -91,28 +90,26 @@ public class HistoricoInstanciaTarefa implements IEntityTaskHistoric {
 		this.dataInicioAlocacao = dataInicioAlocacao;
 	}
 
-	public Ator getAtorAlocado() {
-		return this.atorAlocado;
+	public Actor getActorAlocado() {
+		return this.actorAlocado;
 	}
 
-	public void setAtorAlocado(Ator atorAlocado) {
-		this.atorAlocado = atorAlocado;
+	public void setActorAlocado(Actor actorAlocado) {
+		this.actorAlocado = actorAlocado;
 	}
 
-	public Ator getAtorAlocador() {
-		return this.atorAlocador;
+	public Actor getActorAlocador() {
+		return this.actorAlocador;
 	}
 
-	public void setAtorAlocador(Ator atorAlocador) {
-		this.atorAlocador = atorAlocador;
+	public void setActorAlocador(Actor actorAlocador) {
+		this.actorAlocador = actorAlocador;
 	}
 
-	public InstanciaTarefa getInstanciaTarefa() {
-		return this.instanciaTarefa;
-	}
 
-	public void setInstanciaTarefa(InstanciaTarefa instanciaTarefa) {
-		this.instanciaTarefa = instanciaTarefa;
+
+	public void setTaskInstance(TaskInstance taskInstance) {
+		this.taskInstance = taskInstance;
 	}
 
 	public TipoHistoricoTarefa getTipoHistoricoTarefa() {
