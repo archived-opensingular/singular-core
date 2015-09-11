@@ -86,4 +86,6 @@ public interface VarDefinitionMap<K extends VarDefinition> extends VarServiceEna
     public default K addVariableString(String ref) {
         return addVariableString(ref, ref, null);
     }
+
+
 }

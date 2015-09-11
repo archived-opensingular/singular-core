@@ -1,5 +1,9 @@
 package br.net.mirante.singular.flow.util.vars;
 
+import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import com.google.common.base.MoreObjects;
+
 public class VarDefinitionImpl implements VarDefinition {
 
     private final String ref;
@@ -9,6 +13,8 @@ public class VarDefinitionImpl implements VarDefinition {
     private final VarType tipo;
 
     private boolean obrigatorio;
+
+    private MetaData metaData;
 
     public VarDefinitionImpl(VarDefinition toCopy) {
         this(toCopy.getRef(), toCopy.getName(), toCopy.getType(), toCopy.isRequired());
@@ -20,6 +26,29 @@ public class VarDefinitionImpl implements VarDefinition {
         this.nome = nome;
         this.tipo = tipo;
         this.obrigatorio = obrigatorio;
+    }
+
+    @Override
+    public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value) {
+        getMetaData().set(propRef, value);
+        return this;
+    }
+
+    @Override
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
+        return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
+    }
+
+    @Override
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
+        return metaData == null ? null : getMetaData().get(propRef);
+    }
+
+    MetaData getMetaData() {
+        if (metaData == null) {
+            metaData = new MetaData();
+        }
+        return metaData;
     }
 
     @Override
