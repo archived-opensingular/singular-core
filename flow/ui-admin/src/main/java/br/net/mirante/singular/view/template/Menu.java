@@ -63,7 +63,7 @@ public class Menu extends Panel {
             definitionMenu.setOutputMarkupId(true);
             definitionMenu.setMarkupId(String.format("_definitionMenu_%d", item.getId()));
             definitionMenu.add(new WebMarkupContainer("link")
-                    .add(new Label("counter", item.getCounter()))
+                    .add(new Label("counter", item.getCounter()).setVisible(false))
                     .add(new Label("definitionLabel", item.getName()))
                     .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#"
                             : uiAdminWicketFilterContext.getRelativeContext().concat("dashboard")

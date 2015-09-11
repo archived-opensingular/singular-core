@@ -10,13 +10,17 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.dao.StatusDTO;
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
+import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -25,23 +29,41 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class DashboardContent extends Content {
 
     @Inject
+    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
+
+    @Inject
     private PesquisaService pesquisaService;
 
     private String processDefinitionCode;
 
     public DashboardContent(String id, String processDefinitionCode) {
-        super(id);
+        super(id, false, false, processDefinitionCode != null, false);
         this.processDefinitionCode = processDefinitionCode;
     }
 
     @Override
-    protected String getContentTitlelKey() {
-        return "label.content.title";
+    protected IModel<?> getContentTitlelModel() {
+        if (processDefinitionCode == null) {
+            return new ResourceModel("label.content.title");
+        } else {
+            return $m.ofValue(pesquisaService.retrieveProcessDefinitionName(processDefinitionCode));
+        }
     }
 
     @Override
-    protected String getContentSubtitlelKey() {
-        return "label.content.subtitle";
+    protected IModel<?> getContentSubtitlelModel() {
+        return new ResourceModel("label.content.subtitle");
+    }
+
+    @Override
+    protected WebMarkupContainer getInfoLink(String id) {
+        WebMarkupContainer infoLink = new WebMarkupContainer(id);
+        infoLink.add($b.attr("data-original-title",
+                new StringResourceModel("label.content.info.title", this).getString()));
+        infoLink.add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process")
+                .concat("?").concat(ProcessosPage.PROCESS_DEFINITION_ID_PARAM)
+                .concat("=").concat(pesquisaService.retrieveProcessDefinitionId(processDefinitionCode))));
+        return infoLink;
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
@@ -36,7 +38,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
     private final WebMarkupContainer diagram = new WebMarkupContainer("diagram");
 
     public ProcessosContent(String id, boolean withSideBar) {
-        super(id, false, withSideBar, true);
+        super(id, false, withSideBar, false, true);
     }
 
     @Override
@@ -116,12 +118,12 @@ public class ProcessosContent extends Content implements SingularWicketContainer
     }
 
     @Override
-    protected String getContentTitlelKey() {
-        return "label.content.title";
+    protected IModel<?> getContentTitlelModel() {
+        return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected String getContentSubtitlelKey() {
-        return "label.content.subtitle";
+    protected IModel<?> getContentSubtitlelModel() {
+        return new ResourceModel("label.content.subtitle");
     }
 }

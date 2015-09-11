@@ -14,6 +14,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
@@ -82,5 +83,21 @@ public class PesquisaDAO {
                 .setParameter("startPeriod", periodFromNow(period));
 
         return (List<Map<String, String>>) query.list();
+    }
+
+    public String retrieveProcessDefinitionName(String processCode) {
+        String sql = "SELECT NO_PROCESSO AS NOME FROM TB_DEFINICAO_PROCESSO WHERE SG_PROCESSO = :processCode";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("NOME", StringType.INSTANCE)
+                .setParameter("processCode", processCode);
+        return (String) query.uniqueResult();
+    }
+
+    public Long retrieveProcessDefinitionId(String processCode) {
+        String sql = "SELECT CO_DEFINICAO_PROCESSO AS ID FROM TB_DEFINICAO_PROCESSO WHERE SG_PROCESSO = :processCode";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("ID", LongType.INSTANCE)
+                .setParameter("processCode", processCode);
+        return (Long) query.uniqueResult();
     }
 }

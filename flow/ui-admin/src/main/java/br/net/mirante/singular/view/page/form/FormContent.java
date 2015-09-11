@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -26,7 +27,7 @@ import br.net.mirante.singular.view.template.Content;
 public class FormContent extends Content implements SingularWicketContainer<FormContent, Void> {
 
     public FormContent(String id, boolean withSideBar) {
-        super(id, false, withSideBar, true);
+        super(id, false, withSideBar, false, true);
     }
 
     static MDicionario dicionario = MDicionario.create();
@@ -72,12 +73,12 @@ public class FormContent extends Content implements SingularWicketContainer<Form
     }
 
     @Override
-    protected String getContentTitlelKey() {
-        return "label.content.title";
+    protected IModel<?> getContentTitlelModel() {
+        return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected String getContentSubtitlelKey() {
-        return "label.content.subtitle";
+    protected IModel<?> getContentSubtitlelModel() {
+        return new ResourceModel("label.content.subtitle");
     }
 }

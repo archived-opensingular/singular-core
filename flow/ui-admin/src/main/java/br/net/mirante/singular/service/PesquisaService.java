@@ -21,4 +21,8 @@ public interface PesquisaService {
     List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode);
 
     List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode);
+
+    String retrieveProcessDefinitionName(String processCode);
+
+    String retrieveProcessDefinitionId(String processDefinitionCode);
 }
