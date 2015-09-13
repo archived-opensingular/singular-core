@@ -15,6 +15,9 @@ import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -32,9 +35,6 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>> {
@@ -86,7 +86,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         if (variableWrapperClass != null) {
             if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
                 throw new SingularFlowException("A classe " + instanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
-                    + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
+                        + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             newVariableWrapper(variableWrapperClass).configVariables(getVariables());
         }
@@ -124,11 +124,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             synchronized (this) {
                 if (flowMap == null) {
                     FlowMap novo = createFlowMap();
-                    
+
                     if (novo.getProcessDefinition() != this) {
                         throw new SingularFlowException("Mapa com definiçao trocada");
                     }
-                    
+
                     novo.verifyConsistency();
                     MBPMUtil.calculateTaskOrder(novo);
                     flowMap = novo;
@@ -199,16 +199,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             if (entityCod == null) {
                 try {
                     IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
-                    
+
                     IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
                     if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
-                        
+
                         entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
                     } else {
                         entityCod = oldEntity.getCod();
                     }
-                    
-                    return entityProcess;
                 } catch (Exception e) {
                     throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
                 }

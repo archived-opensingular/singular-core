@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Lists;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -23,8 +25,6 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-
-import com.google.common.collect.Lists;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -79,15 +79,15 @@ public abstract class ProcessInstance {
     public TransitionCall prepareTransition(String transitionName) {
         return getCurrentTask().prepareTransition(transitionName);
     }
-    
+
     IEntityProcessInstance getInternalEntity() {
         return entity;
     }
-    
+
     protected void setParent(ProcessInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
-    
+
     public TaskInstance getParentTask() {
         IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
         return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
@@ -115,7 +115,7 @@ public abstract class ProcessInstance {
         TaskInstance tarefaAtual = getCurrentTask();
         if (tarefaAtual != null) {
             // Uma situação legada, que não existe mais no fluxo mapeado
-            return tarefaAtual.getEntityTaskInstance().getTask().getName();
+            return tarefaAtual.getName();
         }
         return null;
     }
@@ -125,7 +125,8 @@ public abstract class ProcessInstance {
     }
 
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
+        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviationOrException(nomeTarefa).getAccessStrategy()
+                .getFirstLevelUsersCodWithAccess(this);
     }
 
     public final boolean canExecuteTask(MUser user) {
@@ -232,7 +233,7 @@ public abstract class ProcessInstance {
         ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
         task.notifyTaskStart(getTarefaMaisRecenteComNome(task.getName()), execucaoMTask);
     }
-    
+
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
         synchronized (this) {
             if (tarefaOrigem != null) {
@@ -243,12 +244,12 @@ public abstract class ProcessInstance {
                 getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
             }
             IEntityTask situacaoNova = getProcessDefinition().getEntityTask(task);
-            
+
             IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
-            
+
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
-            
+
             MBPM.getMbpmBean().notifyStateUpdate(this);
             return tarefaNova;
         }
@@ -501,7 +502,7 @@ public abstract class ProcessInstance {
         }
         this.executionContext = execucaoTask;
     }
-    
+
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getProcessDefinition().getVariableWrapperClass()) {
