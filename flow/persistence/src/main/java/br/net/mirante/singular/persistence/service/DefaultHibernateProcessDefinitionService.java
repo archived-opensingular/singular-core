@@ -95,6 +95,12 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
 
     @Override
     public TaskDefinition retrieveOrCreateEntityDefinitionTask(ProcessDefinition process, MTask<?> task) {
-        return null;
+        TaskDefinition taskDefinition = (TaskDefinition) process.getTaskDefinition(task.getAbbreviation());
+        if (taskDefinition == null) {
+            taskDefinition = new TaskDefinition();
+            taskDefinition.setAbbreviation(task.getAbbreviation());
+            taskDefinition.setProcessDefinition(process);
+        }
+        return taskDefinition;
     }
 }

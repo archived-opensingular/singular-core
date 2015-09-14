@@ -13,7 +13,7 @@ public class ProcessDefinitionDAO extends AbstractHibernateDAO {
 
     public ProcessDefinition retrievePorSigla(String abbreviation) {
         return (ProcessDefinition) getSession()
-                .createQuery(" from " + ProcessDefinition.class.getName() + " p where p.abbreviation = : abbreviation")
+                .createQuery(" from " + ProcessDefinition.class.getName() + " p where p.abbreviation = :abbreviation ")
                 .setParameter("abbreviation", abbreviation)
                 .uniqueResult();
     }

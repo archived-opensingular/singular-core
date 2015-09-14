@@ -1,96 +1,93 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 
 
 /**
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
- * 
  */
 @Entity
-@Table(name="TB_DEFINICAO_TAREFA")
-@NamedQuery(name="DefinicaoTarefa.findAll", query="SELECT d FROM DefinicaoTarefa d")
+@Table(name = "TB_DEFINICAO_TAREFA")
+@NamedQuery(name = "DefinicaoTarefa.findAll", query = "SELECT d FROM DefinicaoTarefa d")
 public class TaskDefinition implements IEntityTaskDefinition {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CO_DEFINICAO_TAREFA")
-	private Long cod;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CO_DEFINICAO_TAREFA")
+    private Long cod;
 
-	@Column(name="SG_TAREFA")
-	private String sigla;
+    @Column(name = "SG_TAREFA")
+    private String abbreviation;
 
-	//bi-directional many-to-one association to TaskRight
-	@OneToMany(mappedBy="definicaoTarefa")
-	private List<TaskRight> permissoesTarefas;
+    //bi-directional many-to-one association to TaskRight
+    @OneToMany(mappedBy = "definicaoTarefa")
+    private List<TaskRight> permissoesTarefas;
 
-	//bi-directional many-to-one association to ProcessDefinition
-	@ManyToOne
-	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
-	private ProcessDefinition processDefinition;
+    //bi-directional many-to-one association to ProcessDefinition
+    @ManyToOne
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
+    private ProcessDefinition processDefinition;
 
-	public TaskDefinition() {
-	}
-
-	public Long getCod() {
-		return this.cod;
-	}
-
-	public void setCod(Long cod) {
-		this.cod = cod;
-	}
-
-	public String getSigla() {
-		return this.sigla;
-	}
-
-	public void setSigla(String sigla) {
-		this.sigla = sigla;
-	}
-
-	public List<TaskRight> getPermissoesTarefas() {
-		return this.permissoesTarefas;
-	}
-
-	public void setPermissoesTarefas(List<TaskRight> permissoesTarefas) {
-		this.permissoesTarefas = permissoesTarefas;
-	}
-
-	public TaskRight addPermissoesTarefa(TaskRight permissoesTarefa) {
-		getPermissoesTarefas().add(permissoesTarefa);
-		permissoesTarefa.setTaskDefinition(this);
-
-		return permissoesTarefa;
-	}
-
-	public TaskRight removePermissoesTarefa(TaskRight permissoesTarefa) {
-		getPermissoesTarefas().remove(permissoesTarefa);
-		permissoesTarefa.setTaskDefinition(null);
-
-		return permissoesTarefa;
-	}
-
-	public ProcessDefinition getProcessDefinition() {
-		return this.processDefinition;
-	}
-
-	public void setProcessDefinition(ProcessDefinition processDefinition) {
-		this.processDefinition = processDefinition;
-	}
+    @OneToMany(mappedBy = "taskDefinition")
+    private List<Task> versions;
 
 
-	@Override
-	public String getAbbreviation() {
-		return null;
-	}
+    public TaskDefinition() {
+    }
 
-	@Override
-	public List<? extends IEntityTask> getVersions() {
-		return null;
-	}
+    public Long getCod() {
+        return this.cod;
+    }
+
+    public void setCod(Long cod) {
+        this.cod = cod;
+    }
+
+    @Override
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public List<TaskRight> getPermissoesTarefas() {
+        return permissoesTarefas;
+    }
+
+    public void setPermissoesTarefas(List<TaskRight> permissoesTarefas) {
+        this.permissoesTarefas = permissoesTarefas;
+    }
+
+    @Override
+    public ProcessDefinition getProcessDefinition() {
+        return processDefinition;
+    }
+
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
+
+    @Override
+    public List<Task> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<Task> versions) {
+        this.versions = versions;
+    }
 }
