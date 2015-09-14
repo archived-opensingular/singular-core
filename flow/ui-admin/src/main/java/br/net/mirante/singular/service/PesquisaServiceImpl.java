@@ -36,7 +36,7 @@ public class PesquisaServiceImpl implements PesquisaService {
             key = "#processCode?:'NULL'",
             cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode) {
-        return instanceDAO.retrieveNewQuantityLastYear(processCode);
+        return instanceDAO.retrieveTransactionQuantityLastYear(processCode);
     }
 
     @Override
@@ -71,6 +71,12 @@ public class PesquisaServiceImpl implements PesquisaService {
     @Cacheable(value = "retrieveMeanTimeFinishedInstances", key = "#processCode", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
         return instanceDAO.retrieveMeanTimeFinishedInstances(processCode);
+    }
+
+    @Override
+    @Cacheable(value = "retrieveCounterActiveInstances", key = "#processCode?:'NULL'", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode) {
+        return instanceDAO.retrieveCounterActiveInstances(processCode);
     }
 
     @Override
