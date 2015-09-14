@@ -56,6 +56,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     PROCESS_INSTANCE retrieveProcessInstanceByCod(@NotNull Serializable cod);
 
+    TASK_INSTANCE retrieveTaskInstanceByCod(@NotNull Serializable cod);
+
     TaskHistoricLog saveTaskHistoricLog(@NotNull TASK_INSTANCE task, String typeDescription, String detail, MUser allocatedUser, MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
 
     void saveVariableHistoric(Date dateHour, PROCESS_INSTANCE instance, TASK_INSTANCE originTask, TASK_INSTANCE destinationTask, VarInstanceMap<?> instanceMap);
@@ -70,18 +72,18 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcess},
      * {@link IEntityTaskDefinition}, {@link IEntityTask},
      * {@link IEntityTaskTransition}
-     * 
+     *
      * @param entityProcess
      * @return
      */
     PROCESS_DEFINITION saveOrUpdateProcessDefinition(PROCESS_DEFINITION entityProcess);
 
     IEntityVariableType retrieveOrCreateEntityVariableType(VarType varType);
-    
+
     void relocateTask(TASK_INSTANCE taskInstance, MUser user);
-    
+
     void updateTargetEndDate(TASK_INSTANCE taskInstance, Date targetEndDate);
-    
+
     void refreshModel(IEntityByCod model);
 
     void flushSession();

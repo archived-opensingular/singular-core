@@ -11,8 +11,6 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-import br.net.mirante.singular.flow.core.TaskType;
-
 @Repository
 public class DefinitionDAO {
 
@@ -66,8 +64,8 @@ public class DefinitionDAO {
         }
 
         String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
-                + "          CAT.NO_CATEGORIA AS CATEGORIA, COUNT(DISTINCT DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
-                + "          AVG(DATEDIFF(SECOND, DEM.DT_INICIO, DEM.DT_FIM)) AS TEMPO,"
+                + "          CAT.NO_CATEGORIA AS CATEGORIA, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
+                + "          AVG(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM)) AS TEMPO,"
                 + "          (SELECT AVG(SUBDEM.THRO) FROM ("
                 + "             SELECT CO_DEFINICAO_PROCESSO AS COD, MONTH(DT_FIM) AS MES,"
                 + "                    COUNT(CO_INSTANCIA_PROCESSO) AS THRO"
@@ -79,10 +77,8 @@ public class DefinitionDAO {
                 + "   FROM TB_DEFINICAO_PROCESSO DEF"
                 + "     INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
                 + "     INNER JOIN TB_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "     LEFT JOIN TB_INSTANCIA_PROCESSO DEM ON PRO.CO_PROCESSO = DEM.CO_PROCESSO"
-                + "     LEFT JOIN TB_TAREFA SIT ON PRO.CO_PROCESSO = SIT.CO_PROCESSO"
-                + "   WHERE"
-                + "     DEM.cod_situacao IS NULL OR SIT.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
+                + "     LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + "   WHERE INS.DT_FIM IS NULL"
                 + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA "
                 + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)

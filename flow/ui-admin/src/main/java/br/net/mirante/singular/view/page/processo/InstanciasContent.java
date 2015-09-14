@@ -11,6 +11,8 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
@@ -37,8 +39,8 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     private final WebMarkupContainer diagram = new WebMarkupContainer("diagram");
 
     public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
-        super(id, false, withSideBar, true);
-        this.processDefinition = processDefinitionService.retrieveById(processDefinitionId);
+        super(id, false, withSideBar, false, true);
+        processDefinition = processDefinitionService.retrieveById(processDefinitionId);
     }
 
     @Override
@@ -117,12 +119,12 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     }
 
     @Override
-    protected String getContentTitlelKey() {
-        return "label.content.title";
+    protected IModel<?> getContentTitlelModel() {
+        return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected String getContentSubtitlelKey() {
-        return "label.content.subtitle";
+    protected IModel<?> getContentSubtitlelModel() {
+        return new ResourceModel("label.content.subtitle");
     }
 }

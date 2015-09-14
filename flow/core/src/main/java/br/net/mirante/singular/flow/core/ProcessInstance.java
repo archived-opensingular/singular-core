@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Lists;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -23,8 +25,6 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-
-import com.google.common.collect.Lists;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -115,7 +115,7 @@ public abstract class ProcessInstance {
         TaskInstance tarefaAtual = getCurrentTask();
         if (tarefaAtual != null) {
             // Uma situação legada, que não existe mais no fluxo mapeado
-            return tarefaAtual.getEntityTaskInstance().getTask().getName();
+            return tarefaAtual.getName();
         }
         return null;
     }
@@ -125,7 +125,8 @@ public abstract class ProcessInstance {
     }
 
     public Set<Serializable> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviation(nomeTarefa).getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
+        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviationOrException(nomeTarefa).getAccessStrategy()
+                .getFirstLevelUsersCodWithAccess(this);
     }
 
     public final boolean canExecuteTask(MUser user) {

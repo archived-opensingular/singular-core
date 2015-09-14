@@ -6,32 +6,36 @@ import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.wicket.AdminWicketFilterContext;
+import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class Content extends Panel {
 
     @Inject
-    private AdminWicketFilterContext adminWicketFilterContext;
+    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     private boolean withBreadcrumb;
     private boolean withSettingsMenu;
+    private boolean withInfoLink;
     private boolean withSideBar;
 
     public Content(String id) {
-        this(id, false, false);
+        this(id, false, false, false, false);
     }
 
     public Content(String id, boolean withSettingsMenu, boolean withSideBar) {
-        this(id, withSettingsMenu, withSideBar, false);
+        this(id, withSettingsMenu, withSideBar, false, false);
     }
 
-    public Content(String id, boolean withSettingsMenu, boolean withSideBar, boolean withBreadcrumb) {
+    public Content(String id, boolean withSettingsMenu, boolean withSideBar,
+            boolean withInfoLink, boolean withBreadcrumb) {
         super(id);
         this.withBreadcrumb = withBreadcrumb;
         this.withSettingsMenu = withSettingsMenu;
+        this.withInfoLink = withInfoLink;
         this.withSideBar = withSideBar;
     }
 
@@ -43,25 +47,22 @@ public abstract class Content extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Label("contentTitle", new ResourceModel(getContentTitlelKey())));
-        add(new Label("contentSubtitle", new ResourceModel(getContentSubtitlelKey())));
+        add(new Label("contentTitle", getContentTitlelModel()));
+        add(new Label("contentSubtitle", getContentSubtitlelModel()));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
-                WicketUtils.$b.attr("href", adminWicketFilterContext.getRelativeContext().concat("dashboard"))));
+                $b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("dashboard"))));
         breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
-        if (withSettingsMenu) {
-            add(new SettingsMenu("_SettingsMenu"));
-        } else {
-            add(new WebMarkupContainer("_SettingsMenu"));
-        }
-        if (withSideBar) {
-            add(new SideBar("_SideBar"));
-        } else {
-            add(new WebMarkupContainer("_SideBar"));
+        add(new SettingsMenu("_SettingsMenu").setVisible(withSettingsMenu));
+        add(new SideBar("_SideBar").setVisible(withSideBar));
+        WebMarkupContainer infoLink = new WebMarkupContainer("_Info");
+        add(infoLink.setVisible(withInfoLink));
+        if (withInfoLink) {
+            infoLink.add(getInfoLink("_InfoLink"));
         }
     }
 
@@ -69,7 +70,11 @@ public abstract class Content extends Panel {
         return new WebMarkupContainer(id);
     }
 
-    protected abstract String getContentTitlelKey();
+    protected WebMarkupContainer getInfoLink(String id) {
+        return new WebMarkupContainer(id);
+    }
 
-    protected abstract String getContentSubtitlelKey();
+    protected abstract IModel<?> getContentTitlelModel();
+
+    protected abstract IModel<?> getContentSubtitlelModel();
 }

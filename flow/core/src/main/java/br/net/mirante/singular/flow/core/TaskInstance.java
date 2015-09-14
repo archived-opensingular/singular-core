@@ -9,6 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.ImmutableList;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -22,11 +24,9 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-import com.google.common.collect.ImmutableList;
-
 public class TaskInstance {
 
-    private final IEntityTaskInstance entityTask;
+    private IEntityTaskInstance entityTask;
 
     private ProcessInstance processInstance;
 
@@ -34,7 +34,8 @@ public class TaskInstance {
 
     TaskInstance(ProcessInstance processInstance, IEntityTaskInstance task) {
         if (!processInstance.getEntity().equals(task.getProcessInstance())) {
-            throw new SingularFlowException(processInstance.createErrorMsg("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão"));
+            throw new SingularFlowException(
+                    processInstance.createErrorMsg("O objeto IDadosTarefa " + task + " não é filho do objeto IDadosInstancia em questão"));
         }
         this.processInstance = processInstance;
         this.entityTask = task;
@@ -54,7 +55,7 @@ public class TaskInstance {
 
     public MTask<?> getFlowTask() {
         if (flowTask == null) {
-            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskWithAbbreviation(entityTask.getTask().getAbbreviation());
+            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getTaskVersion().getAbbreviation());
         }
         return flowTask;
     }
@@ -85,14 +86,19 @@ public class TaskInstance {
 
     @SuppressWarnings("unchecked")
     public final <X extends IEntityTaskInstance> X getEntityTaskInstance() {
+        entityTask = getPersistenceService().retrieveTaskInstanceByCod(entityTask.getCod());
         return (X) entityTask;
+    }
+
+    private IEntityTask getTaskVersion() {
+        return entityTask.getTask();
     }
 
     public String getName() {
         if (getFlowTask() != null) {
             return getFlowTask().getName();
         }
-        return entityTask.getTask().getName();
+        return getTaskVersion().getName();
     }
 
     public String getProcessName() {
@@ -119,21 +125,21 @@ public class TaskInstance {
         if (getFlowTask() != null) {
             return getFlowTask().isEnd();
         }
-        return entityTask.getTask().isEnd();
+        return getTaskVersion().isEnd();
     }
 
     public boolean isPeople() {
         if (getFlowTask() != null) {
             return getFlowTask().isPeople();
         }
-        return entityTask.getTask().isPeople();
+        return getTaskVersion().isPeople();
     }
 
     public boolean isWait() {
         if (getFlowTask() != null) {
             return getFlowTask().isWait();
         }
-        return entityTask.getTask().isWait();
+        return getTaskVersion().isWait();
     }
 
     public TransitionCall prepareTransition(String transitionName) {
@@ -146,7 +152,8 @@ public class TaskInstance {
 
     public void relocateTask(MUser author, MUser user, boolean notify, String relocationCause) {
         if (user != null && !isPeople()) {
-            throw new SingularFlowException(getProcessInstance().createErrorMsg("A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa"));
+            throw new SingularFlowException(
+                    getProcessInstance().createErrorMsg("A tarefa '" + getName() + "' não pode ser realocada, pois não é do tipo pessoa"));
         }
         MUser pessoaAlocadaAntes = getAllocatedUser();
         if (Objects.equals(user, pessoaAlocadaAntes)) {
@@ -241,10 +248,10 @@ public class TaskInstance {
     }
 
     private Set<Serializable> getFirstLevelUsersCodWithAccess() {
-        Objects.requireNonNull(getFlowTask(), "Task com a sigla " + entityTask.getTask().getAbbreviation() + " não encontrada na definição "
+        Objects.requireNonNull(getFlowTask(), "Task com a sigla " + getTaskVersion().getAbbreviation() + " não encontrada na definição "
                 + getProcessInstance().getProcessDefinition().getName());
         Objects.requireNonNull(getFlowTask().getAccessStrategy(),
-                "Estratégia de acesso da task " + entityTask.getTask().getAbbreviation() + " não foi definida");
+                "Estratégia de acesso da task " + getTaskVersion().getAbbreviation() + " não foi definida");
         return getFlowTask().getAccessStrategy().getFirstLevelUsersCodWithAccess(getProcessInstance());
     }
 

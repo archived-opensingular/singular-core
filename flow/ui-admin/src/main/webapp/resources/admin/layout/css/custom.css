@@ -51,3 +51,8 @@ table.dataTable thead th > a {
 .without-progress-bar > .dashboard-stat2 {
     padding-bottom: 1px;
 }
+
+.feeds li .col2 {
+    width: 120px;
+    margin-left: -120px;
+}

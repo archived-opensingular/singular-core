@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.vars.VarService;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
+
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+import br.net.mirante.singular.flow.core.entity.TransitionType;
+import br.net.mirante.singular.flow.util.vars.VarService;
 
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {
@@ -180,14 +180,36 @@ public class FlowMap implements Serializable {
         return tasksByAbbreviation.get(abbreviation);
     }
 
+    public MTask<?> getTaskWithAbbreviationOrException(String abbreviation) {
+        MTask<?> t = tasksByAbbreviation.get(abbreviation);
+        if (t == null) {
+            throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"));
+        }
+        return t;
+    }
+
     public MTaskPeople getPeopleTaskWithAbbreviation(String abbreviation) {
-        return MTaskPeople.class.cast(getTaskWithAbbreviation(abbreviation));
+        return castCheck(getTaskWithAbbreviation(abbreviation), MTaskPeople.class, abbreviation);
+    }
+
+    public MTaskPeople getPeopleTaskWithAbbreviationOrException(String abbreviation) {
+        return castCheck(getTaskWithAbbreviationOrException(abbreviation), MTaskPeople.class, abbreviation);
+    }
+
+    private <T extends MTask> T castCheck(MTask<?> target, Class<T> expectedClass, String abbreviation) {
+        if (target == null) {
+            return null;
+        } else if (expectedClass.isInstance(target)) {
+            return expectedClass.cast(target);
+        }
+        throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' found, but it is of type "
+                + target.getClass().getName() + " and was expected to be " + expectedClass.getClass().getName()));
     }
 
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
         return getTaskWithName(taskDefinition.getName());
     }
-    
+
     public MTask<?> getTaskWithName(String name) {
         if (tasksByName.containsKey(name)) {
             return tasksByName.get(name);
