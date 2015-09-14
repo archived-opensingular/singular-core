@@ -11,6 +11,7 @@ import br.net.mirante.singular.persistence.entity.ProcessDefinition;
 import br.net.mirante.singular.persistence.entity.Role;
 import br.net.mirante.singular.persistence.entity.Task;
 import br.net.mirante.singular.persistence.entity.TaskDefinition;
+import br.net.mirante.singular.persistence.entity.TaskType;
 import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
@@ -143,7 +144,7 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
         Task taskEntity = new Task();
         taskEntity.setName(task.getName());
         taskEntity.setProcess(process);
-        taskEntity.setType(task.getEffectiveTaskType());
+        taskEntity.setType((TaskType) task.getEffectiveTaskType());
         taskEntity.setTaskDefinition(retrieveOrCreateEntityDefinitionTask(process.getProcessDefinition(), task));
         return taskEntity;
     }

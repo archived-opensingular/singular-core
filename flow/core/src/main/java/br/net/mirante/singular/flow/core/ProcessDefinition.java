@@ -1,24 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import br.net.mirante.singular.commons.util.log.Loggable;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
-
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -36,8 +18,24 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
-@SuppressWarnings({ "serial", "unchecked" })
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+@SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> instanceClass;
@@ -70,6 +68,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
+     *
      * @param instanceClass
      */
     @Deprecated
@@ -79,6 +78,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
+     *
      * @param instanceClass
      */
     @Deprecated
@@ -275,7 +275,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public final String getName() {
-        if (name == null){
+        if (name == null) {
             getLogger().warn("!!! process definition name not set, using  class simple name !!!");
             name = this.getClass().getSimpleName();
         }
@@ -283,14 +283,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     /**
-     *
      * @return
      * @deprecated o termo sigla deve ser substituido por key
      */
     //TODO renomear
     @Deprecated
     public final String getAbbreviation() {
-        if (abbreviation == null){
+        if (abbreviation == null) {
             getLogger().warn("!!! process definition abbreviation not set, using  class simple name !!!");
             abbreviation = this.getClass().getSimpleName();
         }
@@ -298,6 +297,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public final String getCategory() {
+        if (category == null) {
+            getLogger().warn("!!! process definition category not set, using  class simple name !!!");
+            category = this.getClass().getSimpleName();
+        }
         return category;
     }
 
@@ -368,7 +371,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             try {
                 for (Constructor<?> constructor : getInstanceClass().getConstructors()) {
                     if (constructor.getParameterTypes().length == 1
-                        && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
+                            && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
                         this.construtor = (Constructor<I>) constructor;
                     }
                 }
@@ -386,7 +389,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
-            .getMbpmBean().getPersistenceService();
+                .getMbpmBean().getPersistenceService();
     }
 
     @Override
@@ -413,9 +416,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     @Override
     public int hashCode() {
         int result = -1;
-        if (getCategory() != null) {
-           result = getCategory().hashCode();
-        }
+        result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;
     }
