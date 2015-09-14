@@ -3,6 +3,7 @@ package br.net.mirante.singular.persistence.entity;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,8 +14,7 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="TB_VARIAVEL")
-@NamedQuery(name="Variavel.findAll", query="SELECT v FROM Variavel v")
+@Table(name="TB_VARIAVEL", schema = Constants.SCHEMA)
 public class Variable implements IEntityVariableInstance {
 	private static final long serialVersionUID = 1L;
 

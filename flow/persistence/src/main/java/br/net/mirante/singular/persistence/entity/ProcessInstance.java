@@ -4,6 +4,7 @@ import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.util.ActorWrapper;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,8 +27,7 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="TB_INSTANCIA_PROCESSO")
-@NamedQuery(name="ProcessInstance.findAll", query="SELECT i FROM ProcessInstance i")
+@Table(name="TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
 public class ProcessInstance implements IEntityProcessInstance {
 	private static final long serialVersionUID = 1L;
 
@@ -66,11 +66,6 @@ public class ProcessInstance implements IEntityProcessInstance {
 	@ManyToOne
 	@JoinColumn(name="CO_PROCESSO")
 	private Process process;
-
-	//uni-directional many-to-one association to Task
-	@ManyToOne
-	@JoinColumn(name="CO_TAREFA_ATUAL")
-	private Task task;
 
 	//bi-directional many-to-one association to TaskInstance
 	@OneToMany(mappedBy="processInstance")
@@ -158,14 +153,6 @@ public class ProcessInstance implements IEntityProcessInstance {
 
 	public void setProcess(Process process) {
 		this.process = process;
-	}
-
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
 	}
 
 	@Override

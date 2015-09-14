@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +18,7 @@ import java.util.List;
  * The persistent class for the TB_CATEGORIA database table.
  */
 @Entity
-@Table(name = "TB_CATEGORIA")
-@NamedQuery(name = "Category.findAll", query = "SELECT c FROM Category c")
+@Table(name = "TB_CATEGORIA", schema = Constants.SCHEMA)
 public class Category implements IEntityCategory {
 
     private static final long serialVersionUID = 1L;

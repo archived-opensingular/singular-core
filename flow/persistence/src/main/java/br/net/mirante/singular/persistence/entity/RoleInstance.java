@@ -3,6 +3,7 @@ package br.net.mirante.singular.persistence.entity;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.util.ActorWrapper;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -13,8 +14,7 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="TB_INSTANCIA_PAPEL")
-@NamedQuery(name="InstanciaPapel.findAll", query="SELECT i FROM InstanciaPapel i")
+@Table(name="TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
 public class RoleInstance implements IEntityRole {
 	private static final long serialVersionUID = 1L;
 

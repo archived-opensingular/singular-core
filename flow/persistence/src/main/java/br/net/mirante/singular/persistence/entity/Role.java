@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,14 +14,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
+import javax.persistence.*;
 
 
 /**
  * The persistent class for the TB_PAPEL database table.
  */
 @Entity
-@Table(name = "TB_PAPEL")
-@NamedQuery(name = "Papel.findAll", query = "SELECT p FROM Papel p")
+@Table(name="TB_PAPEL")
 public class Role implements IEntityProcessRole {
     private static final long serialVersionUID = 1L;
 

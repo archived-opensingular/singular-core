@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,8 +12,7 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="TB_DEFINICAO_PROCESSO")
-@NamedQuery(name="ProcessDefinition.findAll", query="SELECT d FROM ProcessDefinition d")
+@Table(name="TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
 public class ProcessDefinition implements IEntityProcessDefinition {
 
 	private static final long serialVersionUID = 1L;

@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,8 +20,7 @@ import java.util.List;
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
  */
 @Entity
-@Table(name = "TB_DEFINICAO_TAREFA")
-@NamedQuery(name = "DefinicaoTarefa.findAll", query = "SELECT d FROM DefinicaoTarefa d")
+@Table(name="TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskDefinition implements IEntityTaskDefinition {
     private static final long serialVersionUID = 1L;
 
@@ -32,9 +32,9 @@ public class TaskDefinition implements IEntityTaskDefinition {
     @Column(name = "SG_TAREFA")
     private String abbreviation;
 
-    //bi-directional many-to-one association to TaskRight
-    @OneToMany(mappedBy = "definicaoTarefa")
-    private List<TaskRight> permissoesTarefas;
+	//bi-directional many-to-one association to TaskRight
+	@OneToMany(mappedBy="taskDefinition")
+	private List<TaskRight> permissoesTarefas;
 
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne

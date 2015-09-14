@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,8 +16,7 @@ import javax.persistence.Table;
  * The persistent class for the TB_TIPO_HISTORICO_TAREFA database table.
  */
 @Entity
-@Table(name = "TB_TIPO_HISTORICO_TAREFA")
-@NamedQuery(name = "TipoHistoricoTarefa.findAll", query = "SELECT t FROM TipoHistoricoTarefa t")
+@Table(name = "TB_TIPO_HISTORICO_TAREFA", schema = Constants.SCHEMA)
 public class TaskHistoryType implements IEntityTaskHistoricType {
     private static final long serialVersionUID = 1L;
 

@@ -7,6 +7,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -18,8 +19,7 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="TB_INSTANCIA_TAREFA")
-@NamedQuery(name="TaskInstance.findAll", query="SELECT i FROM TaskInstance i")
+@Table(name="TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 public class TaskInstance implements IEntityTaskInstance {
 	private static final long serialVersionUID = 1L;
 
@@ -52,11 +52,11 @@ public class TaskInstance implements IEntityTaskInstance {
 	private Boolean suspensa;
 
 	//bi-directional many-to-one association to ProcessInstance
-	@OneToMany(mappedBy="instanciaTarefaPai")
+	@OneToMany(mappedBy="parentTask")
 	private List<ProcessInstance> instanciasTarefaFilhas;
 
 	//bi-directional many-to-one association to ProcessInstance
-	@OneToMany(mappedBy="instanciaTarefa")
+	@OneToMany(mappedBy="taskInstance")
 	private List<ProcessInstance> instanciasProcesso;
 
 	//uni-directional many-to-one association to Actor

@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -12,8 +13,7 @@ import java.util.List;
  * 
  */
 @Entity
-@Table(name="TB_PROCESSO")
-@NamedQuery(name="Process.findAll", query="SELECT p FROM Process p")
+@Table(name="TB_PROCESSO", schema = Constants.SCHEMA)
 public class Process implements IEntityProcess {
 	private static final long serialVersionUID = 1L;
 
@@ -33,9 +33,6 @@ public class Process implements IEntityProcess {
 
 	@OneToMany(mappedBy = "process")
 	private List<Task> tasks;
-
-    //TODO mapear essa parada
-	private List<TaskDefinition> taskDefinitions;
 
 	public Process() {
 	}
@@ -75,11 +72,4 @@ public class Process implements IEntityProcess {
         this.tasks = tasks;
     }
 
-    public List<TaskDefinition> getTaskDefinitions() {
-        return taskDefinitions;
-    }
-
-    public void setTaskDefinitions(List<TaskDefinition> taskDefinitions) {
-        this.taskDefinitions = taskDefinitions;
-    }
 }
