@@ -1,5 +1,6 @@
 package br.net.mirante.singular.persistence.service;
 
+import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.service.IProcessEntityService;
@@ -7,12 +8,17 @@ import br.net.mirante.singular.persistence.dao.ProcessDefinitionDAO;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.ProcessDefinition;
+import br.net.mirante.singular.persistence.entity.Role;
 import br.net.mirante.singular.persistence.entity.Task;
 import br.net.mirante.singular.persistence.entity.TaskDefinition;
 import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,7 +34,7 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
     private final ProcessDefinitionDAO processDefinitionDAO = new ProcessDefinitionDAO(getSessionLocator());
 
 
-    public DefaultHibernateProcessDefinitionService(SessionLocator sessionLocator){
+    public DefaultHibernateProcessDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
     }
 
@@ -69,28 +75,77 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
     }
 
     @Override
-    public void checkRoleDefChanges(br.net.mirante.singular.flow.core.ProcessDefinition<?> definicao, ProcessDefinition entityProcessDefinition) {
+    public void checkRoleDefChanges(br.net.mirante.singular.flow.core.ProcessDefinition<?> processDefinition, ProcessDefinition entityProcessDefinition) {
+        Set<String> abbreviations = new HashSet<>();
+        for (Role role : new ArrayList<>(entityProcessDefinition.getRoles())) {
+            MProcessRole roleAbbreviation = processDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
+            if (roleAbbreviation == null) {
+                if(role.getRolesInstances().isEmpty()){
+                    entityProcessDefinition.getRoles().remove(role);
+                    processDefinitionDAO.delete(role);
+                }
+            } else {
+                if (!role.getName().equals(roleAbbreviation.getName())
+                        || !role.getAbbreviation().equals(roleAbbreviation.getAbbreviation())) {
+                    role.setName(roleAbbreviation.getName());
+                    role.setAbbreviation(roleAbbreviation.getAbbreviation());
+                    processDefinitionDAO.update(role);
+                }
+                abbreviations.add(role.getAbbreviation());
+            }
+        }
 
+        for (MProcessRole mPapel : processDefinition.getFlowMap().getRoles()) {
+            if (!abbreviations.contains(mPapel.getAbbreviation())) {
+                final Role role = new Role();
+                role.setProcessDefinition(entityProcessDefinition);
+                role.setName(mPapel.getName());
+                role.setAbbreviation(mPapel.getAbbreviation());
+                processDefinitionDAO.save(role);
+            }
+        }
+        processDefinitionDAO.refresh(entityProcessDefinition);
     }
 
     @Override
     public Process createEntityProcess(ProcessDefinition entityProcessDefinition) {
-        return null;
+        Process entityProcess = new Process();
+        entityProcess.setProcessDefinition(entityProcessDefinition);
+        entityProcess.setVersionDate(new Date());
+        return entityProcess;
     }
 
     @Override
     public Category retrieveOrCreateCategoryWith(String name) {
-        return null;
+        requireNonNull(name);
+        Category category = processDefinitionDAO.retrieveByUniqueProperty(Category.class, "name", name);
+        if (category == null) {
+            category = new Category();
+            category.setName(name);
+            processDefinitionDAO.save(category);
+        }
+        return category;
     }
 
     @Override
     public Transition createEntityTaskTransition(MTransition mTransition, Task originTask, Task destinationTask) {
-        return null;
+        Transition taskEntity = new Transition();
+        taskEntity.setAbbreviation(mTransition.getAbbreviation());
+        taskEntity.setName(mTransition.getName());
+        taskEntity.setType(mTransition.getType());
+        taskEntity.setOriginTask(originTask);
+        taskEntity.setDestinationTask(destinationTask);
+        return taskEntity;
     }
 
     @Override
     public Task createEntityTask(Process process, MTask<?> task) {
-        return null;
+        Task taskEntity = new Task();
+        taskEntity.setName(task.getName());
+        taskEntity.setProcess(process);
+        taskEntity.setType(task.getEffectiveTaskType());
+        taskEntity.setTaskDefinition(retrieveOrCreateEntityDefinitionTask(process.getProcessDefinition(), task));
+        return taskEntity;
     }
 
     @Override
