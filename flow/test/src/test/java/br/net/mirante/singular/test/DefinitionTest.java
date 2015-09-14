@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.*;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
@@ -29,6 +30,7 @@ public class DefinitionTest {
 
     }
 
+    @Transactional
     @Test
     public void teste() {
 
