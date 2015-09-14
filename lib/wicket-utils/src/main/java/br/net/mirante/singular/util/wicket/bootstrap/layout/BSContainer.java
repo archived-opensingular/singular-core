@@ -64,6 +64,21 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         return newComponent(BSGrid::new);
     }
 
+    public BSControls newFormGroup() {
+        return newFormGroup(true);
+    }
+    public BSControls newFormGroup(boolean compact) {
+        return newComponent(new IBSComponentFactory<BSControls>() {
+            @Override
+            public BSControls newComponent(String componentId) {
+                BSControls controls = new BSControls(componentId, false)
+                    .setCssClass((compact ? "" : "form-group ") + "form-group-sm");
+                controls.add(new AttributeAppender("class", "can-have-error", " "));
+                return controls;
+            }
+        });
+    }
+
     public THIS appendTag(String tag, Component component) {
         return appendTag(tag, true, "", component);
     }
