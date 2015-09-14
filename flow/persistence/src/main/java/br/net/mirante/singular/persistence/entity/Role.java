@@ -21,7 +21,7 @@ import javax.persistence.*;
  * The persistent class for the TB_PAPEL database table.
  */
 @Entity
-@Table(name="TB_PAPEL")
+@Table(name="TB_PAPEL", schema = Constants.SCHEMA)
 public class Role implements IEntityProcessRole {
     private static final long serialVersionUID = 1L;
 
