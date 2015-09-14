@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -91,12 +92,14 @@ public class DashboardContent extends Content {
 
     private void addDefaultCharts() {
         add(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
-                "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
+                "label.chart.new.instance.quantity.subtitle", new ImmutablePair<>("QTD_NEW",
+                new StringResourceModel("label.chart.new.instance.quantity.new", this).getString()),
+                "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
             }
-        });
+        }.addGraph("QTD_CLS", new StringResourceModel("label.chart.new.instance.quantity.finished", this).getString()));
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
                 "label.chart.status.hour.quantity.subtitle",
                 processDefinitionCode == null

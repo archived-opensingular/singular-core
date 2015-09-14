@@ -104,19 +104,31 @@ public class InstanceDAO {
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveNewQuantityLastYear(String processCode) {
         String sql = "SET LANGUAGE Portuguese;"
-                + "SELECT UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/'"
+                + "SELECT NEW.MES, NEW.QTD_NEW, ISNULL(CLS.QTD_CLS, 0) AS QTD_CLS FROM"
+                + "(SELECT UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/'"
                 + " + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
-                + " COUNT(CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_NEW, COUNT(CO_INSTANCIA_PROCESSO) - 1 AS QTD_CLS"
                 + " FROM TB_INSTANCIA_PROCESSO INS"
                 + "   LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_INICIO >= (GETDATE() - 365)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
-                + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
-                + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
+                + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)) NEW"
+                + " LEFT JOIN"
+                + " (SELECT UPPER(SUBSTRING(DATENAME(MONTH, DT_FIM), 0, 4)) + '/'"
+                + " + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS MES,"
+                + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_CLS"
+                + " FROM TB_INSTANCIA_PROCESSO INS"
+                + " LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " WHERE DT_FIM >= (GETDATE() - 365)"
+                + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
+                + " GROUP BY MONTH(DT_FIM), YEAR(DT_FIM), DATENAME(MONTH, DT_FIM), DATENAME(YEAR, DT_FIM)) CLS"
+                + " ON CLS.MES = NEW.MES";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("MES", StringType.INSTANCE)
-                .addScalar("QUANTIDADE", LongType.INSTANCE)
+                .addScalar("QTD_NEW", LongType.INSTANCE)
+                .addScalar("QTD_CLS", LongType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         if (processCode != null) {
             query.setParameter("processCode", processCode);
