@@ -1,90 +1,109 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.persistence.util.Constants;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
 import javax.persistence.*;
 
 
 /**
  * The persistent class for the TB_PAPEL database table.
- * 
  */
 @Entity
-@Table(name="TB_PAPEL", schema = Constants.SCHEMA)
+@Table(name="TB_PAPEL")
 public class Role implements IEntityProcessRole {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CO_PAPEL")
-	private Long cod;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CO_PAPEL")
+    private Long cod;
 
-	@Column(name="NO_PAPEL")
-	private String nome;
+    @Column(name = "NO_PAPEL")
+    private String nome;
 
-	@Column(name="SG_PAPEL")
-	private String sigla;
+    @Column(name = "SG_PAPEL")
+    private String sigla;
 
-	//bi-directional many-to-one association to ProcessDefinition
-	@ManyToOne
-	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
-	private ProcessDefinition processDefinition;
+    //bi-directional many-to-one association to ProcessDefinition
+    @ManyToOne
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
+    private ProcessDefinition processDefinition;
 
-	public Role() {
-	}
+    @OneToMany(mappedBy = "role")
+    private List<RoleInstance> rolesInstances;
 
-	public Long getCod() {
-		return this.cod;
-	}
+    public Role() {
+    }
 
-	public void setCod(Long cod) {
-		this.cod = cod;
-	}
+    public Long getCod() {
+        return this.cod;
+    }
 
-	public String getNome() {
-		return this.nome;
-	}
+    public void setCod(Long cod) {
+        this.cod = cod;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public String getNome() {
+        return this.nome;
+    }
 
-	public String getSigla() {
-		return this.sigla;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public void setSigla(String sigla) {
-		this.sigla = sigla;
-	}
+    public String getSigla() {
+        return this.sigla;
+    }
 
-	public ProcessDefinition getProcessDefinition() {
-		return this.processDefinition;
-	}
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
 
-	public void setProcessDefinition(ProcessDefinition processDefinition) {
-		this.processDefinition = processDefinition;
-	}
+    public ProcessDefinition getProcessDefinition() {
+        return this.processDefinition;
+    }
 
-	@Override
-	public String getAbbreviation() {
-		return null;
-	}
+    public void setProcessDefinition(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
+    }
 
-	@Override
-	public void setAbbreviation(String abbreviation) {
+    @Override
+    public String getAbbreviation() {
+        return null;
+    }
 
-	}
+    @Override
+    public void setAbbreviation(String abbreviation) {
 
-	@Override
-	public String getName() {
-		return null;
-	}
+    }
 
-	@Override
-	public void setName(String name) {
+    @Override
+    public String getName() {
+        return null;
+    }
 
-	}
+    @Override
+    public void setName(String name) {
 
+    }
+
+    public List<RoleInstance> getRolesInstances() {
+        return rolesInstances;
+    }
+
+    public void setRolesInstances(List<RoleInstance> rolesInstances) {
+        this.rolesInstances = rolesInstances;
+    }
 }
