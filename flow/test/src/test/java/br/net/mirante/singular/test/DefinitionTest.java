@@ -1,5 +1,7 @@
 package br.net.mirante.singular.test;
 
+import br.net.mirante.singular.Definicao;
+import br.net.mirante.singular.InstanciaDefinicao;
 import br.net.mirante.singular.TestMBPMBean;
 import br.net.mirante.singular.flow.core.MBPM;
 import org.junit.Before;
@@ -22,14 +24,17 @@ public class DefinitionTest {
     public void setup() {
         assertNotNull(mbpmBean);
         MBPM.setConf(mbpmBean);
-        MBPM.getDefinitions();
+
     }
 
     @Test
     public void teste() {
 
+        InstanciaDefinicao id = new InstanciaDefinicao();
+        id.start();
 
-
+        InstanciaDefinicao id2 = MBPM.findProcessInstance(id.getFullId());
+        assertNotNull(id2);
         System.out.println("legal");
     }
 

@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.commons.util.log.Loggable;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,7 +38,7 @@ import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 @SuppressWarnings({ "serial", "unchecked" })
-public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>> {
+public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> instanceClass;
 
@@ -274,6 +275,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public final String getName() {
+        if (name == null){
+            getLogger().warn("!!! process definition name not set, using  class simple name !!!");
+            name = this.getClass().getSimpleName();
+        }
         return name;
     }
 
@@ -285,6 +290,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     //TODO renomear
     @Deprecated
     public final String getAbbreviation() {
+        if (abbreviation == null){
+            getLogger().warn("!!! process definition abbreviation not set, using  class simple name !!!");
+            abbreviation = this.getClass().getSimpleName();
+        }
         return abbreviation;
     }
 
@@ -403,8 +412,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     @Override
     public int hashCode() {
-        int result = category.hashCode();
-        result = 31 * result + name.hashCode();
+        int result = -1;
+        if (getCategory() != null) {
+           result = getCategory().hashCode();
+        }
+        result = 31 * result + getName().hashCode();
         return result;
     }
 }
