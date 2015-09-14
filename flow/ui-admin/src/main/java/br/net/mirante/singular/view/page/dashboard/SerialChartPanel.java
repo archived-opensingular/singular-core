@@ -28,6 +28,7 @@ public abstract class SerialChartPanel extends Panel {
     private String graphType;
 
     private boolean withFilter;
+    private boolean withLegend;
     private PeriodType periodType;
     private WebMarkupContainer barChartDiv;
     private List<Map<String, String>> dadosGrafico;
@@ -49,18 +50,19 @@ public abstract class SerialChartPanel extends Panel {
 
     public SerialChartPanel(String id, String title, String subtitle, Pair<String, String> graphInfo,
             String categoryField, String graphType) {
-        this(id, title, subtitle, graphInfo, categoryField, "", false);
+        this(id, title, subtitle, graphInfo, categoryField, "", false, false);
         this.graphType = graphType;
     }
 
     public SerialChartPanel(String id, String title, String subtitle,
             String valueField, String categoryField, String balloonTextsuffix, boolean withFilter) {
         this(id, title, subtitle, new ImmutablePair<>(valueField, valueField),
-                categoryField, balloonTextsuffix, withFilter);
+                categoryField, balloonTextsuffix, withFilter, false);
     }
 
     public SerialChartPanel(String id, String title, String subtitle,
-            Pair<String, String> graphInfo, String categoryField, String balloonTextsuffix, boolean withFilter) {
+            Pair<String, String> graphInfo, String categoryField, String balloonTextsuffix,
+            boolean withFilter, boolean withLegend) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
@@ -69,6 +71,7 @@ public abstract class SerialChartPanel extends Panel {
         this.categoryField = categoryField;
         this.balloonTextsuffix = balloonTextsuffix;
         this.withFilter = withFilter;
+        this.withLegend = withLegend;
         this.graphType = DEFAULT_GRAPH_TYPE;
     }
 
@@ -91,6 +94,11 @@ public abstract class SerialChartPanel extends Panel {
 
     public SerialChartPanel addGraph(String valueField, String title) {
         this.valuesField.add(new ImmutablePair<>(valueField, title));
+        return this;
+    }
+
+    public SerialChartPanel addLegend() {
+        this.withLegend = true;
         return this;
     }
 
@@ -196,9 +204,7 @@ public abstract class SerialChartPanel extends Panel {
                "                    \"tickLength\": 20," +
                "                    \"autoWrap\": true" +
                "                }," +
-               "                \"legend\": {" +
-               "                    \"useGraphSettings\": true" +
-               "                }," +
+               (withLegend ? "                \"legend\": {\"useGraphSettings\": true}," : "") +
                "                \"export\": {" +
                "                    \"enabled\": true" +
                "                }" +
