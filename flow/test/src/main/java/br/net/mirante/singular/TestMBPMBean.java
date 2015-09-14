@@ -13,15 +13,24 @@ import br.net.mirante.singular.flow.core.service.IProcessEntityService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceService;
+import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
+import org.hibernate.SessionFactory;
+import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 
-@Component
+@Named
 public class TestMBPMBean extends AbstractMbpmBean {
 
     public static final String PREFIXO = "SGL";
+
+    @Inject
+    private SessionFactory sessionFactory;
 
     @Override
     protected ProcessDefinitionCache getDefinitionCache() {
@@ -89,7 +98,7 @@ public class TestMBPMBean extends AbstractMbpmBean {
 
     @Override
     protected IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService() {
-        return null;
+        return new DefaultHibernatePersistenceService(() -> sessionFactory.getCurrentSession());
     }
 
     @Override
@@ -99,7 +108,7 @@ public class TestMBPMBean extends AbstractMbpmBean {
 
     @Override
     protected IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService() {
-        return null;
+        return new DefaultHibernateProcessDefinitionService(() -> sessionFactory.getCurrentSession());
     }
 
     /**

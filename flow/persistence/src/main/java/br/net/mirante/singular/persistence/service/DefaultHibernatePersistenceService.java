@@ -9,21 +9,22 @@ import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.persistence.entity.Category;
-import br.net.mirante.singular.persistence.entity.TaskDefinition;
-import br.net.mirante.singular.persistence.entity.RoleInstance;
+import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.Role;
+import br.net.mirante.singular.persistence.entity.RoleInstance;
 import br.net.mirante.singular.persistence.entity.Task;
+import br.net.mirante.singular.persistence.entity.TaskDefinition;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
-import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.Variable;
+import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-public class DefaultHibernatePersistenceService implements
+public class DefaultHibernatePersistenceService extends AbstractHibernateService implements
         IPersistenceService<Category,
                 Process,
                 ProcessInstance,
@@ -33,6 +34,10 @@ public class DefaultHibernatePersistenceService implements
                 Variable,
                 Role,
                 RoleInstance> {
+
+    public DefaultHibernatePersistenceService(SessionLocator sessionLocator) {
+        super(sessionLocator);
+    }
 
     @Override
     public ProcessInstance createProcessInstance(Process process, Task initialState) {

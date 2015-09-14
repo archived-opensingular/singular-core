@@ -20,6 +20,8 @@ public class DefinitionTest {
     @Inject
     private TestMBPMBean mbpmBean;
 
+
+
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
