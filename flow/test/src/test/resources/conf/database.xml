@@ -25,7 +25,7 @@
 
         <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
-        <!--<property name="packagesToScan" value="br.com.montrealonline.persistence.entidade" />-->
+        <property name="packagesToScan" value="br.net.mirante.singular.persistence.entity" />
 
         <property name="hibernateProperties">
             <props>
@@ -47,6 +47,7 @@
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="DROPS">
         <jdbc:script location="classpath:/db/ddl/create-tables.sql" />
+        <jdbc:script location="classpath:/db/ddl/create-constraints.sql" />
         <jdbc:script location="classpath:/db/dml/load-data.sql" />
     </jdbc:initialize-database>
 

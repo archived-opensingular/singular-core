@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -11,8 +12,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="TB_TIPO_TAREFA")
-@NamedQuery(name="TipoTarefa.findAll", query="SELECT t FROM TipoTarefa t")
+@Table(name="TB_TIPO_TAREFA", schema = Constants.SCHEMA)
 public class TaskType implements IEntityTaskType {
 	private static final long serialVersionUID = 1L;
 

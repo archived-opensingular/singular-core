@@ -2,6 +2,7 @@ package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +21,7 @@ import java.util.List;
  * The persistent class for the TB_TAREFA database table.
  */
 @Entity
-@Table(name = "TB_TAREFA")
-@NamedQuery(name = "Tarefa.findAll", query = "SELECT t FROM Tarefa t")
+@Table(name = "TB_TAREFA", schema = Constants.SCHEMA)
 public class Task implements IEntityTask {
     private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ public class Task implements IEntityTask {
     //uni-directional many-to-one association to TaskType
     @ManyToOne
     @JoinColumn(name = "CO_TIPO_TAREFA")
-    private IEntityTaskType type;
+    private TaskType type;
 
     @OneToMany(mappedBy = "originTask")
     private List<Transition> transitions;
@@ -88,11 +88,11 @@ public class Task implements IEntityTask {
     }
 
     @Override
-    public IEntityTaskType getType() {
+    public TaskType getType() {
         return type;
     }
 
-    public void setType(IEntityTaskType type) {
+    public void setType(TaskType type) {
         this.type = type;
     }
 

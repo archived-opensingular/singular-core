@@ -2,6 +2,7 @@ package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +21,7 @@ import javax.persistence.Table;
  * The persistent class for the TB_TRANSICAO database table.
  */
 @Entity
-@Table(name = "TB_TRANSICAO")
-@NamedQuery(name = "Transicao.findAll", query = "SELECT t FROM Transicao t")
+@Table(name = "TB_TRANSICAO", schema = Constants.SCHEMA)
 public class Transition implements IEntityTaskTransition {
     private static final long serialVersionUID = 1L;
 

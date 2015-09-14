@@ -3,7 +3,6 @@ package br.net.mirante.singular.flow.util.vars;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeBoolean;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeDate;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeDouble;
-import br.net.mirante.singular.flow.util.vars.types.VarTypeInteger;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeString;
 
 public class DefaultVarService implements VarService {
@@ -75,7 +74,8 @@ public class DefaultVarService implements VarService {
 
     @Override
     public VarDefinition newDefinitionInteger(String ref, String name) {
-        return new VarDefinitionImpl(ref, name, new VarTypeInteger(), false);
+        return null;
+//        return new VarDefinitionImpl(ref, name, new VarTypeInteger(), false);
     }
 
     @Override

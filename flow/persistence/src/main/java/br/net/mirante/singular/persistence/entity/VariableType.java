@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -11,8 +12,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="TB_TIPO_VARIAVEL")
-@NamedQuery(name="VariableType.findAll", query="SELECT t FROM VariableType t")
+@Table(name="TB_TIPO_VARIAVEL", schema = Constants.SCHEMA)
 public class VariableType implements IEntityVariableType {
 	private static final long serialVersionUID = 1L;
 

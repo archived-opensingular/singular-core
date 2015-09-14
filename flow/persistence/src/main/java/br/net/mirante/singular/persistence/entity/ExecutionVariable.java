@@ -1,6 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,8 +12,7 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="TB_VARIAVEL_EXECUCAO_TRANSICAO")
-@NamedQuery(name="VariavelExecucaoTransicao.findAll", query="SELECT v FROM VariavelExecucaoTransicao v")
+@Table(name="TB_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
 public class ExecutionVariable implements IEntityExecutionVariable {
 	private static final long serialVersionUID = 1L;
 

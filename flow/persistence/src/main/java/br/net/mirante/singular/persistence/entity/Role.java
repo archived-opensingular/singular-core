@@ -2,6 +2,7 @@ package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 
@@ -11,8 +12,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="TB_PAPEL")
-@NamedQuery(name="Papel.findAll", query="SELECT p FROM Papel p")
+@Table(name="TB_PAPEL", schema = Constants.SCHEMA)
 public class Role implements IEntityProcessRole {
 	private static final long serialVersionUID = 1L;
 

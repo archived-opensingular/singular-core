@@ -4,6 +4,7 @@ import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -14,8 +15,7 @@ import java.util.Date;
  * 
  */
 @Entity
-@Table(name="TB_HISTORICO_INSTANCIA_TAREFA")
-@NamedQuery(name="HistoricoInstanciaTarefa.findAll", query="SELECT h FROM HistoricoInstanciaTarefa h")
+@Table(name="TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
 public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 	private static final long serialVersionUID = 1L;
 

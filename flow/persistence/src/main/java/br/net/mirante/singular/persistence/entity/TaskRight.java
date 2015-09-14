@@ -1,5 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
+import br.net.mirante.singular.persistence.util.Constants;
+
 import javax.persistence.*;
 
 
@@ -8,8 +10,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="RL_PERMISSAO_TAREFA")
-@NamedQuery(name="PermissaoTarefa.findAll", query="SELECT p FROM PermissaoTarefa p")
+@Table(name="RL_PERMISSAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskRight {
 	private static final long serialVersionUID = 1L;
 

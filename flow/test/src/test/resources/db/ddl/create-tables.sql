@@ -13,8 +13,9 @@
 -- Executar em comandos separados o DROP, depois os creates de tabela e schema, depois incluir FKs, depois os inserts
 
 SET DATABASE SQL SYNTAX MSS TRUE;
+
 DROP SCHEMA DBSINGULAR IF EXISTS CASCADE;
-CREATE SCHEMA DBSINGULAR;
+CREATE SCHEMA DBSINGULAR ;
 /*==============================================================*/
 /* Table: RL_PERMISSAO_PROCESSO                                 */
 /*==============================================================*/

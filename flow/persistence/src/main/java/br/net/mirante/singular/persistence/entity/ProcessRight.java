@@ -1,5 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
+import br.net.mirante.singular.persistence.util.Constants;
+
 import javax.persistence.*;
 
 
@@ -8,8 +10,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="RL_PERMISSAO_PROCESSO")
-@NamedQuery(name="PermissaoProcesso.findAll", query="SELECT p FROM PermissaoProcesso p")
+@Table(name="RL_PERMISSAO_PROCESSO", schema = Constants.SCHEMA)
 public class ProcessRight {
 	private static final long serialVersionUID = 1L;
 
@@ -18,7 +19,7 @@ public class ProcessRight {
 
 	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
-	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
+	@JoinColumn(name="CO_DEFINICAO_PROCESSO", insertable=false, updatable=false)
 	private ProcessDefinition processDefinition;
 
 	public ProcessRight() {

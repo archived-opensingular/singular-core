@@ -12,7 +12,7 @@ public class ProcessRightPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="CO_DEFINICAO_PROCESSO", insertable=false, updatable=false)
+	@Column(name="CO_DEFINICAO_PROCESSO")
 	private long codProcessDefinition;
 
 	@Column(name="TP_PERMISSAO")
