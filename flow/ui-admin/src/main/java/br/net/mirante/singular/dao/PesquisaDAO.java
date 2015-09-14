@@ -144,6 +144,25 @@ public class PesquisaDAO {
         return (List<Map<String, String>>) query.list();
     }
 
+    public List<Map<String, String>> retrieveCountByTask(String processCode) {
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+                + " FROM TB_INSTANCIA_TAREFA INSTA"
+                + " INNER JOIN TB_TAREFA TAR ON TAR.CO_TAREFA = INSTA.CO_TAREFA"
+                + " INNER JOIN TB_INSTANCIA_PROCESSO INS ON INSTA.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
+                + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " WHERE INS.DT_FIM IS NULL AND INSTA.DT_FIM IS NULL AND DEF.SG_PROCESSO = :processCode"
+                + " GROUP BY TAR.NO_TAREFA ORDER BY QUANTIDADE DESC";
+
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("NOME", StringType.INSTANCE)
+                .addScalar("QUANTIDADE", StringType.INSTANCE)
+                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+                .setParameter("processCode", processCode);
+
+        return (List<Map<String, String>>) query.list();
+    }
+
     public String retrieveProcessDefinitionName(String processCode) {
         String sql = "SELECT NO_PROCESSO AS NOME FROM TB_DEFINICAO_PROCESSO WHERE SG_PROCESSO = :processCode";
         Query query = getSession().createSQLQuery(sql)

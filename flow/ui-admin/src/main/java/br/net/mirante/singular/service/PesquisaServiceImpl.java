@@ -56,6 +56,12 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
+    @Cacheable(value = "retrieveCountByTask", key = "#processCode", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveCountByTask(String processCode) {
+        return pesquisaDAO.retrieveCountByTask(processCode);
+    }
+
+    @Override
     @Cacheable(value = "retrieveActiveInstanceStatus", key = "#processCode?:'NULL'", cacheManager = "cacheManager")
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         return instanceDAO.retrieveActiveInstanceStatus(processCode);

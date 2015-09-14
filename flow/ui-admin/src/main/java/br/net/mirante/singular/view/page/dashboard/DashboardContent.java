@@ -87,6 +87,7 @@ public class DashboardContent extends Content {
         addStatusesPanel();
         addWelcomeChart();
         addDefaultCharts();
+        addSpecificCharts();
         add(new FeedPanel("feed"));
     }
 
@@ -179,5 +180,21 @@ public class DashboardContent extends Content {
         }
         add(globalContainer);
         add(localContainer);
+    }
+
+    private void addSpecificCharts() {
+        WebMarkupContainer taskCountChartContainer = new WebMarkupContainer("taskCountChartContainer");
+        if (processDefinitionCode != null) {
+            taskCountChartContainer.add(new PieChartPanel("task-count-chart", "label.chart.count.task.title",
+                    "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveCountByTask(processDefinitionCode);
+                }
+            });
+        } else {
+            taskCountChartContainer.add($b.visibleIf($m.ofValue(false)));
+        }
+        add(taskCountChartContainer);
     }
 }
