@@ -79,10 +79,10 @@ public class TaskInstance implements IEntityTaskInstance {
 	@JoinColumn(name="CO_TAREFA")
 	private Task task;
 
-	//uni-directional many-to-one association to Transicao
+	//uni-directional many-to-one association to Transition
 	@ManyToOne
 	@JoinColumn(name="CO_TRANSICAO_EXECUTADA")
-	private Transicao transicao;
+	private Transition transition;
 
 	public TaskInstance() {
 	}
@@ -188,12 +188,12 @@ public class TaskInstance implements IEntityTaskInstance {
 		this.task = task;
 	}
 
-	public Transicao getTransicao() {
-		return this.transicao;
+	public Transition getTransition() {
+		return this.transition;
 	}
 
-	public void setTransicao(Transicao transicao) {
-		this.transicao = transicao;
+	public void setTransition(Transition transition) {
+		this.transition = transition;
 	}
 
 	@Override

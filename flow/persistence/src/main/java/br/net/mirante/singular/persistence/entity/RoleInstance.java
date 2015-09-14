@@ -1,9 +1,8 @@
 package br.net.mirante.singular.persistence.entity;
 
 import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.persistence.entity.util.ActorWrapper;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,7 +15,7 @@ import java.util.Date;
 @Entity
 @Table(name="TB_INSTANCIA_PAPEL")
 @NamedQuery(name="InstanciaPapel.findAll", query="SELECT i FROM InstanciaPapel i")
-public class InstanciaPapel implements IEntityRole {
+public class RoleInstance implements IEntityRole {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -26,7 +25,7 @@ public class InstanciaPapel implements IEntityRole {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_CRIACAO")
-	private Date dataCriacao;
+	private Date createDate;
 
 	//uni-directional many-to-one association to Actor
 	@ManyToOne
@@ -36,7 +35,7 @@ public class InstanciaPapel implements IEntityRole {
 	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADOR")
-	private Actor actorAlocador;
+	private Actor allocatorActor;
 
 	//uni-directional many-to-one association to ProcessInstance
 	@ManyToOne
@@ -48,73 +47,68 @@ public class InstanciaPapel implements IEntityRole {
 	@JoinColumn(name="CO_PAPEL")
 	private Role role;
 
-	public InstanciaPapel() {
+	public RoleInstance() {
 	}
 
+	@Override
 	public Long getCod() {
-		return this.cod;
+		return cod;
 	}
 
 	public void setCod(Long cod) {
 		this.cod = cod;
 	}
 
-	public Date getDataCriacao() {
-		return this.dataCriacao;
+	@Override
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setDataCriacao(Date dataCriacao) {
-		this.dataCriacao = dataCriacao;
+	@Override
+	public MUser getAllocatorUser() {
+		return ActorWrapper.wrap(getActor());
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	public Actor getActor() {
-		return this.actor;
+		return actor;
 	}
 
 	public void setActor(Actor actor) {
 		this.actor = actor;
 	}
 
-	public Actor getActorAlocador() {
-		return this.actorAlocador;
+	public Actor getAllocatorActor() {
+		return allocatorActor;
 	}
 
-	public void setActorAlocador(Actor actorAlocador) {
-		this.actorAlocador = actorAlocador;
+	public void setAllocatorActor(Actor allocatorActor) {
+		this.allocatorActor = allocatorActor;
 	}
 
+	@Override
 	public ProcessInstance getProcessInstance() {
-		return this.processInstance;
+		return processInstance;
 	}
 
 	public void setProcessInstance(ProcessInstance processInstance) {
 		this.processInstance = processInstance;
 	}
 
+	@Override
 	public Role getRole() {
-		return this.role;
+		return role;
+	}
+
+	@Override
+	public MUser getUser() {
+		return ActorWrapper.wrap(actor);
 	}
 
 	public void setRole(Role role) {
 		this.role = role;
 	}
-
-
-	@Override
-	public MUser getUser() {
-		return null;
-	}
-
-	@Override
-	public Date getCreateDate() {
-		return null;
-	}
-
-	@Override
-	public MUser getAllocatorUser() {
-		return null;
-	}
-
-
-
 }

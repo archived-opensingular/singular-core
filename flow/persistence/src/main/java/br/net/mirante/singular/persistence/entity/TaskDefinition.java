@@ -1,6 +1,5 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 
@@ -26,9 +25,9 @@ public class TaskDefinition implements IEntityTaskDefinition {
 	@Column(name="SG_TAREFA")
 	private String sigla;
 
-	//bi-directional many-to-one association to PermissaoTarefa
+	//bi-directional many-to-one association to TaskRight
 	@OneToMany(mappedBy="definicaoTarefa")
-	private List<PermissaoTarefa> permissoesTarefas;
+	private List<TaskRight> permissoesTarefas;
 
 	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
@@ -54,22 +53,22 @@ public class TaskDefinition implements IEntityTaskDefinition {
 		this.sigla = sigla;
 	}
 
-	public List<PermissaoTarefa> getPermissoesTarefas() {
+	public List<TaskRight> getPermissoesTarefas() {
 		return this.permissoesTarefas;
 	}
 
-	public void setPermissoesTarefas(List<PermissaoTarefa> permissoesTarefas) {
+	public void setPermissoesTarefas(List<TaskRight> permissoesTarefas) {
 		this.permissoesTarefas = permissoesTarefas;
 	}
 
-	public PermissaoTarefa addPermissoesTarefa(PermissaoTarefa permissoesTarefa) {
+	public TaskRight addPermissoesTarefa(TaskRight permissoesTarefa) {
 		getPermissoesTarefas().add(permissoesTarefa);
 		permissoesTarefa.setTaskDefinition(this);
 
 		return permissoesTarefa;
 	}
 
-	public PermissaoTarefa removePermissoesTarefa(PermissaoTarefa permissoesTarefa) {
+	public TaskRight removePermissoesTarefa(TaskRight permissoesTarefa) {
 		getPermissoesTarefas().remove(permissoesTarefa);
 		permissoesTarefa.setTaskDefinition(null);
 

@@ -67,10 +67,20 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private transient Constructor<I> construtor;
 
+    /**
+     * Esse construtor tem que ser repensado
+     * @param instanceClass
+     */
+    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
+    /**
+     * Esse construtor tem que ser repensado
+     * @param instanceClass
+     */
+    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
         this.variableService = varService;

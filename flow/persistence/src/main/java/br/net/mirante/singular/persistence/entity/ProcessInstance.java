@@ -76,16 +76,16 @@ public class ProcessInstance implements IEntityProcessInstance {
 	@OneToMany(mappedBy="processInstance")
 	private List<TaskInstance> tasks;
 
-	//bi-directional many-to-one association to Variavel
+	//bi-directional many-to-one association to Variable
 	@OneToMany(mappedBy="processInstance")
-	private List<Variavel> variables;
+	private List<Variable> variables;
 
 	//bi-directional many-to-one association to ExecutionVariable
 	@OneToMany(mappedBy="processInstance")
 	private List<ExecutionVariable> historicalVariables;
 
 	@OneToMany(mappedBy="processInstance")
-	private List<InstanciaPapel> roles;
+	private List<RoleInstance> roles;
 
 
 	@Override
@@ -178,11 +178,11 @@ public class ProcessInstance implements IEntityProcessInstance {
 	}
 
 	@Override
-	public List<Variavel> getVariables() {
+	public List<Variable> getVariables() {
 		return variables;
 	}
 
-	public void setVariables(List<Variavel> variables) {
+	public void setVariables(List<Variable> variables) {
 		this.variables = variables;
 	}
 
@@ -200,7 +200,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 		this.historicalVariables = historicalVariables;
 	}
 
-    public void setRoles(List<InstanciaPapel> roles) {
+    public void setRoles(List<RoleInstance> roles) {
         this.roles = roles;
     }
 }

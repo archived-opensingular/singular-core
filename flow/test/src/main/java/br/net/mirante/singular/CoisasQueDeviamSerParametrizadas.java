@@ -29,5 +29,6 @@ public class CoisasQueDeviamSerParametrizadas {
     public static final Lnk LINK_INSTANCE = new Lnk("Sei la", false);
 
     public static final Lnk LINK_TASK = new Lnk("Sei la de novo", false);
+
     public static final AbstractProcessNotifiers NOTIFIER = new NullNotifier();
 }

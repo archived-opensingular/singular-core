@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
-public enum TaskType {
+public enum TaskType implements IEntityTaskType {
 
     Java("J", "design/imagens/execute.png"),
     People("P", "design/imagens/pessoa.png"),
@@ -15,26 +15,32 @@ public enum TaskType {
         this.image = image;
     }
 
+    @Override
     public String getImage() {
         return image;
     }
 
+    @Override
     public final boolean isEnd() {
         return this == TaskType.End;
     }
 
+    @Override
     public final boolean isJava() {
         return this == TaskType.Java;
     }
 
+    @Override
     public final boolean isPeople() {
         return this == TaskType.People;
     }
 
+    @Override
     public final boolean isWait() {
         return this == TaskType.Wait;
     }
 
+    @Override
     public String getAbbreviation() {
         return abbreviation;
     }

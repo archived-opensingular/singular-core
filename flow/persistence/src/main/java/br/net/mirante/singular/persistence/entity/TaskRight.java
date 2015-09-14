@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="RL_PERMISSAO_TAREFA")
 @NamedQuery(name="PermissaoTarefa.findAll", query="SELECT p FROM PermissaoTarefa p")
-public class PermissaoTarefa  {
+public class TaskRight {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -23,7 +23,7 @@ public class PermissaoTarefa  {
 	@JoinColumn(name="CO_DEFINICAO_TAREFA")
 	private TaskDefinition taskDefinition;
 
-	public PermissaoTarefa() {
+	public TaskRight() {
 	}
 
 	public Long getCod() {

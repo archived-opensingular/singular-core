@@ -25,7 +25,7 @@
 
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2005Dialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
                 <prop key="hibernate.connection.isolation">2</prop>
                 <prop key="hibernate.jdbc.batch_size">30</prop>
                 <prop key="hibernate.show_sql">true</prop>

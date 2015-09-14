@@ -14,7 +14,7 @@ public class ProcessRight {
 	private static final long serialVersionUID = 1L;
 
 	@EmbeddedId
-	private PermissaoProcessoPK id;
+	private ProcessRightPK id;
 
 	//bi-directional many-to-one association to ProcessDefinition
 	@ManyToOne
@@ -24,11 +24,11 @@ public class ProcessRight {
 	public ProcessRight() {
 	}
 
-	public PermissaoProcessoPK getId() {
+	public ProcessRightPK getId() {
 		return this.id;
 	}
 
-	public void setId(PermissaoProcessoPK id) {
+	public void setId(ProcessRightPK id) {
 		this.id = id;
 	}
 

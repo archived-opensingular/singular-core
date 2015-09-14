@@ -50,10 +50,10 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 	@JoinColumn(name="CO_INSTANCIA_TAREFA")
 	private TaskInstance taskInstance;
 
-	//uni-directional many-to-one association to TipoHistoricoTarefa
+	//uni-directional many-to-one association to TaskHistoryType
 	@ManyToOne
 	@JoinColumn(name="CO_TIPO_HISTORICO_TAREFA")
-	private TipoHistoricoTarefa tipoHistoricoTarefa;
+	private TaskHistoryType taskHistoryType;
 
 	public TaskInstanceHistory() {
 	}
@@ -112,12 +112,12 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 		this.taskInstance = taskInstance;
 	}
 
-	public TipoHistoricoTarefa getTipoHistoricoTarefa() {
-		return this.tipoHistoricoTarefa;
+	public TaskHistoryType getTaskHistoryType() {
+		return this.taskHistoryType;
 	}
 
-	public void setTipoHistoricoTarefa(TipoHistoricoTarefa tipoHistoricoTarefa) {
-		this.tipoHistoricoTarefa = tipoHistoricoTarefa;
+	public void setTaskHistoryType(TaskHistoryType taskHistoryType) {
+		this.taskHistoryType = taskHistoryType;
 	}
 
 	@Override

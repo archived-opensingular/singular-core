@@ -7,11 +7,12 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.builder.FlowBuilder;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 
-public class Definicao extends ProcessDefinition {
+public class Definicao extends ProcessDefinition<InstanciaDefinicao> {
 
-    protected Definicao(Class instanceClass) {
-        super(instanceClass);
+    public Definicao(){
+        super(InstanciaDefinicao.class);
     }
+
 
     @Override
     protected FlowMap createFlowMap() {

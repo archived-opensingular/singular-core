@@ -1,9 +1,7 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 
 import java.util.List;
@@ -38,10 +36,10 @@ public class Task implements IEntityTask {
 	@JoinColumn(name="CO_PROCESSO")
 	private Process process;
 
-	//uni-directional many-to-one association to TipoTarefa
+	//uni-directional many-to-one association to TaskType
 	@ManyToOne
 	@JoinColumn(name="CO_TIPO_TAREFA")
-	private TipoTarefa tipoTarefa;
+	private TaskType taskType;
 
 	public Task() {
 	}
@@ -78,12 +76,12 @@ public class Task implements IEntityTask {
 		this.process = process;
 	}
 
-	public TipoTarefa getTipoTarefa() {
-		return this.tipoTarefa;
+	public TaskType getTaskType() {
+		return this.taskType;
 	}
 
-	public void setTipoTarefa(TipoTarefa tipoTarefa) {
-		this.tipoTarefa = tipoTarefa;
+	public void setTaskType(TaskType taskType) {
+		this.taskType = taskType;
 	}
 
 	@Override
@@ -92,7 +90,7 @@ public class Task implements IEntityTask {
 	}
 
 	@Override
-	public TaskType getType() {
+	public IEntityTaskType getType() {
 		return null;
 	}
 

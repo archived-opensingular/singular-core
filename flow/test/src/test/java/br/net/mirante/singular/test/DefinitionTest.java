@@ -22,7 +22,7 @@ public class DefinitionTest {
     public void setup() {
         assertNotNull(mbpmBean);
         MBPM.setConf(mbpmBean);
-
+        MBPM.getDefinitions();
     }
 
     @Test

@@ -10,13 +10,13 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.TaskDefinition;
-import br.net.mirante.singular.persistence.entity.InstanciaPapel;
+import br.net.mirante.singular.persistence.entity.RoleInstance;
 import br.net.mirante.singular.persistence.entity.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.Role;
 import br.net.mirante.singular.persistence.entity.Task;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
 import br.net.mirante.singular.persistence.entity.Process;
-import br.net.mirante.singular.persistence.entity.Variavel;
+import br.net.mirante.singular.persistence.entity.Variable;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -30,9 +30,9 @@ public class DefaultHibernatePersistenceService implements
                 TaskInstance,
                 TaskDefinition,
                 Task,
-                Variavel,
+                Variable,
                 Role,
-                InstanciaPapel> {
+                RoleInstance> {
 
     @Override
     public ProcessInstance createProcessInstance(Process process, Task initialState) {
@@ -60,12 +60,12 @@ public class DefaultHibernatePersistenceService implements
     }
 
     @Override
-    public InstanciaPapel setInstanceUserRole(ProcessInstance instance, Role role, MUser user) {
+    public RoleInstance setInstanceUserRole(ProcessInstance instance, Role role, MUser user) {
         return null;
     }
 
     @Override
-    public void removeInstanceUserRole(ProcessInstance instance, InstanciaPapel instanciaPapel) {
+    public void removeInstanceUserRole(ProcessInstance instance, RoleInstance roleInstance) {
 
     }
 
@@ -100,12 +100,22 @@ public class DefaultHibernatePersistenceService implements
     }
 
     @Override
+    public TaskInstance retrieveTaskInstanceByCod(Serializable cod) {
+        return null;
+    }
+
+    @Override
     public TaskHistoricLog saveTaskHistoricLog(TaskInstance task, String typeDescription, String detail, MUser allocatedUser, MUser responsibleUser, Date dateHour, ProcessInstance generatedProcessInstance) {
         return null;
     }
 
     @Override
     public void saveVariableHistoric(Date dateHour, ProcessInstance instance, TaskInstance originTask, TaskInstance destinationTask, VarInstanceMap<?> instanceMap) {
+
+    }
+
+    @Override
+    public void saveVariableHistoric(Date dateHour, ProcessInstance instance, br.net.mirante.singular.flow.core.TaskInstance originTask, br.net.mirante.singular.flow.core.TaskInstance destinationTask, VarInstanceMap<?> instanceMap) {
 
     }
 

@@ -1,17 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.Lists;
-
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -25,6 +13,16 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -35,22 +33,44 @@ public abstract class ProcessInstance {
 
     private transient ExecucaoMTask executionContext;
 
+
+    /**
+     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
+     */
+    @Deprecated
     private transient IEntityProcessInstance entity;
 
     private transient VarInstanceMap<?> variables;
 
     private transient VariableWrapper variableWrapper;
 
+    /**
+     * @param definitionClass
+     * @deprecated definitionClass deve ser removido daqui, getProcessDefinition deve ser abstrato
+     */
+    @Deprecated
     protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass) {
         processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
-        entity = getProcessDefinition().createProcessInstance();
+        setInternalEntity(getProcessDefinition().createProcessInstance());
     }
 
+    /**
+     * @param definitionClass
+     * @param entityProcessInstance
+     * @deprecated definitionClass deve ser removido daqui, getProcessDefinition deve ser abstrato
+     */
+    @Deprecated
     protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass, IEntityProcessInstance entityProcessInstance) {
         processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
-        entity = entityProcessInstance;
+        setInternalEntity(entityProcessInstance);
     }
 
+    /**
+     * @param <K>
+     * @return
+     * @deprecated deve ser transformado em abstrato
+     */
+    @Deprecated
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         return (K) processDefinitionRef.get();
     }
@@ -79,15 +99,29 @@ public abstract class ProcessInstance {
     public TransitionCall prepareTransition(String transitionName) {
         return getCurrentTask().prepareTransition(transitionName);
     }
-    
+
+    /**
+     * @return
+     * @deprecated deve ser transformado em abstrato
+     */
+    @Deprecated
     IEntityProcessInstance getInternalEntity() {
         return entity;
     }
-    
+
+    /**
+     * @return
+     * @deprecated deve ser transformado em abstrato
+     */
+    @Deprecated
+    void setInternalEntity(IEntityProcessInstance entity) {
+        this.entity = entity;
+    }
+
     protected void setParent(ProcessInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
-    
+
     public TaskInstance getParentTask() {
         IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
         return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
@@ -133,24 +167,22 @@ public abstract class ProcessInstance {
         if (getEstado() == null) {
             return false;
         }
-        switch (getEstado().getTaskType()) {
-            case People:
-            case Wait:
-                return (isAllocated(user.getCod()))
-                        || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
-            default:
-                return false;
+        IEntityTaskType tt = getEstado().getTaskType();
+        if (tt.isPeople() || tt.isWait()) {
+            return (isAllocated(user.getCod()))
+                    || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
+
         }
+        return false;
     }
 
     public boolean canVisualize(MUser user) {
-        switch (getInternalEntity().getCurrentTask().getTask().getType()) {
-            case People:
-            case Wait:
-                if (hasAllocatedUser() && isAllocated(user.getCod())) {
-                    return true;
-                }
-            default:
+        IEntityTaskType tt = getInternalEntity().getCurrentTask().getTask().getType();
+        if (tt.isPeople() || tt.isWait()) {
+            if (hasAllocatedUser() && isAllocated(user.getCod())) {
+                return true;
+            }
+
         }
         return getAccessStrategy() != null && getAccessStrategy().canVisualize(this, user);
     }
@@ -180,11 +212,11 @@ public abstract class ProcessInstance {
     }
 
     public final IEntityProcessInstance getEntity() {
-        if (entity.getCod() == null) {
+        if (getInternalEntity().getCod() == null) {
             return saveEntity();
         }
-        entity = getPersistenceService().retrieveProcessInstanceByCod(entity.getCod());
-        return entity;
+        setInternalEntity(getPersistenceService().retrieveProcessInstanceByCod(getInternalEntity().getCod()));
+        return getInternalEntity();
     }
 
     public final MUser getUserWithRole(String roleAbbreviation) {
@@ -216,8 +248,8 @@ public abstract class ProcessInstance {
     }
 
     public final <K extends IEntityProcessInstance> K saveEntity() {
-        entity = getPersistenceService().saveProcessInstance(entity);
-        return (K) entity;
+        setInternalEntity(getPersistenceService().saveProcessInstance(getInternalEntity()));
+        return (K) getInternalEntity();
     }
 
     public final void forceStateUpdate(MTask<?> task) {
@@ -233,7 +265,7 @@ public abstract class ProcessInstance {
         ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
         task.notifyTaskStart(getTarefaMaisRecenteComNome(task.getName()), execucaoMTask);
     }
-    
+
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
         synchronized (this) {
             if (tarefaOrigem != null) {
@@ -244,12 +276,12 @@ public abstract class ProcessInstance {
                 getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
             }
             IEntityTask situacaoNova = getProcessDefinition().getEntityTask(task);
-            
+
             IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
-            
+
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
-            
+
             MBPM.getMbpmBean().notifyStateUpdate(this);
             return tarefaNova;
         }
@@ -264,11 +296,11 @@ public abstract class ProcessInstance {
     }
 
     public final Serializable getEntityCod() {
-        return entity.getCod();
+        return getInternalEntity().getCod();
     }
 
     public final String getId() {
-        return entity.getCod().toString();
+        return getInternalEntity().getCod().toString();
     }
 
     public final String getFullId() {
@@ -488,7 +520,7 @@ public abstract class ProcessInstance {
         return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getAbbreviation().equalsIgnoreCase(tipo.getAbbreviation()));
     }
 
-    public TaskInstance getUltimaTarefaConcluida(final TaskType tipoTarefa) {
+    public TaskInstance getUltimaTarefaConcluida(final IEntityTaskType tipoTarefa) {
         return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getType().equals(tipoTarefa));
     }
 
@@ -502,7 +534,7 @@ public abstract class ProcessInstance {
         }
         this.executionContext = execucaoTask;
     }
-    
+
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getProcessDefinition().getVariableWrapperClass()) {
