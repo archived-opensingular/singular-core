@@ -231,7 +231,8 @@ public class UIBuilderWicket {
             MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
 
             BSContainer<?> parentCol = ctx.getContainer();
-            BSTRow tr = parentCol.newTag("tr", true, "", id -> new BSTRow(id, BSGridSize.XS));
+            BSTRow tr = parentCol.newTag("tr", true, "",
+                    (IBSComponentFactory<BSTRow>) id -> new BSTRow(id, BSGridSize.XS));
 
             for (String nomeCampo : tComposto.getCampos()) {
                 final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
