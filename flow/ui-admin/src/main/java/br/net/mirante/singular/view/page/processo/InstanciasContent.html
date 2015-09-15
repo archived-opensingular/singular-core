@@ -6,7 +6,10 @@
                 <div class="portlet-title">
                     <div class="caption">
                         <i class="icon-list font-blue-hoki"></i>
-                        <span class="caption-subject bold font-blue-hoki uppercase" wicket:id="processNameTitle"></span> <label class="caption-helper"><wicket:message key="label.table.title"/></label>
+                        <span class="caption-subject bold font-blue-hoki uppercase" wicket:id="processNameTitle"></span>
+                        <label class="caption-helper">
+                            <wicket:message key="label.table.title"/>
+                        </label>
                     </div>
                     <div class="tools">
                         <a class="collapse" href="javascript:" data-original-title="" title="">
@@ -14,26 +17,91 @@
                         <a class="reload" href="javascript:" data-original-title="" title="">
                         </a>
                     </div>
-                    <div class="actions">
-                        <a wicket:id="showDiagramButton" href="javascript:" class="btn btn-default btn-sm">
-                            <i class="icon-eye"></i> <wicket:message key="label.table.header.view"/> </a>
-                    </div>
                 </div>
                 <div class="portlet-body">
-                    <div class="table-scrollable">
-                        <table wicket:id="processos"></table>
+                    <div class="tabbable-custom ">
+                        <ul class="nav nav-tabs ">
+                            <li class="active">
+                                <a aria-expanded="true" href="#tab_1" data-toggle="tab">
+                                    <wicket:message key="label.tab.instance"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a aria-expanded="false" href="#tab_2" data-toggle="tab">
+                                    <wicket:message key="label.tab.metadata"/>
+                                </a>
+                            </li>
+                            <li>
+                                <a aria-expanded="false" href="#tab_3" data-toggle="tab">
+                                    <wicket:message key="label.tab.diagram"/>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_1">
+                                <div class="table-scrollable">
+                                    <table wicket:id="processos"></table>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_2">
+                                <div class="table-scrollable">
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th><wicket:message key="label.table.column.task"/></th>
+                                            <th><wicket:message key="label.table.column.type"/></th>
+                                            <th><wicket:message key="label.table.column.executor"/></th>
+                                            <th><wicket:message key="label.table.column.transaction"/></th>
+                                            <th><wicket:message key="label.table.column.parameter"/></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td rowspan="2">Tarefa 1</td>
+                                            <td rowspan="2">Tipo 1</td>
+                                            <td rowspan="2">Executor 1</td>
+                                            <td>Transição 1</td>
+                                            <td><span class="label label-sm label-success">Par 1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Transição 2</td>
+                                            <td><span class="label label-sm label-danger">Par 2</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td rowspan="3">Tarefa 2</td>
+                                            <td rowspan="3">Tipo 2</td>
+                                            <td rowspan="3">Executor 2</td>
+                                            <td>Transição 1</td>
+                                            <td><span class="label label-sm label-success">Par 1</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Transição 2</td>
+                                            <td><span class="label label-sm label-danger">Par 2</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Transição 3</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tarefa 3</td>
+                                            <td>Tipo 1</td>
+                                            <td>Executor 2</td>
+                                            <td>Transição 1</td>
+                                            <td><span class="label label-sm label-danger">Par 1</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="tab_3">
+                                <img wicket:id="tabImage"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <form wicket:id="diagramForm">
-        <div wicket:id="diagramModal">
-            <div wicket:id="diagram">
-                <img wicket:id="image"/>
-            </div>
-        </div>
-    </form>
 
     <wicket:fragment wicket:id="breadcrumbProcess">
         <li>
