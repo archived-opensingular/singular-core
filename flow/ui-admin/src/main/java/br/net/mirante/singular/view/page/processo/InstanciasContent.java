@@ -1,6 +1,7 @@
 package br.net.mirante.singular.view.page.processo;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -8,6 +9,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -15,6 +17,7 @@ import org.apache.wicket.request.resource.DynamicImageResource;
 
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -81,7 +84,66 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                 .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", InstanceDTO::getDataAtividadeString)
                 .appendPropertyColumn(getMessage("label.table.column.user"), "user", InstanceDTO::getUsuarioAlocado)
                 .build("processos"));
+        queue(mountMetadatas());
         queue(new NonCachingImage("tabImage", imageModel));
+    }
+
+    private RepeatingView mountMetadatas() {
+        final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
+        final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
+        for (MetaDataDTO metadata : metadatas) {
+            int max = metadata.getTransactions().size();
+            for (int i = 0; i <= max; i++) {
+                final WebMarkupContainer metadataRow = new WebMarkupContainer(metadatasRow.newChildId());
+                metadataRow.add(createMetadatasCol(metadata, i));
+                metadatasRow.add(metadataRow);
+            }
+        }
+        return metadatasRow;
+    }
+
+    private RepeatingView createMetadatasCol(MetaDataDTO metadata, int index) {
+        final RepeatingView metadatasCol = new RepeatingView("metadatasCol");
+        /* Task */
+        WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        metadataCol.add(new Label("metadataLabel", metadata.getTask()));
+        metadatasCol.add(metadataCol);
+        /* Type */
+        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        metadataCol.add(new Label("metadataLabel", metadata.getType()));
+        metadatasCol.add(metadataCol);
+        /* Executor */
+        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        metadataCol.add(new Label("metadataLabel", metadata.getExecutor()));
+        metadatasCol.add(metadataCol);
+        /* Transaction */
+        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        if (metadata.getTransactions().size() > index) {
+            metadataCol.add(new Label("metadataLabel",
+                    metadata.getTransactions().get(index).getSource()
+                            .concat(" -> ")
+                            .concat(metadata.getTransactions().get(index).getTarget())));
+        } else {
+            metadataCol.add(new Label("metadataLabel", ""));
+        }
+        metadatasCol.add(metadataCol);
+        /* Parameter */
+        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        if (metadata.getTransactions().size() > index
+                && !metadata.getTransactions().get(index).getParameters().isEmpty()) {
+            MetaDataDTO.TransactionDTO transaction = metadata.getTransactions().get(index);
+            for (MetaDataDTO.ParameterDTO parameter : transaction.getParameters()) {
+                WebMarkupContainer parameterFragment = new Fragment("metadataLabel", "parameterFragment", this);
+                parameterFragment.add(new Label("parameterLabel", parameter.getName())
+                        .add(WicketUtils.$b.attrAppender("class", (parameter.isRequired()
+                                ? "label-danger" : "label-success"), " ")));
+                metadataCol.add(parameterFragment);
+            }
+        } else {
+            metadataCol.add(new Label("metadataLabel", ""));
+        }
+        metadatasCol.add(metadataCol);
+        return metadatasCol;
     }
 
     @Override

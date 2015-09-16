@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 
 public interface ProcessDefinitionService {
 
@@ -18,4 +19,6 @@ public interface ProcessDefinitionService {
     int countAll(Long id);
 
     byte[] retrieveProcessDiagram(String sigla);
+
+    List<MetaDataDTO> retrieveMetaData(Long id);
 }

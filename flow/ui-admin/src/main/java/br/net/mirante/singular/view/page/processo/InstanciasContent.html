@@ -56,38 +56,10 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td rowspan="2">Tarefa 1</td>
-                                            <td rowspan="2">Tipo 1</td>
-                                            <td rowspan="2">Executor 1</td>
-                                            <td>Transição 1</td>
-                                            <td><span class="label label-sm label-success">Par 1</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Transição 2</td>
-                                            <td><span class="label label-sm label-danger">Par 2</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td rowspan="3">Tarefa 2</td>
-                                            <td rowspan="3">Tipo 2</td>
-                                            <td rowspan="3">Executor 2</td>
-                                            <td>Transição 1</td>
-                                            <td><span class="label label-sm label-success">Par 1</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Transição 2</td>
-                                            <td><span class="label label-sm label-danger">Par 2</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Transição 3</td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tarefa 3</td>
-                                            <td>Tipo 1</td>
-                                            <td>Executor 2</td>
-                                            <td>Transição 1</td>
-                                            <td><span class="label label-sm label-danger">Par 1</span></td>
+                                        <tr wicket:id="metadatasRow">
+                                            <td wicket:id="metadatasCol">
+                                                <wicket:container wicket:id="metadataLabel"/>
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -117,6 +89,9 @@
         <li class="active">
             <wicket:message key="breadcrumb.flow.process.instance"/>
         </li>
+    </wicket:fragment>
+    <wicket:fragment wicket:id="parameterFragment">
+        <span wicket:id="parameterLabel" class="label label-sm"></span>
     </wicket:fragment>
 </wicket:extend>
 </html>
