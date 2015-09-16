@@ -21,10 +21,13 @@ import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
 
@@ -60,8 +63,6 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                     }
                 };
 
-        queue(new Label("processNameTitle", processDefinition.getNome()));
-
         BaseDataProvider<InstanceDTO, String> dataProvider = new BaseDataProvider<InstanceDTO, String>() {
             @Override
             public Iterator<? extends InstanceDTO> iterator(int first, int count,
@@ -92,8 +93,8 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
         final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
         for (MetaDataDTO metadata : metadatas) {
-            int max = metadata.getTransactions().size();
-            for (int i = 0; i <= max; i++) {
+            int max = Math.max(metadata.getTransactions().size(), 1);
+            for (int i = 0; i < max; i++) {
                 final WebMarkupContainer metadataRow = new WebMarkupContainer(metadatasRow.newChildId());
                 metadataRow.add(createMetadatasCol(metadata, i));
                 metadatasRow.add(metadataRow);
@@ -104,24 +105,15 @@ public class InstanciasContent extends Content implements SingularWicketContaine
 
     private RepeatingView createMetadatasCol(MetaDataDTO metadata, int index) {
         final RepeatingView metadatasCol = new RepeatingView("metadatasCol");
-        /* Task */
-        WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
-        metadataCol.add(new Label("metadataLabel", metadata.getTask()));
-        metadatasCol.add(metadataCol);
-        /* Type */
-        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
-        metadataCol.add(new Label("metadataLabel", metadata.getType()));
-        metadatasCol.add(metadataCol);
-        /* Executor */
-        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
-        metadataCol.add(new Label("metadataLabel", metadata.getExecutor()));
-        metadatasCol.add(metadataCol);
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getTask);
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getType);
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getExecutor);
         /* Transaction */
-        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
         if (metadata.getTransactions().size() > index) {
             metadataCol.add(new Label("metadataLabel",
                     metadata.getTransactions().get(index).getSource()
-                            .concat(" -> ")
+                            .concat(" → ")
                             .concat(metadata.getTransactions().get(index).getTarget())));
         } else {
             metadataCol.add(new Label("metadataLabel", ""));
@@ -132,13 +124,15 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         if (metadata.getTransactions().size() > index
                 && !metadata.getTransactions().get(index).getParameters().isEmpty()) {
             MetaDataDTO.TransactionDTO transaction = metadata.getTransactions().get(index);
+            final RepeatingView parametersCol = new RepeatingView("metadataLabel");
             for (MetaDataDTO.ParameterDTO parameter : transaction.getParameters()) {
-                WebMarkupContainer parameterFragment = new Fragment("metadataLabel", "parameterFragment", this);
+                WebMarkupContainer parameterFragment = new Fragment(parametersCol.newChildId(), "parameterFragment", this);
                 parameterFragment.add(new Label("parameterLabel", parameter.getName())
-                        .add(WicketUtils.$b.attrAppender("class", (parameter.isRequired()
+                        .add($b.attrAppender("class", (parameter.isRequired()
                                 ? "label-danger" : "label-success"), " ")));
-                metadataCol.add(parameterFragment);
+                parametersCol.add(parameterFragment);
             }
+            metadataCol.add(parametersCol);
         } else {
             metadataCol.add(new Label("metadataLabel", ""));
         }
@@ -146,17 +140,29 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         return metadatasCol;
     }
 
+    private void addRowWithSpan(RepeatingView metadatasCol, MetaDataDTO metadata, int index,
+            IFunction<MetaDataDTO, String> fValue) {
+        if (index == 0) {
+            WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+            metadataCol.add(new Label("metadataLabel", fValue.apply(metadata)));
+            metadatasCol.add(metadataCol);
+            if (metadata.getTransactions().size() > 1) {
+                metadataCol.add($b.attr("rowspan", metadata.getTransactions().size()));
+            }
+        }
+    }
+
     @Override
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         WebMarkupContainer breadcrumb = new Fragment(id, "breadcrumbProcess", this);
         breadcrumb.add(new WebMarkupContainer("processListLink")
-                .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
+                .add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
         return breadcrumb;
     }
 
     @Override
     protected IModel<?> getContentTitlelModel() {
-        return new ResourceModel("label.content.title");
+        return $m.ofValue(processDefinition.getNome());
     }
 
     @Override

@@ -105,6 +105,10 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         parameter.setName("Par 2");
         parameter.setRequired(true);
         transaction.getParameters().add(parameter);
+        parameter = metadata.new ParameterDTO();
+        parameter.setName("Par 3");
+        parameter.setRequired(false);
+        transaction.getParameters().add(parameter);
         metadata.getTransactions().add(transaction);
         metadatas.add(metadata);
         return metadatas;
