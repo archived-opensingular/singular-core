@@ -18,10 +18,15 @@ import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
+import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
+
+    @Inject
+    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
     private ProcessDefinitionService processDefinitionService;
@@ -81,7 +86,10 @@ public class InstanciasContent extends Content implements SingularWicketContaine
 
     @Override
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
-        return new Fragment(id, "breadcrumbProcess", this);
+        WebMarkupContainer breadcrumb = new Fragment(id, "breadcrumbProcess", this);
+        breadcrumb.add(new WebMarkupContainer("processListLink")
+                .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
+        return breadcrumb;
     }
 
     @Override
