@@ -18,7 +18,6 @@ import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
-import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {

@@ -16,7 +16,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
-import br.net.mirante.singular.service.PesquisaService;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
@@ -33,7 +33,7 @@ public class DashboardContent extends Content {
     private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
-    private PesquisaService pesquisaService;
+    private UIAdminFacade uiAdminFacade;
 
     private String processDefinitionCode;
 
@@ -47,7 +47,7 @@ public class DashboardContent extends Content {
         if (processDefinitionCode == null) {
             return new ResourceModel("label.content.title");
         } else {
-            return $m.ofValue(pesquisaService.retrieveProcessDefinitionName(processDefinitionCode));
+            return $m.ofValue(uiAdminFacade.retrieveProcessDefinitionName(processDefinitionCode));
         }
     }
 
@@ -63,7 +63,7 @@ public class DashboardContent extends Content {
                 new StringResourceModel("label.content.info.title", this).getString()));
         infoLink.add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process")
                 .concat("?").concat(ProcessosPage.PROCESS_DEFINITION_ID_PARAM)
-                .concat("=").concat(pesquisaService.retrieveProcessDefinitionId(processDefinitionCode))));
+                .concat("=").concat(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode))));
         return infoLink;
     }
 
@@ -98,7 +98,7 @@ public class DashboardContent extends Content {
                 "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
+                return uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
             }
         }.addGraph("QTD_CLS", new StringResourceModel("label.chart.new.instance.quantity.finished", this).getString())
                 .addLegend());
@@ -106,7 +106,7 @@ public class DashboardContent extends Content {
                 "label.chart.active.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveCounterActiveInstances(processDefinitionCode);
+                return uiAdminFacade.retrieveCounterActiveInstances(processDefinitionCode);
             }
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
@@ -116,7 +116,7 @@ public class DashboardContent extends Content {
                 "QUANTIDADE", "SITUACAO", true, true) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
+                return uiAdminFacade.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
                         processDefinitionCode != null ? processDefinitionCode : "LiberarLancamentoAtv");
             }
         });
@@ -127,14 +127,14 @@ public class DashboardContent extends Content {
                 "MEAN", "NOME", true, false) {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return pesquisaService.retrieveMeanTimeByTask(periodType.getPeriod(),
+                return uiAdminFacade.retrieveMeanTimeByTask(periodType.getPeriod(),
                         processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
             }
         });
     }
 
     private void addStatusesPanel() {
-        IStatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
+        IStatusDTO statusDTO = uiAdminFacade.retrieveActiveInstanceStatus(processDefinitionCode);
         add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
         add(new StatusPanel("active-average-status-panel", "label.active.average.status",
@@ -155,7 +155,7 @@ public class DashboardContent extends Content {
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return pesquisaService.retrieveMeanTimeByProcess(periodType.getPeriod());
+                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod());
                 }
             });
             localContainer.add($b.visibleIf($m.ofValue(false)));
@@ -165,7 +165,7 @@ public class DashboardContent extends Content {
                     "TEMPO", "MES", "smoothedLine") {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return pesquisaService.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                    return uiAdminFacade.retrieveMeanTimeActiveInstances(processDefinitionCode);
                 }
             });
             localContainer.add(new SerialChartPanel("finished-instances-mean-time-chart",
@@ -173,7 +173,7 @@ public class DashboardContent extends Content {
                     "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine") {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return pesquisaService.retrieveMeanTimeFinishedInstances(processDefinitionCode);
+                    return uiAdminFacade.retrieveMeanTimeFinishedInstances(processDefinitionCode);
                 }
             });
             globalContainer.add($b.visibleIf($m.ofValue(false)));
@@ -189,7 +189,7 @@ public class DashboardContent extends Content {
                     "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return pesquisaService.retrieveCountByTask(processDefinitionCode);
+                    return uiAdminFacade.retrieveCountByTask(processDefinitionCode);
                 }
             });
         } else {

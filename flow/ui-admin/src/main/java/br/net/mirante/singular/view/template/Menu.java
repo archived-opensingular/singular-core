@@ -13,7 +13,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 
 import br.net.mirante.singular.dao.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
-import br.net.mirante.singular.service.MenuService;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
@@ -24,7 +24,7 @@ public class Menu extends Panel {
     private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
-    private MenuService menuService;
+    private UIAdminFacade uiAdminFacade;
 
     public Menu(String id) {
         super(id);
@@ -45,7 +45,7 @@ public class Menu extends Panel {
     }
 
     private RepeatingView createCategoriesMenu() {
-        final List<MenuItemDTO> categories = menuService.retrieveAllCategories();
+        final List<MenuItemDTO> categories = uiAdminFacade.retrieveAllCategories();
         final RepeatingView categoriesMenu = new RepeatingView("categories");
         for (IMenuItemDTO item : categories) {
             final WebMarkupContainer categoryMenu = new WebMarkupContainer(categoriesMenu.newChildId());
