@@ -17,8 +17,7 @@ import br.net.mirante.singular.dao.DefinitionDAO;
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
-import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 
 @Service("processDefinitionService")
@@ -35,14 +34,14 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public IDefinitionDTO retrieveById(Long id) {
+    public DefinitionDTO retrieveById(Long id) {
         Object[] result = definitionDAO.retrieveById(id);
         return new DefinitionDTO((Long) result[0], (String) result[1], (String) result[2], null, null, null, null);
     }
 
     @Override
     @Transactional
-    public List<IDefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
+    public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
                 .map(o -> new DefinitionDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3],
@@ -58,7 +57,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public List<IInstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id) {
+    public List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id) {
         List<Object[]> results = instanceDAO.retrieveAll(first, size, orderByProperty, asc, id);
         return results.stream()
                 .map(o -> new InstanceDTO((Long) o[0], (String) o[1], (Long) o[2], (Date) o[3],
@@ -74,7 +73,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public List<IMetaDataDTO> retrieveMetaData(Long id) {
+    public List<MetaDataDTO> retrieveMetaData(Long id) {
         return definitionDAO.retrieveMetaData(id);
     }
 

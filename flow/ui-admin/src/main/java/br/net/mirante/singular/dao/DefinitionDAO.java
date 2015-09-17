@@ -13,7 +13,6 @@ import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 
 @Repository
@@ -107,7 +106,7 @@ public class DefinitionDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<IMetaDataDTO> retrieveMetaData(Long id) {
+    public List<MetaDataDTO> retrieveMetaData(Long id) {
         long newestProcessVersionId = ((Number) getSession()
                 .createSQLQuery("SELECT MAX(CO_PROCESSO) FROM TB_PROCESSO WHERE CO_DEFINICAO_PROCESSO = :id")
                 .setParameter("id", id)
@@ -126,8 +125,8 @@ public class DefinitionDAO {
                 .setParameter("fim", TaskType.End.ordinal())
                 .setParameter("id", newestProcessVersionId)
                 .setResultTransformer(Transformers.aliasToBean(MetaDataDTO.class));
-        List<IMetaDataDTO> metaDatas = query.list();
-        for (IMetaDataDTO metaData : metaDatas) {
+        List<MetaDataDTO> metaDatas = query.list();
+        for (MetaDataDTO metaData : metaDatas) {
             metaData.setTransactions(retrieveTransactions(metaData.getId()));
         }
         return metaDatas;

@@ -22,6 +22,9 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
         FeedDTO, MenuItemDTO> {
 
     @Inject
+    private ProcessDefinitionService processDefinitionService;
+
+    @Inject
     private PesquisaService pesquisaService;
 
     @Inject
@@ -32,37 +35,37 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
 
     @Override
     public DefinitionDTO retrieveDefinitionById(Long id) {
-        return null;
+        return processDefinitionService.retrieveById(id);
     }
 
     @Override
     public List<DefinitionDTO> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc) {
-        return null;
+        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc);
     }
 
     @Override
     public int countAllDefinition() {
-        return 0;
+        return processDefinitionService.countAll();
     }
 
     @Override
     public List<InstanceDTO> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Long id) {
-        return null;
+        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc, id);
     }
 
     @Override
     public int countAllInstance(Long id) {
-        return 0;
+        return processDefinitionService.countAll(id);
     }
 
     @Override
     public byte[] retrieveProcessDiagram(String sigla) {
-        return new byte[0];
+        return processDefinitionService.retrieveProcessDiagram(sigla);
     }
 
     @Override
     public List<MetaDataDTO> retrieveMetaData(Long id) {
-        return null;
+        return processDefinitionService.retrieveMetaData(id);
     }
 
     @Override

@@ -2,23 +2,23 @@ package br.net.mirante.singular.service;
 
 import java.util.List;
 
-import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
-import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
-import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
+import br.net.mirante.singular.dao.DefinitionDTO;
+import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 
 public interface ProcessDefinitionService {
 
-    IDefinitionDTO retrieveById(Long id);
+    DefinitionDTO retrieveById(Long id);
 
-    List<IDefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc);
+    List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc);
 
     int countAll();
 
-    List<IInstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id);
+    List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id);
 
     int countAll(Long id);
 
     byte[] retrieveProcessDiagram(String sigla);
 
-    List<IMetaDataDTO> retrieveMetaData(Long id);
+    List<MetaDataDTO> retrieveMetaData(Long id);
 }
