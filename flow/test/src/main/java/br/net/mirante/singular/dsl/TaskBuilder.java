@@ -1,7 +1,11 @@
 package br.net.mirante.singular.dsl;
 
+import br.net.mirante.singular.flow.core.FlowMap;
+import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import javafx.geometry.InsetsBuilder;
+
+import java.util.function.Consumer;
 
 public class TaskBuilder {
 
@@ -20,4 +24,7 @@ public class TaskBuilder {
         return new TransitionBuilder1(this);
     }
 
+    public TransitionBuilder1 transition(String aprovado) {
+        return null;
+    }
 }

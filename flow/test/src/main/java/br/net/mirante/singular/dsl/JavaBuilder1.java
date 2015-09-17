@@ -1,7 +1,10 @@
 package br.net.mirante.singular.dsl;
 
 import br.net.mirante.singular.InstanciaDefinicao;
+import br.net.mirante.singular.flow.core.MTask;
 import org.springframework.core.task.TaskExecutor;
+
+import java.util.function.Consumer;
 
 public class JavaBuilder1 {
 
@@ -17,9 +20,10 @@ public class JavaBuilder1 {
         this.taskBuilder2 = taskBuilder2;
     }
 
-    public TaskBuilder call(TaskExecutor t){
-        return taskBuilder;
+    public JavaBuilder2 call(TaskExecutor t){
+        return new JavaBuilder2(this);
     }
+
 
 
     @FunctionalInterface
