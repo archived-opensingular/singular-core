@@ -1,42 +1,43 @@
 package br.net.mirante.singular.view.page.processo;
 
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
+import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
+
+    @Inject
+    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
     private ProcessDefinitionService processDefinitionService;
 
     private DefinitionDTO processDefinition;
-
-    private final Form<?> diagramForm = new Form<>("diagramForm");
-    private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
-    private final WebMarkupContainer diagram = new WebMarkupContainer("diagram");
 
     public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
         super(id, false, withSideBar, false, true);
@@ -54,27 +55,13 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                         DynamicImageResource dir = new DynamicImageResource() {
                             @Override
                             protected byte[] getImageData(Attributes attributes) {
-                                String[] siglas = ((ServletWebRequest) attributes.getRequest())
-                                        .getContainerRequest().getParameterMap().get("sigla");
-                                String sigla = siglas[siglas.length - 1];
-                                return processDefinitionService.retrieveProcessDiagram(sigla);
+                                return processDefinitionService.retrieveProcessDiagram(processDefinition.getSigla());
                             }
                         };
                         dir.setFormat("image/png");
                         return dir;
                     }
                 };
-
-        queue(new Label("processNameTitle", processDefinition.getNome()));
-        queue(new ActionAjaxLink<Void>("showDiagramButton") {
-            @Override
-            protected void onAction(AjaxRequestTarget target) {
-                getPage().getPageParameters().add("sigla", processDefinition.getSigla());
-                /* FIXME: Verificar como detectar o fim da carga! */
-                //target.appendJavaScript("Metronic.blockUI({target:'.modal-body',animate:true});");
-                diagramModal.show(target);
-            }
-        });
 
         BaseDataProvider<InstanceDTO, String> dataProvider = new BaseDataProvider<InstanceDTO, String>() {
             @Override
@@ -98,29 +85,84 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                 .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", InstanceDTO::getDataAtividadeString)
                 .appendPropertyColumn(getMessage("label.table.column.user"), "user", InstanceDTO::getUsuarioAlocado)
                 .build("processos"));
+        queue(new NonCachingImage("tabImage", imageModel));
+        queue(mountMetadatas());
+    }
 
-        diagramModal.setSize(BSModalBorder.Size.FIT);
-        diagramModal.setTitleText(getMessage("label.modal.title"));
-        diagramModal.addButton(BSModalBorder.ButtonStyle.DEFAULT, getMessage("label.modal.button.close"),
-                new ActionAjaxButton("close", diagramForm) {
-                    @Override
-                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                        diagramModal.hide(target);
-                    }
-                });
+    private RepeatingView mountMetadatas() {
+        final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
+        final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
+        for (MetaDataDTO metadata : metadatas) {
+            int max = Math.max(metadata.getTransactions().size(), 1);
+            for (int i = 0; i < max; i++) {
+                final WebMarkupContainer metadataRow = new WebMarkupContainer(metadatasRow.newChildId());
+                metadataRow.add(createMetadatasCol(metadata, i));
+                metadatasRow.add(metadataRow);
+            }
+        }
+        return metadatasRow;
+    }
 
-        queue(diagramForm);
-        queue(diagramModal.add(diagram.add(new NonCachingImage("image", imageModel))));
+    private RepeatingView createMetadatasCol(MetaDataDTO metadata, int index) {
+        final RepeatingView metadatasCol = new RepeatingView("metadatasCol");
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getTask);
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getType);
+        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getExecutor);
+        /* Transaction */
+        WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        if (metadata.getTransactions().size() > index) {
+            metadataCol.add(new Label("metadataLabel",
+                    metadata.getTransactions().get(index).getSource()
+                            .concat(" → ")
+                            .concat(metadata.getTransactions().get(index).getTarget())));
+        } else {
+            metadataCol.add(new Label("metadataLabel", ""));
+        }
+        metadatasCol.add(metadataCol);
+        /* Parameter */
+        metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+        if (metadata.getTransactions().size() > index
+                && !metadata.getTransactions().get(index).getParameters().isEmpty()) {
+            MetaDataDTO.TransactionDTO transaction = metadata.getTransactions().get(index);
+            final RepeatingView parametersCol = new RepeatingView("metadataLabel");
+            for (MetaDataDTO.ParameterDTO parameter : transaction.getParameters()) {
+                WebMarkupContainer parameterFragment = new Fragment(parametersCol.newChildId(), "parameterFragment", this);
+                parameterFragment.add(new Label("parameterLabel", parameter.getName())
+                        .add($b.attrAppender("class", (parameter.isRequired()
+                                ? "label-danger" : "label-success"), " ")));
+                parametersCol.add(parameterFragment);
+            }
+            metadataCol.add(parametersCol);
+        } else {
+            metadataCol.add(new Label("metadataLabel", ""));
+        }
+        metadatasCol.add(metadataCol);
+        return metadatasCol;
+    }
+
+    private void addRowWithSpan(RepeatingView metadatasCol, MetaDataDTO metadata, int index,
+            IFunction<MetaDataDTO, String> fValue) {
+        if (index == 0) {
+            WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
+            metadataCol.add(new Label("metadataLabel", fValue.apply(metadata)));
+            metadatasCol.add(metadataCol);
+            if (metadata.getTransactions().size() > 1) {
+                metadataCol.add($b.attr("rowspan", metadata.getTransactions().size()));
+            }
+        }
     }
 
     @Override
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
-        return new Fragment(id, "breadcrumbProcess", this);
+        WebMarkupContainer breadcrumb = new Fragment(id, "breadcrumbProcess", this);
+        breadcrumb.add(new WebMarkupContainer("processListLink")
+                .add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
+        return breadcrumb;
     }
 
     @Override
     protected IModel<?> getContentTitlelModel() {
-        return new ResourceModel("label.content.title");
+        return $m.ofValue(processDefinition.getNome());
     }
 
     @Override

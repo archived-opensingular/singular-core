@@ -17,6 +17,7 @@ import br.net.mirante.singular.dao.DefinitionDAO;
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
+import br.net.mirante.singular.dao.MetaDataDTO;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
@@ -67,6 +68,12 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     @Transactional
     public int countAll(Long id) {
         return instanceDAO.countAll(id);
+    }
+
+    @Override
+    @Transactional
+    public List<MetaDataDTO> retrieveMetaData(Long id) {
+        return definitionDAO.retrieveMetaData(id);
     }
 
     @Override

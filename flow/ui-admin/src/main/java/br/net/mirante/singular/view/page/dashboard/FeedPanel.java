@@ -18,8 +18,8 @@ import org.apache.wicket.model.util.ListModel;
 import br.net.mirante.singular.dao.FeedDTO;
 import br.net.mirante.singular.service.FeedService;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class FeedPanel extends Panel {
 
@@ -101,11 +101,10 @@ public class FeedPanel extends Panel {
         return fi;
     }
 
-
     private String getDesc(FeedDTO feed) {
-        return "[" + feed.getNomeProcesso() + "] " + feed.getDescricaoInstancia();
+        return "[" + feed.getNomeProcesso() + "] " + (feed.getDescricaoInstancia() != null
+                ? feed.getDescricaoInstancia() : "N/A");
     }
-
 
     private String getTimeDesc(FeedDTO feed) {
         return String.format(" + %s dias ", feed.getTempoDecorrido().subtract(feed.getMedia()));
