@@ -53,7 +53,7 @@ public class MetaDataDTO implements Serializable {
         this.transactions = transactions;
     }
 
-    public class TransactionDTO implements Serializable {
+    public static class TransactionDTO implements Serializable {
         private static final long serialVersionUID = 8149321077048616674L;
 
         private String name;
