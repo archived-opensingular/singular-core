@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 
+import br.net.mirante.singular.dao.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 import br.net.mirante.singular.service.MenuService;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -44,7 +45,7 @@ public class Menu extends Panel {
     }
 
     private RepeatingView createCategoriesMenu() {
-        final List<IMenuItemDTO> categories = menuService.retrieveAllCategories();
+        final List<MenuItemDTO> categories = menuService.retrieveAllCategories();
         final RepeatingView categoriesMenu = new RepeatingView("categories");
         for (IMenuItemDTO item : categories) {
             final WebMarkupContainer categoryMenu = new WebMarkupContainer(categoriesMenu.newChildId());

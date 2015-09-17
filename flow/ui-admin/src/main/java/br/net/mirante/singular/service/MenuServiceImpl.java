@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.CategoryMenuDAO;
+import br.net.mirante.singular.dao.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 
 @Service("menuService")
@@ -22,7 +23,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     @Cacheable(value = "retrieveAllCategoriesMenu", cacheManager = "cacheManager")
-    public List<IMenuItemDTO> retrieveAllCategories() {
+    public List<MenuItemDTO> retrieveAllCategories() {
         return categoryMenuDAO.retrieveAll();
     }
 

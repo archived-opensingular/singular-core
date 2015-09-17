@@ -24,6 +24,9 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Inject
     private FeedService feedService;
 
+    @Inject
+    private MenuService menuService;
+
     @Override
     public DefinitionDTO retrieveDefinitionById(Long id) {
         return null;
@@ -121,7 +124,7 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
 
     @Override
     public List<MenuItemDTO> retrieveAllCategories() {
-        return null;
+        return menuService.retrieveAllCategories();
     }
 
     @Override
