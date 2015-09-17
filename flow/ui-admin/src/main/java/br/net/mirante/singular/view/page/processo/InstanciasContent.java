@@ -15,9 +15,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
+import br.net.mirante.singular.flow.core.dto.IParameterDTO;
+import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -90,9 +92,9 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     }
 
     private RepeatingView mountMetadatas() {
-        final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
+        final List<IMetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
         final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
-        for (MetaDataDTO metadata : metadatas) {
+        for (IMetaDataDTO metadata : metadatas) {
             int max = Math.max(metadata.getTransactions().size(), 1);
             for (int i = 0; i < max; i++) {
                 final WebMarkupContainer metadataRow = new WebMarkupContainer(metadatasRow.newChildId());
@@ -103,11 +105,11 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         return metadatasRow;
     }
 
-    private RepeatingView createMetadatasCol(MetaDataDTO metadata, int index) {
+    private RepeatingView createMetadatasCol(IMetaDataDTO metadata, int index) {
         final RepeatingView metadatasCol = new RepeatingView("metadatasCol");
-        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getTask);
-        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getType);
-        addRowWithSpan(metadatasCol, metadata, index, MetaDataDTO::getExecutor);
+        addRowWithSpan(metadatasCol, metadata, index, IMetaDataDTO::getTask);
+        addRowWithSpan(metadatasCol, metadata, index, IMetaDataDTO::getType);
+        addRowWithSpan(metadatasCol, metadata, index, IMetaDataDTO::getExecutor);
         /* Transaction */
         WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
         if (metadata.getTransactions().size() > index) {
@@ -123,9 +125,9 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
         if (metadata.getTransactions().size() > index
                 && !metadata.getTransactions().get(index).getParameters().isEmpty()) {
-            MetaDataDTO.TransactionDTO transaction = metadata.getTransactions().get(index);
+            ITransactionDTO transaction = metadata.getTransactions().get(index);
             final RepeatingView parametersCol = new RepeatingView("metadataLabel");
-            for (MetaDataDTO.ParameterDTO parameter : transaction.getParameters()) {
+            for (IParameterDTO parameter : transaction.getParameters()) {
                 WebMarkupContainer parameterFragment = new Fragment(parametersCol.newChildId(), "parameterFragment", this);
                 parameterFragment.add(new Label("parameterLabel", parameter.getName())
                         .add($b.attrAppender("class", (parameter.isRequired()
@@ -140,8 +142,8 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         return metadatasCol;
     }
 
-    private void addRowWithSpan(RepeatingView metadatasCol, MetaDataDTO metadata, int index,
-            IFunction<MetaDataDTO, String> fValue) {
+    private void addRowWithSpan(RepeatingView metadatasCol, IMetaDataDTO metadata, int index,
+            IFunction<IMetaDataDTO, String> fValue) {
         if (index == 0) {
             WebMarkupContainer metadataCol = new WebMarkupContainer(metadatasCol.newChildId());
             metadataCol.add(new Label("metadataLabel", fValue.apply(metadata)));
