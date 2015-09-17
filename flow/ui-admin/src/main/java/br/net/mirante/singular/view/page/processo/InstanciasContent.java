@@ -15,9 +15,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
+import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -63,9 +63,9 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                     }
                 };
 
-        BaseDataProvider<InstanceDTO, String> dataProvider = new BaseDataProvider<InstanceDTO, String>() {
+        BaseDataProvider<IInstanceDTO, String> dataProvider = new BaseDataProvider<IInstanceDTO, String>() {
             @Override
-            public Iterator<? extends InstanceDTO> iterator(int first, int count,
+            public Iterator<? extends IInstanceDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
                 return processDefinitionService.retrieveAll(first, count, sortProperty, ascending,
                         processDefinition.getCod()).iterator();
@@ -78,12 +78,12 @@ public class InstanciasContent extends Content implements SingularWicketContaine
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.description"), "description", InstanceDTO::getDescricao)
-                .appendPropertyColumn(getMessage("label.table.column.time"), "delta", InstanceDTO::getDeltaString)
-                .appendPropertyColumn(getMessage("label.table.column.date"), "date", InstanceDTO::getDataInicialString)
-                .appendPropertyColumn(getMessage("label.table.column.delta"), "deltas", InstanceDTO::getDeltaAtividadeString)
-                .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", InstanceDTO::getDataAtividadeString)
-                .appendPropertyColumn(getMessage("label.table.column.user"), "user", InstanceDTO::getUsuarioAlocado)
+                .appendPropertyColumn(getMessage("label.table.column.description"), "description", IInstanceDTO::getDescricao)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "delta", IInstanceDTO::getDeltaString)
+                .appendPropertyColumn(getMessage("label.table.column.date"), "date", IInstanceDTO::getDataInicialString)
+                .appendPropertyColumn(getMessage("label.table.column.delta"), "deltas", IInstanceDTO::getDeltaAtividadeString)
+                .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", IInstanceDTO::getDataAtividadeString)
+                .appendPropertyColumn(getMessage("label.table.column.user"), "user", IInstanceDTO::getUsuarioAlocado)
                 .build("processos"));
         queue(new NonCachingImage("tabImage", imageModel));
         queue(mountMetadatas());
