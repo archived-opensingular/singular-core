@@ -4,7 +4,9 @@ import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.service.IProcessEntityService;
+import br.net.mirante.singular.persistence.dao.CategoryDAO;
 import br.net.mirante.singular.persistence.dao.ProcessDefinitionDAO;
+import br.net.mirante.singular.persistence.dao.RoleDAO;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.ProcessDefinition;
@@ -33,6 +35,8 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
 
 
     private final ProcessDefinitionDAO processDefinitionDAO = new ProcessDefinitionDAO(getSessionLocator());
+    private final CategoryDAO categoryDAO = new CategoryDAO(getSessionLocator());
+    private final RoleDAO roleDAO = new RoleDAO(getSessionLocator());
 
 
     public DefaultHibernateProcessDefinitionService(SessionLocator sessionLocator) {
@@ -83,14 +87,14 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
             if (roleAbbreviation == null) {
                 if(role.getRolesInstances().isEmpty()){
                     entityProcessDefinition.getRoles().remove(role);
-                    processDefinitionDAO.delete(role);
+                    roleDAO.delete(role);
                 }
             } else {
                 if (!role.getName().equals(roleAbbreviation.getName())
                         || !role.getAbbreviation().equals(roleAbbreviation.getAbbreviation())) {
                     role.setName(roleAbbreviation.getName());
                     role.setAbbreviation(roleAbbreviation.getAbbreviation());
-                    processDefinitionDAO.update(role);
+                    roleDAO.update(role);
                 }
                 abbreviations.add(role.getAbbreviation());
             }
@@ -102,7 +106,7 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
                 role.setProcessDefinition(entityProcessDefinition);
                 role.setName(mPapel.getName());
                 role.setAbbreviation(mPapel.getAbbreviation());
-                processDefinitionDAO.save(role);
+                roleDAO.save(role);
             }
         }
         processDefinitionDAO.refresh(entityProcessDefinition);
@@ -113,17 +117,18 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
         Process entityProcess = new Process();
         entityProcess.setProcessDefinition(entityProcessDefinition);
         entityProcess.setVersionDate(new Date());
+        entityProcess.setTasks(new ArrayList<>());
         return entityProcess;
     }
 
     @Override
     public Category retrieveOrCreateCategoryWith(String name) {
         requireNonNull(name);
-        Category category = processDefinitionDAO.retrieveByUniqueProperty(Category.class, "name", name);
+        Category category = categoryDAO.retrieveByUniqueProperty(Category.class, "name", name);
         if (category == null) {
             category = new Category();
             category.setName(name);
-            processDefinitionDAO.save(category);
+            categoryDAO.save(category);
         }
         return category;
     }
@@ -144,8 +149,10 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
         Task taskEntity = new Task();
         taskEntity.setName(task.getName());
         taskEntity.setProcess(process);
-        taskEntity.setType((TaskType) task.getEffectiveTaskType());
+        long idTaskType = ((br.net.mirante.singular.flow.core.TaskType) task.getEffectiveTaskType()).ordinal();
+        taskEntity.setType(new TaskType(idTaskType));
         taskEntity.setTaskDefinition(retrieveOrCreateEntityDefinitionTask(process.getProcessDefinition(), task));
+        taskEntity.setTransitions(new ArrayList<>());
         return taskEntity;
     }
 

@@ -8,6 +8,8 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.persistence.dao.ProcessDAO;
+import br.net.mirante.singular.persistence.dao.ProcessDefinitionDAO;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.ProcessInstance;
@@ -34,6 +36,8 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
                 Variable,
                 Role,
                 RoleInstance> {
+
+    private final ProcessDAO processDAO = new ProcessDAO(getSessionLocator());
 
     public DefaultHibernatePersistenceService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -131,7 +135,8 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
 
     @Override
     public Process saveOrUpdateProcessDefinition(Process entityProcess) {
-        return null;
+        processDAO.save(entityProcess);
+        return entityProcess;
     }
 
     @Override

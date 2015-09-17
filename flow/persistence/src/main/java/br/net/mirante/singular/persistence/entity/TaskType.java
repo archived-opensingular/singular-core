@@ -27,6 +27,10 @@ public class TaskType implements IEntityTaskType {
 	public TaskType() {
 	}
 
+	public TaskType(Long cod) {
+		this.cod = cod;
+	}
+
 	public Long getCod() {
 		return this.cod;
 	}
