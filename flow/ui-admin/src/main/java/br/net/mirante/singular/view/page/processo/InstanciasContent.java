@@ -15,6 +15,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
+import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
@@ -92,9 +93,9 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     }
 
     private RepeatingView mountMetadatas() {
-        final List<IMetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
+        final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
         final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
-        for (IMetaDataDTO metadata : metadatas) {
+        for (MetaDataDTO metadata : metadatas) {
             int max = Math.max(metadata.getTransactions().size(), 1);
             for (int i = 0; i < max; i++) {
                 final WebMarkupContainer metadataRow = new WebMarkupContainer(metadatasRow.newChildId());
