@@ -218,7 +218,7 @@ public interface IBSGridCol<THIS extends Component> {
         }
         <C extends Component> C set(Object comp, String key, Integer colspan) {
             HashMap<String, Integer> colData = getColData((C) comp);
-            if (colspan == null)
+            if (colspan == null || colspan < 0)
                 colData.remove(key);
             else
                 colData.put(key, colspan);
