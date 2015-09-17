@@ -15,7 +15,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 
-import br.net.mirante.singular.dao.StatusDTO;
+import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.service.PesquisaService;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -134,17 +134,17 @@ public class DashboardContent extends Content {
     }
 
     private void addStatusesPanel() {
-        StatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
+        IStatusDTO IStatusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", IStatusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
         add(new StatusPanel("active-average-status-panel", "label.active.average.status",
-                statusDTO.getAverageTimeInDays()).setUnit(
+                IStatusDTO.getAverageTimeInDays()).setUnit(
                 new StringResourceModel("label.active.average.status.unit", this).getString())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
-                statusDTO.getOpenedInstancesLast30Days()));
+                IStatusDTO.getOpenedInstancesLast30Days()));
         add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
-                statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
+                IStatusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
     }
 
     private void addWelcomeChart() {

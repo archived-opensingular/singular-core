@@ -1,8 +1,8 @@
 package br.net.mirante.singular.dao;
 
-import java.io.Serializable;
+import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
-public class StatusDTO implements Serializable {
+public class StatusDTO implements IStatusDTO {
 
     private String processCode;
     private Integer amount;
@@ -23,42 +23,52 @@ public class StatusDTO implements Serializable {
         this.finishedInstancesLast30Days = finishedInstancesLast30Days;
     }
 
+    @Override
     public String getProcessCode() {
         return processCode;
     }
 
+    @Override
     public void setProcessCode(String processCode) {
         this.processCode = processCode;
     }
 
+    @Override
     public Integer getAmount() {
         return amount;
     }
 
+    @Override
     public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
+    @Override
     public Integer getAverageTimeInDays() {
         return averageTimeInDays;
     }
 
+    @Override
     public void setAverageTimeInDays(Integer averageTimeInDays) {
         this.averageTimeInDays = averageTimeInDays;
     }
 
+    @Override
     public Integer getOpenedInstancesLast30Days() {
         return openedInstancesLast30Days;
     }
 
+    @Override
     public void setOpenedInstancesLast30Days(Integer openedInstancesLast30Days) {
         this.openedInstancesLast30Days = openedInstancesLast30Days;
     }
 
+    @Override
     public Integer getFinishedInstancesLast30Days() {
         return finishedInstancesLast30Days;
     }
 
+    @Override
     public void setFinishedInstancesLast30Days(Integer finishedInstancesLast30Days) {
         this.finishedInstancesLast30Days = finishedInstancesLast30Days;
     }
