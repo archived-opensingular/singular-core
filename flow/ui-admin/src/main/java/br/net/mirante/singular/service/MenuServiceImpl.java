@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.CategoryMenuDAO;
 import br.net.mirante.singular.dao.MenuItemDTO;
-import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 
 @Service("menuService")
 public class MenuServiceImpl implements MenuService {

@@ -17,7 +17,7 @@ import org.apache.wicket.model.util.ListModel;
 
 import br.net.mirante.singular.dao.FeedDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
-import br.net.mirante.singular.service.FeedService;
+import br.net.mirante.singular.service.UIAdminFacade;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -25,7 +25,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class FeedPanel extends Panel {
 
     @Inject
-    private FeedService feedService;
+    private UIAdminFacade uiAdminFacade;
 
     private ListModel<FeedDTO> feeds = new ListModel<>();
 
@@ -46,7 +46,7 @@ public class FeedPanel extends Panel {
     }
 
     private void initFeeds() {
-        feeds.setObject(feedService.retrieveFeed());
+        feeds.setObject(uiAdminFacade.retrieveAllFeed());
         add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
             protected Iterator<IModel<IFeedDTO>> getItemModels() {

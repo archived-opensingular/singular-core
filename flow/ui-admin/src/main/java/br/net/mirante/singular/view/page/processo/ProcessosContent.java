@@ -17,7 +17,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
-import br.net.mirante.singular.service.ProcessDefinitionService;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -31,7 +31,7 @@ import br.net.mirante.singular.view.template.Content;
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 
     @Inject
-    private ProcessDefinitionService processDefinitionService;
+    private UIAdminFacade uiAdminFacade;
 
     private final Form<?> diagramForm = new Form<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
@@ -55,7 +55,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                                 String[] siglas = ((ServletWebRequest) attributes.getRequest())
                                         .getContainerRequest().getParameterMap().get("sigla");
                                 String sigla = siglas[siglas.length - 1];
-                                return processDefinitionService.retrieveProcessDiagram(sigla);
+                                return uiAdminFacade.retrieveProcessDiagram(sigla);
                             }
                         };
                         dir.setFormat("image/png");
@@ -67,12 +67,12 @@ public class ProcessosContent extends Content implements SingularWicketContainer
             @Override
             public Iterator<? extends IDefinitionDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending).iterator();
+                return uiAdminFacade.retrieveAllDefinition(first, count, sortProperty, ascending).iterator();
             }
 
             @Override
             public long size() {
-                return processDefinitionService.countAll();
+                return uiAdminFacade.countAllDefinition();
             }
         };
 

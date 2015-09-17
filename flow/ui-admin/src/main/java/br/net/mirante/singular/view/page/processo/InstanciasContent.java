@@ -21,7 +21,7 @@ import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IParameterDTO;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
-import br.net.mirante.singular.service.ProcessDefinitionService;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
@@ -38,13 +38,13 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
-    private ProcessDefinitionService processDefinitionService;
+    private UIAdminFacade uiAdminFacade;
 
     private IDefinitionDTO processDefinition;
 
     public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
         super(id, false, withSideBar, false, true);
-        processDefinition = processDefinitionService.retrieveById(processDefinitionId);
+        processDefinition = uiAdminFacade.retrieveDefinitionById(processDefinitionId);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                         DynamicImageResource dir = new DynamicImageResource() {
                             @Override
                             protected byte[] getImageData(Attributes attributes) {
-                                return processDefinitionService.retrieveProcessDiagram(processDefinition.getSigla());
+                                return uiAdminFacade.retrieveProcessDiagram(processDefinition.getSigla());
                             }
                         };
                         dir.setFormat("image/png");
@@ -70,13 +70,13 @@ public class InstanciasContent extends Content implements SingularWicketContaine
             @Override
             public Iterator<? extends IInstanceDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending,
+                return uiAdminFacade.retrieveAllInstance(first, count, sortProperty, ascending,
                         processDefinition.getCod()).iterator();
             }
 
             @Override
             public long size() {
-                return processDefinitionService.countAll(processDefinition.getCod());
+                return uiAdminFacade.countAllInstance(processDefinition.getCod());
             }
         };
 
@@ -93,7 +93,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     }
 
     private RepeatingView mountMetadatas() {
-        final List<MetaDataDTO> metadatas = processDefinitionService.retrieveMetaData(processDefinition.getCod());
+        final List<MetaDataDTO> metadatas = uiAdminFacade.retrieveMetaData(processDefinition.getCod());
         final RepeatingView metadatasRow = new RepeatingView("metadatasRow");
         for (MetaDataDTO metadata : metadatas) {
             int max = Math.max(metadata.getTransactions().size(), 1);
