@@ -16,11 +16,6 @@
                                     <wicket:message key="label.tab.metadata"/>
                                 </a>
                             </li>
-                            <li>
-                                <a aria-expanded="false" href="#tab_3" data-toggle="tab">
-                                    <wicket:message key="label.tab.diagram"/>
-                                </a>
-                            </li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_1">
@@ -29,6 +24,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane" id="tab_2">
+                                <img wicket:id="tabImage"/>
                                 <div class="table-scrollable">
                                     <table class="table table-bordered table-hover">
                                         <thead>
@@ -49,9 +45,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                            <div class="tab-pane" id="tab_3">
-                                <img wicket:id="tabImage"/>
                             </div>
                         </div>
                     </div>

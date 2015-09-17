@@ -85,8 +85,8 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                 .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", InstanceDTO::getDataAtividadeString)
                 .appendPropertyColumn(getMessage("label.table.column.user"), "user", InstanceDTO::getUsuarioAlocado)
                 .build("processos"));
-        queue(mountMetadatas());
         queue(new NonCachingImage("tabImage", imageModel));
+        queue(mountMetadatas());
     }
 
     private RepeatingView mountMetadatas() {
