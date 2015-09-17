@@ -26,7 +26,6 @@ import org.hibernate.type.TimestampType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.flow.core.TaskType;
-import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 @Repository
 public class InstanceDAO {
@@ -221,7 +220,7 @@ public class InstanceDAO {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public IStatusDTO retrieveActiveInstanceStatus(String processCode) {
+    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         String sql = "SELECT '" + processCode + "' AS processCode,"
                 + " COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS amount,"
                 + " AVG(DATEDIFF(DAY, INS.DT_INICIO, GETDATE())) AS averageTimeInDays"
@@ -238,7 +237,7 @@ public class InstanceDAO {
             query.setParameter("processCode", processCode);
         }
         query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
-        IStatusDTO status = (IStatusDTO) query.uniqueResult();
+        StatusDTO status = (StatusDTO) query.uniqueResult();
         status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
         status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
         return status;
@@ -329,19 +328,19 @@ public class InstanceDAO {
             if (count) {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         } else {
             if (count) {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         }
     }

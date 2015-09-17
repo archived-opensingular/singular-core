@@ -22,6 +22,9 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
         FeedDTO, MenuItemDTO> {
 
     @Inject
+    private PesquisaService pesquisaService;
+
+    @Inject
     private FeedService feedService;
 
     @Inject
@@ -64,57 +67,57 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
 
     @Override
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
-        return null;
+        return pesquisaService.retrieveMeanTimeByProcess(period);
     }
 
     @Override
     public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode) {
-        return null;
+        return pesquisaService.retrieveNewInstancesQuantityLastYear(processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode) {
-        return null;
+        return pesquisaService.retrieveEndStatusQuantityByPeriod(period, processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode) {
-        return null;
+        return pesquisaService.retrieveMeanTimeByTask(period, processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveCountByTask(String processDefinitionCode) {
-        return null;
+        return pesquisaService.retrieveCountByTask(processDefinitionCode);
     }
 
     @Override
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
-        return null;
+        return pesquisaService.retrieveActiveInstanceStatus(processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
-        return null;
+        return pesquisaService.retrieveMeanTimeActiveInstances(processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
-        return null;
+        return pesquisaService.retrieveMeanTimeFinishedInstances(processCode);
     }
 
     @Override
     public List<Map<String, String>> retrieveCounterActiveInstances(String processCode) {
-        return null;
+        return pesquisaService.retrieveCounterActiveInstances(processCode);
     }
 
     @Override
     public String retrieveProcessDefinitionName(String processCode) {
-        return null;
+        return pesquisaService.retrieveProcessDefinitionName(processCode);
     }
 
     @Override
     public String retrieveProcessDefinitionId(String processDefinitionCode) {
-        return null;
+        return pesquisaService.retrieveProcessDefinitionId(processDefinitionCode);
     }
 
     @Override
@@ -129,6 +132,6 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
 
     @Override
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
-        return null;
+        return menuService.retrieveCategoryDefinitionIdsByCode(code);
     }
 }
