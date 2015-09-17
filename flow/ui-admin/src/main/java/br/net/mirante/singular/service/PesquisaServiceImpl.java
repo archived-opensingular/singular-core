@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.PesquisaDAO;
-import br.net.mirante.singular.flow.core.dto.IStatusDTO;
+import br.net.mirante.singular.dao.StatusDTO;
 
 @Service("pesquisaService")
 @Transactional(readOnly = true)
@@ -62,7 +62,7 @@ public class PesquisaServiceImpl implements PesquisaService {
 
     @Override
     @Cacheable(value = "retrieveActiveInstanceStatus", key = "#processCode?:'NULL'", cacheManager = "cacheManager")
-    public IStatusDTO retrieveActiveInstanceStatus(String processCode) {
+    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         return instanceDAO.retrieveActiveInstanceStatus(processCode);
     }
 
