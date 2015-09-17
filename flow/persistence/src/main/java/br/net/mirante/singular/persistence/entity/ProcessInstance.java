@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -190,4 +191,12 @@ public class ProcessInstance implements IEntityProcessInstance {
     public void setRoles(List<RoleInstance> roles) {
         this.roles = roles;
     }
+
+	public void addTask(TaskInstance taskInstance) {
+		if (getTasks() == null) {
+			setTasks(new ArrayList<>());
+		}
+
+		getTasks().add(taskInstance);
+	}
 }

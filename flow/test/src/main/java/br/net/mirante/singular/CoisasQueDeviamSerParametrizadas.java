@@ -3,15 +3,16 @@ package br.net.mirante.singular;
 import br.net.mirante.singular.flow.core.AbstractProcessNotifiers;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.persistence.entity.Actor;
 
 public class CoisasQueDeviamSerParametrizadas {
 
     public static final String PACKAGES_TO_SCAN = "br.net.mirante.singular";
 
-    public static final MUser USER = new MUser() {
+    public static final Actor USER = new Actor() {
         @Override
-        public Integer getCod() {
-            return 1;
+        public Long getCod() {
+            return 1l;
         }
 
         @Override

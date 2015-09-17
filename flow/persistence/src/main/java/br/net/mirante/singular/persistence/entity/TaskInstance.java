@@ -30,59 +30,52 @@ public class TaskInstance implements IEntityTaskInstance {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALVO_FIM")
-	private Date dataAlvoFim;
+	private Date targetEndDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DATA_ALVO_SUSPENSAO")
-	private Date dataAlvoSuspensao;
+	private Date suspensionTargetDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_ESPERADA_FIM")
-	private Date dataEsperadaFim;
+	private Date expectedEndDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_FIM")
-	private Date dataFim;
+	private Date endDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_INICIO")
-	private Date dataInicio;
+	private Date beginDate;
 
 	@Column(name="SE_SUSPENSA")
-	private Boolean suspensa;
+	private Boolean suspended;
 
-	//bi-directional many-to-one association to ProcessInstance
 	@OneToMany(mappedBy="parentTask")
-	private List<ProcessInstance> instanciasTarefaFilhas;
+	private List<ProcessInstance> childProcesses;
 
-	//bi-directional many-to-one association to ProcessInstance
 	@OneToMany(mappedBy="taskInstance")
-	private List<ProcessInstance> instanciasProcesso;
+	private List<ProcessInstance> taskInstances;
 
-	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADO")
-	private Actor actorAlocado;
+	private Actor allocatedUser;
 
-	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_CONCLUSAO")
-	private Actor actorConclusao;
+	private Actor responsibleUser;
 
-	//bi-directional many-to-one association to ProcessInstance
 	@ManyToOne
 	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
 	private ProcessInstance processInstance;
 
-	//uni-directional many-to-one association to Task
 	@ManyToOne
 	@JoinColumn(name="CO_TAREFA")
 	private Task task;
 
-	//uni-directional many-to-one association to Transition
 	@ManyToOne
 	@JoinColumn(name="CO_TRANSICAO_EXECUTADA")
-	private Transition transition;
+	private Transition executedTransition;
 
 	public TaskInstance() {
 	}
@@ -95,169 +88,133 @@ public class TaskInstance implements IEntityTaskInstance {
 		this.cod = cod;
 	}
 
-	public Date getDataAlvoFim() {
-		return this.dataAlvoFim;
+	@Override
+	public Date getTargetEndDate() {
+		return targetEndDate;
 	}
 
-	public void setDataAlvoFim(Date dataAlvoFim) {
-		this.dataAlvoFim = dataAlvoFim;
+	@Override
+	public void setTargetEndDate(Date targetEndDate) {
+		this.targetEndDate = targetEndDate;
 	}
 
-	public Date getDataAlvoSuspensao() {
-		return this.dataAlvoSuspensao;
+	public Date getSuspensionTargetDate() {
+		return suspensionTargetDate;
 	}
 
-	public void setDataAlvoSuspensao(Date dataAlvoSuspensao) {
-		this.dataAlvoSuspensao = dataAlvoSuspensao;
+	public void setSuspensionTargetDate(Date suspensionTargetDate) {
+		this.suspensionTargetDate = suspensionTargetDate;
 	}
 
-	public Date getDataEsperadaFim() {
-		return this.dataEsperadaFim;
+	public Date getExpectedEndDate() {
+		return expectedEndDate;
 	}
 
-	public void setDataEsperadaFim(Date dataEsperadaFim) {
-		this.dataEsperadaFim = dataEsperadaFim;
+	public void setExpectedEndDate(Date expectedEndDate) {
+		this.expectedEndDate = expectedEndDate;
 	}
 
-	public Date getDataFim() {
-		return this.dataFim;
+	@Override
+	public Date getEndDate() {
+		return endDate;
 	}
 
-	public void setDataFim(Date dataFim) {
-		this.dataFim = dataFim;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
-	public Date getDataInicio() {
-		return this.dataInicio;
+	@Override
+	public Date getBeginDate() {
+		return beginDate;
 	}
 
-	public void setDataInicio(Date dataInicio) {
-		this.dataInicio = dataInicio;
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
 	}
 
-	public Boolean getSuspensa() {
-		return this.suspensa;
+	public Boolean getSuspended() {
+		return suspended;
 	}
 
-	public void setSuspensa(Boolean suspensa) {
-		this.suspensa = suspensa;
+	public void setSuspended(Boolean suspended) {
+		this.suspended = suspended;
 	}
 
-	public List<ProcessInstance> getInstanciasTarefaFilhas() {
-		return this.instanciasTarefaFilhas;
+	@Override
+	public List<ProcessInstance> getChildProcesses() {
+		return childProcesses;
 	}
 
-	public void setInstanciasTarefaFilhas(List<ProcessInstance> instanciasTarefaFilhas) {
-		this.instanciasTarefaFilhas = instanciasTarefaFilhas;
+	public void setChildProcesses(List<ProcessInstance> childProcesses) {
+		this.childProcesses = childProcesses;
 	}
 
-	public List<ProcessInstance> getInstanciasProcesso() {
-		return this.instanciasProcesso;
+	public List<ProcessInstance> getTaskInstances() {
+		return taskInstances;
 	}
 
-	public void setInstanciasProcesso(List<ProcessInstance> instanciasProcesso) {
-		this.instanciasProcesso = instanciasProcesso;
+	public void setTaskInstances(List<ProcessInstance> taskInstances) {
+		this.taskInstances = taskInstances;
 	}
 
-
-	public Actor getActorAlocado() {
-		return this.actorAlocado;
+	@Override
+	public Actor getAllocatedUser() {
+		return allocatedUser;
 	}
 
-	public void setActorAlocado(Actor actorAlocado) {
-		this.actorAlocado = actorAlocado;
+	public void setAllocatedUser(Actor allocatedUser) {
+		this.allocatedUser = allocatedUser;
 	}
 
-	public Actor getActorConclusao() {
-		return this.actorConclusao;
+	@Override
+	public Actor getResponsibleUser() {
+		return responsibleUser;
 	}
 
-	public void setActorConclusao(Actor actorConclusao) {
-		this.actorConclusao = actorConclusao;
+	public void setResponsibleUser(Actor responsibleUser) {
+		this.responsibleUser = responsibleUser;
 	}
 
-
+	@Override
+	public ProcessInstance getProcessInstance() {
+		return processInstance;
+	}
 
 	public void setProcessInstance(ProcessInstance processInstance) {
 		this.processInstance = processInstance;
 	}
 
-
+	@Override
+	public Task getTask() {
+		return task;
+	}
 
 	public void setTask(Task task) {
 		this.task = task;
 	}
 
-	public Transition getTransition() {
-		return this.transition;
-	}
-
-	public void setTransition(Transition transition) {
-		this.transition = transition;
-	}
-
 	@Override
-	public IEntityProcessInstance getProcessInstance() {
-		return null;
+	public Transition getExecutedTransition() {
+		return executedTransition;
 	}
 
-	@Override
-	public IEntityTask getTask() {
-		return null;
-	}
-
-	@Override
-	public Date getBeginDate() {
-		return null;
-	}
-
-	@Override
-	public Date getEndDate() {
-		return null;
-	}
-
-	@Override
-	public Date getTargetEndDate() {
-		return null;
-	}
-
-	@Override
-	public void setTargetEndDate(Date targetEndDate) {
-
-	}
-
-	@Override
-	public MUser getAllocatedUser() {
-		return null;
-	}
-
-	@Override
-	public MUser getResponsibleUser() {
-		return null;
-	}
-
-	@Override
-	public IEntityTaskTransition getExecutedTransition() {
-		return null;
+	public void setExecutedTransition(Transition executedTransition) {
+		this.executedTransition = executedTransition;
 	}
 
 	@Override
 	public List<? extends IEntityExecutionVariable> getInputVariables() {
-		return null;
+		throw new UnsupportedOperationException("Método não implementado");
 	}
 
 	@Override
 	public List<? extends IEntityExecutionVariable> getOutputVariables() {
-		return null;
+		throw new UnsupportedOperationException("Método não implementado");
 	}
 
 	@Override
 	public List<? extends IEntityTaskInstanceHistory> getTaskHistoric() {
-		return null;
+		throw new UnsupportedOperationException("Método não implementado");
 	}
 
-	@Override
-	public List<? extends IEntityProcessInstance> getChildProcesses() {
-		return null;
-	}
 }

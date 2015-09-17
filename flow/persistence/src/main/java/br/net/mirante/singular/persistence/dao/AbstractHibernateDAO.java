@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 public abstract class AbstractHibernateDAO<T extends IEntityByCod> {
 
@@ -27,6 +28,10 @@ public abstract class AbstractHibernateDAO<T extends IEntityByCod> {
 
     public void save(T t) {
         getSession().save(t);
+    }
+
+    public void save(Collection<T> collection) {
+        collection.forEach(this::save);
     }
 
     public void refresh(T t) {

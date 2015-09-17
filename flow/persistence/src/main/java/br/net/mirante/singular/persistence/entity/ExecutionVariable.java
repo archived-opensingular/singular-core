@@ -75,7 +75,7 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 
 	@Override
 	public String getName() {
-		return null;
+		return this.name;
 	}
 
 	public void setProcessInstance(ProcessInstance processInstance) {
@@ -88,12 +88,12 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 
 	@Override
 	public String getValue() {
-		return null;
+		return this.value;
 	}
 
 	@Override
 	public Date getDate() {
-		return null;
+		return this.date;
 	}
 
 	public void setDestinationTask(TaskInstance destinationTask) {
