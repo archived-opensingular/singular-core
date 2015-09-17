@@ -15,6 +15,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 
+import br.net.mirante.singular.dao.FeedDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.service.FeedService;
 
@@ -26,7 +27,7 @@ public class FeedPanel extends Panel {
     @Inject
     private FeedService feedService;
 
-    private ListModel<IFeedDTO> feeds = new ListModel<>();
+    private ListModel<FeedDTO> feeds = new ListModel<>();
 
     public FeedPanel(String id) {
         super(id);

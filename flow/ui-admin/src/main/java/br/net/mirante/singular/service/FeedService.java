@@ -2,9 +2,9 @@ package br.net.mirante.singular.service;
 
 import java.util.List;
 
-import br.net.mirante.singular.flow.core.dto.IFeedDTO;
+import br.net.mirante.singular.dao.FeedDTO;
 
 public interface FeedService {
 
-    List<IFeedDTO> retrieveFeed();
+    List<FeedDTO> retrieveFeed();
 }
