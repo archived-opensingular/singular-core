@@ -1,17 +1,18 @@
 package br.net.mirante.singular.dao;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuItemDTO implements Serializable {
+import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
+
+public class MenuItemDTO implements IMenuItemDTO {
     private static final long serialVersionUID = 25234058060013546L;
 
     private Long id;
     private String name;
     private String code;
     private Integer counter;
-    private List<MenuItemDTO> itens;
+    private List<IMenuItemDTO> itens;
 
     public MenuItemDTO(Long id, String name, String code, Integer counter) {
         this.id = id;
@@ -21,27 +22,33 @@ public class MenuItemDTO implements Serializable {
         this.itens = new ArrayList<>();
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
 
+    @Override
     public Integer getCounter() {
         return counter;
     }
 
-    public List<MenuItemDTO> getItens() {
+    @Override
+    public List<IMenuItemDTO> getItens() {
         return itens;
     }
 
-    public MenuItemDTO addItem(MenuItemDTO item) {
+    @Override
+    public IMenuItemDTO addItem(IMenuItemDTO item) {
         this.itens.add(item);
         return this;
     }
