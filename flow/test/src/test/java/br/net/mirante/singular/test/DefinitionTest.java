@@ -1,5 +1,7 @@
 package br.net.mirante.singular.test;
 
+import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
+import br.net.mirante.singular.Definicao;
 import br.net.mirante.singular.InstanciaDefinicao;
 import br.net.mirante.singular.TestDAO;
 import br.net.mirante.singular.TestMBPMBean;
@@ -22,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
+@Transactional
 public class DefinitionTest {
 
     @Inject
@@ -39,16 +42,20 @@ public class DefinitionTest {
         MBPM.setConf(mbpmBean);
     }
 
-    @Transactional
     @Test
     public void teste() {
 
-        InstanciaDefinicao id = new InstanciaDefinicao();
-        id.start();
+        InstanciaDefinicao id = iniciarFluxo();
 
         InstanciaDefinicao id2 = MBPM.findProcessInstance(id.getFullId());
         assertNotNull(id2);
         System.out.println("legal");
+    }
+
+    private InstanciaDefinicao iniciarFluxo() {
+        InstanciaDefinicao id = new InstanciaDefinicao();
+        id.start();
+        return id;
     }
 
     @Test
@@ -89,6 +96,12 @@ public class DefinitionTest {
 
         testDAO.save(tt);
 
+    }
+
+    @Test
+    public void testarDefinicao() {
+        InstanciaDefinicao instanciaDefinicao = iniciarFluxo();
+        instanciaDefinicao.executeTransition();
     }
 
 }
