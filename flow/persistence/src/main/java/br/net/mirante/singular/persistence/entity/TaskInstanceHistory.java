@@ -25,25 +25,25 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 	private Long cod;
 
 	@Column(name="DS_COMPLEMENTO")
-	private String complemento;
+	private String description;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_FIM_ALOCACAO")
-	private Date dataFimAlocacao;
+	private Date endDateAllocation;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="DT_INICIO_ALOCACAO")
-	private Date dataInicioAlocacao;
+	private Date beginDateAllocation;
 
 	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADO")
-	private Actor actorAlocado;
+	private Actor allocatedUser;
 
 	//uni-directional many-to-one association to Actor
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADOR")
-	private Actor actorAlocador;
+	private Actor allocatorUser;
 
 	//uni-directional many-to-one association to TaskInstance
 	@ManyToOne
@@ -66,54 +66,61 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 		this.cod = cod;
 	}
 
-	public String getComplemento() {
-		return this.complemento;
+	@Override
+	public String getDescription() {
+		return description;
 	}
 
-	public void setComplemento(String complemento) {
-		this.complemento = complemento;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public Date getDataFimAlocacao() {
-		return this.dataFimAlocacao;
+	@Override
+	public Date getEndDateAllocation() {
+		return endDateAllocation;
 	}
 
-	public void setDataFimAlocacao(Date dataFimAlocacao) {
-		this.dataFimAlocacao = dataFimAlocacao;
+	public void setEndDateAllocation(Date endDateAllocation) {
+		this.endDateAllocation = endDateAllocation;
 	}
 
-	public Date getDataInicioAlocacao() {
-		return this.dataInicioAlocacao;
+	@Override
+	public Date getBeginDateAllocation() {
+		return beginDateAllocation;
 	}
 
-	public void setDataInicioAlocacao(Date dataInicioAlocacao) {
-		this.dataInicioAlocacao = dataInicioAlocacao;
+	public void setBeginDateAllocation(Date beginDateAllocation) {
+		this.beginDateAllocation = beginDateAllocation;
 	}
 
-	public Actor getActorAlocado() {
-		return this.actorAlocado;
+	public Actor getAllocatedUser() {
+		return allocatedUser;
 	}
 
-	public void setActorAlocado(Actor actorAlocado) {
-		this.actorAlocado = actorAlocado;
+	public void setAllocatedUser(Actor allocatedUser) {
+		this.allocatedUser = allocatedUser;
 	}
 
-	public Actor getActorAlocador() {
-		return this.actorAlocador;
+	@Override
+	public Actor getAllocatorUser() {
+		return allocatorUser;
 	}
 
-	public void setActorAlocador(Actor actorAlocador) {
-		this.actorAlocador = actorAlocador;
+	public void setAllocatorUser(Actor allocatorUser) {
+		this.allocatorUser = allocatorUser;
 	}
 
-
+	@Override
+	public TaskInstance getTaskInstance() {
+		return taskInstance;
+	}
 
 	public void setTaskInstance(TaskInstance taskInstance) {
 		this.taskInstance = taskInstance;
 	}
 
 	public TaskHistoryType getTaskHistoryType() {
-		return this.taskHistoryType;
+		return taskHistoryType;
 	}
 
 	public void setTaskHistoryType(TaskHistoryType taskHistoryType) {
@@ -121,37 +128,8 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 	}
 
 	@Override
-	public IEntityTaskInstance getTaskInstance() {
-		return null;
-	}
-
-	@Override
-	public Date getBeginDateAllocation() {
-		return null;
-	}
-
-	@Override
-	public Date getEndDateAllocation() {
-		return null;
-	}
-
-	@Override
-	public MUser getAllocatedUser() {
-		return null;
-	}
-
-	@Override
-	public MUser getAllocatorUser() {
-		return null;
-	}
-
-	@Override
-	public String getDescription() {
-		return null;
-	}
-
-	@Override
 	public IEntityTaskHistoricType getType() {
-		return null;
+		throw new UnsupportedOperationException("Método não implementado");
 	}
+
 }

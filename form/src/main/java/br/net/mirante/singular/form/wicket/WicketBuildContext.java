@@ -7,18 +7,19 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 
 public class WicketBuildContext implements Serializable {
 
-    private final WicketBuildContext      parent;
-    private final BSCol                   container;
+    private final WicketBuildContext                parent;
+    private final BSContainer<?>                    container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean                 hintsInherited;
+    private final boolean                           hintsInherited;
 
     public WicketBuildContext(BSCol container) {
         this(null, container, false);
     }
-    public WicketBuildContext(WicketBuildContext parent, BSCol container, boolean hintsInherited) {
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, boolean hintsInherited) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
@@ -26,7 +27,7 @@ public class WicketBuildContext implements Serializable {
     public WicketBuildContext getParent() {
         return parent;
     }
-    public BSCol getContainer() {
+    public BSContainer<?> getContainer() {
         return container;
     }
 
@@ -45,7 +46,7 @@ public class WicketBuildContext implements Serializable {
         return (T) hints.get(key);
     }
 
-    public WicketBuildContext createChild(BSCol childContainer, boolean hintsInheritedh) {
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInheritedh) {
         return new WicketBuildContext(this, childContainer, hintsInheritedh);
     }
 }

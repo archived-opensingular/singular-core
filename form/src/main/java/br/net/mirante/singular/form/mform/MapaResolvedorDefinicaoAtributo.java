@@ -36,7 +36,7 @@ final class MapaResolvedorDefinicaoAtributo {
                 return novo;
             }
         }
-        throw new RuntimeException("Não existe o atriburo '" + pathAtributo + "' definido em '" + dono.getNome()
+        throw new RuntimeException("Não existe o atributo '" + pathAtributo + "' definido em '" + dono.getNome()
                 + "' ou nos tipos extendidos");
     }
 

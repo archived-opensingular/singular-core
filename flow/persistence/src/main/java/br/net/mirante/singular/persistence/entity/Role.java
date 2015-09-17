@@ -31,10 +31,10 @@ public class Role implements IEntityProcessRole {
     private Long cod;
 
     @Column(name = "NO_PAPEL")
-    private String nome;
+    private String name;
 
     @Column(name = "SG_PAPEL")
-    private String sigla;
+    private String abbreviation;
 
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
@@ -55,21 +55,6 @@ public class Role implements IEntityProcessRole {
         this.cod = cod;
     }
 
-    public String getNome() {
-        return this.nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSigla() {
-        return this.sigla;
-    }
-
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
-    }
 
     public ProcessDefinition getProcessDefinition() {
         return this.processDefinition;
@@ -81,22 +66,22 @@ public class Role implements IEntityProcessRole {
 
     @Override
     public String getAbbreviation() {
-        return null;
+        return this.abbreviation;
     }
 
     @Override
     public void setAbbreviation(String abbreviation) {
-
+        this.abbreviation = abbreviation;
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
     public void setName(String name) {
-
+        this.name = name;
     }
 
     public List<RoleInstance> getRolesInstances() {

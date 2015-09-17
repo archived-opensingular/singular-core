@@ -137,9 +137,9 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes
-                .as(AtrBasic::new).label("Certificações").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
             certificacao
-                .as(AtrBasic::new);
+                .as(AtrBasic::new).label("Certificação");
             dataCertificacao
                 .as(AtrBasic::new).label("Data")
                 .as(AtrWicket::new).larguraPref(2);

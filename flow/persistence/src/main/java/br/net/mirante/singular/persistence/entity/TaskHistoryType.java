@@ -45,6 +45,6 @@ public class TaskHistoryType implements IEntityTaskHistoricType {
 
     @Override
     public String getDescription() {
-        return null;
+        return this.description;
     }
 }

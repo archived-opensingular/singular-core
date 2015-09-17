@@ -13,7 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="TB_ATOR", schema = Constants.SCHEMA)
-public class Actor {
+public class Actor implements MUser {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -30,6 +30,16 @@ public class Actor {
 
 	public void setCod(Long cod) {
 		this.cod = cod;
+	}
+
+	@Override
+	public String getNomeGuerra() {
+		throw new UnsupportedOperationException("Método não implementado");
+	}
+
+	@Override
+	public String getEmail() {
+		throw new UnsupportedOperationException("Método não implementado");
 	}
 
 }

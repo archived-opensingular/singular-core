@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -86,15 +87,26 @@ public class DashboardContent extends Content {
         addStatusesPanel();
         addWelcomeChart();
         addDefaultCharts();
+        addSpecificCharts();
         add(new FeedPanel("feed"));
     }
 
     private void addDefaultCharts() {
         add(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
-                "label.chart.new.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
+                "label.chart.new.instance.quantity.subtitle", new ImmutablePair<>("QTD_NEW",
+                new StringResourceModel("label.chart.new.instance.quantity.new", this).getString()),
+                "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                 return pesquisaService.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
+            }
+        }.addGraph("QTD_CLS", new StringResourceModel("label.chart.new.instance.quantity.finished", this).getString())
+                .addLegend());
+        add(new SerialChartPanel("active-instances-quantity-chart", "label.chart.active.instance.quantity.title",
+                "label.chart.active.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
+            @Override
+            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                return pesquisaService.retrieveCounterActiveInstances(processDefinitionCode);
             }
         });
         add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
@@ -168,5 +180,21 @@ public class DashboardContent extends Content {
         }
         add(globalContainer);
         add(localContainer);
+    }
+
+    private void addSpecificCharts() {
+        WebMarkupContainer taskCountChartContainer = new WebMarkupContainer("taskCountChartContainer");
+        if (processDefinitionCode != null) {
+            taskCountChartContainer.add(new PieChartPanel("task-count-chart", "label.chart.count.task.title",
+                    "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return pesquisaService.retrieveCountByTask(processDefinitionCode);
+                }
+            });
+        } else {
+            taskCountChartContainer.add($b.visibleIf($m.ofValue(false)));
+        }
+        add(taskCountChartContainer);
     }
 }

@@ -9,6 +9,7 @@ import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.event.IEvent;
+import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -16,6 +17,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
 
 public abstract class Template extends WebPage {
 
@@ -35,6 +37,7 @@ public abstract class Template extends WebPage {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        response.render(CssHeaderItem.forReference(new PackageResourceReference(Template.class, "Template.css")));
         if (withSideBar()) {
             addQuickSidebar(response);
         }
