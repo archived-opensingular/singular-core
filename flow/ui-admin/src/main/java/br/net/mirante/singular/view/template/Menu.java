@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 
-import br.net.mirante.singular.dao.MenuItemDTO;
+import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 import br.net.mirante.singular.service.MenuService;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
@@ -44,9 +44,9 @@ public class Menu extends Panel {
     }
 
     private RepeatingView createCategoriesMenu() {
-        final List<MenuItemDTO> categories = menuService.retrieveAllCategories();
+        final List<IMenuItemDTO> categories = menuService.retrieveAllCategories();
         final RepeatingView categoriesMenu = new RepeatingView("categories");
-        for (MenuItemDTO item : categories) {
+        for (IMenuItemDTO item : categories) {
             final WebMarkupContainer categoryMenu = new WebMarkupContainer(categoriesMenu.newChildId());
             categoryMenu.setOutputMarkupId(true);
             categoryMenu.setMarkupId(String.format("_categoryMenu_%d", item.getId()));
@@ -56,9 +56,9 @@ public class Menu extends Panel {
         return categoriesMenu;
     }
 
-    private RepeatingView createDefinitionsMenu(List<MenuItemDTO> definitions) {
+    private RepeatingView createDefinitionsMenu(List<IMenuItemDTO> definitions) {
         final RepeatingView definitionsMenu = new RepeatingView("definitions");
-        for (MenuItemDTO item : definitions) {
+        for (IMenuItemDTO item : definitions) {
             final WebMarkupContainer definitionMenu = new WebMarkupContainer(definitionsMenu.newChildId());
             definitionMenu.setOutputMarkupId(true);
             definitionMenu.setMarkupId(String.format("_definitionMenu_%d", item.getId()));

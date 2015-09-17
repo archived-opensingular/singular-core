@@ -4,14 +4,17 @@ import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
-        METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO> {
+        METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO, MENU extends IMenuItemDTO> {
 
     DEFINITION retrieveDefinitionById(Long id);
 
@@ -50,4 +53,8 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
     String retrieveProcessDefinitionId(String processDefinitionCode);
 
     List<FEED> retrieveAllFeed();
+
+    List<MENU> retrieveAllCategories();
+
+    Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
 }

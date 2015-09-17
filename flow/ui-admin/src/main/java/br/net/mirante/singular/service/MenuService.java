@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import br.net.mirante.singular.dao.MenuItemDTO;
+import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 
 public interface MenuService {
 
-    List<MenuItemDTO> retrieveAllCategories();
+    List<IMenuItemDTO> retrieveAllCategories();
 
     Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
 }

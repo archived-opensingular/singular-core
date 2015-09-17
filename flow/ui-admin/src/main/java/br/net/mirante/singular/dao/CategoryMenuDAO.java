@@ -16,6 +16,8 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
+import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
+
 @Repository
 public class CategoryMenuDAO {
 
@@ -51,9 +53,9 @@ public class CategoryMenuDAO {
         return sessionFactory.getCurrentSession();
     }
 
-    public List<MenuItemDTO> retrieveAll() {
-        List<MenuItemDTO> categories = new ArrayList<>();
-        Map<Long, MenuItemDTO> categoriesMap = mountCategories(retrieveCategories());
+    public List<IMenuItemDTO> retrieveAll() {
+        List<IMenuItemDTO> categories = new ArrayList<>();
+        Map<Long, IMenuItemDTO> categoriesMap = mountCategories(retrieveCategories());
         categories.addAll(categoriesMap.entrySet().stream()
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toList()));
@@ -61,10 +63,10 @@ public class CategoryMenuDAO {
     }
 
     @SuppressWarnings("SuspiciousMethodCalls")
-    private Map<Long, MenuItemDTO> mountCategories(List<Object[]> rawCategoies) {
-        Map<Long, MenuItemDTO> categories = new HashMap<>();
+    private Map<Long, IMenuItemDTO> mountCategories(List<Object[]> rawCategoies) {
+        Map<Long, IMenuItemDTO> categories = new HashMap<>();
         for (Object[] category : rawCategoies) {
-            MenuItemDTO item = categories.get(category[ResultColumn.categoryId.getPos()]);
+            IMenuItemDTO item = categories.get(category[ResultColumn.categoryId.getPos()]);
             if (item == null) {
                 item = new MenuItemDTO((Long) category[ResultColumn.categoryId.getPos()],
                         (String) category[ResultColumn.categoryName.getPos()],
