@@ -26,6 +26,7 @@ import org.hibernate.type.TimestampType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 @Repository
 public class InstanceDAO {
@@ -220,7 +221,7 @@ public class InstanceDAO {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
+    public IStatusDTO retrieveActiveInstanceStatus(String processCode) {
         String sql = "SELECT '" + processCode + "' AS processCode,"
                 + " COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS amount,"
                 + " AVG(DATEDIFF(DAY, INS.DT_INICIO, GETDATE())) AS averageTimeInDays"
@@ -237,7 +238,7 @@ public class InstanceDAO {
             query.setParameter("processCode", processCode);
         }
         query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
-        StatusDTO status = (StatusDTO) query.uniqueResult();
+        IStatusDTO status = (IStatusDTO) query.uniqueResult();
         status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
         status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
         return status;

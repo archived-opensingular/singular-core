@@ -17,9 +17,9 @@ import br.net.mirante.singular.dao.DefinitionDAO;
 import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.dao.MetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
@@ -74,7 +74,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public List<MetaDataDTO> retrieveMetaData(Long id) {
+    public List<IMetaDataDTO> retrieveMetaData(Long id) {
         return definitionDAO.retrieveMetaData(id);
     }
 
