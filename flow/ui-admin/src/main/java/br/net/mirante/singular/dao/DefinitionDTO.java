@@ -1,10 +1,9 @@
 package br.net.mirante.singular.dao;
 
-import java.io.Serializable;
-
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.util.FormatUtil;
 
-public class DefinitionDTO implements Serializable {
+public class DefinitionDTO implements IDefinitionDTO {
 
     private Long cod;
     private String nome;
@@ -27,54 +26,67 @@ public class DefinitionDTO implements Serializable {
         this.version = 1L;
     }
 
+    @Override
     public Long getCod() {
         return cod;
     }
 
+    @Override
     public void setCod(Long cod) {
         this.cod = cod;
     }
 
+    @Override
     public String getNome() {
         return nome;
     }
 
+    @Override
     public void setNome(String nome) {
         this.nome = nome;
     }
 
+    @Override
     public String getSigla() {
         return sigla;
     }
 
+    @Override
     public void setSigla(String sigla) {
         this.sigla = sigla;
     }
 
+    @Override
     public String getCategoria() {
         return categoria;
     }
 
+    @Override
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
+    @Override
     public Long getQuantidade() {
         return quantidade;
     }
 
+    @Override
     public void setQuantidade(Long quantidade) {
         this.quantidade = quantidade;
     }
 
+    @Override
     public Long getTempoMedio() {
         return tempoMedio;
     }
 
+    @Override
     public void setTempoMedio(Long tempoMedio) {
         this.tempoMedio = tempoMedio;
     }
 
+    @Override
     public String getTempoMedioString() {
         StringBuilder tempo = new StringBuilder("");
         if (this.tempoMedio != null) {
@@ -83,18 +95,22 @@ public class DefinitionDTO implements Serializable {
         return tempo.toString();
     }
 
+    @Override
     public Long getThroughput() {
         return throughput;
     }
 
+    @Override
     public void setThroughput(Long throughput) {
         this.throughput = throughput;
     }
 
+    @Override
     public Long getVersion() {
         return version;
     }
 
+    @Override
     public void setVersion(Long version) {
         this.version = version;
     }
