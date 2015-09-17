@@ -1,15 +1,25 @@
 package br.net.mirante.singular.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MetaDataDTO implements Serializable {
     private static final long serialVersionUID = -6631180471711181801L;
 
+    private Long id;
     private String task;
     private String type;
     private String executor;
     private List<TransactionDTO> transactions;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTask() {
         return task;
@@ -46,9 +56,22 @@ public class MetaDataDTO implements Serializable {
     public class TransactionDTO implements Serializable {
         private static final long serialVersionUID = 8149321077048616674L;
 
+        private String name;
         private String source;
         private String target;
         private List<ParameterDTO> parameters;
+
+        public TransactionDTO() {
+            parameters = new ArrayList<>();
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
 
         public String getSource() {
             return source;

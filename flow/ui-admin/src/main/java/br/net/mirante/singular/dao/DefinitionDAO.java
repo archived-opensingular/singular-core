@@ -7,9 +7,12 @@ import javax.inject.Inject;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+
+import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
 public class DefinitionDAO {
@@ -99,5 +102,48 @@ public class DefinitionDAO {
     public int countAll() {
         return ((Number) getSession()
                 .createSQLQuery("SELECT COUNT(*) FROM TB_DEFINICAO_PROCESSO").uniqueResult()).intValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<MetaDataDTO> retrieveMetaData(Long id) {
+        long newestProcessVersionId = ((Number) getSession()
+                .createSQLQuery("SELECT MAX(CO_PROCESSO) FROM TB_PROCESSO WHERE CO_DEFINICAO_PROCESSO = :id")
+                .setParameter("id", id)
+                .uniqueResult()).longValue();
+        String sql =
+                "SELECT TAR.CO_TAREFA AS id, TAR.NO_TAREFA AS task, TIT.DS_TIPO_TAREFA AS type, '' AS executor"
+                        + " FROM TB_TAREFA TAR"
+                        + "   INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                        + "   INNER JOIN TB_TIPO_TAREFA TIT ON TIT.CO_TIPO_TAREFA = TAR.CO_TIPO_TAREFA"
+                        + " WHERE TIT.CO_TIPO_TAREFA != :fim AND PRO.CO_PROCESSO = :id";
+        Query query = getSession().createSQLQuery(sql)
+                .addScalar("id", LongType.INSTANCE)
+                .addScalar("task", StringType.INSTANCE)
+                .addScalar("type", StringType.INSTANCE)
+                .addScalar("executor", StringType.INSTANCE)
+                .setParameter("fim", TaskType.End.ordinal())
+                .setParameter("id", newestProcessVersionId)
+                .setResultTransformer(Transformers.aliasToBean(MetaDataDTO.class));
+        List<MetaDataDTO> metaDatas = query.list();
+        for (MetaDataDTO metaData : metaDatas) {
+            metaData.setTransactions(retrieveTransactions(metaData.getId()));
+        }
+        return metaDatas;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<MetaDataDTO.TransactionDTO> retrieveTransactions(Long id) {
+        return getSession().createSQLQuery(
+                "SELECT TRA.NO_TRANSICAO AS name, SOU.NO_TAREFA AS source, TGT.NO_TAREFA AS target"
+                        + " FROM TB_TRANSICAO TRA"
+                        + "   INNER JOIN TB_TAREFA SOU ON SOU.CO_TAREFA = TRA.CO_TAREFA_ORIGEM"
+                        + "   INNER JOIN TB_TAREFA TGT ON TGT.CO_TAREFA = TRA.CO_TAREFA_DESTINO"
+                        + " WHERE SOU.CO_TAREFA = :id"
+        ).addScalar("name", StringType.INSTANCE)
+                .addScalar("source", StringType.INSTANCE)
+                .addScalar("target", StringType.INSTANCE)
+                .setParameter("id", id)
+                .setResultTransformer(Transformers.aliasToBean(MetaDataDTO.TransactionDTO.class))
+                .list();
     }
 }
