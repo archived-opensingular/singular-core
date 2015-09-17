@@ -18,6 +18,7 @@ import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
@@ -33,14 +34,14 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public DefinitionDTO retrieveById(Long id) {
+    public IDefinitionDTO retrieveById(Long id) {
         Object[] result = definitionDAO.retrieveById(id);
         return new DefinitionDTO((Long) result[0], (String) result[1], (String) result[2], null, null, null, null);
     }
 
     @Override
     @Transactional
-    public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
+    public List<IDefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
         List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
                 .map(o -> new DefinitionDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3],

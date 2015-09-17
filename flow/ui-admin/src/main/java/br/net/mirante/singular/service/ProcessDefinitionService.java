@@ -2,15 +2,15 @@ package br.net.mirante.singular.service;
 
 import java.util.List;
 
-import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 
 public interface ProcessDefinitionService {
 
-    DefinitionDTO retrieveById(Long id);
+    IDefinitionDTO retrieveById(Long id);
 
-    List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc);
+    List<IDefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc);
 
     int countAll();
 

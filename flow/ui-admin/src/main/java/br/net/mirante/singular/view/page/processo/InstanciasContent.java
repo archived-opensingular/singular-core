@@ -15,9 +15,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.service.ProcessDefinitionService;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -37,7 +37,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     @Inject
     private ProcessDefinitionService processDefinitionService;
 
-    private DefinitionDTO processDefinition;
+    private IDefinitionDTO processDefinition;
 
     public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
         super(id, false, withSideBar, false, true);
