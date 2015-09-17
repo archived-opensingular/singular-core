@@ -6,10 +6,11 @@ import java.util.Map;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
-        STATUS extends IStatusDTO> {
+        METADATA extends IMetaDataDTO, STATUS extends IStatusDTO> {
 
     DEFINITION retrieveDefinitionById(Long id);
 
@@ -23,7 +24,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     byte[] retrieveProcessDiagram(String sigla);
 
-//    List<MetaDataDTO> retrieveMetaData(Long id);
+    List<METADATA> retrieveMetaData(Long id);
 
     List<Map<String, String>> retrieveMeanTimeByProcess(Period period);
 
