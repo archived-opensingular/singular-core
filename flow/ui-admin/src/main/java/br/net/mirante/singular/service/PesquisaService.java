@@ -4,7 +4,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
-import br.net.mirante.singular.dao.StatusDTO;
+import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 public interface PesquisaService {
 
@@ -18,7 +18,7 @@ public interface PesquisaService {
 
     List<Map<String,String>> retrieveCountByTask(String processDefinitionCode);
 
-    StatusDTO retrieveActiveInstanceStatus(String processCode);
+    IStatusDTO retrieveActiveInstanceStatus(String processCode);
 
     List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode);
 

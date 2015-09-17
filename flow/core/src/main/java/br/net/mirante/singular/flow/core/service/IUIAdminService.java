@@ -1,11 +1,15 @@
 package br.net.mirante.singular.flow.core.service;
 
+import java.time.Period;
 import java.util.List;
+import java.util.Map;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
+import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
-public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO> {
+public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
+        STATUS extends IStatusDTO> {
 
     DEFINITION retrieveDefinitionById(Long id);
 
@@ -18,4 +22,28 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
     int countAllInstance(Long id);
 
     byte[] retrieveProcessDiagram(String sigla);
+
+//    List<MetaDataDTO> retrieveMetaData(Long id);
+
+    List<Map<String, String>> retrieveMeanTimeByProcess(Period period);
+
+    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode);
+
+    List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode);
+
+    List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
+
+    List<Map<String, String>> retrieveCountByTask(String processDefinitionCode);
+
+    STATUS retrieveActiveInstanceStatus(String processCode);
+
+    List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode);
+
+    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode);
+
+    List<Map<String, String>> retrieveCounterActiveInstances(String processCode);
+
+    String retrieveProcessDefinitionName(String processCode);
+
+    String retrieveProcessDefinitionId(String processDefinitionCode);
 }
