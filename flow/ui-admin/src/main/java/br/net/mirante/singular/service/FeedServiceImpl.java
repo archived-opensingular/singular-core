@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.FeedDTO;
+import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 
 @Singleton
@@ -30,8 +31,8 @@ public class FeedServiceImpl implements FeedService {
     @Override
     @Transactional
     @Cacheable(value = "retrieveFeed", cacheManager = "cacheManager")
-    public List<FeedDTO> retrieveFeed() {
-        List<FeedDTO> result = new ArrayList<>();
+    public List<IFeedDTO> retrieveFeed() {
+        List<IFeedDTO> result = new ArrayList<>();
         List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1));
         for (Map<String, String> mediaPorProcesso : medias) {
             String sigla = mediaPorProcesso.get("SIGLA");

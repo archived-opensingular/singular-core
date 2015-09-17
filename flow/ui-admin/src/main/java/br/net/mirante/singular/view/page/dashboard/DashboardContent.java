@@ -134,17 +134,17 @@ public class DashboardContent extends Content {
     }
 
     private void addStatusesPanel() {
-        IStatusDTO IStatusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", IStatusDTO.getAmount())
+        IStatusDTO statusDTO = pesquisaService.retrieveActiveInstanceStatus(processDefinitionCode);
+        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
         add(new StatusPanel("active-average-status-panel", "label.active.average.status",
-                IStatusDTO.getAverageTimeInDays()).setUnit(
+                statusDTO.getAverageTimeInDays()).setUnit(
                 new StringResourceModel("label.active.average.status.unit", this).getString())
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
         add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
-                IStatusDTO.getOpenedInstancesLast30Days()));
+                statusDTO.getOpenedInstancesLast30Days()));
         add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
-                IStatusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
+                statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
     }
 
     private void addWelcomeChart() {

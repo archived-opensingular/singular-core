@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
+import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
-        METADATA extends IMetaDataDTO, STATUS extends IStatusDTO> {
+        METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO> {
 
     DEFINITION retrieveDefinitionById(Long id);
 
@@ -47,4 +48,6 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
     String retrieveProcessDefinitionName(String processCode);
 
     String retrieveProcessDefinitionId(String processDefinitionCode);
+
+    List<FEED> retrieveAllFeed();
 }

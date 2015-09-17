@@ -1,9 +1,10 @@
 package br.net.mirante.singular.dao;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FeedDTO implements Serializable {
+import br.net.mirante.singular.flow.core.dto.IFeedDTO;
+
+public class FeedDTO implements IFeedDTO {
 
     private String descricaoInstancia;
     private String nomeProcesso;
@@ -17,34 +18,42 @@ public class FeedDTO implements Serializable {
         this.media = media;
     }
 
+    @Override
     public String getDescricaoInstancia() {
         return descricaoInstancia;
     }
 
+    @Override
     public void setDescricaoInstancia(String descricaoInstancia) {
         this.descricaoInstancia = descricaoInstancia;
     }
 
+    @Override
     public String getNomeProcesso() {
         return nomeProcesso;
     }
 
+    @Override
     public void setNomeProcesso(String nomeProcesso) {
         this.nomeProcesso = nomeProcesso;
     }
 
+    @Override
     public BigDecimal getTempoDecorrido() {
         return tempoAtraso;
     }
 
+    @Override
     public void setTempoAtraso(BigDecimal tempoAtraso) {
         this.tempoAtraso = tempoAtraso;
     }
 
+    @Override
     public BigDecimal getMedia() {
         return media;
     }
 
+    @Override
     public void setMedia(BigDecimal media) {
         this.media = media;
     }
