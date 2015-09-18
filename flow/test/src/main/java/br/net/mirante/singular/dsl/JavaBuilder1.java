@@ -1,10 +1,6 @@
 package br.net.mirante.singular.dsl;
 
-import br.net.mirante.singular.InstanciaDefinicao;
-import br.net.mirante.singular.flow.core.MTask;
-import org.springframework.core.task.TaskExecutor;
-
-import java.util.function.Consumer;
+import br.net.mirante.singular.definicao.InstanciaPeticao;
 
 public class JavaBuilder1 {
 
@@ -29,6 +25,6 @@ public class JavaBuilder1 {
     @FunctionalInterface
     public static  interface TaskExecutor{
 
-        String execute(InstanciaDefinicao instancia);
+        String execute(InstanciaPeticao instancia);
     }
 }

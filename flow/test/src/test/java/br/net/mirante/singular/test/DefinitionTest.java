@@ -1,11 +1,12 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.InstanciaDefinicao;
-import br.net.mirante.singular.InstanciaDefinicaoComVariavel;
+import br.net.mirante.singular.definicao.InstanciaDefinicaoComVariavel;
+import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.flow.core.MBPM;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class DefinitionTest extends TestSupport {
@@ -19,15 +20,16 @@ public class DefinitionTest extends TestSupport {
     @Test
     public void testeCriarInstanciaDefinicao() {
 
-        InstanciaDefinicao id = iniciarFluxo();
-        InstanciaDefinicao id2 = MBPM.findProcessInstance(id.getFullId());
-        assertNotNull(id2);
+        InstanciaPeticao id = startInstance();
+        InstanciaPeticao id2 = MBPM.findProcessInstance(id.getFullId());
+
+        assertEquals("", id, id2);
     }
 
-    private InstanciaDefinicao iniciarFluxo() {
-        InstanciaDefinicao id = new InstanciaDefinicao();
-        id.start();
-        return id;
+    @Test
+    public void executeTransition() {
+        InstanciaPeticao instanciaPeticao = startInstance();
+        instanciaPeticao.executeTransition();
     }
 
     @Test
@@ -39,10 +41,10 @@ public class DefinitionTest extends TestSupport {
         }
     }
 
-    @Test
-    public void testarDefinicao() {
-        InstanciaDefinicao instanciaDefinicao = iniciarFluxo();
-        instanciaDefinicao.executeTransition();
+    private InstanciaPeticao startInstance() {
+        InstanciaPeticao id = new InstanciaPeticao();
+        id.start();
+        return id;
     }
 
 }

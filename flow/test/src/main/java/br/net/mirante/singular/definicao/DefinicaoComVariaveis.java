@@ -1,12 +1,12 @@
 package br.net.mirante.singular;
 
+import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.builder.BEnd;
 import br.net.mirante.singular.flow.core.builder.BJava;
-import br.net.mirante.singular.flow.core.builder.BTask;
 import br.net.mirante.singular.flow.core.builder.FlowBuilder;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionImpl;
@@ -15,10 +15,10 @@ import br.net.mirante.singular.flow.util.vars.types.VarTypeString;
 
 import java.math.BigDecimal;
 
-public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaDefinicao> {
+public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
 
     public DefinicaoComVariaveis() {
-        super(InstanciaDefinicao.class);
+        super(InstanciaPeticao.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }

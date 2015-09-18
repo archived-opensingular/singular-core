@@ -1,6 +1,7 @@
 package br.net.mirante.singular.dsl;
 
-import br.net.mirante.singular.InstanciaDefinicao;
+
+import br.net.mirante.singular.definicao.InstanciaPeticao;
 
 public class WaitBuilder1 {
     public WaitBuilder1(PeopleBuilder2 peopleBuilder2) {
@@ -13,6 +14,6 @@ public class WaitBuilder1 {
     @FunctionalInterface
     public static interface WaitPredicate {
 
-        String execute(InstanciaDefinicao i);
+        String execute(InstanciaPeticao i);
     }
 }

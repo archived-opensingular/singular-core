@@ -1,11 +1,11 @@
 package br.net.mirante.singular.dsl.exemplo;
 
-import br.net.mirante.singular.InstanciaDefinicao;
+import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.dsl.Builder;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTaskJava;
 import br.net.mirante.singular.flow.core.MTaskPeople;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import br.net.mirante.singular.flow.core.ProcessInstance;
 
 public class Exemplo {
 
@@ -51,11 +51,11 @@ public class Exemplo {
     }
 
 
-    private String enviarEmail(InstanciaDefinicao i){
+    private String enviarEmail(ProcessInstance i){
         return null;
     }
 
-    private String predicate(InstanciaDefinicao i){
+    private String predicate(InstanciaPeticao i){
         return null;
     }
 }
