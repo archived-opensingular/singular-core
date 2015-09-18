@@ -16,8 +16,8 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
-import br.net.mirante.singular.dao.DefinitionDTO;
-import br.net.mirante.singular.service.ProcessDefinitionService;
+import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -31,7 +31,7 @@ import br.net.mirante.singular.view.template.Content;
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
 
     @Inject
-    private ProcessDefinitionService processDefinitionService;
+    private UIAdminFacade uiAdminFacade;
 
     private final Form<?> diagramForm = new Form<>("diagramForm");
     private final BSModalBorder diagramModal = new BSModalBorder("diagramModal");
@@ -55,7 +55,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                                 String[] siglas = ((ServletWebRequest) attributes.getRequest())
                                         .getContainerRequest().getParameterMap().get("sigla");
                                 String sigla = siglas[siglas.length - 1];
-                                return processDefinitionService.retrieveProcessDiagram(sigla);
+                                return uiAdminFacade.retrieveProcessDiagram(sigla);
                             }
                         };
                         dir.setFormat("image/png");
@@ -63,28 +63,28 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                     }
                 };
 
-        BaseDataProvider<DefinitionDTO, String> dataProvider = new BaseDataProvider<DefinitionDTO, String>() {
+        BaseDataProvider<IDefinitionDTO, String> dataProvider = new BaseDataProvider<IDefinitionDTO, String>() {
             @Override
-            public Iterator<? extends DefinitionDTO> iterator(int first, int count,
+            public Iterator<? extends IDefinitionDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return processDefinitionService.retrieveAll(first, count, sortProperty, ascending).iterator();
+                return uiAdminFacade.retrieveAllDefinition(first, count, sortProperty, ascending).iterator();
             }
 
             @Override
             public long size() {
-                return processDefinitionService.countAll();
+                return uiAdminFacade.countAllDefinition();
             }
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", DefinitionDTO::getCod)
-                .appendPropertyColumn(getMessage("label.table.column.name"), "name", DefinitionDTO::getNome)
-                .appendPropertyColumn(getMessage("label.table.column.category"), "category", DefinitionDTO::getCategoria)
-                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", DefinitionDTO::getQuantidade)
-                .appendPropertyColumn(getMessage("label.table.column.time"), "time", DefinitionDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", DefinitionDTO::getThroughput)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", DefinitionDTO::getVersion)
-                .appendColumn(new BSActionColumn<DefinitionDTO, String>(WicketUtils.$m.ofValue(""))
+                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", IDefinitionDTO::getCod)
+                .appendPropertyColumn(getMessage("label.table.column.name"), "name", IDefinitionDTO::getNome)
+                .appendPropertyColumn(getMessage("label.table.column.category"), "category", IDefinitionDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", IDefinitionDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "time", IDefinitionDTO::getTempoMedioString)
+                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", IDefinitionDTO::getThroughput)
+                .appendPropertyColumn(getMessage("label.table.column.version"), "version", IDefinitionDTO::getVersion)
+                .appendColumn(new BSActionColumn<IDefinitionDTO, String>(WicketUtils.$m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                             getPage().getPageParameters().add("sigla", model.getObject().getSigla());
                             /* FIXME: Verificar como detectar o fim da carga! */

@@ -10,6 +10,9 @@ public class TaskBuilder2 {
     public TaskBuilder2(TaskBuilder2 taskBuilder2) {
     }
 
+    public TaskBuilder2(JavaBuilder2 javaBuilder2) {
+    }
+
     public JavaBuilder1 java(String key){
         return new JavaBuilder1(this);
     }
@@ -28,5 +31,9 @@ public class TaskBuilder2 {
 
     public FlowMap build() {
         return new FlowMap(null);
+    }
+
+    public TransitionBuilder1 transition() {
+        return null;
     }
 }

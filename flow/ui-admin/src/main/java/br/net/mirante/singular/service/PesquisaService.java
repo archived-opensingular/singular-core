@@ -16,7 +16,7 @@ public interface PesquisaService {
 
     List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
 
-    List<Map<String,String>> retrieveCountByTask(String processDefinitionCode);
+    List<Map<String, String>> retrieveCountByTask(String processDefinitionCode);
 
     StatusDTO retrieveActiveInstanceStatus(String processCode);
 

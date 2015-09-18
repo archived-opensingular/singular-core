@@ -13,6 +13,7 @@ import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 
 @Repository
 public class DefinitionDAO {
@@ -132,7 +133,7 @@ public class DefinitionDAO {
     }
 
     @SuppressWarnings("unchecked")
-    private List<MetaDataDTO.TransactionDTO> retrieveTransactions(Long id) {
+    private List<ITransactionDTO> retrieveTransactions(Long id) {
         return getSession().createSQLQuery(
                 "SELECT TRA.NO_TRANSICAO AS name, SOU.NO_TAREFA AS source, TGT.NO_TAREFA AS target"
                         + " FROM TB_TRANSICAO TRA"

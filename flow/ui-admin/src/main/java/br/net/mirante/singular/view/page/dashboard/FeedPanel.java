@@ -16,7 +16,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 
 import br.net.mirante.singular.dao.FeedDTO;
-import br.net.mirante.singular.service.FeedService;
+import br.net.mirante.singular.flow.core.dto.IFeedDTO;
+import br.net.mirante.singular.service.UIAdminFacade;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -24,7 +25,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class FeedPanel extends Panel {
 
     @Inject
-    private FeedService feedService;
+    private UIAdminFacade uiAdminFacade;
 
     private ListModel<FeedDTO> feeds = new ListModel<>();
 
@@ -36,7 +37,6 @@ public class FeedPanel extends Panel {
         public String icon;
         public String color;
         public String msg;
-
     }
 
     @Override
@@ -46,24 +46,24 @@ public class FeedPanel extends Panel {
     }
 
     private void initFeeds() {
-        feeds.setObject(feedService.retrieveFeed());
-        add(new RefreshingView<FeedDTO>("atividades", feeds) {
+        feeds.setObject(uiAdminFacade.retrieveAllFeed());
+        add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
-            protected Iterator<IModel<FeedDTO>> getItemModels() {
-                List<IModel<FeedDTO>> models = new ArrayList<>();
-                for (FeedDTO feedDTO : feeds.getObject()) {
+            protected Iterator<IModel<IFeedDTO>> getItemModels() {
+                List<IModel<IFeedDTO>> models = new ArrayList<>();
+                for (IFeedDTO feedDTO : feeds.getObject()) {
                     models.add($m.ofValue(feedDTO));
                 }
                 return models.iterator();
             }
 
             @Override
-            protected void populateItem(Item<FeedDTO> item) {
-                final FeedDTO feedDto = item.getModelObject();
-                FeedItem fi = getFeedItem(feedDto);
+            protected void populateItem(Item<IFeedDTO> item) {
+                final IFeedDTO feedDTO = item.getModelObject();
+                FeedItem fi = getFeedItem(feedDTO);
 
-                item.queue(new Label("descricao", getDesc(feedDto)));
-                item.queue(new Label("tempoDeAtraso", getTimeDesc(feedDto)));
+                item.queue(new Label("descricao", getDesc(feedDTO)));
+                item.queue(new Label("tempoDeAtraso", getTimeDesc(feedDTO)));
 
                 WebMarkupContainer iconColor = new WebMarkupContainer("feedIconColor");
                 iconColor.add($b.classAppender(fi.color));
@@ -83,7 +83,7 @@ public class FeedPanel extends Panel {
         });
     }
 
-    private FeedItem getFeedItem(FeedDTO feed) {
+    private FeedItem getFeedItem(IFeedDTO feed) {
         FeedItem fi = new FeedItem();
         fi.color = "label-default ";
         fi.icon = "fa fa-clock-o ";
@@ -101,12 +101,12 @@ public class FeedPanel extends Panel {
         return fi;
     }
 
-    private String getDesc(FeedDTO feed) {
+    private String getDesc(IFeedDTO feed) {
         return "[" + feed.getNomeProcesso() + "] " + (feed.getDescricaoInstancia() != null
                 ? feed.getDescricaoInstancia() : "N/A");
     }
 
-    private String getTimeDesc(FeedDTO feed) {
+    private String getTimeDesc(IFeedDTO feed) {
         return String.format(" + %s dias ", feed.getTempoDecorrido().subtract(feed.getMedia()));
     }
 }

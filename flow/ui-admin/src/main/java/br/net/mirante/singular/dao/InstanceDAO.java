@@ -328,19 +328,19 @@ public class InstanceDAO {
             if (count) {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         } else {
             if (count) {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL: "")));
+                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         }
     }

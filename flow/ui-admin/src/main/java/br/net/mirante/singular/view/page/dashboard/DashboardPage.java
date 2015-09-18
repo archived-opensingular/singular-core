@@ -8,7 +8,7 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.util.string.StringValue;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import br.net.mirante.singular.service.MenuService;
+import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
@@ -18,7 +18,7 @@ public class DashboardPage extends Template {
     public static final String PROCESS_DEFINITION_COD_PARAM = "pdCod";
 
     @Inject
-    private MenuService menuService;
+    private UIAdminFacade uiAdminFacade;
 
     @Override
     protected Content getContent(String id) {
@@ -33,7 +33,7 @@ public class DashboardPage extends Template {
         if (processDefinitionCode.isNull()) {
             response.render(OnDomReadyHeaderItem.forScript("$('#_menuItemHome').addClass('active');"));
         } else {
-            Pair<Long, Long> ids = menuService.retrieveCategoryDefinitionIdsByCode(processDefinitionCode.toString());
+            Pair<Long, Long> ids = uiAdminFacade.retrieveCategoryDefinitionIdsByCode(processDefinitionCode.toString());
             StringBuilder script = new StringBuilder();
             String menuId = String.format("_categoryMenu_%d", ids.getLeft());
             String itemId = String.format("_definitionMenu_%d", ids.getRight());
