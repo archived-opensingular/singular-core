@@ -1,21 +1,26 @@
 package br.net.mirante.singular.wicket;
 
 import org.apache.wicket.Session;
-import org.apache.wicket.core.request.ClientInfo;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 
-public class UIAdminSession extends Session {
+public class UIAdminSession extends AuthenticatedWebSession {
 
     private String name;
     private String avatar;
     private String logout;
+
+    private Roles roles;
 
     public UIAdminSession(Request request, @SuppressWarnings("UnusedParameters") Response response) {
         super(request);
         this.name = request.getRequestParameters().getParameterValue("name").toString("Admin");
         this.avatar = request.getRequestParameters().getParameterValue("avatar").toString(null);
         this.logout = request.getRequestParameters().getParameterValue("logout").toString(null);
+        this.roles = new Roles();
+        this.roles.add(Roles.USER);
     }
 
     public static UIAdminSession get() {
@@ -23,8 +28,21 @@ public class UIAdminSession extends Session {
     }
 
     @Override
-    public ClientInfo getClientInfo() {
-        return null;
+    protected boolean authenticate(String username, String password) {
+        return false;
+    }
+
+    @Override
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void addRole(String roleKey) {
+        roles.add(roleKey);
+    }
+
+    public boolean hasAdminRole() {
+        return roles.hasRole(Roles.ADMIN);
     }
 
     public String getName() {
