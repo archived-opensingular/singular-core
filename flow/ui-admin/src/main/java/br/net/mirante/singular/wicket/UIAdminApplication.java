@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
+import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
@@ -11,9 +13,10 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
+import br.net.mirante.singular.view.error.Error403Page;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 
-public class UIAdminApplication extends WebApplication {
+public class UIAdminApplication extends AuthenticatedWebApplication {
 
     @Override
     public Class<? extends WebPage> getHomePage() {
@@ -26,7 +29,8 @@ public class UIAdminApplication extends WebApplication {
 
         Locale.setDefault(new Locale("pt", "BR"));
 
-        // add your configuration here
+        getApplicationSettings().setAccessDeniedPage(Error403Page.class);
+
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
@@ -38,6 +42,16 @@ public class UIAdminApplication extends WebApplication {
     @Override
     public Session newSession(Request request, Response response) {
         return new UIAdminSession(request, response);
+    }
+
+    @Override
+    protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
+        return UIAdminSession.class;
+    }
+
+    @Override
+    protected Class<? extends WebPage> getSignInPageClass() {
+        return DashboardPage.class;
     }
 
     @Override
