@@ -34,6 +34,8 @@ public class Definicao extends ProcessDefinition<InstanciaDefinicao> {
 
     @Override
     protected FlowMap createFlowMap() {
+        setName("Teste", "Definicao");
+
         FlowMap flowMap = new FlowMap(this);
 
         flowMap.addJavaTask(() -> "Aprovar Solicitação");

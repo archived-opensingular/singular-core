@@ -14,7 +14,7 @@
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
         <!--<property name="url" value="jdbc:hsqldb:hsql://localhost/singulardb"/>-->
-        <property name="url" value="jdbc:hsqldb:mem:singulardb/singulardb"/>
+        <property name="url" value="jdbc:hsqldb:mem:singulardb"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
 

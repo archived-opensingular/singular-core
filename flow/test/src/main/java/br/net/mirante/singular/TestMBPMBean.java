@@ -83,7 +83,7 @@ public class TestMBPMBean extends AbstractMbpmBean {
      */
     @Override
     public MUser getUserIfAvailable() {
-        return CoisasQueDeviamSerParametrizadas.USER;
+        return null;
     }
 
     @Override

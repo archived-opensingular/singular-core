@@ -1,11 +1,7 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
-import br.net.mirante.singular.Definicao;
 import br.net.mirante.singular.InstanciaDefinicao;
 import br.net.mirante.singular.InstanciaDefinicaoComVariavel;
-import br.net.mirante.singular.TestDAO;
-import br.net.mirante.singular.TestMBPMBean;
 import br.net.mirante.singular.flow.core.MBPM;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.Category;
@@ -27,33 +23,18 @@ import br.net.mirante.singular.persistence.entity.TaskType;
 import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.Variable;
 import br.net.mirante.singular.persistence.entity.VariableType;
-import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runners.MethodSorters;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:applicationContext.xml")
-@Transactional
-public class DefinitionTest {
-
-    @Inject
-    private TestMBPMBean mbpmBean;
-
-    @Inject
-    private TestDAO testDAO;
-
-    @Inject
-    private SessionFactory sessionFactory;
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class DefinitionTest extends TestSupport {
 
     @Before
     public void setup() {
@@ -94,8 +75,7 @@ public class DefinitionTest {
     }
 
     @Test
-    @Transactional
-    public void veriifcarAcessoEmTodasAsTabelas() {
+    public void verificarAcessoEmTodasAsTabelas() {
         sessionFactory.getCurrentSession().createCriteria(Actor.class).list();
         sessionFactory.getCurrentSession().createCriteria(Category.class).list();
         sessionFactory.getCurrentSession().createCriteria(ExecutionVariable.class).list();
@@ -120,7 +100,6 @@ public class DefinitionTest {
 
 
     @Test
-    @Transactional
     public void testarUsoDeVariaveis() {
         InstanciaDefinicaoComVariavel id2 = new InstanciaDefinicaoComVariavel();
         id2.start();
@@ -136,7 +115,6 @@ public class DefinitionTest {
         tt.setAbbreviation("teste");
 
         testDAO.save(tt);
-
     }
 
     @Test
