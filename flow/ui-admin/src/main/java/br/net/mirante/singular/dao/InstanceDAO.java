@@ -296,7 +296,7 @@ public class InstanceDAO {
                     + "      AND DT_FIM < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%s";
     private static final String PROCESS_CODE_FILTER_SQL = " AND SG_PROCESSO = :processCode";
     private static final String SELECT_AVERAGE_TIME_SQL =
-            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO";
+            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, ISNULL(INS.DT_FIM, GETDATE())) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO";
     private static final String SELECT_COUNT_SQL =
             "       COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE";
 
