@@ -33,7 +33,7 @@ public class PesquisaDAO {
         return sessionFactory.getCurrentSession();
     }
 
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
         String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
                 + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
                 + " FROM TB_INSTANCIA_PROCESSO INS"
@@ -41,6 +41,7 @@ public class PesquisaDAO {
                 + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL"
                 + (period != null ? " AND INS.DT_INICIO >= :startPeriod AND INS.DT_FIM <= :endPeriod" : "")
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "")
                 + " GROUP BY DEF.SG_PROCESSO, DEF.NO_PROCESSO ORDER BY MEAN DESC";
 
         Query query = getSession().createSQLQuery(sql)
@@ -52,6 +53,10 @@ public class PesquisaDAO {
         if (period != null) {
             query.setParameter("startPeriod", periodFromNow(period));
             query.setParameter("endPeriod", new Date());
+        }
+
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
         }
 
         query.setMaxResults(15);

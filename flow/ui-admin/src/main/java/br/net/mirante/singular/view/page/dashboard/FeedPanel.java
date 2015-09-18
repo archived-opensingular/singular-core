@@ -27,10 +27,13 @@ public class FeedPanel extends Panel {
     @Inject
     private UIAdminFacade uiAdminFacade;
 
+    private String processCode;
+
     private ListModel<FeedDTO> feeds = new ListModel<>();
 
-    public FeedPanel(String id) {
+    public FeedPanel(String id, String processCode) {
         super(id);
+        this.processCode = processCode;
     }
 
     private class FeedItem {
@@ -46,7 +49,7 @@ public class FeedPanel extends Panel {
     }
 
     private void initFeeds() {
-        feeds.setObject(uiAdminFacade.retrieveAllFeed());
+        feeds.setObject(uiAdminFacade.retrieveAllFeed(processCode));
         add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
             protected Iterator<IModel<IFeedDTO>> getItemModels() {

@@ -30,7 +30,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<METADATA> retrieveMetaData(Long id);
 
-    List<Map<String, String>> retrieveMeanTimeByProcess(Period period);
+    List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode);
 
     List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode);
 
@@ -52,7 +52,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     String retrieveProcessDefinitionId(String processDefinitionCode);
 
-    List<FEED> retrieveAllFeed();
+    List<FEED> retrieveAllFeed(String processCode);
 
     List<MENU> retrieveAllCategories();
 

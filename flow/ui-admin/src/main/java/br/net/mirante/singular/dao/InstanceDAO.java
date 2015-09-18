@@ -30,6 +30,8 @@ import br.net.mirante.singular.flow.core.TaskType;
 @Repository
 public class InstanceDAO {
 
+    public static final int MAX_FEED_SIZE = 30;
+
     private enum Columns {
         description("DESCRICAO"),
         delta("DELTA"),
@@ -209,7 +211,7 @@ public class InstanceDAO {
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         query.setParameter("media", media);
         query.setParameter("sigla", sigla);
-        query.setMaxResults(30);
+        query.setMaxResults(MAX_FEED_SIZE);
         return (List<Map<String, String>>) query.list();
     }
 

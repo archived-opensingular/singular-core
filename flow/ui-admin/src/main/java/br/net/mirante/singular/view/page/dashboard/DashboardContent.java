@@ -88,7 +88,7 @@ public class DashboardContent extends Content {
         addWelcomeChart();
         addDefaultCharts();
         addSpecificCharts();
-        add(new FeedPanel("feed"));
+        add(new FeedPanel("feed", processDefinitionCode));
     }
 
     private void addDefaultCharts() {
@@ -155,7 +155,7 @@ public class DashboardContent extends Content {
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod());
+                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null);
                 }
             });
             localContainer.add($b.visibleIf($m.ofValue(false)));

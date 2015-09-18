@@ -8,7 +8,7 @@ import br.net.mirante.singular.dao.StatusDTO;
 
 public interface PesquisaService {
 
-    List<Map<String, String>> retrieveMeanTimeByProcess(Period period);
+    List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode);
 
     List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode);
 

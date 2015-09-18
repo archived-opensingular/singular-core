@@ -30,9 +30,9 @@ public class FeedServiceImpl implements FeedService {
     @Override
     @Transactional
     @Cacheable(value = "retrieveFeed", cacheManager = "cacheManager")
-    public List<FeedDTO> retrieveFeed() {
+    public List<FeedDTO> retrieveFeed(String processCode) {
         List<FeedDTO> result = new ArrayList<>();
-        List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1));
+        List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1), processCode);
         for (Map<String, String> mediaPorProcesso : medias) {
             String sigla = mediaPorProcesso.get("SIGLA");
             BigDecimal media = new BigDecimal(mediaPorProcesso.get("MEAN"));
@@ -40,6 +40,9 @@ public class FeedServiceImpl implements FeedService {
             result.addAll(instancias.stream()
                     .map(instancia -> new FeedDTO(mediaPorProcesso.get("NOME"), instancia.get("DESCRICAO"),
                             new BigDecimal(instancia.get("DIAS")), media)).collect(Collectors.toList()));
+            if (result.size() >= InstanceDAO.MAX_FEED_SIZE) {
+                break;
+            }
         }
 
         result.sort((f1, f2) -> f2.getTempoDecorrido().subtract(f2.getMedia()).compareTo(
