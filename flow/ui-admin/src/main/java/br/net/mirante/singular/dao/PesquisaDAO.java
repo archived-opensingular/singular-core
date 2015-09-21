@@ -20,6 +20,8 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
+import br.net.mirante.singular.flow.core.TaskType;
+
 @Repository
 @SuppressWarnings("unchecked")
 public class PesquisaDAO {
@@ -90,7 +92,8 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode";
+                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal();
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("QUANTIDADE", IntegerType.INSTANCE)
@@ -110,6 +113,7 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO ORDER BY MEAN DESC";
 
         Query query = getSession().createSQLQuery(sql)
@@ -134,6 +138,7 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO"
                 + " ORDER BY MEAN) AS OTHERS GROUP BY NOME_DEFINICAO";
 
