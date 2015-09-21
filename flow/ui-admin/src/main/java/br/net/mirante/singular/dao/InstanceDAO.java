@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
@@ -296,7 +297,11 @@ public class InstanceDAO {
                     + "      AND DT_FIM < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%s";
     private static final String PROCESS_CODE_FILTER_SQL = " AND SG_PROCESSO = :processCode";
     private static final String SELECT_AVERAGE_TIME_SQL =
-            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, ISNULL(INS.DT_FIM, GETDATE())) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO";
+            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO";
+    private static final String SELECT_AVERAGE_2_TIME_SQL =
+            "       CAST(YEAR(CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)) AS VARCHAR(2)), 2) AS DATA,%n" +
+            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO,%n" +
+            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO2";
     private static final String SELECT_COUNT_SQL =
             "       COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE";
 
@@ -305,6 +310,10 @@ public class InstanceDAO {
     }
 
     private String mountDateDistSQL(boolean active, boolean count, boolean processCodeFilter) {
+        return mountDateDistSQL(active, count, false, processCodeFilter);
+    }
+
+    private String mountDateDistSQL(boolean active, boolean count, boolean move, boolean processCodeFilter) {
         List<String> sqls = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, 1);
@@ -314,7 +323,7 @@ public class InstanceDAO {
             calendar.add(Calendar.MONTH, -1);
             int month = calendar.get(Calendar.MONTH) + 1;
             int year = calendar.get(Calendar.YEAR);
-            formatDateDistSQL(sqls, pos, month, year, monthPlus1, yearPlus1, active, count, processCodeFilter);
+            formatDateDistSQL(sqls, pos, month, year, monthPlus1, yearPlus1, active, count, move, processCodeFilter);
         }
         int pos = 13;
         StringBuilder result = new StringBuilder("SET LANGUAGE Portuguese;");
@@ -324,15 +333,41 @@ public class InstanceDAO {
         return result.toString();
     }
 
+    private String formatDateDistMoveSQL(int month, int year, int yearPlus1, int monthPlus1) {
+        int yearPlus3;
+        int monthPlus3;
+        int yearPlus6;
+        int monthPlus6;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, yearPlus1);
+        calendar.set(Calendar.MONTH, monthPlus1 - 1);
+        calendar.add(Calendar.MONTH, 2);
+        yearPlus3 = calendar.get(Calendar.YEAR);
+        monthPlus3 = calendar.get(Calendar.MONTH) + 1;
+
+        calendar.add(Calendar.MONTH, 3);
+        yearPlus6 = calendar.get(Calendar.YEAR);
+        monthPlus6 = calendar.get(Calendar.MONTH) + 1;
+
+        return String.format(SELECT_AVERAGE_2_TIME_SQL, year, month, year, month,
+                yearPlus3, monthPlus3, yearPlus3, monthPlus3,
+                yearPlus6, monthPlus6, yearPlus6, monthPlus6);
+    }
+
     private void formatDateDistSQL(List<String> sqls, int pos, int month, int year,
-            int monthPlus1, int yearPlus1, boolean active, boolean count, boolean processCodeFilter) {
+            int monthPlus1, int yearPlus1, boolean active, boolean count, boolean move, boolean processCodeFilter) {
         if (active) {
             if (count) {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
                         (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
-                sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
+                sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month,
+                        (move
+                                ? formatDateDistMoveSQL(month, year, yearPlus1, monthPlus1)
+                                : String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1)
+                        ),
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
                         (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
@@ -341,19 +376,28 @@ public class InstanceDAO {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
                         year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
-                sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_AVERAGE_TIME_SQL,
+                sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month,
+                        String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1),
                         year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
     private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode, boolean count) {
+        return retrieveMeanTimeInstances(sql, processCode, count, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode,
+            boolean count, boolean move) {
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("POS", IntegerType.INSTANCE)
                 .addScalar("MES", StringType.INSTANCE)
                 .addScalar(count ? "QUANTIDADE" : "TEMPO", count ? IntegerType.INSTANCE : FloatType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        if (move) {
+            ((SQLQuery) query).addScalar("DATA", StringType.INSTANCE).addScalar("TEMPO2", FloatType.INSTANCE);
+        }
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }
@@ -362,6 +406,10 @@ public class InstanceDAO {
 
     public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
         return retrieveMeanTimeInstances(mountDateDistSQL(true, processCode != null), processCode, false);
+    }
+
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(true, false, true, true), processCode, false, true);
     }
 
     public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {

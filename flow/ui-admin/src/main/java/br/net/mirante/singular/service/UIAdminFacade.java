@@ -104,6 +104,11 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
+        return pesquisaService.retrieveAverageTimesActiveInstances(processCode);
+    }
+
+    @Override
     public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
         return pesquisaService.retrieveMeanTimeFinishedInstances(processCode);
     }

@@ -193,7 +193,22 @@ public class DashboardContent extends Content {
 
     private void addSpecificCharts() {
         WebMarkupContainer tasksTimeChartContainer = new WebMarkupContainer("tasksTimeChartContainer");
-        //tasksTimeChartContainer.add($b.visibleIf($m.ofValue(false)));
+        if (processDefinitionCode != null) {
+            tasksTimeChartContainer.add(new AreaChartPanel("active-instances-average-time-chart",
+                    "label.chart.active.instances.average.time.title",
+                    "label.chart.active.instances.average.time.subtitle",
+                    new ImmutablePair<>("TEMPO",
+                            new StringResourceModel("label.chart.active.instances.average.time.3", this).getString()),
+                    "DATA", false, true) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return uiAdminFacade.retrieveAverageTimesActiveInstances(processDefinitionCode);
+                }
+            }.addGraph("TEMPO2", new StringResourceModel("label.chart.active.instances.average.time.6", this)
+                    .getString()));
+        } else {
+            tasksTimeChartContainer.add($b.visibleIf($m.ofValue(false)));
+        }
         add(tasksTimeChartContainer);
     }
 }

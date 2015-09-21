@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -54,11 +55,16 @@ public abstract class AreaChartPanel extends Panel {
         add(createPieChart());
     }
 
+    public AreaChartPanel addGraph(String valueField, String title) {
+        this.valuesField.add(new ImmutablePair<>(valueField, title));
+        return this;
+    }
+
     private WebMarkupContainer createPieChart() {
-        pieChartDiv = new WebMarkupContainer("chart-div");
-        pieChartDiv.setOutputMarkupId(true);
-        pieChartDiv.add($b.onReadyScript(this::montarScript));
-        return pieChartDiv;
+        areaChartDiv = new WebMarkupContainer("chart-div");
+        areaChartDiv.setOutputMarkupId(true);
+        areaChartDiv.add($b.onReadyScript(this::montarScript));
+        return areaChartDiv;
     }
 
     private void createChartFilter() {
@@ -78,7 +84,7 @@ public abstract class AreaChartPanel extends Panel {
             protected void onEvent(AjaxRequestTarget target) {
                 periodType = PeriodType.valueOfName(getComponent().getId());
                 updateGraph();
-                target.add(pieChartDiv);
+                target.add(areaChartDiv);
             }
         });
 
@@ -99,8 +105,26 @@ public abstract class AreaChartPanel extends Panel {
         return new JSONArray(dados).toString();
     }
 
+    private String montarValueKeys() {
+        String ykeys = " ykeys: [%s],";
+        StringBuilder ykeysElements = new StringBuilder();
+        for (Pair<String, String> element : valuesField) {
+            ykeysElements.append("'").append(element.getLeft()).append("',");
+        }
+        return String.format(ykeys, ykeysElements.substring(0, ykeysElements.length() - 1));
+    }
+
+    private String montarValueLabels() {
+        String ykeys = " labels: [%s],";
+        StringBuilder ykeysElements = new StringBuilder();
+        for (Pair<String, String> element : valuesField) {
+            ykeysElements.append("'").append(element.getRight()).append("',");
+        }
+        return String.format(ykeys, ykeysElements.substring(0, ykeysElements.length() - 1));
+    }
+
     private CharSequence montarScript(Component comp) {
-        String areaChart = "Morris.Area({"
+        return "Morris.Area({"
                 + "element: '" + comp.getMarkupId() + "',"
                 + " padding: 0,"
                 + " behaveLikeLine: false,"
@@ -112,28 +136,12 @@ public abstract class AreaChartPanel extends Panel {
                 + parseToJson(dadosGrafico) + ","
                 + " lineColors: ['#399a8c', '#92e9dc'],"
                 + " xkey: '" + titleField + "',"
-                + " ykeys: ['sales', 'profit'],"
-                + "                    labels: ['Sales', 'Profit'],\n"
-                + "                    pointSize: 0,\n"
-                + "                    lineWidth: 0,\n"
-                + "                    hideHover: 'auto',\n"
-                + "                    resize: true\n"
-                + "                });"
-        return "            AmCharts.makeChart( \"" + id + "\", {" +
-                "                \"type\": \"pie\", " +
-                "                \"angle\": 12," +
-                "                \"marginTop\": -50," +
-                "                \"balloonText\": \"[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>\"," +
-                "                \"depth3D\": 15," +
-                (isDonut ? "                \"innerRadius\": \"40%\"," : "") +
-                "                \"labelRadius\": 50," +
-                "                \"titleField\": \"" + titleField + "\"," +
-                "                \"valueField\": \"" + valueField + "\"," +
-                "                \"allLabels\": []," +
-                "                \"balloon\": {}," +
-                (withLegend ? "                \"legend\": {\"align\": \"center\", \"markerType\": \"circle\"}," : "") +
-                "                \"titles\": [" + (titleGraph != null ? titleGraph : "") + "]," +
-                "                \"dataProvider\": " + parseToJson(dadosGrafico) +
-                "           });";
+                + montarValueKeys()
+                + montarValueLabels()
+                + " pointSize: 0,"
+                + " lineWidth: 0,"
+                + " hideHover: '" + (withLegend ? "auto" : "always") + "',"
+                + " resize: true"
+                + "});";
     }
 }
