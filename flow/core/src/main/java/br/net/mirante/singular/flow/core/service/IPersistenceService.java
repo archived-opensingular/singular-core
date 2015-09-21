@@ -38,7 +38,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     void completeTask(@NotNull TASK_INSTANCE task, @Nullable String transitionName, @Nullable MUser responsibleUser);
 
-    void setProcessInstanceParent(@NotNull PROCESS_INSTANCE instance, @NotNull PROCESS_INSTANCE instanceFather);
+    void setProcessInstanceParent(@NotNull PROCESS_INSTANCE instance, @NotNull PROCESS_INSTANCE parentTask);
 
     ROLE_USER setInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE role, MUser user);
 

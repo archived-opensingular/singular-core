@@ -58,10 +58,11 @@ public class ProcessInstance implements IEntityProcessInstance {
 	@JoinColumn(name="CO_INSTANCIA_TAREFA_PAI")
 	private TaskInstance parentTask;
 
-	//bi-directional many-to-one association to TaskInstance
+	// TODO remover este campo, era apenas provisorio no modelo
 	@ManyToOne
 	@JoinColumn(name="CO_TAREFA_ATUAL")
-	private TaskInstance taskInstance;
+	@Deprecated
+	private TaskDefinition currentTaskDefinition;
 
 	//uni-directional many-to-one association to Process
 	@ManyToOne
@@ -139,12 +140,12 @@ public class ProcessInstance implements IEntityProcessInstance {
 		this.parentTask = parentTask;
 	}
 
-	public TaskInstance getTaskInstance() {
-		return taskInstance;
+	public TaskDefinition getCurrentTaskDefinition() {
+		return currentTaskDefinition;
 	}
 
-	public void setTaskInstance(TaskInstance taskInstance) {
-		this.taskInstance = taskInstance;
+	public void setCurrentTaskDefinition(TaskDefinition currentTaskDefinition) {
+		this.currentTaskDefinition = currentTaskDefinition;
 	}
 
 	@Override
@@ -180,7 +181,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 	}
 
 	@Override
-	public List<? extends IEntityRole> getRoles() {
+	public List<RoleInstance> getRoles() {
 		return roles;
 	}
 
@@ -198,5 +199,13 @@ public class ProcessInstance implements IEntityProcessInstance {
 		}
 
 		getTasks().add(taskInstance);
+	}
+
+	public void addRole(RoleInstance roleInstance) {
+		if (getRoles() == null) {
+			setRoles(new ArrayList<>());
+		}
+
+		getRoles().add(roleInstance);
 	}
 }

@@ -54,9 +54,6 @@ public class TaskInstance implements IEntityTaskInstance {
 	@OneToMany(mappedBy="parentTask")
 	private List<ProcessInstance> childProcesses;
 
-	@OneToMany(mappedBy="taskInstance")
-	private List<ProcessInstance> taskInstances;
-
 	@ManyToOne
 	@JoinColumn(name="CO_ATOR_ALOCADO")
 	private Actor allocatedUser;
@@ -147,14 +144,6 @@ public class TaskInstance implements IEntityTaskInstance {
 
 	public void setChildProcesses(List<ProcessInstance> childProcesses) {
 		this.childProcesses = childProcesses;
-	}
-
-	public List<ProcessInstance> getTaskInstances() {
-		return taskInstances;
-	}
-
-	public void setTaskInstances(List<ProcessInstance> taskInstances) {
-		this.taskInstances = taskInstances;
 	}
 
 	@Override

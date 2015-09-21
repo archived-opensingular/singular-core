@@ -46,6 +46,10 @@ public abstract class AbstractHibernateDAO<T extends IEntityByCod> {
         getSession().delete(t);
     }
 
+    public T merge(T t) {
+        return (T) getSession().merge(t);
+    }
+
     @SuppressWarnings("unchecked")
     public T retrieveByUniqueProperty(Class<T> clazz, String prop, Object o) {
         return (T) getSession().createCriteria(clazz).add(Restrictions.eq(prop, o)).uniqueResult();

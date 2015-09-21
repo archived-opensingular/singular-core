@@ -2,7 +2,9 @@ package br.net.mirante.singular.test;
 
 import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
+import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.MBPM;
+import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import org.junit.After;
@@ -16,6 +18,7 @@ import org.junit.runners.MethodSorters;
 import javax.transaction.Transactional;
 import java.io.Serializable;
 
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -24,20 +27,17 @@ public class PeticaoTest extends TestSupport {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    private InstanciaPeticao instanciaPeticao;
 
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
         MBPM.setConf(mbpmBean);
 
-        this.instanciaPeticao = startInstance();
     }
 
     @After
     public void tearDown() {
-//        inspecionarDB();
-        System.out.println("fim teste");
+        ProcessDefinitionCache.invalidateAll();
     }
 
     @Test
@@ -53,6 +53,7 @@ public class PeticaoTest extends TestSupport {
     public void executeTransitionWithoutTransitionName() {
         thrown.expect(SingularFlowException.class);
 
+        InstanciaPeticao instanciaPeticao = startInstance();
         instanciaPeticao.executeTransition();
     }
 
@@ -64,7 +65,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(ip, "Publicado");
+        assertCurrentTaskName(PUBLICADO.getName(), ip);
     }
 
     @Test
@@ -73,7 +74,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.DEFERIR);
 
-        assertCurrentTaskName(ip, "Deferido");
+        assertCurrentTaskName(DEFERIDO.getName(), ip);
     }
 
     @Test
@@ -81,7 +82,7 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao ip = startInstance();
         ip.executeTransition(Peticao.INDEFERIR);
 
-        assertCurrentTaskName(ip, "Indeferido");
+        assertCurrentTaskName(INDEFERIDO.getName(), ip);
     }
 
     @Test
@@ -95,7 +96,18 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(ip, "Publicado");
+        assertCurrentTaskName(PUBLICADO.getName(), ip);
+    }
+
+    @Test
+    public void expirarAprovaGerente() {
+        InstanciaPeticao ip = startInstance();
+        System.out.println("Id - " + ip.getId());
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+
+        new ExecuteWaitingTasksJob(null).run();
+
+        assertCurrentTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
     }
 
     @Test
@@ -121,9 +133,9 @@ public class PeticaoTest extends TestSupport {
         assertEquals("As instâncias de processo são diferentes", cod1, cod2);
     }
 
-    private void assertCurrentTaskName(InstanciaPeticao instanciaPeticao, String expectedCurrentTaskName) {
+    private void assertCurrentTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
-                instanciaPeticao.getCurrentTaskName(),
-                expectedCurrentTaskName);
+                expectedCurrentTaskName,
+                instanciaPeticao.getCurrentTaskName());
     }
 }

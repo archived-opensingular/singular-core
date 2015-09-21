@@ -24,6 +24,10 @@ public class Actor implements MUser {
 	public Actor() {
 	}
 
+	public Actor(MUser user) {
+		this.cod = (Long)user.getCod();
+	}
+
 	public Long getCod() {
 		return this.cod;
 	}

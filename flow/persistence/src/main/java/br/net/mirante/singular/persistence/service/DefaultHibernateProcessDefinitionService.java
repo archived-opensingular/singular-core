@@ -1,5 +1,6 @@
 package br.net.mirante.singular.persistence.service;
 
+import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -149,11 +150,17 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
         Task taskEntity = new Task();
         taskEntity.setName(task.getName());
         taskEntity.setProcess(process);
-        long idTaskType = ((br.net.mirante.singular.flow.core.TaskType) task.getEffectiveTaskType()).ordinal();
-        taskEntity.setType(new TaskType(idTaskType));
+        taskEntity.setType(createTaskType(task.getEffectiveTaskType()));
         taskEntity.setTaskDefinition(retrieveOrCreateEntityDefinitionTask(process.getProcessDefinition(), task));
         taskEntity.setTransitions(new ArrayList<>());
         return taskEntity;
+    }
+
+    private TaskType createTaskType(IEntityTaskType entityTaskType) {
+        br.net.mirante.singular.flow.core.TaskType effectiveTaskType = ((br.net.mirante.singular.flow.core.TaskType) entityTaskType);
+        TaskType taskType = new TaskType();
+        taskType.setCod((long)effectiveTaskType.ordinal() + 1L);
+        return taskType;
     }
 
     @Override
