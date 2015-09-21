@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.form.Form;
@@ -14,6 +16,7 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
@@ -33,38 +36,39 @@ public class TestFormWicketBuild extends TestCase {
     }
 
     public void testVeryBasic() {
-        WicketBuildContext ctx = new WicketBuildContext(new BSGrid("teste").newColInRow());
-        IModel<MIString> mCidade = new LoadableDetachableModel<MIString>() {
+        BSGrid rootContainer = new BSGrid("teste");
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow());
+        IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
             @Override
-            protected MIString load() {
+            protected MTipoString load() {
                 MDicionario dicionario = MDicionario.create();
                 PacoteBuilder pb = dicionario.criarNovoPacote("teste");
                 MTipoString tipoCidade = pb.createTipo("cidade", MTipoString.class);
                 tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
-
-                MIString iCidade = tipoCidade.novaInstancia();
-                iCidade.setValor("Brasilia");
-                return iCidade;
+                return tipoCidade;
             }
         };
+        IModel<MIString> mCidade = new MInstanciaRaizModel<MIString>() {
+            @Override
+            protected MTipoString getTipoRaiz() {
+                return tCidade.getObject();
+            }
+        };
+        mCidade.getObject().setValor("Brasilia");
         UIBuilderWicket.buildForEdit(ctx, mCidade);
-        //        assertTrue(comp instanceof TextField);
-        //        assertEquals("Cidade", comp.getLabel().getObject());
-        //        assertEquals("Brasilia", comp.getModelObject());
 
         Form<Object> form = new Form<>("form");
         tester.startComponentInPage(new FormPanel("panel", form) {
             @Override
             protected Component newFormBody(String id) {
-                BSContainer<?> layout = new BSContainer<>(id);
-                layout.appendTag("div", ctx.getContainer());
-                return layout;
+                return new BSContainer<>(id).appendTag("div", rootContainer);
             }
         });
+        assertEquals("Brasilia", mCidade.getObject().getValor());
+
         FormTester formTester = tester.newFormTester("panel:form");
-        formTester.setValue(FormPanel.ID_FORM_BODY + ":_:1:cidade", "Guará");
+        formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
-        form.process(null);
 
         assertEquals("Guará", mCidade.getObject().getValor());
     }

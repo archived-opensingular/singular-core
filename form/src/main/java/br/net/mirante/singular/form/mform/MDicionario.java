@@ -37,7 +37,9 @@ public class MDicionario implements IContextoTipo {
     @Override
     public <T extends MTipo<?>> void carregarPacoteFromTipo(Class<T> classeTipo) {
         // TODO tentar esconder esse método. Não é interessante ficar público
-        carregarPacote(getAnotacaoPacote(classeTipo));
+        Class<? extends MPacote> classPacote = getAnotacaoPacote(classeTipo);
+//        garantirPacoteCarregado(classPacote);
+        carregarPacote(classPacote);
     }
 
     final <T extends MPacote> void garantirPacoteCarregado(Class<T> classePacote) {
@@ -78,6 +80,7 @@ public class MDicionario implements IContextoTipo {
         return tipos;
     }
 
+    @SuppressWarnings("unchecked")
     final <T extends MTipo<?>> T registrarTipo(MEscopo escopo, T novo, Class<T> classeDeRegistro) {
         if (classeDeRegistro != null) {
             Class<? extends MPacote> classePacoteAnotado = getAnotacaoPacote(classeDeRegistro);
@@ -92,7 +95,7 @@ public class MDicionario implements IContextoTipo {
         novo.resolverSuperTipo(this);
         tipos.vericaNaoDeveEstarPresente(novo);
         ((MEscopoBase) escopo).registrar(novo);
-        tipos.add(novo, (Class) classeDeRegistro);
+        tipos.add(novo, (Class<MTipo<?>>) classeDeRegistro);
         return novo;
     }
 

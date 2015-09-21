@@ -1,7 +1,6 @@
 package br.net.mirante.singular.util.wicket.util;
 
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.nullsFirst;
+import static java.util.Comparator.*;
 
 import java.io.Serializable;
 

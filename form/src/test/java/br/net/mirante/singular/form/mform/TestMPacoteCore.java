@@ -321,7 +321,7 @@ public class TestMPacoteCore extends TestCaseForm {
 
     public void testCargaAutomaticaPacotePorLerUmAtributo() {
         MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        dicionario.criarNovoPacote("teste");
 
         assertCargaPacoteA(dicionario, false);
         assertEquals(null, dicionario.getTipo(MTipoString.class).getValorAtributo(TestPacoteA.ATR_XX));
@@ -427,13 +427,14 @@ public class TestMPacoteCore extends TestCaseForm {
         assertEquals(valor, registro.getValor(path));
     }
 
-    private static void assertLista(MILista lista, Object[] valoresEsperados) {
+    private static void assertLista(MILista<?> lista, Object[] valoresEsperados) {
         assertEquals(valoresEsperados.length, lista.size());
         for (int i = 0; i < valoresEsperados.length; i++) {
             assertEquals(valoresEsperados[i], lista.getValorAt(i));
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoSimples() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
@@ -469,6 +470,7 @@ public class TestMPacoteCore extends TestCaseForm {
 
     }
 
+    @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoComposto() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
@@ -506,6 +508,7 @@ public class TestMPacoteCore extends TestCaseForm {
         assertException(() -> pedidos.setValor("[1].marca", 10), "Não é um campo definido");
     }
 
+    @SuppressWarnings("unchecked")
     public void testTipoCriacaoOfTipoCompostoTipado() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
