@@ -127,12 +127,12 @@ class EngineProcessamentoMBPM {
         executeTransition(instancia, execucaoTask.getTransicaoResultado(), null);
     }
 
-    static TaskInstance executeTransition(ProcessInstance instancia, String nomeTransicao, VarInstanceMap<?> param) {
-        return executeTransition(instancia.getCurrentTask(), nomeTransicao, param);
+    static TaskInstance executeTransition(ProcessInstance instancia, String transitionName, VarInstanceMap<?> param) {
+        return executeTransition(instancia.getCurrentTask(), transitionName, param);
     }
 
-    static TaskInstance executeTransition(TaskInstance tarefaAtual, String nomeTransicao, VarInstanceMap<?> param) {
-        MTransition transicao = searchTransition(tarefaAtual, nomeTransicao);
+    static TaskInstance executeTransition(TaskInstance tarefaAtual, String transitionName, VarInstanceMap<?> param) {
+        MTransition transicao = searchTransition(tarefaAtual, transitionName);
         return updateEstado(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 

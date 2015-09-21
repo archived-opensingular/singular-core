@@ -89,12 +89,12 @@ public abstract class ProcessInstance {
         EngineProcessamentoMBPM.executeTransition(this, null, null);
     }
 
-    public void executeTransition(String destino) {
-        EngineProcessamentoMBPM.executeTransition(this, destino, null);
+    public void executeTransition(String transitionName) {
+        EngineProcessamentoMBPM.executeTransition(this, transitionName, null);
     }
 
-    public void executeTransition(String destino, VarInstanceMap<?> param) {
-        EngineProcessamentoMBPM.executeTransition(this, destino, param);
+    public void executeTransition(String transitionName, VarInstanceMap<?> param) {
+        EngineProcessamentoMBPM.executeTransition(this, transitionName, param);
     }
 
     public TransitionCall prepareTransition(String transitionName) {
