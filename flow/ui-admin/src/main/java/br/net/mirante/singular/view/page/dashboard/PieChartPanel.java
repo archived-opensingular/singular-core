@@ -120,8 +120,7 @@ public abstract class PieChartPanel extends Panel {
     }
 
     private CharSequence montarScript(Component comp) {
-        String id = comp.getMarkupId();
-        return "            AmCharts.makeChart( \"" + id + "\", {" +
+        return "            AmCharts.makeChart( \"" + comp.getMarkupId() + "\", {" +
                 "                \"type\": \"pie\", " +
                 "                \"angle\": 12," +
                 "                \"marginTop\": -50," +

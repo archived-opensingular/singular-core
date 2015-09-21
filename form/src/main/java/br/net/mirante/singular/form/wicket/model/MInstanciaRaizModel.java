@@ -10,17 +10,11 @@ import br.net.mirante.singular.form.util.xml.MElement;
 public abstract class MInstanciaRaizModel<I extends MInstancia> implements IModel<I> {
     private MElement    serial;
     private transient I object;
-    private String      nomeTipo;
     public MInstanciaRaizModel() {}
     public MInstanciaRaizModel(I object) {
         setObject(object);
     }
-    protected abstract MTipo<I> getTipoRaiz(String nomeTipo);
-    protected MTipo<I> getTipoRaiz() {
-        if (this.nomeTipo == null)
-            return null;
-        return getTipoRaiz(this.nomeTipo);
-    }
+    protected abstract MTipo<I> getTipoRaiz();
     protected I hydrate(MTipo<I> tipoRaiz, MElement xml) {
         I instancia = tipoRaiz.novaInstancia();
         if (xml != null)
@@ -41,7 +35,6 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
     public void setObject(I object) {
         this.serial = dehydrate(object);
         this.object = object;
-        this.nomeTipo = (object == null) ? null : object.getMTipo().getNome();
     }
     @Override
     public void detach() {
@@ -51,7 +44,6 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((nomeTipo == null) ? 0 : nomeTipo.hashCode());
         result = prime * result + ((serial == null) ? 0 : serial.hashCode());
         return result;
     }
@@ -64,11 +56,6 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> implements IMode
         if (getClass() != obj.getClass())
             return false;
         MInstanciaRaizModel<?> other = (MInstanciaRaizModel<?>) obj;
-        if (nomeTipo == null) {
-            if (other.nomeTipo != null)
-                return false;
-        } else if (!nomeTipo.equals(other.nomeTipo))
-            return false;
         if (serial == null) {
             if (other.serial != null)
                 return false;

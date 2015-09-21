@@ -69,8 +69,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
-        return pesquisaService.retrieveMeanTimeByProcess(period);
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
+        return pesquisaService.retrieveMeanTimeByProcess(period, processCode);
     }
 
     @Override
@@ -89,8 +89,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<Map<String, String>> retrieveCountByTask(String processDefinitionCode) {
-        return pesquisaService.retrieveCountByTask(processDefinitionCode);
+    public List<Map<String, String>> retrieveStatsByActiveTask(String processDefinitionCode) {
+        return pesquisaService.retrieveStatsByActiveTask(processDefinitionCode);
     }
 
     @Override
@@ -101,6 +101,11 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Override
     public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
         return pesquisaService.retrieveMeanTimeActiveInstances(processCode);
+    }
+
+    @Override
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
+        return pesquisaService.retrieveAverageTimesActiveInstances(processCode);
     }
 
     @Override
@@ -124,8 +129,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<FeedDTO> retrieveAllFeed() {
-        return feedService.retrieveFeed();
+    public List<FeedDTO> retrieveAllFeed(String processCode) {
+        return feedService.retrieveFeed(processCode);
     }
 
     @Override

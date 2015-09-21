@@ -6,5 +6,5 @@ import br.net.mirante.singular.dao.FeedDTO;
 
 public interface FeedService {
 
-    List<FeedDTO> retrieveFeed();
+    List<FeedDTO> retrieveFeed(String processCode);
 }

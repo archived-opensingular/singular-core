@@ -25,9 +25,11 @@ public class PesquisaServiceImpl implements PesquisaService {
     private InstanceDAO instanceDAO;
 
     @Override
-    @Cacheable(value = "retrieveMeanTimeByProcess", key = "#period", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
-        return pesquisaDAO.retrieveMeanTimeByProcess(period);
+    @Cacheable(value = "retrieveMeanTimeByProcess",
+            key = "#period.toString().concat(#processCode?:'NULL')",
+            cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
+        return pesquisaDAO.retrieveMeanTimeByProcess(period, processCode);
     }
 
     @Override
@@ -55,9 +57,9 @@ public class PesquisaServiceImpl implements PesquisaService {
     }
 
     @Override
-    @Cacheable(value = "retrieveCountByTask", key = "#processCode", cacheManager = "cacheManager")
-    public List<Map<String, String>> retrieveCountByTask(String processCode) {
-        return pesquisaDAO.retrieveCountByTask(processCode);
+    @Cacheable(value = "retrieveStatsByActiveTask", key = "#processCode", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
+        return pesquisaDAO.retrieveStatsByActiveTask(processCode);
     }
 
     @Override
@@ -70,6 +72,12 @@ public class PesquisaServiceImpl implements PesquisaService {
     @Cacheable(value = "retrieveMeanTimeActiveInstances", key = "#processCode", cacheManager = "cacheManager")
     public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
         return instanceDAO.retrieveMeanTimeActiveInstances(processCode);
+    }
+
+    @Override
+    @Cacheable(value = "retrieveAverageTimesActiveInstances", key = "#processCode", cacheManager = "cacheManager")
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
+        return instanceDAO.retrieveAverageTimesActiveInstances(processCode);
     }
 
     @Override

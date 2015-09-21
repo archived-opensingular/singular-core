@@ -16,9 +16,9 @@ import java.util.function.Function;
 
 class MapaNomeClasseValor<K> implements Iterable<K> {
 
-    private final Function<K, String> mapeadorNome;
+    private final Function<K, String>        mapeadorNome;
 
-    private final Map<String, K> porNome = new LinkedHashMap<>();
+    private final Map<String, K>             porNome   = new LinkedHashMap<>();
     private final Map<Class<? extends K>, K> porClasse = new HashMap<>();
 
     MapaNomeClasseValor(Function<K, String> mapeadorNome) {
@@ -43,6 +43,7 @@ class MapaNomeClasseValor<K> implements Iterable<K> {
         return classeAlvo.cast(valor);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends K> T get(String nome) {
         return (T) porNome.get(nome);
     }
