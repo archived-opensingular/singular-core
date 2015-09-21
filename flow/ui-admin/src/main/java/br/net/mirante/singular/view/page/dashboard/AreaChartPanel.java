@@ -1,8 +1,10 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,52 +16,30 @@ import org.apache.wicket.model.ResourceModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-public abstract class PieChartPanel extends Panel {
+public abstract class AreaChartPanel extends Panel {
 
     private String title;
     private String subtitle;
-    private String valueField;
     private String titleField;
-    private String titleGraph;
+    private List<Pair<String, String>> valuesField;
 
-    private boolean isDonut;
     private boolean withFilter;
     private boolean withLegend;
     private PeriodType periodType;
-    private WebMarkupContainer pieChartDiv;
+    private WebMarkupContainer areaChartDiv;
     private List<Map<String, String>> dadosGrafico;
 
-    public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField) {
-        this(id, title, subtitle, valueField, titleField, false, false);
-    }
-
-    public PieChartPanel(String id, String title, String subtitle, String titleGraph,
-            String valueField, String titleField) {
-        this(id, title, subtitle, valueField, titleField, titleGraph, false, false, false);
-    }
-
-    public PieChartPanel(String id, String title, String subtitle, String titleGraph,
-            String valueField, String titleField, boolean withFilter, boolean isDonut) {
-        this(id, title, subtitle, valueField, titleField, titleGraph, withFilter, false, isDonut);
-    }
-
-    public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
-            boolean withFilter, boolean isDonut) {
-        this(id, title, subtitle, valueField, titleField, null, withFilter, false, isDonut);
-    }
-
-    public PieChartPanel(String id, String title, String subtitle, String valueField, String titleField,
-            String titleGraph, boolean withFilter, boolean withLegend, boolean isDonut) {
+    public AreaChartPanel(String id, String title, String subtitle,
+            Pair<String, String> graphInfo, String titleField,
+            boolean withFilter, boolean withLegend) {
         super(id);
         this.title = title;
         this.subtitle = subtitle;
-        this.valueField = valueField;
         this.titleField = titleField;
+        this.valuesField = new ArrayList<>();
+        this.valuesField.add(graphInfo);
         this.withFilter = withFilter;
         this.withLegend = withLegend;
-        this.isDonut = isDonut;
-        this.titleGraph = (titleGraph != null
-                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph) : null);
     }
 
     @Override
@@ -120,7 +100,26 @@ public abstract class PieChartPanel extends Panel {
     }
 
     private CharSequence montarScript(Component comp) {
-        return "            AmCharts.makeChart( \"" + comp.getMarkupId() + "\", {" +
+        String areaChart = "Morris.Area({"
+                + "element: '" + comp.getMarkupId() + "',"
+                + " padding: 0,"
+                + " behaveLikeLine: false,"
+                + " idEnabled: false,"
+                + " gridLineColor: false,"
+                + " axes: false,"
+                + " fillOpacity: 1,"
+                + " data: "
+                + parseToJson(dadosGrafico) + ","
+                + " lineColors: ['#399a8c', '#92e9dc'],"
+                + " xkey: '" + titleField + "',"
+                + " ykeys: ['sales', 'profit'],"
+                + "                    labels: ['Sales', 'Profit'],\n"
+                + "                    pointSize: 0,\n"
+                + "                    lineWidth: 0,\n"
+                + "                    hideHover: 'auto',\n"
+                + "                    resize: true\n"
+                + "                });"
+        return "            AmCharts.makeChart( \"" + id + "\", {" +
                 "                \"type\": \"pie\", " +
                 "                \"angle\": 12," +
                 "                \"marginTop\": -50," +
