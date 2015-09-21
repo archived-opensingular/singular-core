@@ -54,7 +54,7 @@
         <persistence strategy="localTempSwap"/>
     </cache>
 
-    <cache name="retrieveCountByTask"
+    <cache name="retrieveStatsByActiveTask"
            maxEntriesLocalHeap="10000"
            maxEntriesLocalDisk="1000"
            eternal="false"

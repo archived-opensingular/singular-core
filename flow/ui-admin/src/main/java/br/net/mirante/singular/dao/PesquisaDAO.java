@@ -15,6 +15,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.FloatType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -154,8 +155,9 @@ public class PesquisaDAO {
         return (List<Map<String, String>>) query.list();
     }
 
-    public List<Map<String, String>> retrieveCountByTask(String processCode) {
-        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+    public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
+                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INSTA.DT_INICIO, GETDATE()) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO"
                 + " FROM TB_INSTANCIA_TAREFA INSTA"
                 + " INNER JOIN TB_TAREFA TAR ON TAR.CO_TAREFA = INSTA.CO_TAREFA"
                 + " INNER JOIN TB_INSTANCIA_PROCESSO INS ON INSTA.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
@@ -167,6 +169,7 @@ public class PesquisaDAO {
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", StringType.INSTANCE)
+                .addScalar("TEMPO", FloatType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .setParameter("processCode", processCode);
 

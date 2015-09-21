@@ -38,7 +38,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<Map<String, String>> retrieveMeanTimeByTask(Period period, String processCode);
 
-    List<Map<String, String>> retrieveCountByTask(String processDefinitionCode);
+    List<Map<String, String>> retrieveStatsByActiveTask(String processDefinitionCode);
 
     STATUS retrieveActiveInstanceStatus(String processCode);
 

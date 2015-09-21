@@ -89,8 +89,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<Map<String, String>> retrieveCountByTask(String processDefinitionCode) {
-        return pesquisaService.retrieveCountByTask(processDefinitionCode);
+    public List<Map<String, String>> retrieveStatsByActiveTask(String processDefinitionCode) {
+        return pesquisaService.retrieveStatsByActiveTask(processDefinitionCode);
     }
 
     @Override

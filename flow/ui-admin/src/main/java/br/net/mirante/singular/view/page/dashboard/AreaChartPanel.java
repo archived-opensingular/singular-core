@@ -142,7 +142,12 @@ public abstract class AreaChartPanel extends Panel {
                 + " lineWidth: 0,"
                 + " hideHover: '" + (withLegend ? "auto" : "always") + "',"
                 + " resize: true,"
-                + " behaveLikeLine: false"
+                + " behaveLikeLine: false,"
+                + " dateFormat: function (x) {"
+                + "   var months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];"
+                + "   var value = new Date(x);"
+                + "   return months[value.getMonth()] + '/' + value.getFullYear().toString().substring(2, 4);"
+                + "}"
                 + "});";
     }
 }

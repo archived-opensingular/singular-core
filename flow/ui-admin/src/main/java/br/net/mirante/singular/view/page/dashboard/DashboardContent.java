@@ -182,7 +182,7 @@ public class DashboardContent extends Content {
                     "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveCountByTask(processDefinitionCode);
+                    return uiAdminFacade.retrieveStatsByActiveTask(processDefinitionCode);
                 }
             });
             globalContainer.add($b.visibleIf($m.ofValue(false)));
@@ -206,6 +206,14 @@ public class DashboardContent extends Content {
                 }
             }.addGraph("TEMPO2", new StringResourceModel("label.chart.active.instances.average.time.6", this)
                     .getString()));
+            tasksTimeChartContainer.add(new PieChartPanel("active-task-mean-time-chart",
+                    "label.chart.active.task.mean.time.title",
+                    "label.chart.active.task.mean.time.subtitle", null, "TEMPO", "NOME", false, false) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return uiAdminFacade.retrieveStatsByActiveTask(processDefinitionCode);
+                }
+            });
         } else {
             tasksTimeChartContainer.add($b.visibleIf($m.ofValue(false)));
         }
