@@ -141,7 +141,8 @@ public abstract class AreaChartPanel extends Panel {
                 + " pointSize: 0,"
                 + " lineWidth: 0,"
                 + " hideHover: '" + (withLegend ? "auto" : "always") + "',"
-                + " resize: true"
+                + " resize: true,"
+                + " behaveLikeLine: false"
                 + "});";
     }
 }
