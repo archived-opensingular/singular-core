@@ -50,7 +50,7 @@ public class FeedPanel extends Panel {
 
     private void initFeeds() {
         feeds.setObject(uiAdminFacade.retrieveAllFeed(processCode));
-        add(new RefreshingView<IFeedDTO>("atividades", feeds) {
+        queue(new WebMarkupContainer("instancesContent").add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
             protected Iterator<IModel<IFeedDTO>> getItemModels() {
                 List<IModel<IFeedDTO>> models = new ArrayList<>();
@@ -83,7 +83,8 @@ public class FeedPanel extends Panel {
 
                 iconColor.queue(icon);
             }
-        });
+        }).setVisible(!feeds.getObject().isEmpty()));
+        queue(new WebMarkupContainer("instancesEmptyMessage").setVisible(feeds.getObject().isEmpty()));
     }
 
     private FeedItem getFeedItem(IFeedDTO feed) {

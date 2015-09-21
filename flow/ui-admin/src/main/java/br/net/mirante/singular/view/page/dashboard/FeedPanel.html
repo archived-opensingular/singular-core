@@ -19,8 +19,11 @@
             <!-- BEGIN TABS -->
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1_1">
-                    <div class="scroller"
-                         style="height: 337px; overflow: hidden; width: auto;"
+                    <div wicket:id="instancesEmptyMessage" style="height: 351px;">
+                        <wicket:message key="feed.panel.tab.content.empty"/>
+                    </div>
+                    <div wicket:id="instancesContent" class="scroller"
+                         style="height: 351px; overflow: hidden; width: auto;"
                          data-always-visible="1" data-rail-visible="1"
                          data-handle-color="#D7DCE2" data-initialized="1">
                         <ul class="feeds" wicket:id="atividades">
@@ -50,10 +53,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="tab_1_2">
-                    <div class="scroller"
-                         style="height: 337px; overflow: hidden; width: auto;"
-                         data-always-visible="1" data-rail-visible="1"
-                         data-handle-color="#D7DCE2" data-initialized="1">
+                    <div style="height: 351px;">
                         <wicket:message key="feed.panel.tab.content.empty"/>
                     </div>
                 </div>
