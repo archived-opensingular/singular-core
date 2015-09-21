@@ -1,5 +1,6 @@
 package br.net.mirante.singular.wicket;
 
+import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
@@ -21,7 +22,10 @@ public class UIAdminSession extends AuthenticatedWebSession {
         this.logout = request.getRequestParameters().getParameterValue("logout").toString(null);
         this.roles = new Roles();
         this.roles.add(Roles.USER);
-        this.roles.add(Roles.ADMIN);
+
+        if (RuntimeConfigurationType.DEVELOPMENT.equals(UIAdminApplication.get().getConfigurationType())) {
+            this.roles.add(Roles.ADMIN);
+        }
     }
 
     public static UIAdminSession get() {
