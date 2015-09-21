@@ -33,9 +33,9 @@ public abstract class TestSupport {
      */
     public void inspecionarDB() {
         org.hsqldb.util.DatabaseManagerSwing.main(new String[]{
-                "--url", "jdbc:hsqldb:mem:singulardb", "--noexit"
+                "--url", "jdbc:hsqldb:file:singulardb", "--noexit"
         });
-        aguardarEnter();
+//        aguardarEnter();
     }
 
     private void aguardarEnter() {
