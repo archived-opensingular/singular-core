@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -71,6 +72,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 
 	//bi-directional many-to-one association to TaskInstance
 	@OneToMany(mappedBy="processInstance")
+	@OrderBy("beginDate")
 	private List<TaskInstance> tasks;
 
 	//bi-directional many-to-one association to Variable

@@ -1,5 +1,6 @@
 package br.net.mirante.singular.test;
 
+import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
 import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
@@ -7,6 +8,7 @@ import br.net.mirante.singular.flow.core.MBPM;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
+import br.net.mirante.singular.persistence.entity.TaskInstance;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -17,10 +19,10 @@ import org.junit.runners.MethodSorters;
 
 import javax.transaction.Transactional;
 import java.io.Serializable;
+import java.util.Calendar;
 
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -105,9 +107,26 @@ public class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
+        TaskInstance currentTask = (TaskInstance)ip.getEntity().getCurrentTask();
+        addDaysToTaskTargetDate(currentTask, -3);
+        testDAO.update(currentTask);
+
         new ExecuteWaitingTasksJob(null).run();
 
         assertCurrentTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
+    }
+
+    @Test
+    public void verificarUserTemPermissaoAcesso() {
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        assertTrue("Usuário não tem permissao", ip.canExecuteTask(CoisasQueDeviamSerParametrizadas.USER));
+    }
+
+    @Test
+    public void verificarUserNaoPermissaoAcesso() {
+        InstanciaPeticao ip = startInstance();
+        assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(CoisasQueDeviamSerParametrizadas.USER));
     }
 
     @Test
@@ -136,6 +155,14 @@ public class PeticaoTest extends TestSupport {
     private void assertCurrentTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getCurrentTaskName());
+                instanciaPeticao.getCurrentTask().getName());
+    }
+
+    private void addDaysToTaskTargetDate(TaskInstance taskInstance, int days) {
+        Calendar newEndDate = Calendar.getInstance();
+        newEndDate.setTime(taskInstance.getTargetEndDate());
+        newEndDate.add(Calendar.DATE, days);
+
+        taskInstance.setTargetEndDate(newEndDate.getTime());
     }
 }

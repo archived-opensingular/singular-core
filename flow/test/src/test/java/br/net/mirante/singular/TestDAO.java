@@ -26,4 +26,8 @@ public class TestDAO {
         sessionFactory.getCurrentSession().save(o);
     }
 
+    public void update(Object o) {
+        sessionFactory.getCurrentSession().update(o);
+    }
+
 }

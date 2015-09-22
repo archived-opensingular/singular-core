@@ -4,20 +4,21 @@ import br.net.mirante.singular.defaults.DefaultPageStrategy;
 import br.net.mirante.singular.defaults.DefaultTaskAccessStrategy;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
-import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
+import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.TaskPredicates;
+import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.builder.BEnd;
 import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.BPeople;
-import br.net.mirante.singular.flow.core.builder.FlowBuilder;
+import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Collections;
+import java.util.List;
 
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
 
@@ -65,19 +66,22 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
+        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", new EmptyUserRoleSettingStrategy(), false);
+
         BJava notificarNovaInstancia = flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
-        BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, new DefaultTaskAccessStrategy());
+        BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
         aguardandoAnalise.withExecutionPage(new DefaultPageStrategy());
-        aguardandoAnalise.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 0).getTime());
         BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new DefaultTaskAccessStrategy());
         emExigencia.withExecutionPage(new DefaultPageStrategy());
         BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, new DefaultTaskAccessStrategy());
         aguardandoGerente.withExecutionPage(new DefaultPageStrategy());
+        aguardandoGerente.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
         BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new DefaultTaskAccessStrategy());
         aguardandoPublicacao.withExecutionPage(new DefaultPageStrategy());
         BEnd indeferido = flow.addEnd(INDEFERIDO);
         BEnd deferido = flow.addEnd(DEFERIDO);
         BEnd publicado = flow.addEnd(PUBLICADO);
+        publicado.addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
         flow.setStartTask(notificarNovaInstancia);
 
         flow.addTransition(notificarNovaInstancia, ENVIAR_PARA_ANALISE, aguardandoAnalise);
@@ -92,7 +96,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         // Tarefa aguardando analise a mais de um dia é indeferida automaticamente
         flow.addAutomaticTransition(aguardandoAnalise, TaskPredicates.timeLimitInDays(1), indeferido);
-        flow.addAutomaticTransition(aguardandoGerente, TaskPredicates.timeLimitInDays(0), aguardandoPublicacao);
+        flow.addAutomaticTransition(aguardandoGerente, TaskPredicates.timeLimitInDays(1), aguardandoPublicacao);
 
         return flow.build();
     }
@@ -107,6 +111,13 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
     public void notificar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
         System.out.println("Notificado");
 
+    }
+
+    private static class EmptyUserRoleSettingStrategy extends UserRoleSettingStrategy<InstanciaPeticao> {
+        @Override
+        public List<? extends MUser> listAllocableUsers(InstanciaPeticao instancia) {
+            return Collections.emptyList();
+        }
     }
 
 }

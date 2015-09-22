@@ -40,6 +40,7 @@ import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -82,6 +83,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setBeginDate(agora);
         processInstance.setProcess(process);
+        processInstance.setRoles(new ArrayList<>());
 
         return processInstance;
     }
