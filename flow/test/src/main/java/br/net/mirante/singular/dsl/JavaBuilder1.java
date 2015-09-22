@@ -1,6 +1,6 @@
 package br.net.mirante.singular.dsl;
 
-import br.net.mirante.singular.definicao.InstanciaPeticao;
+import br.net.mirante.singular.flow.core.ProcessInstance;
 
 public class JavaBuilder1 {
 
@@ -23,8 +23,8 @@ public class JavaBuilder1 {
 
 
     @FunctionalInterface
-    public static  interface TaskExecutor{
+    public static  interface TaskExecutor<T extends ProcessInstance>{
 
-        String execute(InstanciaPeticao instancia);
+        String execute(T instancia);
     }
 }

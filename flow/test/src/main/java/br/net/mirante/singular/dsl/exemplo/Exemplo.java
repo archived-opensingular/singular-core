@@ -55,7 +55,7 @@ public class Exemplo {
         return null;
     }
 
-    private String predicate(InstanciaPeticao i){
+    private String predicate(ProcessInstance i){
         return null;
     }
 }

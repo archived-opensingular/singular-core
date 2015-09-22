@@ -1,7 +1,7 @@
 package br.net.mirante.singular.dsl;
 
 
-import br.net.mirante.singular.definicao.InstanciaPeticao;
+import br.net.mirante.singular.flow.core.ProcessInstance;
 
 public class WaitBuilder1 {
     public WaitBuilder1(PeopleBuilder2 peopleBuilder2) {
@@ -12,8 +12,8 @@ public class WaitBuilder1 {
     }
 
     @FunctionalInterface
-    public static interface WaitPredicate {
+    public static interface WaitPredicate<T extends ProcessInstance> {
 
-        String execute(InstanciaPeticao i);
+        String execute(ProcessInstance i);
     }
 }
