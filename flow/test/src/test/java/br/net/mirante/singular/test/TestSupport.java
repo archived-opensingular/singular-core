@@ -1,22 +1,23 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.TestDAO;
-import br.net.mirante.singular.TestMBPMBean;
+import java.util.Scanner;
+
+import javax.inject.Inject;
+
 import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.Scanner;
+import br.net.mirante.singular.TestDAO;
+import br.net.mirante.singular.TestMBPMBean;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 @Transactional
-@TransactionConfiguration(defaultRollback = false)
+@Rollback(value = false)
 public abstract class TestSupport {
 
     @Inject
@@ -33,7 +34,7 @@ public abstract class TestSupport {
      * ENTER no console.
      */
     public void inspecionarDB() {
-        org.hsqldb.util.DatabaseManagerSwing.main(new String[]{
+        org.hsqldb.util.DatabaseManagerSwing.main(new String[] {
                 "--url", "jdbc:hsqldb:file:singulardb", "--noexit"
         });
 //        aguardarEnter();
@@ -44,5 +45,4 @@ public abstract class TestSupport {
         Scanner scanner = new Scanner(System.in);
         scanner.nextLine();
     }
-
 }

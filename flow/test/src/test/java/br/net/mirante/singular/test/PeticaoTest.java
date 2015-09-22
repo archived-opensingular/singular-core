@@ -1,5 +1,16 @@
 package br.net.mirante.singular.test;
 
+import java.io.Serializable;
+import java.util.Calendar;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runners.MethodSorters;
+
 import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
 import br.net.mirante.singular.ConstantesUtil;
 import br.net.mirante.singular.definicao.InstanciaPeticao;
@@ -11,20 +22,15 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runners.MethodSorters;
 
-import javax.transaction.Transactional;
-import java.io.Serializable;
-import java.util.Calendar;
-
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
-import static org.junit.Assert.*;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -36,7 +42,6 @@ public class PeticaoTest extends TestSupport {
     public void setup() {
         assertNotNull(mbpmBean);
         MBPM.setConf(mbpmBean);
-
     }
 
     @After
@@ -60,7 +65,6 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao instanciaPeticao = startInstance();
         instanciaPeticao.executeTransition();
     }
-
 
     @Test
     public void executeHappyPath() {
@@ -109,7 +113,7 @@ public class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = (TaskInstance)ip.getEntity().getCurrentTask();
+        TaskInstance currentTask = (TaskInstance) ip.getEntity().getCurrentTask();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
@@ -147,8 +151,8 @@ public class PeticaoTest extends TestSupport {
             }
         }
 
+        assertNotNull(role);
         assertEquals("Usuário diferente do esperado.", ConstantesUtil.USER_4, role.getUser());
-
     }
 
     @Test
