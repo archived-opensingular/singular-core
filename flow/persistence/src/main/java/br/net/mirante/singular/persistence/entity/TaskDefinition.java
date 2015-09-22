@@ -29,7 +29,7 @@ public class TaskDefinition implements IEntityTaskDefinition {
     @Column(name = "CO_DEFINICAO_TAREFA")
     private Long cod;
 
-    @Column(name = "SG_TAREFA")
+    @Column(name = "SG_TAREFA", nullable = false)
     private String abbreviation;
 
 	//bi-directional many-to-one association to TaskRight
@@ -38,7 +38,7 @@ public class TaskDefinition implements IEntityTaskDefinition {
 
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
-    @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
     private ProcessDefinition processDefinition;
 
     @OneToMany(mappedBy = "taskDefinition")

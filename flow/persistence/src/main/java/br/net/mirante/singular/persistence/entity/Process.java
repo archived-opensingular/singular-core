@@ -23,12 +23,12 @@ public class Process implements IEntityProcess {
 	private Long cod;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_VERSAO")
+	@Column(name="DT_VERSAO", nullable = false)
 	private Date versionDate;
 
 	//uni-directional many-to-one association to ProcessDefinition
 	@ManyToOne
-	@JoinColumn(name="CO_DEFINICAO_PROCESSO")
+	@JoinColumn(name="CO_DEFINICAO_PROCESSO", nullable = false)
 	private ProcessDefinition processDefinition;
 
 	@OneToMany(mappedBy = "process")

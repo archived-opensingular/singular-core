@@ -21,10 +21,10 @@ public class Actor implements MUser {
 	@Column(name="CO_ATOR")
 	private Long cod;
 
-	@Column(name="NO_ATOR")
+	@Column(name="NO_ATOR", nullable = false)
 	private String nome;
 
-	@Column(name="DS_EMAIL")
+	@Column(name="DS_EMAIL", nullable = false)
 	private String email;
 
 	public Actor() {

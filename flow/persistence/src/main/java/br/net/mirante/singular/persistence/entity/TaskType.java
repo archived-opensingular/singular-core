@@ -26,7 +26,7 @@ public class TaskType implements IEntityTaskType {
 	@Column(name="CO_TIPO_TAREFA")
 	private Long cod;
 
-	@Column(name="DS_TIPO_TAREFA")
+	@Column(name="DS_TIPO_TAREFA", nullable = false)
 	private String name;
 
 	public TaskType() {

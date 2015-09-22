@@ -42,7 +42,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 	private Date endDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_INICIO")
+	@Column(name="DT_INICIO", nullable = false)
 	private Date beginDate;
 
 	//uni-directional many-to-one association to Actor
@@ -63,7 +63,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 
 	//uni-directional many-to-one association to Process
 	@ManyToOne
-	@JoinColumn(name="CO_PROCESSO")
+	@JoinColumn(name="CO_PROCESSO", nullable = false)
 	private Process process;
 
 	//bi-directional many-to-one association to TaskInstance

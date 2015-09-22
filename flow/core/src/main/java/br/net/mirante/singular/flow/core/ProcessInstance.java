@@ -390,6 +390,9 @@ public abstract class ProcessInstance {
 
     public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
         MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
+        if (mProcessRole == null) {
+            throw new SingularFlowException("Não foi possível encontrar a role: " + roleAbbreviation);
+        }
         MUser previousUser = getUserWithRole(mProcessRole.getAbbreviation());
 
         if (previousUser == null) {

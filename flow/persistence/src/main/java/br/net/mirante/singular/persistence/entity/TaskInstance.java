@@ -51,7 +51,7 @@ public class TaskInstance implements IEntityTaskInstance {
 	private Date endDate;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_INICIO")
+	@Column(name="DT_INICIO", nullable = false)
 	private Date beginDate;
 
 	@Column(name="SE_SUSPENSA")
@@ -69,11 +69,11 @@ public class TaskInstance implements IEntityTaskInstance {
 	private Actor responsibleUser;
 
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
+	@JoinColumn(name="CO_INSTANCIA_PROCESSO", nullable = false)
 	private ProcessInstance processInstance;
 
 	@ManyToOne
-	@JoinColumn(name="CO_TAREFA")
+	@JoinColumn(name="CO_TAREFA", nullable = false)
 	private Task task;
 
 	@ManyToOne

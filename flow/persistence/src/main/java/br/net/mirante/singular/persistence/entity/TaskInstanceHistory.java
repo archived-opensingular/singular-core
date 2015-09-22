@@ -54,12 +54,12 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
 
 	//uni-directional many-to-one association to TaskInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_TAREFA")
+	@JoinColumn(name="CO_INSTANCIA_TAREFA", nullable = false)
 	private TaskInstance taskInstance;
 
 	//uni-directional many-to-one association to TaskHistoryType
 	@ManyToOne
-	@JoinColumn(name="CO_TIPO_HISTORICO_TAREFA")
+	@JoinColumn(name="CO_TIPO_HISTORICO_TAREFA", nullable = false)
 	private TaskHistoryType taskHistoryType;
 
 	public TaskInstanceHistory() {

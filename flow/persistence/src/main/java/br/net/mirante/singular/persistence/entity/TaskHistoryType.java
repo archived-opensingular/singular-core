@@ -25,7 +25,7 @@ public class TaskHistoryType implements IEntityTaskHistoricType {
     @Column(name = "CO_TIPO_HISTORICO_TAREFA")
     private Long cod;
 
-    @Column(name = "DS_TIPO_HISTORICO_TAREFA")
+    @Column(name = "DS_TIPO_HISTORICO_TAREFA", nullable = false)
     private String description;
 
     public TaskHistoryType() {

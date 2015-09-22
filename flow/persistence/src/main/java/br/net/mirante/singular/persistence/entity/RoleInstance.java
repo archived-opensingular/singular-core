@@ -31,12 +31,12 @@ public class RoleInstance implements IEntityRole {
 	private Long cod;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_CRIACAO")
+	@Column(name="DT_CRIACAO", nullable = false)
 	private Date createDate;
 
 	//uni-directional many-to-one association to Actor
 	@ManyToOne
-	@JoinColumn(name="CO_ATOR")
+	@JoinColumn(name="CO_ATOR", nullable = false)
 	private Actor actor;
 
 	//uni-directional many-to-one association to Actor
@@ -46,12 +46,12 @@ public class RoleInstance implements IEntityRole {
 
 	//uni-directional many-to-one association to ProcessInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
+	@JoinColumn(name="CO_INSTANCIA_PROCESSO", nullable = false)
 	private ProcessInstance processInstance;
 
 	//uni-directional many-to-one association to Role
 	@ManyToOne
-	@JoinColumn(name="CO_PAPEL")
+	@JoinColumn(name="CO_PAPEL", nullable = false)
 	private Role role;
 
 	public RoleInstance() {

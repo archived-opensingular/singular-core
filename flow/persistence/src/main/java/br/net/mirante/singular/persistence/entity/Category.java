@@ -28,7 +28,7 @@ public class Category implements IEntityCategory {
     @Column(name = "CO_CATEGORIA")
     private Long cod;
 
-    @Column(name = "NO_CATEGORIA")
+    @Column(name = "NO_CATEGORIA", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "category")

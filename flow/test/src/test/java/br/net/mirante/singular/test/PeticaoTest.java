@@ -151,6 +151,22 @@ public class PeticaoTest extends TestSupport {
 
     }
 
+    @Test
+    public void atribuirPapelInexistente() {
+        thrown.expect(SingularFlowException.class);
+        thrown.expectMessage("Não foi possível encontrar a role: Inexistente");
+
+        InstanciaPeticao ip = startInstance();
+        ip.addOrReplaceUserRole("Inexistente", ConstantesUtil.USER_1);
+    }
+
+    @Test
+    @Transactional(Transactional.TxType.NEVER)
+    public void zTest() {
+        inspecionarDB();
+        System.out.println("");
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     ////                               MÉTODOS UTILITÁRIOS                                       ////
     /////////////////////////////////////////////////////////////////////////////////////////////////

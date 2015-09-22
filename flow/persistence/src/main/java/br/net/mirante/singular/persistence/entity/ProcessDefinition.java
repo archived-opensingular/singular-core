@@ -22,13 +22,13 @@ public class ProcessDefinition implements IEntityProcessDefinition {
 	@Column(name="CO_DEFINICAO_PROCESSO")
 	private Long cod;
 
-	@Column(name="NO_CLASSE_JAVA")
+	@Column(name="NO_CLASSE_JAVA", nullable = false)
 	private String definitionClassName;
 
-	@Column(name="NO_PROCESSO")
+	@Column(name="NO_PROCESSO", nullable = false)
 	private String name;
 
-	@Column(name="SG_PROCESSO")
+	@Column(name="SG_PROCESSO", nullable = false)
 	private String abbreviation;
 
 	//bi-directional many-to-one association to ProcessRight

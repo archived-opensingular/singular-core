@@ -21,10 +21,10 @@ public class VariableType implements IEntityVariableType {
 	@Column(name="CO_TIPO_VARIAVEL")
 	private Long cod;
 
-	@Column(name="DS_TIPO_VARIAVEL")
+	@Column(name="DS_TIPO_VARIAVEL", nullable = false)
 	private String description;
 
-	@Column(name="NO_CLASSE_JAVA")
+	@Column(name="NO_CLASSE_JAVA", nullable = false)
 	private String typeClassName;
 
 	public VariableType() {

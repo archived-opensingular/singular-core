@@ -23,7 +23,7 @@ public class Variable implements IEntityVariableInstance {
 	@Column(name="CO_VARIAVEL")
 	private Long cod;
 
-	@Column(name="NO_VARIAVEL")
+	@Column(name="NO_VARIAVEL", nullable = false)
 	private String name;
 
 	@Column(name="VL_VARIAVEL")
@@ -31,12 +31,12 @@ public class Variable implements IEntityVariableInstance {
 
 	//bi-directional many-to-one association to ProcessInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
+	@JoinColumn(name="CO_INSTANCIA_PROCESSO", nullable = false)
 	private ProcessInstance processInstance;
 
 	//uni-directional many-to-one association to VariableType
 	@ManyToOne
-	@JoinColumn(name="CO_TIPO_VARIAVEL")
+	@JoinColumn(name="CO_TIPO_VARIAVEL", nullable = false)
 	private VariableType type;
 
 	public Variable() {

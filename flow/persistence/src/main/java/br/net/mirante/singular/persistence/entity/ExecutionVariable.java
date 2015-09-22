@@ -22,10 +22,10 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 	private long cod;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_HISTORICO")
+	@Column(name="DT_HISTORICO", nullable = false)
 	private Date date;
 
-	@Column(name="NO_VARIAVEL")
+	@Column(name="NO_VARIAVEL", nullable = false)
 	private String name;
 
 	@Column(name="VL_NOVO")
@@ -33,22 +33,22 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 
 	//bi-directional many-to-one association to ProcessInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_PROCESSO")
+	@JoinColumn(name="CO_INSTANCIA_PROCESSO", nullable = false)
 	private ProcessInstance processInstance;
 
 	//uni-directional many-to-one association to TaskInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_TAREFA_DESTINO")
+	@JoinColumn(name="CO_INSTANCIA_TAREFA_DESTINO", nullable = false)
 	private TaskInstance destinationTask;
 
 	//uni-directional many-to-one association to TaskInstance
 	@ManyToOne
-	@JoinColumn(name="CO_INSTANCIA_TAREFA_ORIGEM")
+	@JoinColumn(name="CO_INSTANCIA_TAREFA_ORIGEM", nullable = false)
 	private TaskInstance originTask;
 
 	//uni-directional many-to-one association to VariableType
 	@ManyToOne
-	@JoinColumn(name="CO_TIPO_VARIAVEL")
+	@JoinColumn(name="CO_TIPO_VARIAVEL", nullable = false)
 	private VariableType variableType;
 
 	//bi-directional many-to-one association to Variable

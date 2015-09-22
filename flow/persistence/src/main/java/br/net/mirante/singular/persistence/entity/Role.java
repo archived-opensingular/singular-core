@@ -30,10 +30,10 @@ public class Role implements IEntityProcessRole {
     @Column(name = "CO_PAPEL")
     private Long cod;
 
-    @Column(name = "NO_PAPEL")
+    @Column(name = "NO_PAPEL", nullable = false)
     private String name;
 
-    @Column(name = "SG_PAPEL")
+    @Column(name = "SG_PAPEL", nullable = false)
     private String abbreviation;
 
     //bi-directional many-to-one association to ProcessDefinition

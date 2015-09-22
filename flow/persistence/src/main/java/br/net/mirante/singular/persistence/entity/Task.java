@@ -30,22 +30,22 @@ public class Task implements IEntityTask {
     @Column(name = "CO_TAREFA")
     private Long cod;
 
-    @Column(name = "NO_TAREFA")
+    @Column(name = "NO_TAREFA", nullable = false)
     private String name;
 
     //uni-directional many-to-one association to TaskDefinition
     @ManyToOne
-    @JoinColumn(name = "CO_DEFINICAO_TAREFA")
+    @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
     private TaskDefinition taskDefinition;
 
     //uni-directional many-to-one association to Processo
     @ManyToOne
-    @JoinColumn(name = "CO_PROCESSO")
+    @JoinColumn(name = "CO_PROCESSO", nullable = false)
     private Process process;
 
     //uni-directional many-to-one association to TaskType
     @ManyToOne
-    @JoinColumn(name = "CO_TIPO_TAREFA")
+    @JoinColumn(name = "CO_TIPO_TAREFA", nullable = false)
     private TaskType type;
 
     @OneToMany(mappedBy = "originTask")

@@ -30,24 +30,24 @@ public class Transition implements IEntityTaskTransition {
     @Column(name = "CO_TRANSICAO")
     private Long cod;
 
-    @Column(name = "NO_TRANSICAO")
+    @Column(name = "NO_TRANSICAO", nullable = false)
     private String name;
 
-    @Column(name = "SG_TRANSICAO")
+    @Column(name = "SG_TRANSICAO", nullable = false)
     private String abbreviation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TP_TRANSICAO")
+    @Column(name = "TP_TRANSICAO", nullable = false)
     private TransitionType type;
 
     //uni-directional many-to-one association to Task
     @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_DESTINO")
+    @JoinColumn(name = "CO_TAREFA_DESTINO", nullable = false)
     private Task destinationTask;
 
     //uni-directional many-to-one association to Task
     @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_ORIGEM")
+    @JoinColumn(name = "CO_TAREFA_ORIGEM", nullable = false)
     private Task originTask;
 
     public Transition() {
