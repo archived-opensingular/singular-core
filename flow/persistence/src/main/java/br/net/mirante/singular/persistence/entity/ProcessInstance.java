@@ -1,9 +1,6 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.persistence.entity.util.ActorWrapper;
 import br.net.mirante.singular.persistence.util.Constants;
 
 import javax.persistence.Column;
@@ -13,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -125,8 +121,8 @@ public class ProcessInstance implements IEntityProcessInstance {
 	}
 
 	@Override
-	public MUser getUserCreator() {
-		return ActorWrapper.wrap(userCreator);
+	public Actor getUserCreator() {
+		return userCreator;
 	}
 
 	public void setUserCreator(Actor userCreator) {

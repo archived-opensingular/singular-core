@@ -1,6 +1,7 @@
 package br.net.mirante.singular.test;
 
 import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
+import br.net.mirante.singular.ConstantesUtil;
 import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
@@ -8,6 +9,7 @@ import br.net.mirante.singular.flow.core.MBPM;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
 import org.junit.After;
 import org.junit.Before;
@@ -127,6 +129,25 @@ public class PeticaoTest extends TestSupport {
     public void verificarUserNaoPermissaoAcesso() {
         InstanciaPeticao ip = startInstance();
         assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(CoisasQueDeviamSerParametrizadas.USER));
+    }
+
+    @Test
+    public void trocarUsuarioPapel() {
+        InstanciaPeticao ip = startInstance();
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_1);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_3);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_4);
+
+        IEntityRole role = null;
+        for (IEntityRole entityRole : ip.getEntity().getRoles()) {
+            if (entityRole.getRole().getAbbreviation().equalsIgnoreCase(Peticao.PAPEL_ANALISTA)) {
+                role = entityRole;
+            }
+        }
+
+        assertEquals("Usuário diferente do esperado.", ConstantesUtil.USER_4, role.getUser());
+
     }
 
     @Test

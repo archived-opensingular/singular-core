@@ -56,6 +56,9 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
     public static final String CUMPRIR_EXIGENCIA = "Cumprir exigência";
     public static final String SOLICITAR_AJUSTE_ANALISE = "Solicitar ajuste análise técnica";
 
+    // Papeis
+    public static final String PAPEL_ANALISTA = "analista";
+
     public Peticao() {
         super(InstanciaPeticao.class);
     }
@@ -66,7 +69,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
-        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", new EmptyUserRoleSettingStrategy(), false);
+        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, new EmptyUserRoleSettingStrategy(), false);
 
         BJava notificarNovaInstancia = flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);

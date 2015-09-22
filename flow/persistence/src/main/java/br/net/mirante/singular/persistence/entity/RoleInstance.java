@@ -1,11 +1,18 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.persistence.entity.util.ActorWrapper;
 import br.net.mirante.singular.persistence.util.Constants;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 
@@ -65,8 +72,8 @@ public class RoleInstance implements IEntityRole {
 	}
 
 	@Override
-	public MUser getAllocatorUser() {
-		return ActorWrapper.wrap(getActor());
+	public Actor getAllocatorUser() {
+		return getActor();
 	}
 
 	public void setCreateDate(Date createDate) {
@@ -104,8 +111,8 @@ public class RoleInstance implements IEntityRole {
 	}
 
 	@Override
-	public MUser getUser() {
-		return ActorWrapper.wrap(actor);
+	public Actor getUser() {
+		return actor;
 	}
 
 	public void setRole(Role role) {

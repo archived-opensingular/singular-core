@@ -21,11 +21,13 @@ public class Actor implements MUser {
 	@Column(name="CO_ATOR")
 	private Long cod;
 
-	public Actor() {
-	}
+	@Column(name="NO_ATOR")
+	private String nome;
 
-	public Actor(MUser user) {
-		this.cod = (Long)user.getCod();
+	@Column(name="DS_EMAIL")
+	private String email;
+
+	public Actor() {
 	}
 
 	public Long getCod() {
@@ -38,12 +40,23 @@ public class Actor implements MUser {
 
 	@Override
 	public String getNomeGuerra() {
-		throw new UnsupportedOperationException("Método não implementado");
+		return getNome();
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	@Override
 	public String getEmail() {
-		throw new UnsupportedOperationException("Método não implementado");
+		return email;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }

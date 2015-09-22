@@ -130,7 +130,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     public RoleInstance setInstanceUserRole(ProcessInstance instance, Role role, MUser user) {
         final RoleInstance roleInstance = new RoleInstance();
         roleInstance.setProcessInstance(instance);
-        roleInstance.setActor(new Actor(user));
+        roleInstance.setActor((Actor) user);
         roleInstance.setRole(role);
         //TODO recuperar ator que esta executando acao
 //        roleInstance.setAllocatorActor();
@@ -244,10 +244,10 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
         taskInstanceHistory.setTaskHistoryType(taskHistoryType);
         taskInstanceHistory.setDescription(detail);
         if (allocatedUser != null) {
-            taskInstanceHistory.setAllocatedUser(new Actor(allocatedUser));
+            taskInstanceHistory.setAllocatedUser((Actor) allocatedUser);
         }
         if (responsibleUser != null) {
-            taskInstanceHistory.setAllocatorUser(new Actor(responsibleUser));
+            taskInstanceHistory.setAllocatorUser((Actor) responsibleUser);
         }
 
         taskInstanceHistoryDAO.save(taskInstanceHistory);
@@ -309,7 +309,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
 
     @Override
     public void relocateTask(TaskInstance taskInstance, MUser user) {
-        taskInstance.setAllocatedUser(new Actor(user));
+        taskInstance.setAllocatedUser((Actor) user);
         taskInstance.setSuspensionTargetDate(null);
 
         updateTask(taskInstance);
