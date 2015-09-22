@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.Serializable;
 import java.util.List;
 
 @Named
@@ -28,6 +29,15 @@ public class TestDAO {
 
     public void update(Object o) {
         sessionFactory.getCurrentSession().update(o);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T restrieveById(Class<T> clazz, Serializable cod) {
+        return (T) sessionFactory.getCurrentSession().load(clazz, cod);
+    }
+
+    public void refresh(Object entity) {
+        sessionFactory.getCurrentSession().refresh(entity);
     }
 
 }

@@ -144,6 +144,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     @Override
     public void removeInstanceUserRole(ProcessInstance instance, RoleInstance roleInstance) {
         roleInstanceDAO.delete(roleInstance);
+        flushSession();
         processInstanceDAO.refresh(instance);
     }
 

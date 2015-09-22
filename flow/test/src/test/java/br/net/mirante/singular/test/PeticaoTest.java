@@ -140,6 +140,7 @@ public class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_4);
 
         IEntityRole role = null;
+        testDAO.refresh(ip.getEntity());
         for (IEntityRole entityRole : ip.getEntity().getRoles()) {
             if (entityRole.getRole().getAbbreviation().equalsIgnoreCase(Peticao.PAPEL_ANALISTA)) {
                 role = entityRole;
@@ -148,13 +149,6 @@ public class PeticaoTest extends TestSupport {
 
         assertEquals("Usuário diferente do esperado.", ConstantesUtil.USER_4, role.getUser());
 
-    }
-
-    @Test
-    @Transactional(Transactional.TxType.NEVER)
-    public void zTest() {
-        inspecionarDB();
-        System.out.println("");
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
