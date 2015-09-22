@@ -161,10 +161,9 @@ public class PeticaoTest extends TestSupport {
     }
 
     @Test
-    @Transactional(Transactional.TxType.NEVER)
-    public void zTest() {
-        inspecionarDB();
-        System.out.println("");
+    public void atribuirPapelExistenteEmOutraTask() {
+        InstanciaPeticao ip = startInstance();
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////

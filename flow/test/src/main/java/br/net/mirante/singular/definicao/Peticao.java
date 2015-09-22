@@ -58,6 +58,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
     // Papeis
     public static final String PAPEL_ANALISTA = "analista";
+    public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
         super(InstanciaPeticao.class);
@@ -70,13 +71,14 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
         BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, new EmptyUserRoleSettingStrategy(), false);
+        BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, new EmptyUserRoleSettingStrategy(), false);
 
         BJava notificarNovaInstancia = flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
         aguardandoAnalise.withExecutionPage(new DefaultPageStrategy());
         BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new DefaultTaskAccessStrategy());
         emExigencia.withExecutionPage(new DefaultPageStrategy());
-        BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, new DefaultTaskAccessStrategy());
+        BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente);
         aguardandoGerente.withExecutionPage(new DefaultPageStrategy());
         aguardandoGerente.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
         BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new DefaultTaskAccessStrategy());
