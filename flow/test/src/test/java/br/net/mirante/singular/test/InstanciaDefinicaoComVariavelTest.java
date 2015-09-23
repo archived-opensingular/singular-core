@@ -1,7 +1,8 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.definicao.InstanciaDefinicaoComVariavel;
 import org.junit.Test;
+
+import br.net.mirante.singular.definicao.InstanciaDefinicaoComVariavel;
 
 public class InstanciaDefinicaoComVariavelTest extends TestSupport {
 
@@ -13,5 +14,4 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
             System.out.println("acabou");
         }
     }
-
 }

@@ -1,6 +1,9 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.flow.core.MBPM;
+import java.util.List;
+
+import org.junit.Test;
+
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
@@ -20,9 +23,6 @@ import br.net.mirante.singular.persistence.entity.TaskType;
 import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.Variable;
 import br.net.mirante.singular.persistence.entity.VariableType;
-import org.junit.Test;
-
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -64,5 +64,4 @@ public class SetupTest extends TestSupport {
     private void listaAllFor(Class<?> clazz) {
         sessionFactory.getCurrentSession().createCriteria(clazz).list();
     }
-
 }
