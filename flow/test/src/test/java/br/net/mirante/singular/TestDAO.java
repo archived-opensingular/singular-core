@@ -1,15 +1,17 @@
 package br.net.mirante.singular;
 
-import br.net.mirante.singular.persistence.entity.TaskType;
-import org.hibernate.SessionFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.transaction.annotation.Transactional;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.List;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
+import br.net.mirante.singular.persistence.entity.TaskType;
 
 @Named
 @Transactional
@@ -40,4 +42,9 @@ public class TestDAO {
         sessionFactory.getCurrentSession().refresh(entity);
     }
 
+    public Integer countHistoty() {
+        return ((Number) sessionFactory.getCurrentSession()
+                .createCriteria(TaskInstanceHistory.class).setProjection(Projections.count("cod"))
+                .uniqueResult()).intValue();
+    }
 }

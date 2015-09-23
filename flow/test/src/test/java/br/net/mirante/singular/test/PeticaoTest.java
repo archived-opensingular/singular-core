@@ -171,6 +171,12 @@ public class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
     }
 
+    @Test
+    public void verificarHistoricoTarefa() {
+        Integer counterHistory = testDAO.countHistoty();
+        assertNotNull(counterHistory);
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////////////
     ////                               MÉTODOS UTILITÁRIOS                                       ////
     /////////////////////////////////////////////////////////////////////////////////////////////////
