@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,5 +47,11 @@ public class TestDAO {
         return ((Number) sessionFactory.getCurrentSession()
                 .createCriteria(TaskInstanceHistory.class).setProjection(Projections.count("cod"))
                 .uniqueResult()).intValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<TaskInstanceHistory> retrieveLastHistories(int count) {
+        return sessionFactory.getCurrentSession().createCriteria(TaskInstanceHistory.class).setMaxResults(count)
+                .addOrder(Order.desc("cod")).list();
     }
 }

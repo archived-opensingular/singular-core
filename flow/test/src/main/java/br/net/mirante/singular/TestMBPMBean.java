@@ -1,28 +1,26 @@
 package br.net.mirante.singular;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.util.Assert;
+
 import br.net.mirante.singular.flow.core.AbstractMbpmBean;
 import br.net.mirante.singular.flow.core.AbstractProcessNotifiers;
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.core.TaskHistoricLog;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessEntityService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceService;
 import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
-import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
-import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
 
 @Named
 public class TestMBPMBean extends AbstractMbpmBean {
@@ -78,12 +76,10 @@ public class TestMBPMBean extends AbstractMbpmBean {
         return CoisasQueDeviamSerParametrizadas.LINK_TASK;
     }
 
-    /**
-     * @return
-     */
     @Override
     public MUser getUserIfAvailable() {
-        return null;
+        return (MUser) sessionFactory.getCurrentSession().createCriteria(Actor.class)
+                .add(Restrictions.idEq(CoisasQueDeviamSerParametrizadas.USER.getCod())).uniqueResult();
     }
 
     @Override
@@ -112,7 +108,6 @@ public class TestMBPMBean extends AbstractMbpmBean {
     }
 
     /**
-     *
      * @param instanciaProcessoMBPM
      * @deprecated esse método deveria ir para o componente de notificação.
      */

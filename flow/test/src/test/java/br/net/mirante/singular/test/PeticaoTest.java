@@ -2,6 +2,7 @@ package br.net.mirante.singular.test;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -21,6 +22,7 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
+import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
 
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
@@ -172,9 +174,32 @@ public class PeticaoTest extends TestSupport {
     }
 
     @Test
-    public void verificarHistoricoTarefa() {
+    public void verificarHistoricoAlocacaoTarefa() {
         Integer counterHistory = testDAO.countHistoty();
         assertNotNull(counterHistory);
+
+        InstanciaPeticao ip = startInstance();
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
+        assertEquals(++counterHistory, testDAO.countHistoty());
+
+        ip.getCurrentTask().relocateTask(mbpmBean.getUserIfAvailable(), ConstantesUtil.USER_2, false, "Testando...");
+        assertEquals(++counterHistory, testDAO.countHistoty());
+
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
+        assertEquals(++counterHistory, testDAO.countHistoty());
+
+        ip.getCurrentTask().relocateTask(mbpmBean.getUserIfAvailable(), ConstantesUtil.USER_1, false, "Testando...");
+        assertEquals(++counterHistory, testDAO.countHistoty());
+
+        List<TaskInstanceHistory> lastHistories = testDAO.retrieveLastHistories(4);
+        assertEquals(mbpmBean.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
+        assertEquals(ConstantesUtil.USER_1, lastHistories.get(0).getAllocatedUser());
+        assertEquals("Alocação", lastHistories.get(0).getTaskHistoryType().getDescription());
+        assertEquals("Papel definido", lastHistories.get(1).getTaskHistoryType().getDescription());
+        assertEquals(ConstantesUtil.USER_2, lastHistories.get(2).getAllocatedUser());
+        assertEquals("Alocação", lastHistories.get(2).getTaskHistoryType().getDescription());
+        assertEquals("Papel definido", lastHistories.get(3).getTaskHistoryType().getDescription());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
