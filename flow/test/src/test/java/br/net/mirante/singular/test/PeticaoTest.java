@@ -52,7 +52,6 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void testeCriarInstanciaPeticao() {
-
         InstanciaPeticao id = startInstance();
         InstanciaPeticao id2 = MBPM.findProcessInstance(id.getFullId());
 
@@ -200,6 +199,24 @@ public class PeticaoTest extends TestSupport {
         assertEquals(ConstantesUtil.USER_2, lastHistories.get(2).getAllocatedUser());
         assertEquals("Alocação", lastHistories.get(2).getTaskHistoryType().getDescription());
         assertEquals("Papel definido", lastHistories.get(3).getTaskHistoryType().getDescription());
+    }
+
+    @Test
+    public void verificarHistoricoTransicaoAutomatica() {
+        Integer counterHistory = testDAO.countHistoty();
+        assertNotNull(counterHistory);
+
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+
+        TaskInstance currentTask = (TaskInstance) ip.getEntity().getCurrentTask();
+        addDaysToTaskTargetDate(currentTask, -3);
+        testDAO.update(currentTask);
+        new ExecuteWaitingTasksJob(null).run();
+        assertEquals(++counterHistory, testDAO.countHistoty());
+
+        List<TaskInstanceHistory> lastHistories = testDAO.retrieveLastHistories(1);
+        assertEquals("Transição Automática", lastHistories.get(0).getTaskHistoryType().getDescription());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
