@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
-import br.net.mirante.singular.CoisasQueDeviamSerParametrizadas;
 import br.net.mirante.singular.ConstantesUtil;
 import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
@@ -125,14 +124,16 @@ public class PeticaoTest extends TestSupport {
     @Test
     public void verificarUserTemPermissaoAcesso() {
         InstanciaPeticao ip = startInstance();
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
         ip.executeTransition(Peticao.APROVAR_TECNICO);
-        assertTrue("Usuário não tem permissao", ip.canExecuteTask(CoisasQueDeviamSerParametrizadas.USER));
+        assertTrue("Usuário não tem permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
     }
 
     @Test
     public void verificarUserNaoPermissaoAcesso() {
         InstanciaPeticao ip = startInstance();
-        assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(CoisasQueDeviamSerParametrizadas.USER));
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
+        assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
     }
 
     @Test
