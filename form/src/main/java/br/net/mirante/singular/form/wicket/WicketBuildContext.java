@@ -3,8 +3,6 @@ package br.net.mirante.singular.form.wicket;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -35,15 +33,15 @@ public class WicketBuildContext implements Serializable {
         hints.put(key, value);
         return this;
     }
-    public <T> T getHint(HintKey<T> key, T defaultValue) {
-        return ObjectUtils.defaultIfNull((T) getHint(key), defaultValue);
-    }
     @SuppressWarnings("unchecked")
     public <T> T getHint(HintKey<T> key) {
-        if (hintsInherited && !hints.containsKey(key) && getParent() != null) {
+        if (hints.containsKey(key)) {
+            return (T) hints.get(key);
+        } else if (hintsInherited && getParent() != null) {
             return getParent().getHint(key);
+        } else {
+            return key.getDefaultValue();
         }
-        return (T) hints.get(key);
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInheritedh) {

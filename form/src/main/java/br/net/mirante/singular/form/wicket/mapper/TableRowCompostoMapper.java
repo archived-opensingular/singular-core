@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.HashMap;
-
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -19,8 +17,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSiz
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 
 public class TableRowCompostoMapper implements IWicketComponentMapper {
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = new HintKey<HashMap<String, Integer>>() {};
-    static final HintKey<Integer>                  COL        = new HintKey<Integer>() {};
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
@@ -30,17 +26,12 @@ public class TableRowCompostoMapper implements IWicketComponentMapper {
 
         BSContainer<?> parentCol = ctx.getContainer();
         BSTRow tr = parentCol.newTag("tr", true, "",
-                (IBSComponentFactory<BSTRow>) id -> new BSTRow(id, BSGridSize.XS));
+            (IBSComponentFactory<BSTRow>) id -> new BSTRow(id, BSGridSize.XS));
 
         for (String nomeCampo : tComposto.getCampos()) {
             final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
             final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
-            final MInstancia iCampo = mCampo.getObject();
-            if (iCampo instanceof MIComposto) {
-                UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
-            } else {
-                UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
-            }
+            UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
         }
     }
 }
