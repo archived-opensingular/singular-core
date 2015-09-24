@@ -1,5 +1,9 @@
 package br.net.mirante.singular.flow.util.vars;
 
+import br.net.mirante.singular.flow.util.props.MetaData;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 
 public interface VarDefinition extends Serializable{
@@ -29,4 +33,11 @@ public interface VarDefinition extends Serializable{
     public default String toPersistenceString(VarInstance varInstance) {
         return getType().toPersistenceString(varInstance);
     }
+
+    public <T> VarDefinition setMetaDataValue(MetaDataRef<T> propRef, T value);
+
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue);
+
+    public <T> T getMetaDataValue(MetaDataRef<T> propRef);
+
 }

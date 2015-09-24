@@ -1,4 +1,4 @@
-package br.net.mirante.singular.util.log;
+package br.net.mirante.singular.commons.util.log;
 
 
 import org.slf4j.Logger;

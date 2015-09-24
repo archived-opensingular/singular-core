@@ -29,8 +29,6 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     List<? extends IEntityRole> getRoles();
 
-    @Deprecated//Remover do CORE
-    IEntityTask getSituacao();
 
     default IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
         for (IEntityRole dadosPapelInstancia : getRoles()) {

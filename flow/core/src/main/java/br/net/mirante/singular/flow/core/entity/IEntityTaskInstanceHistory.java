@@ -4,7 +4,7 @@ import java.util.Date;
 
 import br.net.mirante.singular.flow.core.MUser;
 
-public interface IEntityTaskHistoric extends IEntityByCod {
+public interface IEntityTaskInstanceHistory extends IEntityByCod {
     
     IEntityTaskInstance getTaskInstance();
 

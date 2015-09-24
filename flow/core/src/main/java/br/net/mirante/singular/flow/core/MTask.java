@@ -52,7 +52,7 @@ public abstract class MTask<K extends MTask<?>> {
 
     public abstract boolean canReallocate();
 
-    public abstract TaskType getTaskType();
+    public abstract IEntityTaskType getTaskType();
 
     public boolean isImmediateExecution() {
         return false;
@@ -99,8 +99,8 @@ public abstract class MTask<K extends MTask<?>> {
         return getAbbreviation().equalsIgnoreCase(taskDefinition.getKey());
     }
 
-    public TaskType getEffectiveTaskType() {
-        TaskType tipo = getTaskType();
+    public IEntityTaskType getEffectiveTaskType() {
+        IEntityTaskType tipo = getTaskType();
         if (tipo != TaskType.Wait && (this instanceof MTaskJava) && ((MTaskJava) this).getScheduleData() != null) {
             tipo = TaskType.Wait;
         }

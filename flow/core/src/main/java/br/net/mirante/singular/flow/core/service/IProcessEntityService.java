@@ -76,7 +76,7 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
     default boolean isNewVersion(IEntityTask oldEntityTask, IEntityTask newEntitytask) {
         if (oldEntityTask == null
             || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
-            || !oldEntityTask.getType().equals(newEntitytask.getType())
+            || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())
             || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
             return true;
         }

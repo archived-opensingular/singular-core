@@ -67,10 +67,10 @@ public class FlowMap implements Serializable {
         return (Collection<MTaskWait>) getTasks(TaskType.Wait);
     }
 
-    public Collection<? extends MTask<?>> getTasks(TaskType taskType) {
+    public Collection<? extends MTask<?>> getTasks(IEntityTaskType IEntityTaskType) {
         final Builder<MTask<?>> builder = ImmutableList.builder();
         for (final MTask mTask : getTasks()) {
-            if (mTask.getTaskType() == taskType) {
+            if (mTask.getTaskType() == IEntityTaskType) {
                 builder.add(mTask);
             }
         }

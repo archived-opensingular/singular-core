@@ -2,13 +2,13 @@ package br.net.mirante.singular.flow.core;
 
 import java.util.List;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoric;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 
 public final class TaskHistoricLog {
 
-    private final IEntityTaskHistoric historic;
+    private final IEntityTaskInstanceHistory historic;
 
-    public TaskHistoricLog(IEntityTaskHistoric historico) {
+    public TaskHistoricLog(IEntityTaskInstanceHistory historico) {
         this.historic = historico;
     }
 

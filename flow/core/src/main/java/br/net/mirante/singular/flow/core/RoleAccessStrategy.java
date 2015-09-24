@@ -1,10 +1,12 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 
@@ -65,8 +67,8 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
     }
 
     @Override
-    public Set<Integer> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
-        final Set<Integer> cods = new HashSet<>();
+    public Set<Serializable> getFirstLevelUsersCodWithAccess(ProcessInstance instance) {
+        final Set<Serializable> cods = new HashSet<>();
         for (IEntityRole entityRole : instance.getUserRoles()) {
             if (isSameRole(executionRole, entityRole)) {
                 cods.add(entityRole.getUser().getCod());
@@ -77,14 +79,13 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
     @Override
     public List<MUser> listAllocableUsers(ProcessInstance instance) {
-        final List<MUser> pessoas = new ArrayList<>();
-        for (IEntityRole entityRole : instance.getUserRoles()) {
-            if (isSameRole(executionRole, entityRole)) {
-                pessoas.add(entityRole.getUser());
-            }
-        }
-        Collections.sort(pessoas);
-        return pessoas;
+        return instance.getUserRoles()
+                .stream()
+                .filter(entityRole -> isSameRole(executionRole, entityRole))
+                .map(IEntityRole::getUser)
+                .sorted()
+                .collect(Collectors.toList());
+
     }
 
     @Override
