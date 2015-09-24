@@ -26,12 +26,13 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 
 public class DefaultCompostoMapper implements IWicketComponentMapper {
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = new HintKey<HashMap<String, Integer>>() {};
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+    static final HintKey<Boolean>                  INLINE     = () -> false;
 
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-        final Map<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS, new HashMap<>());
+        final Map<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
         MInstancia instancia = model.getObject();
         MIComposto composto = (MIComposto) instancia;
