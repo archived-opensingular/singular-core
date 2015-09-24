@@ -1,7 +1,6 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,17 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
 
+import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
+import br.net.mirante.singular.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_DEFINICAO_TAREFA database table.
  */
 @Entity
-@Table(name="TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
+@Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskDefinition implements IEntityTaskDefinition {
     private static final long serialVersionUID = 1L;
 
@@ -32,9 +31,9 @@ public class TaskDefinition implements IEntityTaskDefinition {
     @Column(name = "SG_TAREFA", nullable = false)
     private String abbreviation;
 
-	//bi-directional many-to-one association to TaskRight
-	@OneToMany(mappedBy="taskDefinition")
-	private List<TaskRight> permissoesTarefas;
+    //bi-directional many-to-one association to TaskRight
+    @OneToMany(mappedBy = "taskDefinition")
+    private List<TaskRight> permissoesTarefas;
 
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
@@ -43,7 +42,6 @@ public class TaskDefinition implements IEntityTaskDefinition {
 
     @OneToMany(mappedBy = "taskDefinition")
     private List<Task> versions;
-
 
     public TaskDefinition() {
     }

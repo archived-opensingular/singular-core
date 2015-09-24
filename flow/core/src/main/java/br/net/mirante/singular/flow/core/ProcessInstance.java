@@ -1,5 +1,17 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -13,17 +25,6 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -33,7 +34,6 @@ public abstract class ProcessInstance {
     private transient MTask<?> estadoAtual;
 
     private transient ExecucaoMTask executionContext;
-
 
     /**
      * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
@@ -69,6 +69,7 @@ public abstract class ProcessInstance {
     /**
      * @param <K>
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
@@ -103,6 +104,7 @@ public abstract class ProcessInstance {
 
     /**
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
@@ -112,6 +114,7 @@ public abstract class ProcessInstance {
 
     /**
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
