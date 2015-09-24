@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 
 public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
 
+    public static final BigDecimal BIGDECIMAL_USADO_NO_TESTE =  new BigDecimal("1111111123242343240.00001E-3");
+    public static final String STRING_USADA_NO_TESTE = "Pessoa X";
+
     public DefinicaoComVariaveis() {
         super(InstanciaPeticao.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
@@ -54,8 +57,10 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
 
     public void setVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
 //        instancia.setVariavel("nome2", "Pessoa Y");
-        instancia.setVariavel("nome", "Pessoa X");
-        instancia.setVariavel("qualquerCoisa", new BigDecimal("1111111123242343240.00001E-3"));
+        instancia.setVariavel("nome", STRING_USADA_NO_TESTE);
+        instancia.setVariavel("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
+
+        instancia.saveEntity();
     }
 
     public void printVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
@@ -64,5 +69,4 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
         System.out.println("########### qualquerCoisa #####>" + instancia.getValorVariavel("qualquerCoisa"));
 
     }
-
 }

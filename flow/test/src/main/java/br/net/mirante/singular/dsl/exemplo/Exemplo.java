@@ -1,6 +1,5 @@
 package br.net.mirante.singular.dsl.exemplo;
 
-import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.dsl.Builder;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTaskJava;
@@ -12,31 +11,31 @@ public class Exemplo {
     public FlowMap getFlowMap(){
         return new Builder()
                     .task()
-                        .java("email")
+                        .java("EMAIL")
                             .call(this::enviarEmail)
                             .extraConfig(this::configEmail)
                             .transition()
                                 .go()
-                        .people("aprovar")
+                        .people("APROVAR")
                             .right("diretor")
                             .url("/worklist/tarefa/aprovacaoDiretoria")
                             .extraConfig(this::configAprovacaoDiretoria)
                             .transition("aprovado")
-                                .gotTo("aguardar.pagamento")
+                                .gotTo("AGUARDAR_PAGAMENTO")
                             .transition("rejeitado")
-                                .gotTo("revisar")
-                        .wait("aguardar.pagamento")
+                                .gotTo("REVISAR")
+                        .wait("AGUARDAR_PAGAMENTO")
                             .until(this::predicate)
                             .transition()
                                 .go()
-                        .end("fim")
-                        .people("revisar")
+                        .end("FIM")
+                        .people("REVISAR")
                             .right("diretor")
                             .url("/worklist/tarefa/revisaoParecer")
                             .transition("reconsiderar")
-                                 .goTo("email")
+                                 .goTo("EMAIL")
                             .transition("aprovar.parecer")
-                                .goTo("fim")
+                                .goTo("FIM")
                         .build();
     }
 
