@@ -21,6 +21,9 @@ import br.net.mirante.singular.form.wicket.AtrWicket;
 
 public class MPacoteCurriculo extends MPacote {
 
+    public static final String PACOTE         = "mform.exemplo.curriculo";
+    public static final String TIPO_CURRICULO = PACOTE + ".Curriculo";
+
     public MPacoteCurriculo() {
         super("mform.exemplo.curriculo");
     }

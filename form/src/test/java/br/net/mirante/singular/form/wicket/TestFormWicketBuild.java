@@ -12,10 +12,13 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 
 import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -35,7 +38,7 @@ public class TestFormWicketBuild extends TestCase {
         });
     }
 
-    public void testVeryBasic() {
+    public void testBasic() {
         BSGrid rootContainer = new BSGrid("teste");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow());
         IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
@@ -71,5 +74,37 @@ public class TestFormWicketBuild extends TestCase {
         formTester.submit();
 
         assertEquals("Guará", mCidade.getObject().getValor());
+    }
+
+    public void testCurriculo() {
+        BSGrid rootContainer = new BSGrid("teste");
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow());
+        IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            protected MTipoComposto<MIComposto> load() {
+                MDicionario dicionario = MDicionario.create();
+                dicionario.carregarPacote(MPacoteCurriculo.class);
+                return (MTipoComposto<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
+            }
+        };
+        IModel<MIComposto> mCurriculo = new MInstanciaRaizModel<MIComposto>() {
+            @Override
+            protected MTipoComposto<MIComposto> getTipoRaiz() {
+                return tCurriculo.getObject();
+            }
+        };
+        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
+
+        Form<Object> form = new Form<>("form");
+        tester.startComponentInPage(new FormPanel("panel", form) {
+            @Override
+            protected Component newFormBody(String id) {
+                return new BSContainer<>(id).appendTag("div", rootContainer);
+            }
+        });
+
+        FormTester formTester = tester.newFormTester("panel:form");
+        formTester.submit();
     }
 }
