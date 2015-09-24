@@ -15,7 +15,6 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 
 public class MPacoteBasic extends MPacote {
 
@@ -62,7 +61,6 @@ public class MPacoteBasic extends MPacote {
         pb.addAtributo(MTipoInteger.class, ATR_TAMANHO_EDICAO);
         pb.addAtributo(MTipoLista.class, ATR_TAMANHO_INICIAL);
 
-        pb.addAtributo(MTipoAnoMes.class, ATR_TAMANHO_EDICAO, 7);
         pb.addAtributo(MTipoData.class, ATR_TAMANHO_EDICAO, 10);
 
         // defina o meta dado do meta dado
