@@ -14,7 +14,7 @@
 
 SET DATABASE SQL SYNTAX MSS TRUE;
 
---DROP SCHEMA DBSINGULAR IF EXISTS CASCADE;
+DROP SCHEMA DBSINGULAR IF EXISTS CASCADE;
 CREATE SCHEMA DBSINGULAR ;
 /*==============================================================*/
 /* Table: RL_PERMISSAO_PROCESSO                                 */
