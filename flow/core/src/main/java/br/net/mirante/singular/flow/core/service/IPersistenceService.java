@@ -66,7 +66,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
         saveVariableHistoric(dateHour, instance, originTask != null ? originTask.<TASK_INSTANCE> getEntityTaskInstance() : null, destinationTask != null ? destinationTask.<TASK_INSTANCE> getEntityTaskInstance() : null, instanceMap);
     }
 
-    List<? extends MUser> retrieveUsersByCod(Collection<Serializable> cods);
+    List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
 
     /**
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcess},

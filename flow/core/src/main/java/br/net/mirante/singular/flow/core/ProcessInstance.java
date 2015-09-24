@@ -160,7 +160,7 @@ public abstract class ProcessInstance {
         return MBPM.getDefaultHrefFor(this);
     }
 
-    public Set<Serializable> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
+    public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
         return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviationOrException(nomeTarefa).getAccessStrategy()
                 .getFirstLevelUsersCodWithAccess(this);
     }
@@ -474,7 +474,7 @@ public abstract class ProcessInstance {
         return getEntity().getTasks().stream().anyMatch(tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null);
     }
 
-    public boolean isAllocated(Serializable codPessoa) {
+    public boolean isAllocated(Integer codPessoa) {
         return getEntity()
                 .getTasks()
                 .stream()

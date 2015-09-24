@@ -181,7 +181,7 @@ public class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(mbpmBean.getUserIfAvailable(), ConstantesUtil.USER_2, false, "Testando...");
+        ip.getCurrentTask().relocateTask(null, ConstantesUtil.USER_2, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         ip.executeTransition(Peticao.APROVAR_TECNICO);
@@ -197,7 +197,7 @@ public class PeticaoTest extends TestSupport {
         assertEquals("Alocação", lastHistories.get(0).getTaskHistoryType().getDescription());
         assertEquals("Papel definido", lastHistories.get(1).getTaskHistoryType().getDescription());
         assertEquals(ConstantesUtil.USER_2, lastHistories.get(2).getAllocatedUser());
-        assertEquals("Alocação", lastHistories.get(2).getTaskHistoryType().getDescription());
+        assertEquals("Alocação Automática", lastHistories.get(2).getTaskHistoryType().getDescription());
         assertEquals("Papel definido", lastHistories.get(3).getTaskHistoryType().getDescription());
     }
 

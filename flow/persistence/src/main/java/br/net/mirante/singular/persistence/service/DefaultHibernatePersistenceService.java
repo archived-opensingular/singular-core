@@ -289,7 +289,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     }
 
     @Override
-    public List<? extends MUser> retrieveUsersByCod(Collection<Serializable> cods) {
+    public List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods) {
         throw new UnsupportedOperationException("Método não implementado");
     }
 

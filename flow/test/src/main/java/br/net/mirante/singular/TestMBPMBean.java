@@ -79,7 +79,7 @@ public class TestMBPMBean extends AbstractMbpmBean {
     @Override
     public MUser getUserIfAvailable() {
         return (MUser) sessionFactory.getCurrentSession().createCriteria(Actor.class)
-                .add(Restrictions.idEq(CoisasQueDeviamSerParametrizadas.USER.getCod())).uniqueResult();
+                .add(Restrictions.idEq(CoisasQueDeviamSerParametrizadas.USER.getCodigo())).uniqueResult();
     }
 
     @Override
