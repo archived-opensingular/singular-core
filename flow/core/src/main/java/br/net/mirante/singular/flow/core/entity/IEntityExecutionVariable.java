@@ -7,8 +7,6 @@ public interface IEntityExecutionVariable extends IEntityByCod {
     IEntityProcessInstance getProcessInstance();
     
     String getName();
-
-    IEntityVariableInstance getVariable();
     
     IEntityTaskInstance getOriginTask();
     

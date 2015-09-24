@@ -51,10 +51,6 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 	@JoinColumn(name="CO_TIPO_VARIAVEL", nullable = false)
 	private VariableType variableType;
 
-	//bi-directional many-to-one association to Variable
-	@ManyToOne
-	@JoinColumn(name="CO_VARIAVEL_INSTANCIA_PROCESSO")
-	private Variable variable;
 
 	public ExecutionVariable() {
 	}
@@ -114,14 +110,6 @@ public class ExecutionVariable implements IEntityExecutionVariable {
 
 	public void setVariableType(VariableType variableType) {
 		this.variableType = variableType;
-	}
-
-	public Variable getVariable() {
-		return this.variable;
-	}
-
-	public void setVariable(Variable variable) {
-		this.variable = variable;
 	}
 
     public void setDate(Date date) {

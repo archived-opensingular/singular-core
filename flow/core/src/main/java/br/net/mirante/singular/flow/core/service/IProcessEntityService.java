@@ -11,6 +11,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.util.vars.VarDefinition;
 
 public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS extends IEntityProcess, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask, TRANSITION extends IEntityTaskTransition> {
 
@@ -42,7 +43,6 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
                 ((List<TRANSITION>) originTask.getTransitions()).add(entityTransition);
             }
         }
-
         return entityProcess;
     }
 

@@ -16,15 +16,13 @@ public class JavaBuilder1 {
         this.taskBuilder2 = taskBuilder2;
     }
 
-    public JavaBuilder2 call(TaskExecutor t){
+    public JavaBuilder2 call(TaskExecutor t) {
         return new JavaBuilder2(this);
     }
 
 
-
     @FunctionalInterface
-    public static  interface TaskExecutor<T extends ProcessInstance>{
-
+    public static interface TaskExecutor<T extends ProcessInstance> {
         String execute(T instancia);
     }
 }
