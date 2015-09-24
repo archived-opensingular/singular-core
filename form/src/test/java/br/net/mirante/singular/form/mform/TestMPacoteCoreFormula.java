@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform;
 import junit.framework.TestCase;
 
 public class TestMPacoteCoreFormula extends TestCase {
+    public void testEmpty() {}
     /*
      * public void testCodeSimple() { MDicionario dicionario =
      * MDicionario.create(); PacoteBuilder pb =
