@@ -15,12 +15,12 @@ import br.net.mirante.singular.form.wicket.AtrWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 
-public class ListaSimpleTableMapper extends AbstractListaMapper {
-    public ListaSimpleTableMapper() {
+public class GridListaMapper extends AbstractListaMapper {
+    public GridListaMapper() {
         super(
             null,
-            ListaSimpleTableMapper::configureCurrentContext,
-            ListaSimpleTableMapper::configureChildContext);
+            GridListaMapper::configureCurrentContext,
+            GridListaMapper::configureChildContext);
     }
     private static void configureCurrentContext(WicketBuildContext ctx, IModel<MILista<MInstancia>> model) {
         MTipo<?> tElementos = model.getObject().getTipoElementos();

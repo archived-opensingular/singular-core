@@ -12,10 +12,10 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSComponentFactory;
 
-public class ListaMultiPanelMapper extends AbstractListaMapper {
-    public ListaMultiPanelMapper() {
+public class PanelListaMapper extends AbstractListaMapper {
+    public PanelListaMapper() {
         super(
-            ListaMultiPanelMapper::newElementCol,
+            PanelListaMapper::newElementCol,
             null,
             null);
     }

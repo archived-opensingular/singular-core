@@ -34,6 +34,7 @@ public enum Icone {
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
     PIN /*              */("icon-pin"),
     PIE /*              */("icon-pie-chart"),
+    PLUS /*             */("fa fa-plus"),
     REDO /*             */("icon-action-redo"),
     SHARE_ALT /*        */("fa fa-share-alt"),
     SHARE_SQUARE /*     */("fa fa-share-square-o"),

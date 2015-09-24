@@ -28,6 +28,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return (MTipoLista<?>) super.getMTipo();
     }
 
+    @SuppressWarnings("unchecked")
     public MTipo<E> getTipoElementos() {
         if (tipoElementos == null) {
             tipoElementos = (MTipo<E>) getMTipo().getTipoElementos();
@@ -54,6 +55,15 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         throw new RuntimeException("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")");
     }
 
+    public E addNovoAt(int index) {
+        if (getTipoElementos() instanceof MTipoComposto) {
+            E instancia = getTipoElementos().novaInstancia();
+            addAtInterno(index, instancia);
+            return instancia;
+        }
+        throw new RuntimeException("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")");
+    }
+
     public void addValor(Object valor) {
         if (valor == null) {
             throw new RuntimeException("Não é aceito null na lista de instâncias");
@@ -74,6 +84,13 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         valores.add(instancia);
     }
 
+    private void addAtInterno(int index, E instancia) {
+        if (valores == null) {
+            valores = new ArrayList<>();
+        }
+        valores.add(Math.min(index, valores.size()), instancia);
+    }
+    
     public MInstancia get(int index) {
         if (valores == null) {
             throw new IndexOutOfBoundsException("A lista " + getNome() + " está vazia (index=" + index + ")");
@@ -117,6 +134,10 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public Object getValorAt(int index) {
         return get(index).getValor();
+    }
+
+    public int indexOf(MInstancia object) {
+        return valores.indexOf(object);
     }
 
     public int size() {

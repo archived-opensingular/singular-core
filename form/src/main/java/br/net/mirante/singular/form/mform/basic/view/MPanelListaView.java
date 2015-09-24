@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import java.io.Serializable;
-
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoLista;
 
-public class MView implements Serializable {
-    public static final MView DEFAULT = new MView();
+public class MPanelListaView extends MView {
 
+    @Override
     public boolean aplicavelEm(MTipo<?> tipo) {
-        return true;
+        return tipo instanceof MTipoLista;
     }
+
 }

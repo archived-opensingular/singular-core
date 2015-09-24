@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
@@ -21,19 +23,22 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
-public class ListaTableMapper implements IWicketComponentMapper {
+public class TableListaMapper implements IWicketComponentMapper {
     @Override
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
@@ -48,15 +53,24 @@ public class ListaTableMapper implements IWicketComponentMapper {
             parentCol.appendTag("h3", new Label("_title", label));
 
         final TemplatePanel template = parentCol.newTag("div", new TemplatePanel("t", () -> ""
+            + "<form wicket:id='form'>"
             + "<table wicket:id='table' class='table table-condensed table-unstyled'>"
-            + "<thead wicket:id='head'></thead>"
-            + "<tbody>"
-            + "<wicket:container wicket:id='items'><tr wicket:id='row'></tr></wicket:container>"
-            + "</tbody>"
-            + "</table>"));
+            + "  <thead wicket:id='head'></thead>"
+            + "  <tbody>"
+            + "    <wicket:container wicket:id='items'><tr wicket:id='row'></tr></wicket:container>"
+            + "  </tbody>"
+            + "  <tfoot wicket:id='footer'>"
+            + "    <tr><td colspan='99'><a wicket:id='adicionar'><i class='" + Icone.PLUS + "'></i></a></td></tr>"
+            + "  </tfoot>"
+            + "</table>"
+            + "</form>"));
+        final Form<?> form = new Form<>("form");
         final WebMarkupContainer table = new WebMarkupContainer("table");
-        final ListaTableMapper.TRsView trView = new TRsView("items", mLista, ctx);
+        final TableListaMapper.TRsView trView = new TRsView("items", mLista, ctx, view);
         final BSTSection thead = new BSTSection("head").setTagName("thead");
+        final WebMarkupContainer footer = new WebMarkupContainer("footer");
+
+        form.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
 
         final MTipo<?> tElementos = iLista.getTipoElementos();
         if (iLista.getTipoElementos() instanceof MTipoComposto<?>) {
@@ -70,17 +84,43 @@ public class ListaTableMapper implements IWicketComponentMapper {
             thead.setVisible(false);
         }
 
+        if (view instanceof MTableListaView) {
+            footer.add(new AdicionarButton("adicionar", form, mLista));
+        } else {
+            footer.setVisible(false);
+        }
+
         template
-            .add(table
-                .add(thead)
-                .add(trView));
+            .add(form
+                .add(table
+                    .add(thead)
+                    .add(trView)
+                    .add(footer)));
     }
+
+    private static final class AdicionarButton extends ActionAjaxButton {
+        private final IModel<MILista<MInstancia>> modelLista;
+        private AdicionarButton(String id, Form<?> form, IModel<MILista<MInstancia>> mLista) {
+            super(id, form);
+            this.setDefaultFormProcessing(false);
+            modelLista = mLista;
+        }
+        @Override
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            MILista<MInstancia> lista = modelLista.getObject();
+            lista.addNovo();
+            target.add(form);
+        }
+    }
+
     private static final class TRsView extends RefreshingView<MInstancia> {
         private WicketBuildContext ctx;
-        private TRsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx) {
+        private MView              view;
+        private TRsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view) {
             super(id, model);
             setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
             this.ctx = ctx;
+            this.view = view;
         }
         @Override
         protected Iterator<IModel<MInstancia>> getItemModels() {
@@ -108,6 +148,12 @@ public class ListaTableMapper implements IWicketComponentMapper {
                 }
             } else {
                 UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), itemModel);
+            }
+
+            if (view instanceof MTableListaView) {
+                MTableListaView tableView = (MTableListaView) view;
+                tableView.isPermiteExclusaoDeLinha();
+                tableView.isPermiteInsercaoDeLinha();
             }
         }
     }
