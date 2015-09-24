@@ -13,12 +13,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
-
+import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -38,8 +38,8 @@ import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-@SuppressWarnings({ "serial", "unchecked" })
-public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>> {
+@SuppressWarnings({"serial", "unchecked"})
+public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> instanceClass;
 
@@ -71,8 +71,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
-     *
-     * @param instanceClass
      */
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
@@ -81,8 +79,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
-     *
-     * @param instanceClass
      */
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
@@ -323,7 +319,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     /**
-     * @return
      * @deprecated o termo sigla deve ser substituido por key
      */
     //TODO renomear
