@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         return canExecute(instancia, user);
     }
 
-    public abstract Set<Serializable> getFirstLevelUsersCodWithAccess(K instancia);
+    public abstract Set<Integer> getFirstLevelUsersCodWithAccess(K instancia);
 
     public abstract List<? extends MUser> listAllocableUsers(K instancia);
 
@@ -95,8 +94,8 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public Set<Serializable> getFirstLevelUsersCodWithAccess(K instancia) {
-            Set<Serializable> cods = new HashSet<>();
+        public Set<Integer> getFirstLevelUsersCodWithAccess(K instancia) {
+            Set<Integer> cods = new HashSet<>();
             for (TaskAccessStrategy<K> taskAccessStrategy : disjunction) {
                 cods.addAll(taskAccessStrategy.getFirstLevelUsersCodWithAccess(instancia));
             }
@@ -153,7 +152,7 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
         }
 
         @Override
-        public Set<Serializable> getFirstLevelUsersCodWithAccess(K instancia) {
+        public Set<Integer> getFirstLevelUsersCodWithAccess(K instancia) {
             return Collections.emptySet();
         }
 
