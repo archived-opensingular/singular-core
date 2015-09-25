@@ -78,7 +78,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     @Override
     public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
             IEntityTaskDefinition... situacoesAlvo) {
-        if (situacoesAlvo == null) {
+        if (situacoesAlvo == null || situacoesAlvo.length == 0 || (situacoesAlvo.length == 1 && situacoesAlvo[0] == null)) {
             return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, (Collection<IEntityTaskDefinition>) null);
         }
         return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, Arrays.asList(situacoesAlvo));
