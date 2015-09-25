@@ -1,4 +1,4 @@
-![Versão](https://img.shields.io/badge/version-0.3.1--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-warn-yellow.svg) ![Test](https://img.shields.io/badge/test-97%-yellow.svg)
+![Versão](https://img.shields.io/badge/version-0.3.1--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-warn-yellow.svg) ![Test](https://img.shields.io/badge/test-98%-yellow.svg)
 
 # Projeto SINGULAR
 
@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Dashboard
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:1,1,57,0&cht=p&chl=failure%20%281%29|error%20%281%29|success%20%2857%29|skipped%20%280%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:1,0,58,0&cht=p&chl=failure%20%281%29|error%20%280%29|success%20%2858%29|skipped%20%280%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
