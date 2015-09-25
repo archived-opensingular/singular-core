@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-lib</artifactId>
-        <version>0.3.0-SNAPSHOT</version>
+        <version>0.3.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>wicket-utils</artifactId>
@@ -35,6 +35,13 @@
     </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-commons</artifactId>
+            <version>0.3.1-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket-core</artifactId>
@@ -56,12 +63,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>

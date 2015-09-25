@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 
 public class MPacoteUtil extends MPacote {
 
@@ -21,6 +22,8 @@ public class MPacoteUtil extends MPacote {
         pb.createTipo(MTipoAnoMes.class);
         pb.createTipo(MTipoNomePessoa.class);
         pb.createTipo(MTipoTelefoneNacional.class);
+
+        pb.addAtributo(MTipoAnoMes.class, MPacoteBasic.ATR_TAMANHO_EDICAO, 7);
 
         MTipoComposto<?> endereco = pb.createTipoComposto("Endereco");
         endereco.addCampoString("rua").as(AtrBasic.class).tamanhoMaximo(50);

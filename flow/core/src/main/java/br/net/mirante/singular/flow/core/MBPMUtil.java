@@ -19,7 +19,7 @@ public class MBPMUtil {
     private static final int PESO_TASK_FIM = 100000;
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, final ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getSituacao(), s2.getEntity().getSituacao(), definicao));
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(), s2.getEntity().getCurrentTask().getTask(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTask s1, IEntityTask s2, ProcessDefinition<?> definicao) {
@@ -32,12 +32,12 @@ public class MBPMUtil {
     }
 
     public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTask> conversor,
-            ProcessDefinition<?> definicao) {
+                                                       ProcessDefinition<?> definicao) {
         lista.sort(getDistanceFromBeginningComparator(conversor, definicao));
     }
 
     private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTask> conversor,
-            ProcessDefinition<?> definicao) {
+                                                                        ProcessDefinition<?> definicao) {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
@@ -108,18 +108,17 @@ public class MBPMUtil {
     }
 
     private static int calculateWeight(MTask<?> task) {
-        switch (task.getTaskType()) {
-            case People:
-                return PESO_TASK_PESSOA;
-            case Java:
-                return PESO_TASK_JAVA;
-            case Wait:
-                return PESO_TASK_WAIT;
-            case End:
-                return PESO_TASK_FIM;
-            default:
-                throw new SingularFlowException(task.getTaskType() + " não tratado");
+        IEntityTaskType tt = task.getTaskType();
+        if (tt.isPeople()) {
+            return PESO_TASK_PESSOA;
+        } else if (tt.isJava()) {
+            return PESO_TASK_JAVA;
+        } else if (tt.isWait()) {
+            return PESO_TASK_WAIT;
+        } else if (tt.isEnd()) {
+            return PESO_TASK_FIM;
         }
+        throw new SingularFlowException(task.getTaskType() + " não tratado");
     }
 
     public static String convertToJavaIdentity(String original, boolean normalize) {
@@ -127,7 +126,7 @@ public class MBPMUtil {
     }
 
     public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
-        if(normalize){
+        if (normalize) {
             original = normalize(original);
         }
         StringBuilder sb = new StringBuilder(original.length());

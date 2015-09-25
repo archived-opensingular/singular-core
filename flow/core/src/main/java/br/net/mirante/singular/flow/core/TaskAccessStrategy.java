@@ -14,7 +14,7 @@ public abstract class TaskAccessStrategy<K extends ProcessInstance> {
     public abstract boolean canExecute(K instance, MUser user);
 
     public <T extends TaskInstance> boolean canExecute(T instance, MUser user) {
-        return canExecute(instance.getProcessInstance(), user);
+        return canExecute((K) instance.getProcessInstance(), user);
     }
 
     public boolean canVisualize(K instancia, MUser user) {

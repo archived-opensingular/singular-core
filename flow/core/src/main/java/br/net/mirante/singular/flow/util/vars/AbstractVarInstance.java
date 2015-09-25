@@ -14,6 +14,8 @@ public abstract class AbstractVarInstance implements VarInstance {
         this.definition = definition;
     }
 
+
+
     @Override
     public VarDefinition getDefinicao() {
         return definition;

@@ -42,7 +42,7 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         IModel<MIComposto> mCurriculo = new MInstanciaRaizModel<MIComposto>() {
             @Override
             protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo("mform.exemplo.curriculo.Curriculo");
+                return (MTipo<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
             }
         };
 

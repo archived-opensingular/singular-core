@@ -13,7 +13,7 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
     }
 
     @Override
-    public TaskType getTaskType() {
+    public IEntityTaskType getTaskType() {
         return TaskType.People;
     }
 

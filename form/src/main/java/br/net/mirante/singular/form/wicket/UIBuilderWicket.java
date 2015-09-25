@@ -5,9 +5,10 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.basic.view.MListaMultiPanelView;
-import br.net.mirante.singular.form.mform.basic.view.MListaSimpleTableView;
+import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -17,11 +18,11 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
+import br.net.mirante.singular.form.wicket.mapper.GridListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListaMultiPanelMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListaSimpleTableMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListaTableMapper;
+import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
+import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 
 public class UIBuilderWicket {
@@ -35,9 +36,10 @@ public class UIBuilderWicket {
         MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*    */MView.class, /*   */YearMonthMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MView.class, /*   */DefaultCompostoMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MTabView.class, /**/DefaultCompostoMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */ListaTableMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MListaSimpleTableView.class, /*   */ListaSimpleTableMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MListaMultiPanelView.class, /*    */ListaMultiPanelMapper::new);
+        //        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MTableListaView.class, /* */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MGridListaView.class, /*  */GridListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MPanelListaView.class, /* */PanelListaMapper::new);
     }
 
     public static void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {

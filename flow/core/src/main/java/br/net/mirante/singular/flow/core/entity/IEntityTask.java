@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core.entity;
 import java.util.Date;
 import java.util.List;
 
+import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.TaskType;
 
 public interface IEntityTask extends IEntityByCod {
@@ -11,7 +12,7 @@ public interface IEntityTask extends IEntityByCod {
     
     String getName();
 
-    TaskType getType();
+    IEntityTaskType getType();
 
     IEntityTaskDefinition getTaskDefinition();
 

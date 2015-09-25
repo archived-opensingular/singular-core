@@ -2,7 +2,9 @@ package br.net.mirante.singular.form.wicket.model;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public class MInstanciaItemListaModel<I extends MInstancia> extends AbstractMInstanciaItemListaModel<I> {
+public class MInstanciaItemListaModel<I extends MInstancia>
+    extends AbstractMInstanciaItemListaModel<I>
+{
 
     private int index;
 
@@ -35,6 +37,6 @@ public class MInstanciaItemListaModel<I extends MInstancia> extends AbstractMIns
         MInstanciaItemListaModel<?> other = (MInstanciaItemListaModel<?>) obj;
         if (index != other.index)
             return false;
-        return super.equals(obj);
+        return true;
     }
 }

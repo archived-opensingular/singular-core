@@ -13,12 +13,12 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
-
+import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -38,8 +38,8 @@ import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-@SuppressWarnings({ "serial", "unchecked" })
-public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>> {
+@SuppressWarnings({"serial", "unchecked"})
+public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> instanceClass;
 
@@ -69,10 +69,18 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private transient Constructor<I> construtor;
 
+    /**
+     * Esse construtor tem que ser repensado
+     */
+    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
+    /**
+     * Esse construtor tem que ser repensado
+     */
+    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
         this.variableService = varService;
@@ -303,14 +311,31 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     public final String getName() {
+        if (name == null) {
+            getLogger().warn("!!! process definition name not set, using  class simple name !!!");
+            name = this.getClass().getSimpleName();
+        }
         return name;
     }
 
+    /**
+     * @deprecated o termo sigla deve ser substituido por key
+     */
+    //TODO renomear
+    @Deprecated
     public final String getAbbreviation() {
+        if (abbreviation == null) {
+            getLogger().warn("!!! process definition abbreviation not set, using  class simple name !!!");
+            abbreviation = this.getClass().getSimpleName();
+        }
         return abbreviation;
     }
 
     public final String getCategory() {
+        if (category == null) {
+            getLogger().warn("!!! process definition category not set, using  class simple name !!!");
+            category = this.getClass().getSimpleName();
+        }
         return category;
     }
 
@@ -381,7 +406,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             try {
                 for (Constructor<?> constructor : getInstanceClass().getConstructors()) {
                     if (constructor.getParameterTypes().length == 1
-                        && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
+                            && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
                         this.construtor = (Constructor<I>) constructor;
                     }
                 }
@@ -399,7 +424,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
-            .getMbpmBean().getPersistenceService();
+                .getMbpmBean().getPersistenceService();
     }
 
     @Override
@@ -425,8 +450,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     @Override
     public int hashCode() {
-        int result = category.hashCode();
-        result = 31 * result + name.hashCode();
+        int result = -1;
+        result = getCategory().hashCode();
+        result = 31 * result + getName().hashCode();
         return result;
     }
 }

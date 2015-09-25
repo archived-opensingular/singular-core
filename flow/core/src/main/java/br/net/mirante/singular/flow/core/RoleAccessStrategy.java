@@ -1,14 +1,13 @@
 package br.net.mirante.singular.flow.core;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 
 public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
@@ -77,14 +76,13 @@ public class RoleAccessStrategy extends TaskAccessStrategy<ProcessInstance> {
 
     @Override
     public List<MUser> listAllocableUsers(ProcessInstance instance) {
-        final List<MUser> pessoas = new ArrayList<>();
-        for (IEntityRole entityRole : instance.getUserRoles()) {
-            if (isSameRole(executionRole, entityRole)) {
-                pessoas.add(entityRole.getUser());
-            }
-        }
-        Collections.sort(pessoas);
-        return pessoas;
+        return instance.getUserRoles()
+                .stream()
+                .filter(entityRole -> isSameRole(executionRole, entityRole))
+                .map(IEntityRole::getUser)
+                .sorted()
+                .collect(Collectors.toList());
+
     }
 
     @Override

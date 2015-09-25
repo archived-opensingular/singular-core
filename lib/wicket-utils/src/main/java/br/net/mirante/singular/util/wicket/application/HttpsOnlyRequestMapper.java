@@ -1,6 +1,6 @@
 package br.net.mirante.singular.util.wicket.application;
 
-import br.net.mirante.singular.util.log.Loggable;
+import br.net.mirante.singular.commons.util.log.Loggable;
 import org.apache.wicket.protocol.https.Scheme;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
@@ -29,7 +29,6 @@ public class HttpsOnlyRequestMapper implements IRequestMapper, Loggable {
      * Constructor
      * 
      * @param delegate
-     * @param config
      */
     public HttpsOnlyRequestMapper(IRequestMapper delegate) {
         this.delegate = Args.notNull(delegate, "delegate");

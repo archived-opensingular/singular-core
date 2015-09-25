@@ -26,7 +26,7 @@ public interface VarService extends Serializable {
     VarDefinition newDefinitionDouble(String ref, String name);
 
     static VarService basic() {
-        throw new UnsupportedOperationException("Falta implementar VarServiceBasic.class");
+        return DefaultVarService.DEFAULT_VAR_SERVICE;
     }
 
     static VarService getVarService(VarServiceEnabled source) {
@@ -35,64 +35,5 @@ public interface VarService extends Serializable {
             throw new UnsupportedOperationException("Falta implementar VarServiceBasic.class");
         }
         return s.deserialize();
-    }
-
-    VarService BASIC = new VarServiceBasic();
-
-    final class VarServiceBasic implements VarService {
-
-        VarServiceBasic() {
-            /* CONSTRUTOR VAZIO */
-        }
-
-        @Override
-        public VarService deserialize() {
-            return BASIC;
-        }
-
-        @Override
-        public VarDefinitionMap<?> newVarDefinitionMap() {
-            return null;
-        }
-
-        @Override
-        public VarInstance newVarInstance(VarDefinition def) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinition(String ref, String name, VarType type) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionString(String ref, String name, Integer tamanhoMaximo) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionMultiLineString(String ref, String name, Integer tamanhoMaximo) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionDate(String ref, String name) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionInteger(String ref, String name) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionBoolean(String ref, String name) {
-            return null;
-        }
-
-        @Override
-        public VarDefinition newDefinitionDouble(String ref, String name) {
-            return null;
-        }
     }
 }

@@ -17,11 +17,14 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
-    HintKey<Boolean> NO_DECORATION = new HintKey<Boolean>() {};
-    Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
+
+    public static HintKey<Boolean> NO_DECORATION = () -> false;
+
+    public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
+
     @Override
-    default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION, false);
+    public default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+        final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         MInstancia instancia = model.getObject();
         String label = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getLabel());

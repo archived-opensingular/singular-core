@@ -1,15 +1,18 @@
 package br.net.mirante.singular.flow.core;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.schedule.ScheduledJob;
+import br.net.mirante.singular.flow.util.view.Lnk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Objects;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
-import br.net.mirante.singular.flow.schedule.ScheduledJob;
-import br.net.mirante.singular.flow.util.view.Lnk;
-
 public class MBPM {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MBPM.class);
 
     private static AbstractMbpmBean mbpmBean;
 
@@ -27,12 +30,13 @@ public class MBPM {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }
-        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        //getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
         getMbpmBean().init();
     }
 
     public static synchronized void setConf(AbstractMbpmBean conf) {
-        if(mbpmBean != null){
+        if(mbpmBean != null
+                && mbpmBean != conf){
             throw new SingularFlowException("O contexto já foi configurado.");
         }
         mbpmBean = conf;

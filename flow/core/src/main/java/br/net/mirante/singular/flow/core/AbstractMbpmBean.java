@@ -16,6 +16,7 @@ import br.net.mirante.singular.flow.core.service.IProcessEntityService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
+//TODO implementacao default, essa classe deveria vir implementada por default, muita coisa para definir
 public abstract class AbstractMbpmBean {
 
     protected void init() {
@@ -58,7 +59,7 @@ public abstract class AbstractMbpmBean {
         return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
+    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Long cod) {
         return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
@@ -72,7 +73,7 @@ public abstract class AbstractMbpmBean {
 
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return findProcessInstance(instanceClass, Integer.parseInt(id));
+            return findProcessInstance(instanceClass, Long.parseLong(id));
         } else {
             return instanceClass.cast(findProcessInstance(id));
         }
@@ -97,17 +98,26 @@ public abstract class AbstractMbpmBean {
 
     // ------- Manipulação de ID --------------------------------------
 
+
+    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    @Deprecated
     protected abstract String generateID(ProcessInstance instance);
 
+    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    @Deprecated
     protected abstract String generateID(TaskInstance taskInstance);
 
+    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    @Deprecated
     protected abstract MappingId parseId(String instanceID);
 
+    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    @Deprecated
     protected static class MappingId {
         public final String abbreviation;
-        public final Integer cod;
+        public final Long cod;
 
-        public MappingId(String abbreviation, int cod) {
+        public MappingId(String abbreviation, long cod) {
             this.abbreviation = abbreviation;
             this.cod = cod;
         }
@@ -115,16 +125,31 @@ public abstract class AbstractMbpmBean {
 
     // ------- Geração de link ----------------------------------------
 
-    public abstract Lnk getDefaultHrefFor(ProcessInstance INSTANCE);
+    @Deprecated
+    //TODO deveria ser opcional esse tipo de definicao, deveria ser simplificado
+    public abstract Lnk getDefaultHrefFor(ProcessInstance processInstance);
 
+    @Deprecated
+    //TODO deveria ser opcional esse tipo de definico, deveria ser simplificado
     public abstract Lnk getDefaultHrefFor(TaskInstance taskInstance);
 
     // ------- Manipulação de Usuário ---------------------------------
 
+    /**
+     * Deveria delegar algo para que a aplicaçào cliente possa prover o usuário
+     * @return
+     */
+    @Deprecated
     public abstract MUser getUserIfAvailable();
 
     public abstract boolean canBeAllocated(MUser user);
 
+    /**
+     *
+     * @return
+     * @deprecated deveria ser opcional
+     */
+    @Deprecated
     protected abstract AbstractProcessNotifiers getNotifiers();
 
     // ------- Consultas ----------------------------------------------

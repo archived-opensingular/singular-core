@@ -21,7 +21,7 @@ public class MTaskJava extends MTask<MTaskJava> {
     }
 
     @Override
-    public TaskType getTaskType() {
+    public IEntityTaskType getTaskType() {
         return TaskType.Java;
     }
 
