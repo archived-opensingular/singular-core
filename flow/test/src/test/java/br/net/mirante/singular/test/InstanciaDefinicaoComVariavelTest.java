@@ -22,9 +22,6 @@ import static org.junit.Assert.assertNotNull;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InstanciaDefinicaoComVariavelTest extends TestSupport {
 
-    public static String pessoa = "Pessoa X";
-    public static BigDecimal qualquerCoisa = new BigDecimal("1111111123242343240.00001E-3");
-
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
@@ -49,11 +46,11 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
         List<ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntity());
         for (ProcessInstance p : instances) {
             List<Variable> variables = testDAO.retrieveVariablesByInstance(p.getCod());
-            assertEquals(variables.size(), 2);
+            assertEquals(2, variables.size());
             List<ExecutionVariable> executionVariables = testDAO.retrieveExecutionVariablesByInstance(p.getCod());
-            assertEquals(variables.size(), 2);
+            assertEquals(2, executionVariables.size());
             List<VariableType> variableTypes = testDAO.retrieveVariablesTypesByInstance(p.getCod());
-            assertEquals(variables.size(), 2);
+            assertEquals(2, variableTypes.size());
         }
     }
 }
