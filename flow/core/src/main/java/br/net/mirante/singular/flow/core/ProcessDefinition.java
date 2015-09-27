@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,10 +12,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
@@ -51,7 +51,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private FlowMap flowMap;
 
-    private Serializable entityCod;
+    private Integer entityCod;
 
     private IProcessCreationPageStrategy creationPage;
 
@@ -257,7 +257,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     @Deprecated
     public final IEntityTask getEntityTaskWithAbbreviation(String sigla) {
-        return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
+        return getEntityTask(getFlowMap().getTaskBybbreviation(sigla));
     }
 
     @Deprecated

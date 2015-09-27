@@ -23,7 +23,7 @@ public class Variable implements IEntityVariableInstance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VARIAVEL")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "NO_VARIAVEL", nullable = false)
     private String name;
@@ -45,11 +45,11 @@ public class Variable implements IEntityVariableInstance {
     }
 
     @Override
-    public Long getCod() {
+    public Integer getCod() {
         return cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

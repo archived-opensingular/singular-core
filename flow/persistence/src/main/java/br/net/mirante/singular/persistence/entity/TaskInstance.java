@@ -31,7 +31,7 @@ public class TaskInstance implements IEntityTaskInstance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_INSTANCIA_TAREFA")
-    private Long cod;
+    private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATA_ALVO_FIM")
@@ -82,11 +82,12 @@ public class TaskInstance implements IEntityTaskInstance {
     public TaskInstance() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

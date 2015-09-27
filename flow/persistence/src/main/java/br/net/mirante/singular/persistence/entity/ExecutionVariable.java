@@ -27,7 +27,7 @@ public class ExecutionVariable implements IEntityExecutionVariable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VARIAVEL_EXECUCAO_TRANSICAO")
-    private long cod;
+    private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_HISTORICO", nullable = false)
@@ -67,14 +67,16 @@ public class ExecutionVariable implements IEntityExecutionVariable {
     public ExecutionVariable() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
+    @Override
     public ProcessInstance getProcessInstance() {
         return this.processInstance;
     }
@@ -88,6 +90,7 @@ public class ExecutionVariable implements IEntityExecutionVariable {
         this.processInstance = processInstance;
     }
 
+    @Override
     public TaskInstance getDestinationTask() {
         return this.destinationTask;
     }
@@ -106,6 +109,7 @@ public class ExecutionVariable implements IEntityExecutionVariable {
         this.destinationTask = destinationTask;
     }
 
+    @Override
     public TaskInstance getOriginTask() {
         return this.originTask;
     }

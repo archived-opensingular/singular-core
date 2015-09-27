@@ -27,7 +27,7 @@ public class RoleInstance implements IEntityRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_INSTANCIA_PAPEL")
-    private Long cod;
+    private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CRIACAO", nullable = false)
@@ -57,11 +57,11 @@ public class RoleInstance implements IEntityRole {
     }
 
     @Override
-    public Long getCod() {
+    public Integer getCod() {
         return cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

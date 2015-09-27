@@ -134,7 +134,7 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
+            estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
         }
         return estadoAtual;
     }
@@ -164,7 +164,7 @@ public abstract class ProcessInstance {
     }
 
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviationOrException(nomeTarefa).getAccessStrategy()
+        return getProcessDefinition().getFlowMap().getPeopleTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
                 .getFirstLevelUsersCodWithAccess(this);
     }
 

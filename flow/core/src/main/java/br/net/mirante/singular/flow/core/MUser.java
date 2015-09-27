@@ -28,7 +28,7 @@ public interface MUser extends Comparable<MUser> {
         return (user2 != null) && getCod().equals(user2.getCod());
     }
 
-    default boolean not(MUser user2) {
+    default boolean isNot(MUser user2) {
         return !(is(user2));
     }
 

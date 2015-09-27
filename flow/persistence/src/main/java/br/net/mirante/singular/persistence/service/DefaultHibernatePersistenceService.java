@@ -1,5 +1,14 @@
 package br.net.mirante.singular.persistence.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.TaskHistoricLog;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
@@ -14,9 +23,9 @@ import br.net.mirante.singular.persistence.dao.ProcessInstanceDAO;
 import br.net.mirante.singular.persistence.dao.RoleInstanceDAO;
 import br.net.mirante.singular.persistence.dao.TaskDAO;
 import br.net.mirante.singular.persistence.dao.TaskDefinitionDAO;
-import br.net.mirante.singular.persistence.dao.TaskInstanceHistoryDAO;
 import br.net.mirante.singular.persistence.dao.TaskHistoryTypeDAO;
 import br.net.mirante.singular.persistence.dao.TaskInstanceDAO;
+import br.net.mirante.singular.persistence.dao.TaskInstanceHistoryDAO;
 import br.net.mirante.singular.persistence.dao.TransitionDAO;
 import br.net.mirante.singular.persistence.dao.VariableDAO;
 import br.net.mirante.singular.persistence.dao.VariableTypeDAO;
@@ -36,17 +45,6 @@ import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.Variable;
 import br.net.mirante.singular.persistence.entity.VariableType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.Objects.requireNonNull;
 
 public class DefaultHibernatePersistenceService extends AbstractHibernateService implements
         IPersistenceService<Category,
@@ -148,7 +146,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     }
 
     @Override
-    public Long updateVariableValue(ProcessInstance instancia, VarInstance mVariavel, Serializable dbVariableCod) {
+    public Integer updateVariableValue(ProcessInstance instancia, VarInstance mVariavel, Integer dbVariableCod) {
 
         Object valorAjustado = mVariavel.getValor();
         Variable variable = null;
@@ -169,7 +167,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
             variable.setName(mVariavel.getRef());
 
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variable.getValue())) {
+            if (!Objects.equals(valorString, variable.getValue())) {
                 variable.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variable.setValue(valorString);
             }
@@ -178,7 +176,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
             processInstanceDAO.refresh(instancia);
         } else {
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variable.getValue())) {
+            if (!Objects.equals(valorString, variable.getValue())) {
                 variable.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variable.setValue(valorString);
                 variableDAO.merge(variable);
@@ -211,7 +209,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     }
 
     @Override
-    public Process retrieveProcessDefinitionByCod(Serializable cod) {
+    public Process retrieveProcessDefinitionByCod(Integer cod) {
         return processDAO.retrieveById(cod);
     }
 
@@ -221,12 +219,12 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
     }
 
     @Override
-    public ProcessInstance retrieveProcessInstanceByCod(Serializable cod) {
+    public ProcessInstance retrieveProcessInstanceByCod(Integer cod) {
         return processInstanceDAO.retrieveById(cod);
     }
 
     @Override
-    public TaskInstance retrieveTaskInstanceByCod(Serializable cod) {
+    public TaskInstance retrieveTaskInstanceByCod(Integer cod) {
         return taskInstanceDAO.retrieveById(cod);
     }
 
@@ -338,7 +336,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
 
     @Override
     public List<ProcessInstance> retrieveProcessInstancesWith(Process process, Date minDataInicio, Date maxDataInicio, Collection<? extends TaskDefinition> states) {
-        requireNonNull(process);
+        Objects.requireNonNull(process);
         if (minDataInicio == null && maxDataInicio == null) {
             return processDAO.retrivePorEstado(null, null, process.getProcessDefinition(), states);
         }

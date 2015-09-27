@@ -1,8 +1,6 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.IEntityTaskType;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
+
+import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.persistence.util.Constants;
 
 
 /**
@@ -28,7 +27,7 @@ public class Task implements IEntityTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_TAREFA")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "NO_TAREFA", nullable = false)
     private String name;
@@ -54,14 +53,16 @@ public class Task implements IEntityTask {
     public Task() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
+    @Override
     public TaskDefinition getTaskDefinition() {
         return this.taskDefinition;
     }
@@ -70,6 +71,7 @@ public class Task implements IEntityTask {
         this.taskDefinition = taskDefinition;
     }
 
+    @Override
     public Process getProcess() {
         return this.process;
     }

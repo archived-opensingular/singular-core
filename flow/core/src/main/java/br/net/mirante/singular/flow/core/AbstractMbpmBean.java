@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +48,7 @@ public abstract class AbstractMbpmBean {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getProcessInstanceByEntityCod(Serializable cod) {
+    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
@@ -59,7 +58,7 @@ public abstract class AbstractMbpmBean {
         return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Long cod) {
+    public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
         return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
@@ -73,7 +72,7 @@ public abstract class AbstractMbpmBean {
 
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return findProcessInstance(instanceClass, Long.parseLong(id));
+            return findProcessInstance(instanceClass, Integer.parseInt(id));
         } else {
             return instanceClass.cast(findProcessInstance(id));
         }
@@ -115,9 +114,9 @@ public abstract class AbstractMbpmBean {
     @Deprecated
     protected static class MappingId {
         public final String abbreviation;
-        public final Long cod;
+        public final Integer cod;
 
-        public MappingId(String abbreviation, long cod) {
+        public MappingId(String abbreviation, int cod) {
             this.abbreviation = abbreviation;
             this.cod = cod;
         }
@@ -137,6 +136,7 @@ public abstract class AbstractMbpmBean {
 
     /**
      * Deveria delegar algo para que a aplicaçào cliente possa prover o usuário
+     *
      * @return
      */
     @Deprecated

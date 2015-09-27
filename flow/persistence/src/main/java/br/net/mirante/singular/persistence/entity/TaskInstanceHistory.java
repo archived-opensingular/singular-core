@@ -28,7 +28,7 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_HISTORICO_ALOCACAO")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "DS_COMPLEMENTO")
     private String description;
@@ -64,11 +64,12 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
     public TaskInstanceHistory() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
@@ -99,6 +100,7 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
         this.beginDateAllocation = beginDateAllocation;
     }
 
+    @Override
     public Actor getAllocatedUser() {
         return allocatedUser;
     }
