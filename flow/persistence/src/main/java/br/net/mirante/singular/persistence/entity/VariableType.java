@@ -21,7 +21,7 @@ public class VariableType implements IEntityVariableType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_TIPO_VARIAVEL")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "DS_TIPO_VARIAVEL", nullable = false)
     private String description;
@@ -32,11 +32,12 @@ public class VariableType implements IEntityVariableType {
     public VariableType() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

@@ -69,21 +69,21 @@ public class TestDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Variable> retrieveVariablesByInstance(Long id) {
+    public List<Variable> retrieveVariablesByInstance(Integer id) {
         return getSession().createQuery(
                 "select v from Variable v inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExecutionVariable> retrieveExecutionVariablesByInstance(Long id) {
+    public List<ExecutionVariable> retrieveExecutionVariablesByInstance(Integer id) {
         return getSession().createQuery(
                 "select v from ExecutionVariable v inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<VariableType> retrieveVariablesTypesByInstance(Long id) {
+    public List<VariableType> retrieveVariablesTypesByInstance(Integer id) {
         return getSession().createQuery(
                 "select distinct vt from Variable v inner join v.type vt inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();

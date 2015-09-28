@@ -54,7 +54,7 @@ public class TaskInstance {
 
     public MTask<?> getFlowTask() {
         if (flowTask == null) {
-            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getTaskVersion().getAbbreviation());
+            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskBybbreviation(getTaskVersion().getAbbreviation());
         }
         return flowTask;
     }

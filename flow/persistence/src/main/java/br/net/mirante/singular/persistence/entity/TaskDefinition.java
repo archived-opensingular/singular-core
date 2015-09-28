@@ -26,7 +26,7 @@ public class TaskDefinition implements IEntityTaskDefinition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_DEFINICAO_TAREFA")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "SG_TAREFA", nullable = false)
     private String abbreviation;
@@ -46,11 +46,12 @@ public class TaskDefinition implements IEntityTaskDefinition {
     public TaskDefinition() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

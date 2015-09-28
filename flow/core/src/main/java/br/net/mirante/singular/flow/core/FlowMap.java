@@ -176,11 +176,11 @@ public class FlowMap implements Serializable {
         return fim;
     }
 
-    public MTask<?> getTaskWithAbbreviation(String abbreviation) {
+    public MTask<?> getTaskBybbreviation(String abbreviation) {
         return tasksByAbbreviation.get(abbreviation);
     }
 
-    public MTask<?> getTaskWithAbbreviationOrException(String abbreviation) {
+    public MTask<?> getTaskByAbbreviationOrException(String abbreviation) {
         MTask<?> t = tasksByAbbreviation.get(abbreviation);
         if (t == null) {
             throw new SingularFlowException(createErrorMsg("Task with abbreviation '" + abbreviation + "' not found"));
@@ -188,12 +188,12 @@ public class FlowMap implements Serializable {
         return t;
     }
 
-    public MTaskPeople getPeopleTaskWithAbbreviation(String abbreviation) {
-        return castCheck(getTaskWithAbbreviation(abbreviation), MTaskPeople.class, abbreviation);
+    public MTaskPeople getPeopleTaskByAbbreviation(String abbreviation) {
+        return castCheck(getTaskBybbreviation(abbreviation), MTaskPeople.class, abbreviation);
     }
 
-    public MTaskPeople getPeopleTaskWithAbbreviationOrException(String abbreviation) {
-        return castCheck(getTaskWithAbbreviationOrException(abbreviation), MTaskPeople.class, abbreviation);
+    public MTaskPeople getPeopleTaskByAbbreviationOrException(String abbreviation) {
+        return castCheck(getTaskByAbbreviationOrException(abbreviation), MTaskPeople.class, abbreviation);
     }
 
     private <T extends MTask> T castCheck(MTask<?> target, Class<T> expectedClass, String abbreviation) {

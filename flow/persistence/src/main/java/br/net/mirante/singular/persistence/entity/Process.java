@@ -29,7 +29,7 @@ public class Process implements IEntityProcess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_PROCESSO")
-    private Long cod;
+    private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERSAO", nullable = false)
@@ -46,11 +46,12 @@ public class Process implements IEntityProcess {
     public Process() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

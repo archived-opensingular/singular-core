@@ -27,7 +27,7 @@ public class ProcessDefinition implements IEntityProcessDefinition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_DEFINICAO_PROCESSO")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "NO_CLASSE_JAVA", nullable = false)
     private String definitionClassName;
@@ -62,11 +62,12 @@ public class ProcessDefinition implements IEntityProcessDefinition {
     public ProcessDefinition() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

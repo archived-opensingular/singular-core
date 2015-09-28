@@ -31,7 +31,7 @@ public class ProcessInstance implements IEntityProcessInstance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_INSTANCIA_PROCESSO")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "DS_INSTANCIA_PROCESSO")
     private String description;
@@ -82,11 +82,11 @@ public class ProcessInstance implements IEntityProcessInstance {
     private List<RoleInstance> roles;
 
     @Override
-    public Long getCod() {
+    public Integer getCod() {
         return cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
