@@ -262,7 +262,7 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
             for (VarInstance variavel : instanceMap) {
                 if(variavel.getValor() != null){
                     ExecutionVariable novo = new ExecutionVariable();
-//                    novo.setVariable((Variable) instance.getVariable(variavel.getRef()));
+                    novo.setVariable((Variable) instance.getVariable(variavel.getRef()));
                     novo.setDate(dateHour);
                     novo.setProcessInstance(instance);
                     novo.setOriginTask(originTask);

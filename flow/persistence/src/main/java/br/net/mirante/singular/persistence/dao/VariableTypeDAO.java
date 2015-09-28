@@ -26,6 +26,7 @@ public class VariableTypeDAO extends AbstractHibernateDAO<VariableType> {
         VariableType variableType = retrieveByTypeClassName(tipoParametro.getClass().getName());
         if (variableType == null) {
             variableType = new VariableType();
+            variableType.setDescription(tipoParametro.getName());
             variableType.setTypeClassName(tipoParametro.getClass().getName());
             save(variableType);
         }

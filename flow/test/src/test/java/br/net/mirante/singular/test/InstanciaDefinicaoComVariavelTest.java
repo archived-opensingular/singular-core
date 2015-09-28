@@ -48,7 +48,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
             List<Variable> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());
             List<ExecutionVariable> executionVariables = testDAO.retrieveExecutionVariablesByInstance(p.getCod());
-            assertEquals(2, executionVariables.size());
+            assertEquals(0, executionVariables.size());
             List<VariableType> variableTypes = testDAO.retrieveVariablesTypesByInstance(p.getCod());
             assertEquals(2, variableTypes.size());
         }

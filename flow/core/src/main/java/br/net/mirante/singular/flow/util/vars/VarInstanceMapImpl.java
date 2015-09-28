@@ -1,5 +1,7 @@
 package br.net.mirante.singular.flow.util.vars;
 
+import br.net.mirante.singular.flow.core.SingularFlowException;
+
 public class VarInstanceMapImpl extends AbstractVarInstanceMap<VarInstance> {
 
     public VarInstanceMapImpl(VarService varService) {
@@ -17,5 +19,10 @@ public class VarInstanceMapImpl extends AbstractVarInstanceMap<VarInstance> {
     @Override
     protected VarInstance newVarInstance(VarDefinition def) {
         return getVarService().newVarInstance(def);
+    }
+
+    @Override
+    public void onValueChanged(VarInstance changedVar) {
+        throw new SingularFlowException("Método não suportado");
     }
 }
