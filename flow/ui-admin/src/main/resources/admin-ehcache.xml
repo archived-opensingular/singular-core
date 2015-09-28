@@ -4,20 +4,18 @@
          monitoring="autodetect"
          dynamicConfig="true">
 
-    <diskStore path="java.io.tmpdir"/>
+    <!--<diskStore path="java.io.tmpdir"/>-->
 
-    <defaultCache maxElementsInMemory="200000" eternal="false"
-                  timeToIdleSeconds="1800" timeToLiveSeconds="2400"
-                  overflowToDisk="false"/>
+    <defaultCache eternal="false"
+                  maxElementsInMemory="200000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  memoryStoreEvictionPolicy="LFU"
+                  overflowToDisk="false"
+                  transactionalMode="off"
+                  maxEntriesLocalHeap="10000"/>
 
-    <cache name="retrieveAllCategoriesMenu"
-           maxEntriesLocalHeap="10000"
-           maxEntriesLocalDisk="1000"
-           eternal="false"
-           diskSpoolBufferSizeMB="20"
-           timeToIdleSeconds="300" timeToLiveSeconds="600"
-           memoryStoreEvictionPolicy="LFU"
-           transactionalMode="off">
+    <cache name="retrieveAllCategoriesMenu">
         <persistence strategy="localTempSwap"/>
     </cache>
 
