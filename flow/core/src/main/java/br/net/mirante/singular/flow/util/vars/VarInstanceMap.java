@@ -7,9 +7,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 
-public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
+public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K>, Loggable {
 
     public K getVariavel(String ref);
 
@@ -185,9 +186,7 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         return result;
     }
 
-    public default void onValueChanged(VarInstance changedVar) {
-        // Ignora por default
-    }
+    public void onValueChanged(VarInstance changedVar);
 
     public static VarInstanceMap<?> empty() {
         return EMPTY;
@@ -203,6 +202,11 @@ public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled
         @Override
         public boolean isEmpty() {
             return true;
+        }
+
+        @Override
+        public void onValueChanged(VarInstance changedVar) {
+            throw new SingularFlowException("Método não suportado");
         }
 
         @Override

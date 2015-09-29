@@ -78,12 +78,20 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance start() {
-        return start(null);
+        return start(getVariaveis());
     }
 
-    public TaskInstance start(VarInstanceMap<?> paramIn) {
+    /**
+     *
+     * @param varInstanceMap
+     * @return
+     * @deprecated Esse método deve ser renomeado pois possui um comportamente implicito não evidente em comparação à outra versão sobrecarregada do mesmo: "getPersistedDescription"
+     *
+     */
+    @Deprecated
+    public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descricação
-        return EngineProcessamentoMBPM.start(this, paramIn);
+        return EngineProcessamentoMBPM.start(this, varInstanceMap);
     }
 
     public void executeTransition() {
