@@ -1,7 +1,6 @@
 package br.net.mirante.singular.flow.core.renderer;
 
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +8,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
+import com.google.common.base.Throwables;
+import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
+import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
+import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
+import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
+import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
+import com.yworks.yfiles.bpmn.view.EventCharEnum;
+import com.yworks.yfiles.bpmn.view.EventPortSupport;
+import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
 import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -28,6 +37,7 @@ import y.view.NodePortLayoutConfigurator;
 import y.view.NodeRealizer;
 import y.view.NodeScaledPortLocationModel;
 import y.view.tabular.TableGroupNodeRealizer;
+
 import br.net.mirante.singular.flow.core.EventType;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTask;
@@ -36,24 +46,13 @@ import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.util.props.MetaDataRef;
 
-import com.google.common.base.Throwables;
-import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
-import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
-import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
-import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
-import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
-import com.yworks.yfiles.bpmn.view.EventCharEnum;
-import com.yworks.yfiles.bpmn.view.EventPortSupport;
-import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
-
 /**
  * https://www.yworks.com/en/products_yfiles_about.html
- *
  */
 public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     public static final MetaDataRef<Boolean> SEND_EMAIL = new MetaDataRef<>("SEND_EMAIL", Boolean.class);
-    
+
     private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";
     private static final String MINIMUM_LABEL_MARGIN = "Minimum Label Margin";
@@ -96,7 +95,7 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     public static YFilesFlowRenderer getInstance() {
         if (instance == null) {
-            synchronized(YFilesFlowRenderer.class){
+            synchronized (YFilesFlowRenderer.class) {
                 if (instance == null) {
                     instance = new YFilesFlowRenderer();
                 }
@@ -110,6 +109,11 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
         drawDiagrama(generateDiagrama(definicao), os);
         return os.toByteArray();
+    }
+
+    @Override
+    public void showImage(ProcessDefinition<?> definicao) {
+        new ImageViewer("Diagrama: " + definicao.getName(), generateImage(definicao));
     }
 
     private Graph2DView generateDiagrama(ProcessDefinition<?> definicao) {
@@ -354,5 +358,25 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
         }
         graph.getRealizer(node).addPort(port);
         port.bindSourcePort(edge);
+    }
+
+    private static class ImageViewer extends JFrame {
+
+        public ImageViewer(String title, byte[] image) throws HeadlessException {
+            super(title);
+            this.getRootPane().setContentPane(getImageComponent(image));
+            this.pack();
+            this.setLocationRelativeTo(null);
+            this.setVisible(true);
+        }
+
+        private JComponent getImageComponent(byte[] image) {
+            JPanel panel = new JPanel();
+            ImageIcon icon = new ImageIcon(image);
+            JLabel label = new JLabel();
+            label.setIcon(icon);
+            panel.add(label);
+            return panel;
+        }
     }
 }

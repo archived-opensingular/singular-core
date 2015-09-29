@@ -18,8 +18,10 @@ public class MBPMUtil {
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, final ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(), s2.getEntity().getCurrentTask().getTask(), definicao));
+    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias,
+            final ProcessDefinition<?> definicao) {
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(),
+                s2.getEntity().getCurrentTask().getTask(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTask s1, IEntityTask s2, ProcessDefinition<?> definicao) {
@@ -41,7 +43,8 @@ public class MBPMUtil {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
-    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes, ProcessDefinition<?> definicao) {
+    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
+            ProcessDefinition<?> definicao) {
         List<X> novo = new ArrayList<>(situacoes);
         novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
         return novo;
@@ -65,11 +68,8 @@ public class MBPMUtil {
         }
         Deque<MTask<?>> deque = new ArrayDeque<>();
         orderedVisit(0, flowMap.getStartTask(), deque);
-        for (MTask<?> task : flowMap.getTasks()) {
-            if (task.getOrder() == 0) {
-                task.setOrder(calculateWeight(task) + 1000000);
-            }
-        }
+        flowMap.getTasks().stream().filter(task -> task.getOrder() == 0)
+                .forEach(task -> task.setOrder(calculateWeight(task) + 1000000));
     }
 
     private static void orderedVisit(int previousValue, MTask<?> task, Deque<MTask<?>> deque) {
@@ -89,7 +89,8 @@ public class MBPMUtil {
     }
 
     private static int calculateTaskOrder(IEntityTask entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntity().getProcessDefinition().equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
+        if (!processDefinition.getEntity().getProcessDefinition()
+                .equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
         MTask<?> task = processDefinition.getFlowMap().getTaskBybbreviation(entityTaskDefinition.getAbbreviation());
@@ -155,5 +156,9 @@ public class MBPMUtil {
 
     public static String normalize(String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
+    public static void showSwingDiagram(Class<? extends ProcessDefinition> definitionClass) {
+        MBPM.getMbpmBean().getFlowRenderer().showImage(MBPM.getDefinicao(definitionClass));
     }
 }

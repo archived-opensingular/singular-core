@@ -51,6 +51,12 @@ public class PeticaoTest extends TestSupport {
     }
 
     @Test
+    public void showSwingDiagramTest() {
+        Peticao.main(null);
+        System.out.println("Verificando diagrama...");
+    }
+
+    @Test
     public void testeCriarInstanciaPeticao() {
         InstanciaPeticao id = startInstance();
         InstanciaPeticao id2 = MBPM.findProcessInstance(id.getFullId());

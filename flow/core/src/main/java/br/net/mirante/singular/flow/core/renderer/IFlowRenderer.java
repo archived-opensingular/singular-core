@@ -4,4 +4,5 @@ import br.net.mirante.singular.flow.core.ProcessDefinition;
 
 public interface IFlowRenderer {
     byte[] generateImage(ProcessDefinition<?> definicao);
+    void showImage(ProcessDefinition<?> definicao);
 }
