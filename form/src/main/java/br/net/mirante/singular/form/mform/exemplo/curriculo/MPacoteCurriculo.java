@@ -140,10 +140,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
-            certificacoes.withView(() -> new MTableListaView()
-                .withAdicaoDeLinha()
-                .withExclusaoDeLinha()
-                .withInsercaoDeLinha());
+            certificacoes.withView(() -> new MTableListaView());
             certificacoes
                 .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
             certificacao

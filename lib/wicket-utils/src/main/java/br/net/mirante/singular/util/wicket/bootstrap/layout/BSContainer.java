@@ -1,5 +1,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
@@ -8,7 +10,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
 @SuppressWarnings("unchecked")
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
@@ -108,6 +110,12 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
             .add(component)
             .setRenderBodyOnly(true);
         return component;
+    }
+
+    public TemplatePanel newTemplateTag(IFunction<TemplatePanel, String> markupFunc) {
+        TemplatePanel container = newComponent(id -> new TemplatePanel(id, markupFunc));
+        container.setRenderBodyOnly(true);
+        return container;
     }
 
     public <C extends Component> THIS appendComponent(IBSComponentFactory<C> factory) {
