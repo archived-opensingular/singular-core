@@ -8,8 +8,12 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
+import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 
 public class MBPMUtil {
 
@@ -158,7 +162,32 @@ public class MBPMUtil {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
+    /**
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por padrão a API
+     * yFiles para gerar o diagrama.
+     *
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     *
+     * @param definitionClass a definição do processo especificado.
+     */
     public static void showSwingDiagram(Class<? extends ProcessDefinition> definitionClass) {
-        MBPM.getMbpmBean().getFlowRenderer().showImage(MBPM.getDefinicao(definitionClass));
+        showSwingDiagram(definitionClass, YFilesFlowRenderer.getInstance());
+    }
+
+    /**
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o diagramador especificado
+     * para gerar a imagem.
+     *
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     *
+     * @param definitionClass a definição do processo especificado.
+     * @param renderer o diagramador especificado.
+     */
+    public static void showSwingDiagram(Class<? extends ProcessDefinition> definitionClass, IFlowRenderer renderer) {
+        try {
+            renderer.showImage(definitionClass.cast(definitionClass.newInstance()));
+        } catch (InstantiationException | IllegalAccessException e) {
+            Logger.getLogger(MBPMUtil.class.getName()).log(Level.WARNING, e.getMessage(), e);
+        }
     }
 }

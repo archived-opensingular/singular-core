@@ -367,6 +367,7 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
             this.getRootPane().setContentPane(getImageComponent(image));
             this.pack();
             this.setLocationRelativeTo(null);
+            this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             this.setVisible(true);
         }
 

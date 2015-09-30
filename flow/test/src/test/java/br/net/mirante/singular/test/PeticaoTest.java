@@ -3,6 +3,8 @@ package br.net.mirante.singular.test;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -52,8 +54,9 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void showSwingDiagramTest() {
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
         Peticao.main(null);
-        System.out.println("Verificando diagrama...");
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Pronto!");
     }
 
     @Test
