@@ -2,6 +2,7 @@ package br.net.mirante.singular.definicao;
 
 import br.net.mirante.singular.defaults.DefaultPageStrategy;
 import br.net.mirante.singular.defaults.DefaultTaskAccessStrategy;
+import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MUser;
@@ -116,13 +117,6 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
     public void notificar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
         System.out.println("Notificado");
 
-    }
-
-    private static class EmptyUserRoleSettingStrategy extends UserRoleSettingStrategy<InstanciaPeticao> {
-        @Override
-        public List<? extends MUser> listAllocableUsers(InstanciaPeticao instancia) {
-            return Collections.emptyList();
-        }
     }
 
 }
