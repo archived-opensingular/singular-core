@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -55,7 +54,7 @@ public class TaskInstance {
 
     public MTask<?> getFlowTask() {
         if (flowTask == null) {
-            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getTaskVersion().getAbbreviation());
+            flowTask = getProcessInstance().getProcessDefinition().getFlowMap().getTaskBybbreviation(getTaskVersion().getAbbreviation());
         }
         return flowTask;
     }
@@ -241,13 +240,13 @@ public class TaskInstance {
             return ImmutableList.of(getAllocatedUser());
         }
         if (getFlowTask() != null && (getFlowTask().isPeople() || (getFlowTask().isWait() && getFlowTask().getAccessStrategy() != null))) {
-            Set<Serializable> codPessoas = getFirstLevelUsersCodWithAccess();
+            Set<Integer> codPessoas = getFirstLevelUsersCodWithAccess();
             return (List<MUser>) getPersistenceService().retrieveUsersByCod(codPessoas);
         }
         return Collections.emptyList();
     }
 
-    private Set<Serializable> getFirstLevelUsersCodWithAccess() {
+    private Set<Integer> getFirstLevelUsersCodWithAccess() {
         Objects.requireNonNull(getFlowTask(), "Task com a sigla " + getTaskVersion().getAbbreviation() + " não encontrada na definição "
                 + getProcessInstance().getProcessDefinition().getName());
         Objects.requireNonNull(getFlowTask().getAccessStrategy(),

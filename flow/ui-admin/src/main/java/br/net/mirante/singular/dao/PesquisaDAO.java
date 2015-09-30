@@ -15,10 +15,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.FloatType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
+
+import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -33,7 +36,7 @@ public class PesquisaDAO {
         return sessionFactory.getCurrentSession();
     }
 
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period) {
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
         String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
                 + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
                 + " FROM TB_INSTANCIA_PROCESSO INS"
@@ -41,6 +44,7 @@ public class PesquisaDAO {
                 + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL"
                 + (period != null ? " AND INS.DT_INICIO >= :startPeriod AND INS.DT_FIM <= :endPeriod" : "")
+                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "")
                 + " GROUP BY DEF.SG_PROCESSO, DEF.NO_PROCESSO ORDER BY MEAN DESC";
 
         Query query = getSession().createSQLQuery(sql)
@@ -52,6 +56,10 @@ public class PesquisaDAO {
         if (period != null) {
             query.setParameter("startPeriod", periodFromNow(period));
             query.setParameter("endPeriod", new Date());
+        }
+
+        if (processCode != null) {
+            query.setParameter("processCode", processCode);
         }
 
         query.setMaxResults(15);
@@ -85,7 +93,8 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode";
+                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal();
 
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("QUANTIDADE", IntegerType.INSTANCE)
@@ -105,6 +114,7 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO ORDER BY MEAN DESC";
 
         Query query = getSession().createSQLQuery(sql)
@@ -129,6 +139,7 @@ public class PesquisaDAO {
                 + " INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
+                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
                 + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO"
                 + " ORDER BY MEAN) AS OTHERS GROUP BY NOME_DEFINICAO";
 
@@ -144,8 +155,9 @@ public class PesquisaDAO {
         return (List<Map<String, String>>) query.list();
     }
 
-    public List<Map<String, String>> retrieveCountByTask(String processCode) {
-        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
+    public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
+        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
+                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INSTA.DT_INICIO, GETDATE()) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO"
                 + " FROM TB_INSTANCIA_TAREFA INSTA"
                 + " INNER JOIN TB_TAREFA TAR ON TAR.CO_TAREFA = INSTA.CO_TAREFA"
                 + " INNER JOIN TB_INSTANCIA_PROCESSO INS ON INSTA.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
@@ -157,6 +169,7 @@ public class PesquisaDAO {
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("NOME", StringType.INSTANCE)
                 .addScalar("QUANTIDADE", StringType.INSTANCE)
+                .addScalar("TEMPO", FloatType.INSTANCE)
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .setParameter("processCode", processCode);
 

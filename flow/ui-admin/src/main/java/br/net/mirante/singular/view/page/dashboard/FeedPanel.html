@@ -5,13 +5,13 @@
     <div class="portlet light ">
         <div class="portlet-title tabbable-line">
             <div class="caption caption-md">
-                <i class="icon-globe font-red-sunglo hide"></i> <span
-                    class="caption-subject font-red-sunglo bold uppercase">Instâncias demorando mais que a média</span>
+                <span class="caption-subject bold uppercase font-red-sunglo"><wicket:message key="feed.panel.title"/></span>
+                <span class="caption-helper"><wicket:message key="feed.panel.subtitle"/></span>
             </div>
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_1_1" data-toggle="tab">Instâncias
+                <li class="active"><a href="#tab_1_1" data-toggle="tab"><wicket:message key="feed.panel.tab.instance.title"/>
                 </a></li>
-                <li class=""><a href="#tab_1_2" data-toggle="tab">Tarefas
+                <li class=""><a href="#tab_1_2" data-toggle="tab"><wicket:message key="feed.panel.tab.task.title"/>
                 </a></li>
             </ul>
         </div>
@@ -19,8 +19,11 @@
             <!-- BEGIN TABS -->
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_1_1">
-                    <div class="scroller"
-                         style="height: 337px; overflow: hidden; width: auto;"
+                    <div wicket:id="instancesEmptyMessage" style="height: 351px;">
+                        <wicket:message key="feed.panel.tab.content.empty"/>
+                    </div>
+                    <div wicket:id="instancesContent" class="scroller"
+                         style="height: 351px; overflow: hidden; width: auto;"
                          data-always-visible="1" data-rail-visible="1"
                          data-handle-color="#D7DCE2" data-initialized="1">
                         <ul class="feeds" wicket:id="atividades">
@@ -34,7 +37,7 @@
                                         </div>
                                         <div class="cont-col2">
                                             <div class="desc">
-                                                <label wicket:id="descricao">Valor</label>
+                                                <label wicket:id="descricao"></label>
                                             </div>
                                             <!-- Aqui ficaria a parte do icone lateral de sugestao de acao -->
                                         </div>
@@ -42,7 +45,7 @@
                                 </div>
                                 <div class="col2">
                                     <div class="date">
-                                        <label wicket:id="tempoDeAtraso"> 5 dias</label>
+                                        <label wicket:id="tempoDeAtraso"></label>
                                     </div>
                                 </div>
                             </li>
@@ -50,7 +53,9 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="tab_1_2">
-
+                    <div style="height: 351px;">
+                        <wicket:message key="feed.panel.tab.content.empty"/>
+                    </div>
                 </div>
             </div>
             <!-- END TABS -->

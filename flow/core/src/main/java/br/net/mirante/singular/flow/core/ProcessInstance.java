@@ -1,5 +1,17 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -13,17 +25,6 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessInstance {
@@ -33,7 +34,6 @@ public abstract class ProcessInstance {
     private transient MTask<?> estadoAtual;
 
     private transient ExecucaoMTask executionContext;
-
 
     /**
      * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
@@ -69,6 +69,7 @@ public abstract class ProcessInstance {
     /**
      * @param <K>
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
@@ -77,12 +78,20 @@ public abstract class ProcessInstance {
     }
 
     public TaskInstance start() {
-        return start(null);
+        return start(getVariaveis());
     }
 
-    public TaskInstance start(VarInstanceMap<?> paramIn) {
+    /**
+     *
+     * @param varInstanceMap
+     * @return
+     * @deprecated Esse método deve ser renomeado pois possui um comportamente implicito não evidente em comparação à outra versão sobrecarregada do mesmo: "getPersistedDescription"
+     *
+     */
+    @Deprecated
+    public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descricação
-        return EngineProcessamentoMBPM.start(this, paramIn);
+        return EngineProcessamentoMBPM.start(this, varInstanceMap);
     }
 
     public void executeTransition() {
@@ -103,6 +112,7 @@ public abstract class ProcessInstance {
 
     /**
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
@@ -112,6 +122,7 @@ public abstract class ProcessInstance {
 
     /**
      * @return
+     *
      * @deprecated deve ser transformado em abstrato
      */
     @Deprecated
@@ -131,7 +142,7 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getProcessDefinition().getFlowMap().getTaskWithAbbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
+            estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
         }
         return estadoAtual;
     }
@@ -160,8 +171,8 @@ public abstract class ProcessInstance {
         return MBPM.getDefaultHrefFor(this);
     }
 
-    public Set<Serializable> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskWithAbbreviationOrException(nomeTarefa).getAccessStrategy()
+    public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
+        return getProcessDefinition().getFlowMap().getPeopleTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
                 .getFirstLevelUsersCodWithAccess(this);
     }
 
@@ -474,7 +485,7 @@ public abstract class ProcessInstance {
         return getEntity().getTasks().stream().anyMatch(tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null);
     }
 
-    public boolean isAllocated(Serializable codPessoa) {
+    public boolean isAllocated(Integer codPessoa) {
         return getEntity()
                 .getTasks()
                 .stream()

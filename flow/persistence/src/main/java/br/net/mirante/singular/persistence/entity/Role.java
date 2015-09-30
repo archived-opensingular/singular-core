@@ -1,7 +1,6 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,11 +9,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.List;
-import javax.persistence.*;
+
+import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.persistence.util.Constants;
 
 
 /**
@@ -28,7 +27,7 @@ public class Role implements IEntityProcessRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_PAPEL")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "NO_PAPEL", nullable = false)
     private String name;
@@ -47,15 +46,17 @@ public class Role implements IEntityProcessRole {
     public Role() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
 
+    @Override
     public ProcessDefinition getProcessDefinition() {
         return this.processDefinition;
     }

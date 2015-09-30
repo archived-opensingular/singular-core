@@ -11,23 +11,21 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
-import br.net.mirante.singular.flow.util.vars.VarDefinition;
 
-public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS extends IEntityProcess, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask, TRANSITION extends IEntityTaskTransition> {
+public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition,
+        PROCESS extends IEntityProcess, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask,
+        TRANSITION extends IEntityTaskTransition> {
 
     /**
      * Generates a new {@link IEntityProcess} if {@link ProcessDefinition} is
      * new or has changed
-     * 
-     * @param processDefinition
-     * @return
      */
     @SuppressWarnings("unchecked")
     default PROCESS generateEntityFor(ProcessDefinition<?> processDefinition) {
         PROCESS_DEF entityProcessDefinition = retrieveOrcreateEntityProcessDefinitionFor(processDefinition);
 
         checkRoleDefChanges(processDefinition, entityProcessDefinition);
-        
+
         PROCESS entityProcess = createEntityProcess(entityProcessDefinition);
 
         for (MTask<?> task : processDefinition.getFlowMap().getAllTasks()) {
@@ -49,7 +47,7 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
     PROCESS_DEF retrieveOrcreateEntityProcessDefinitionFor(ProcessDefinition<?> definicao);
 
     void checkRoleDefChanges(ProcessDefinition<?> definicao, PROCESS_DEF entityProcessDefinition);
-    
+
     PROCESS createEntityProcess(PROCESS_DEF entityProcessDefinition);
 
     CATEGORY retrieveOrCreateCategoryWith(String name);
@@ -75,9 +73,9 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
 
     default boolean isNewVersion(IEntityTask oldEntityTask, IEntityTask newEntitytask) {
         if (oldEntityTask == null
-            || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
-            || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())
-            || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
+                || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
+                || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())
+                || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
             return true;
         }
         for (IEntityTaskTransition newEntityTaskTransition : newEntitytask.getTransitions()) {
@@ -90,13 +88,10 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
     }
 
     default boolean isNewVersion(IEntityTaskTransition oldEntityTaskTransition, IEntityTaskTransition newEntityTaskTransition) {
-        if (oldEntityTaskTransition == null
-            || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
-            || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
-            || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType()
-            || !oldEntityTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getDestinationTask().getAbbreviation())) {
-            return true;
-        }
-        return false;
+        return oldEntityTaskTransition == null
+                || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
+                || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
+                || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType()
+                || !oldEntityTaskTransition.getDestinationTask().getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getDestinationTask().getAbbreviation());
     }
 }

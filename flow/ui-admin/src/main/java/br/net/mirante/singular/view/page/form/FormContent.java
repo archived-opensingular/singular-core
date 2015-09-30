@@ -13,7 +13,6 @@ import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
@@ -39,15 +38,11 @@ public class FormContent extends Content implements SingularWicketContainer<Form
     @SuppressWarnings("unchecked")
     protected void onInitialize() {
         super.onInitialize();
-        MTipoComposto<? extends MIComposto> tCurriculo = (MTipoComposto<? extends MIComposto>)
-            dicionario.getTipo("mform.exemplo.curriculo.Curriculo");
 
-        MIComposto iCurriculo = tCurriculo.novaInstancia();
-
-        IModel<MIComposto> mCurriculo = new MInstanciaRaizModel<MIComposto>(iCurriculo) {
+        IModel<MIComposto> mCurriculo = new MInstanciaRaizModel<MIComposto>() {
             @Override
-            protected MTipo<MIComposto> getTipoRaiz(String nomeTipo) {
-                return (MTipo<MIComposto>) dicionario.getTipo(nomeTipo);
+            protected MTipo<MIComposto> getTipoRaiz() {
+                return (MTipo<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
             }
         };
 

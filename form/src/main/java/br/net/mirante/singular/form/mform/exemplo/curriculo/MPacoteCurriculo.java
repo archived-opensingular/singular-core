@@ -5,10 +5,11 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MListaMultiPanelView;
-import br.net.mirante.singular.form.mform.basic.view.MListaSimpleTableView;
+import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
@@ -20,6 +21,9 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.wicket.AtrWicket;
 
 public class MPacoteCurriculo extends MPacote {
+
+    public static final String PACOTE         = "mform.exemplo.curriculo";
+    public static final String TIPO_CURRICULO = PACOTE + ".Curriculo";
 
     public MPacoteCurriculo() {
         super("mform.exemplo.curriculo");
@@ -89,7 +93,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
-            formacao.withView(MListaSimpleTableView::new)
+            formacao.withView(MGridListaView::new)
                 .as(AtrBasic::new).label("Formação Acadêmica").tamanhoInicial(1);
             academicoTipo.withView(MSelecaoPorRadioView::new)
                 .as(AtrBasic::new).label("Tipo")
@@ -112,7 +116,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString cargo = experiencia.addCampoString("cargo", true);
         final MTipoString atividades = experiencia.addCampoString("atividades");
         {
-            experiencias.withView(MListaMultiPanelView::new)
+            experiencias.withView(MPanelListaView::new)
                 .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(2);
             dtInicioExperiencia
                 .as(AtrBasic::new).label("Data inicial")
@@ -136,6 +140,10 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
+            certificacoes.withView(() -> new MTableListaView()
+                .withAdicaoDeLinha()
+                .withExclusaoDeLinha()
+                .withInsercaoDeLinha());
             certificacoes
                 .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
             certificacao

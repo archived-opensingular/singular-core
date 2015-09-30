@@ -1,6 +1,25 @@
 package br.net.mirante.singular.flow.core;
 
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Throwables;
+
 import br.net.mirante.singular.commons.util.log.Loggable;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -18,22 +37,6 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
@@ -48,7 +51,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     private FlowMap flowMap;
 
-    private Serializable entityCod;
+    private Integer entityCod;
 
     private IProcessCreationPageStrategy creationPage;
 
@@ -68,8 +71,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
-     *
-     * @param instanceClass
      */
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
@@ -78,8 +79,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     /**
      * Esse construtor tem que ser repensado
-     *
-     * @param instanceClass
      */
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
@@ -233,28 +232,37 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
         return def;
     }
 
+    @Deprecated
     public final Set<IEntityTask> getEntityNotJavaTask() {
+        // TODO não faz sentido retornar IEntityTask. Deveria ser
+        // IEntityTaskDefinition
         return convertToEntityTask(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
     }
 
+    @Deprecated
     public final Set<IEntityTask> getEntityPeopleTasks() {
+        // TODO não faz sentido retornar IEntityTask. Deveria ser
+        // IEntityTaskDefinition
         return convertToEntityTask(getFlowMap().getPeopleTasks().stream());
     }
 
-    public final IEntityTask getEntityStartTask() {
-        final MTask<?> inicial = getFlowMap().getStartTask();
-        return getEntityTask(inicial);
+    final IEntityTask getEntityStartTask() {
+        return getEntityTask(getFlowMap().getStartTask());
     }
 
-    public final IEntityTask getEntityTaskWithName(String taskName) {
-        return getEntityTask(getFlowMap().getTaskWithName(taskName));
+    @Deprecated
+    public final IEntityTask getEntityTask(ITaskDefinition task) {
+        return getEntityTask(getFlowMap().getTask(task));
     }
 
+    @Deprecated
     public final IEntityTask getEntityTaskWithAbbreviation(String sigla) {
-        return getEntityTask(getFlowMap().getTaskWithAbbreviation(sigla));
+        return getEntityTask(getFlowMap().getTaskBybbreviation(sigla));
     }
 
+    @Deprecated
     public final IEntityTask getEntityTask(MTask<?> task) {
+        // TODO esse metodo deve deixar de ser público
         if (task == null) {
             return null;
         }
@@ -264,6 +272,34 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
         }
         return situacao;
+    }
+
+    public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
+        return Arrays.stream(task).map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
+    }
+
+    public final List<IEntityTaskDefinition> getEntityTaskDefinition(Collection<? extends ITaskDefinition> tasks) {
+        return tasks.stream().map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
+    }
+
+    public final IEntityTaskDefinition getEntityTaskDefinition(MTask<?> task) {
+        return getEntityTaskDefinitionOrException(task.getAbbreviation());
+    }
+
+    public final IEntityTaskDefinition getEntityTaskDefinition(ITaskDefinition task) {
+        return getEntityTaskDefinitionOrException(task.getKey());
+    }
+
+    public final IEntityTaskDefinition getEntityTaskDefinition(String taskAbbreviation) {
+        return (taskAbbreviation == null) ? null : getEntity().getTaskDefinition(taskAbbreviation);
+    }
+
+    public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
+        IEntityTaskDefinition taskDefinition = getEntityTaskDefinition(taskAbbreviation);
+        if (taskDefinition == null) {
+            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation));
+        }
+        return taskDefinition;
     }
 
     public byte[] getFlowImage() {
@@ -283,7 +319,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
     }
 
     /**
-     * @return
      * @deprecated o termo sigla deve ser substituido por key
      */
     //TODO renomear

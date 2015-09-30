@@ -58,13 +58,15 @@ public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
 
     @Override
     public int hashCode() {
+        final I object = this.getObject();
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((rootTarget == null) ? 0 : rootTarget.hashCode());
+        result = prime * result + ((object == null) ? 0 : object.getCaminhoCompleto().hashCode());
         return result;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -72,11 +74,17 @@ public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractMInstanciaItemListaModel<?> other = (AbstractMInstanciaItemListaModel<?>) obj;
-        if (rootTarget == null) {
-            if (other.rootTarget != null)
+
+        final AbstractMInstanciaItemListaModel<?> other = (AbstractMInstanciaItemListaModel<?>) obj;
+        final I object = this.getObject();
+        final I otherObject = (I) other.getObject();
+
+        if (object == null) {
+            if (otherObject != null)
                 return false;
-        } else if (!rootTarget.equals(other.rootTarget))
+        } else if (!object.getCaminhoCompleto().equals(otherObject.getCaminhoCompleto()))
+            return false;
+        if (getIndex() != other.getIndex())
             return false;
         return true;
     }

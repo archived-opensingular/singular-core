@@ -5,11 +5,11 @@ import br.net.mirante.singular.persistence.entity.Actor;
 
 public class ActorWrapper {
 
-    public static MUser wrap(final Actor actor){
+    public static MUser wrap(final Actor actor) {
         return new MUser() {
 
             @Override
-            public Long getCod() {
+            public Integer getCod() {
                 return actor.getCod();
             }
 

@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -22,8 +25,6 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
 
-import com.google.common.collect.Sets;
-
 public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProcessDataService<I> {
 
     private final ProcessDefinition<I> processDefinition;
@@ -33,7 +34,8 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         this.processDefinition = processDefinition;
     }
 
-    public final I retrieveInstance(Long entityCod) {
+    @Override
+    public final I retrieveInstance(Integer entityCod) {
         IEntityProcessInstance entityProcessInstance = getPersistenceService().retrieveProcessInstanceByCod(entityCod);
         if (entityProcessInstance != null) {
             return processDefinition.convertToProcessInstance(entityProcessInstance);
@@ -41,115 +43,118 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return null;
     }
 
+    @Override
     public final List<I> retrieveActiveInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
         return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
                 pessoa, true));
     }
 
+    @Override
     public final List<I> retrieveEndedInstances() {
         return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
                 null, false));
     }
 
+    @Override
     public final List<I> retrieveEndedInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
         return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
                 pessoa, false));
     }
 
+    @Override
     public final List<I> retrieveAllInstancesIn(MTask<?> task) {
-        final IEntityTask obterSituacaoPara = getEntityTask(task);
-        return retrieveAllInstancesIn(obterSituacaoPara != null ? Sets.newHashSet(obterSituacaoPara) : null);
+        IEntityTaskDefinition obterSituacaoPara = getEntityTask(task);
+        return retrieveAllInstancesIn(obterSituacaoPara != null ? Lists.newArrayList(obterSituacaoPara) : null);
     }
 
+    @Override
     public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
-            String... situacoesAlvo) {
-        Set<IEntityTask> situacoes = convertToEntityTask(situacoesAlvo);
-        return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas,
-                situacoes.toArray(new IEntityTask[situacoes.size()]));
+            ITaskDefinition... situacoesAlvo) {
+        return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, convertToEntityTask(situacoesAlvo));
     }
 
+    @Override
     public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
-            IEntityTask... situacoesAlvo) {
-        final Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
-        for (final IEntityTask situacao : situacoesAlvo) {
-            if (situacao != null) {
-                estadosAlvo.add(getEntityTask(getFlowMap().getTaskWithAbbreviation(situacao.getAbbreviation()))
-                        .getTaskDefinition());
-            }
+            IEntityTaskDefinition... situacoesAlvo) {
+        if (situacoesAlvo == null || situacoesAlvo.length == 0 || (situacoesAlvo.length == 1 && situacoesAlvo[0] == null)) {
+            return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, (Collection<IEntityTaskDefinition>) null);
         }
-        if (estadosAlvo.isEmpty()) {
-            if (!exibirEncerradas) {
-                estadosAlvo.addAll(getEntityProcess().getTasks()
-                        .stream().filter(situacao -> !situacao.isEnd())
-                        .map(IEntityTask::getTaskDefinition).collect(Collectors.toList()));
-            }
-        }
-        return convertToProcessInstance(getPersistenceService()
-                .retrieveProcessInstancesWith(getEntityProcess(), minDataInicio, maxDataInicio, estadosAlvo));
+        return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, Arrays.asList(situacoesAlvo));
     }
 
-    public final List<I> retrieveAllInstancesIn(String... situacoesAlvo) {
-        final Set<IEntityTask> estadosAlvo = convertToEntityTask(situacoesAlvo);
-        return retrieveAllInstancesIn(estadosAlvo);
-    }
-
-    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTask> situacoesAlvo) {
-        Set<IEntityTaskDefinition> estados = null;
-        if (situacoesAlvo != null) {
-            estados = situacoesAlvo.stream().map(IEntityTask::getTaskDefinition).collect(Collectors.toSet());
+    private List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+            Collection<IEntityTaskDefinition> situacoesAlvo) {
+        if (!exibirEncerradas && (situacoesAlvo == null || situacoesAlvo.isEmpty())) {
+            situacoesAlvo = getEntityProcess().getTasks().stream().filter(t -> !t.isEnd()).map(t -> t.getTaskDefinition())
+                    .collect(Collectors.toList());
         }
-        return convertToProcessInstance(getPersistenceService()
-                .retrieveProcessInstancesWith(getEntityProcess(), null, null, estados));
+        return convertToProcessInstance(
+                getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), minDataInicio, maxDataInicio, situacoesAlvo));
     }
 
+    @Override
+    public List<I> retrieveAllInstancesIn(ITaskDefinition... tasks) {
+        return retrieveAllInstancesIn(convertToEntityTask(tasks));
+    }
+
+    @Override
+    public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> situacoesAlvo) {
+        return convertToProcessInstance(
+                getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, null, situacoesAlvo));
+    }
+
+
+    @Override
     public final List<I> retrieveActiveInstancesWithPeopleOrWaiting() {
-        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks()
-                .stream().filter(t -> t.isPeople() || t.isWait()));
-        return retrieveAllInstancesIn(estadosAlvo);
+        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople() || t.isWait())));
     }
 
+    @Override
     public final List<I> retrieveActiveInstances() {
-        final Set<IEntityTask> estadosAlvo = convertToEntityTask(getFlowMap().getTasks());
-        return retrieveAllInstancesIn(estadosAlvo);
+        return retrieveAllInstances(false);
     }
 
+    @Override
     public final List<I> retrieveAllInstances(boolean exibirEncerradas) {
-        final Set<IEntityTask> estadosAlvo = new HashSet<>();
-        estadosAlvo.addAll(convertToEntityTask(getFlowMap().getTasks()));
         if (exibirEncerradas) {
+            Set<IEntityTaskDefinition> estadosAlvo = new HashSet<>();
+            estadosAlvo.addAll(convertToEntityTask(getFlowMap().getTasks()));
             estadosAlvo.addAll(convertToEntityTask(getFlowMap().getEndTasks()));
+            return retrieveAllInstancesIn(estadosAlvo);
+        } else {
+            return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks()));
         }
-        return retrieveAllInstancesIn(estadosAlvo);
     }
 
+    @Override
     public final List<I> retrieveActiveInstancesWithPeople() {
-        return retrieveAllInstancesIn(processDefinition.getEntityPeopleTasks());
+        return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople())));
     }
 
     protected final IEntityProcess getEntityProcess() {
         return processDefinition.getEntity();
     }
 
-    protected final IEntityTask getEntityTask(MTask<?> task) {
-        return processDefinition.getEntityTask(task);
+    protected final IEntityTaskDefinition getEntityTask(MTask<?> task) {
+        return processDefinition.getEntityTaskDefinition(task);
     }
 
     protected final FlowMap getFlowMap() {
         return processDefinition.getFlowMap();
     }
 
-    protected final Set<IEntityTask> convertToEntityTask(Collection<? extends MTask<?>> collection) {
-        return processDefinition.convertToEntityTask(collection);
+    protected final List<IEntityTaskDefinition> convertToEntityTask(Collection<? extends MTask<?>> collection) {
+        return convertToEntityTask(collection.stream());
     }
 
-    protected final <X extends IEntityTask> Set<X> convertToEntityTask(Stream<? extends MTask<?>> stream) {
-        return processDefinition.convertToEntityTask(stream);
+    protected final List<IEntityTaskDefinition> convertToEntityTask(Stream<? extends MTask<?>> stream) {
+        return stream.map(t -> processDefinition.getEntityTaskDefinition(t)).collect(Collectors.toList());
     }
 
-    protected final Set<IEntityTask> convertToEntityTask(String... tasksNames) {
-        return Arrays.stream(tasksNames).map(processDefinition::getEntityTaskWithName).collect(Collectors.toSet());
+    protected final List<IEntityTaskDefinition> convertToEntityTask(ITaskDefinition... tasks) {
+        return processDefinition.getEntityTaskDefinition(tasks);
     }
 
     protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> entities) {

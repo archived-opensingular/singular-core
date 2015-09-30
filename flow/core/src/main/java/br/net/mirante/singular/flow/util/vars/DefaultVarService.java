@@ -21,21 +21,7 @@ public class DefaultVarService implements VarService {
 
     @Override
     public VarInstance newVarInstance(VarDefinition def) {
-        return new AbstractVarInstance(def) {
-
-            Object value;
-
-            @Override
-            public VarInstance setValor(Object valor) {
-                this.value = valor;
-                return this;
-            }
-
-            @Override
-            public Object getValor() {
-                return value;
-            }
-        };
+        return new DefaultVarInstance(def);
     }
 
     @Override

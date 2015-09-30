@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface IEntityProcessDefinition extends IEntityByCod {
-    
+
     String getAbbreviation();
-    
+
     String getName();
-    
+
     String getDefinitionClassName();
 
     IEntityCategory getCategory();
@@ -17,14 +17,17 @@ public interface IEntityProcessDefinition extends IEntityByCod {
     List<? extends IEntityTaskDefinition> getTaskDefinitions();
 
     List<? extends IEntityProcessRole> getRoles();
-    
+
     List<? extends IEntityProcess> getVersions();
-    
+
     default IEntityProcess getLastVersion(){
         return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityProcess::getVersionDate))).orElse(null);
     }
-    
+
     default IEntityTaskDefinition getTaskDefinition(String sigla) {
+        // TODO Daniel - esse método e os demais são muito ineficiente.
+        // Particularmente esse é muito usando. A solução para isso seria uma
+        // classe derivada que fizesse cache em uma Map.
         for (IEntityTaskDefinition situacao : getTaskDefinitions()) {
             if (situacao.getAbbreviation().equalsIgnoreCase(sigla)) {
                 return situacao;
@@ -41,5 +44,5 @@ public interface IEntityProcessDefinition extends IEntityByCod {
         }
         return null;
     }
-    
+
 }

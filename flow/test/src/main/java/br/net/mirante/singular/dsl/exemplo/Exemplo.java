@@ -1,6 +1,5 @@
 package br.net.mirante.singular.dsl.exemplo;
 
-import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.dsl.Builder;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTaskJava;

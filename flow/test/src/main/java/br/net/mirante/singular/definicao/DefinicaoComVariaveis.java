@@ -26,7 +26,6 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }
 
-
     @Override
     protected FlowMap createFlowMap() {
         FlowBuilder f = new FlowBuilderImpl(this);
@@ -50,13 +49,11 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
         return f.build();
     }
 
-
     public void print(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
         System.out.println("legal");
     }
 
     public void setVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
-//        instancia.setVariavel("nome2", "Pessoa Y");
         instancia.setVariavel("nome", STRING_USADA_NO_TESTE);
         instancia.setVariavel("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
 
@@ -64,10 +61,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
     }
 
     public void printVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
-//        System.out.println("########### nome2         #####>" + instancia.getValorVariavel("nome2"));
         System.out.println("########### nome          #####>" + instancia.getValorVariavel("nome"));
         System.out.println("########### qualquerCoisa #####>" + instancia.getValorVariavel("qualquerCoisa"));
-
     }
-
 }

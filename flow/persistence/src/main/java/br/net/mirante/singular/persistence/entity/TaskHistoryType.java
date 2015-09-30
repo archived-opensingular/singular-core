@@ -1,15 +1,14 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
-import br.net.mirante.singular.persistence.util.Constants;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
+import br.net.mirante.singular.persistence.util.Constants;
 
 
 /**
@@ -23,7 +22,7 @@ public class TaskHistoryType implements IEntityTaskHistoricType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_TIPO_HISTORICO_TAREFA")
-    private Long cod;
+    private Integer cod;
 
     @Column(name = "DS_TIPO_HISTORICO_TAREFA", nullable = false)
     private String description;
@@ -31,11 +30,12 @@ public class TaskHistoryType implements IEntityTaskHistoricType {
     public TaskHistoryType() {
     }
 
-    public Long getCod() {
+    @Override
+    public Integer getCod() {
         return this.cod;
     }
 
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

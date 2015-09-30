@@ -27,10 +27,13 @@ public class FeedPanel extends Panel {
     @Inject
     private UIAdminFacade uiAdminFacade;
 
+    private String processCode;
+
     private ListModel<FeedDTO> feeds = new ListModel<>();
 
-    public FeedPanel(String id) {
+    public FeedPanel(String id, String processCode) {
         super(id);
+        this.processCode = processCode;
     }
 
     private class FeedItem {
@@ -46,8 +49,8 @@ public class FeedPanel extends Panel {
     }
 
     private void initFeeds() {
-        feeds.setObject(uiAdminFacade.retrieveAllFeed());
-        add(new RefreshingView<IFeedDTO>("atividades", feeds) {
+        feeds.setObject(uiAdminFacade.retrieveAllFeed(processCode));
+        queue(new WebMarkupContainer("instancesContent").add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
             protected Iterator<IModel<IFeedDTO>> getItemModels() {
                 List<IModel<IFeedDTO>> models = new ArrayList<>();
@@ -80,7 +83,8 @@ public class FeedPanel extends Panel {
 
                 iconColor.queue(icon);
             }
-        });
+        }).setVisible(!feeds.getObject().isEmpty()));
+        queue(new WebMarkupContainer("instancesEmptyMessage").setVisible(feeds.getObject().isEmpty()));
     }
 
     private FeedItem getFeedItem(IFeedDTO feed) {

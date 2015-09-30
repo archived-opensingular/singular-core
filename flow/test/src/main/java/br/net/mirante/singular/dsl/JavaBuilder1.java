@@ -20,9 +20,8 @@ public class JavaBuilder1 {
         return new JavaBuilder2(this);
     }
 
-
     @FunctionalInterface
-    public static interface TaskExecutor<T extends ProcessInstance> {
+    public interface TaskExecutor<T extends ProcessInstance> {
         String execute(T instancia);
     }
 }

@@ -1,67 +1,75 @@
 package br.net.mirante.singular.persistence.entity;
 
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.persistence.util.Constants;
 
-import javax.persistence.*;
-import java.util.List;
-
-
 /**
  * The persistent class for the TB_DEFINICAO_PROCESSO database table.
- * 
  */
 @Entity
-@Table(name="TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
 public class ProcessDefinition implements IEntityProcessDefinition {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CO_DEFINICAO_PROCESSO")
-	private Long cod;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CO_DEFINICAO_PROCESSO")
+    private Integer cod;
 
-	@Column(name="NO_CLASSE_JAVA", nullable = false)
-	private String definitionClassName;
+    @Column(name = "NO_CLASSE_JAVA", nullable = false)
+    private String definitionClassName;
 
-	@Column(name="NO_PROCESSO", nullable = false)
-	private String name;
+    @Column(name = "NO_PROCESSO", nullable = false)
+    private String name;
 
-	@Column(name="SG_PROCESSO", nullable = false)
-	private String abbreviation;
+    @Column(name = "SG_PROCESSO", nullable = false)
+    private String abbreviation;
 
-	//bi-directional many-to-one association to ProcessRight
-	@OneToMany(mappedBy="processDefinition")
-	private List<ProcessRight> processRights;
+    //bi-directional many-to-one association to ProcessRight
+    @OneToMany(mappedBy = "processDefinition")
+    private List<ProcessRight> processRights;
 
-	//uni-directional many-to-one association to Category
-	@ManyToOne
-	@JoinColumn(name="CO_CATEGORA")
-	private Category category;
+    //uni-directional many-to-one association to Category
+    @ManyToOne
+    @JoinColumn(name = "CO_CATEGORA")
+    private Category category;
 
-	//bi-directional many-to-one association to TaskDefinition
-	@OneToMany(mappedBy="processDefinition")
-	private List<TaskDefinition> taskDefinitions;
-
-	//bi-directional many-to-one association to Role
-	@OneToMany(mappedBy="processDefinition")
-	private List<Role> roles;
+    //bi-directional many-to-one association to TaskDefinition
+    @OneToMany(mappedBy = "processDefinition")
+    private List<TaskDefinition> taskDefinitions;
 
     //bi-directional many-to-one association to Role
-    @OneToMany(mappedBy="processDefinition")
+    @OneToMany(mappedBy = "processDefinition")
+    private List<Role> roles;
+
+    //bi-directional many-to-one association to Role
+    @OneToMany(mappedBy = "processDefinition")
     private List<Process> versions;
 
-	public ProcessDefinition() {
-	}
+    public ProcessDefinition() {
+    }
 
-	public Long getCod() {
-		return this.cod;
-	}
+    @Override
+    public Integer getCod() {
+        return this.cod;
+    }
 
-	public void setCod(Long cod) {
-		this.cod = cod;
-	}
+    public void setCod(Integer cod) {
+        this.cod = cod;
+    }
 
     @Override
     public String getDefinitionClassName() {

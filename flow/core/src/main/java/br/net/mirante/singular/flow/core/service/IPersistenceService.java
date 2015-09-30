@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core.service;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -43,20 +42,20 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     ROLE_USER setInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE role, MUser user);
 
     void removeInstanceUserRole(@NotNull PROCESS_INSTANCE instance, ROLE_USER roleUser);
-    
-    Long updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Serializable dbVariableCod);
+
+    Integer updateVariableValue(@NotNull PROCESS_INSTANCE instance, @NotNull VarInstance varInstance, Integer dbVariableCod);
 
     void setParentTask(@NotNull PROCESS_INSTANCE childrenInstance, @NotNull TASK_INSTANCE parentTask);
 
     void updateTask(@NotNull TASK_INSTANCE task);
 
-    PROCESS_DEFINITION retrieveProcessDefinitionByCod(@NotNull Serializable cod);
+    PROCESS_DEFINITION retrieveProcessDefinitionByCod(@NotNull Integer cod);
 
     PROCESS_DEFINITION retrieveProcessDefinitionByAbbreviation(@NotNull String abbreviation);
 
-    PROCESS_INSTANCE retrieveProcessInstanceByCod(@NotNull Serializable cod);
+    PROCESS_INSTANCE retrieveProcessInstanceByCod(@NotNull Integer cod);
 
-    TASK_INSTANCE retrieveTaskInstanceByCod(@NotNull Serializable cod);
+    TASK_INSTANCE retrieveTaskInstanceByCod(@NotNull Integer cod);
 
     TaskHistoricLog saveTaskHistoricLog(@NotNull TASK_INSTANCE task, String typeDescription, String detail, MUser allocatedUser, MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance);
 
@@ -66,7 +65,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
         saveVariableHistoric(dateHour, instance, originTask != null ? originTask.<TASK_INSTANCE> getEntityTaskInstance() : null, destinationTask != null ? destinationTask.<TASK_INSTANCE> getEntityTaskInstance() : null, instanceMap);
     }
 
-    List<? extends MUser> retrieveUsersByCod(Collection<Serializable> cods);
+    List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
 
     /**
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcess},

@@ -11,41 +11,39 @@ import br.net.mirante.singular.flow.util.props.MetaData;
 //TODO marcar a variável quando esta for utilizada. Essa interface deve obrigar a implementacao de um metodo para essa verificacao
 public interface VarInstance extends Serializable {
 
+    VarInstance setValor(Object valor);
 
+    VarDefinition getDefinicao();
 
-    public VarInstance setValor(Object valor);
+    Object getValor();
 
-    public VarDefinition getDefinicao();
+    String getStringDisplay();
 
-    public Object getValor();
+    String getStringPersistencia();
 
-    public String getStringDisplay();
+    MetaData getMetaData();
 
-    public String getStringPersistencia();
-
-    public MetaData getMetaData();
-
-    public default <T> T getValor(T defaultValue) {
+    @SuppressWarnings("unchecked")
+    default <T> T getValor(T defaultValue) {
         T v = (T) getValor();
         return (v == null) ? defaultValue : v;
     }
 
-    public default String getRef() {
+    default String getRef() {
         return getDefinicao().getRef();
     }
 
-    public default String getNome() {
+    default String getNome() {
         return getDefinicao().getName();
     }
 
-    public default boolean isObrigatorio() {
+    default boolean isObrigatorio() {
         return getDefinicao().isRequired();
     }
 
-    public default VarType getTipo() {
+    default VarType getTipo() {
         return getDefinicao().getType();
     }
 
-    public void setChangeListner(VarInstanceMap<?> changeListener);
-
+    void setChangeListner(VarInstanceMap<?> changeListener);
 }

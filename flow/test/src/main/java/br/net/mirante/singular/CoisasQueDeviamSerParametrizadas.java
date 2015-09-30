@@ -1,7 +1,6 @@
 package br.net.mirante.singular;
 
 import br.net.mirante.singular.flow.core.AbstractProcessNotifiers;
-import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.util.view.Lnk;
 import br.net.mirante.singular.persistence.entity.Actor;
 
@@ -11,7 +10,12 @@ public class CoisasQueDeviamSerParametrizadas {
 
     public static final Actor USER = new Actor() {
         @Override
-        public Long getCod() {
+        public Integer getCod() {
+            return 1;
+        }
+
+        @Override
+        public Long getCodigo() {
             return 1l;
         }
 
@@ -25,7 +29,6 @@ public class CoisasQueDeviamSerParametrizadas {
             return "mirante.teste@gmail.com";
         }
     };
-
 
     public static final Lnk LINK_INSTANCE = new Lnk("Sei la", false);
 

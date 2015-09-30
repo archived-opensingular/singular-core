@@ -92,7 +92,7 @@ public class MBPMUtil {
         if (!processDefinition.getEntity().getProcessDefinition().equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
-        MTask<?> task = processDefinition.getFlowMap().getTaskWithAbbreviation(entityTaskDefinition.getAbbreviation());
+        MTask<?> task = processDefinition.getFlowMap().getTaskBybbreviation(entityTaskDefinition.getAbbreviation());
         if (task != null) {
             return task.getOrder();
         }

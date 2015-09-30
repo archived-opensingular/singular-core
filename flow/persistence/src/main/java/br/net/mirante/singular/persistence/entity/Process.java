@@ -1,49 +1,59 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
-import br.net.mirante.singular.persistence.util.Constants;
-
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_PROCESSO database table.
- * 
  */
 @Entity
-@Table(name="TB_PROCESSO", schema = Constants.SCHEMA)
+@Table(name = "TB_PROCESSO", schema = Constants.SCHEMA)
 public class Process implements IEntityProcess {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="CO_PROCESSO")
-	private Long cod;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "CO_PROCESSO")
+    private Integer cod;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="DT_VERSAO", nullable = false)
-	private Date versionDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DT_VERSAO", nullable = false)
+    private Date versionDate;
 
-	//uni-directional many-to-one association to ProcessDefinition
-	@ManyToOne
-	@JoinColumn(name="CO_DEFINICAO_PROCESSO", nullable = false)
-	private ProcessDefinition processDefinition;
+    //uni-directional many-to-one association to ProcessDefinition
+    @ManyToOne
+    @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
+    private ProcessDefinition processDefinition;
 
-	@OneToMany(mappedBy = "process")
-	private List<Task> tasks;
+    @OneToMany(mappedBy = "process")
+    private List<Task> tasks;
 
-	public Process() {
-	}
+    public Process() {
+    }
 
-	public Long getCod() {
-		return this.cod;
-	}
+    @Override
+    public Integer getCod() {
+        return this.cod;
+    }
 
-	public void setCod(Long cod) {
-		this.cod = cod;
-	}
+    public void setCod(Integer cod) {
+        this.cod = cod;
+    }
 
     @Override
     public Date getVersionDate() {

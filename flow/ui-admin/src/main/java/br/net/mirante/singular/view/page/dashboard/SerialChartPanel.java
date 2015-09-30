@@ -26,6 +26,7 @@ public abstract class SerialChartPanel extends Panel {
     private List<Pair<String, String>> valuesField;
     private String balloonTextsuffix;
     private String graphType;
+    private String titleGraph;
 
     private boolean withFilter;
     private boolean withLegend;
@@ -46,6 +47,14 @@ public abstract class SerialChartPanel extends Panel {
             String graphType) {
         this(id, title, subtitle, valueField, categoryField, "", false);
         this.graphType = graphType;
+    }
+
+    public SerialChartPanel(String id, String title, String subtitle, String valueField, String categoryField,
+            String graphType, String titleGraph) {
+        this(id, title, subtitle, valueField, categoryField, "", false);
+        this.graphType = graphType;
+        this.titleGraph = (titleGraph != null
+                ? String.format("{\"id\": \"titleId\", \"size\": 16, \"text\": \"%s\"}", titleGraph) : null);
     }
 
     public SerialChartPanel(String id, String title, String subtitle, Pair<String, String> graphInfo,
@@ -73,6 +82,7 @@ public abstract class SerialChartPanel extends Panel {
         this.withFilter = withFilter;
         this.withLegend = withLegend;
         this.graphType = DEFAULT_GRAPH_TYPE;
+        this.titleGraph= null;
     }
 
     @Override
@@ -205,6 +215,7 @@ public abstract class SerialChartPanel extends Panel {
                "                    \"autoWrap\": true" +
                "                }," +
                (withLegend ? "                \"legend\": {\"useGraphSettings\": true}," : "") +
+               "                \"titles\": [" + (titleGraph != null ? titleGraph : "") + "]," +
                "                \"export\": {" +
                "                    \"enabled\": true" +
                "                }" +

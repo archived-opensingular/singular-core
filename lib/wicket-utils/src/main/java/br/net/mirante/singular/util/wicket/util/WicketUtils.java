@@ -84,4 +84,14 @@ public final class WicketUtils {
             return ((Iterator<?>) obj).hasNext();
         return true;
     }
+
+    public static Optional<String> findPageRelativePath(MarkupContainer container, String childId) {
+        return WicketUtils.findFirstChild(container, Component.class,
+            it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
+    }
+    public static Optional<String> findContainerRelativePath(MarkupContainer container, String childId) {
+        return WicketUtils.findFirstChild(container, Component.class, it -> it.getId().equals(childId))
+            .map(it -> it.getPageRelativePath())
+            .map(it -> it.substring(container.getPageRelativePath().length() + 1));
+    }
 }
