@@ -28,10 +28,7 @@ import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_P
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -105,6 +102,14 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.PUBLICAR);
 
         assertCurrentTaskName(PUBLICADO.getName(), ip);
+    }
+
+    @Test
+    public void naoDeveriaTerDataDeFim() {
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+
+        assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
     }
 
     @Test
