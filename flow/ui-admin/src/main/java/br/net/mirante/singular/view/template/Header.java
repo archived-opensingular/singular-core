@@ -1,22 +1,27 @@
 package br.net.mirante.singular.view.template;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.ResourceModel;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class Header extends Panel {
 
+    private boolean withTogglerButton;
     private boolean withTopAction;
     private boolean withSideBar;
 
     public Header(String id) {
         super(id);
+        this.withTogglerButton = true;
         this.withTopAction = true;
+        this.withSideBar = false;
     }
 
-    public Header(String id, boolean withTopAction, boolean withSideBar) {
+    public Header(String id, boolean withTogglerButton,  boolean withTopAction, boolean withSideBar) {
         super(id);
+        this.withTogglerButton = withTogglerButton;
         this.withTopAction = withTopAction;
         this.withSideBar = withSideBar;
     }
@@ -24,6 +29,8 @@ public class Header extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        add(new WebMarkupContainer("togglerButton")
+                .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTogglerButton))));
         if (withTopAction) {
             add(new TopAction("_TopAction"));
         } else {

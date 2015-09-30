@@ -3,8 +3,10 @@ package br.net.mirante.singular.view.page.form;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 
@@ -30,6 +32,7 @@ public class FormContent extends Content implements SingularWicketContainer<Form
     }
 
     static MDicionario dicionario = MDicionario.create();
+
     static {
         dicionario.carregarPacote(MPacoteCurriculo.class);
     }
@@ -51,20 +54,25 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
         add(new BSFeedbackPanel("feedback"));
         add(new Form<>("form")
-            .add(container)
-            .add(new Button("enviar") {
-                @Override
-                public void onSubmit() {
+                .add(container)
+                .add(new Button("enviar") {
+                    @Override
+                    public void onSubmit() {
 
-                    MIComposto iCurriculo = mCurriculo.getObject();
-                    StringWriter buffer = new StringWriter();
-                    MformPersistenciaXML.toXML(iCurriculo).printTabulado(new PrintWriter(buffer));
-                    info(buffer.toString());
+                        MIComposto iCurriculo = mCurriculo.getObject();
+                        StringWriter buffer = new StringWriter();
+                        MformPersistenciaXML.toXML(iCurriculo).printTabulado(new PrintWriter(buffer));
+                        info(buffer.toString());
 
-                    MILista<MInstancia> listaCurso = (MILista<MInstancia>) iCurriculo.getCampo("formacaoAcademica");
-                    listaCurso.addNovo();
-                }
-            }));
+                        MILista<MInstancia> listaCurso = (MILista<MInstancia>) iCurriculo.getCampo("formacaoAcademica");
+                        listaCurso.addNovo();
+                    }
+                }));
+    }
+
+    @Override
+    protected WebMarkupContainer getBreadcrumbLinks(String id) {
+        return new Fragment(id, "breadcrumbForm", this);
     }
 
     @Override

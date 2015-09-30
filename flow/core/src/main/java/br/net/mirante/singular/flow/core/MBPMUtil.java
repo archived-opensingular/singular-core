@@ -163,10 +163,10 @@ public class MBPMUtil {
     }
 
     /**
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por padrão a API
-     * yFiles para gerar o diagrama.
+     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por padrão a API
+     * yFiles para gerar o diagrama.</p>
      *
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.</p>
      *
      * @param definitionClass a definição do processo especificado.
      */
@@ -175,10 +175,10 @@ public class MBPMUtil {
     }
 
     /**
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o diagramador especificado
-     * para gerar a imagem.
+     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o diagramador especificado
+     * para gerar a imagem.</p>
      *
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.</p>
      *
      * @param definitionClass a definição do processo especificado.
      * @param renderer o diagramador especificado.

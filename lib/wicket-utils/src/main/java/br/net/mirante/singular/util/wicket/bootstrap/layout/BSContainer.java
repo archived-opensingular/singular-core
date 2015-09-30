@@ -67,17 +67,14 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup() {
-        return newFormGroup(true);
+        return newFormGroup(false);
     }
     public BSControls newFormGroup(boolean compact) {
-        return newComponent(new IBSComponentFactory<BSControls>() {
-            @Override
-            public BSControls newComponent(String componentId) {
-                BSControls controls = new BSControls(componentId, false)
-                    .setCssClass((compact ? "" : "form-group ") + "form-group-sm");
-                controls.add(new AttributeAppender("class", "can-have-error", " "));
-                return controls;
-            }
+        return newComponent(componentId -> {
+            BSControls controls = new BSControls(componentId, false)
+                .setCssClass((compact ? "" : "form-group ") + "form-md-line-input form-md-floating-label");
+            controls.add(new AttributeAppender("class", "can-have-error", " "));
+            return controls;
         });
     }
 
