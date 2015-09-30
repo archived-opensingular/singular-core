@@ -55,27 +55,27 @@ public class TaskType implements IEntityTaskType {
 
     @Override
     public String getImage() {
-        return br.net.mirante.singular.flow.core.TaskType.valueOf(getAbbreviation()).getImage();
+        return br.net.mirante.singular.flow.core.TaskType.valueOfAbbreviation(getAbbreviation()).getImage();
     }
 
     @Override
     public boolean isEnd() {
-        return br.net.mirante.singular.flow.core.TaskType.valueOf(getAbbreviation()).isEnd();
+        return br.net.mirante.singular.flow.core.TaskType.valueOfAbbreviation(getAbbreviation()).isEnd();
     }
 
     @Override
     public boolean isJava() {
-        return br.net.mirante.singular.flow.core.TaskType.valueOf(getAbbreviation()).isJava();
+        return br.net.mirante.singular.flow.core.TaskType.valueOfAbbreviation(getAbbreviation()).isJava();
     }
 
     @Override
     public boolean isPeople() {
-        return br.net.mirante.singular.flow.core.TaskType.valueOf(getAbbreviation()).isPeople();
+        return br.net.mirante.singular.flow.core.TaskType.valueOfAbbreviation(getAbbreviation()).isPeople();
     }
 
     @Override
     public boolean isWait() {
-        return br.net.mirante.singular.flow.core.TaskType.valueOf(getAbbreviation()).isWait();
+        return br.net.mirante.singular.flow.core.TaskType.valueOfAbbreviation(getAbbreviation()).isWait();
     }
 
     @Override

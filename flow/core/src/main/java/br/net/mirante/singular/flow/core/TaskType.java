@@ -15,6 +15,16 @@ public enum TaskType implements IEntityTaskType {
         this.image = image;
     }
 
+    public static TaskType valueOfAbbreviation(String abbreviation) {
+        for (TaskType taskType : values()) {
+            if (abbreviation.equalsIgnoreCase(taskType.getAbbreviation())) {
+                return taskType;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public String getImage() {
         return image;

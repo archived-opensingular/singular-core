@@ -108,6 +108,14 @@ public class PeticaoTest extends TestSupport {
     }
 
     @Test
+    public void deveriaTerDataDeFim() {
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.INDEFERIR);
+
+        assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
+    }
+
+    @Test
     public void expirarAprovaGerente() {
         InstanciaPeticao ip = startInstance();
         System.out.println("Id - " + ip.getId());
