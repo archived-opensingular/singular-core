@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.awt.HeadlessException;
 import java.text.Normalizer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -10,6 +11,13 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
@@ -163,31 +171,69 @@ public class MBPMUtil {
     }
 
     /**
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por padrão a API
-     * yFiles para gerar o diagrama.
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por
+     * padrão a API yFiles para gerar o diagrama.
      *
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.
      *
-     * @param definitionClass a definição do processo especificado.
+     * Exemplo de código de uso:
+     *
+     * <pre>
+     * public static void main(String[] args) {
+     *     MBPMUtil.showSwingDiagram((Class&lt;ProcessDefinition&lt;?>>) new Object() {
+     *     }.getClass().getEnclosingClass());
+     * }
+     * </pre>
+     *
+     *
+     * @param definitionClass
+     *            a definição do processo especificado.
      */
-    public static void showSwingDiagram(Class<? extends ProcessDefinition> definitionClass) {
+    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass) {
         showSwingDiagram(definitionClass, YFilesFlowRenderer.getInstance());
     }
 
     /**
-     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o diagramador especificado
-     * para gerar a imagem.
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o
+     * diagramador especificado para gerar a imagem.
      *
-     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a descrição do problema.
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.
      *
-     * @param definitionClass a definição do processo especificado.
-     * @param renderer o diagramador especificado.
+     * @param definitionClass
+     *            a definição do processo especificado.
+     * @param renderer
+     *            o diagramador especificado.
      */
-    public static void showSwingDiagram(Class<? extends ProcessDefinition> definitionClass, IFlowRenderer renderer) {
+    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass, IFlowRenderer renderer) {
         try {
-            renderer.showImage(definitionClass.cast(definitionClass.newInstance()));
+            ProcessDefinition<?> definicao = definitionClass.cast(definitionClass.newInstance());
+
+            new ImageViewer("Diagrama: " + definicao.getName(), renderer.generateImage(definicao));
         } catch (InstantiationException | IllegalAccessException e) {
             Logger.getLogger(MBPMUtil.class.getName()).log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private static class ImageViewer extends JFrame {
+
+        public ImageViewer(String title, byte[] image) throws HeadlessException {
+            super(title);
+            getRootPane().setContentPane(getImageComponent(image));
+            pack();
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            setVisible(true);
+        }
+
+        private JComponent getImageComponent(byte[] image) {
+            JPanel panel = new JPanel();
+            ImageIcon icon = new ImageIcon(image);
+            JLabel label = new JLabel();
+            label.setIcon(icon);
+            panel.add(label);
+            return panel;
         }
     }
 }
