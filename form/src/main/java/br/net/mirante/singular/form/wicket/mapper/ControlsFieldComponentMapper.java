@@ -19,12 +19,14 @@ import br.net.mirante.singular.util.wicket.model.ValueModel;
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
     HintKey<Boolean> NO_DECORATION = () -> false;
+    HintKey<Boolean> MATERIAL_DESIGN = () -> true;
 
     Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
     @Override
     default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
+        final boolean hintMaterialDesign = ctx.getHint(MATERIAL_DESIGN);
 
         MInstancia instancia = model.getObject();
         String label = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getLabel());
@@ -32,11 +34,17 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         BSControls controls = ctx.getContainer().newFormGroup();
 
         BSLabel bsLabel = new BSLabel("label", labelModel);
-        if (hintNoDecoration)
+        if (hintNoDecoration) {
             bsLabel.add($b.classAppender("visible-sm visible-xs"));
+        }
 
+        if (!hintMaterialDesign) {
+            controls.appendLabel(bsLabel);
+        }
         Component comp = appendInput(controls, model, labelModel);
-        controls.appendLabel(bsLabel);
+        if (hintMaterialDesign) {
+            controls.appendLabel(bsLabel);
+        }
         controls.appendFeedback();
 
         Integer size = instancia.as(MPacoteBasic.aspect()).getTamanhoEdicao();
