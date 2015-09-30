@@ -70,7 +70,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(PUBLICADO.getName(), ip);
+        assertLatestTaskName(PUBLICADO.getName(), ip);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.DEFERIR);
 
-        assertCurrentTaskName(DEFERIDO.getName(), ip);
+        assertLatestTaskName(DEFERIDO.getName(), ip);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao ip = startInstance();
         ip.executeTransition(Peticao.INDEFERIR);
 
-        assertCurrentTaskName(INDEFERIDO.getName(), ip);
+        assertLatestTaskName(INDEFERIDO.getName(), ip);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(PUBLICADO.getName(), ip);
+        assertLatestTaskName(PUBLICADO.getName(), ip);
     }
 
     @Test
@@ -110,6 +110,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
         assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
+        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
     }
 
     @Test
@@ -118,6 +119,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.INDEFERIR);
 
         assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
+        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTask().getEndDate());
     }
 
     @Test
@@ -132,7 +134,7 @@ public class PeticaoTest extends TestSupport {
 
         new ExecuteWaitingTasksJob(null).run();
 
-        assertCurrentTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
+        assertLatestTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
     }
 
     @Test
@@ -248,10 +250,10 @@ public class PeticaoTest extends TestSupport {
         assertEquals("As instâncias de processo são diferentes", cod1, cod2);
     }
 
-    private void assertCurrentTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
+    private void assertLatestTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getCurrentTask().getName());
+                instanciaPeticao.getLatestTask().getName());
     }
 
     private void addDaysToTaskTargetDate(TaskInstance taskInstance, int days) {
