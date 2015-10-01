@@ -3,6 +3,8 @@ package br.net.mirante.singular.test;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +47,13 @@ public class PeticaoTest extends TestSupport {
     @After
     public void tearDown() {
         ProcessDefinitionCache.invalidateAll();
+    }
+
+    @Test
+    public void showSwingDiagramTest() {
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
+        Peticao.main(null);
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Pronto!");
     }
 
     @Test

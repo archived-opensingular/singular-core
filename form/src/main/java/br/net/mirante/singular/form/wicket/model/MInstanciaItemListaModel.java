@@ -17,4 +17,8 @@ public class MInstanciaItemListaModel<I extends MInstancia>
     protected int index() {
         return index;
     }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
 }

@@ -10,6 +10,23 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import com.google.common.base.Throwables;
+import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
+import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
+import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
+import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
+import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
+import com.yworks.yfiles.bpmn.view.EventCharEnum;
+import com.yworks.yfiles.bpmn.view.EventPortSupport;
+import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
+
+import br.net.mirante.singular.flow.core.EventType;
+import br.net.mirante.singular.flow.core.FlowMap;
+import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.MTaskEnd;
+import br.net.mirante.singular.flow.core.MTransition;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -28,32 +45,14 @@ import y.view.NodePortLayoutConfigurator;
 import y.view.NodeRealizer;
 import y.view.NodeScaledPortLocationModel;
 import y.view.tabular.TableGroupNodeRealizer;
-import br.net.mirante.singular.flow.core.EventType;
-import br.net.mirante.singular.flow.core.FlowMap;
-import br.net.mirante.singular.flow.core.MTask;
-import br.net.mirante.singular.flow.core.MTaskEnd;
-import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-
-import com.google.common.base.Throwables;
-import com.yworks.yfiles.bpmn.layout.BpmnLayouter;
-import com.yworks.yfiles.bpmn.view.ActivityTypeEnum;
-import com.yworks.yfiles.bpmn.view.BpmnLayoutConfigurator;
-import com.yworks.yfiles.bpmn.view.BpmnRealizerFactory;
-import com.yworks.yfiles.bpmn.view.BpmnTypeEnum;
-import com.yworks.yfiles.bpmn.view.EventCharEnum;
-import com.yworks.yfiles.bpmn.view.EventPortSupport;
-import com.yworks.yfiles.bpmn.view.TaskTypeEnum;
 
 /**
  * https://www.yworks.com/en/products_yfiles_about.html
- *
  */
 public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     public static final MetaDataRef<Boolean> SEND_EMAIL = new MetaDataRef<>("SEND_EMAIL", Boolean.class);
-    
+
     private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";
     private static final String MINIMUM_LABEL_MARGIN = "Minimum Label Margin";
@@ -96,7 +95,7 @@ public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
 
     public static YFilesFlowRenderer getInstance() {
         if (instance == null) {
-            synchronized(YFilesFlowRenderer.class){
+            synchronized (YFilesFlowRenderer.class) {
                 if (instance == null) {
                     instance = new YFilesFlowRenderer();
                 }

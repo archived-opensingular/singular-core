@@ -1,16 +1,44 @@
 <html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <wicket:extend>
-<div wicket:id="feedback"></div>
-<form wicket:id="form">
+    <div wicket:id="feedback"></div>
+    <form wicket:id="form" role="form">
+        <div class="portlet light">
+            <div class="portlet-title">
+                <div class="caption font-green">
+                    <i class="icon-note font-green"></i>
+                    <span class="caption-subject bold uppercase"> <wicket:message key="label.form.title"/></span>
+                </div>
+                <div class="actions">
+                    <a class="btn btn-circle btn-icon-only blue" href="javascript:">
+                        <i class="icon-cloud-upload"></i>
+                    </a>
+                    <a class="btn btn-circle btn-icon-only green" href="javascript:">
+                        <i class="icon-wrench"></i>
+                    </a>
+                    <a class="btn btn-circle btn-icon-only red" href="javascript:">
+                        <i class="icon-trash"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="portlet-body form">
+                <div class="form-body" wicket:id="generated"></div>
+                <div class="form-actions noborder">
+                    <button type="submit" class="btn blue" wicket:id="enviar"><wicket:message key="label.button.send"/></button>
+                    <button type="button" class="btn default"><wicket:message key="label.button.cancel"/></button>
+                </div>
+            </div>
+        </div>
+    </form>
 
-  <div class="panel panel-default">
-    <div class="panel-heading">Formulário</div>
-    <div class="panel-body">
-      <div wicket:id="generated"></div>
-      <input type="submit" class="btn btn-primary" wicket:id="enviar">
-    </div>
-  </div>
-
-</form>
+    <wicket:fragment wicket:id="breadcrumbForm">
+        <li>
+            <a href="#">
+                <wicket:message key="breadcrumb.form"/>
+            </a><i class="fa fa-circle"></i>
+        </li>
+        <li class="active">
+            <wicket:message key="breadcrumb.form.cv"/>
+        </li>
+    </wicket:fragment>
 </wicket:extend>
 </html>

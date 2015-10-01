@@ -12,11 +12,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Throwables;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
@@ -39,7 +38,8 @@ import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class ProcessDefinition<I extends ProcessInstance> implements Comparable<ProcessDefinition<?>>, Loggable {
+public abstract class ProcessDefinition<I extends ProcessInstance>
+        implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> instanceClass;
 
@@ -450,7 +450,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance> implements Co
 
     @Override
     public int hashCode() {
-        int result = -1;
+        int result;
         result = getCategory().hashCode();
         result = 31 * result + getName().hashCode();
         return result;

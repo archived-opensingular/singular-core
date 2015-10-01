@@ -22,6 +22,9 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 @AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
 
@@ -31,8 +34,10 @@ public abstract class Template extends WebPage {
     protected void onInitialize() {
         super.onInitialize();
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
-        add(new WebMarkupContainer("pageBody"));
-        queue(new Header("_Header", withTopAction(), withSideBar()));
+        add(new WebMarkupContainer("pageBody")
+                .add($b.attrAppender("class", "page-sidebar-fixed", " ", $m.ofValue(withMenu())))
+                .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
+        queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
         queue(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"));
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
@@ -80,8 +85,8 @@ public abstract class Template extends WebPage {
         response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/layout/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
-            .append("    QuickSidebar.init(); // init quick sidebar\n")
-            .append("});");
+                .append("    QuickSidebar.init(); // init quick sidebar\n")
+                .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
@@ -93,7 +98,8 @@ public abstract class Template extends WebPage {
             AjaxRequestTarget target = (AjaxRequestTarget) payload;
             target.addListener(new AjaxRequestTarget.IListener() {
                 @Override
-                public void onBeforeRespond(Map<String, Component> map, AjaxRequestTarget target) {}
+                public void onBeforeRespond(Map<String, Component> map, AjaxRequestTarget target) {
+                }
 
                 @Override
                 public void onAfterRespond(Map<String, Component> map, AjaxRequestTarget.IJavaScriptResponse response) {
