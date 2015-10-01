@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,6 +51,7 @@ public class PeticaoTest extends TestSupport {
     }
 
     @Test
+    @Ignore
     public void showSwingDiagramTest() {
         Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
         Peticao.main(null);
