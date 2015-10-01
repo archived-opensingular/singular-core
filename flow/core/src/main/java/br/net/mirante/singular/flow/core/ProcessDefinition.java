@@ -41,6 +41,12 @@ import br.net.mirante.singular.flow.util.view.Lnk;
 public abstract class ProcessDefinition<I extends ProcessInstance>
         implements Comparable<ProcessDefinition<?>>, Loggable {
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     private final Class<I> instanceClass;
 
     private String category;
@@ -70,16 +76,20 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private transient Constructor<I> construtor;
 
     /**
-     * Esse construtor tem que ser repensado
+     *
+     * @deprecated mover para a implementacao do alocpro
      */
+    //TODO moverparaalocpro
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
     /**
-     * Esse construtor tem que ser repensado
+     *
+     * @deprecated mover para a implementacao do alocpro
      */
+    //TODO moverparaalocpro
     @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
@@ -87,10 +97,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         Objects.requireNonNull(getConstrutor());
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     public final Class<I> getInstanceClass() {
         return instanceClass;
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
         this.variableWrapperClass = variableWrapperClass;
         if (variableWrapperClass != null) {
@@ -401,6 +423,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         }
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     private Constructor<I> getConstrutor() {
         if (construtor == null) {
             try {

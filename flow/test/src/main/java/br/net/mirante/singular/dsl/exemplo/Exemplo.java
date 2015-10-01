@@ -8,53 +8,54 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 
 public class Exemplo {
 
-    public FlowMap getFlowMap(){
+    public FlowMap getFlowMap() {
+        // @formatter:off
         return new Builder()
                     .task()
                         .java("EMAIL")
                             .call(this::enviarEmail)
-                            .extraConfig(this::configEmail)
                             .transition()
-                                .go()
+                                .to()
                         .people("APROVAR")
                             .right("diretor")
                             .url("/worklist/tarefa/aprovacaoDiretoria")
                             .extraConfig(this::configAprovacaoDiretoria)
                             .transition("aprovado")
-                                .gotTo("AGUARDAR_PAGAMENTO")
+                                .to("AGUARDAR_PAGAMENTO")
                             .transition("rejeitado")
-                                .gotTo("REVISAR")
+                                .to("REVISAR")
                         .wait("AGUARDAR_PAGAMENTO")
                             .until(this::predicate)
                             .transition()
-                                .go()
+                                .to()
                         .end("FIM")
                         .people("REVISAR")
                             .right("diretor")
                             .url("/worklist/tarefa/revisaoParecer")
                             .transition("reconsiderar")
-                                 .goTo("EMAIL")
+                                 .to("EMAIL")
                             .transition("aprovar.parecer")
-                                .goTo("FIM")
+                                .to("FIM")
                         .build();
+            // @formatter:on
     }
 
 
-    private void configEmail(MTaskJava java){
+    private void configEmail(MTaskJava java) {
         //faz o que quiser
     }
 
 
-    private void configAprovacaoDiretoria(MTaskPeople people){
+    private void configAprovacaoDiretoria(MTaskPeople people) {
         //faz o que quiser
     }
 
 
-    private String enviarEmail(ProcessInstance i){
-        return null;
+    private void enviarEmail(Object ...o ) {
+        return;
     }
 
-    private String predicate(ProcessInstance i){
+    private String predicate(ProcessInstance i) {
         return null;
     }
 }

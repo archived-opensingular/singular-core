@@ -18,6 +18,13 @@ public final class ProcessDefinitionCache {
 
     private final ImmutableList<ProcessDefinition<?>> definitions;
     private final ImmutableMap<String, ProcessDefinition<?>> definitionsById;
+
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     private final ImmutableMap<Class<? extends ProcessInstance>, ProcessDefinition<?>> definitionsByInstanceType;
 
     private static LoadingCache<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>> definitionsByClass = CacheBuilder
@@ -88,6 +95,12 @@ public final class ProcessDefinitionCache {
         return definitionsById.get(id);
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     public ProcessDefinition<?> getDefinitionForInstance(Class<? extends ProcessInstance> classeInstancia) {
         return definitionsByInstanceType.get(classeInstancia);
     }

@@ -38,6 +38,12 @@ public abstract class AbstractMbpmBean {
         return getDefinitionCache().getDefinitions();
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     private <T extends ProcessInstance> ProcessDefinition<?> getDefinicaoForInstanciaOrException(Class<T> instanceClass) {
         ProcessDefinition<?> def = getDefinitionCache().getDefinitionForInstance(instanceClass);
         if (def == null) {
@@ -58,10 +64,22 @@ public abstract class AbstractMbpmBean {
         return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, Integer cod) {
         return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     public final <T extends ProcessInstance> T findProcessInstanceOrException(Class<T> instanceClass, String id) {
         T instance = findProcessInstance(instanceClass, id);
         if (instance == null) {
@@ -70,6 +88,12 @@ public abstract class AbstractMbpmBean {
         return instance;
     }
 
+    /**
+     *
+     * @deprecated mover para a implementacao do alocpro
+     */
+    //TODO moverparaalocpro
+    @Deprecated
     public final <T extends ProcessInstance> T findProcessInstance(Class<T> instanceClass, String id) {
         if (StringUtils.isNumeric(id)) {
             return findProcessInstance(instanceClass, Integer.parseInt(id));
