@@ -36,7 +36,7 @@ public class UIBuilderWicket {
         MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*    */MView.class, /*   */YearMonthMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MView.class, /*   */DefaultCompostoMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MTabView.class, /**/DefaultCompostoMapper::new);
-        //        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MTableListaView.class, /* */TableListaMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MGridListaView.class, /*  */GridListaMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MPanelListaView.class, /* */PanelListaMapper::new);

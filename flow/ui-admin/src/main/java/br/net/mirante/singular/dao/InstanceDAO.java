@@ -138,7 +138,7 @@ public class InstanceDAO {
                 + " FROM TB_INSTANCIA_PROCESSO INS"
                 + " LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE DT_INICIO >= (GETDATE() - 365)"
+                + " WHERE DT_INICIO >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
                 + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
@@ -162,7 +162,7 @@ public class InstanceDAO {
                 + " FROM TB_INSTANCIA_PROCESSO INS"
                 + " LEFT JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE DT_FIM >= (GETDATE() - 365)"
+                + " WHERE DT_FIM >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_FIM), YEAR(DT_FIM), DATENAME(MONTH, DT_FIM), DATENAME(YEAR, DT_FIM)"
                 + " ORDER BY YEAR(DT_FIM), MONTH(DT_FIM)";

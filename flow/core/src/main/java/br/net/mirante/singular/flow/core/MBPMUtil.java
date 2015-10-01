@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
+import java.awt.HeadlessException;
 import java.text.Normalizer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -8,8 +9,19 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
+import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 
 public class MBPMUtil {
 
@@ -18,8 +30,10 @@ public class MBPMUtil {
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, final ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(), s2.getEntity().getCurrentTask().getTask(), definicao));
+    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias,
+            final ProcessDefinition<?> definicao) {
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(),
+                s2.getEntity().getCurrentTask().getTask(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTask s1, IEntityTask s2, ProcessDefinition<?> definicao) {
@@ -41,7 +55,8 @@ public class MBPMUtil {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
-    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes, ProcessDefinition<?> definicao) {
+    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
+            ProcessDefinition<?> definicao) {
         List<X> novo = new ArrayList<>(situacoes);
         novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
         return novo;
@@ -65,11 +80,8 @@ public class MBPMUtil {
         }
         Deque<MTask<?>> deque = new ArrayDeque<>();
         orderedVisit(0, flowMap.getStartTask(), deque);
-        for (MTask<?> task : flowMap.getTasks()) {
-            if (task.getOrder() == 0) {
-                task.setOrder(calculateWeight(task) + 1000000);
-            }
-        }
+        flowMap.getTasks().stream().filter(task -> task.getOrder() == 0)
+                .forEach(task -> task.setOrder(calculateWeight(task) + 1000000));
     }
 
     private static void orderedVisit(int previousValue, MTask<?> task, Deque<MTask<?>> deque) {
@@ -89,7 +101,8 @@ public class MBPMUtil {
     }
 
     private static int calculateTaskOrder(IEntityTask entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntity().getProcessDefinition().equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
+        if (!processDefinition.getEntity().getProcessDefinition()
+                .equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }
         MTask<?> task = processDefinition.getFlowMap().getTaskBybbreviation(entityTaskDefinition.getAbbreviation());
@@ -155,5 +168,71 @@ public class MBPMUtil {
 
     public static String normalize(String original) {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
+    /**
+     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por
+     * padrão a API yFiles para gerar o diagrama.</p>
+     *
+     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.</p>
+     *
+     * <p>Exemplo de código de uso:</p>
+     *
+     * <pre>
+     * public static void main(String[] args) {
+     *     MBPMUtil.showSwingDiagram((Class&lt;ProcessDefinition&lt;?>>) new Object() {
+     *     }.getClass().getEnclosingClass());
+     * }
+     * </pre>
+     *
+     * @param definitionClass
+     *            a definição do processo especificado.
+     */
+    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass) {
+        showSwingDiagram(definitionClass, YFilesFlowRenderer.getInstance());
+    }
+
+    /**
+     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o
+     * diagramador especificado para gerar a imagem.</p>
+     *
+     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.</p>
+     *
+     * @param definitionClass
+     *            a definição do processo especificado.
+     * @param renderer
+     *            o diagramador especificado.
+     */
+    public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass, IFlowRenderer renderer) {
+        try {
+            ProcessDefinition<?> definicao = definitionClass.cast(definitionClass.newInstance());
+
+            new ImageViewer("Diagrama: " + definicao.getName(), renderer.generateImage(definicao));
+        } catch (InstantiationException | IllegalAccessException e) {
+            Logger.getLogger(MBPMUtil.class.getName()).log(Level.WARNING, e.getMessage(), e);
+        }
+    }
+
+    private static class ImageViewer extends JFrame {
+
+        public ImageViewer(String title, byte[] image) throws HeadlessException {
+            super(title);
+            getRootPane().setContentPane(getImageComponent(image));
+            pack();
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            setVisible(true);
+        }
+
+        private JComponent getImageComponent(byte[] image) {
+            JPanel panel = new JPanel();
+            ImageIcon icon = new ImageIcon(image);
+            JLabel label = new JLabel();
+            label.setIcon(icon);
+            panel.add(label);
+            return panel;
+        }
     }
 }

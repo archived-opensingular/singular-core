@@ -30,6 +30,7 @@ public enum Icone {
     LIST_ALT/*          */("fa fa-list-alt"),
     LOCK/*              */("fa fa-lock"),
     MAP_MARKER /*       */("fa fa-map-marker"),
+    MINUS /*            */("fa fa-minus"),
     MONEY /*            */("fa fa-money"),
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
     PIN /*              */("icon-pin"),

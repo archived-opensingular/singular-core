@@ -8,14 +8,16 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.util.wicket.lambda.IFunction;
+
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @SuppressWarnings("unchecked")
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
-    private String                tagName;
-    private String                cssClass = null;
-    protected final RepeatingView items    = new RepeatingView("_");
+    private String tagName;
+    private String cssClass = null;
+    protected final RepeatingView items = new RepeatingView("_");
 
     public BSContainer(String id) {
         super(id);
@@ -65,17 +67,17 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup() {
-        return newFormGroup(true);
+        return newFormGroup(false, true);
     }
-    public BSControls newFormGroup(boolean compact) {
-        return newComponent(new IBSComponentFactory<BSControls>() {
-            @Override
-            public BSControls newComponent(String componentId) {
-                BSControls controls = new BSControls(componentId, false)
-                    .setCssClass((compact ? "" : "form-group ") + "form-group-sm");
-                controls.add(new AttributeAppender("class", "can-have-error", " "));
-                return controls;
-            }
+
+    public BSControls newFormGroup(boolean compact, boolean material) {
+        return newComponent(componentId -> {
+            BSControls controls = new BSControls(componentId, false)
+                    .setCssClass(material
+                            ? "form-group form-md-line-input form-md-floating-label"
+                            : (compact ? "" : "form-group ") + "form-group-sm");
+            controls.add(new AttributeAppender("class", "can-have-error", " "));
+            return controls;
         });
     }
 
@@ -96,18 +98,25 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     public <C extends Component> C newTag(String tag, C component) {
         return newTag(tag, true, "", component);
     }
+
     public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, IBSComponentFactory<C> factory) {
         return newTag(tag, closeTag, attrs, factory.newComponent(items.newChildId()));
     }
 
     public <C extends Component> C newTag(String tag, boolean closeTag, String attrs, C component) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, () ->
-            "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
-                + (closeTag ? "</" + tag + ">\n" : "\n")));
+                "<" + tag + " wicket:id='" + component.getId() + "' " + defaultString(attrs) + ">"
+                        + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
-            .add(component)
-            .setRenderBodyOnly(true);
+                .add(component)
+                .setRenderBodyOnly(true);
         return component;
+    }
+
+    public TemplatePanel newTemplateTag(IFunction<TemplatePanel, String> markupFunc) {
+        TemplatePanel container = newComponent(id -> new TemplatePanel(id, markupFunc));
+        container.setRenderBodyOnly(true);
+        return container;
     }
 
     public <C extends Component> THIS appendComponent(IBSComponentFactory<C> factory) {

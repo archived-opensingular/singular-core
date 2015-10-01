@@ -1,14 +1,16 @@
 package br.net.mirante.singular.definicao;
 
+import java.util.Calendar;
+
 import br.net.mirante.singular.defaults.DefaultPageStrategy;
 import br.net.mirante.singular.defaults.DefaultTaskAccessStrategy;
+import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
-import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskPredicates;
-import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.builder.BEnd;
 import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.BPeople;
@@ -16,11 +18,14 @@ import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
-
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
@@ -36,7 +41,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         private final String name;
 
-        private PeticaoTask(String name) {
+        PeticaoTask(String name) {
             this.name = name;
         }
 
@@ -108,7 +113,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
     private Calendar addDias(Object taskInstance, int dias) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(((ProcessInstance)taskInstance).getBeginDate());
+        calendar.setTime(((ProcessInstance) taskInstance).getBeginDate());
         calendar.add(Calendar.DATE, dias);
         return calendar;
     }
@@ -118,11 +123,10 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
     }
 
-    private static class EmptyUserRoleSettingStrategy extends UserRoleSettingStrategy<InstanciaPeticao> {
-        @Override
-        public List<? extends MUser> listAllocableUsers(InstanciaPeticao instancia) {
-            return Collections.emptyList();
-        }
+    @SuppressWarnings("unchecked")
+    public static void main(String[] args) {
+        MBPMUtil.showSwingDiagram((Class<? extends ProcessDefinition<?>>) new Object() {
+            /* VAZIO */
+        }.getClass().getEnclosingClass());
     }
-
 }

@@ -3,6 +3,8 @@ package br.net.mirante.singular.test;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,10 +30,7 @@ import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_P
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
 import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -48,6 +47,13 @@ public class PeticaoTest extends TestSupport {
     @After
     public void tearDown() {
         ProcessDefinitionCache.invalidateAll();
+    }
+
+    @Test
+    public void showSwingDiagramTest() {
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Gerando diagrama...");
+        Peticao.main(null);
+        Logger.getLogger(PeticaoTest.class.getName()).log(Level.INFO, "Pronto!");
     }
 
     @Test
@@ -73,7 +79,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(PUBLICADO.getName(), ip);
+        assertLatestTaskName(PUBLICADO.getName(), ip);
     }
 
     @Test
@@ -82,7 +88,7 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.DEFERIR);
 
-        assertCurrentTaskName(DEFERIDO.getName(), ip);
+        assertLatestTaskName(DEFERIDO.getName(), ip);
     }
 
     @Test
@@ -90,7 +96,7 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao ip = startInstance();
         ip.executeTransition(Peticao.INDEFERIR);
 
-        assertCurrentTaskName(INDEFERIDO.getName(), ip);
+        assertLatestTaskName(INDEFERIDO.getName(), ip);
     }
 
     @Test
@@ -104,7 +110,25 @@ public class PeticaoTest extends TestSupport {
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
 
-        assertCurrentTaskName(PUBLICADO.getName(), ip);
+        assertLatestTaskName(PUBLICADO.getName(), ip);
+    }
+
+    @Test
+    public void naoDeveriaTerDataDeFim() {
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.APROVAR_TECNICO);
+
+        assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
+        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+    }
+
+    @Test
+    public void deveriaTerDataDeFim() {
+        InstanciaPeticao ip = startInstance();
+        ip.executeTransition(Peticao.INDEFERIR);
+
+        assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
+        assertNotNull("Tarefa deveria ter uma data de fim", ip.getLatestTask().getEndDate());
     }
 
     @Test
@@ -119,7 +143,7 @@ public class PeticaoTest extends TestSupport {
 
         new ExecuteWaitingTasksJob(null).run();
 
-        assertCurrentTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
+        assertLatestTaskName(AGUARDANDO_PUBLICACAO.getName(), ip);
     }
 
     @Test
@@ -235,10 +259,10 @@ public class PeticaoTest extends TestSupport {
         assertEquals("As instâncias de processo são diferentes", cod1, cod2);
     }
 
-    private void assertCurrentTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
+    private void assertLatestTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
-                instanciaPeticao.getCurrentTask().getName());
+                instanciaPeticao.getLatestTask().getName());
     }
 
     private void addDaysToTaskTargetDate(TaskInstance taskInstance, int days) {

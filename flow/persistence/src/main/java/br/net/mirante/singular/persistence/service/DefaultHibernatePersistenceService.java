@@ -98,6 +98,12 @@ public class DefaultHibernatePersistenceService extends AbstractHibernateService
         taskInstance.setProcessInstance(instance);
         taskInstance.setBeginDate(new Date());
         taskInstance.setTask(state);
+        if (state.getType().isEnd()) {
+            instance.setEndDate(new Date());
+            taskInstance.setEndDate(new Date());
+        } else {
+            instance.setEndDate(null);
+        }
 
         instance.addTask(taskInstance);
         instance.setCurrentTaskDefinition(state.getTaskDefinition());

@@ -5,9 +5,9 @@ import br.net.mirante.singular.form.mform.MTipoLista;
 
 public class MTableListaView extends MView {
 
-    private boolean permiteExclusaoDeLinha;
-    private boolean permiteInsercaoDeLinha;
-    private boolean permiteAdicaoDeLinha;
+    private boolean permiteAdicaoDeLinha   = true;
+    private boolean permiteInsercaoDeLinha = false;
+    private boolean permiteExclusaoDeLinha = true;
 
     @Override
     public boolean aplicavelEm(MTipo<?> tipo) {

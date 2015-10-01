@@ -107,6 +107,7 @@ public class DefaultHibernateProcessDefinitionService extends AbstractHibernateS
                 role.setProcessDefinition(entityProcessDefinition);
                 role.setName(mPapel.getName());
                 role.setAbbreviation(mPapel.getAbbreviation());
+                role.setRolesInstances(new ArrayList<>());
                 roleDAO.save(role);
             }
         }
