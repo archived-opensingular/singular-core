@@ -1,6 +1,7 @@
 package br.net.mirante.singular.dsl;
 
 import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.builder.BJava;
 
 public class JavaBuilder1 {
 
@@ -16,12 +17,13 @@ public class JavaBuilder1 {
         this.taskBuilder2 = taskBuilder2;
     }
 
-    public JavaBuilder2 call(TaskExecutor t) {
-        return new JavaBuilder2(this);
+
+    public TaskBuilder2 call(Whatever impl) {
+        return new TaskBuilder2(new JavaBuilder2(this));
     }
 
     @FunctionalInterface
-    public interface TaskExecutor<T extends ProcessInstance> {
-        String execute(T instancia);
+    public interface Whatever {
+        void execute(Object ... objects);
     }
 }

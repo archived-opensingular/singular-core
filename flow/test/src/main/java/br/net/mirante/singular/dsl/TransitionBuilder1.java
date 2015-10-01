@@ -20,11 +20,11 @@ public class TransitionBuilder1 {
 
     }
 
-    public TaskBuilder2 goTo(String task){
+    public TaskBuilder2 to(String task){
         return taskBuilder2;
     }
 
-    public TaskBuilder2 go() {
+    public TaskBuilder2 to() {
         return taskBuilder2;
     }
 

@@ -17,6 +17,10 @@ public class TaskBuilder2 {
         return new JavaBuilder1(this);
     }
 
+    public WaitBuilder1 wait(String key){
+        return new WaitBuilder1(null);
+    }
+
     public TransitionBuilder1 transition(String outcome){
         return new TransitionBuilder1(this);
     }
