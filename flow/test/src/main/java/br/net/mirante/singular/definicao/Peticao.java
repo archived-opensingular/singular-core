@@ -78,7 +78,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
         BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, new EmptyUserRoleSettingStrategy(), false);
         BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, new EmptyUserRoleSettingStrategy(), false);
 
-        BJava notificarNovaInstancia = flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
+        BJava notificarNovaInstancia = flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
         aguardandoAnalise.withExecutionPage(new DefaultPageStrategy());
         BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new DefaultTaskAccessStrategy());

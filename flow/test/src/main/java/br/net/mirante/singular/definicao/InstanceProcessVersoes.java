@@ -46,9 +46,9 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
 
-                BJava<?> start = flow.addJavaTask(() -> "Start");
+                BJava<?> start = flow.addJava(() -> "Start");
                 start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJavaTask(() -> "Task");
+                BJava<?> task = flow.addJava(() -> "Task");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People", papelTecnico);
                 people.withExecutionPage(new DefaultPageStrategy());
@@ -72,9 +72,9 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", new EmptyUserRoleSettingStrategy(), false);
 
-                BJava<?> start = flow.addJavaTask(() -> "Start");
+                BJava<?> start = flow.addJava(() -> "Start");
                 start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJavaTask(() -> "Task");
+                BJava<?> task = flow.addJava(() -> "Task");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People", papelAnalista);
                 people.withExecutionPage(new DefaultPageStrategy());
@@ -98,9 +98,9 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
 
-                BJava<?> start = flow.addJavaTask(() -> "Start 2");
+                BJava<?> start = flow.addJava(() -> "Start 2");
                 start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJavaTask(() -> "Task 2");
+                BJava<?> task = flow.addJava(() -> "Task 2");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People 2", papelTecnico);
                 people.withExecutionPage(new DefaultPageStrategy());

@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.vars.VarService;
@@ -142,6 +143,10 @@ public class FlowMap implements Serializable {
         return addTask(new MTaskWait(this, definition.getName(), definition.getKey(), dateExecutionStrategy));
     }
 
+    public MTask<?> setStartTask(ITaskDefinition initialTask) {
+        return setStartTask(getTask(initialTask));
+    }
+
     public MTask<?> setStartTask(MTask<?> task) {
         Objects.requireNonNull(task);
         if (task.getFlowMap() != this) {
@@ -206,8 +211,19 @@ public class FlowMap implements Serializable {
                 + target.getClass().getName() + " and was expected to be " + expectedClass.getClass().getName()));
     }
 
+    /**
+     * Encontra a definição da task informada ou dispara exception senão
+     * encontrada.
+     *
+     * @return Sempre diferente de null
+     */
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
-        return getTaskWithName(taskDefinition.getName());
+        MTask<?> task = getTaskWithName(taskDefinition.getName());
+        if (task == null) {
+            throw new SingularException(
+                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getAbbreviation());
+        }
+        return task;
     }
 
     public MTask<?> getTaskWithName(String name) {

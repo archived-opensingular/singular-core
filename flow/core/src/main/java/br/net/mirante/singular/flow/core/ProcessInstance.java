@@ -9,8 +9,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
@@ -27,7 +28,7 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class ProcessInstance {
+public class ProcessInstance {
 
     private final RefProcessDefinition processDefinitionRef;
 
@@ -36,7 +37,8 @@ public abstract class ProcessInstance {
     private transient ExecucaoMTask executionContext;
 
     /**
-     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
+     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity
+     *             no lugar
      */
     @Deprecated
     private transient IEntityProcessInstance entity;
@@ -85,7 +87,9 @@ public abstract class ProcessInstance {
      *
      * @param varInstanceMap
      * @return
-     * @deprecated Esse método deve ser renomeado pois possui um comportamente implicito não evidente em comparação à outra versão sobrecarregada do mesmo: "getPersistedDescription"
+     * @deprecated Esse método deve ser renomeado pois possui um comportamente
+     *             implicito não evidente em comparação à outra versão
+     *             sobrecarregada do mesmo: "getPersistedDescription"
      *
      */
     @Deprecated

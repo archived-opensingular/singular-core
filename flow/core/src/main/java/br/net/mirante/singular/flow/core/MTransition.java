@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.common.base.MoreObjects;
+
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.props.MetaData;
 import br.net.mirante.singular.flow.util.props.MetaDataRef;
@@ -13,8 +16,6 @@ import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-
-import com.google.common.base.MoreObjects;
 
 @SuppressWarnings("serial")
 public class MTransition implements Serializable {
@@ -117,7 +118,7 @@ public class MTransition implements Serializable {
         }
         return metaData;
     }
-    
+
     public MTask<?> getOrigin() {
         return origin;
     }
@@ -129,16 +130,20 @@ public class MTransition implements Serializable {
     public String getAbbreviation() {
         return abbreviation;
     }
-    
+
     public MTask<?> getDestination() {
         return destination;
     }
 
-    public MTransition thenGoTo(MTask<?> destination) {
+    public MTransition thenGo(ITaskDefinition destination) {
+        return thenGo(getFlowMap().getTask(destination));
+    }
+
+    public MTransition thenGo(MTask<?> destination) {
         return this.destination.addTransition(destination);
     }
 
-    public MTransition thenGoTo(String acao, MTask<?> destination) {
+    public MTransition thenGo(String acao, MTask<?> destination) {
         return this.destination.addTransition(acao, destination);
     }
 
@@ -210,7 +215,7 @@ public class MTransition implements Serializable {
         return parameters;
     }
 
-    public MTransition addParameterFromProcessVariable(String ref, boolean required) {
+    public MTransition addParamFromProcessVariable(String ref, boolean required) {
         VarDefinition defVar = getFlowMap().getProcessDefinition().getVariables().getDefinition(ref);
         if (defVar == null) {
             throw new SingularFlowException(getFlowMap().createErrorMsg("Variable '" + ref + "' is not defined in process definition."));

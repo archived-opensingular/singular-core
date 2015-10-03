@@ -118,69 +118,69 @@ public class FlowBuilderImpl extends
             return flowBuilder;
         }
 
-        public SELF addParameterFromProcessVariable(String ref, boolean obrigatorio) {
-            getTransition().addParameterFromProcessVariable(ref, obrigatorio);
+        public SELF addParamFromProcessVariable(String ref, boolean obrigatorio) {
+            getTransition().addParamFromProcessVariable(ref, obrigatorio);
             return self();
         }
 
-        public SELF addTransitionStringParam(String ref, boolean obrigatorio, Integer tamanho) {
-            return addTransitionStringParam(ref, ref, obrigatorio, tamanho);
+        public SELF addParamString(String ref, boolean obrigatorio, Integer tamanho) {
+            return addParamString(ref, ref, obrigatorio, tamanho);
         }
 
-        public SELF addTransitionStringParam(String ref, boolean obrigatorio) {
-            return addTransitionStringParam(ref, ref, obrigatorio, null);
+        public SELF addParamString(String ref, boolean obrigatorio) {
+            return addParamString(ref, ref, obrigatorio, null);
         }
 
-        public SELF addTransitionStringParam(String ref, String nome, boolean obrigatorio) {
-            return addTransitionStringParam(ref, nome, obrigatorio, null);
+        public SELF addParamString(String ref, String nome, boolean obrigatorio) {
+            return addParamString(ref, nome, obrigatorio, null);
         }
 
-        public SELF addTransitionStringParam(String ref, String nome, boolean obrigatorio, Integer tamanho) {
+        public SELF addParamString(String ref, String nome, boolean obrigatorio, Integer tamanho) {
             getTransition().getParameters().addVariableString(ref, nome, tamanho).setRequired(obrigatorio);
             return self();
         }
 
-        public SELF addTransitionStringMultipleLinesParam(String ref, String nome, boolean obrigatorio) {
-            return addTransitionStringMultipleLinesParam(ref, nome, obrigatorio, null);
+        public SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio) {
+            return addParamStringMultipleLines(ref, nome, obrigatorio, null);
         }
 
-        public SELF addTransitionStringMultipleLinesParam(String ref, String nome, boolean obrigatorio, Integer tamanho) {
+        public SELF addParamStringMultipleLines(String ref, String nome, boolean obrigatorio, Integer tamanho) {
             getTransition().getParameters().addVariableStringMultipleLines(ref, nome, tamanho).setRequired(obrigatorio);
             return self();
         }
 
-        public SELF addTransitionIntegerParam(String ref, boolean obrigatorio) {
-            return addTransitionIntegerParam(ref, ref, obrigatorio);
+        public SELF addParamInteger(String ref, boolean obrigatorio) {
+            return addParamInteger(ref, ref, obrigatorio);
         }
 
-        public SELF addTransitionIntegerParam(String ref, String nome, boolean obrigatorio) {
+        public SELF addParamInteger(String ref, String nome, boolean obrigatorio) {
             getTransition().getParameters().addVariableInteger(ref, nome).setRequired(obrigatorio);
             return self();
         }
 
-        public SELF addTransitionDoubleParam(String ref, boolean obrigatorio) {
-            return addTransitionDoubleParam(ref, ref, obrigatorio);
+        public SELF addParamDouble(String ref, boolean obrigatorio) {
+            return addParamDouble(ref, ref, obrigatorio);
         }
 
-        public SELF addTransitionDoubleParam(String ref, String nome, boolean obrigatorio) {
+        public SELF addParamDouble(String ref, String nome, boolean obrigatorio) {
             getTransition().getParameters().addVariableDouble(ref, nome).setRequired(obrigatorio);
             return self();
         }
 
-        public SELF addTransitionDateParam(String ref, boolean obrigatorio) {
-            return addTransitionDateParam(ref, ref, obrigatorio);
+        public SELF addParamDate(String ref, boolean obrigatorio) {
+            return addParamDate(ref, ref, obrigatorio);
         }
 
-        public SELF addTransitionDateParam(String ref, String nome, boolean obrigatorio) {
+        public SELF addParamDate(String ref, String nome, boolean obrigatorio) {
             getTransition().getParameters().addVariableDate(ref, nome).setRequired(obrigatorio);
             return self();
         }
 
-        public SELF addTransitionParam(String ref, VarType tipo, boolean obrigatorio) {
-            return addTransitionParam(ref, ref, tipo, obrigatorio);
+        public SELF addParam(String ref, VarType tipo, boolean obrigatorio) {
+            return addParam(ref, ref, tipo, obrigatorio);
         }
 
-        public SELF addTransitionParam(String ref, String nome, VarType varType, boolean obrigatorio) {
+        public SELF addParam(String ref, String nome, VarType varType, boolean obrigatorio) {
             getTransition().getParameters().addVariable(ref, nome, varType).setRequired(obrigatorio);
             return self();
         }
