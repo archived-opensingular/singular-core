@@ -27,6 +27,11 @@ import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
+/**
+ * <p>Esta é a classe responsável por manter os dados de instância de um determinado processo.</p>
+ *
+ * @author Mirante Tecnologia
+ */
 @SuppressWarnings({"serial", "unchecked"})
 public class ProcessInstance {
 
@@ -37,8 +42,7 @@ public class ProcessInstance {
     private transient ExecucaoMTask executionContext;
 
     /**
-     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity
-     *             no lugar
+     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
      */
     @Deprecated
     private transient IEntityProcessInstance entity;
@@ -55,6 +59,12 @@ public class ProcessInstance {
         processDefinitionRef = RefProcessDefinition.of(processDefinition);
     }
 
+    /**
+     * <p>Retorna a definição de processo desta instância.</p>
+     *
+     * @param <K> o tipo da definição de processo.
+     * @return a definição de processo desta instância.
+     */
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
             throw new SingularException("A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition ");
@@ -62,18 +72,19 @@ public class ProcessInstance {
         return (K) processDefinitionRef.get();
     }
 
+    /**
+     * <p>Inicia esta instância de processo.</p>
+     *
+     * @return A tarefa atual da instância depois da inicialização.
+     */
     public TaskInstance start() {
         return start(getVariaveis());
     }
 
     /**
-     *
-     * @param varInstanceMap
-     * @return
      * @deprecated Esse método deve ser renomeado pois possui um comportamente
      *             implicito não evidente em comparação à outra versão
      *             sobrecarregada do mesmo: "getPersistedDescription"
-     *
      */
     @Deprecated
     public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
@@ -81,14 +92,29 @@ public class ProcessInstance {
         return EngineProcessamentoMBPM.start(this, varInstanceMap);
     }
 
+    /**
+     * <p>Executa a próxima transição desta instância de processo.</p>
+     */
     public void executeTransition() {
         EngineProcessamentoMBPM.executeTransition(this, null, null);
     }
 
+    /**
+     * <p>Executa a transição especificada desta instância de processo.</p>
+     *
+     * @param transitionName a transição especificada.
+     */
     public void executeTransition(String transitionName) {
         EngineProcessamentoMBPM.executeTransition(this, transitionName, null);
     }
 
+    /**
+     * <p>Executa a transição especificada desta instância de processo passando
+     * as variáveis fornecidas.</p>
+     *
+     * @param transitionName a transição especificada.
+     * @param param as variáveis fornecidas.
+     */
     public void executeTransition(String transitionName, VarInstanceMap<?> param) {
         EngineProcessamentoMBPM.executeTransition(this, transitionName, param);
     }

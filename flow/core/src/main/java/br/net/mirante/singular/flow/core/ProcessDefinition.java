@@ -39,6 +39,7 @@ import br.net.mirante.singular.flow.util.view.Lnk;
  * <p>Esta é a classe responsável por manter as definições de um dado processo.</p>
  *
  * @param <I> o tipo das instâncias deste processo.
+ * @author Mirante Tecnologia
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>

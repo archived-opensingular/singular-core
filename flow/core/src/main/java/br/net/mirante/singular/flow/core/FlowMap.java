@@ -22,6 +22,8 @@ import br.net.mirante.singular.flow.util.vars.VarService;
 
 /**
  * <p>Esta classe representa o mapa de fluxo de uma dada definição de processo.</p>
+ *
+ * @author Mirante Tecnologia
  */
 @SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class FlowMap implements Serializable {
