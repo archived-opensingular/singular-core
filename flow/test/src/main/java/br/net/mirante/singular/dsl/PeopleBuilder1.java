@@ -12,7 +12,7 @@ public class PeopleBuilder1 {
         return new PeopleBuilder2(this);
     }
 
-    public PeopleBuilder1 right(String diretor) {
+    public PeopleBuilder1 right(Object diretor) {
         return this;
     }
 }
