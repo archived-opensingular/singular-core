@@ -395,6 +395,7 @@ public class FlowMap implements Serializable {
     /**
      * <p>Encontra a definição da tarefa informada ou dispara uma exceção caso não a encontre.</p>
      *
+     * @param taskDefinition a definição informada.
      * @return a definição da tarefa informada.
      * @throws SingularException caso não encontre a tarefa.
      */

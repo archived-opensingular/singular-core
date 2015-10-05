@@ -232,6 +232,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return variableService;
     }
 
+    /**
+     * <p>Retorna as definições de variáveis deste processo.</p>
+     *
+     * @return the variables
+     */
     public final VarDefinitionMap<?> getVariables() {
         if (variableDefinitions == null) {
             variableDefinitions = getVarService().newVarDefinitionMap();
@@ -239,14 +244,34 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return variableDefinitions;
     }
 
+    /**
+     * <p>Cria e adiciona um novo <i>job</i> ao agendador deste processo.</p>
+     *
+     * @param impl a implementação do <i>job</i>.
+     * @param name o nome do <i>job</i>.
+     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     */
     protected final ProcessScheduledJob addScheduledJob(Supplier<Object> impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
+    /**
+     * <p>Cria e adiciona um novo <i>job</i> ao agendador deste processo.</p>
+     *
+     * @param impl a implementação do <i>job</i>.
+     * @param name o nome do <i>job</i>.
+     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     */
     protected final ProcessScheduledJob addScheduledJob(Runnable impl, String name) {
         return addScheduledJob(name).call(impl);
     }
 
+    /**
+     * <p>Cria e adiciona um novo <i>job</i> sem implementação ao agendador deste processo.</p>
+     *
+     * @param name o nome do <i>job</i>.
+     * @return o {@link ProcessScheduledJob} que encapsula o <i>job</i> criado.
+     */
     protected final ProcessScheduledJob addScheduledJob(String name) {
         name = StringUtils.trimToNull(name);
 
@@ -263,19 +288,47 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return CollectionUtils.unmodifiableCollection(scheduledJobsByName.values());
     }
 
+    /**
+     * <p>Retorna o valor do metadado especificado.</p>
+     *
+     * @param <T> o tipo do metadado.
+     * @param propRef o metadado especificado.
+     * @param defaultValue o valor padrão do metadado.
+     * @return o valor do metadado especificado; ou o valor padrão caso não encontre o metadado especificado.
+     */
     public <T> T getMetaDataValue(MetaDataRef<T> propRef, T defaultValue) {
         return metaData == null ? defaultValue : MoreObjects.firstNonNull(getMetaData().get(propRef), defaultValue);
     }
 
+    /**
+     * <p>Retorna o valor do metadado especificado.</p>
+     *
+     * @param <T> o tipo do metadado.
+     * @param propRef o metadado especificado.
+     * @return o valor do metadado especificado; ou {@code null} caso não encontre o metadado especificado.
+     */
     public <T> T getMetaDataValue(MetaDataRef<T> propRef) {
         return metaData == null ? null : getMetaData().get(propRef);
     }
 
+    /**
+     * <p>Configura o valor do metadado especificado.</p>
+     *
+     * @param <T> o tipo do metadado.
+     * @param propRef o metadado especificado.
+     * @param value o valor do metadado a ser configurado.
+     * @return esta definição de processo já com o metadado definido.
+     */
     protected <T> ProcessDefinition<I> setMetaDataValue(MetaDataRef<T> propRef, T value) {
         getMetaData().set(propRef, value);
         return this;
     }
 
+    /**
+     * <p>Recupera a entidade persistente correspondente a esta definição de processo.</p>
+     *
+     * @return a entidade persistente.
+     */
     public final IEntityProcess getEntity() {
         synchronized (this) {
             if (entityCod == null) {
@@ -304,6 +357,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return def;
     }
 
+    /**
+     * <p>Encontra a definição da tarefa informada ou dispara uma exceção caso não a encontre.</p>
+     *
+     * @param taskDefinition a definição informada.
+     * @return a definição da tarefa informada.
+     * @throws br.net.mirante.singular.commons.base.SingularException caso não encontre a tarefa.
+     */
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
         return getFlowMap().getTask(taskDefinition);
     }
@@ -350,42 +410,103 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return situacao;
     }
 
+    /**
+     * <p>Retorna as entidades persistentes correspondentes às definições de tarefas informadas.</p>
+     *
+     * @param task as definições informadas.
+     * @return as entidades persistentes.
+     */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
         return Arrays.stream(task).map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
     }
 
+    /**
+     * <p>Retorna as entidades persistentes correspondentes às definições de tarefas informadas.</p>
+     *
+     * @param tasks as definições informadas.
+     * @return as entidades persistentes.
+     */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(Collection<? extends ITaskDefinition> tasks) {
         return tasks.stream().map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
     }
 
+    /**
+     * <p>Retorna a entidade persistente correspondente à tarefa informada.</p>
+     *
+     * @param task a tarefa informada.
+     * @return a entidade persistente.
+     */
     public final IEntityTaskDefinition getEntityTaskDefinition(MTask<?> task) {
         return getEntityTaskDefinitionOrException(task.getAbbreviation());
     }
 
+    /**
+     * <p>Retorna a entidade persistente correspondente à definição de tarefa informada.</p>
+     *
+     * @param task a definição informada.
+     * @return a entidade persistente.
+     */
     public final IEntityTaskDefinition getEntityTaskDefinition(ITaskDefinition task) {
         return getEntityTaskDefinitionOrException(task.getKey());
     }
 
+    /**
+     * <p>Retorna a entidade persistente correspondente à definição de tarefa com a sigla informada.</p>
+     *
+     * @param taskAbbreviation a sigla da definição informada.
+     * @return a entidade persistente; ou {@code null} caso não a encontre.
+     */
     public final IEntityTaskDefinition getEntityTaskDefinition(String taskAbbreviation) {
         return (taskAbbreviation == null) ? null : getEntity().getTaskDefinition(taskAbbreviation);
     }
 
+    /**
+     * <p>Retorna a entidade persistente correspondente à definição de tarefa com a sigla informada.</p>
+     *
+     * @param taskAbbreviation a sigla da definição informada.
+     * @return a entidade persistente.
+     * @throws SingularFlowException caso a entidade não seja encontrada.
+     */
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
         IEntityTaskDefinition taskDefinition = getEntityTaskDefinition(taskAbbreviation);
         if (taskDefinition == null) {
-            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation));
+            throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla="
+                    + taskAbbreviation));
         }
         return taskDefinition;
     }
 
+    /**
+     * <p>Retorna o diagrama BPMN desta definição de processo.</p>
+     *
+     * @return os <i>bytes</i> da imagem PNG do diagrama gerado.
+     */
     public byte[] getFlowImage() {
         return FlowRendererFactory.generateImageFor(this);
     }
 
+    /**
+     * <p>Formata uma mensagem de erro.</p>
+     *
+     * <p>A formatação da mensagem segue o seguinte padrão:</p>
+     *
+     * <pre>
+     *     "Processo MBPM '" + getName() + "': " + msg
+     * </pre>
+     *
+     * @param msg a mensagem a ser formatada.
+     * @return a mensagem formatada.
+     * @see #getName()
+     */
     protected final String createErrorMsg(String msg) {
         return "Processo MBPM '" + getName() + "': " + msg;
     }
 
+    /**
+     * <p>Retorna o nome deste processo.</p>
+     *
+     * @return o nome deste processo.
+     */
     public final String getName() {
         if (name == null) {
             getLogger().warn("!!! process definition name not set, using  class simple name !!!");
@@ -407,6 +528,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return abbreviation;
     }
 
+    /**
+     * <p>Retorna a categoria deste processo.</p>
+     *
+     * @return a categoria deste processo.
+     */
     public final String getCategory() {
         if (category == null) {
             getLogger().warn("!!! process definition category not set, using  class simple name !!!");
@@ -415,30 +541,70 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return category;
     }
 
+    /**
+     * <p>Retorna o <i>link resolver</i> deste processo para o usuário especificado.</p>
+     *
+     * @param user o usuário especificado.
+     * @return o <i>link resolver</i>.
+     */
     public final Lnk getCreatePageFor(MUser user) {
         return getCreationPageStrategy().getCreatePageFor(this, user);
     }
 
+    /**
+     * <p>Retorna o {@link IProcessCreationPageStrategy} deste processo.</p>
+     *
+     * @return o {@link IProcessCreationPageStrategy}.
+     */
     protected final IProcessCreationPageStrategy getCreationPageStrategy() {
         return creationPage;
     }
 
+    /**
+     * <p>Configura o {@link IProcessCreationPageStrategy} deste processo.</p>
+     *
+     * @param creationPage o {@link IProcessCreationPageStrategy}.
+     */
     protected final void setCreationPageStrategy(IProcessCreationPageStrategy creationPage) {
         this.creationPage = creationPage;
     }
 
+    /**
+     * <p>Verifica se há um {@link IProcessCreationPageStrategy} configurado.</p>
+     *
+     * @return {@code true} caso exista um {@link IProcessCreationPageStrategy} configurado;
+     * {@code false} caso contrário.
+     */
     public boolean isCreatedByUser() {
         return creationPage != null;
     }
 
+    /**
+     * <p>Verifica se um {@link IProcessCreationPageStrategy} possa ser configurado pelo
+     * usuário especificado.</p>
+     *
+     * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa ser configurado;
+     * {@code false} caso contrário.
+     */
     public boolean canBeCreatedBy(MUser user) {
         return isCreatedByUser();
     }
 
+    /**
+     * <p>Gera uma sigla para esta definição de processo.</p>
+     *
+     * @return a sigla gerada.
+     */
     protected String generateAbbreviation() {
         return getClass().getSimpleName();
     }
 
+    /**
+     * <p>Configura a categoria e nome desta definição de processo.</p>
+     *
+     * @param category a categoria.
+     * @param name o nome.
+     */
     protected final void setName(String category, String name) {
         setName(category, generateAbbreviation(), name);
     }
@@ -464,10 +630,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return (Set<X>) stream.map(this::getEntityTask).collect(Collectors.toSet());
     }
 
+    /**
+     * <p>Retorna uma lista de instâncias correspondentes às entidades fornecidas.</p>
+     *
+     * @param demandas as entidades fornecidas.
+     * @return a lista de instâncias.
+     */
     protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> demandas) {
         return demandas.stream().map(this::convertToProcessInstance).collect(Collectors.toList());
     }
 
+    /**
+     * <p>Retorna a instância correspondente à entidade fornecida.</p>
+     *
+     * @param dadosInstancia a entidade fornecida.
+     * @return a instância.
+     */
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
         Objects.requireNonNull(dadosInstancia);
         I novo = newUnbindedInstance();
@@ -476,10 +654,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * Retorna um novo e vazio ProcessInstance correspondente a definição de
-     * processo atual pronto para ser configurado para um novo fluxo.
+     * <p>Retorna uma nova instância vazia deste processo pronta para ser configurada em um novo fluxo.</p>
      *
-     * @return Nunca null
+     * @return a nova instância (<i>null safe</i>).
      */
     protected I newInstance() {
         I novo = newUnbindedInstance();
@@ -509,7 +686,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     /**
      * Retorna uma referência a definição atual que pode ser serializada e
-     * deserializada em implicar na serialização de toda definição do processo.
+     * deserializada sem implicar na serialização de toda definição do processo.
+     *
+     * @return referência serializável.
      */
     protected RefProcessDefinition getSerializableReference() {
         if (serializableReference == null) {
