@@ -119,14 +119,21 @@ public class ProcessInstance {
         EngineProcessamentoMBPM.executeTransition(this, transitionName, param);
     }
 
+    /**
+     * <p>Realiza a montagem necessária para execução da transição especificada a partir
+     * da tarefa atual desta instância.</p>
+     *
+     * @param transitionName a transição especificada.
+     * @return a montagem resultante.
+     */
     public TransitionCall prepareTransition(String transitionName) {
         return getCurrentTask().prepareTransition(transitionName);
     }
 
     final IEntityProcessInstance getInternalEntity() {
         if (entity == null) {
-            throw new SingularException(
-                    getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
+            throw new SingularException(getClass().getName()
+                    + " is not binded to a new and neither to a existing database intance process entity.");
         }
         return entity;
     }
@@ -144,6 +151,11 @@ public class ProcessInstance {
         this.entity = entity;
     }
 
+    /**
+     * <p>Configura a instância "pai" desta instância de processo.</p>
+     *
+     * @param pai a instância "pai".
+     */
     public void setParent(ProcessInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
