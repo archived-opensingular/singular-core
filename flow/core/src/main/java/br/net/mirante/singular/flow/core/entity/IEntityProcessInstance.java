@@ -6,7 +6,7 @@ import java.util.List;
 import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod {
-    
+
     IEntityProcess getProcess();
 
     String getDescription();
@@ -20,7 +20,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
     Date getEndDate();
 
     IEntityTaskInstance getParentTask();
-    
+
     List<? extends IEntityTaskInstance> getTasks();
 
     List<? extends IEntityVariableInstance> getVariables();
@@ -54,6 +54,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
     }
 
     default IEntityTaskInstance getCurrentTask(IEntityTask entityTask) {
+        // TODO método incorreto. Deveria usar a definição e não a versão
         List<? extends IEntityTaskInstance> lista = getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
             IEntityTaskInstance tarefa = lista.get(i);
@@ -64,7 +65,9 @@ public interface IEntityProcessInstance extends IEntityByCod {
         return null;
     }
 
+    @Deprecated
     default IEntityTaskInstance getCurrentTask() {
+        // TODO Refatorar isso. Muito ineficiente e traz resultado errado.
         List<? extends IEntityTaskInstance> lista = getTasks();
         for (int i = lista.size() - 1; i != -1; i--) {
             IEntityTaskInstance tarefa = lista.get(i);
@@ -74,7 +77,7 @@ public interface IEntityProcessInstance extends IEntityByCod {
         }
         return null;
     }
-    
+
     default IEntityVariableInstance getVariable(String ref) {
         return getVariables().stream().filter(var -> var.getName().equalsIgnoreCase(ref)).findAny().orElse(null);
     }

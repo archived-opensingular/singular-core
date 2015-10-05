@@ -61,7 +61,7 @@ public class PeticaoTest extends TestSupport {
     @Test
     public void testeCriarInstanciaPeticao() {
         InstanciaPeticao id = startInstance();
-        InstanciaPeticao id2 = MBPM.findProcessInstance(id.getFullId());
+        InstanciaPeticao id2 = MBPM.getProcessInstance(id.getFullId());
 
         assertEqualsInstance(id, id2);
     }

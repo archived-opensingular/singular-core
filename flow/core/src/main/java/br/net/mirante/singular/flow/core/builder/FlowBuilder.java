@@ -126,7 +126,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newWaitTask(getFlowMap().addWaitTask(taskDefinition, executionDateStrategy));
     }
 
-    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
+    public <T extends ProcessInstance> BUILDER_WAIT addWait(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
             TaskAccessStrategy<?> accessStrategy) {
         BUILDER_WAIT wait = addWaitTask(taskDefinition, executionDateStrategy);
         wait.addAccessStrategy(accessStrategy);

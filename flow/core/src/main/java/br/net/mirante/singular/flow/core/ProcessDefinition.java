@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,7 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
@@ -73,7 +71,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
-    private transient Constructor<I> construtor;
+    private transient RefProcessDefinition serializableReference;
 
     /**
      * @deprecated mover para a implementacao do alocpro
@@ -92,7 +90,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
         this.variableService = varService;
-        Objects.requireNonNull(getConstrutor());
     }
 
     /**
@@ -464,33 +461,32 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
         Objects.requireNonNull(dadosInstancia);
-        try {
-            return getConstrutor().newInstance(dadosInstancia);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(dadosInstancia);
+        return novo;
     }
 
     /**
-     * @deprecated mover para a implementacao do alocpro
+     * Retorna um novo e vazio ProcessInstance correspondente a definição de
+     * processo atual pronto para ser configurado para um novo fluxo.
+     *
+     * @return Nunca null
      */
-    //TODO moverparaalocpro
-    @Deprecated
-    private Constructor<I> getConstrutor() {
-        if (construtor == null) {
-            try {
-                for (Constructor<?> constructor : getInstanceClass().getConstructors()) {
-                    if (constructor.getParameterTypes().length == 1
-                            && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
-                        this.construtor = (Constructor<I>) constructor;
-                    }
-                }
-                Objects.requireNonNull(this.construtor);
-            } catch (final Exception e) {
-                throw new SingularFlowException(createErrorMsg("Construtor ausente: " + getInstanceClass().getName() + "(" + IEntityProcessInstance.class.getName() + ")"), e);
-            }
+    protected I newInstance() {
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(createProcessInstance());
+        return novo;
+    }
+
+    private I newUnbindedInstance() {
+        I novo;
+        try {
+            novo = getInstanceClass().newInstance();
+        } catch (Exception e) {
+            throw new SingularFlowException(createErrorMsg("Construtor público ausente: " + getInstanceClass().getSimpleName() + "()"), e);
         }
-        return construtor;
+        novo.setProcessDefinition(this);
+        return novo;
     }
 
     final IEntityProcessInstance createProcessInstance() {
@@ -500,6 +496,29 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
                 .getMbpmBean().getPersistenceService();
+    }
+
+    /**
+     * Retorna uma referência a definição atual que pode ser serializada e
+     * deserializada em implicar na serialização de toda definição do processo.
+     */
+    protected RefProcessDefinition getSerializableReference() {
+        if (serializableReference == null) {
+            serializableReference = createStaticReference(getClass());
+        }
+        return serializableReference;
+    }
+
+    private static RefProcessDefinition createStaticReference(final Class<? extends ProcessDefinition> processDefinitionClass) {
+        // A criação da classe tem que ficar em um método estático de modo que
+        // classe anômina não tenha uma referência implicita a
+        // ProcessDefinition, o que atrapalharia a serialização
+        return new RefProcessDefinition() {
+            @Override
+            protected ProcessDefinition<?> reload() {
+                return ProcessDefinitionCache.getDefinition(processDefinitionClass);
+            }
+        };
     }
 
     @Override
