@@ -11,10 +11,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.MoreObjects;
 
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
@@ -36,6 +35,11 @@ import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
+/**
+ * <p>Esta é a classe responsável por manter as definições de um dado processo.</p>
+ *
+ * @param <I> o tipo das instâncias deste processo.
+ */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>
         implements Comparable<ProcessDefinition<?>>, Loggable {
@@ -111,7 +115,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         if (variableWrapperClass != null) {
             if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
                 throw new SingularFlowException("A classe " + instanceClass.getName()
- + " não implementa " + VariableEnabled.class.getName()
+                        + " não implementa " + VariableEnabled.class.getName()
                         + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             newVariableWrapper(variableWrapperClass).configVariables(getVariables());
@@ -143,10 +147,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
      * </p>
      *
-     * @param <T>
-     *            o tipo informado.
-     * @param variableWrapperClass
-     *            a classe do <i>wrapper</i> a ser criado.
+     * @param <T> o tipo informado.
+     * @param variableWrapperClass a classe do <i>wrapper</i> a ser criado.
      * @return um novo <i>wrapper</i> para o tipo informado.
      */
     public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
@@ -162,20 +164,22 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * processo é igual à informada.
      * </p>
      *
-     * @param <T>
-     *            o tipo do <i>wrapper</i>.
-     * @param expectedVariableWrapperClass
-     *            a classe esperada para o <i>wrapper</i>.
-     * @throws SingularFlowException
-     *             caso as classes não sejam iguais.
+     * @param <T> o tipo do <i>wrapper</i>.
+     * @param expectedVariableWrapperClass a classe esperada para o <i>wrapper</i>.
+     * @throws SingularFlowException caso as classes não sejam iguais.
      */
     final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
         if (expectedVariableWrapperClass != variableWrapperClass) {
             throw new SingularFlowException(getClass().getName()
- + " espera que as variáveis sejam do tipo " + variableWrapperClass);
+                    + " espera que as variáveis sejam do tipo " + variableWrapperClass);
         }
     }
 
+    /**
+     * <p>Método responsável pela criação do mapa de fluxo.</p>
+     *
+     * @return o mapa de fluxo para este processo.
+     */
     protected abstract FlowMap createFlowMap();
 
     /**
@@ -218,6 +222,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return processDataService;
     }
 
+    /**
+     * <p>Retorna o serviço de consulta das definições de variáveis.</p>
+     *
+     * @return o serviço de consulta.
+     */
     protected final VarService getVarService() {
         variableService = variableService.deserialize();
         return variableService;
