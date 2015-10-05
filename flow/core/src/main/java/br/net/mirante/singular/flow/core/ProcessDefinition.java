@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Throwables;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,12 +35,16 @@ import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
+/**
+ * <p>Esta é a classe responsável por manter as definições de um dado processo.</p>
+ *
+ * @param <I> o tipo das instâncias deste processo.
+ */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>
         implements Comparable<ProcessDefinition<?>>, Loggable {
 
     /**
-     *
      * @deprecated mover para a implementacao do alocpro
      */
     //TODO moverparaalocpro
@@ -73,10 +75,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private final Map<String, ProcessScheduledJob> scheduledJobsByName = new HashMap<>();
 
-    private transient Constructor<I> construtor;
+    private transient RefProcessDefinition serializableReference;
 
     /**
-     *
      * @deprecated mover para a implementacao do alocpro
      */
     //TODO moverparaalocpro
@@ -86,7 +87,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     *
      * @deprecated mover para a implementacao do alocpro
      */
     //TODO moverparaalocpro
@@ -94,11 +94,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.instanceClass = instanceClass;
         this.variableService = varService;
-        Objects.requireNonNull(getConstrutor());
     }
 
     /**
-     *
      * @deprecated mover para a implementacao do alocpro
      */
     //TODO moverparaalocpro
@@ -108,7 +106,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     *
      * @deprecated mover para a implementacao do alocpro
      */
     //TODO moverparaalocpro
@@ -117,7 +114,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         this.variableWrapperClass = variableWrapperClass;
         if (variableWrapperClass != null) {
             if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
-                throw new SingularFlowException("A classe " + instanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
+                throw new SingularFlowException("A classe " + instanceClass.getName()
+                        + " não implementa " + VariableEnabled.class.getName()
                         + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             newVariableWrapper(variableWrapperClass).configVariables(getVariables());
@@ -132,10 +130,27 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         }
     }
 
+    /**
+     * <p>
+     * Retorna a classe do <i>wrapper</i> de variáveis desta definição de
+     * processo.
+     * </p>
+     *
+     * @return a classe do <i>wrapper</i>.
+     */
     public final Class<? extends VariableWrapper> getVariableWrapperClass() {
         return variableWrapperClass;
     }
 
+    /**
+     * <p>
+     * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
+     * </p>
+     *
+     * @param <T> o tipo informado.
+     * @param variableWrapperClass a classe do <i>wrapper</i> a ser criado.
+     * @return um novo <i>wrapper</i> para o tipo informado.
+     */
     public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
         verifyVariableWrapperClass(variableWrapperClass);
         T wrapper = newVariableWrapper(variableWrapperClass);
@@ -143,14 +158,37 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return wrapper;
     }
 
+    /**
+     * <p>
+     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
+     * processo é igual à informada.
+     * </p>
+     *
+     * @param <T> o tipo do <i>wrapper</i>.
+     * @param expectedVariableWrapperClass a classe esperada para o <i>wrapper</i>.
+     * @throws SingularFlowException caso as classes não sejam iguais.
+     */
     final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
         if (expectedVariableWrapperClass != variableWrapperClass) {
-            throw new SingularFlowException(getClass().getName() + " espera que as variáveis sejam do tipo " + variableWrapperClass);
+            throw new SingularFlowException(getClass().getName()
+                    + " espera que as variáveis sejam do tipo " + variableWrapperClass);
         }
     }
 
+    /**
+     * <p>Método responsável pela criação do mapa de fluxo.</p>
+     *
+     * @return o mapa de fluxo para este processo.
+     */
     protected abstract FlowMap createFlowMap();
 
+    /**
+     * <p>
+     * Retorna o {@link FlowMap} para esta definição de processo.
+     * </p>
+     *
+     * @return o {@link FlowMap}.
+     */
     public final FlowMap getFlowMap() {
         if (flowMap == null) {
             synchronized (this) {
@@ -170,6 +208,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return flowMap;
     }
 
+    /**
+     * <p>
+     * Retorna o serviço de consulta das instâncias deste tipo de processo.
+     * </p>
+     *
+     * @return o serviço de consulta.
+     */
     public IProcessDataService<I> getDataService() {
         if (processDataService == null) {
             processDataService = new ProcessDataServiceImpl<>(this);
@@ -177,6 +222,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return processDataService;
     }
 
+    /**
+     * <p>Retorna o serviço de consulta das definições de variáveis.</p>
+     *
+     * @return o serviço de consulta.
+     */
     protected final VarService getVarService() {
         variableService = variableService.deserialize();
         return variableService;
@@ -252,6 +302,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         }
 
         return def;
+    }
+
+    public MTask<?> getTask(ITaskDefinition taskDefinition) {
+        return getFlowMap().getTask(taskDefinition);
     }
 
     @Deprecated
@@ -416,34 +470,32 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
         Objects.requireNonNull(dadosInstancia);
-        try {
-            return getConstrutor().newInstance(dadosInstancia);
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
-        }
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(dadosInstancia);
+        return novo;
     }
 
     /**
+     * Retorna um novo e vazio ProcessInstance correspondente a definição de
+     * processo atual pronto para ser configurado para um novo fluxo.
      *
-     * @deprecated mover para a implementacao do alocpro
+     * @return Nunca null
      */
-    //TODO moverparaalocpro
-    @Deprecated
-    private Constructor<I> getConstrutor() {
-        if (construtor == null) {
-            try {
-                for (Constructor<?> constructor : getInstanceClass().getConstructors()) {
-                    if (constructor.getParameterTypes().length == 1
-                            && IEntityProcessInstance.class.isAssignableFrom(constructor.getParameterTypes()[0])) {
-                        this.construtor = (Constructor<I>) constructor;
-                    }
-                }
-                Objects.requireNonNull(this.construtor);
-            } catch (final Exception e) {
-                throw new SingularFlowException(createErrorMsg("Construtor ausente: " + getInstanceClass().getName() + "(" + IEntityProcessInstance.class.getName() + ")"), e);
-            }
+    protected I newInstance() {
+        I novo = newUnbindedInstance();
+        novo.setInternalEntity(createProcessInstance());
+        return novo;
+    }
+
+    private I newUnbindedInstance() {
+        I novo;
+        try {
+            novo = getInstanceClass().newInstance();
+        } catch (Exception e) {
+            throw new SingularFlowException(createErrorMsg("Construtor público ausente: " + getInstanceClass().getSimpleName() + "()"), e);
         }
-        return construtor;
+        novo.setProcessDefinition(this);
+        return novo;
     }
 
     final IEntityProcessInstance createProcessInstance() {
@@ -453,6 +505,29 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
                 .getMbpmBean().getPersistenceService();
+    }
+
+    /**
+     * Retorna uma referência a definição atual que pode ser serializada e
+     * deserializada em implicar na serialização de toda definição do processo.
+     */
+    protected RefProcessDefinition getSerializableReference() {
+        if (serializableReference == null) {
+            serializableReference = createStaticReference(getClass());
+        }
+        return serializableReference;
+    }
+
+    private static RefProcessDefinition createStaticReference(final Class<? extends ProcessDefinition> processDefinitionClass) {
+        // A criação da classe tem que ficar em um método estático de modo que
+        // classe anômina não tenha uma referência implicita a
+        // ProcessDefinition, o que atrapalharia a serialização
+        return new RefProcessDefinition() {
+            @Override
+            protected ProcessDefinition<?> reload() {
+                return ProcessDefinitionCache.getDefinition(processDefinitionClass);
+            }
+        };
     }
 
     @Override

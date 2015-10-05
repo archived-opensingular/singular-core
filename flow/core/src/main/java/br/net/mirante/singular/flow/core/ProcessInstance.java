@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -9,9 +8,11 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -27,16 +28,17 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class ProcessInstance {
+public class ProcessInstance {
 
-    private final RefProcessDefinition processDefinitionRef;
+    private RefProcessDefinition processDefinitionRef;
 
     private transient MTask<?> estadoAtual;
 
     private transient ExecucaoMTask executionContext;
 
     /**
-     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
+     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity
+     *             no lugar
      */
     @Deprecated
     private transient IEntityProcessInstance entity;
@@ -45,35 +47,18 @@ public abstract class ProcessInstance {
 
     private transient VariableWrapper variableWrapper;
 
-    /**
-     * @param definitionClass
-     * @deprecated definitionClass deve ser removido daqui, getProcessDefinition deve ser abstrato
-     */
-    @Deprecated
-    protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass) {
-        processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
-        setInternalEntity(getProcessDefinition().createProcessInstance());
+
+    final void setProcessDefinition(ProcessDefinition<?> processDefinition) {
+        if (processDefinitionRef != null) {
+            throw new SingularException("Erro Interno");
+        }
+        processDefinitionRef = RefProcessDefinition.of(processDefinition);
     }
 
-    /**
-     * @param definitionClass
-     * @param entityProcessInstance
-     * @deprecated definitionClass deve ser removido daqui, getProcessDefinition deve ser abstrato
-     */
-    @Deprecated
-    protected ProcessInstance(Class<? extends ProcessDefinition<?>> definitionClass, IEntityProcessInstance entityProcessInstance) {
-        processDefinitionRef = RefProcessDefinition.loadByClass(definitionClass);
-        setInternalEntity(entityProcessInstance);
-    }
-
-    /**
-     * @param <K>
-     * @return
-     *
-     * @deprecated deve ser transformado em abstrato
-     */
-    @Deprecated
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
+        if (processDefinitionRef == null) {
+            throw new SingularException("A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition ");
+        }
         return (K) processDefinitionRef.get();
     }
 
@@ -85,7 +70,9 @@ public abstract class ProcessInstance {
      *
      * @param varInstanceMap
      * @return
-     * @deprecated Esse método deve ser renomeado pois possui um comportamente implicito não evidente em comparação à outra versão sobrecarregada do mesmo: "getPersistedDescription"
+     * @deprecated Esse método deve ser renomeado pois possui um comportamente
+     *             implicito não evidente em comparação à outra versão
+     *             sobrecarregada do mesmo: "getPersistedDescription"
      *
      */
     @Deprecated
@@ -110,28 +97,28 @@ public abstract class ProcessInstance {
         return getCurrentTask().prepareTransition(transitionName);
     }
 
-    /**
-     * @return
-     *
-     * @deprecated deve ser transformado em abstrato
-     */
-    @Deprecated
-    IEntityProcessInstance getInternalEntity() {
+    final IEntityProcessInstance getInternalEntity() {
+        if (entity == null) {
+            throw new SingularException(
+                    getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
+        }
         return entity;
     }
 
-    /**
-     * @return
-     *
-     * @deprecated deve ser transformado em abstrato
-     */
-    @Deprecated
-    void setInternalEntity(IEntityProcessInstance entity) {
+    private IEntityTaskInstance getEntityCurrentTaskOrException() {
+        IEntityTaskInstance current = getInternalEntity().getCurrentTask();
+        if (current == null) {
+            throw new SingularException(createErrorMsg("Não há um task atual para essa instancia"));
+        }
+        return current;
+    }
+
+    final void setInternalEntity(IEntityProcessInstance entity) {
         Objects.requireNonNull(entity);
         this.entity = entity;
     }
 
-    protected void setParent(ProcessInstance pai) {
+    public void setParent(ProcessInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
 
@@ -142,13 +129,22 @@ public abstract class ProcessInstance {
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(getInternalEntity().getCurrentTask().getTask().getAbbreviation());
+            IEntityTaskInstance current = getInternalEntity().getCurrentTask();
+            if (current != null) {
+                estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getTask().getAbbreviation());
+            } else if (isEnd()) {
+                throw new SingularException(createErrorMsg(
+                        "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
+            } else {
+                throw new SingularException(createErrorMsg("getEstado() não pode ser invocado para essa instância"));
+            }
         }
         return estadoAtual;
     }
 
     public boolean isEnd() {
-        return getEntity().getCurrentTask().getTask().isEnd();
+        return getEndDate() != null;
+        // return getEntity().getCurrentTask().getTask().isEnd();
     }
 
     public String getProcessName() {
@@ -190,7 +186,7 @@ public abstract class ProcessInstance {
     }
 
     public boolean canVisualize(MUser user) {
-        IEntityTaskType tt = getInternalEntity().getCurrentTask().getTask().getType();
+        IEntityTaskType tt = getEntityCurrentTaskOrException().getTask().getType();
         if (tt.isPeople() || tt.isWait()) {
             if (hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;
@@ -256,7 +252,7 @@ public abstract class ProcessInstance {
         return getInternalEntity().getUserCreator();
     }
 
-    protected final void setDescription(String descricao) {
+    public final void setDescription(String descricao) {
         getInternalEntity().setDescription(StringUtils.left(descricao, 250));
     }
 
@@ -308,7 +304,7 @@ public abstract class ProcessInstance {
         return getInternalEntity().getEndDate();
     }
 
-    public final Serializable getEntityCod() {
+    public final Integer getEntityCod() {
         return getInternalEntity().getCod();
     }
 

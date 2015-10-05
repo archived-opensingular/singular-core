@@ -26,12 +26,11 @@ public abstract class RefProcessDefinition implements Serializable {
         processDefinition = null;
     }
 
-    public static RefProcessDefinition loadByClass(Class<? extends ProcessDefinition<?>> processDefinitionClass) {
-        return new RefProcessDefinition() {
-            @Override
-            protected ProcessDefinition<?> reload() {
-                return ProcessDefinitionCache.getDefinition(processDefinitionClass);
-            }
-        };
+    public static RefProcessDefinition of(Class<? extends ProcessDefinition<?>> processDefinitionClass) {
+        return ProcessDefinitionCache.getDefinition(processDefinitionClass).getSerializableReference();
+    }
+
+    public static RefProcessDefinition of(ProcessDefinition<?> definition) {
+        return definition.getSerializableReference();
     }
 }

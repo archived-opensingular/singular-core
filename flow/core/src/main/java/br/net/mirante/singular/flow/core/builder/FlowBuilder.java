@@ -53,6 +53,10 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return flowMap;
     }
 
+    public void setStart(ITaskDefinition initialTask) {
+        getFlowMap().setStartTask(initialTask);
+    }
+
     public void setStartTask(BTask initialTask) {
         getFlowMap().setStartTask(initialTask.getTask());
     }
@@ -83,14 +87,14 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         boolean automaticUserAllocation) {
         return addRoleDefinition(description, MBPMUtil.convertToJavaIdentity(description, true), userRoleSettingStrategy, automaticUserAllocation);
     }
-    
+
     public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
             UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
             boolean automaticUserAllocation) {
         return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, userRoleSettingStrategy, automaticUserAllocation));
     }
 
-    public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
+    public BUILDER_JAVA addJava(TASK_DEF taskDefinition) {
         return newJavaTask(getFlowMap().addJavaTask(taskDefinition));
     }
 
@@ -110,7 +114,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return addPeopleTask(taskDefinition, RoleAccessStrategy.of(requiredRole.getProcessRole()));
     }
 
-    public BUILDER_PEOPLE addPeopleTask(TASK_DEF taskDefinition, BProcessRole<?> requiredExecutionRole, BProcessRole<?> requiredVisualizeRole) {
+    public BUILDER_PEOPLE addPeople(TASK_DEF taskDefinition, BProcessRole<?> requiredExecutionRole, BProcessRole<?> requiredVisualizeRole) {
         return addPeopleTask(taskDefinition, RoleAccessStrategy.of(requiredExecutionRole.getProcessRole(), requiredVisualizeRole.getProcessRole()));
     }
 
@@ -122,7 +126,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newWaitTask(getFlowMap().addWaitTask(taskDefinition, executionDateStrategy));
     }
 
-    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
+    public <T extends ProcessInstance> BUILDER_WAIT addWait(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
             TaskAccessStrategy<?> accessStrategy) {
         BUILDER_WAIT wait = addWaitTask(taskDefinition, executionDateStrategy);
         wait.addAccessStrategy(accessStrategy);
@@ -140,7 +144,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     public BUILDER_TRANSITION addTransition(BTask origin, TASK_DEF actionName, BTask destination) {
         return addTransition(origin, actionName.getName(), destination);
     }
-    
+
     public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination) {
         return newTransition(origin.getTask().addTransition(actionName, destination.getTask()));
     }

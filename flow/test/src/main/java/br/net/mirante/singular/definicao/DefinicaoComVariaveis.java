@@ -30,13 +30,13 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
     protected FlowMap createFlowMap() {
         FlowBuilder f = new FlowBuilderImpl(this);
 
-        BJava PRINT = f.addJavaTask(() -> "Print Variavel");
+        BJava PRINT = f.addJava(() -> "Print Variavel");
         PRINT.call(this::printVar);
 
-        BJava SET_VARIAVEL = f.addJavaTask(() -> "Definir Variavel");
+        BJava SET_VARIAVEL = f.addJava(() -> "Definir Variavel");
         SET_VARIAVEL.call(this::setVar);
 
-        BJava APROVAR = f.addJavaTask(() -> "Aprovar Definiçâo");
+        BJava APROVAR = f.addJava(() -> "Aprovar Definiçâo");
         APROVAR.call(this::print);
 
         BEnd END = f.addEnd(() -> "Aprovado");

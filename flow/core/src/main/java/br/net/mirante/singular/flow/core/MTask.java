@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import com.google.common.base.MoreObjects;
+
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.props.MetaData;
 import br.net.mirante.singular.flow.util.props.MetaDataRef;
-
-import com.google.common.base.MoreObjects;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class MTask<K extends MTask<?>> {

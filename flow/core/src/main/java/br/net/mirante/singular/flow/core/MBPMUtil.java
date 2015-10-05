@@ -208,7 +208,6 @@ public class MBPMUtil {
     public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass, IFlowRenderer renderer) {
         try {
             ProcessDefinition<?> definicao = definitionClass.cast(definitionClass.newInstance());
-
             new ImageViewer("Diagrama: " + definicao.getName(), renderer.generateImage(definicao));
         } catch (InstantiationException | IllegalAccessException e) {
             Logger.getLogger(MBPMUtil.class.getName()).log(Level.WARNING, e.getMessage(), e);

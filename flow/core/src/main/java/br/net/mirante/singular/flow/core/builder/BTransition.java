@@ -15,13 +15,24 @@ public interface BTransition<SELF extends BTransition<SELF>> {
         return (SELF) this;
     }
 
-    public default SELF thenGoTo(BTask destination) {
-        MTransition transition = getTransition().thenGoTo(destination.getTask());
+    public default SELF thenGo(ITaskDefinition destination) {
+        MTransition transition = getTransition().thenGo(destination);
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
-    public default SELF thenGoTo(String actionName, BTask destination) {
-        MTransition transition = getTransition().thenGoTo(actionName, destination.getTask());
+    // depois de avaliar a assinatura com ITaskDefinition e refatorar Alocpro,
+    // apagar esse método
+    @Deprecated
+    public default SELF thenGo(BTask destination) {
+        MTransition transition = getTransition().thenGo(destination.getTask());
+        return (SELF) getFlowBuilder().newTransition(transition);
+    }
+
+    // depois de avaliar a assinatura com ITaskDefinition e refatorar Alocpro,
+    // apagar esse método
+    @Deprecated
+    public default SELF thenGo(String actionName, BTask destination) {
+        MTransition transition = getTransition().thenGo(actionName, destination.getTask());
         return (SELF) getFlowBuilder().newTransition(transition);
     }
 
