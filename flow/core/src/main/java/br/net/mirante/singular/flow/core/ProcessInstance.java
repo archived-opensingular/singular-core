@@ -160,11 +160,21 @@ public class ProcessInstance {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
 
+    /**
+     * <p>Retorna a tarefa "pai" desta instância de processo.</p>
+     *
+     * @return a tarefa "pai".
+     */
     public TaskInstance getParentTask() {
         IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
         return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
     }
 
+    /**
+     * <p>Retorna o tarefa corrente desta instância de processo.</p>
+     *
+     * @return a tarefa corrente.
+     */
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
             IEntityTaskInstance current = getInternalEntity().getCurrentTask();
@@ -180,15 +190,30 @@ public class ProcessInstance {
         return estadoAtual;
     }
 
+    /**
+     * <p>Verifica se esta instância está encerrada.</p>
+     *
+     * @return {@code true} caso esta instância está encerrada; {@code false} caso contrário.
+     */
     public boolean isEnd() {
         return getEndDate() != null;
         // return getEntity().getCurrentTask().getTask().isEnd();
     }
 
+    /**
+     * <p>Retornar o nome da definição de processo desta instância.</p>
+     *
+     * @return o nome da definição de processo.
+     */
     public String getProcessName() {
         return getProcessDefinition().getName();
     }
 
+    /**
+     * <p>Retorna o nome da tarefa atual desta instância de processo.</p>
+     *
+     * @return o nome da tarefa atual; ou {@code null} caso não haja uma tarefa atual.
+     */
     public String getCurrentTaskName() {
         if (getEstado() != null) {
             return getEstado().getName();
@@ -201,28 +226,48 @@ public class ProcessInstance {
         return null;
     }
 
+    /**
+     * <p>Retorna o <i>link resolver</i> padrão desta instância de processo.</p>
+     *
+     * @return o <i>link resolver</i> padrão.
+     */
     public final Lnk getDefaultHref() {
         return MBPM.getDefaultHrefFor(this);
     }
 
+    /**
+     * <p>Retorna os códigos de usuários com direito de execução da tarefa humana definida
+     * para o processo correspondente a esta instância.</p>
+     *
+     * @param nomeTarefa o nome da tarefa humana a ser inspecionada.
+     * @return os códigos de usuários com direitos de execução.
+     */
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
-        return getProcessDefinition().getFlowMap().getPeopleTaskByAbbreviationOrException(nomeTarefa).getAccessStrategy()
-                .getFirstLevelUsersCodWithAccess(this);
+        return getProcessDefinition().getFlowMap().getPeopleTaskByAbbreviationOrException(nomeTarefa)
+                .getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
+    /**
+     * <p>Verifica de o usuário especificado pode executar a tarefa corrente desta instância de processo.</p>
+     *
+     * @param user o usuário especificado.
+     * @return {@code true} caso o usuário possa executar a tarefa corrente; {@code false} caso contrário.
+     */
     public final boolean canExecuteTask(MUser user) {
         if (getEstado() == null) {
             return false;
         }
         IEntityTaskType tt = getEstado().getTaskType();
-        if (tt.isPeople() || tt.isWait()) {
-            return (isAllocated(user.getCod()))
-                    || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user));
-
-        }
-        return false;
+        return (tt.isPeople() || tt.isWait()) && ((isAllocated(user.getCod()))
+                || (getAccessStrategy() != null && getAccessStrategy().canExecute(this, user)));
     }
 
+    /**
+     * <p>Verifica de o usuário especificado pode visualizar a tarefa corrente desta instância de processo.</p>
+     *
+     * @param user o usuário especificado.
+     * @return {@code true} caso o usuário possa visualizar a tarefa corrente; {@code false} caso contrário.
+     */
     public boolean canVisualize(MUser user) {
         IEntityTaskType tt = getEntityCurrentTaskOrException().getTask().getType();
         if (tt.isPeople() || tt.isWait()) {
@@ -234,14 +279,39 @@ public class ProcessInstance {
         return getAccessStrategy() != null && getAccessStrategy().canVisualize(this, user);
     }
 
+    /**
+     * <p>Retorna os códigos de usuários com direito de execução da tarefa corrente desta
+     * instância de processo.</p>
+     *
+     * @return os códigos de usuários com direitos de execução.
+     */
     public Set<Integer> getFirstLevelUsersCodWithAccess() {
         return getAccessStrategy().getFirstLevelUsersCodWithAccess(this);
     }
 
+    /**
+     * <p>Retorna os usuários com direito de execução da tarefa corrente desta instância de processo.</p>
+     *
+     * @return os usuários com direitos de execução.
+     */
     public List<MUser> listAllocableUsers() {
         return getAccessStrategy().listAllocableUsers(this);
     }
 
+
+    /**
+     * <p>Formata uma mensagem de erro.</p>
+     *
+     * <p>A formatação da mensagem segue o seguinte padrão:</p>
+     *
+     * <pre>
+     *     getClass().getName() + " - " + getFullId() + " : " + message
+     * </pre>
+     *
+     * @param message a mensagem a ser formatada.
+     * @return a mensagem formatada.
+     * @see #getFullId()
+     */
     public final String createErrorMsg(String message) {
         return getClass().getName() + " - " + getFullId() + " : " + message;
     }
@@ -258,6 +328,12 @@ public class ProcessInstance {
         getPersistenceService().refreshModel(getInternalEntity());
     }
 
+
+    /**
+     * <p>Recupera a entidade persistente correspondente a esta instância de processo.</p>
+     *
+     * @return a entidade persistente.
+     */
     public final IEntityProcessInstance getEntity() {
         if (getInternalEntity().getCod() == null) {
             return saveEntity();
@@ -266,6 +342,12 @@ public class ProcessInstance {
         return getInternalEntity();
     }
 
+    /**
+     * <p>Retorna o usuário desta instância de processo atribuído ao papel especificado.</p>
+     *
+     * @param roleAbbreviation a sigla do papel especificado.
+     * @return o usuário atribuído ao papel.
+     */
     public final MUser getUserWithRole(String roleAbbreviation) {
         final IEntityRole entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
         if (entityRole != null) {
