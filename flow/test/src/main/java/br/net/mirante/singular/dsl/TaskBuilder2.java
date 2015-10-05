@@ -2,6 +2,8 @@ package br.net.mirante.singular.dsl;
 
 import br.net.mirante.singular.flow.core.FlowMap;
 
+import java.util.function.Supplier;
+
 public class TaskBuilder2 {
 
     public TaskBuilder2(Builder builder) {
@@ -22,6 +24,10 @@ public class TaskBuilder2 {
     }
 
     public TransitionBuilder1 transition(String outcome){
+        return new TransitionBuilder1(this);
+    }
+
+    public TransitionBuilder1 transition(Supplier<Boolean> outcome){
         return new TransitionBuilder1(this);
     }
 
