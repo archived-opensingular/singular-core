@@ -11,10 +11,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.MoreObjects;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.base.MoreObjects;
 
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
@@ -73,15 +72,31 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private transient RefProcessDefinition serializableReference;
 
+    /**
+     * <p>Instancia uma nova definição de processo do tipo informado.</p>
+     *
+     * @param instanceClass o tipo da instância da definição a ser instanciada.
+     */
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
+    /**
+     * <p>Instancia uma nova definição de processo do tipo informado.</p>
+     *
+     * @param instanceClass o tipo da instância da definição a ser instanciada.
+     * @param varService o serviço de consulta das definições de variáveis.
+     */
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.processInstanceClass = instanceClass;
         this.variableService = varService;
     }
 
+    /**
+     * <p>Retorna o tipo das instâncias desta definição de processo.</p>
+     *
+     * @return o tipo das instâncias.
+     */
     public final Class<I> getProcessInstanceClass() {
         return processInstanceClass;
     }
@@ -128,9 +143,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
      * </p>
      *
+     * <p>
+     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
+     * processo é igual à informada.
+     * </p>
+     *
      * @param <T> o tipo informado.
      * @param variableWrapperClass a classe do <i>wrapper</i> a ser criado.
      * @return um novo <i>wrapper</i> para o tipo informado.
+     * @throws SingularFlowException caso as classes não sejam iguais.
      */
     public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
         verifyVariableWrapperClass(variableWrapperClass);
@@ -139,20 +160,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return wrapper;
     }
 
-    /**
-     * <p>
-     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo é igual à informada.
-     * </p>
-     *
-     * @param <T> o tipo do <i>wrapper</i>.
-     * @param expectedVariableWrapperClass a classe esperada para o <i>wrapper</i>.
-     * @throws SingularFlowException caso as classes não sejam iguais.
-     */
     final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
         if (expectedVariableWrapperClass != variableWrapperClass) {
             throw new SingularFlowException(getClass().getName()
- + " espera que as variáveis sejam do tipo " + variableWrapperClass);
+                    + " espera que as variáveis sejam do tipo " + variableWrapperClass);
         }
     }
 
@@ -343,6 +354,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @param taskDefinition a definição informada.
      * @return a definição da tarefa informada.
+     *
      * @throws br.net.mirante.singular.commons.base.SingularException caso não encontre a tarefa.
      */
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
@@ -441,6 +453,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @param taskAbbreviation a sigla da definição informada.
      * @return a entidade persistente.
+     *
      * @throws SingularFlowException caso a entidade não seja encontrada.
      */
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
@@ -453,15 +466,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     /**
      * <p>Formata uma mensagem de erro.</p>
-     *
+     * <p>
      * <p>A formatação da mensagem segue o seguinte padrão:</p>
-     *
+     * <p>
      * <pre>
      *     "Processo MBPM '" + getName() + "': " + msg
      * </pre>
      *
      * @param msg a mensagem a ser formatada.
      * @return a mensagem formatada.
+     *
      * @see #getName()
      */
     protected final String createErrorMsg(String msg) {
@@ -592,15 +606,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
     }
 
+    /**
+     * <p>Retorna uma lista de instâncias correspondentes às entidades fornecidas.</p>
+     *
+     * @param demandas as entidades fornecidas.
+     * @return a lista de instâncias.
+     */
     protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> demandas) {
         return demandas.stream().map(e -> convertToProcessInstance(e)).collect(Collectors.toList());
     }
 
     /**
-     * <p>Retorna uma lista de instâncias correspondentes às entidades fornecidas.</p>
+     * <p>Retorna a instância correspondente à entidade fornecida.</p>
      *
-     * @param dadosInstancia as entidades fornecidas.
-     * @return a lista de instâncias.
+     * @param dadosInstancia a entidade fornecida.
+     * @return a instância.
      */
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
         Objects.requireNonNull(dadosInstancia);

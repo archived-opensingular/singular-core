@@ -329,7 +329,6 @@ public class ProcessInstance {
         getPersistenceService().refreshModel(getInternalEntity());
     }
 
-
     /**
      * <p>Recupera a entidade persistente correspondente a esta instância de processo.</p>
      *
