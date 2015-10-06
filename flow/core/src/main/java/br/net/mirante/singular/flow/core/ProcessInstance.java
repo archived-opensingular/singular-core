@@ -577,9 +577,12 @@ public class ProcessInstance {
     }
 
     /**
-     * Cria versão extendida da descrição em relação ao campo descrição no BD.
-     * Geralmente são adicionadas informações que não precisam ter cache feito
-     * em banco de dados.
+     * <p>Cria versão extendida da descrição em relação ao campo descrição no BD.</p>
+     *
+     * <p>Geralmente são adicionadas informações que não precisam ter cache feito
+     * em banco de dados.</p>
+     *
+     * @return a descrição atual desta instância.
      */
     protected String getCompleteDescription() {
         return getPersistedDescription();
@@ -725,6 +728,7 @@ public class ProcessInstance {
     /**
      * Retorna a mais nova task que atende a condicao informada
      *
+     * @param condicao condicao
      * @return pode ser null
      */
     public TaskInstance getLatestTask(Predicate<TaskInstance> condicao) {
@@ -744,6 +748,8 @@ public class ProcessInstance {
 
     /**
      * Retorna a mais nova task encerrada ou ativa.
+     *
+     * @return last task
      */
     public TaskInstance getLatestTask() {
         return getLatestTask(t -> true);
@@ -752,6 +758,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada ou ativa com a mesma sigla informada.
      *
+     * @param abbreviation abbreviation
      * @return Pode ser null
      */
     private TaskInstance getLatestTask(String abbreviation) {
@@ -761,6 +768,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada ou ativa com a sigla da referencia.
      *
+     * @param taskRef taskRef
      * @return Pode ser null
      */
     public TaskInstance getLatestTask(ITaskDefinition taskRef) {
@@ -770,6 +778,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada ou ativa do tipo informado.
      *
+     * @param tipo tipo
      * @return Pode ser null
      */
     public TaskInstance getLatestTask(MTask<?> tipo) {
@@ -779,6 +788,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada e com a mesma sigla informada.
      *
+     * @param abbreviation abbreviation
      * @return Pode ser null
      */
     private TaskInstance getFinishedTask(String abbreviation) {
@@ -788,6 +798,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada e com a mesma sigla da referência.
      *
+     * @param taskRef taskRef
      * @return Pode ser null
      */
     public TaskInstance getFinishedTask(ITaskDefinition taskRef) {
@@ -797,6 +808,7 @@ public class ProcessInstance {
     /**
      * Encontra a mais nova task encerrada e com a mesma sigla do tipo.
      *
+     * @param tipo tipo
      * @return Pode ser null
      */
     public TaskInstance getFinishedTask(MTask<?> tipo) {

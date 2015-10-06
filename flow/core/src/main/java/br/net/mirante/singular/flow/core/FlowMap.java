@@ -52,12 +52,14 @@ public class FlowMap implements Serializable {
     }
 
     /**
-     * <p>Ponto de extensão para customizações.</p>
+     * <p>Ponto de extensão para customizações. Cria uma nova transição com as características
+     * informadas.</p>
      *
      * @param origin tarefa de origem.
      * @param name o nome da transição.
      * @param destinarion a tarefa destino.
      * @param type o tipo de transição.
+     * @return a nova transição criada.
      */
     protected MTransition newTransition(MTask<?> origin, String name, MTask<?> destinarion, TransitionType type) {
         return new MTransition(origin, name, destinarion, type);
@@ -257,6 +259,7 @@ public class FlowMap implements Serializable {
      * <p>Configura a estratégia de execução conforme a especificada ({@link IExecutionDateStrategy}).
      * Isso define a data alvo de uma instância desta tarefa.</p>
      *
+     * @param <T> o tipo da instância de processo.
      * @param definition a definição da tarefa.
      * @param dateExecutionStrategy a estratégia de execução.
      * @return a nova tarefa criada e adicionada.

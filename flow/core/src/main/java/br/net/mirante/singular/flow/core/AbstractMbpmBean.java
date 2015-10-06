@@ -152,9 +152,7 @@ public abstract class AbstractMbpmBean {
     // ------- Manipulação de Usuário ---------------------------------
 
     /**
-     * Deveria delegar algo para que a aplicaçào cliente possa prover o usuário
-     *
-     * @return
+     * Deveria delegar algo para que a aplicaçào cliente possa prover o usuário.
      */
     @Deprecated
     public abstract MUser getUserIfAvailable();
@@ -162,8 +160,6 @@ public abstract class AbstractMbpmBean {
     public abstract boolean canBeAllocated(MUser user);
 
     /**
-     *
-     * @return
      * @deprecated deveria ser opcional
      */
     @Deprecated

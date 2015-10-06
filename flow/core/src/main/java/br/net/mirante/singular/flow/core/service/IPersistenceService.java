@@ -69,11 +69,10 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     /**
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcessVersion},
-     * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion},
-     * {@link IEntityTaskTransition}
+     * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion} and {@link IEntityTaskTransition}.
      *
-     * @param entityProcess
-     * @return
+     * @param entityProcess the process definition to persist.
+     * @return the persisted process definition.
      */
     PROCESS_DEFINITION saveOrUpdateProcessDefinition(PROCESS_DEFINITION entityProcess);
 

@@ -5,8 +5,6 @@ package br.net.mirante.singular.flow.core;
 public interface MUser extends Comparable<MUser> {
 
     /**
-     * @return
-     *
      * @deprecated deveria ser serializable
      */
     //TODO refatorar
@@ -14,8 +12,6 @@ public interface MUser extends Comparable<MUser> {
     Integer getCod();
 
     /**
-     * @return
-     *
      * @deprecated nome de guerra só faz sentido no contexto da mirante
      */
     // TODO renomear para um nome mais representativo para o singular. Sugestão

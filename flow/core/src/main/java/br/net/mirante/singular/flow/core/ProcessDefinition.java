@@ -466,9 +466,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     /**
      * <p>Formata uma mensagem de erro.</p>
-     * <p>
+     *
      * <p>A formatação da mensagem segue o seguinte padrão:</p>
-     * <p>
+     *
      * <pre>
      *     "Processo MBPM '" + getName() + "': " + msg
      * </pre>
@@ -563,6 +563,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * <p>Verifica se um {@link IProcessCreationPageStrategy} possa ser configurado pelo
      * usuário especificado.</p>
      *
+     * @param user o usuário especificado.
      * @return {@code true} caso um {@link IProcessCreationPageStrategy} possa ser configurado;
      * {@code false} caso contrário.
      */
