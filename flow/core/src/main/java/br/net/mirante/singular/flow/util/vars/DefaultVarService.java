@@ -40,11 +40,6 @@ public class DefaultVarService implements VarService {
     }
 
     /**
-     *
-     * @param ref
-     * @param name
-     * @param tamanhoMaximo
-     * @return
      * @deprecated não utilizar pois mistura apresentacao com definicao do fluxo
      */
     @Deprecated

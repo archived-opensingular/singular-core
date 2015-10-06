@@ -191,7 +191,7 @@ public class MBPMUtil {
      *
      * <pre>
      * public static void main(String[] args) {
-     *     MBPMUtil.showSwingDiagram((Class&lt;ProcessDefinition&lt;?>>) new Object() {
+     *     MBPMUtil.showSwingDiagram((Class&lt;ProcessDefinition&lt;?&gt;&gt;) new Object() {
      *     }.getClass().getEnclosingClass());
      * }
      * </pre>

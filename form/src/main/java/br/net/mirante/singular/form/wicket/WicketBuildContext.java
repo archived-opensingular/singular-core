@@ -44,7 +44,7 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInheritedh) {
-        return new WicketBuildContext(this, childContainer, hintsInheritedh);
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
+        return new WicketBuildContext(this, childContainer, hintsInherited);
     }
 }

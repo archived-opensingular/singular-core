@@ -143,7 +143,7 @@ public class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = (TaskInstance) ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstance currentTask = ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
@@ -239,7 +239,7 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = (TaskInstance) ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstance currentTask = ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
         new ExecuteWaitingTasksJob(null).run();
