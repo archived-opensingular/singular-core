@@ -356,31 +356,71 @@ public class ProcessInstance {
         return null;
     }
 
+    /**
+     * <p>Recupera a lista de papeis da entidade persistente correspondente a esta instância.</p>
+     *
+     * @return os papeis.
+     */
     public final List<? extends IEntityRole> getUserRoles() {
         return getEntity().getRoles();
     }
 
+    /**
+     * <p>Recupera a lista de papeis com a sigla especificada da entidade persistente
+     * correspondente a esta instância.</p>
+     *
+     * @param roleAbbreviation a sigla especificada.
+     * @return os papeis.
+     */
     public final IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
         return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
     }
 
+    /**
+     * <p>Verifica se há papeis definidos.</p>
+     *
+     * @return {@code true} caso haja pelo menos um papel definido; {@code false} caso contrário.
+     */
     public final boolean hasUserRoles() {
         return !getEntity().getRoles().isEmpty();
     }
 
+    /**
+     * <p>Retorna o usuário que criou esta instância de processo.</p>
+     *
+     * @return o usuário criador.
+     */
     public final MUser getUserCreator() {
         return getInternalEntity().getUserCreator();
     }
 
+    /**
+     * <p>Altera a descrição desta instância de processo.</p>
+     *
+     * <p>A descrição será truncada para um tamanho máximo de 250 caracteres.</p>
+     *
+     * @param descricao a nova descrição.
+     */
     public final void setDescription(String descricao) {
         getInternalEntity().setDescription(StringUtils.left(descricao, 250));
     }
 
+    /**
+     * <p>Persiste esta instância de processo.</p>
+     *
+     * @param <K> o tipo da entidade desta instância.
+     * @return a entidade persistida.
+     */
     public final <K extends IEntityProcessInstance> K saveEntity() {
         setInternalEntity(getPersistenceService().saveProcessInstance(getInternalEntity()));
         return (K) getInternalEntity();
     }
 
+    /**
+     * <p>Realiza uma transição manual da tarefa atual para a tarefa especificada.</p>
+     *
+     * @param task a tarefa especificada.
+     */
     public final void forceStateUpdate(MTask<?> task) {
         final TaskInstance tarefaOrigem = getCurrentTask();
         List<MUser> pessoasAnteriores = getResponsaveisDiretos();
@@ -395,6 +435,15 @@ public class ProcessInstance {
         task.notifyTaskStart(getLatestTask(task), execucaoMTask);
     }
 
+    /**
+     * <p>Realiza uma transição da tarefa de origiem para a tarefa alvo especificadas.</p>
+     *
+     * @param tarefaOrigem a tarefa de origem.
+     * @param transicaoOrigem a transição disparada.
+     * @param task a tarefa alvo.
+     * @param agora o momento da transição.
+     * @return a tarefa corrente depois da transição.
+     */
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
         synchronized (this) {
             if (tarefaOrigem != null) {
@@ -416,22 +465,47 @@ public class ProcessInstance {
         }
     }
 
+    /**
+     * <p>Retorna a data inicial desta instância.</p>
+     *
+     * @return a data inicial.
+     */
     public final Date getBeginDate() {
         return getInternalEntity().getBeginDate();
     }
 
+    /**
+     * <p>Retorna a data de encerramento desta instância.</p>
+     *
+     * @return a data de encerramento.
+     */
     public final Date getEndDate() {
         return getInternalEntity().getEndDate();
     }
 
+    /**
+     * <p>Retorna o código desta instância.</p>
+     *
+     * @return o código.
+     */
     public final Integer getEntityCod() {
         return getInternalEntity().getCod();
     }
 
+    /**
+     * <p>Retorna o código desta instância como uma {@link String}.</p>
+     *
+     * @return o código.
+     */
     public final String getId() {
         return getInternalEntity().getCod().toString();
     }
 
+    /**
+     * <p>Retorna um novo <b>ID</b> autogerado para esta instância.</p>
+     *
+     * @return o <b>ID</b> autogerado.
+     */
     public final String getFullId() {
         return Flow.generateID(this);
     }
@@ -441,14 +515,18 @@ public class ProcessInstance {
     }
 
     /**
-     * O mesmo que getDescricaoCompleta.
+     * <p>O mesmo que {@link #getCompleteDescription()}.</p>
+     *
+     * @return a descrição completa.
      */
     public String getDescription() {
         return getCompleteDescription();
     }
 
     /**
-     * Nome do processo seguido da descrição completa.
+     * <p>Retorna o nome do processo seguido da descrição completa.
+     *
+     * @return o nome do processo seguido da descrição completa.
      */
     public final String getExtendedDescription() {
         String descricao = getDescription();
@@ -458,6 +536,11 @@ public class ProcessInstance {
         return getProcessName() + " - " + descricao;
     }
 
+    /**
+     * <p>Retorna a descrição atual desta instância.</p>
+     *
+     * @return a descrição atual.
+     */
     protected final String getPersistedDescription() {
         String descricao = getInternalEntity().getDescription();
         if (descricao == null) {
@@ -470,18 +553,19 @@ public class ProcessInstance {
     }
 
     /**
-     * Cria a descrição que vai gravada no banco de dados. Deve ser sobreescrito
-     * para ter efeito
+     * <p>Cria a descrição que vai gravada no banco de dados. Deve ser sobreescrito
+     * para ter efeito.</p>
+     *
+     * @return a descrição criada.
      */
     protected String generateInitialDescription() {
         return null;
     }
 
     /**
-     * Sobrescreve a descrição da demanda a partir do método
-     * {@link #generateInitialDescription()}
+     * <p>Sobrescreve a descrição da demanda a partir do método {@link #generateInitialDescription()}.</p>
      *
-     * @return true caso tenha sido alterada a descrição
+     * @return {@code true} caso tenha sido alterada a descrição; {@code false} caso contrário.
      */
     public final boolean regenerateInitialDescription() {
         String descricao = generateInitialDescription();
@@ -501,6 +585,11 @@ public class ProcessInstance {
         return getPersistedDescription();
     }
 
+    /**
+     * <p>Retorna os responsáveis diretos.</p>
+     *
+     * @return os responsáveis diretos.
+     */
     public List<MUser> getResponsaveisDiretos() {
         TaskInstance tarefa = getCurrentTask();
         if (tarefa != null) {
@@ -515,6 +604,12 @@ public class ProcessInstance {
         }
     }
 
+    /**
+     * <p>Atribui ou substitui o usuário para o papel especificado.</p>
+     *
+     * @param roleAbbreviation o papel especificado.
+     * @param newUser o novo usuário atribuído ao papel.
+     */
     public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
         MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
         if (mProcessRole == null) {
@@ -550,10 +645,21 @@ public class ProcessInstance {
         }
     }
 
+    /**
+     * <p>Configura o valor variável especificada.</p>
+     *
+     * @param nomeVariavel o nome da variável especificada.
+     * @param valor o valor a ser configurado.
+     */
     public void setVariavel(String nomeVariavel, Object valor) {
         getVariaveis().setValor(nomeVariavel, valor);
     }
 
+    /**
+     * <p>Adiciona as variáveis especificadas a esta instância.</p>
+     *
+     * @param newVariableSet as variáveis especificadas.
+     */
     public final void setVariables(VariableWrapper newVariableSet) {
         getProcessDefinition().verifyVariableWrapperClass(newVariableSet.getClass());
         getVariaveis().addValues(newVariableSet.getVariables(), true);
