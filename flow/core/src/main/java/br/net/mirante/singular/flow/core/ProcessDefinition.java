@@ -127,10 +127,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * <p>
-     * Retorna a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo.
-     * </p>
+     * <p>Retorna a classe do <i>wrapper</i> de variáveis desta definição de processo.</p>
      *
      * @return a classe do <i>wrapper</i>.
      */

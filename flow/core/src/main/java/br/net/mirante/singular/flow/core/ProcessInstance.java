@@ -668,26 +668,62 @@ public class ProcessInstance {
         getVariaveis().addValues(newVariableSet.getVariables(), true);
     }
 
+    /**
+     * <p>Retorna o valor da variável do tipo {@link Date} especificada.</p>
+     *
+     * @param nomeVariavel o nome da variável especificada.
+     * @return o valor da variável.
+     */
     public final Date getValorVariavelData(String nomeVariavel) {
         return getVariaveis().getValorData(nomeVariavel);
     }
 
+    /**
+     * <p>Retorna o valor da variável do tipo {@link Boolean} especificada.</p>
+     *
+     * @param nomeVariavel o nome da variável especificada.
+     * @return o valor da variável.
+     */
     public final Boolean getValorVariavelBoolean(String nomeVariavel) {
         return getVariaveis().getValorBoolean(nomeVariavel);
     }
 
+    /**
+     * <p>Retorna o valor da variável do tipo {@link String} especificada.</p>
+     *
+     * @param nomeVariavel o nome da variável especificada.
+     * @return o valor da variável.
+     */
     public final String getValorVariavelString(String nomeVariavel) {
         return getVariaveis().getValorString(nomeVariavel);
     }
 
+    /**
+     * <p>Retorna o valor da variável do tipo {@link Integer} especificada.</p>
+     *
+     * @param nomeVariavel o nome da variável especificada.
+     * @return o valor da variável.
+     */
     public final Integer getValorVariavelInteger(String nomeVariavel) {
         return getVariaveis().getValorInteger(nomeVariavel);
     }
 
+    /**
+     * <p>Retorna o valor da variável especificada.</p>
+     *
+     * @param <T> o tipo da variável especificada.
+     * @param nomeVariavel o nome da variável especificada.
+     * @return o valor da variável.
+     */
     public final <T> T getValorVariavel(String nomeVariavel) {
         return getVariaveis().getValor(nomeVariavel);
     }
 
+    /**
+     * <p>Retorna o mapa das variáveis desta instância de processo.</p>
+     *
+     * @return o mapa das variáveis.
+     */
     public final VarInstanceMap<?> getVariaveis() {
         if (variables == null) {
             variables = new VarInstanceTableProcess(this);
@@ -695,6 +731,11 @@ public class ProcessInstance {
         return variables;
     }
 
+    /**
+     * <p>Valida esta instância de processo.</p>
+     *
+     * @throws SingularFlowException caso a validação falhe.
+     */
     protected void validadeStart() {
         if (variables == null && !getProcessDefinition().getVariables().hasRequired()) {
             return;
@@ -706,19 +747,30 @@ public class ProcessInstance {
         }
     }
 
+    /**
+     * <p>Verifica se há usuário alocado em alguma tarefa desta instância de processo.</p>
+     *
+     * @return {@code true} caso haja algum usuário alocado; {@code false} caso contrário.
+     */
     public boolean hasAllocatedUser() {
         return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null);
     }
 
+    /**
+     * <p>Verifica se o usuário especificado está alocado em alguma tarefa desta instância de processo.</p>
+     *
+     * @param codPessoa o código usuário especificado.
+     * @return {@code true} caso o usuário esteja alocado; {@code false} caso contrário.
+     */
     public boolean isAllocated(Integer codPessoa) {
         return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null
                 && tarefa.getAllocatedUser().getCod().equals(codPessoa));
     }
 
     /**
-     * Retorna a lista de todas as tasks da mais antiga para a mais novo.
+     * <p>Retorna a lista de todas as tarefas. Ordena da mais antiga para a mais nova.</p>
      *
-     * @return Nunca null
+     * @return a lista de tarefas (<i>null safe</i>).
      */
     public List<TaskInstance> getTasks() {
         IEntityProcessInstance demanda = getEntity();
@@ -726,10 +778,10 @@ public class ProcessInstance {
     }
 
     /**
-     * Retorna a mais nova task que atende a condicao informada
+     * <p>Retorna a mais nova tarefa que atende a condição informada.</p>
      *
-     * @param condicao condicao
-     * @return pode ser null
+     * @param condicao a condição informada.
+     * @return a tarefa; ou {@code null} caso não encontre a tarefa.
      */
     public TaskInstance getLatestTask(Predicate<TaskInstance> condicao) {
         List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
@@ -742,74 +794,67 @@ public class ProcessInstance {
         return null;
     }
 
+    /**
+     * <p>Retorna a tarefa atual.</p>
+     *
+     * @return a tarefa atual.
+     */
     public TaskInstance getCurrentTask() {
         return getLatestTask(t -> t.isActive());
     }
 
     /**
-     * Retorna a mais nova task encerrada ou ativa.
+     * <p>Retorna a mais nova tarefa encerrada ou ativa.</p>
      *
-     * @return last task
+     * @return a mais nova tarefa encerrada ou ativa.
      */
     public TaskInstance getLatestTask() {
         return getLatestTask(t -> true);
     }
 
-    /**
-     * Encontra a mais nova task encerrada ou ativa com a mesma sigla informada.
-     *
-     * @param abbreviation abbreviation
-     * @return Pode ser null
-     */
     private TaskInstance getLatestTask(String abbreviation) {
         return getLatestTask(t -> t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
     /**
-     * Encontra a mais nova task encerrada ou ativa com a sigla da referencia.
+     * <p>Encontra a mais nova tarefa encerrada ou ativa com a sigla da referência.</p>
      *
-     * @param taskRef taskRef
-     * @return Pode ser null
+     * @param taskRef a referência.
+     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getLatestTask(ITaskDefinition taskRef) {
         return getLatestTask(taskRef.getKey());
     }
 
     /**
-     * Encontra a mais nova task encerrada ou ativa do tipo informado.
+     * <p>Encontra a mais nova tarefa encerrada ou ativa do tipo informado.</p>
      *
-     * @param tipo tipo
-     * @return Pode ser null
+     * @param tipo o tipo informado.
+     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getLatestTask(MTask<?> tipo) {
         return getLatestTask(tipo.getAbbreviation());
     }
 
-    /**
-     * Encontra a mais nova task encerrada e com a mesma sigla informada.
-     *
-     * @param abbreviation abbreviation
-     * @return Pode ser null
-     */
     private TaskInstance getFinishedTask(String abbreviation) {
         return getLatestTask(t -> t.isFinished() && t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
     /**
-     * Encontra a mais nova task encerrada e com a mesma sigla da referência.
+     * <p>Encontra a mais nova tarefa encerrada e com a mesma sigla da referência.</p>
      *
-     * @param taskRef taskRef
-     * @return Pode ser null
+     * @param taskRef a referência.
+     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getFinishedTask(ITaskDefinition taskRef) {
         return getFinishedTask(taskRef.getKey());
     }
 
     /**
-     * Encontra a mais nova task encerrada e com a mesma sigla do tipo.
+     * <p>Encontra a mais nova tarefa encerrada e com a mesma sigla do tipo.</p>
      *
-     * @param tipo tipo
-     * @return Pode ser null
+     * @param tipo o tipo.
+     * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getFinishedTask(MTask<?> tipo) {
         return getFinishedTask(tipo.getAbbreviation());
@@ -819,6 +864,11 @@ public class ProcessInstance {
         return getProcessDefinition().getPersistenceService();
     }
 
+    /**
+     * <p>Configura o contexto de execução.</p>
+     *
+     * @param execucaoTask o novo contexto de execução.
+     */
     final void setExecutionContext(ExecucaoMTask execucaoTask) {
         if (this.executionContext != null && execucaoTask != null) {
             throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
@@ -826,10 +876,18 @@ public class ProcessInstance {
         this.executionContext = execucaoTask;
     }
 
+    /**
+     * <p>Retorna o <i>wrapper</i> das variáveis desta instância de processo.</p>
+     *
+     * @param <T> o tipo de <i>wrapper</i>.
+     * @param variableWrapperClass a classe do <i>wrapper</i>.
+     * @return o <i>wrapper</i>.
+     */
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getProcessDefinition().getVariableWrapperClass()) {
-                throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName() + ") é diferente da definida em "
+                throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName()
+                        + ") é diferente da definida em "
                         + getDescription().getClass().getName() + ". A definição do processo informou o wrapper como sendo "
                         + getProcessDefinition().getVariableWrapperClass());
             }
