@@ -27,7 +27,10 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 /**
- * <p>Esta é a classe responsável por manter os dados de instância de um determinado processo.</p>
+ * <p>
+ * Esta é a classe responsável por manter os dados de instância de um
+ * determinado processo.
+ * </p>
  *
  * @author Mirante Tecnologia
  */
@@ -41,7 +44,8 @@ public class ProcessInstance {
     private transient ExecucaoMTask executionContext;
 
     /**
-     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity no lugar
+     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity
+     *             no lugar
      */
     @Deprecated
     private transient IEntityProcessInstance entity;
@@ -58,9 +62,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna a definição de processo desta instância.</p>
+     * <p>
+     * Retorna a definição de processo desta instância.
+     * </p>
      *
-     * @param <K> o tipo da definição de processo.
+     * @param <K>
+     *            o tipo da definição de processo.
      * @return a definição de processo desta instância.
      */
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
@@ -71,7 +78,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Inicia esta instância de processo.</p>
+     * <p>
+     * Inicia esta instância de processo.
+     * </p>
      *
      * @return A tarefa atual da instância depois da inicialização.
      */
@@ -91,37 +100,49 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Executa a próxima transição desta instância de processo.</p>
+     * <p>
+     * Executa a próxima transição desta instância de processo.
+     * </p>
      */
     public void executeTransition() {
         EngineProcessamentoMBPM.executeTransition(this, null, null);
     }
 
     /**
-     * <p>Executa a transição especificada desta instância de processo.</p>
+     * <p>
+     * Executa a transição especificada desta instância de processo.
+     * </p>
      *
-     * @param transitionName a transição especificada.
+     * @param transitionName
+     *            a transição especificada.
      */
     public void executeTransition(String transitionName) {
         EngineProcessamentoMBPM.executeTransition(this, transitionName, null);
     }
 
     /**
-     * <p>Executa a transição especificada desta instância de processo passando
-     * as variáveis fornecidas.</p>
+     * <p>
+     * Executa a transição especificada desta instância de processo passando as
+     * variáveis fornecidas.
+     * </p>
      *
-     * @param transitionName a transição especificada.
-     * @param param as variáveis fornecidas.
+     * @param transitionName
+     *            a transição especificada.
+     * @param param
+     *            as variáveis fornecidas.
      */
     public void executeTransition(String transitionName, VarInstanceMap<?> param) {
         EngineProcessamentoMBPM.executeTransition(this, transitionName, param);
     }
 
     /**
-     * <p>Realiza a montagem necessária para execução da transição especificada a partir
-     * da tarefa atual desta instância.</p>
+     * <p>
+     * Realiza a montagem necessária para execução da transição especificada a
+     * partir da tarefa atual desta instância.
+     * </p>
      *
-     * @param transitionName a transição especificada.
+     * @param transitionName
+     *            a transição especificada.
      * @return a montagem resultante.
      */
     public TransitionCall prepareTransition(String transitionName) {
@@ -150,16 +171,21 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Configura a instância "pai" desta instância de processo.</p>
+     * <p>
+     * Configura a instância "pai" desta instância de processo.
+     * </p>
      *
-     * @param pai a instância "pai".
+     * @param pai
+     *            a instância "pai".
      */
     public void setParent(ProcessInstance pai) {
         getPersistenceService().setProcessInstanceParent(getInternalEntity(), pai.getInternalEntity());
     }
 
     /**
-     * <p>Retorna a tarefa "pai" desta instância de processo.</p>
+     * <p>
+     * Retorna a tarefa "pai" desta instância de processo.
+     * </p>
      *
      * @return a tarefa "pai".
      */
@@ -169,7 +195,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o tarefa corrente desta instância de processo.</p>
+     * <p>
+     * Retorna o tarefa corrente desta instância de processo.
+     * </p>
      *
      * @return a tarefa corrente.
      */
@@ -179,8 +207,13 @@ public class ProcessInstance {
             if (current != null) {
                 estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
             } else if (isFinished()) {
-                throw new SingularException(createErrorMsg(
-                        "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
+                current = getLatestTask();
+                if (current != null && current.isFinished()) {
+                    estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
+                } else {
+                    throw new SingularException(createErrorMsg(
+                            "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
+                }
             } else {
                 throw new SingularException(createErrorMsg("getEstado() não pode ser invocado para essa instância"));
             }
@@ -189,16 +222,21 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Verifica se esta instância está encerrada.</p>
+     * <p>
+     * Verifica se esta instância está encerrada.
+     * </p>
      *
-     * @return {@code true} caso esta instância está encerrada; {@code false} caso contrário.
+     * @return {@code true} caso esta instância está encerrada; {@code false}
+     *         caso contrário.
      */
     public boolean isFinished() {
         return getEndDate() != null;
     }
 
     /**
-     * <p>Retornar o nome da definição de processo desta instância.</p>
+     * <p>
+     * Retornar o nome da definição de processo desta instância.
+     * </p>
      *
      * @return o nome da definição de processo.
      */
@@ -207,9 +245,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o nome da tarefa atual desta instância de processo.</p>
+     * <p>
+     * Retorna o nome da tarefa atual desta instância de processo.
+     * </p>
      *
-     * @return o nome da tarefa atual; ou {@code null} caso não haja uma tarefa atual.
+     * @return o nome da tarefa atual; ou {@code null} caso não haja uma tarefa
+     *         atual.
      */
     public String getCurrentTaskName() {
         if (getEstado() != null) {
@@ -224,7 +265,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o <i>link resolver</i> padrão desta instância de processo.</p>
+     * <p>
+     * Retorna o <i>link resolver</i> padrão desta instância de processo.
+     * </p>
      *
      * @return o <i>link resolver</i> padrão.
      */
@@ -233,10 +276,13 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna os códigos de usuários com direito de execução da tarefa humana definida
-     * para o processo correspondente a esta instância.</p>
+     * <p>
+     * Retorna os códigos de usuários com direito de execução da tarefa humana
+     * definida para o processo correspondente a esta instância.
+     * </p>
      *
-     * @param nomeTarefa o nome da tarefa humana a ser inspecionada.
+     * @param nomeTarefa
+     *            o nome da tarefa humana a ser inspecionada.
      * @return os códigos de usuários com direitos de execução.
      */
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
@@ -245,10 +291,15 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Verifica de o usuário especificado pode executar a tarefa corrente desta instância de processo.</p>
+     * <p>
+     * Verifica de o usuário especificado pode executar a tarefa corrente desta
+     * instância de processo.
+     * </p>
      *
-     * @param user o usuário especificado.
-     * @return {@code true} caso o usuário possa executar a tarefa corrente; {@code false} caso contrário.
+     * @param user
+     *            o usuário especificado.
+     * @return {@code true} caso o usuário possa executar a tarefa corrente;
+     *         {@code false} caso contrário.
      */
     public final boolean canExecuteTask(MUser user) {
         if (getEstado() == null) {
@@ -264,10 +315,15 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Verifica de o usuário especificado pode visualizar a tarefa corrente desta instância de processo.</p>
+     * <p>
+     * Verifica de o usuário especificado pode visualizar a tarefa corrente
+     * desta instância de processo.
+     * </p>
      *
-     * @param user o usuário especificado.
-     * @return {@code true} caso o usuário possa visualizar a tarefa corrente; {@code false} caso contrário.
+     * @param user
+     *            o usuário especificado.
+     * @return {@code true} caso o usuário possa visualizar a tarefa corrente;
+     *         {@code false} caso contrário.
      */
     public boolean canVisualize(MUser user) {
         MTask<?> tt = getCurrentTaskOrException().getFlowTask();
@@ -281,8 +337,10 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna os códigos de usuários com direito de execução da tarefa corrente desta
-     * instância de processo.</p>
+     * <p>
+     * Retorna os códigos de usuários com direito de execução da tarefa corrente
+     * desta instância de processo.
+     * </p>
      *
      * @return os códigos de usuários com direitos de execução.
      */
@@ -291,7 +349,10 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna os usuários com direito de execução da tarefa corrente desta instância de processo.</p>
+     * <p>
+     * Retorna os usuários com direito de execução da tarefa corrente desta
+     * instância de processo.
+     * </p>
      *
      * @return os usuários com direitos de execução.
      */
@@ -301,15 +362,20 @@ public class ProcessInstance {
 
 
     /**
-     * <p>Formata uma mensagem de erro.</p>
+     * <p>
+     * Formata uma mensagem de erro.
+     * </p>
      *
-     * <p>A formatação da mensagem segue o seguinte padrão:</p>
+     * <p>
+     * A formatação da mensagem segue o seguinte padrão:
+     * </p>
      *
      * <pre>
-     *     getClass().getName() + " - " + getFullId() + " : " + message
+     * getClass().getName() + " - " + getFullId() + " : " + message
      * </pre>
      *
-     * @param message a mensagem a ser formatada.
+     * @param message
+     *            a mensagem a ser formatada.
      * @return a mensagem formatada.
      * @see #getFullId()
      */
@@ -330,7 +396,10 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Recupera a entidade persistente correspondente a esta instância de processo.</p>
+     * <p>
+     * Recupera a entidade persistente correspondente a esta instância de
+     * processo.
+     * </p>
      *
      * @return a entidade persistente.
      */
@@ -343,9 +412,13 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o usuário desta instância de processo atribuído ao papel especificado.</p>
+     * <p>
+     * Retorna o usuário desta instância de processo atribuído ao papel
+     * especificado.
+     * </p>
      *
-     * @param roleAbbreviation a sigla do papel especificado.
+     * @param roleAbbreviation
+     *            a sigla do papel especificado.
      * @return o usuário atribuído ao papel.
      */
     public final MUser getUserWithRole(String roleAbbreviation) {
