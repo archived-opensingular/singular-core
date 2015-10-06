@@ -1,5 +1,15 @@
 package br.net.mirante.singular.test;
 
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
@@ -19,19 +29,13 @@ import br.net.mirante.singular.ConstantesUtil;
 import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
-import br.net.mirante.singular.flow.core.MBPM;
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.persistence.entity.TaskInstance;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
-
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
-import static org.junit.Assert.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -42,7 +46,7 @@ public class PeticaoTest extends TestSupport {
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        MBPM.setConf(mbpmBean);
+        Flow.setConf(mbpmBean);
     }
 
     @After
@@ -61,7 +65,7 @@ public class PeticaoTest extends TestSupport {
     @Test
     public void testeCriarInstanciaPeticao() {
         InstanciaPeticao id = startInstance();
-        InstanciaPeticao id2 = MBPM.getProcessInstance(id.getFullId());
+        InstanciaPeticao id2 = Flow.getProcessInstance(id.getFullId());
 
         assertEqualsInstance(id, id2);
     }
@@ -139,7 +143,7 @@ public class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = (TaskInstance) ip.getEntity().getCurrentTask();
+        TaskInstance currentTask = (TaskInstance) ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
@@ -235,7 +239,7 @@ public class PeticaoTest extends TestSupport {
         InstanciaPeticao ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = (TaskInstance) ip.getEntity().getCurrentTask();
+        TaskInstance currentTask = (TaskInstance) ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
         new ExecuteWaitingTasksJob(null).run();
@@ -246,7 +250,7 @@ public class PeticaoTest extends TestSupport {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////
-    ////                               MÉTODOS UTILITÁRIOS                                       ////
+    //// MÉTODOS UTILITÁRIOS ////
     /////////////////////////////////////////////////////////////////////////////////////////////////
     private InstanciaPeticao startInstance() {
         InstanciaPeticao id = new InstanciaPeticao();

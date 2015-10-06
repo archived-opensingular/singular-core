@@ -12,13 +12,13 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableList;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
@@ -48,7 +48,7 @@ public class TaskInstance {
     @SuppressWarnings("unchecked")
     public <X extends ProcessInstance> X getProcessInstance() {
         if (processInstance == null) {
-            processInstance = MBPM.getProcessInstance(entityTask.getProcessInstance());
+            processInstance = Flow.getProcessInstance(entityTask.getProcessInstance());
         }
         return (X) processInstance;
     }
@@ -65,11 +65,11 @@ public class TaskInstance {
     }
 
     public String getFullId() {
-        return MBPM.generateID(this);
+        return Flow.generateID(this);
     }
 
     public Lnk getDefaultHref() {
-        return MBPM.getDefaultHrefFor(this);
+        return Flow.getDefaultHrefFor(this);
     }
 
     public MUser getAllocatedUser() {
@@ -90,7 +90,7 @@ public class TaskInstance {
         return (X) entityTask;
     }
 
-    private IEntityTask getTaskVersion() {
+    private IEntityTaskVersion getTaskVersion() {
         return entityTask.getTask();
     }
 
@@ -99,6 +99,10 @@ public class TaskInstance {
             return getFlowTask().getName();
         }
         return getTaskVersion().getName();
+    }
+
+    public String getAbbreviation() {
+        return getTaskVersion().getAbbreviation();
     }
 
     public String getProcessName() {
@@ -119,6 +123,15 @@ public class TaskInstance {
 
     public Date getEndDate() {
         return entityTask.getEndDate();
+    }
+
+
+    public boolean isFinished() {
+        return entityTask.isFinished();
+    }
+
+    public boolean isActive() {
+        return entityTask.isActive();
     }
 
     public boolean isEnd() {
@@ -142,6 +155,9 @@ public class TaskInstance {
         return getTaskVersion().isWait();
     }
 
+    // TODO Daniel: Existe duas formas de fazer uma transicao. O método abaixo e
+    // executeTransitaion(). Decidir por apenas um ficar público. Sugiro o
+    // prepareTransition
     public TransitionCall prepareTransition(String transitionName) {
         return new TransitionCallImpl(getTransition(transitionName));
     }
@@ -172,8 +188,8 @@ public class TaskInstance {
         }
 
         if (notify) {
-            MBPM.getNotifiers().notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
-            MBPM.getNotifiers().notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, relocationCause);
+            Flow.getNotifiers().notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
+            Flow.getNotifiers().notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, relocationCause);
         }
 
         notifyStateUpdate();
@@ -193,16 +209,27 @@ public class TaskInstance {
         notifyStateUpdate();
     }
 
+    /**
+     * Retorna todos os processo filhos associados a essa tarefa. Podem ser
+     * processo disparados em conjunto a tarefa atual ou mesmo um processo filho
+     * que consiste no subProcesso da tarefa.
+     *
+     * @return sempre diferente de null, mas pode ser lista vazia.
+     */
+    public List<ProcessInstance> getChildProcesses() {
+        return Flow.getProcessInstances(entityTask.getChildProcesses());
+    }
+
     private void notifyStateUpdate() {
-        MBPM.getMbpmBean().notifyStateUpdate(getProcessInstance());
+        Flow.getMbpmBean().notifyStateUpdate(getProcessInstance());
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento) {
-        return log(tipoHistorico, detalhamento, null, MBPM.getUserIfAvailable(), null);
+        return log(tipoHistorico, detalhamento, null, Flow.getUserIfAvailable(), null);
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada) {
-        return log(tipoHistorico, detalhamento, alocada, MBPM.getUserIfAvailable(), null);
+        return log(tipoHistorico, detalhamento, alocada, Flow.getUserIfAvailable(), null);
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora) {
@@ -214,7 +241,7 @@ public class TaskInstance {
         return getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada, autor, dataHora, demandaFilha);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessInstance().getProcessDefinition().getPersistenceService();
     }
 

@@ -10,7 +10,7 @@ import org.junit.runners.MethodSorters;
 
 import br.net.mirante.singular.DefinicaoComVariaveis;
 import br.net.mirante.singular.definicao.InstanciaDefinicaoComVariavel;
-import br.net.mirante.singular.flow.core.MBPM;
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
 import br.net.mirante.singular.persistence.entity.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.Variable;
@@ -25,7 +25,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        MBPM.setConf(mbpmBean);
+        Flow.setConf(mbpmBean);
     }
 
     @Test

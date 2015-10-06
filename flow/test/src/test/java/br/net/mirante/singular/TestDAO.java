@@ -12,7 +12,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
 import br.net.mirante.singular.persistence.entity.TaskType;
@@ -62,7 +62,7 @@ public class TestDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<br.net.mirante.singular.persistence.entity.ProcessInstance> findAllProcessInstancesByDefinition(IEntityProcess entity) {
+    public List<br.net.mirante.singular.persistence.entity.ProcessInstance> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
         return getSession().createQuery(
                 "select pi from ProcessInstance pi inner join pi.process p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();

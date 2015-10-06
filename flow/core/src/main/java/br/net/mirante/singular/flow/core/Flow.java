@@ -1,7 +1,9 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +13,13 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
-public class MBPM {
+public class Flow {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MBPM.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Flow.class);
 
     private static AbstractMbpmBean mbpmBean;
 
-    private MBPM() {
+    private Flow() {
     }
 
     private static void init() {
@@ -102,6 +104,15 @@ public class MBPM {
 
     public static final <T extends ProcessInstance> T getProcessInstanceOrException(String processInstanceID) {
         return (T) getMbpmBean().getProcessInstanceOrException(processInstanceID);
+    }
+
+    /**
+     * Converte a lista de entidades nos respectivos ProcessInstance.
+     *
+     * @return Uma lista que pode ser alterada
+     */
+    public static List<ProcessInstance> getProcessInstances(Collection<? extends IEntityProcessInstance> entities) {
+        return entities.stream().map(e -> getProcessInstance(e)).collect(Collectors.toList());
     }
 
     public static String generateID(ProcessInstance instancia) {

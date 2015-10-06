@@ -22,8 +22,7 @@ import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
 
-public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_JAVA extends BJava<?>,
-        BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>,TASK_DEF extends ITaskDefinition> {
+public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BTask, BUILDER_JAVA extends BJava<?>, BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>, TASK_DEF extends ITaskDefinition> {
 
     private final MAPA flowMap;
 
@@ -32,6 +31,8 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     }
 
     protected abstract MAPA newFlowMap(DEF processDefinition);
+
+    protected abstract BUILDER_TASK newTask(MTask<?> task);
 
     protected abstract BUILDER_JAVA newJavaTask(MTaskJava task);
 
@@ -137,18 +138,40 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newEndTask(getFlowMap().addEnd(taskDefinition));
     }
 
+    /**
+     * Retorna um builder de task para uma tarefa já adicionada anteriormente ou
+     * exception senão encontrar.
+     */
+    public BUILDER_TASK from(ITaskDefinition taskRef) {
+        return newTask(getTask(taskRef));
+    }
+
+    /**
+     * Encontra a definição da task informada ou dispara exception senão
+     * encontrada.
+     *
+     * @return Sempre diferente de null
+     */
+    protected MTask<?> getTask(ITaskDefinition taskRef) {
+        return getFlowMap().getTask(taskRef);
+    }
+
+    @Deprecated
     public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination, boolean showTransitionInExecution) {
         return newTransition(origin.getTask().addTransition(actionName, destination.getTask(), showTransitionInExecution));
     }
 
+    @Deprecated
     public BUILDER_TRANSITION addTransition(BTask origin, TASK_DEF actionName, BTask destination) {
         return addTransition(origin, actionName.getName(), destination);
     }
 
+    @Deprecated
     public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination) {
         return newTransition(origin.getTask().addTransition(actionName, destination.getTask()));
     }
 
+    @Deprecated
     public BUILDER_TRANSITION addTransition(BTask origin, BTask destination) {
         return newTransition(origin.getTask().addTransition(destination.getTask()));
     }

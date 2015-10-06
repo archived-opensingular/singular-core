@@ -34,7 +34,7 @@ public class TransitionAccessStrategyImpl<X extends TaskInstance> implements Tra
 
     public static <T extends TaskInstance> TransitionAccessStrategy<T> sameStrategyOf(final MTask<?> task, boolean visible) {
         return (instance) -> {
-            MUser user = MBPM.getUserIfAvailable();
+            MUser user = Flow.getUserIfAvailable();
             boolean canExecute = user != null && task.getAccessStrategy().canExecute(instance, user);
             if (canExecute && visible) {
                 return new TransitionAccess(TransitionAccessLevel.ENABLED, null);

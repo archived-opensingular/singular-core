@@ -18,7 +18,7 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
-        FlowBuilder<ProcessDefinition<?>, FlowMap, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
+        FlowBuilder<ProcessDefinition<?>, FlowMap, BTask, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {
 
     public FlowBuilderImpl(ProcessDefinition<?> processDefinition) {
         super(processDefinition);
@@ -30,23 +30,28 @@ public class FlowBuilderImpl extends
     }
 
     @Override
+    protected BTask newTask(MTask<?> task) {
+        return new ImplBTask(this, task);
+    }
+
+    @Override
     protected BJava<?> newJavaTask(MTaskJava task) {
-        return new ImplBJava<>(task);
+        return new ImplBJava<>(this, task);
     }
 
     @Override
     protected BPeople<?> newPeopleTask(MTaskPeople task) {
-        return new ImplBPeople<>(task);
+        return new ImplBPeople<>(this, task);
     }
 
     @Override
     protected BWait<?> newWaitTask(MTaskWait task) {
-        return new ImplBWait<>(task);
+        return new ImplBWait<>(this, task);
     }
 
     @Override
     protected BEnd<?> newEndTask(MTaskEnd task) {
-        return new ImplBEnd<>(task);
+        return new ImplBEnd<>(this, task);
     }
 
     @Override
@@ -61,9 +66,11 @@ public class FlowBuilderImpl extends
 
     public static class ImplBTask<SELF extends ImplBTask<SELF, TASK>, TASK extends MTask<?>> implements BuilderTaskSelf<SELF, TASK> {
 
+        private final FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder;
         private final TASK task;
 
-        public ImplBTask(TASK task) {
+        public ImplBTask(FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> flowBuilder, TASK task) {
+            this.flowBuilder = flowBuilder;
             this.task = task;
         }
 
@@ -71,29 +78,41 @@ public class FlowBuilderImpl extends
         public TASK getTask() {
             return task;
         }
+
+        protected FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getFlowBuilder() {
+            return flowBuilder;
+        }
+
+        /**
+         * Cria uma nova transição da task atual para a task destino informada
+         * com o nome informado.
+         */
+        public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
+            return getFlowBuilder().addTransition(this, actionName, getFlowBuilder().from(taskRefDestiny));
+        }
     }
 
     protected static class ImplBJava<SELF extends ImplBJava<SELF>> extends ImplBTask<SELF, MTaskJava> implements BJava<SELF> {
-        public ImplBJava(MTaskJava task) {
-            super(task);
+        public ImplBJava(FlowBuilderImpl flowBuilder, MTaskJava task) {
+            super(flowBuilder, task);
         }
     }
 
     protected static class ImplBPeople<SELF extends ImplBPeople<SELF>> extends ImplBTask<SELF, MTaskPeople> implements BPeople<SELF> {
-        public ImplBPeople(MTaskPeople task) {
-            super(task);
+        public ImplBPeople(FlowBuilderImpl flowBuilder, MTaskPeople task) {
+            super(flowBuilder, task);
         }
     }
 
     protected static class ImplBWait<SELF extends ImplBWait<SELF>> extends ImplBTask<SELF, MTaskWait> implements BWait<SELF> {
-        public ImplBWait(MTaskWait task) {
-            super(task);
+        public ImplBWait(FlowBuilderImpl flowBuilder, MTaskWait task) {
+            super(flowBuilder, task);
         }
     }
 
     protected static class ImplBEnd<SELF extends ImplBEnd<SELF>> extends ImplBTask<SELF, MTaskEnd> implements BEnd<SELF> {
-        public ImplBEnd(MTaskEnd task) {
-            super(task);
+        public ImplBEnd(FlowBuilderImpl flowBuilder, MTaskEnd task) {
+            super(flowBuilder, task);
         }
     }
 
@@ -194,12 +213,12 @@ public class FlowBuilderImpl extends
             getTransition().setParametersValidator(parametrosValidator);
             return self();
         }
-        
+
         public <K extends ProcessInstance,T> SELF setMetaDataValue(MetaDataRef<T> propRef, T value) {
             getTransition().setMetaDataValue(propRef, value);
             return self();
         }
-        
+
     }
 
     public static class ImplBProcessRole<SELF extends ImplBProcessRole<SELF>> implements BProcessRole<SELF> {

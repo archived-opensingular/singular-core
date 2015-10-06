@@ -19,15 +19,14 @@ import com.google.common.base.MoreObjects;
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
-import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.util.props.MetaData;
@@ -40,12 +39,7 @@ import br.net.mirante.singular.flow.util.view.Lnk;
 public abstract class ProcessDefinition<I extends ProcessInstance>
         implements Comparable<ProcessDefinition<?>>, Loggable {
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    private final Class<I> instanceClass;
+    private final Class<I> processInstanceClass;
 
     private String category;
 
@@ -73,32 +67,17 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private transient RefProcessDefinition serializableReference;
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass) {
         this(instanceClass, VarService.basic());
     }
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
-        this.instanceClass = instanceClass;
+        this.processInstanceClass = instanceClass;
         this.variableService = varService;
     }
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    public final Class<I> getInstanceClass() {
-        return instanceClass;
+    public final Class<I> getProcessInstanceClass() {
+        return processInstanceClass;
     }
 
     /**
@@ -109,10 +88,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
         this.variableWrapperClass = variableWrapperClass;
         if (variableWrapperClass != null) {
-            if (!VariableEnabled.class.isAssignableFrom(instanceClass)) {
-                throw new SingularFlowException("A classe " + instanceClass.getName()
- + " não implementa " + VariableEnabled.class.getName()
-                        + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
+            if (!VariableEnabled.class.isAssignableFrom(processInstanceClass)) {
+                throw new SingularFlowException(
+                        "A classe " + processInstanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
+                                + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
             }
             newVariableWrapper(variableWrapperClass).configVariables(getVariables());
         }
@@ -267,14 +246,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return this;
     }
 
-    public final IEntityProcess getEntity() {
+    public final IEntityProcessVersion getEntity() {
         synchronized (this) {
             if (entityCod == null) {
                 try {
-                    IEntityProcess entityProcess = MBPM.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+                    IEntityProcessVersion entityProcess = Flow.getMbpmBean().getProcessEntityService().generateEntityFor(this);
 
-                    IEntityProcess oldEntity = entityProcess.getProcessDefinition().getLastVersion();
-                    if (MBPM.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
+                    IEntityProcessVersion oldEntity = entityProcess.getProcessDefinition().getLastVersion();
+                    if (Flow.getMbpmBean().getProcessEntityService().isNewVersion(oldEntity, entityProcess)) {
 
                         entityCod = getPersistenceService().saveOrUpdateProcessDefinition(entityProcess).getCod();
                     } else {
@@ -286,7 +265,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             }
         }
 
-        final IEntityProcess def = getPersistenceService().retrieveProcessDefinitionByCod(entityCod);
+        final IEntityProcessVersion def = getPersistenceService().retrieveProcessDefinitionByCod(entityCod);
         if (def == null) {
             entityCod = null;
             throw new SingularFlowException(createErrorMsg("Definicao demanda incosistente com o BD: codigo não encontrado"));
@@ -300,41 +279,36 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     @Deprecated
-    public final Set<IEntityTask> getEntityNotJavaTask() {
+    public final Set<IEntityTaskVersion> getEntityNotJavaTasksVersion() {
         // TODO não faz sentido retornar IEntityTask. Deveria ser
         // IEntityTaskDefinition
-        return convertToEntityTask(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
+        return convertToEntityTaskVersion(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
     }
 
     @Deprecated
-    public final Set<IEntityTask> getEntityPeopleTasks() {
+    public final Set<IEntityTaskVersion> getEntityPeopleTasksVersion() {
         // TODO não faz sentido retornar IEntityTask. Deveria ser
         // IEntityTaskDefinition
-        return convertToEntityTask(getFlowMap().getPeopleTasks().stream());
+        return convertToEntityTaskVersion(getFlowMap().getPeopleTasks().stream());
     }
 
-    final IEntityTask getEntityStartTask() {
-        return getEntityTask(getFlowMap().getStartTask());
-    }
-
-    @Deprecated
-    public final IEntityTask getEntityTask(ITaskDefinition task) {
-        return getEntityTask(getFlowMap().getTask(task));
+    final IEntityTaskVersion getEntityStartTaskVersion() {
+        return getEntityTaskVersion(getFlowMap().getStartTask());
     }
 
     @Deprecated
-    public final IEntityTask getEntityTaskWithAbbreviation(String sigla) {
-        return getEntityTask(getFlowMap().getTaskBybbreviation(sigla));
+    public final IEntityTaskVersion getEntityTaskVersionByAbbreviation(String sigla) {
+        return getEntityTaskVersion(getFlowMap().getTaskBybbreviation(sigla));
     }
 
     @Deprecated
-    public final IEntityTask getEntityTask(MTask<?> task) {
+    public final IEntityTaskVersion getEntityTaskVersion(MTask<?> task) {
         // TODO esse metodo deve deixar de ser público
         if (task == null) {
             return null;
         }
 
-        IEntityTask situacao = getEntity().getTask(task.getAbbreviation());
+        IEntityTaskVersion situacao = getEntity().getTask(task.getAbbreviation());
         if (situacao == null) {
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD"));
         }
@@ -367,10 +341,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
             throw new SingularFlowException(createErrorMsg("Dados inconsistentes com o BD para a task sigla=" + taskAbbreviation));
         }
         return taskDefinition;
-    }
-
-    public byte[] getFlowImage() {
-        return FlowRendererFactory.generateImageFor(this);
     }
 
     protected final String createErrorMsg(String msg) {
@@ -447,16 +417,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return metaData;
     }
 
-    final Set<IEntityTask> convertToEntityTask(Collection<? extends MTask<?>> collection) {
-        return convertToEntityTask(collection.stream());
-    }
-
-    final <X extends IEntityTask> Set<X> convertToEntityTask(Stream<? extends MTask<?>> stream) {
-        return (Set<X>) stream.map(this::getEntityTask).collect(Collectors.toSet());
+    final <X extends IEntityTaskVersion> Set<X> convertToEntityTaskVersion(Stream<? extends MTask<?>> stream) {
+        return (Set<X>) stream.map(t -> getEntityTaskVersion(t)).collect(Collectors.toSet());
     }
 
     protected final List<I> convertToProcessInstance(List<? extends IEntityProcessInstance> demandas) {
-        return demandas.stream().map(this::convertToProcessInstance).collect(Collectors.toList());
+        return demandas.stream().map(e -> convertToProcessInstance(e)).collect(Collectors.toList());
     }
 
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
@@ -481,20 +447,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private I newUnbindedInstance() {
         I novo;
         try {
-            novo = getInstanceClass().newInstance();
+            novo = getProcessInstanceClass().newInstance();
         } catch (Exception e) {
-            throw new SingularFlowException(createErrorMsg("Construtor público ausente: " + getInstanceClass().getSimpleName() + "()"), e);
+            throw new SingularFlowException(
+                    createErrorMsg("Construtor público ausente: " + getProcessInstanceClass().getSimpleName() + "()"), e);
         }
         novo.setProcessDefinition(this);
         return novo;
     }
 
     final IEntityProcessInstance createProcessInstance() {
-        return getPersistenceService().createProcessInstance(getEntity(), getEntityStartTask());
+        return getPersistenceService().createProcessInstance(getEntity(), getEntityStartTaskVersion());
     }
 
-    final IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) MBPM
+    final IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow
                 .getMbpmBean().getPersistenceService();
     }
 

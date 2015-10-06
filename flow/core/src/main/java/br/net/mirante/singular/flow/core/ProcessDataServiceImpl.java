@@ -14,11 +14,11 @@ import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
@@ -133,7 +133,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople())));
     }
 
-    protected final IEntityProcess getEntityProcess() {
+    protected final IEntityProcessVersion getEntityProcess() {
         return processDefinition.getEntity();
     }
 
@@ -161,8 +161,8 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.convertToProcessInstance(entities);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance,
-            IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole,
+    private IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance,
+            IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole,
             IEntityRole> getPersistenceService() {
         return processDefinition.getPersistenceService();
     }

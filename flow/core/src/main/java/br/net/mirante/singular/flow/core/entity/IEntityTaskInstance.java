@@ -9,7 +9,7 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     IEntityProcessInstance getProcessInstance();
 
-    IEntityTask getTask();
+    IEntityTaskVersion getTask();
 
     Date getBeginDate();
 
@@ -18,19 +18,26 @@ public interface IEntityTaskInstance extends IEntityByCod {
     Date getTargetEndDate();
 
     void setTargetEndDate(Date targetEndDate);
-    
+
     MUser getAllocatedUser();
 
     MUser getResponsibleUser();
 
     IEntityTaskTransition getExecutedTransition();
-    
+
     List<? extends IEntityExecutionVariable> getInputVariables();
 
     List<? extends IEntityExecutionVariable> getOutputVariables();
-    
+
     List<? extends IEntityTaskInstanceHistory> getTaskHistoric();
 
     List<? extends IEntityProcessInstance> getChildProcesses();
 
+    default boolean isActive() {
+        return getEndDate() == null;
+    }
+
+    default boolean isFinished() {
+        return getEndDate() != null;
+    }
 }

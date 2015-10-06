@@ -10,7 +10,7 @@ import org.joda.time.Days;
 public class TaskPredicates {
 
     public static ITaskPredicate disabledCreator() {
-        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !MBPM.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));
+        return new TaskPredicateImpl("Criador Demanda Inativado", (taskInstance) -> !Flow.canBeAllocated(taskInstance.getProcessInstance().getUserCreator()));
     }
 
     public static ITaskPredicate timeLimitInDays(final int numberOfDays) {

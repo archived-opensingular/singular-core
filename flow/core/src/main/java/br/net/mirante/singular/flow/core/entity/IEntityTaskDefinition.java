@@ -10,9 +10,9 @@ public interface IEntityTaskDefinition extends IEntityByCod {
 
     String getAbbreviation();
     
-    List<? extends IEntityTask> getVersions();
+    List<? extends IEntityTaskVersion> getVersions();
 
-    default IEntityTask getLastVersion(){
-        return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityTask::getVersionDate))).get();
+    default IEntityTaskVersion getLastVersion(){
+        return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityTaskVersion::getVersionDate))).get();
     }
 }

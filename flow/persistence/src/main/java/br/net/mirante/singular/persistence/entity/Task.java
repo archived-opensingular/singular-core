@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.persistence.util.Constants;
 
 
@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TAREFA", schema = Constants.SCHEMA)
-public class Task implements IEntityTask {
+public class Task implements IEntityTaskVersion {
     private static final long serialVersionUID = 1L;
 
     @Id

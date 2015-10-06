@@ -3,7 +3,7 @@ package br.net.mirante.singular.flow.core.renderer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import br.net.mirante.singular.flow.core.MBPM;
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 
 import com.google.common.base.Throwables;
@@ -19,7 +19,7 @@ public class FlowRendererFactory {
             .build(new CacheLoader<Class<? extends ProcessDefinition>, byte[]>() {
                 @Override
                 public byte[] load(Class<? extends ProcessDefinition> classe) throws Exception {
-                    return MBPM.getMbpmBean().getFlowRenderer().generateImage(MBPM.getDefinicao(classe));
+                    return Flow.getMbpmBean().getFlowRenderer().generateImage(Flow.getDefinicao(classe));
                 }
             });
 

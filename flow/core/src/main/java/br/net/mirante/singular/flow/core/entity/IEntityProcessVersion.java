@@ -3,13 +3,13 @@ package br.net.mirante.singular.flow.core.entity;
 import java.util.Date;
 import java.util.List;
 
-public interface IEntityProcess extends IEntityByCod {
+public interface IEntityProcessVersion extends IEntityByCod {
 
     IEntityProcessDefinition getProcessDefinition();
 
     Date getVersionDate();
 
-    List<? extends IEntityTask> getTasks();
+    List<? extends IEntityTaskVersion> getTasks();
     
     default String getDefinitionClassName() {
         return getProcessDefinition().getDefinitionClassName();
@@ -27,8 +27,8 @@ public interface IEntityProcess extends IEntityByCod {
         return getProcessDefinition().getCategory();
     }
 
-    default IEntityTask getTask(String abbreviation) {
-        for (IEntityTask situacao : getTasks()) {
+    default IEntityTaskVersion getTask(String abbreviation) {
+        for (IEntityTaskVersion situacao : getTasks()) {
             if (situacao.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return situacao;
             }

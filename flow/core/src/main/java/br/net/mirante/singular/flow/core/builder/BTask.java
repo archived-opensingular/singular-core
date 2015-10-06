@@ -8,6 +8,8 @@ public interface BTask {
 
     public MTask<?> getTask();
 
+    public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny);
+
     public BTask addAccessStrategy(TaskAccessStrategy<?> estrategiaAcesso);
 
     public BTask addVisualizeStrategy(TaskAccessStrategy<?> estrategiaAcesso);

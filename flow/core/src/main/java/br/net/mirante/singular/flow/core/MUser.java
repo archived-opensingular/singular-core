@@ -18,7 +18,8 @@ public interface MUser extends Comparable<MUser> {
      *
      * @deprecated nome de guerra só faz sentido no contexto da mirante
      */
-    //TODO renomear para um nome mais representativo para o singular
+    // TODO renomear para um nome mais representativo para o singular. Sugestão
+    // getShortName()
     @Deprecated
     String getNomeGuerra();
 

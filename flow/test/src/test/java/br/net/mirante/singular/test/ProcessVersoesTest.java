@@ -2,11 +2,11 @@ package br.net.mirante.singular.test;
 
 import br.net.mirante.singular.definicao.InstanceProcessVersoes;
 import br.net.mirante.singular.definicao.ProcessVersoes;
-import br.net.mirante.singular.flow.core.MBPM;
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import org.junit.After;
 import org.junit.Before;
@@ -25,7 +25,7 @@ public class ProcessVersoesTest extends TestSupport {
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        MBPM.setConf(mbpmBean);
+        Flow.setConf(mbpmBean);
     }
 
     @Test
@@ -41,9 +41,9 @@ public class ProcessVersoesTest extends TestSupport {
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
-        IEntityProcess pd1 = pi1.getProcessDefinition().getEntity();
+        IEntityProcessVersion pd1 = pi1.getProcessDefinition().getEntity();
         ProcessInstance pi2 = start2.getProcessInstance();
-        IEntityProcess pd2 = pi2.getProcessDefinition().getEntity();
+        IEntityProcessVersion pd2 = pi2.getProcessDefinition().getEntity();
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);
         assertNotEquals("As definições de processo devem ser diferentes", pd1, pd2);
     }
@@ -81,9 +81,9 @@ public class ProcessVersoesTest extends TestSupport {
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
-        IEntityProcess pd1 = pi1.getProcessDefinition().getEntity();
+        IEntityProcessVersion pd1 = pi1.getProcessDefinition().getEntity();
         ProcessInstance pi2 = start2.getProcessInstance();
-        IEntityProcess pd2 = pi2.getProcessDefinition().getEntity();
+        IEntityProcessVersion pd2 = pi2.getProcessDefinition().getEntity();
 
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);
         assertEquals("As definições de processo devem ser iguais", pd1, pd2);

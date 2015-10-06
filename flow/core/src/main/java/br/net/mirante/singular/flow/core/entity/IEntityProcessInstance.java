@@ -7,7 +7,7 @@ import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod {
 
-    IEntityProcess getProcess();
+    IEntityProcessVersion getProcess();
 
     String getDescription();
 
@@ -34,45 +34,6 @@ public interface IEntityProcessInstance extends IEntityByCod {
         for (IEntityRole dadosPapelInstancia : getRoles()) {
             if (roleAbbreviation.equalsIgnoreCase(dadosPapelInstancia.getRole().getAbbreviation())) {
                 return dadosPapelInstancia;
-            }
-        }
-        return null;
-    }
-
-    default IEntityTaskInstance getTaskByAbbreviation(String taskAbbreviation) {
-        return getTask(getProcess().getTask(taskAbbreviation));
-    }
-
-    default IEntityTaskInstance getTask(IEntityTask entityTask) {
-        List<? extends IEntityTaskInstance> tarefas = getTasks();
-        for (int i = tarefas.size() - 1; i > -1; i--) {
-            if (tarefas.get(i).getTask().equals(entityTask)) {
-                return tarefas.get(i);
-            }
-        }
-        return null;
-    }
-
-    default IEntityTaskInstance getCurrentTask(IEntityTask entityTask) {
-        // TODO método incorreto. Deveria usar a definição e não a versão
-        List<? extends IEntityTaskInstance> lista = getTasks();
-        for (int i = lista.size() - 1; i != -1; i--) {
-            IEntityTaskInstance tarefa = lista.get(i);
-            if (tarefa.getEndDate() == null && tarefa.getTask().equals(entityTask)) {
-                return tarefa;
-            }
-        }
-        return null;
-    }
-
-    @Deprecated
-    default IEntityTaskInstance getCurrentTask() {
-        // TODO Refatorar isso. Muito ineficiente e traz resultado errado.
-        List<? extends IEntityTaskInstance> lista = getTasks();
-        for (int i = lista.size() - 1; i != -1; i--) {
-            IEntityTaskInstance tarefa = lista.get(i);
-            if (tarefa.getEndDate() == null) {
-                return tarefa;
             }
         }
         return null;

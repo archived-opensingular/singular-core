@@ -17,11 +17,11 @@ public final class TaskHistoricLog {
     }
 
     public void sendEmail(List<MUser> users) {
-        MBPM.getNotifiers().notifyLogToUsers(this, users);
+        Flow.getNotifiers().notifyLogToUsers(this, users);
     }
 
     public ProcessInstance getProcessInstance() {
-        return MBPM.getProcessInstance(historic.getTaskInstance().getProcessInstance());
+        return Flow.getProcessInstance(historic.getTaskInstance().getProcessInstance());
     }
 
     public MUser getAllocatorUser() {

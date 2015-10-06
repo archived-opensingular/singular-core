@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -23,7 +23,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_PROCESSO", schema = Constants.SCHEMA)
-public class Process implements IEntityProcess {
+public class Process implements IEntityProcessVersion {
     private static final long serialVersionUID = 1L;
 
     @Id

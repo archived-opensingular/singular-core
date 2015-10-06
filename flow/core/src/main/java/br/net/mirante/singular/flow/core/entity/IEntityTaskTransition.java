@@ -3,9 +3,9 @@ package br.net.mirante.singular.flow.core.entity;
 
 public interface IEntityTaskTransition extends IEntityByCod {
 
-    IEntityTask getOriginTask();
+    IEntityTaskVersion getOriginTask();
 
-    IEntityTask getDestinationTask();
+    IEntityTaskVersion getDestinationTask();
     
     String getName();
 

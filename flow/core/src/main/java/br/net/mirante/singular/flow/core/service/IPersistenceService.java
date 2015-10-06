@@ -12,12 +12,12 @@ import br.net.mirante.singular.flow.core.TaskHistoricLog;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
@@ -27,7 +27,7 @@ import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.vars.VarType;
 
-public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEFINITION extends IEntityProcess, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask, INSTANCE_VARIABLE extends IEntityVariableInstance, ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole> {
+public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEFINITION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTaskVersion, INSTANCE_VARIABLE extends IEntityVariableInstance, ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole> {
 
     PROCESS_INSTANCE createProcessInstance(@NotNull PROCESS_DEFINITION processDefinition, @NotNull TASK initialState);
 
@@ -68,8 +68,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     List<? extends MUser> retrieveUsersByCod(Collection<Integer> cods);
 
     /**
-     * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcess},
-     * {@link IEntityTaskDefinition}, {@link IEntityTask},
+     * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcessVersion},
+     * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion},
      * {@link IEntityTaskTransition}
      *
      * @param entityProcess

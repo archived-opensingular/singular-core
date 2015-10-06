@@ -10,17 +10,16 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Lists;
-
 import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
@@ -105,8 +104,8 @@ public class ProcessInstance {
         return entity;
     }
 
-    private IEntityTaskInstance getEntityCurrentTaskOrException() {
-        IEntityTaskInstance current = getInternalEntity().getCurrentTask();
+    private TaskInstance getCurrentTaskOrException() {
+        TaskInstance current = getCurrentTask();
         if (current == null) {
             throw new SingularException(createErrorMsg("Não há um task atual para essa instancia"));
         }
@@ -124,15 +123,15 @@ public class ProcessInstance {
 
     public TaskInstance getParentTask() {
         IEntityTaskInstance dbTaskInstance = getInternalEntity().getParentTask();
-        return dbTaskInstance == null ? null : MBPM.getTaskInstance(dbTaskInstance);
+        return dbTaskInstance == null ? null : Flow.getTaskInstance(dbTaskInstance);
     }
 
     public MTask<?> getEstado() {
         if (estadoAtual == null) {
-            IEntityTaskInstance current = getInternalEntity().getCurrentTask();
+            TaskInstance current = getCurrentTask();
             if (current != null) {
-                estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getTask().getAbbreviation());
-            } else if (isEnd()) {
+                estadoAtual = getProcessDefinition().getFlowMap().getTaskBybbreviation(current.getAbbreviation());
+            } else if (isFinished()) {
                 throw new SingularException(createErrorMsg(
                         "incossitencia: o estado final está null, mas deveria ter um estado do tipo final por estar finalizado"));
             } else {
@@ -142,9 +141,8 @@ public class ProcessInstance {
         return estadoAtual;
     }
 
-    public boolean isEnd() {
+    public boolean isFinished() {
         return getEndDate() != null;
-        // return getEntity().getCurrentTask().getTask().isEnd();
     }
 
     public String getProcessName() {
@@ -164,7 +162,7 @@ public class ProcessInstance {
     }
 
     public final Lnk getDefaultHref() {
-        return MBPM.getDefaultHrefFor(this);
+        return Flow.getDefaultHrefFor(this);
     }
 
     public Set<Integer> getFirstLevelUsersCodWithAccess(String nomeTarefa) {
@@ -186,7 +184,7 @@ public class ProcessInstance {
     }
 
     public boolean canVisualize(MUser user) {
-        IEntityTaskType tt = getEntityCurrentTaskOrException().getTask().getType();
+        MTask<?> tt = getCurrentTaskOrException().getFlowTask();
         if (tt.isPeople() || tt.isWait()) {
             if (hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;
@@ -268,11 +266,11 @@ public class ProcessInstance {
         TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);
         if (tarefaOrigem != null) {
             tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
-                    null, MBPM.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
+                    null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         }
 
         ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
-        task.notifyTaskStart(getTarefaMaisRecenteComNome(task.getName()), execucaoMTask);
+        task.notifyTaskStart(getLatestTask(task), execucaoMTask);
     }
 
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
@@ -282,16 +280,16 @@ public class ProcessInstance {
                 if (transicaoOrigem != null) {
                     transitionName = transicaoOrigem.getName();
                 }
-                getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, MBPM.getUserIfAvailable());
+                getPersistenceService().completeTask(tarefaOrigem.getEntityTaskInstance(), transitionName, Flow.getUserIfAvailable());
             }
-            IEntityTask situacaoNova = getProcessDefinition().getEntityTask(task);
+            IEntityTaskVersion situacaoNova = getProcessDefinition().getEntityTaskVersion(task);
 
             IEntityTaskInstance tarefa = getPersistenceService().addTask(getEntity(), situacaoNova);
 
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
 
-            MBPM.getMbpmBean().notifyStateUpdate(this);
+            Flow.getMbpmBean().notifyStateUpdate(this);
             return tarefaNova;
         }
     }
@@ -313,10 +311,10 @@ public class ProcessInstance {
     }
 
     public final String getFullId() {
-        return MBPM.generateID(this);
+        return Flow.generateID(this);
     }
 
-    public TaskInstance getTaskInstance(final IEntityTaskInstance tarefa) {
+    private TaskInstance getTaskInstance(final IEntityTaskInstance tarefa) {
         return tarefa != null ? new TaskInstance(this, tarefa) : null;
     }
 
@@ -478,65 +476,106 @@ public class ProcessInstance {
     }
 
     public boolean hasAllocatedUser() {
-        return getEntity().getTasks().stream().anyMatch(tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null);
+        return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null);
     }
 
     public boolean isAllocated(Integer codPessoa) {
-        return getEntity()
-                .getTasks()
-                .stream()
-                .anyMatch(
-                        tarefa -> isActiveTask(tarefa) && tarefa.getAllocatedUser() != null
-                                && tarefa.getAllocatedUser().getCod().equals(codPessoa));
+        return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null
+                && tarefa.getAllocatedUser().getCod().equals(codPessoa));
     }
 
+    /**
+     * Retorna a lista de todas as tasks da mais antiga para a mais novo.
+     *
+     * @return Nunca null
+     */
     public List<TaskInstance> getTasks() {
         IEntityProcessInstance demanda = getEntity();
         return demanda.getTasks().stream().map(this::getTaskInstance).collect(Collectors.toList());
     }
 
-    private TaskInstance findFirstTaskInstance(boolean searchFromEnd, Predicate<IEntityTaskInstance> condicao) {
+    /**
+     * Retorna a mais nova task que atende a condicao informada
+     *
+     * @return pode ser null
+     */
+    public TaskInstance getLatestTask(Predicate<TaskInstance> condicao) {
         List<? extends IEntityTaskInstance> lista = getEntity().getTasks();
-        if (searchFromEnd) {
-            lista = Lists.reverse(lista);
+        for (int i = lista.size() - 1; i != -1; i--) {
+            TaskInstance task = getTaskInstance(lista.get(i));
+            if (condicao.test(task)) {
+                return task;
+            }
         }
-
-        return getTaskInstance(lista.stream().filter(condicao).findFirst().orElse(null));
-    }
-
-    private static boolean isActiveTask(IEntityTaskInstance tarefa) {
-        return tarefa.getEndDate() == null;
-    }
-
-    public TaskInstance getUltimaTarefa() {
-        return findFirstTaskInstance(true, t -> true);
+        return null;
     }
 
     public TaskInstance getCurrentTask() {
-        return findFirstTaskInstance(true, ProcessInstance::isActiveTask);
+        return getLatestTask(t -> t.isActive());
     }
 
-    public TaskInstance getTarefaMaisRecenteComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getTask().getName().equalsIgnoreCase(nomeTipo));
-    }
-
+    /**
+     * Retorna a mais nova task encerrada ou ativa.
+     */
     public TaskInstance getLatestTask() {
-        return findFirstTaskInstance(true, tarefa -> true);
+        return getLatestTask(t -> true);
     }
 
-    public TaskInstance getUltimaTarefaConcluidaComNome(final String nomeTipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getName().equalsIgnoreCase(nomeTipo));
+    /**
+     * Encontra a mais nova task encerrada ou ativa com a mesma sigla informada.
+     *
+     * @return Pode ser null
+     */
+    private TaskInstance getLatestTask(String abbreviation) {
+        return getLatestTask(t -> t.getAbbreviation().equalsIgnoreCase(abbreviation));
     }
 
-    public TaskInstance getUltimaTarefaConcluidaTipo(final MTask<?> tipo) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getAbbreviation().equalsIgnoreCase(tipo.getAbbreviation()));
+    /**
+     * Encontra a mais nova task encerrada ou ativa com a sigla da referencia.
+     *
+     * @return Pode ser null
+     */
+    public TaskInstance getLatestTask(ITaskDefinition taskRef) {
+        return getLatestTask(taskRef.getKey());
     }
 
-    public TaskInstance getUltimaTarefaConcluida(final IEntityTaskType tipoTarefa) {
-        return findFirstTaskInstance(true, tarefa -> tarefa.getEndDate() != null && tarefa.getTask().getType().equals(tipoTarefa));
+    /**
+     * Encontra a mais nova task encerrada ou ativa do tipo informado.
+     *
+     * @return Pode ser null
+     */
+    public TaskInstance getLatestTask(MTask<?> tipo) {
+        return getLatestTask(tipo.getAbbreviation());
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcess, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTask, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    /**
+     * Encontra a mais nova task encerrada e com a mesma sigla informada.
+     *
+     * @return Pode ser null
+     */
+    private TaskInstance getFinishedTask(String abbreviation) {
+        return getLatestTask(t -> t.isFinished() && t.getAbbreviation().equalsIgnoreCase(abbreviation));
+    }
+
+    /**
+     * Encontra a mais nova task encerrada e com a mesma sigla da referência.
+     *
+     * @return Pode ser null
+     */
+    public TaskInstance getFinishedTask(ITaskDefinition taskRef) {
+        return getFinishedTask(taskRef.getKey());
+    }
+
+    /**
+     * Encontra a mais nova task encerrada e com a mesma sigla do tipo.
+     *
+     * @return Pode ser null
+     */
+    public TaskInstance getFinishedTask(MTask<?> tipo) {
+        return getFinishedTask(tipo.getAbbreviation());
+    }
+
+    protected IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessDefinition().getPersistenceService();
     }
 

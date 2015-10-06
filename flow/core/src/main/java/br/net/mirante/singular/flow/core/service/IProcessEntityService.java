@@ -6,18 +6,18 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcess;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 
 public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition,
-        PROCESS extends IEntityProcess, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTask,
+        PROCESS extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK extends IEntityTaskVersion,
         TRANSITION extends IEntityTaskTransition> {
 
     /**
-     * Generates a new {@link IEntityProcess} if {@link ProcessDefinition} is
+     * Generates a new {@link IEntityProcessVersion} if {@link ProcessDefinition} is
      * new or has changed
      */
     @SuppressWarnings("unchecked")
@@ -58,12 +58,12 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
 
     TASK_DEF retrieveOrCreateEntityDefinitionTask(PROCESS_DEF process, MTask<?> task);
 
-    default boolean isNewVersion(IEntityProcess oldEntity, IEntityProcess newEntity) {
+    default boolean isNewVersion(IEntityProcessVersion oldEntity, IEntityProcessVersion newEntity) {
         if (oldEntity == null || oldEntity.getTasks().size() != newEntity.getTasks().size()) {
             return true;
         }
-        for (IEntityTask newEntitytask : newEntity.getTasks()) {
-            IEntityTask oldEntityTask = oldEntity.getTask(newEntitytask.getAbbreviation());
+        for (IEntityTaskVersion newEntitytask : newEntity.getTasks()) {
+            IEntityTaskVersion oldEntityTask = oldEntity.getTask(newEntitytask.getAbbreviation());
             if (isNewVersion(oldEntityTask, newEntitytask)) {
                 return true;
             }
@@ -71,7 +71,7 @@ public interface IProcessEntityService<CATEGORY extends IEntityCategory, PROCESS
         return false;
     }
 
-    default boolean isNewVersion(IEntityTask oldEntityTask, IEntityTask newEntitytask) {
+    default boolean isNewVersion(IEntityTaskVersion oldEntityTask, IEntityTaskVersion newEntitytask) {
         if (oldEntityTask == null
                 || !oldEntityTask.getName().equalsIgnoreCase(newEntitytask.getName())
                 || !oldEntityTask.getType().getAbbreviation().equals(newEntitytask.getType().getAbbreviation())

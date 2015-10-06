@@ -90,11 +90,6 @@ public abstract class MTask<K extends MTask<?>> {
         return getTaskType() == TaskType.Wait;
     }
 
-    @Deprecated
-    public final boolean is(String name) {
-        return getName().equalsIgnoreCase(name);
-    }
-    
     public final boolean is(ITaskDefinition taskDefinition) {
         return getAbbreviation().equalsIgnoreCase(taskDefinition.getKey());
     }

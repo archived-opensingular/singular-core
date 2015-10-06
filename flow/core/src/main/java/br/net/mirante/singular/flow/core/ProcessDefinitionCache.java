@@ -58,7 +58,7 @@ public final class ProcessDefinitionCache {
                 throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
             }
             cacheById.put(def.getAbbreviation(), def);
-            cacheByInstanceType.put(def.getInstanceClass(), def);
+            cacheByInstanceType.put(def.getProcessInstanceClass(), def);
         }
         definitions = cache.build();
         definitionsById = ImmutableMap.copyOf(cacheById);

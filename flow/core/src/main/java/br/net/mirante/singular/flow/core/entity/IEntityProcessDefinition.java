@@ -18,10 +18,10 @@ public interface IEntityProcessDefinition extends IEntityByCod {
 
     List<? extends IEntityProcessRole> getRoles();
 
-    List<? extends IEntityProcess> getVersions();
+    List<? extends IEntityProcessVersion> getVersions();
 
-    default IEntityProcess getLastVersion(){
-        return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityProcess::getVersionDate))).orElse(null);
+    default IEntityProcessVersion getLastVersion(){
+        return getVersions().stream().collect(Collectors.maxBy(Comparator.comparing(IEntityProcessVersion::getVersionDate))).orElse(null);
     }
 
     default IEntityTaskDefinition getTaskDefinition(String sigla) {

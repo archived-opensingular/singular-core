@@ -19,7 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTask;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
+import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 
@@ -30,13 +31,12 @@ public class MBPMUtil {
     private static final int PESO_TASK_PESSOA = 1000;
     private static final int PESO_TASK_FIM = 100000;
 
-    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias,
-            final ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getEntity().getCurrentTask().getTask(),
-                s2.getEntity().getCurrentTask().getTask(), definicao));
+    public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getCurrentTask().getEntityTaskInstance().getTask(),
+                s2.getCurrentTask().getEntityTaskInstance().getTask(), definicao));
     }
 
-    private static int compareByDistanceFromBeginning(IEntityTask s1, IEntityTask s2, ProcessDefinition<?> definicao) {
+    private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {
         int ordem1 = calculateTaskOrder(s1, definicao);
         int ordem2 = calculateTaskOrder(s2, definicao);
         if (ordem1 != ordem2) {
@@ -45,17 +45,17 @@ public class MBPMUtil {
         return s1.getName().compareTo(s2.getName());
     }
 
-    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTask> conversor,
+    public static <T> void sortByDistanceFromBeginning(List<? extends T> lista, Function<T, IEntityTaskVersion> conversor,
                                                        ProcessDefinition<?> definicao) {
         lista.sort(getDistanceFromBeginningComparator(conversor, definicao));
     }
 
-    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTask> conversor,
+    private static <T> Comparator<T> getDistanceFromBeginningComparator(Function<T, IEntityTaskVersion> conversor,
                                                                         ProcessDefinition<?> definicao) {
         return (o1, o2) -> compareByDistanceFromBeginning(conversor.apply(o1), conversor.apply(o2), definicao);
     }
 
-    public static <X extends IEntityTask> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
+    public static <X extends IEntityTaskVersion> List<X> getSortedByDistanceFromBeginning(List<X> situacoes,
             ProcessDefinition<?> definicao) {
         List<X> novo = new ArrayList<>(situacoes);
         novo.sort((s1, s2) -> compareByDistanceFromBeginning(s1, s2, definicao));
@@ -100,7 +100,7 @@ public class MBPMUtil {
         }
     }
 
-    private static int calculateTaskOrder(IEntityTask entityTaskDefinition, ProcessDefinition<?> processDefinition) {
+    private static int calculateTaskOrder(IEntityTaskVersion entityTaskDefinition, ProcessDefinition<?> processDefinition) {
         if (!processDefinition.getEntity().getProcessDefinition()
                 .equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
@@ -170,14 +170,24 @@ public class MBPMUtil {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
+    public static byte[] getFlowImage(ProcessDefinition<?> processDefinition) {
+        return FlowRendererFactory.generateImageFor(processDefinition);
+    }
+
     /**
-     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por
-     * padrão a API yFiles para gerar o diagrama.</p>
+     * <p>
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa por
+     * padrão a API yFiles para gerar o diagrama.
+     * </p>
      *
-     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
-     * descrição do problema.</p>
+     * <p>
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.
+     * </p>
      *
-     * <p>Exemplo de código de uso:</p>
+     * <p>
+     * Exemplo de código de uso:
+     * </p>
      *
      * <pre>
      * public static void main(String[] args) {
@@ -194,11 +204,15 @@ public class MBPMUtil {
     }
 
     /**
-     * <p>Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o
-     * diagramador especificado para gerar a imagem.</p>
+     * <p>
+     * Apresenta o diagrama BPMN do processo especificado em uma janela. Usa o
+     * diagramador especificado para gerar a imagem.
+     * </p>
      *
-     * <p>Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
-     * descrição do problema.</p>
+     * <p>
+     * Em caso de falha a janela não é mostrada e um LOG é gerado contendo a
+     * descrição do problema.
+     * </p>
      *
      * @param definitionClass
      *            a definição do processo especificado.
@@ -225,7 +239,7 @@ public class MBPMUtil {
             setVisible(true);
         }
 
-        private JComponent getImageComponent(byte[] image) {
+        private static JComponent getImageComponent(byte[] image) {
             JPanel panel = new JPanel();
             ImageIcon icon = new ImageIcon(image);
             JLabel label = new JLabel();
