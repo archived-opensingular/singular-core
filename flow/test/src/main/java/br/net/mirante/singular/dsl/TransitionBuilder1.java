@@ -28,7 +28,20 @@ public class TransitionBuilder1 {
         return taskBuilder2;
     }
 
-    public PeopleBuilder2 gotTo(String s) {
-        return new PeopleBuilder2(this);
+    public TransitionBuilder1 vars(VarConfigurer configurer) {
+        return  null;
+    }
+
+    public VarBuilder1 vars() {
+        return null;
+    }
+
+    @FunctionalInterface
+    public static interface VarConfigurer {
+
+
+        public void config(VariableConfiguration variableConfiguration);
+
+
     }
 }

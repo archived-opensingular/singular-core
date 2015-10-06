@@ -4,6 +4,7 @@ import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MTaskPeople;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class PeopleBuilder2 {
 
@@ -19,6 +20,15 @@ public class PeopleBuilder2 {
         return new TransitionBuilder1(this);
     }
 
+    public TransitionBuilder1 transition() {
+        return new TransitionBuilder1(this);
+    }
+
+
+    public TransitionBuilder1 transition(Supplier<Boolean> sup) {
+        return new TransitionBuilder1(this);
+    }
+
     public WaitBuilder1 wait(String s) {
         return new WaitBuilder1(this);
     }
@@ -26,4 +36,5 @@ public class PeopleBuilder2 {
     public TaskBuilder extraConfig(Consumer<MTaskPeople> people) {
         return null;
     }
+
 }
