@@ -20,9 +20,9 @@ import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.GridListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper2;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.TableListaMapper2;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 
 public class UIBuilderWicket {
@@ -36,10 +36,10 @@ public class UIBuilderWicket {
         MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*    */MView.class, /*   */YearMonthMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MView.class, /*   */DefaultCompostoMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MTabView.class, /**/DefaultCompostoMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MTableListaView.class, /* */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper2::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MTableListaView.class, /* */TableListaMapper2::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MGridListaView.class, /*  */GridListaMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MPanelListaView.class, /* */PanelListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MPanelListaView.class, /* */PanelListaMapper2::new);
     }
 
     public static void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {

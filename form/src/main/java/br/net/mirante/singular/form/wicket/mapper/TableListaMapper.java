@@ -170,18 +170,15 @@ public class TableListaMapper implements IWicketComponentMapper {
                 UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), itemModel);
             }
 
-            if (view instanceof MTableListaView) {
-                MTableListaView tableView = (MTableListaView) view;
-                if (tableView.isPermiteExclusaoDeLinha()) {
-                    tr.newCol()
-                        .newTemplateTag(tp -> ""
-                            + "<button"
-                            + " wicket:id='_remover_'"
-                            + " class='btn btn-danger btn-sm'"
-                            + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.MINUS + "'></i>"
-                            + "</button>")
-                        .add(new RemoverButton("_remover_", form, TRsView.this.getModel(), item));
-                }
+            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()) {
+                tr.newCol()
+                    .newTemplateTag(tp -> ""
+                        + "<button"
+                        + " wicket:id='_remover_'"
+                        + " class='btn btn-danger btn-sm'"
+                        + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.MINUS + "'></i>"
+                        + "</button>")
+                    .add(new RemoverButton("_remover_", form, TRsView.this.getModel(), item));
             }
         }
         private final class InserirButton extends ActionAjaxButton {
