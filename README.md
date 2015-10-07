@@ -16,6 +16,7 @@ Módulos JAVA do projeto SINGULAR.
         * [HipChat](https://miranteteam.hipchat.com)
     * Equipe de Desenvolvimento
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
+        * [Tutorial](tutorial.md)
 
 # Módulo UI-Admin
 
