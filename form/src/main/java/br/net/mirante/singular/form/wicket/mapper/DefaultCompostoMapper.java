@@ -20,6 +20,7 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.util.wicket.behavior.StatelessBehaviors;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -34,13 +35,15 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
         final Map<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
 
-        MInstancia instancia = model.getObject();
-        MIComposto composto = (MIComposto) instancia;
-        MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
+        final MInstancia instancia = model.getObject();
+        final MIComposto composto = (MIComposto) instancia;
+        final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
 
-        BSContainer<?> parentCol = ctx.getContainer();
-        BSGrid grid = parentCol.newGrid();
-        BSRow row = grid.newRow();
+        final BSContainer<?> parentCol = ctx.getContainer();
+        final BSGrid grid = parentCol.newGrid();
+        final BSRow row = grid.newRow();
+
+        grid.add(StatelessBehaviors.DISABLED_ATTR);
 
         for (String nomeCampo : tComposto.getCampos()) {
             final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);

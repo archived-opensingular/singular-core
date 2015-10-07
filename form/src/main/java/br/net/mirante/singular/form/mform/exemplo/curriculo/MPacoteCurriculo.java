@@ -44,10 +44,10 @@ public class MPacoteCurriculo extends MPacote {
         {
             informacoesPessoais.as(AtrBasic::new).label("Informações Pessoais");
             nome
-                .as(AtrBasic::new).label("Nome").tamanhoMaximo(50)
+                .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50).obrigatorio(true)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
-                .as(AtrBasic::new).label("CPF")
+                .as(AtrBasic::new).label("CPF").obrigatorio(true)
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")

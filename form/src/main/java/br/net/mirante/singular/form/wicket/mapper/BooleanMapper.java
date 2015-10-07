@@ -12,20 +12,26 @@ import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.behavior.StatelessBehaviors;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
 public class BooleanMapper implements IWicketComponentMapper {
     @Override
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-        String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
-        BSControls formGroup = ctx.getContainer()
-            .newComponent(BSControls::new);
-        IModel<String> labelModel = $m.ofValue(label);
-        formGroup.appendLabel(new BSLabel("label", ""));
+
+        final String label = trimToEmpty(model.getObject().as(MPacoteBasic.aspect()).getLabel());
+        final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
+        final IModel<String> labelModel = $m.ofValue(label);
+        final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
+
+        formGroup.appendLabel(new BSLabel("label", "")
+            .add(StatelessBehaviors.DISABLED_ATTR));
         formGroup.appendCheckbox(
-            new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model)),
+            input,
             labelModel);
-        formGroup.appendFeedback();
+        //formGroup.appendFeedback();
+
+        input.add(StatelessBehaviors.DISABLED_ATTR);
     }
 }

@@ -4,6 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
@@ -12,14 +13,15 @@ import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.util.wicket.behavior.StatelessBehaviors;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
-    HintKey<Boolean> NO_DECORATION = () -> false;
-    HintKey<Boolean> MATERIAL_DESIGN = () -> true;
+    static HintKey<Boolean> NO_DECORATION   = () -> false;
+    static HintKey<Boolean> MATERIAL_DESIGN = () -> false;
 
     Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
@@ -28,28 +30,40 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
         final boolean hintMaterialDesign = ctx.getHint(MATERIAL_DESIGN);
 
-        MInstancia instancia = model.getObject();
-        String label = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getLabel());
-        ValueModel<String> labelModel = $m.ofValue(label);
-        BSControls controls = ctx.getContainer().newFormGroup();
+        final MInstancia instancia = model.getObject();
+        final String labelText = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getLabel());
+        final ValueModel<String> labelModel = $m.ofValue(labelText);
+        final BSControls controls = ctx.getContainer().newFormGroup();
 
-        BSLabel bsLabel = new BSLabel("label", labelModel);
+        final BSLabel label = new BSLabel("label", labelModel);
+        label.add(StatelessBehaviors.DISABLED_ATTR);
         if (hintNoDecoration) {
-            bsLabel.add($b.classAppender("visible-sm visible-xs"));
+            label.add($b.classAppender("visible-sm visible-xs"));
         }
 
-        if (!hintMaterialDesign) {
-            controls.appendLabel(bsLabel);
-        }
-        Component comp = appendInput(controls, model, labelModel);
+        final String subtitle = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getSubtitle());
+
+        final Component input;
         if (hintMaterialDesign) {
-            controls.appendLabel(bsLabel);
+            input = appendInput(controls, model, labelModel);
+            controls.appendLabel(label);
+            if (!subtitle.isEmpty())
+                controls.appendHelpBlock($m.ofValue(subtitle));
+        } else {
+            controls.appendLabel(label);
+            if (!subtitle.isEmpty())
+                controls.appendHelpBlock($m.ofValue(subtitle));
+            input = appendInput(controls, model, labelModel);
         }
-        controls.appendFeedback();
+        input.add(StatelessBehaviors.DISABLED_ATTR);
+        if (instancia.as(MPacoteBasic.aspect()).isObrigatorio() && (input instanceof FormComponent<?>)) {
+            ((FormComponent<?>) input).setRequired(true);
+            label.add(StatelessBehaviors.REQUIRED_AFTER);
+        }
 
-        Integer size = instancia.as(MPacoteBasic.aspect()).getTamanhoEdicao();
-        if ((comp instanceof TextField<?>) && (size != null)) {
-            comp.add($b.attr("size", size));
+        final Integer size = instancia.as(MPacoteBasic.aspect()).getTamanhoEdicao();
+        if ((input instanceof TextField<?>) && (size != null)) {
+            input.add($b.attr("size", size));
         }
     }
 }

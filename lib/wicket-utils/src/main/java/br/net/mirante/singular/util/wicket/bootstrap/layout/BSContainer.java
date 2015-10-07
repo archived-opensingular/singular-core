@@ -67,7 +67,7 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public BSControls newFormGroup() {
-        return newFormGroup(false, true);
+        return newFormGroup(true, false);
     }
 
     public BSControls newFormGroup(boolean compact, boolean material) {

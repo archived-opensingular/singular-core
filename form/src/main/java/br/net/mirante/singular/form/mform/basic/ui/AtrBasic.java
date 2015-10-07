@@ -21,6 +21,11 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
+    public AtrBasic subtitle(String valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_SUBTITLE, valor);
+        return this;
+    }
+
     public AtrBasic tamanhoEdicao(Integer valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO, valor);
         return this;
@@ -41,6 +46,11 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
+    public AtrBasic obrigatorio(Boolean valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_OBRIGATORIO, valor);
+        return this;
+    }
+
     public AtrBasic multiLinha(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
         return this;
@@ -48,6 +58,10 @@ public class AtrBasic extends MTranslatorParaAtributo {
 
     public String getLabel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_LABEL);
+    }
+
+    public String getSubtitle() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_SUBTITLE);
     }
 
     public Integer getTamanhoEdicao() {
@@ -64,6 +78,10 @@ public class AtrBasic extends MTranslatorParaAtributo {
 
     public Boolean isVisivel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
+    }
+
+    public Boolean isObrigatorio() {
+        return getAlvo().getValorAtributo(MPacoteBasic.ATR_OBRIGATORIO);
     }
 
     public Boolean isMultiLinha() {
