@@ -1,4 +1,4 @@
-![Versão](https://img.shields.io/badge/version-0.3.2--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-error-red.svg) ![Test](https://img.shields.io/badge/test-69%-green.svg)
+![Versão](https://img.shields.io/badge/version-0.3.2--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-error-red.svg) ![Test](https://img.shields.io/badge/test-69%-red.svg)
 
 # Projeto SINGULAR
 
@@ -15,7 +15,7 @@ Módulos JAVA do projeto SINGULAR.
         * [Atlassian](https://mirante.atlassian.net/secure/RapidBoard.jspa?rapidView=86&projectKey=MIR)
         * [HipChat](https://miranteteam.hipchat.com)
     * Equipe de Desenvolvimento
-        * [GitBlit](http://10.0.0.22/summary/MIRANTE%2Fsingular.git)
+        * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
 
 # Módulo UI-Admin
 
