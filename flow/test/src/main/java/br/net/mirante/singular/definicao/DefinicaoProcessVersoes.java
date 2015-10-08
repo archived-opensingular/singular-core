@@ -1,7 +1,7 @@
 package br.net.mirante.singular.definicao;
 
 
-import br.net.mirante.singular.defaults.DefaultPageStrategy;
+
 import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
@@ -10,10 +10,11 @@ import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.BPeople;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
+import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 
-public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
+public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
-    public InstanceProcessVersoes() {
+    public DefinicaoProcessVersoes() {
         super(ProcessVersoes.class);
     }
 
@@ -39,10 +40,10 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
     private enum InstanceProcessVersao {
         VERSAO_1() {
             @Override
-            public FlowMap createFlowMap(InstanceProcessVersoes instanceProcessVersoes) {
-                instanceProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+                definicaoProcessVersoes.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(instanceProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
 
@@ -51,7 +52,7 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BJava<?> task = flow.addJava(() -> "Task");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People", papelTecnico);
-                people.withExecutionPage(new DefaultPageStrategy());
+                people.withExecutionPage(new NullPageStrategy());
                 BEnd<?> end = flow.addEnd(() -> "End");
 
                 flow.setStartTask(start);
@@ -65,10 +66,10 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_1_COM_PAPEIS() {
             @Override
-            public FlowMap createFlowMap(InstanceProcessVersoes instanceProcessVersoes) {
-                instanceProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+                definicaoProcessVersoes.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(instanceProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
                 BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", new EmptyUserRoleSettingStrategy(), false);
 
@@ -77,7 +78,7 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BJava<?> task = flow.addJava(() -> "Task");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People", papelAnalista);
-                people.withExecutionPage(new DefaultPageStrategy());
+                people.withExecutionPage(new NullPageStrategy());
                 BEnd<?> end = flow.addEnd(() -> "End");
 
                 flow.setStartTask(start);
@@ -91,10 +92,10 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
         VERSAO_2() {
             @Override
-            public FlowMap createFlowMap(InstanceProcessVersoes instanceProcessVersoes) {
-                instanceProcessVersoes.setName("Versão", "Usando versões");
+            public FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes) {
+                definicaoProcessVersoes.setName("Versão", "Usando versões");
 
-                FlowBuilderImpl flow = new FlowBuilderImpl(instanceProcessVersoes);
+                FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
 
@@ -103,7 +104,7 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BJava<?> task = flow.addJava(() -> "Task 2");
                 task.call((ProcessVersoes p) -> {});
                 BPeople<?> people = flow.addPeopleTask(() -> "People 2", papelTecnico);
-                people.withExecutionPage(new DefaultPageStrategy());
+                people.withExecutionPage(new NullPageStrategy());
                 BEnd<?> end = flow.addEnd(() -> "End 2");
 
                 flow.setStartTask(start);
@@ -115,7 +116,7 @@ public class InstanceProcessVersoes extends ProcessDefinition<ProcessVersoes> {
             }
         };
 
-        public abstract FlowMap createFlowMap(InstanceProcessVersoes instanceProcessVersoes);
+        public abstract FlowMap createFlowMap(DefinicaoProcessVersoes definicaoProcessVersoes);
     }
 
 }

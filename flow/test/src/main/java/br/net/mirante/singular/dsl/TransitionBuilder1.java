@@ -1,5 +1,7 @@
 package br.net.mirante.singular.dsl;
 
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+
 public class TransitionBuilder1 {
 
     TaskBuilder2 taskBuilder2;
@@ -23,6 +25,12 @@ public class TransitionBuilder1 {
     public TaskBuilder2 to(String task){
         return taskBuilder2;
     }
+
+    public <T extends Enum & ITaskDefinition> TaskBuilder2 to(T task){
+        return taskBuilder2;
+    }
+
+
 
     public TaskBuilder2 to() {
         return taskBuilder2;

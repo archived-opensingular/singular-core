@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.TestFlowConfiguration;
 import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;
@@ -12,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.TestDAO;
-import br.net.mirante.singular.TestMBPMBean;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
@@ -21,7 +22,7 @@ import br.net.mirante.singular.TestMBPMBean;
 public abstract class TestSupport {
 
     @Inject
-    protected TestMBPMBean mbpmBean;
+    protected TestFlowConfiguration mbpmBean;
 
     @Inject
     protected TestDAO testDAO;

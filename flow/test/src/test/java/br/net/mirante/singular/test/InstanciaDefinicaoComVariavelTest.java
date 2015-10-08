@@ -3,16 +3,15 @@ package br.net.mirante.singular.test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.net.mirante.singular.flow.core.ProcessInstance;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import br.net.mirante.singular.DefinicaoComVariaveis;
-import br.net.mirante.singular.definicao.InstanciaDefinicaoComVariavel;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
-import br.net.mirante.singular.persistence.entity.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.Variable;
 import br.net.mirante.singular.persistence.entity.VariableType;
 
@@ -30,12 +29,10 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
 
     @Test
     public void teste1UsoDeVariaveis() {
-        InstanciaDefinicaoComVariavel id2 = new InstanciaDefinicaoComVariavel();
-        id2.start();
-
-        String nome = id2.getValorVariavel("nome");
-        BigDecimal qualquerCoisa = id2.getValorVariavel("qualquerCoisa");
-
+        ProcessInstance pi = new DefinicaoComVariaveis().newInstance();
+        pi.start();
+        String nome = pi.getValorVariavel("nome");
+        BigDecimal qualquerCoisa = pi.getValorVariavel("qualquerCoisa");
         assertEquals(nome, DefinicaoComVariaveis.STRING_USADA_NO_TESTE);
         assertEquals(qualquerCoisa, DefinicaoComVariaveis.BIGDECIMAL_USADO_NO_TESTE);
     }
@@ -43,8 +40,8 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
     @Test()
     public void teste2PersistenciaVariaveis() {
         DefinicaoComVariaveis d = mbpmBean.getProcessDefinition(DefinicaoComVariaveis.class);
-        List<ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntity());
-        for (ProcessInstance p : instances) {
+        List<br.net.mirante.singular.persistence.entity.ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntity());
+        for (br.net.mirante.singular.persistence.entity.ProcessInstance p : instances) {
             List<Variable> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());
             List<ExecutionVariable> executionVariables = testDAO.retrieveExecutionVariablesByInstance(p.getCod());

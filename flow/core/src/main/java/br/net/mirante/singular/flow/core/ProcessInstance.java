@@ -25,6 +25,16 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -43,11 +53,6 @@ public class ProcessInstance {
 
     private transient ExecucaoMTask executionContext;
 
-    /**
-     * @deprecated não proliferar o uso desse campo, utilzar getInternalEntity
-     *             no lugar
-     */
-    @Deprecated
     private transient IEntityProcessInstance entity;
 
     private transient VarInstanceMap<?> variables;
@@ -72,7 +77,7 @@ public class ProcessInstance {
      */
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
-            throw new SingularException("A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition ");
+            throw new SingularException("A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newInstance() a partir da definição do processo.");
         }
         return (K) processDefinitionRef.get();
     }
@@ -533,7 +538,7 @@ public class ProcessInstance {
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
 
-            Flow.getMbpmBean().notifyStateUpdate(this);
+            Flow.getMbpmBean().getNotifiers().notifyStateUpdate(this);
             return tarefaNova;
         }
     }

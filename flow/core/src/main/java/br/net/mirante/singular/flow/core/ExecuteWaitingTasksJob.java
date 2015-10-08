@@ -27,7 +27,7 @@ public class ExecuteWaitingTasksJob implements IScheduledJob {
 
     @Override
     public Object run() {
-        final AbstractMbpmBean mbpmBean = Flow.getMbpmBean();
+        final SingularFlowConfigurationBean mbpmBean = Flow.getMbpmBean();
         final StringBuilder log = new StringBuilder();
         final Date hoje = new Date();
         for (ProcessDefinition<?> definicaoProcessoMBPM : mbpmBean.getDefinitions()) {

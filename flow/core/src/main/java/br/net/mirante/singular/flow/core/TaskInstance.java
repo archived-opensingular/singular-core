@@ -221,7 +221,7 @@ public class TaskInstance {
     }
 
     private void notifyStateUpdate() {
-        Flow.getMbpmBean().notifyStateUpdate(getProcessInstance());
+        Flow.getMbpmBean().getNotifiers().notifyStateUpdate(getProcessInstance());
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento) {

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.definicao.InstanceProcessVersoes;
+import br.net.mirante.singular.definicao.DefinicaoProcessVersoes;
 import br.net.mirante.singular.definicao.ProcessVersoes;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
@@ -8,7 +8,6 @@ import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -31,13 +30,13 @@ public class ProcessVersoesTest extends TestSupport {
     @Test
     public void testarMudancaVersao() {
 
-        ProcessVersoes processVersao1 = new ProcessVersoes();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start1 = processVersao1.start();
 
-        InstanceProcessVersoes.changeFlowToVersao2();
+        DefinicaoProcessVersoes.changeFlowToVersao2();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new ProcessVersoes();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -51,15 +50,15 @@ public class ProcessVersoesTest extends TestSupport {
     @Test
     public void testarMudancaVersaoApenasPapeis() {
 
-        ProcessVersoes processVersao1 = new ProcessVersoes();
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start1 = processVersao1.start();
 
         List<? extends IEntityProcessRole> rolesBefore = new ArrayList<>(start1.getProcessInstance().getProcessDefinition().getEntity().getProcessDefinition().getRoles());
 
-        InstanceProcessVersoes.changeFlowToVersao1ComPapeis();
+        DefinicaoProcessVersoes.changeFlowToVersao1ComPapeis();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new ProcessVersoes();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();
@@ -73,11 +72,12 @@ public class ProcessVersoesTest extends TestSupport {
     @Test
     public void nadaMudou() {
 
-        ProcessVersoes processVersao1 = new ProcessVersoes();
+
+        ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start1 = processVersao1.start();
 
         ProcessDefinitionCache.invalidateAll();
-        ProcessVersoes processVersao2 = new ProcessVersoes();
+        ProcessVersoes processVersao2 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start2 = processVersao2.start();
 
         ProcessInstance pi1 = start1.getProcessInstance();

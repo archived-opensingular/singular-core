@@ -2,8 +2,8 @@ package br.net.mirante.singular.definicao;
 
 import java.util.Calendar;
 
-import br.net.mirante.singular.defaults.DefaultPageStrategy;
-import br.net.mirante.singular.defaults.DefaultTaskAccessStrategy;
+import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
+import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
 import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
@@ -80,14 +80,14 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         BJava notificarNovaInstancia = flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
-        aguardandoAnalise.withExecutionPage(new DefaultPageStrategy());
-        BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new DefaultTaskAccessStrategy());
-        emExigencia.withExecutionPage(new DefaultPageStrategy());
+        aguardandoAnalise.withExecutionPage(new NullPageStrategy());
+        BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
+        emExigencia.withExecutionPage(new NullPageStrategy());
         BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente);
-        aguardandoGerente.withExecutionPage(new DefaultPageStrategy());
+        aguardandoGerente.withExecutionPage(new NullPageStrategy());
         aguardandoGerente.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
-        BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new DefaultTaskAccessStrategy());
-        aguardandoPublicacao.withExecutionPage(new DefaultPageStrategy());
+        BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
+        aguardandoPublicacao.withExecutionPage(new NullPageStrategy());
         BEnd indeferido = flow.addEnd(INDEFERIDO);
         BEnd deferido = flow.addEnd(DEFERIDO);
         BEnd publicado = flow.addEnd(PUBLICADO);

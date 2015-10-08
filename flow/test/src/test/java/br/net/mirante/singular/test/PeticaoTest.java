@@ -45,7 +45,6 @@ public class PeticaoTest extends TestSupport {
 
     @Before
     public void setup() {
-        assertNotNull(mbpmBean);
         Flow.setConf(mbpmBean);
     }
 
@@ -218,11 +217,11 @@ public class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(mbpmBean.getUserIfAvailable(), ConstantesUtil.USER_1, false, "Testando...");
+        ip.getCurrentTask().relocateTask(Flow.getUserIfAvailable(), ConstantesUtil.USER_1, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         List<TaskInstanceHistory> lastHistories = testDAO.retrieveLastHistories(4);
-        assertEquals(mbpmBean.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
+        assertEquals(Flow.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
         assertEquals(ConstantesUtil.USER_1, lastHistories.get(0).getAllocatedUser());
         assertEquals("Alocação", lastHistories.get(0).getTaskHistoryType().getDescription());
         assertEquals("Papel definido", lastHistories.get(1).getTaskHistoryType().getDescription());
@@ -253,7 +252,8 @@ public class PeticaoTest extends TestSupport {
     //// MÉTODOS UTILITÁRIOS ////
     /////////////////////////////////////////////////////////////////////////////////////////////////
     private InstanciaPeticao startInstance() {
-        InstanciaPeticao id = new InstanciaPeticao();
+        Peticao p = new Peticao();
+        InstanciaPeticao id = p.newInstance();
         id.start();
         return id;
     }

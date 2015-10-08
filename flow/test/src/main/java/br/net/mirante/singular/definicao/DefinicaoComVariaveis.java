@@ -5,6 +5,7 @@ import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.flow.core.builder.BEnd;
 import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.FlowBuilder;
@@ -15,13 +16,13 @@ import br.net.mirante.singular.flow.util.vars.types.VarTypeString;
 
 import java.math.BigDecimal;
 
-public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
+public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
 
-    public static final BigDecimal BIGDECIMAL_USADO_NO_TESTE =  new BigDecimal("1111111123242343240.00001E-3");
+    public static final BigDecimal BIGDECIMAL_USADO_NO_TESTE = new BigDecimal("1111111123242343240.00001E-3");
     public static final String STRING_USADA_NO_TESTE = "Pessoa X";
 
     public DefinicaoComVariaveis() {
-        super(InstanciaPeticao.class);
+        super(ProcessInstance.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }
@@ -47,6 +48,12 @@ public class DefinicaoComVariaveis extends ProcessDefinition<InstanciaPeticao> {
         f.addTransition(PRINT, END);
 
         return f.build();
+    }
+
+    public ProcessInstance start() {
+        ProcessInstance instancia = newInstance();
+        TaskInstance tarefa = instancia.start();
+        return instancia;
     }
 
     public void print(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {

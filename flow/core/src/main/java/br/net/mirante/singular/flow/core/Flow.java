@@ -17,7 +17,7 @@ public class Flow {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Flow.class);
 
-    private static AbstractMbpmBean mbpmBean;
+    private static SingularFlowConfigurationBean mbpmBean;
 
     private Flow() {
     }
@@ -37,7 +37,7 @@ public class Flow {
         getMbpmBean().init();
     }
 
-    public static synchronized void setConf(AbstractMbpmBean conf) {
+    public static synchronized void setConf(SingularFlowConfigurationBean conf) {
         if(mbpmBean != null
                 && mbpmBean != conf){
             throw new SingularFlowException("O contexto já foi configurado.");
@@ -46,7 +46,7 @@ public class Flow {
         init();
     }
 
-    public static AbstractMbpmBean getMbpmBean() {
+    public static SingularFlowConfigurationBean getMbpmBean() {
         Objects.requireNonNull(mbpmBean, "Configuração do fluxo não realizada");
         return mbpmBean;
     }
@@ -124,7 +124,7 @@ public class Flow {
     }
 
     public static MUser getUserIfAvailable() {
-        return getMbpmBean().getUserIfAvailable();
+        return getMbpmBean().getUserService().getUserIfAvailable();
     }
 
     public static AbstractProcessNotifiers getNotifiers() {
@@ -132,14 +132,14 @@ public class Flow {
     }
 
     static boolean canBeAllocated(MUser pessoa) {
-        return getMbpmBean().canBeAllocated(pessoa);
+        return getMbpmBean().getUserService().canBeAllocated(pessoa);
     }
 
     public static Lnk getDefaultHrefFor(ProcessInstance instanciaProcesso) {
-        return getMbpmBean().getDefaultHrefFor(instanciaProcesso);
+        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaProcesso);
     }
 
     public static Lnk getDefaultHrefFor(TaskInstance instanciaTarefa) {
-        return getMbpmBean().getDefaultHrefFor(instanciaTarefa);
+        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
     }
 }
