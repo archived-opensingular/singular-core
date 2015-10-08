@@ -1,0 +1,46 @@
+<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<wicket:panel>
+    <div class="page-content-wrapper">
+        <div class="page-content">
+            <!-- BEGIN PAGE HEAD -->
+            <div class="page-head">
+                <!-- BEGIN PAGE TITLE -->
+                <div class="page-title">
+                    <h1><wicket:container wicket:id="contentTitle"/>
+                        <small><wicket:container wicket:id="contentSubtitle"/></small>
+                    </h1>
+                </div>
+                <!-- END PAGE TITLE -->
+                <!-- BEGIN PAGE TOOLBAR -->
+                <div class="page-toolbar">
+                    <!-- BEGIN THEME PANEL -->
+                    <div wicket:id="_Info" class="btn-group btn-theme-panel">
+                        <a wicket:id="_InfoLink" href="#" class="btn tooltips" data-placement="bottom" data-html="true" data-original-title="Info" onclick="this.blur();">
+                            <i class="icon-info"></i>
+                        </a>
+                    </div>
+                    <wicket:container wicket:id="_SettingsMenu"/>
+                    <!-- END THEME PANEL -->
+                </div>
+                <!-- END PAGE TOOLBAR -->
+            </div>
+            <!-- END PAGE HEAD -->
+            <!-- BEGIN PAGE BREADCRUMB -->
+            <ul wicket:id="breadcrumb" class="page-breadcrumb breadcrumb">
+                <li>
+                    <a wicket:id="breadcrumbDashboard"><wicket:message key="breadcrumb.home"/></a><i class="fa fa-circle"></i>
+                </li>
+                <wicket:container wicket:id="_BreadcrumbLinks"/>
+            </ul>
+            <!-- END PAGE BREADCRUMB -->
+            <!-- BEGIN PAGE CONTENT INNER -->
+            <wicket:child/>
+            <!-- END PAGE CONTENT INNER -->
+        </div>
+
+        <!-- BEGIN QUICK SIDEBAR -->
+        <wicket:container wicket:id="_SideBar"/>
+        <!-- END QUICK SIDEBAR -->
+    </div>
+</wicket:panel>
+</html>

@@ -1,0 +1,58 @@
+/* here you can put your own css to customize and override the theme */
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
+    width: 39px;
+}
+
+.portlet {
+    border-radius: 4px !important;
+}
+
+.portlet .portlet-title {
+    border-radius: 4px 4px 0 0 !important;
+    border-bottom: 1px solid #eee !important;
+    margin-bottom: 10px;
+}
+
+.portlet .portlet-body,
+.portlet .portlet-body .form-actions {
+    border-radius: 0 0 4px 4px !important;
+}
+
+.portlet-fullscreen .portlet-body > .columnLine {
+    height: 90%;
+}
+
+.portlet-fullscreen .portlet-body > .animated-pie-chart {
+    height: 90%;
+}
+
+a.fullscreen {
+    margin-left: 2px;
+}
+
+table.dataTable thead th > a {
+    display: block;
+    width: 100% !important;
+    padding-right: 10px;
+}
+
+.btn.blue-stripe, .btn.green-stripe, .btn.red-stripe, .btn.red-stripe {
+    border-left-width: 3px !important;
+}
+
+/*noinspection CssInvalidPropertyValue*/
+.modal-fit.modal-dialog {
+    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+    width: -moz-max-content;    /* Firefox/Gecko */
+    width: -webkit-max-content; /* Chrome */
+}
+
+.without-progress-bar > .dashboard-stat2 {
+    padding-bottom: 1px;
+}
+
+.feeds li .col2 {
+    width: 120px;
+    margin-left: -120px;
+}
