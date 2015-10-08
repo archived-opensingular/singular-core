@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.behavior.AttributeAppender;
@@ -9,8 +11,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class Content extends Panel {
 
@@ -58,7 +58,6 @@ public abstract class Content extends Panel {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
         add(new SettingsMenu("_SettingsMenu").setVisible(withSettingsMenu));
-        add(new SideBar("_SideBar").setVisible(withSideBar));
         WebMarkupContainer infoLink = new WebMarkupContainer("_Info");
         add(infoLink.setVisible(withInfoLink));
         if (withInfoLink) {
