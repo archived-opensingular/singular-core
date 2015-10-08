@@ -18,6 +18,7 @@ Módulos JAVA do projeto SINGULAR.
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
+        * [Documentação](http://git.mirante.net.br/blob/MIRANTE%2Fsingular.git/gh-pages/_includes%2FindexContent.md)
 
 # Módulo UI-Admin
 

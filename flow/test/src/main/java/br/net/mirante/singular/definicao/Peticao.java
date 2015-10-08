@@ -1,10 +1,5 @@
 package br.net.mirante.singular.definicao;
 
-import java.util.Calendar;
-
-import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
-import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
-import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MBPMUtil;
@@ -17,17 +12,14 @@ import br.net.mirante.singular.flow.core.builder.BPeople;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
+import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
 
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
+import java.util.Calendar;
 
-public class Peticao extends ProcessDefinition<InstanciaPeticao> {
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
+
+public class Peticao extends ProcessDefinition<ProcessInstance> {
 
     public enum PeticaoTask implements ITaskDefinition {
         NOTIFICAR_NOVA_INSTANCIA("Notificar nova instância"),
@@ -66,7 +58,7 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
     public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
-        super(InstanciaPeticao.class);
+        super(ProcessInstance.class);
     }
 
     @Override
@@ -75,19 +67,15 @@ public class Peticao extends ProcessDefinition<InstanciaPeticao> {
 
         FlowBuilderImpl flow = new FlowBuilderImpl(this);
 
-        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, new EmptyUserRoleSettingStrategy(), false);
-        BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, new EmptyUserRoleSettingStrategy(), false);
+        BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
+        BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
         BJava notificarNovaInstancia = flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
-        aguardandoAnalise.withExecutionPage(new NullPageStrategy());
         BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
-        emExigencia.withExecutionPage(new NullPageStrategy());
         BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente);
-        aguardandoGerente.withExecutionPage(new NullPageStrategy());
         aguardandoGerente.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
         BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
-        aguardandoPublicacao.withExecutionPage(new NullPageStrategy());
         BEnd indeferido = flow.addEnd(INDEFERIDO);
         BEnd deferido = flow.addEnd(DEFERIDO);
         BEnd publicado = flow.addEnd(PUBLICADO);

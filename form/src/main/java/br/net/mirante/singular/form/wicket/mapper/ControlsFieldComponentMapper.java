@@ -58,7 +58,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         input.add(StatelessBehaviors.DISABLED_ATTR);
         if (instancia.as(MPacoteBasic.aspect()).isObrigatorio() && (input instanceof FormComponent<?>)) {
             ((FormComponent<?>) input).setRequired(true);
-            label.add(StatelessBehaviors.REQUIRED_AFTER);
+            label.add(StatelessBehaviors.REQUIRED_AFTER_LABEL);
         }
 
         final Integer size = instancia.as(MPacoteBasic.aspect()).getTamanhoEdicao();

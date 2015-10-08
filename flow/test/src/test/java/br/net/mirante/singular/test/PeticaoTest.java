@@ -26,7 +26,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
 import br.net.mirante.singular.ConstantesUtil;
-import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
@@ -63,8 +62,8 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void testeCriarInstanciaPeticao() {
-        InstanciaPeticao id = startInstance();
-        InstanciaPeticao id2 = Flow.getProcessInstance(id.getFullId());
+        ProcessInstance id = startInstance();
+        ProcessInstance id2 = Flow.getProcessInstance(id.getFullId());
 
         assertEqualsInstance(id, id2);
     }
@@ -73,13 +72,13 @@ public class PeticaoTest extends TestSupport {
     public void executeTransitionWithoutTransitionName() {
         thrown.expect(SingularFlowException.class);
 
-        InstanciaPeticao instanciaPeticao = startInstance();
+        ProcessInstance instanciaPeticao = startInstance();
         instanciaPeticao.executeTransition();
     }
 
     @Test
     public void executeHappyPath() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.APROVAR_GERENTE);
         ip.executeTransition(Peticao.PUBLICAR);
@@ -89,7 +88,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void grantApplication() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.DEFERIR);
 
@@ -98,7 +97,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void rejectApplication() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.INDEFERIR);
 
         assertLatestTaskName(INDEFERIDO.getName(), ip);
@@ -106,7 +105,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void fuzzyFlow() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         ip.executeTransition(Peticao.SOLICITAR_AJUSTE_ANALISE);
         ip.executeTransition(Peticao.COLOCAR_EM_EXIGENCIA);
@@ -120,7 +119,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void naoDeveriaTerDataDeFim() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
         assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
@@ -129,7 +128,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void deveriaTerDataDeFim() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.INDEFERIR);
 
         assertNotNull("Instancia deveria ter uma data de fim", ip.getEndDate());
@@ -138,7 +137,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void expirarAprovaGerente() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
@@ -153,7 +152,7 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void verificarUserTemPermissaoAcesso() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
         ip.executeTransition(Peticao.APROVAR_TECNICO);
         assertTrue("Usuário não tem permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
@@ -161,14 +160,14 @@ public class PeticaoTest extends TestSupport {
 
     @Test
     public void verificarUserNaoPermissaoAcesso() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
         assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
     }
 
     @Test
     public void trocarUsuarioPapel() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_1);
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_3);
@@ -191,13 +190,13 @@ public class PeticaoTest extends TestSupport {
         thrown.expect(SingularFlowException.class);
         thrown.expectMessage("Não foi possível encontrar a role: Inexistente");
 
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole("Inexistente", ConstantesUtil.USER_1);
     }
 
     @Test
     public void atribuirPapelExistenteEmOutraTask() {
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
     }
 
@@ -206,7 +205,7 @@ public class PeticaoTest extends TestSupport {
         Integer counterHistory = testDAO.countHistoty();
         assertNotNull(counterHistory);
 
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
@@ -235,7 +234,7 @@ public class PeticaoTest extends TestSupport {
         Integer counterHistory = testDAO.countHistoty();
         assertNotNull(counterHistory);
 
-        InstanciaPeticao ip = startInstance();
+        ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
         TaskInstance currentTask = ip.getCurrentTask().getEntityTaskInstance();
@@ -251,9 +250,9 @@ public class PeticaoTest extends TestSupport {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //// MÉTODOS UTILITÁRIOS ////
     /////////////////////////////////////////////////////////////////////////////////////////////////
-    private InstanciaPeticao startInstance() {
+    private ProcessInstance startInstance() {
         Peticao p = new Peticao();
-        InstanciaPeticao id = p.newInstance();
+        ProcessInstance id = p.newInstance();
         id.start();
         return id;
     }
@@ -265,7 +264,7 @@ public class PeticaoTest extends TestSupport {
         assertEquals("As instâncias de processo são diferentes", cod1, cod2);
     }
 
-    private void assertLatestTaskName(String expectedCurrentTaskName, InstanciaPeticao instanciaPeticao) {
+    private void assertLatestTaskName(String expectedCurrentTaskName, ProcessInstance instanciaPeticao) {
         assertEquals("Situação diferente do esperado",
                 expectedCurrentTaskName,
                 instanciaPeticao.getLatestTask().getName());

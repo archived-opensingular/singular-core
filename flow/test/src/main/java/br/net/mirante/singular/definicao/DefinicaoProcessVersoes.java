@@ -1,8 +1,6 @@
 package br.net.mirante.singular.definicao;
 
 
-
-import br.net.mirante.singular.definicao.role.strategy.EmptyUserRoleSettingStrategy;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.builder.BEnd;
@@ -45,7 +43,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
+                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 BJava<?> start = flow.addJava(() -> "Start");
                 start.call((ProcessVersoes p) -> {});
@@ -71,7 +69,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", new EmptyUserRoleSettingStrategy(), false);
+                BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 BJava<?> start = flow.addJava(() -> "Start");
                 start.call((ProcessVersoes p) -> {});
@@ -97,7 +95,7 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 FlowBuilderImpl flow = new FlowBuilderImpl(definicaoProcessVersoes);
 
-                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", new EmptyUserRoleSettingStrategy(), false);
+                BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 BJava<?> start = flow.addJava(() -> "Start 2");
                 start.call((ProcessVersoes p) -> {});
