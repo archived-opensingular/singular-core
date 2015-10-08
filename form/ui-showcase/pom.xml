@@ -15,7 +15,7 @@
     <name>[singular :: form :: ui-showcase]</name>
     <packaging>war</packaging>
 
-    <build>
+    <build>	
         <resources>
             <resource>
                 <filtering>false</filtering>
@@ -188,6 +188,13 @@
             <version>1.2</version>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 
 </project>

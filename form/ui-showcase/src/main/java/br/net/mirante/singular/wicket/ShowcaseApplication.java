@@ -11,14 +11,19 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import br.net.mirante.singular.view.error.Error403Page;
 import br.net.mirante.singular.view.page.form.FormPage;
 
-public class UIAdminApplication extends AuthenticatedWebApplication {
+public class ShowcaseApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
 
-    @Override
+    private ApplicationContext ctx;
+
+	@Override
     public Class<? extends WebPage> getHomePage() {
         return FormPage.class;
     }
@@ -35,7 +40,11 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
 
-        getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+        if(ctx != null){
+        	getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));
+        }else{
+        	getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+        }
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
     }
 
@@ -63,7 +72,12 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
         }
     }
 
-    public static UIAdminApplication get() {
-        return (UIAdminApplication) WebApplication.get();
+    public static ShowcaseApplication get() {
+        return (ShowcaseApplication) WebApplication.get();
     }
+
+	@Override
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		this.ctx = ctx;
+	}
 }

@@ -23,7 +23,7 @@ public class UIAdminSession extends AuthenticatedWebSession {
         this.roles = new Roles();
         this.roles.add(Roles.USER);
 
-        if (RuntimeConfigurationType.DEVELOPMENT.equals(UIAdminApplication.get().getConfigurationType())) {
+        if (RuntimeConfigurationType.DEVELOPMENT.equals(ShowcaseApplication.get().getConfigurationType())) {
             this.roles.add(Roles.ADMIN);
         }
     }
