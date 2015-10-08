@@ -1,10 +1,7 @@
 package br.net.mirante.singular.test;
 
-import java.util.Scanner;
-
-import javax.inject.Inject;
-
-import br.net.mirante.singular.TestFlowConfiguration;
+import br.net.mirante.singular.TestDAO;
+import br.net.mirante.singular.flow.core.SingularFlowConfigurationBean;
 import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;
@@ -12,7 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.net.mirante.singular.TestDAO;
+import javax.inject.Inject;
+import java.util.Scanner;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -22,7 +20,7 @@ import br.net.mirante.singular.TestDAO;
 public abstract class TestSupport {
 
     @Inject
-    protected TestFlowConfiguration mbpmBean;
+    protected SingularFlowConfigurationBean mbpmBean;
 
     @Inject
     protected TestDAO testDAO;
@@ -35,7 +33,7 @@ public abstract class TestSupport {
      * ENTER no console.
      */
     public void inspecionarDB() {
-        org.hsqldb.util.DatabaseManagerSwing.main(new String[] {
+        org.hsqldb.util.DatabaseManagerSwing.main(new String[]{
                 "--url", "jdbc:hsqldb:file:singulardb", "--noexit"
         });
 //        aguardarEnter();

@@ -12,6 +12,14 @@
 
     <context:component-scan base-package="br.net.mirante.singular"/>
 
+    <bean name="singularFlowConfigurationBean" class="br.net.mirante.singular.persistence.util.HibernateSingularFlowConfigurationBean">
+        <property name="sessionFactory" ref="sessionFactory"/>
+        <property name="definitionsBasePackage" value="br.net.mirante.singular"/>
+        <property name="userService" ref="testUserService" />
+    </bean>
+
     <import resource="conf/database.xml"/>
+
+
 
 </beans>
