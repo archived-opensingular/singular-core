@@ -1,15 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
@@ -17,98 +14,148 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
+import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaItemListaModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
-    interface NewElementCol extends Serializable {
-        BSContainer<?> create(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index);
-    }
-    interface ConfigureCurrentContext extends Serializable {
-        void configure(WicketBuildContext ctx, IModel<MILista<MInstancia>> model);
-    }
-    interface ConfigureChildContext extends Serializable {
-        void configure(WicketBuildContext ctx, IModel<MILista<MInstancia>> model, int index);
-    }
-    private final AbstractListaMapper.ConfigureCurrentContext configureCurrentContext;
-    private final AbstractListaMapper.ConfigureChildContext   configureChildContext;
-    private final AbstractListaMapper.NewElementCol           newElementCol;
-    public AbstractListaMapper() {
-        this(null, null, null);
-    }
-    public AbstractListaMapper(
-        AbstractListaMapper.NewElementCol newElementCol,
-        AbstractListaMapper.ConfigureCurrentContext configureCurrentContext,
-        AbstractListaMapper.ConfigureChildContext configureChildContext)
-    {
-        this.newElementCol = newElementCol;
-        this.configureCurrentContext = configureCurrentContext;
-        this.configureChildContext = configureChildContext;
-    }
-    @Override
-    @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-        IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
 
-        if (configureCurrentContext != null)
-            configureCurrentContext.configure(ctx, mLista);
-
-        MILista<?> iLista = mLista.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(AtrBasic::new).getLabel()));
-        BSContainer<?> parentCol = ctx.getContainer();
-        if (isNotBlank(label.getObject()))
-            parentCol.appendTag("h3", new Label("_title", label));
-
-        TemplatePanel template = parentCol.newTag("div", new TemplatePanel("t", () ->
-            "<div wicket:id='lista'><div wicket:id='grid'></div></div>"));
-        template.add(new ItemsView("lista", mLista, ctx, newElementCol, configureChildContext));
+    protected static AdicionarButton appendAdicionarButton(final IModel<MILista<MInstancia>> mLista, final Form<?> form, final BSContainer<?> cell) {
+        AdicionarButton btn = new AdicionarButton("_add", form, mLista);
+        cell
+            .newTemplateTag(t -> ""
+                + "<button"
+                + " wicket:id='_add'"
+                + " class='btn btn-success btn-sm'"
+                + " style='padding:5px 3px 1px;margin-top:3px;margin-right:7px;'><i class='" + Icone.PLUS + "'></i>"
+                + "</button>"
+            ).add(btn);
+        return btn;
     }
 
-    private static final class ItemsView extends RefreshingView<MInstancia> {
-        private WicketBuildContext    ctx;
-        private AbstractListaMapper.NewElementCol         newElementCol;
-        private AbstractListaMapper.ConfigureChildContext configureChildContext;
-        private ItemsView(String id, IModel<?> model, WicketBuildContext ctx, AbstractListaMapper.NewElementCol newElementCol, AbstractListaMapper.ConfigureChildContext configureChildContext) {
+    protected static InserirButton appendInserirButton(ElementsView elementsView, Form<?> form, Item<MInstancia> item, BSContainer<?> cell) {
+        InserirButton btn = new InserirButton("_inserir_", elementsView, form, elementsView.getModel(), item);
+        cell
+            .newTemplateTag(tp -> ""
+                + "<button"
+                + " wicket:id='_inserir_'"
+                + " class='btn btn-success btn-sm'"
+                + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.PLUS + "'></i>"
+                + "</button>")
+            .add(btn);
+        return btn;
+    }
+
+    protected static RemoverButton appendRemoverButton(ElementsView elementsView, Form<?> form, Item<MInstancia> item, BSContainer<?> cell) {
+        RemoverButton btn = new RemoverButton("_remover_", form, elementsView, item);
+        cell
+            .newTemplateTag(tp -> ""
+                + "<button"
+                + " wicket:id='_remover_'"
+                + " class='btn btn-danger btn-sm'"
+                + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.MINUS + "'></i>"
+                + "</button>")
+            .add(btn);
+        return btn;
+    }
+
+    protected static abstract class ElementsView extends RefreshingView<MInstancia> {
+        public ElementsView(String id, IModel<MILista<MInstancia>> model) {
             super(id, model);
             setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
-            this.ctx = ctx;
-            this.newElementCol = newElementCol;
-            this.configureChildContext = configureChildContext;
         }
         @Override
         protected Iterator<IModel<MInstancia>> getItemModels() {
             List<IModel<MInstancia>> list = new ArrayList<>();
-            MILista<?> miLista = (MILista<?>) getDefaultModelObject();
+            MILista<MInstancia> miLista = getModelObject();
             for (int i = 0; i < miLista.size(); i++)
                 list.add(new MInstanciaItemListaModel<>(getDefaultModel(), i));
             return list.iterator();
         }
-        @Override
-        protected void populateItem(Item<MInstancia> item) {
-            BSGrid grid = new BSGrid("grid");
-            item.add(grid);
-
-            int index = item.getIndex();
-            BSContainer<?> col = ObjectUtils.defaultIfNull(newElementCol, ItemsView::defaultNewElementCol)
-                .create(ctx, grid, item.getModel(), index);
-            WicketBuildContext childCtx = ctx.createChild(col, true);
-            if (configureChildContext != null)
-                configureChildContext.configure(childCtx, this.getModel(), index);
-            UIBuilderWicket.buildForEdit(childCtx, item.getModel());
+        @SuppressWarnings("unchecked")
+        public MILista<MInstancia> getModelObject() {
+            return (MILista<MInstancia>) getDefaultModelObject();
         }
         @SuppressWarnings("unchecked")
         public IModel<MILista<MInstancia>> getModel() {
             return (IModel<MILista<MInstancia>>) getDefaultModel();
         }
-        static BSContainer<?> defaultNewElementCol(WicketBuildContext parentCtx, BSGrid grid, IModel<MInstancia> itemModel, int index) {
-            return grid.newColInRow();
+    }
+
+    protected static class InserirButton extends ActionAjaxButton {
+        private final IModel<MILista<MInstancia>> modelLista;
+        private final Item<MInstancia>            item;
+        private final ElementsView                elementsView;
+        private InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<MILista<MInstancia>> mLista, Item<MInstancia> item) {
+            super(id, form);
+            this.setDefaultFormProcessing(false);
+            this.elementsView = elementsView;
+            this.modelLista = mLista;
+            this.item = item;
+        }
+        @Override
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            final int index = item.getIndex();
+            MILista<MInstancia> lista = modelLista.getObject();
+            lista.addNovoAt(index);
+            List<MInstanciaItemListaModel<?>> itemModels = new ArrayList<>();
+            for (Component child : elementsView) {
+                IModel<?> childModel = child.getDefaultModel();
+                if (childModel instanceof MInstanciaItemListaModel<?>)
+                    itemModels.add((MInstanciaItemListaModel<?>) childModel);
+            }
+            for (MInstanciaItemListaModel<?> itemModel : itemModels)
+                if (itemModel.getIndex() >= index)
+                    itemModel.setIndex(itemModel.getIndex() + 1);
+            target.add(form);
+            target.focusComponent(this);
+        }
+    }
+
+    protected static class RemoverButton extends ActionAjaxButton {
+        private final ElementsView     elementsView;
+        private final Item<MInstancia> item;
+        private RemoverButton(String id, Form<?> form, ElementsView elementsView, Item<MInstancia> item) {
+            super(id, form);
+            this.setDefaultFormProcessing(false);
+            this.elementsView = elementsView;
+            this.item = item;
+        }
+        @Override
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            final int index = item.getIndex();
+            MILista<MInstancia> lista = elementsView.getModelObject();
+            lista.remove(index);
+            List<MInstanciaItemListaModel<?>> itemModels = new ArrayList<>();
+            for (Component child : elementsView) {
+                IModel<?> childModel = child.getDefaultModel();
+                if (childModel instanceof MInstanciaItemListaModel<?>)
+                    itemModels.add((MInstanciaItemListaModel<?>) childModel);
+            }
+            for (MInstanciaItemListaModel<?> itemModel : itemModels)
+                if (itemModel.getIndex() > index)
+                    itemModel.setIndex(itemModel.getIndex() - 1);
+                else if (itemModel.getIndex() == index)
+                    itemModel.setIndex(Integer.MAX_VALUE);
+            target.add(form);
+        }
+    }
+
+    protected static final class AdicionarButton extends ActionAjaxButton {
+        private final IModel<MILista<MInstancia>> modelLista;
+        private AdicionarButton(String id, Form<?> form, IModel<MILista<MInstancia>> mLista) {
+            super(id, form);
+            this.setDefaultFormProcessing(false);
+            modelLista = mLista;
+        }
+        @Override
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+            MILista<MInstancia> lista = modelLista.getObject();
+            lista.addNovo();
+            target.add(form);
+            target.focusComponent(this);
         }
     }
 }

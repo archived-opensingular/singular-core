@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -13,10 +12,13 @@ import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.util.wicket.behavior.StatelessBehaviors;
+import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
+import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
+import br.net.mirante.singular.form.wicket.behavior.RequiredByTipoBehavior;
+import br.net.mirante.singular.form.wicket.behavior.RequiredLabelIndicatorBehavior;
+import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
-import br.net.mirante.singular.util.wicket.model.ValueModel;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
@@ -30,40 +32,37 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
         final boolean hintMaterialDesign = ctx.getHint(MATERIAL_DESIGN);
 
-        final MInstancia instancia = model.getObject();
-        final String labelText = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getLabel());
-        final ValueModel<String> labelModel = $m.ofValue(labelText);
         final BSControls controls = ctx.getContainer().newFormGroup();
 
+        final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
+        final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
+        final AtributoModel<Integer> size = new AtributoModel<>(model, MPacoteBasic.ATR_TAMANHO_EDICAO);
+
         final BSLabel label = new BSLabel("label", labelModel);
-        label.add(StatelessBehaviors.DISABLED_ATTR);
+        label.add(DisabledClassBehavior.INSTANCE);
         if (hintNoDecoration) {
             label.add($b.classAppender("visible-sm visible-xs"));
         }
-
-        final String subtitle = trimToEmpty(instancia.as(MPacoteBasic.aspect()).getSubtitle());
 
         final Component input;
         if (hintMaterialDesign) {
             input = appendInput(controls, model, labelModel);
             controls.appendLabel(label);
-            if (!subtitle.isEmpty())
-                controls.appendHelpBlock($m.ofValue(subtitle));
+            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.INSTANCE);
         } else {
             controls.appendLabel(label);
-            if (!subtitle.isEmpty())
-                controls.appendHelpBlock($m.ofValue(subtitle));
+            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.INSTANCE);
             input = appendInput(controls, model, labelModel);
         }
-        input.add(StatelessBehaviors.DISABLED_ATTR);
-        if (instancia.as(MPacoteBasic.aspect()).isObrigatorio() && (input instanceof FormComponent<?>)) {
-            ((FormComponent<?>) input).setRequired(true);
-            label.add(StatelessBehaviors.REQUIRED_AFTER_LABEL);
+        input.add(DisabledClassBehavior.INSTANCE);
+        if (input instanceof FormComponent<?>) {
+            FormComponent<?> fcInput = (FormComponent<?>) input;
+            fcInput.add(RequiredByTipoBehavior.INSTANCE);
+            label.add(RequiredLabelIndicatorBehavior.INSTANCE);
         }
 
-        final Integer size = instancia.as(MPacoteBasic.aspect()).getTamanhoEdicao();
-        if ((input instanceof TextField<?>) && (size != null)) {
-            input.add($b.attr("size", size));
+        if (input instanceof TextField<?>) {
+            input.add($b.attr("size", size, size.emptyModel().not()));
         }
     }
 }

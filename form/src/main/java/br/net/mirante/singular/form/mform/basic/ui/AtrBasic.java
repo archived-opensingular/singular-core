@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
-import java.util.function.Function;
-
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
@@ -10,10 +8,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
     public AtrBasic() {}
     public AtrBasic(MAtributoEnabled alvo) {
         super(alvo);
-    }
-
-    public static <A extends MAtributoEnabled> Function<A, AtrBasic> factory() {
-        return a -> new AtrBasic(a);
     }
 
     public AtrBasic label(String valor) {
@@ -46,11 +40,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
-    public AtrBasic obrigatorio(Boolean valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_OBRIGATORIO, valor);
-        return this;
-    }
-
     public AtrBasic multiLinha(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
         return this;
@@ -78,10 +67,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
 
     public Boolean isVisivel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
-    }
-
-    public Boolean isObrigatorio() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_OBRIGATORIO);
     }
 
     public Boolean isMultiLinha() {

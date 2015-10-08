@@ -7,7 +7,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class DateMapper implements ControlsFieldComponentMapper {
