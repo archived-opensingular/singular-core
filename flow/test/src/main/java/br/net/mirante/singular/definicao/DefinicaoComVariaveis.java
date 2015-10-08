@@ -1,6 +1,5 @@
 package br.net.mirante.singular;
 
-import br.net.mirante.singular.definicao.InstanciaPeticao;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;

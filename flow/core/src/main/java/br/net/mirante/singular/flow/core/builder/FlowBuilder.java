@@ -21,6 +21,8 @@ import br.net.mirante.singular.flow.core.RoleAccessStrategy;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.TaskAccessStrategy;
 import br.net.mirante.singular.flow.core.UserRoleSettingStrategy;
+import br.net.mirante.singular.flow.core.defaults.EmptyUserRoleSettingStrategy;
+import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 
 public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends FlowMap, BUILDER_TASK extends BTask, BUILDER_JAVA extends BJava<?>, BUILDER_PEOPLE extends BPeople<?>, BUILDER_WAIT extends BWait<?>, BUILDER_END extends BEnd<?>, BUILDER_TRANSITION extends BTransition<?>, BUILDER_PAPEL extends BProcessRole<?>, TASK_DEF extends ITaskDefinition> {
 
@@ -95,6 +97,11 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, userRoleSettingStrategy, automaticUserAllocation));
     }
 
+    public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,
+                                           boolean automaticUserAllocation) {
+        return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
+    }
+
     public BUILDER_JAVA addJava(TASK_DEF taskDefinition) {
         return newJavaTask(getFlowMap().addJavaTask(taskDefinition));
     }
@@ -108,6 +115,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         if (accessStrategy != null) {
             task.addAccessStrategy(accessStrategy);
         }
+        task.withExecutionPage(new NullPageStrategy());
         return task;
     }
 
