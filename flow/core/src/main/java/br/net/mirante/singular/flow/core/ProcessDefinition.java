@@ -647,7 +647,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
                 }
             }
         } catch (Exception e) {
-            new SingularFlowException(e.getMessage(), e);
+            throw new SingularFlowException(e.getMessage(), e);
         }
         throw new SingularFlowException(
                 createErrorMsg("Construtor sem parametros  ausente: " + getProcessInstanceClass().getSimpleName() + "()"));
