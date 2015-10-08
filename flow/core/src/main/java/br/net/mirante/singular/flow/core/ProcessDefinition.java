@@ -1,20 +1,5 @@
 package br.net.mirante.singular.flow.core;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.google.common.base.MoreObjects;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -33,6 +18,21 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
+import com.google.common.base.MoreObjects;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>Esta é a classe responsável por manter as definições de um dado processo.</p>
@@ -85,7 +85,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * <p>Instancia uma nova definição de processo do tipo informado.</p>
      *
      * @param instanceClass o tipo da instância da definição a ser instanciada.
-     * @param varService o serviço de consulta das definições de variáveis.
+     * @param varService    o serviço de consulta das definições de variáveis.
      */
     protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
         this.processInstanceClass = instanceClass;
@@ -139,13 +139,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * <p>
      * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
      * </p>
-     *
+     * <p>
      * <p>
      * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
      * processo é igual à informada.
      * </p>
      *
-     * @param <T> o tipo informado.
+     * @param <T>                  o tipo informado.
      * @param variableWrapperClass a classe do <i>wrapper</i> a ser criado.
      * @return um novo <i>wrapper</i> para o tipo informado.
      * @throws SingularFlowException caso as classes não sejam iguais.
@@ -280,8 +280,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     /**
      * <p>Retorna o valor do metadado especificado.</p>
      *
-     * @param <T> o tipo do metadado.
-     * @param propRef o metadado especificado.
+     * @param <T>          o tipo do metadado.
+     * @param propRef      o metadado especificado.
      * @param defaultValue o valor padrão do metadado.
      * @return o valor do metadado especificado; ou o valor padrão caso não encontre o metadado especificado.
      */
@@ -292,7 +292,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     /**
      * <p>Retorna o valor do metadado especificado.</p>
      *
-     * @param <T> o tipo do metadado.
+     * @param <T>     o tipo do metadado.
      * @param propRef o metadado especificado.
      * @return o valor do metadado especificado; ou {@code null} caso não encontre o metadado especificado.
      */
@@ -303,9 +303,9 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     /**
      * <p>Configura o valor do metadado especificado.</p>
      *
-     * @param <T> o tipo do metadado.
+     * @param <T>     o tipo do metadado.
      * @param propRef o metadado especificado.
-     * @param value o valor do metadado a ser configurado.
+     * @param value   o valor do metadado a ser configurado.
      * @return esta definição de processo já com o metadado definido.
      */
     protected <T> ProcessDefinition<I> setMetaDataValue(MetaDataRef<T> propRef, T value) {
@@ -351,7 +351,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @param taskDefinition a definição informada.
      * @return a definição da tarefa informada.
-     *
      * @throws br.net.mirante.singular.commons.base.SingularException caso não encontre a tarefa.
      */
     public MTask<?> getTask(ITaskDefinition taskDefinition) {
@@ -450,7 +449,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @param taskAbbreviation a sigla da definição informada.
      * @return a entidade persistente.
-     *
      * @throws SingularFlowException caso a entidade não seja encontrada.
      */
     public final IEntityTaskDefinition getEntityTaskDefinitionOrException(String taskAbbreviation) {
@@ -463,16 +461,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     /**
      * <p>Formata uma mensagem de erro.</p>
-     *
+     * <p>
      * <p>A formatação da mensagem segue o seguinte padrão:</p>
-     *
+     * <p>
      * <pre>
      *     "Processo MBPM '" + getName() + "': " + msg
      * </pre>
      *
      * @param msg a mensagem a ser formatada.
      * @return a mensagem formatada.
-     *
      * @see #getName()
      */
     protected final String createErrorMsg(String msg) {
@@ -581,7 +578,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * <p>Configura a categoria e nome desta definição de processo.</p>
      *
      * @param category a categoria.
-     * @param name o nome.
+     * @param name     o nome.
      */
     protected final void setName(String category, String name) {
         setName(category, generateAbbreviation(), name);
@@ -632,7 +629,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *
      * @return a nova instância (<i>null safe</i>).
      */
-    protected I newInstance() {
+    public I newInstance() {
         I novo = newUnbindedInstance();
         novo.setInternalEntity(createProcessInstance());
         return novo;
@@ -641,13 +638,19 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private I newUnbindedInstance() {
         I novo;
         try {
-            novo = getProcessInstanceClass().newInstance();
+            for (Constructor<?> c : getProcessInstanceClass().getDeclaredConstructors()) {
+                if (c.getParameters().length == 0) {
+                    c.setAccessible(true);
+                    novo = (I) c.newInstance();
+                    novo.setProcessDefinition(this);
+                    return novo;
+                }
+            }
         } catch (Exception e) {
-            throw new SingularFlowException(
-                    createErrorMsg("Construtor público ausente: " + getProcessInstanceClass().getSimpleName() + "()"), e);
+            new SingularFlowException(e.getMessage(), e);
         }
-        novo.setProcessDefinition(this);
-        return novo;
+        throw new SingularFlowException(
+                createErrorMsg("Construtor sem parametros  ausente: " + getProcessInstanceClass().getSimpleName() + "()"));
     }
 
     final IEntityProcessInstance createProcessInstance() {

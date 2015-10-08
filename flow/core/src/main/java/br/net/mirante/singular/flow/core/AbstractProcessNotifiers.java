@@ -17,4 +17,6 @@ public abstract class AbstractProcessNotifiers {
     public abstract void notifyStartToInterestedUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask);
 
     public abstract <X extends MUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify);
+
+    public abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
 }

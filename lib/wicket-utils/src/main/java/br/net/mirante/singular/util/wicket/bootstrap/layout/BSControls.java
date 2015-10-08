@@ -146,8 +146,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public Label newHelpBlock(IModel<String> textModel) {
-        return super.newTag("span", true,
-            "class='help-block'", newComponent(id -> new Label(id, textModel)));
+        return super.newTag("span", true, "class='help-block'", (Label) newComponent(id -> new Label(id, textModel)));
     }
     public BSControls appendHelpBlock(IModel<String> textModel) {
         newHelpBlock(textModel);
