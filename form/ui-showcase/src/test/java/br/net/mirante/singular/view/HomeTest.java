@@ -14,7 +14,7 @@ import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/test-context.xml"})
-//@ContextConfiguration(locations = {"classpath:WEB-INF/applicationContext.xml"})
+//BASED on https://ci.apache.org/projects/wicket/guide/6.x/guide/testingspring.html
 public class HomeTest {
 
 	private WicketTester driver;

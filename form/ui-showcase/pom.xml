@@ -189,11 +189,18 @@
             <scope>provided</scope>
         </dependency>
         
+        <!-- FOR TESTING USING SPRING -->
         <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.reflections</groupId>
+		    <artifactId>reflections</artifactId>
+		    <version>0.9.10</version>
 		</dependency>
     </dependencies>
 
