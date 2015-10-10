@@ -255,7 +255,7 @@ public class TaskInstance {
         if (adicionarAlocado) {
             MUser p = getAllocatedUser();
             if (p != null) {
-                sb.append(" (").append(p.getNomeGuerra()).append(")");
+                sb.append(" (").append(p.getSimpleName()).append(")");
             }
         }
         return sb;

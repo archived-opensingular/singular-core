@@ -705,7 +705,7 @@ public class ProcessInstance {
 
                 final TaskInstance latestTask = getLatestTask();
                 if (latestTask != null) {
-                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
+                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 }
             }
         } else if (newUser == null || !previousUser.equals(newUser)) {
@@ -718,7 +718,7 @@ public class ProcessInstance {
             final TaskInstance latestTask = getLatestTask();
             if (latestTask != null) {
                 if (newUser != null) {
-                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
+                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 } else {
                     latestTask.log("Papel removido", mProcessRole.getName());
                 }
