@@ -1,21 +1,23 @@
 package br.net.mirante.singular.persistence.dao;
 
-import br.net.mirante.singular.flow.core.entity.IEntityByCod;
-import br.net.mirante.singular.persistence.entity.ProcessDefinition;
-import br.net.mirante.singular.persistence.entity.Role;
-import br.net.mirante.singular.persistence.entity.util.SessionLocator;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
 import java.io.Serializable;
 import java.util.Collection;
 
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
+import br.net.mirante.singular.flow.core.entity.IEntityByCod;
+import br.net.mirante.singular.persistence.entity.util.SessionLocator;
+
 public abstract class AbstractHibernateDAO<T extends IEntityByCod> {
+
+    protected final Class<T> entityClass;
 
     protected final SessionLocator sessionLocator;
 
-    public AbstractHibernateDAO(SessionLocator sessionLocator) {
+    public AbstractHibernateDAO(Class<T> entityClass, SessionLocator sessionLocator) {
         this.sessionLocator = sessionLocator;
+        this.entityClass = entityClass;
     }
 
     public SessionLocator getSessionLocator() {
@@ -50,9 +52,12 @@ public abstract class AbstractHibernateDAO<T extends IEntityByCod> {
         return (T) getSession().merge(t);
     }
 
-    @SuppressWarnings("unchecked")
-    public T retrieveByUniqueProperty(Class<T> clazz, String prop, Object o) {
-        return (T) getSession().createCriteria(clazz).add(Restrictions.eq(prop, o)).uniqueResult();
+    public final T retrieveById(Serializable id) {
+        return entityClass.cast(getSession().load(entityClass, id));
+    }
+
+    public T retrieveByUniqueProperty(String prop, Object o) {
+        return entityClass.cast(getSession().createCriteria(entityClass).add(Restrictions.eq(prop, o)).uniqueResult());
     }
 
 }

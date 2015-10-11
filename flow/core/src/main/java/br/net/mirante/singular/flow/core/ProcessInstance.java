@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
@@ -161,10 +162,10 @@ public class ProcessInstance implements Serializable {
             if (codEntity != null) {
                 IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
                 if (newfromDB != null) {
-                    if (!getProcessDefinition().getEntity().getProcessDefinition().equals(newfromDB.getProcess().getProcessDefinition())) {
+                    if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcess().getProcessDefinition())) {
                         throw new SingularException(getProcessDefinition().getName() + " id=" + codEntity
                                 + " se refere a definição de processo " + newfromDB.getProcess().getProcessDefinition().getAbbreviation()
-                                + " mas era esperado que referenciasse " + getProcessDefinition().getEntity().getProcessDefinition());
+                                + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
 
                     }
                     entity = newfromDB;
@@ -750,7 +751,8 @@ public class ProcessInstance implements Serializable {
 
     private void addUserRole(MProcessRole mProcessRole, MUser user) {
         if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
-            getPersistenceService().setInstanceUserRole(getEntity(), getProcessDefinition().getEntity().getRole(mProcessRole.getAbbreviation()), user);
+            getPersistenceService().setInstanceUserRole(getEntity(),
+                    getProcessDefinition().getEntityProcessDefinition().getRole(mProcessRole.getAbbreviation()), user);
         }
     }
 
@@ -1064,7 +1066,7 @@ public class ProcessInstance implements Serializable {
         return getFinishedTask(tipo.getAbbreviation());
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessDefinition().getPersistenceService();
     }
 

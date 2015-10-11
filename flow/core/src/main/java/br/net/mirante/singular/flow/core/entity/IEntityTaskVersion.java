@@ -4,24 +4,25 @@ import java.util.Date;
 import java.util.List;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
-import br.net.mirante.singular.flow.core.TaskType;
 
 public interface IEntityTaskVersion extends IEntityByCod {
 
     IEntityProcessVersion getProcess();
-    
+
     String getName();
+
+    void setName(String name);
 
     IEntityTaskType getType();
 
     IEntityTaskDefinition getTaskDefinition();
 
     List<? extends IEntityTaskTransition> getTransitions();
-    
+
     default Date getVersionDate(){
         return getProcess().getVersionDate();
     }
-    
+
     default IEntityTaskTransition getTransition(String abbreviation) {
         for (IEntityTaskTransition entityTaskTransition : getTransitions()) {
             if (entityTaskTransition.getAbbreviation().equalsIgnoreCase(abbreviation)) {
@@ -30,25 +31,25 @@ public interface IEntityTaskVersion extends IEntityByCod {
         }
         return null;
     }
-    
+
     default String getAbbreviation(){
         return getTaskDefinition().getAbbreviation();
     }
-    
+
     default boolean isEnd() {
-        return TaskType.End.equals(getType());
+        return getType().isEnd();
     }
 
     default boolean isPeople() {
-        return TaskType.People.equals(getType());
+        return getType().isPeople();
     }
 
     default boolean isWait() {
-        return TaskType.Wait.equals(getType());
+        return getType().isWait();
     }
 
     default boolean isJava() {
-        return TaskType.Java.equals(getType());
+        return getType().isJava();
     }
 
     default String getDetail() {

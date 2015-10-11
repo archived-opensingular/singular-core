@@ -7,7 +7,7 @@ public class RoleInstanceDAO extends AbstractHibernateDAO<RoleInstance> {
 
 
     public RoleInstanceDAO(SessionLocator sessionLocator) {
-        super(sessionLocator);
+        super(RoleInstance.class, sessionLocator);
     }
 
 }
