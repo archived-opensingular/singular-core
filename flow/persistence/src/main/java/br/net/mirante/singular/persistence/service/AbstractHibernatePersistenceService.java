@@ -1,12 +1,19 @@
 package br.net.mirante.singular.persistence.service;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
@@ -30,7 +37,6 @@ import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole>
@@ -45,6 +51,11 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     // ProcessIntance
     // -------------------------------------------------------
 
+    @Override
+    public PROCESS_INSTANCE retrieveProcessInstanceByCod(Integer cod) {
+        return getSession().retrieve(getClassProcessInstance(), cod);
+    }
+    
     /**
      * Cria uma intancia de ProcessIntance parcialmente preenchida. Apenas isola
      * a persistencia do tipo correto.
@@ -90,12 +101,22 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(processInstance);
     }
 
+    
+    protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
+    
     /**
      * Cria uma nova taskInstance parcialmente preenchiada apenas com
      * processIntance e taskVersion.
      */
     protected abstract TASK_INSTANCE newTaskInstance(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion);
 
+    @Override
+    public TASK_INSTANCE retrieveTaskInstanceByCod(Integer cod) {
+        Objects.requireNonNull(cod);
+        return getSession().retrieve(getClassTaskInstance(), cod);
+    }
+
+    
     @Override
     public TASK_INSTANCE addTask(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion) {
         Date agora = new Date();
@@ -242,7 +263,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             variavel = newVariableInstance(processInstance, mVariavel.getRef());
 
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variavel.getValue())) {
+            if (!Objects.equals(valorString, variavel.getValue())) {
                 variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variavel.setValue(valorString);
             }
@@ -251,7 +272,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             ss.refresh(processInstance);
         } else {
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variavel.getValue())) {
+            if (!Objects.equals(valorString, variavel.getValue())) {
                 variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variavel.setValue(valorString);
                 ss.merge(variavel);
@@ -317,6 +338,54 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         return variableType;
     }
 
+    protected abstract Class<PROCESS_INSTANCE> getClassProcessInstance();
+    
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date minDataInicio, Date maxDataInicio, java.util.Collection<? extends TASK_DEF> states) {
+        Objects.requireNonNull(process);
+        final Criteria c = getSession().createCriteria(getClassProcessInstance());
+        c.createAlias("process", "DEF");
+        c.add(Restrictions.eq("DEF.processDefinition", process));
+        if (states != null && !states.isEmpty()) {
+            c.add(Restrictions.in("currentTaskDefinition", states));
+        }
+        if (minDataInicio != null) {
+            c.add(Restrictions.ge("beginDate", minDataInicio));
+        }
+        if (maxDataInicio != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(maxDataInicio);
+            calendar.add(Calendar.DAY_OF_YEAR, 1);
+            calendar.add(Calendar.MILLISECOND, -1);
+            c.add(Restrictions.le("beginDate", calendar.getTime()));
+        }
+        c.addOrder(Order.desc("beginDate"));
+        return c.list();
+    }
+
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, MUser creatingUser, Boolean active) {
+        Objects.requireNonNull(process);
+        Criteria c = getSession().createCriteria(getClassProcessInstance());
+        c.createAlias("process", "DEF");
+        c.add(Restrictions.eq("DEF.processDefinition", process));
+        c.addOrder(Order.desc("dataSituacaoAtual"))
+            .setCacheable(true);
+        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        if (active != null) {
+            c.createAlias("situacao", "ST");
+            if (active) {
+                c.add(Restrictions.ne("ST.type", TaskType.End));
+            } else {
+                c.add(Restrictions.eq("ST.type", TaskType.End));
+            }
+        }
+
+        if (creatingUser != null) {
+            c.add(Restrictions.eq("userCreator", creatingUser));
+        }
+        return c.list();
+    }
+    
     // -------------------------------------------------------
     // Util
     // -------------------------------------------------------
