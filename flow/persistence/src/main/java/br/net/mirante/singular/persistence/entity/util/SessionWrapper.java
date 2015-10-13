@@ -23,7 +23,6 @@ public class SessionWrapper {
 
     public SessionWrapper(Session session) {
         this.session = session;
-        session.beginTransaction();
     }
 
     public Session getSession() {
@@ -211,7 +210,7 @@ public class SessionWrapper {
     /**
      * Carrega todas as instancia do BD (fazendo cache) e retorna a primeira
      * instância que atende a condição informada.
-     * 
+     *
      * @return Null senão encontrada
      */
     public <T> T retrieveFirstFromCachedRetriveAll(Class<T> classe, Predicate<T> filtro) {
@@ -221,7 +220,7 @@ public class SessionWrapper {
     /**
      * Retorna a primeira entidade no BD com a propriedade no valor indicado.
      * Não faz cache da consulta.
-     * 
+     *
      * @return NUll senão encontrada.
      */
     public <T> T retrieveByUniqueProperty(Class<T> classe, String prop, Object value) {
@@ -230,7 +229,7 @@ public class SessionWrapper {
 
     /**
      * Retorna todas as intância do banco sem fazer cache.
-     * 
+     *
      * @return Nunca null
      */
     public <T> List<T> retrieveAll(Class<T> classe) {
@@ -239,7 +238,7 @@ public class SessionWrapper {
 
     /**
      * Retorna todas as intância do banco podendo ou não faze cache.
-     * 
+     *
      * @return Nunca null
      */
     public <T> List<T> retrieveAll(Class<T> classe, boolean cacheResult) {
