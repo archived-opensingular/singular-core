@@ -72,7 +72,7 @@ public class RoleInstance implements IEntityRole {
 
     @Override
     public Actor getAllocatorUser() {
-        return getAllocatorUser();
+        return allocatorUser;
     }
 
     public void setCreateDate(Date createDate) {
