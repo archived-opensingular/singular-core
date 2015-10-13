@@ -90,6 +90,13 @@ public class FlowBuilderImpl extends
         public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
             return getFlowBuilder().addTransition(this, actionName, getFlowBuilder().from(taskRefDestiny));
         }
+
+        /**
+         * Cria uma nova transição da task atual para a task destino informada
+         */
+        public BTransition<?> go(ITaskDefinition taskRefDestiny) {
+            return go(taskRefDestiny.getName(), taskRefDestiny);
+        }
     }
 
     protected static class ImplBJava<SELF extends ImplBJava<SELF>> extends ImplBTask<SELF, MTaskJava> implements BJava<SELF> {
