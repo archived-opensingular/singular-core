@@ -333,8 +333,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MView getView() {
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
-    public void addValidacao(IValidator<?> validador) {
+    public MTipo<I> addValidacao(IValidator<?> validador) {
         this.validadores.add(validador);
+        return this;
     }
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validar(IValidatable<?> validatable) {

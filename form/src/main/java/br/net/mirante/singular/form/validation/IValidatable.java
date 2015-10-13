@@ -6,5 +6,6 @@ public interface IValidatable<T> {
     T getValue();
     MInstancia getMInstancia();
     void error(IValidationError error);
+    IValidationError error(String msg);
     boolean isValid();
 }

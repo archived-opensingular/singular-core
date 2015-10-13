@@ -20,6 +20,7 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.validator.MEmailValidator;
 import br.net.mirante.singular.form.wicket.AtrWicket;
 
 public class MPacoteCurriculo extends MPacote {
@@ -44,11 +45,12 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class);
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         {
-            informacoesPessoais.as(AtrBasic::new).label("Informações Pessoais");
-            nome.withObrigatorio(true)
+            informacoesPessoais
+                .as(AtrBasic::new).label("Informações Pessoais");
+            nome
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
-            cpf.withObrigatorio(true)
+            cpf
                 .as(AtrBasic::new).label("CPF")
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
@@ -62,14 +64,20 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoTelefoneNacional telFixo2 = contatos.addCampo("telefoneFixo2", MTipoTelefoneNacional.class);
         final MTipoTelefoneNacional telCel = contatos.addCampo("telefoneCelular", MTipoTelefoneNacional.class);
         {
-            contatos.as(AtrBasic::new).label("Contatos");
-            email.as(AtrBasic::new).label("e-Mail")
+            contatos
+                .as(AtrBasic::new).label("Contatos");
+            email
+                .addValidacao(MEmailValidator.getInstance())
+                .as(AtrBasic::new).label("e-Mail")
                 .as(AtrWicket::new).larguraPref(6);
-            telFixo.as(AtrBasic::new).label("Tel.Fixo")
+            telFixo
+                .as(AtrBasic::new).label("Tel.Fixo")
                 .as(AtrWicket::new).larguraPref(2);
-            telFixo2.as(AtrBasic::new).label("Tel.Fixo")
+            telFixo2
+                .as(AtrBasic::new).label("Tel.Fixo")
                 .as(AtrWicket::new).larguraPref(2);
-            telCel.as(AtrBasic::new).label("Tel.Celular")
+            telCel
+                .as(AtrBasic::new).label("Tel.Celular")
                 .as(AtrWicket::new).larguraPref(2);
         }
 
@@ -95,9 +103,11 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
-            formacao.withView(MGridListaView::new)
+            formacao
+                .withView(MGridListaView::new)
                 .as(AtrBasic::new).label("Formação Acadêmica").tamanhoInicial(1);
-            academicoTipo.withView(MSelecaoPorRadioView::new)
+            academicoTipo
+                .withView(MSelecaoPorRadioView::new)
                 .as(AtrBasic::new).label("Tipo")
                 .as(AtrWicket::new).larguraPref(2);
             academicoNomeCurso
@@ -118,7 +128,8 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString cargo = experiencia.addCampoString("cargo", true);
         final MTipoString atividades = experiencia.addCampoString("atividades");
         {
-            experiencias.withView(MPanelListaView::new)
+            experiencias
+                .withView(MPanelListaView::new)
                 .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(2);
             dtInicioExperiencia
                 .as(AtrBasic::new).label("Data inicial")
@@ -142,8 +153,8 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
-            certificacoes.withView(() -> new MTableListaView());
             certificacoes
+                .withView(() -> new MTableListaView())
                 .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
             certificacao
                 .as(AtrBasic::new).label("Certificação");

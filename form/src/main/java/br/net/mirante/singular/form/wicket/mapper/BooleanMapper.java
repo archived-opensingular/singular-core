@@ -23,12 +23,12 @@ public class BooleanMapper implements IWicketComponentMapper {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
 
         formGroup.appendLabel(new BSLabel("label", "")
-            .add(DisabledClassBehavior.INSTANCE));
+            .add(DisabledClassBehavior.getInstance()));
         formGroup.appendCheckbox(
             input,
             labelModel);
         //formGroup.appendFeedback();
 
-        input.add(DisabledClassBehavior.INSTANCE);
+        input.add(DisabledClassBehavior.getInstance());
     }
 }

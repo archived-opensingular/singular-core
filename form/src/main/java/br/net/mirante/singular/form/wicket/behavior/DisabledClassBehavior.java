@@ -5,7 +5,10 @@ import org.apache.wicket.behavior.AttributeAppender;
 
 public class DisabledClassBehavior extends AttributeAppender {
 
-    public static final DisabledClassBehavior INSTANCE = new DisabledClassBehavior();
+    private static final DisabledClassBehavior INSTANCE = new DisabledClassBehavior();
+    public static DisabledClassBehavior getInstance() {
+        return INSTANCE;
+    }
 
     private DisabledClassBehavior() {
         super("class", "disabled", " ");
