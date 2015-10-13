@@ -1,8 +1,5 @@
 package br.net.mirante.singular.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
@@ -41,10 +37,6 @@ public class Role implements IEntityProcessRole {
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
     private ProcessDefinition processDefinition;
-
-    @Deprecated
-    @OneToMany(mappedBy = "role")
-    private List<RoleInstance> rolesInstances;
 
     public Role() {
     }
@@ -93,21 +85,4 @@ public class Role implements IEntityProcessRole {
         this.name = name;
     }
 
-    @Override
-    @Deprecated
-    // TODO lista muito pessada. Trocar uso por um consulta especifica e apagar
-    // essa lista
-    public List<RoleInstance> getRolesInstances() {
-        return rolesInstances;
-    }
-
-    @Override
-    @Deprecated
-    public void setRolesInstancesAsEmpty() {
-        setRolesInstances(new ArrayList<>());
-    }
-
-    public void setRolesInstances(List<RoleInstance> rolesInstances) {
-        this.rolesInstances = rolesInstances;
-    }
 }

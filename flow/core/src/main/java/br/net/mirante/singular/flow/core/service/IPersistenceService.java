@@ -19,7 +19,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
@@ -68,7 +68,7 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     /**
      * Must persist: {@link IEntityProcessDefinition}, {@link IEntityProcessVersion},
-     * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion} and {@link IEntityTaskTransition}.
+     * {@link IEntityTaskDefinition}, {@link IEntityTaskVersion} and {@link IEntityTaskTransitionVersion}.
      *
      * @param processVersion the process definition to persist.
      * @return the persisted process definition.

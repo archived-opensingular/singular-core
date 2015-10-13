@@ -17,14 +17,14 @@ public interface IEntityTaskVersion extends IEntityByCod {
 
     IEntityTaskDefinition getTaskDefinition();
 
-    List<? extends IEntityTaskTransition> getTransitions();
+    List<? extends IEntityTaskTransitionVersion> getTransitions();
 
     default Date getVersionDate(){
         return getProcess().getVersionDate();
     }
 
-    default IEntityTaskTransition getTransition(String abbreviation) {
-        for (IEntityTaskTransition entityTaskTransition : getTransitions()) {
+    default IEntityTaskTransitionVersion getTransition(String abbreviation) {
+        for (IEntityTaskTransitionVersion entityTaskTransition : getTransitions()) {
             if (entityTaskTransition.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return entityTaskTransition;
             }

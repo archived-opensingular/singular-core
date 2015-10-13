@@ -5,9 +5,6 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Throwables;
-
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
@@ -22,7 +19,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
@@ -32,6 +29,9 @@ import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole>
         extends AbstractHibernateService implements
@@ -131,7 +131,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, MUser responsibleUser) {
         task.setEndDate(new Date());
-        IEntityTaskTransition transition = task.getTask().getTransition(transitionAbbreviation);
+        IEntityTaskTransitionVersion transition = task.getTask().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
 
         if (responsibleUser != null) {

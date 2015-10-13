@@ -19,7 +19,7 @@ import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -209,7 +209,7 @@ public class TaskInstance implements IEntityTaskInstance {
     }
 
     @Override
-    public void setExecutedTransition(IEntityTaskTransition transition) {
+    public void setExecutedTransition(IEntityTaskTransitionVersion transition) {
         setExecutedTransition((Transition) executedTransition);
     }
 

@@ -6,12 +6,12 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 
 public interface IProcessDefinitionEntityService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition,
         PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion,
- TRANSITION extends IEntityTaskTransition, PROCESS_ROLE extends IEntityProcessRole> {
+ TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE extends IEntityProcessRole> {
 
     /**
      * Generates a new {@link IEntityProcessVersion} if {@link ProcessDefinition} is
