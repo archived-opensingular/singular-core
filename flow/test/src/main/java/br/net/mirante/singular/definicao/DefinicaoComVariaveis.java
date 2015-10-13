@@ -1,4 +1,4 @@
-package br.net.mirante.singular;
+package br.net.mirante.singular.definicao;
 
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;

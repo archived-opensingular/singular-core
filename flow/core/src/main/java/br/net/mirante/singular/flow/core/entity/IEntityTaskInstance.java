@@ -33,9 +33,9 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     void setSuspensionTargetDate(Date suspensionTargetDate);
 
-    IEntityTaskTransition getExecutedTransition();
+    IEntityTaskTransitionVersion getExecutedTransition();
 
-    void setExecutedTransition(IEntityTaskTransition transition);
+    void setExecutedTransition(IEntityTaskTransitionVersion transition);
 
     List<? extends IEntityExecutionVariable> getInputVariables();
 

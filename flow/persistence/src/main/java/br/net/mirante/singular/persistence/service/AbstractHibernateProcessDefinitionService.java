@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
@@ -17,16 +21,17 @@ import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
-public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransition, PROCESS_ROLE extends IEntityProcessRole>
+public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityProcessRole, PROCESS_ROLE extends IEntityRole>
         extends AbstractHibernateService
-        implements IProcessDefinitionEntityService<CATEGORY, PROCESS_DEF, PROCESS_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE> {
+        implements IProcessDefinitionEntityService<CATEGORY, PROCESS_DEF, PROCESS_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE_DEF> {
 
     public AbstractHibernateProcessDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -112,6 +117,8 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return def;
     }
 
+    protected abstract Class<? extends PROCESS_ROLE_DEF> getClassProcessRoleDef();
+
     protected abstract Class<? extends PROCESS_ROLE> getClassProcessRole();
 
     private final void checkRoleDefChanges(ProcessDefinition<?> processDefinition, PROCESS_DEF entityProcessDefinition) {
@@ -121,10 +128,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         for (IEntityProcessRole role : new ArrayList<>(entityProcessDefinition.getRoles())) {
             MProcessRole roleAbbreviation = processDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
             if (roleAbbreviation == null) {
-                // TODO Daniel: o if abaixo é muito ruim pois gera um consulta
-                // eventualmente muito pesada no BD. Deve ser trocado por uma
-                // consulta que retorne apenas um linha.
-                if (role.getRolesInstances().isEmpty()) {
+                if (!hasRoleInstances(sw, role)) {
                     entityProcessDefinition.getRoles().remove(role);
                     sw.delete(role);
                 }
@@ -141,17 +145,23 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
         for (MProcessRole mPapel : processDefinition.getFlowMap().getRoles()) {
             if (!abbreviations.contains(mPapel.getAbbreviation())) {
-                PROCESS_ROLE role = newInstanceOf(getClassProcessRole());
+                PROCESS_ROLE_DEF role = newInstanceOf(getClassProcessRoleDef());
                 role.setProcessDefinition(entityProcessDefinition);
                 role.setName(mPapel.getName());
                 role.setAbbreviation(mPapel.getAbbreviation());
-                role.setRolesInstancesAsEmpty();
                 sw.save(role);
             }
         }
         sw.refresh(entityProcessDefinition);
     }
-
+    
+    private boolean hasRoleInstances(SessionWrapper sw, IEntityProcessRole role){
+        Criteria criteria = sw.createCriteria(getClassProcessRole());
+        criteria.add(Restrictions.eq("role", role));
+        criteria.setProjection(Projections.rowCount());
+        return ((Number)criteria.uniqueResult()).doubleValue() > 0;
+    }
+    
     protected abstract Class<? extends CATEGORY> getClassCategory();
 
     private final CATEGORY retrieveOrCreateCategoryWith(String name) {
@@ -197,8 +207,8 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
                 || oldEntityTask.getTransitions().size() != newEntitytask.getTransitions().size()) {
             return true;
         }
-        for (IEntityTaskTransition newEntityTaskTransition : newEntitytask.getTransitions()) {
-            IEntityTaskTransition oldEntityTaskTransition = oldEntityTask.getTransition(newEntityTaskTransition.getAbbreviation());
+        for (IEntityTaskTransitionVersion newEntityTaskTransition : newEntitytask.getTransitions()) {
+            IEntityTaskTransitionVersion oldEntityTaskTransition = oldEntityTask.getTransition(newEntityTaskTransition.getAbbreviation());
             if (isNewVersion(oldEntityTaskTransition, newEntityTaskTransition)) {
                 return true;
             }
@@ -206,7 +216,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         return false;
     }
 
-    private boolean isNewVersion(IEntityTaskTransition oldEntityTaskTransition, IEntityTaskTransition newEntityTaskTransition) {
+    private boolean isNewVersion(IEntityTaskTransitionVersion oldEntityTaskTransition, IEntityTaskTransitionVersion newEntityTaskTransition) {
         return oldEntityTaskTransition == null || !oldEntityTaskTransition.getName().equalsIgnoreCase(newEntityTaskTransition.getName())
                 || !oldEntityTaskTransition.getAbbreviation().equalsIgnoreCase(newEntityTaskTransition.getAbbreviation())
                 || oldEntityTaskTransition.getType() != newEntityTaskTransition.getType() || !oldEntityTaskTransition.getDestinationTask()

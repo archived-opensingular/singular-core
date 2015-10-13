@@ -8,6 +8,7 @@ import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.Process;
 import br.net.mirante.singular.persistence.entity.ProcessDefinition;
 import br.net.mirante.singular.persistence.entity.Role;
+import br.net.mirante.singular.persistence.entity.RoleInstance;
 import br.net.mirante.singular.persistence.entity.Task;
 import br.net.mirante.singular.persistence.entity.TaskDefinition;
 import br.net.mirante.singular.persistence.entity.TaskType;
@@ -15,7 +16,7 @@ import br.net.mirante.singular.persistence.entity.Transition;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
 public class DefaultHibernateProcessDefinitionService
-        extends AbstractHibernateProcessDefinitionService<Category, ProcessDefinition, Process, TaskDefinition, Task, Transition, Role> {
+        extends AbstractHibernateProcessDefinitionService<Category, ProcessDefinition, Process, TaskDefinition, Task, Transition, Role, RoleInstance> {
 
     public DefaultHibernateProcessDefinitionService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -27,8 +28,13 @@ public class DefaultHibernateProcessDefinitionService
     }
 
     @Override
-    protected Class<Role> getClassProcessRole() {
+    protected Class<? extends Role> getClassProcessRoleDef() {
         return Role.class;
+    }
+    
+    @Override
+    protected Class<RoleInstance> getClassProcessRole() {
+        return RoleInstance.class;
     }
 
     @Override
