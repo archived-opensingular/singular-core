@@ -1,5 +1,6 @@
 package br.net.mirante.singular.persistence.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.persistence.util.Constants;
 
@@ -40,6 +42,7 @@ public class Role implements IEntityProcessRole {
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
     private ProcessDefinition processDefinition;
 
+    @Deprecated
     @OneToMany(mappedBy = "role")
     private List<RoleInstance> rolesInstances;
 
@@ -59,6 +62,11 @@ public class Role implements IEntityProcessRole {
     @Override
     public ProcessDefinition getProcessDefinition() {
         return this.processDefinition;
+    }
+
+    @Override
+    public void setProcessDefinition(IEntityProcessDefinition processDefinition) {
+        setProcessDefinition((ProcessDefinition) processDefinition);
     }
 
     public void setProcessDefinition(ProcessDefinition processDefinition) {
@@ -85,8 +93,18 @@ public class Role implements IEntityProcessRole {
         this.name = name;
     }
 
+    @Override
+    @Deprecated
+    // TODO lista muito pessada. Trocar uso por um consulta especifica e apagar
+    // essa lista
     public List<RoleInstance> getRolesInstances() {
         return rolesInstances;
+    }
+
+    @Override
+    @Deprecated
+    public void setRolesInstancesAsEmpty() {
+        setRolesInstances(new ArrayList<>());
     }
 
     public void setRolesInstances(List<RoleInstance> rolesInstances) {

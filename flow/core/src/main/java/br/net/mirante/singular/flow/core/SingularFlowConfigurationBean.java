@@ -4,21 +4,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.defaults.NullNotifier;
 import br.net.mirante.singular.flow.core.defaults.NullViewLocator;
-import br.net.mirante.singular.flow.core.service.IUserService;
-import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
-import br.net.mirante.singular.flow.util.view.IViewLocator;
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
-import br.net.mirante.singular.flow.core.service.IProcessEntityService;
+import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
+import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
+import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
+import br.net.mirante.singular.flow.util.view.IViewLocator;
 
 //TODO implementacao default, essa classe deveria vir implementada por default, muita coisa para definir
 public abstract class SingularFlowConfigurationBean {
@@ -193,10 +193,10 @@ public abstract class SingularFlowConfigurationBean {
         return YFilesFlowRenderer.getInstance();
     }
 
-    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
+    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
 
-    protected abstract IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService();
+    protected abstract IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> getProcessEntityService();
 
 
     protected IScheduleService getScheduleService() {

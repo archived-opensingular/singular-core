@@ -40,7 +40,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
     @Test()
     public void teste2PersistenciaVariaveis() {
         DefinicaoComVariaveis d = mbpmBean.getProcessDefinition(DefinicaoComVariaveis.class);
-        List<br.net.mirante.singular.persistence.entity.ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntity());
+        List<br.net.mirante.singular.persistence.entity.ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntityProcessVersion());
         for (br.net.mirante.singular.persistence.entity.ProcessInstance p : instances) {
             List<Variable> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());

@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -105,6 +106,7 @@ public class ProcessInstance implements IEntityProcessInstance {
         return endDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
@@ -114,6 +116,7 @@ public class ProcessInstance implements IEntityProcessInstance {
         return beginDate;
     }
 
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
@@ -130,6 +133,11 @@ public class ProcessInstance implements IEntityProcessInstance {
     @Override
     public TaskInstance getParentTask() {
         return parentTask;
+    }
+
+    @Override
+    public void setParentTask(IEntityTaskInstance parent) {
+        setParentTask((TaskInstance) parent);
     }
 
     public void setParentTask(TaskInstance parentTask) {
@@ -189,19 +197,12 @@ public class ProcessInstance implements IEntityProcessInstance {
         this.roles = roles;
     }
 
-    public void addTask(TaskInstance taskInstance) {
+    @Override
+    public void addTask(IEntityTaskInstance taskInstance) {
         if (getTasks() == null) {
             setTasks(new ArrayList<>());
         }
 
-        getTasks().add(taskInstance);
-    }
-
-    public void addRole(RoleInstance roleInstance) {
-        if (getRoles() == null) {
-            setRoles(new ArrayList<>());
-        }
-
-        getRoles().add(roleInstance);
+        getTasks().add((TaskInstance) taskInstance);
     }
 }

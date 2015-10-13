@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
@@ -33,7 +34,7 @@ public class Flow {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }
-        //getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
         getMbpmBean().init();
     }
 
@@ -51,7 +52,7 @@ public class Flow {
         return mbpmBean;
     }
 
-    public static <K extends ProcessDefinition<?>> K getDefinicao(Class<K> classe) {
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
         return getMbpmBean().getProcessDefinition(classe);
     }
     public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
@@ -66,12 +67,6 @@ public class Flow {
     @SuppressWarnings("unchecked")
     public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
         return (List<K>) getMbpmBean().getDefinitions();
-    }
-
-    public static <T extends VariableWrapper> T newInitialVariables(Class<? extends ProcessDefinition<?>> processDefinitionClass,
-            Class<T> variableWrapperClass) {
-        ProcessDefinition<?> processDefinition = getDefinicao(processDefinitionClass);
-        return processDefinition.newInitialVariables(variableWrapperClass);
     }
 
     public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {

@@ -4,22 +4,23 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
+import com.google.common.base.Joiner;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-
-import com.google.common.base.Joiner;
 
 class EngineProcessamentoMBPM {
 
@@ -81,7 +82,7 @@ class EngineProcessamentoMBPM {
                                 MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
                                     instanciaTarefa);
                                 Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                                    + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
+                                        + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
                                 instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
                             }
@@ -151,8 +152,9 @@ class EngineProcessamentoMBPM {
         } else {
             transicao = estadoAtual.getTransition(nomeTransicao);
             if (transicao == null) {
-                throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName() + "] não possui a transição '" + nomeTransicao
-                    + "' solicitada. As opções são: {" + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
+                throw new SingularFlowException("A tarefa [" + tarefaAtual.getProcessInstance().getFullId() + "." + estadoAtual.getName()
+                        + "] não possui a transição '" + nomeTransicao + "' solicitada. As opções são: {"
+                        + Joiner.on(',').join(estadoAtual.getTransitions()) + '}');
             }
         }
         return transicao;
@@ -169,8 +171,9 @@ class EngineProcessamentoMBPM {
     }
 
     @SuppressWarnings("unchecked")
-    private static IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow.getMbpmBean().getPersistenceService();
+    private static IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow
+                .getMbpmBean().getPersistenceService();
     }
 
     private static void validarParametrosInput(ProcessInstance instancia, MTransition transicao, VarInstanceMap<?> paramIn) {
@@ -180,7 +183,8 @@ class EngineProcessamentoMBPM {
         for (VarDefinition p : transicao.getParameters()) {
             if (p.isRequired()) {
                 if (!parametroPresentes(paramIn, p)) {
-                    throw new SingularFlowException("O parametro obrigatório '" + p.getRef() + "' não foi informado na chamada da transição "
+                    throw new SingularFlowException("O parametro obrigatório '" + p.getRef()
+                            + "' não foi informado na chamada da transição "
                         + transicao.getName());
                 }
             }

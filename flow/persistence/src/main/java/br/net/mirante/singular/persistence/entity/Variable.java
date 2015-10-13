@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -67,6 +68,7 @@ public class Variable implements IEntityVariableInstance {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -83,6 +85,11 @@ public class Variable implements IEntityVariableInstance {
     @Override
     public VariableType getType() {
         return type;
+    }
+
+    @Override
+    public void setType(IEntityVariableType type) {
+        setType((VariableType) type);
     }
 
     public void setType(VariableType type) {
