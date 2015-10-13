@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -13,6 +15,7 @@ import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IComportamento;
+import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
 
 @MFormTipo(nome = "MTipo", pacote = MPacoteCore.class)
@@ -29,6 +32,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     private MapaAtributos                   atributosDefinidos = new MapaAtributos();
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
+
+    private List<IValidator<?>>             validadores        = new ArrayList<>();
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
@@ -328,9 +333,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MView getView() {
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
-    public <T> void addValidacao(IValidator<T> validador) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+    public void addValidacao(IValidator<?> validador) {
+        this.validadores.add(validador);
+    }
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void validar(IValidatable<?> validatable) {
+        for (IValidator<?> validador : this.validadores)
+            validador.validate((IValidatable) validatable);
     }
 
     public I castInstancia(MInstancia instancia) {

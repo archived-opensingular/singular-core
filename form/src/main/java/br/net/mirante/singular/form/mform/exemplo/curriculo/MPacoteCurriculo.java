@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform.exemplo.curriculo;
 
+import java.time.Period;
+
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
@@ -194,7 +196,7 @@ public class MPacoteCurriculo extends MPacote {
 
         // Validacoes
         // ---------------------------------------------------------------------------------------------
-        //        dtNasc.addValidacao(MTipoData.validadorBuilder().entre(new Period().withYears(-100), new Period().withYears(-14)).build());
+        dtNasc.addValidacao(MTipoData.validadorBuilder().entre(Period.ofYears(-100), Period.ofYears(-14)).build());
 
         //        informacoesPessoais.addValidacao((IValidatable<MIComposto> validatable) -> {
         //            if (validatable.getValue().isCampoNull("telefoneFixo") && validatable.getValue().isCampoNull("telefoneCelular")) {

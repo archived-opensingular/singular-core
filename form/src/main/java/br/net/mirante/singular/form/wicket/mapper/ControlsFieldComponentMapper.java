@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.MInstanciaValidator;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
@@ -59,6 +60,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             FormComponent<?> fcInput = (FormComponent<?>) input;
             fcInput.add(RequiredByTipoBehavior.INSTANCE);
             label.add(RequiredLabelIndicatorBehavior.INSTANCE);
+            fcInput.add(new MInstanciaValidator<>());
         }
 
         if (input instanceof TextField<?>) {
