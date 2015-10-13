@@ -12,12 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.ImmutableList;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
@@ -238,10 +240,12 @@ public class TaskInstance {
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento, MUser alocada, MUser autor, Date dataHora,
             IEntityProcessInstance demandaFilha) {
-        return getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada, autor, dataHora, demandaFilha);
+        IEntityTaskInstanceHistory historico = getPersistenceService().saveTaskHistoricLog(entityTask, tipoHistorico, detalhamento, alocada,
+                autor, dataHora, demandaFilha);
+        return new TaskHistoricLog(historico);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessInstance().getProcessDefinition().getPersistenceService();
     }
 
@@ -255,7 +259,7 @@ public class TaskInstance {
         if (adicionarAlocado) {
             MUser p = getAllocatedUser();
             if (p != null) {
-                sb.append(" (").append(p.getNomeGuerra()).append(")");
+                sb.append(" (").append(p.getSimpleName()).append(")");
             }
         }
         return sb;

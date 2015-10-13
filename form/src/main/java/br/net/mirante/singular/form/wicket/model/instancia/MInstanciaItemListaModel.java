@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.model;
+package br.net.mirante.singular.form.wicket.model.instancia;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 

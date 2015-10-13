@@ -1,15 +1,16 @@
 package br.net.mirante.singular.persistence.util;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.util.Assert;
+
 import br.net.mirante.singular.flow.core.SingularFlowConfigurationBean;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
-import br.net.mirante.singular.flow.core.service.IProcessEntityService;
+import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceService;
 import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.util.Assert;
 
 public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigurationBean {
 
@@ -43,13 +44,13 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     }
 
     @Override
-    protected IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService() {
-        return new DefaultHibernatePersistenceService(this.getSessionLocator());
+    protected IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService() {
+        return new DefaultHibernatePersistenceService(getSessionLocator());
     }
 
     @Override
-    protected IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService() {
-        return new DefaultHibernateProcessDefinitionService(this.getSessionLocator());
+    protected IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> getProcessEntityService() {
+        return new DefaultHibernateProcessDefinitionService(getSessionLocator());
     }
 
     public SessionLocator getSessionLocator() {

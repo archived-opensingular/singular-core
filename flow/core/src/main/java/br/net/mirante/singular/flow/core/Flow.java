@@ -51,7 +51,7 @@ public class Flow {
         return mbpmBean;
     }
 
-    public static <K extends ProcessDefinition<?>> K getDefinicao(Class<K> classe) {
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
         return getMbpmBean().getProcessDefinition(classe);
     }
     public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
@@ -66,12 +66,6 @@ public class Flow {
     @SuppressWarnings("unchecked")
     public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
         return (List<K>) getMbpmBean().getDefinitions();
-    }
-
-    public static <T extends VariableWrapper> T newInitialVariables(Class<? extends ProcessDefinition<?>> processDefinitionClass,
-            Class<T> variableWrapperClass) {
-        ProcessDefinition<?> processDefinition = getDefinicao(processDefinitionClass);
-        return processDefinition.newInitialVariables(variableWrapperClass);
     }
 
     public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {

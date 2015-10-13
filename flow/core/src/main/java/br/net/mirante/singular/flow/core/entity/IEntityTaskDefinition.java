@@ -9,7 +9,9 @@ public interface IEntityTaskDefinition extends IEntityByCod {
     IEntityProcessDefinition getProcessDefinition();
 
     String getAbbreviation();
-    
+
+    void setAbbreviation(String abbreviation);
+
     List<? extends IEntityTaskVersion> getVersions();
 
     default IEntityTaskVersion getLastVersion(){

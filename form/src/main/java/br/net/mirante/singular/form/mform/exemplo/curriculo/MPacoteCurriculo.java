@@ -43,11 +43,11 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         {
             informacoesPessoais.as(AtrBasic::new).label("Informações Pessoais");
-            nome
-                .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50).obrigatorio(true)
+            nome.withObrigatorio(true)
+                .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
-            cpf
-                .as(AtrBasic::new).label("CPF").obrigatorio(true)
+            cpf.withObrigatorio(true)
+                .as(AtrBasic::new).label("CPF")
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")

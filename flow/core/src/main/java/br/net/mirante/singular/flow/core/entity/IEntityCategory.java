@@ -6,5 +6,7 @@ public interface IEntityCategory extends IEntityByCod {
 
     String getName();
 
+    void setName(String name);
+
     List<? extends IEntityProcessDefinition> getProcessDefinitions();
 }

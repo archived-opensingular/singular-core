@@ -1,18 +1,28 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+import java.util.Collections;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Date;
+import java.util.List;
 import java.util.List;
 import java.util.Objects;
+import java.util.Objects;
+import java.util.Set;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
@@ -25,16 +35,6 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.util.vars.ValidationResult;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 import br.net.mirante.singular.flow.util.view.Lnk;
-import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -45,15 +45,17 @@ import java.util.stream.Collectors;
  * @author Mirante Tecnologia
  */
 @SuppressWarnings({"serial", "unchecked"})
-public class ProcessInstance {
+public class ProcessInstance implements Serializable {
 
     private RefProcessDefinition processDefinitionRef;
+
+    private Integer codEntity;
+
+    private transient IEntityProcessInstance entity;
 
     private transient MTask<?> estadoAtual;
 
     private transient ExecucaoMTask executionContext;
-
-    private transient IEntityProcessInstance entity;
 
     private transient VarInstanceMap<?> variables;
 
@@ -77,7 +79,8 @@ public class ProcessInstance {
      */
     public <K extends ProcessDefinition<?>> K getProcessDefinition() {
         if (processDefinitionRef == null) {
-            throw new SingularException("A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newInstance() a partir da definição do processo.");
+            throw new SingularException(
+                    "A instância não foi inicializada corretamente, pois não tem uma referência a ProcessDefinition! Tente chamar o método newInstance() a partir da definição do processo.");
         }
         return (K) processDefinitionRef.get();
     }
@@ -156,8 +159,22 @@ public class ProcessInstance {
 
     final IEntityProcessInstance getInternalEntity() {
         if (entity == null) {
-            throw new SingularException(
-                    getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
+            if (codEntity != null) {
+                IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+                if (newfromDB != null) {
+                    if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcess().getProcessDefinition())) {
+                        throw new SingularException(getProcessDefinition().getName() + " id=" + codEntity
+                                + " se refere a definição de processo " + newfromDB.getProcess().getProcessDefinition().getAbbreviation()
+                                + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
+
+                    }
+                    entity = newfromDB;
+                }
+            }
+            if (entity == null) {
+                throw new SingularException(
+                        getClass().getName() + " is not binded to a new and neither to a existing database intance process entity.");
+            }
         }
         return entity;
     }
@@ -173,6 +190,7 @@ public class ProcessInstance {
     final void setInternalEntity(IEntityProcessInstance entity) {
         Objects.requireNonNull(entity);
         this.entity = entity;
+        this.codEntity = entity.getCod();
     }
 
     /**
@@ -401,19 +419,15 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>
      * Recupera a entidade persistente correspondente a esta instância de
      * processo.
-     * </p>
-     *
-     * @return a entidade persistente.
      */
     public final IEntityProcessInstance getEntity() {
-        if (getInternalEntity().getCod() == null) {
+        if (codEntity == null && getInternalEntity().getCod() == null) {
             return saveEntity();
         }
-        setInternalEntity(getPersistenceService().retrieveProcessInstanceByCod(getInternalEntity().getCod()));
-        return getInternalEntity();
+        entity = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
+        return entity;
     }
 
     /**
@@ -435,19 +449,27 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Recupera a lista de papeis da entidade persistente correspondente a esta instância.</p>
+     * <p>
+     * Recupera a lista de papeis da entidade persistente correspondente a esta
+     * instância.
+     * </p>
      *
      * @return os papeis.
      */
+    // TODO Daniel deveria retornar um objeto que isolasse da persistência
+    @Deprecated
     public final List<? extends IEntityRole> getUserRoles() {
         return getEntity().getRoles();
     }
 
     /**
-     * <p>Recupera a lista de papeis com a sigla especificada da entidade persistente
-     * correspondente a esta instância.</p>
+     * <p>
+     * Recupera a lista de papeis com a sigla especificada da entidade
+     * persistente correspondente a esta instância.
+     * </p>
      *
-     * @param roleAbbreviation a sigla especificada.
+     * @param roleAbbreviation
+     *            a sigla especificada.
      * @return os papeis.
      */
     public final IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
@@ -455,16 +477,21 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Verifica se há papeis definidos.</p>
+     * <p>
+     * Verifica se há papeis definidos.
+     * </p>
      *
-     * @return {@code true} caso haja pelo menos um papel definido; {@code false} caso contrário.
+     * @return {@code true} caso haja pelo menos um papel definido;
+     *         {@code false} caso contrário.
      */
     public final boolean hasUserRoles() {
         return !getEntity().getRoles().isEmpty();
     }
 
     /**
-     * <p>Retorna o usuário que criou esta instância de processo.</p>
+     * <p>
+     * Retorna o usuário que criou esta instância de processo.
+     * </p>
      *
      * @return o usuário criador.
      */
@@ -473,20 +500,28 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Altera a descrição desta instância de processo.</p>
+     * <p>
+     * Altera a descrição desta instância de processo.
+     * </p>
      *
-     * <p>A descrição será truncada para um tamanho máximo de 250 caracteres.</p>
+     * <p>
+     * A descrição será truncada para um tamanho máximo de 250 caracteres.
+     * </p>
      *
-     * @param descricao a nova descrição.
+     * @param descricao
+     *            a nova descrição.
      */
     public final void setDescription(String descricao) {
         getInternalEntity().setDescription(StringUtils.left(descricao, 250));
     }
 
     /**
-     * <p>Persiste esta instância de processo.</p>
+     * <p>
+     * Persiste esta instância de processo.
+     * </p>
      *
-     * @param <K> o tipo da entidade desta instância.
+     * @param <K>
+     *            o tipo da entidade desta instância.
      * @return a entidade persistida.
      */
     public final <K extends IEntityProcessInstance> K saveEntity() {
@@ -495,9 +530,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Realiza uma transição manual da tarefa atual para a tarefa especificada.</p>
+     * <p>
+     * Realiza uma transição manual da tarefa atual para a tarefa especificada.
+     * </p>
      *
-     * @param task a tarefa especificada.
+     * @param task
+     *            a tarefa especificada.
      */
     public final void forceStateUpdate(MTask<?> task) {
         final TaskInstance tarefaOrigem = getCurrentTask();
@@ -514,12 +552,19 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Realiza uma transição da tarefa de origiem para a tarefa alvo especificadas.</p>
+     * <p>
+     * Realiza uma transição da tarefa de origiem para a tarefa alvo
+     * especificadas.
+     * </p>
      *
-     * @param tarefaOrigem a tarefa de origem.
-     * @param transicaoOrigem a transição disparada.
-     * @param task a tarefa alvo.
-     * @param agora o momento da transição.
+     * @param tarefaOrigem
+     *            a tarefa de origem.
+     * @param transicaoOrigem
+     *            a transição disparada.
+     * @param task
+     *            a tarefa alvo.
+     * @param agora
+     *            o momento da transição.
      * @return a tarefa corrente depois da transição.
      */
     protected final TaskInstance updateState(TaskInstance tarefaOrigem, MTransition transicaoOrigem, MTask<?> task, Date agora) {
@@ -544,16 +589,18 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna a data inicial desta instância.</p>
+     * Retorna a data inicial desta instância.
      *
-     * @return a data inicial.
+     * @return nunca null.
      */
     public final Date getBeginDate() {
         return getInternalEntity().getBeginDate();
     }
 
     /**
-     * <p>Retorna a data de encerramento desta instância.</p>
+     * <p>
+     * Retorna a data de encerramento desta instância.
+     * </p>
      *
      * @return a data de encerramento.
      */
@@ -562,25 +609,31 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o código desta instância.</p>
+     * <p>
+     * Retorna o código desta instância.
+     * </p>
      *
      * @return o código.
      */
     public final Integer getEntityCod() {
-        return getInternalEntity().getCod();
+        return codEntity;
     }
 
     /**
-     * <p>Retorna o código desta instância como uma {@link String}.</p>
+     * <p>
+     * Retorna o código desta instância como uma {@link String}.
+     * </p>
      *
      * @return o código.
      */
     public final String getId() {
-        return getInternalEntity().getCod().toString();
+        return getEntityCod().toString();
     }
 
     /**
-     * <p>Retorna um novo <b>ID</b> autogerado para esta instância.</p>
+     * <p>
+     * Retorna um novo <b>ID</b> autogerado para esta instância.
+     * </p>
      *
      * @return o <b>ID</b> autogerado.
      */
@@ -593,7 +646,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>O mesmo que {@link #getCompleteDescription()}.</p>
+     * <p>
+     * O mesmo que {@link #getCompleteDescription()}.
+     * </p>
      *
      * @return a descrição completa.
      */
@@ -602,7 +657,8 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o nome do processo seguido da descrição completa.
+     * <p>
+     * Retorna o nome do processo seguido da descrição completa.
      *
      * @return o nome do processo seguido da descrição completa.
      */
@@ -615,7 +671,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna a descrição atual desta instância.</p>
+     * <p>
+     * Retorna a descrição atual desta instância.
+     * </p>
      *
      * @return a descrição atual.
      */
@@ -631,8 +689,10 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Cria a descrição que vai gravada no banco de dados. Deve ser sobreescrito
-     * para ter efeito.</p>
+     * <p>
+     * Cria a descrição que vai gravada no banco de dados. Deve ser sobreescrito
+     * para ter efeito.
+     * </p>
      *
      * @return a descrição criada.
      */
@@ -641,9 +701,13 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Sobrescreve a descrição da demanda a partir do método {@link #generateInitialDescription()}.</p>
+     * <p>
+     * Sobrescreve a descrição da demanda a partir do método
+     * {@link #generateInitialDescription()}.
+     * </p>
      *
-     * @return {@code true} caso tenha sido alterada a descrição; {@code false} caso contrário.
+     * @return {@code true} caso tenha sido alterada a descrição; {@code false}
+     *         caso contrário.
      */
     public final boolean regenerateInitialDescription() {
         String descricao = generateInitialDescription();
@@ -655,10 +719,14 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Cria versão extendida da descrição em relação ao campo descrição no BD.</p>
+     * <p>
+     * Cria versão extendida da descrição em relação ao campo descrição no BD.
+     * </p>
      *
-     * <p>Geralmente são adicionadas informações que não precisam ter cache feito
-     * em banco de dados.</p>
+     * <p>
+     * Geralmente são adicionadas informações que não precisam ter cache feito
+     * em banco de dados.
+     * </p>
      *
      * @return a descrição atual desta instância.
      */
@@ -667,7 +735,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna os responsáveis diretos.</p>
+     * <p>
+     * Retorna os responsáveis diretos.
+     * </p>
      *
      * @return os responsáveis diretos.
      */
@@ -681,15 +751,20 @@ public class ProcessInstance {
 
     private void addUserRole(MProcessRole mProcessRole, MUser user) {
         if (getUserWithRole(mProcessRole.getAbbreviation()) == null) {
-            getPersistenceService().setInstanceUserRole(getEntity(), getProcessDefinition().getEntity().getRole(mProcessRole.getAbbreviation()), user);
+            getPersistenceService().setInstanceUserRole(getEntity(),
+                    getProcessDefinition().getEntityProcessDefinition().getRole(mProcessRole.getAbbreviation()), user);
         }
     }
 
     /**
-     * <p>Atribui ou substitui o usuário para o papel especificado.</p>
+     * <p>
+     * Atribui ou substitui o usuário para o papel especificado.
+     * </p>
      *
-     * @param roleAbbreviation o papel especificado.
-     * @param newUser o novo usuário atribuído ao papel.
+     * @param roleAbbreviation
+     *            o papel especificado.
+     * @param newUser
+     *            o novo usuário atribuído ao papel.
      */
     public final void addOrReplaceUserRole(final String roleAbbreviation, MUser newUser) {
         MProcessRole mProcessRole = getProcessDefinition().getFlowMap().getRoleWithAbbreviation(roleAbbreviation);
@@ -705,11 +780,12 @@ public class ProcessInstance {
 
                 final TaskInstance latestTask = getLatestTask();
                 if (latestTask != null) {
-                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
+                    latestTask.log("Papel definido", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 }
             }
         } else if (newUser == null || !previousUser.equals(newUser)) {
-            getPersistenceService().removeInstanceUserRole(getEntity(), getEntity().getRoleUserByAbbreviation(mProcessRole.getAbbreviation()));
+            IEntityProcessInstance entityTmp = getEntity();
+            getPersistenceService().removeInstanceUserRole(entityTmp, entityTmp.getRoleUserByAbbreviation(mProcessRole.getAbbreviation()));
             if (newUser != null) {
                 addUserRole(mProcessRole, newUser);
             }
@@ -718,7 +794,7 @@ public class ProcessInstance {
             final TaskInstance latestTask = getLatestTask();
             if (latestTask != null) {
                 if (newUser != null) {
-                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getNomeGuerra()));
+                    latestTask.log("Papel alterado", String.format("%s: %s", mProcessRole.getName(), newUser.getSimpleName()));
                 } else {
                     latestTask.log("Papel removido", mProcessRole.getName());
                 }
@@ -727,19 +803,26 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Configura o valor variável especificada.</p>
+     * <p>
+     * Configura o valor variável especificada.
+     * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
-     * @param valor o valor a ser configurado.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
+     * @param valor
+     *            o valor a ser configurado.
      */
     public void setVariavel(String nomeVariavel, Object valor) {
         getVariaveis().setValor(nomeVariavel, valor);
     }
 
     /**
-     * <p>Adiciona as variáveis especificadas a esta instância.</p>
+     * <p>
+     * Adiciona as variáveis especificadas a esta instância.
+     * </p>
      *
-     * @param newVariableSet as variáveis especificadas.
+     * @param newVariableSet
+     *            as variáveis especificadas.
      */
     public final void setVariables(VariableWrapper newVariableSet) {
         getProcessDefinition().verifyVariableWrapperClass(newVariableSet.getClass());
@@ -747,9 +830,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o valor da variável do tipo {@link Date} especificada.</p>
+     * <p>
+     * Retorna o valor da variável do tipo {@link Date} especificada.
+     * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
      * @return o valor da variável.
      */
     public final Date getValorVariavelData(String nomeVariavel) {
@@ -757,9 +843,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o valor da variável do tipo {@link Boolean} especificada.</p>
+     * <p>
+     * Retorna o valor da variável do tipo {@link Boolean} especificada.
+     * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
      * @return o valor da variável.
      */
     public final Boolean getValorVariavelBoolean(String nomeVariavel) {
@@ -767,9 +856,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o valor da variável do tipo {@link String} especificada.</p>
+     * <p>
+     * Retorna o valor da variável do tipo {@link String} especificada.
+     * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
      * @return o valor da variável.
      */
     public final String getValorVariavelString(String nomeVariavel) {
@@ -777,9 +869,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o valor da variável do tipo {@link Integer} especificada.</p>
+     * <p>
+     * Retorna o valor da variável do tipo {@link Integer} especificada.
+     * </p>
      *
-     * @param nomeVariavel o nome da variável especificada.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
      * @return o valor da variável.
      */
     public final Integer getValorVariavelInteger(String nomeVariavel) {
@@ -787,10 +882,14 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o valor da variável especificada.</p>
+     * <p>
+     * Retorna o valor da variável especificada.
+     * </p>
      *
-     * @param <T> o tipo da variável especificada.
-     * @param nomeVariavel o nome da variável especificada.
+     * @param <T>
+     *            o tipo da variável especificada.
+     * @param nomeVariavel
+     *            o nome da variável especificada.
      * @return o valor da variável.
      */
     public final <T> T getValorVariavel(String nomeVariavel) {
@@ -798,7 +897,9 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o mapa das variáveis desta instância de processo.</p>
+     * <p>
+     * Retorna o mapa das variáveis desta instância de processo.
+     * </p>
      *
      * @return o mapa das variáveis.
      */
@@ -810,9 +911,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Valida esta instância de processo.</p>
+     * <p>
+     * Valida esta instância de processo.
+     * </p>
      *
-     * @throws SingularFlowException caso a validação falhe.
+     * @throws SingularFlowException
+     *             caso a validação falhe.
      */
     protected void validadeStart() {
         if (variables == null && !getProcessDefinition().getVariables().hasRequired()) {
@@ -826,19 +930,28 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Verifica se há usuário alocado em alguma tarefa desta instância de processo.</p>
+     * <p>
+     * Verifica se há usuário alocado em alguma tarefa desta instância de
+     * processo.
+     * </p>
      *
-     * @return {@code true} caso haja algum usuário alocado; {@code false} caso contrário.
+     * @return {@code true} caso haja algum usuário alocado; {@code false} caso
+     *         contrário.
      */
     public boolean hasAllocatedUser() {
         return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null);
     }
 
     /**
-     * <p>Verifica se o usuário especificado está alocado em alguma tarefa desta instância de processo.</p>
+     * <p>
+     * Verifica se o usuário especificado está alocado em alguma tarefa desta
+     * instância de processo.
+     * </p>
      *
-     * @param codPessoa o código usuário especificado.
-     * @return {@code true} caso o usuário esteja alocado; {@code false} caso contrário.
+     * @param codPessoa
+     *            o código usuário especificado.
+     * @return {@code true} caso o usuário esteja alocado; {@code false} caso
+     *         contrário.
      */
     public boolean isAllocated(Integer codPessoa) {
         return getEntity().getTasks().stream().anyMatch(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null
@@ -856,9 +969,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna a mais nova tarefa que atende a condição informada.</p>
+     * <p>
+     * Retorna a mais nova tarefa que atende a condição informada.
+     * </p>
      *
-     * @param condicao a condição informada.
+     * @param condicao
+     *            a condição informada.
      * @return a tarefa; ou {@code null} caso não encontre a tarefa.
      */
     public TaskInstance getLatestTask(Predicate<TaskInstance> condicao) {
@@ -895,9 +1011,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Encontra a mais nova tarefa encerrada ou ativa com a sigla da referência.</p>
+     * <p>
+     * Encontra a mais nova tarefa encerrada ou ativa com a sigla da referência.
+     * </p>
      *
-     * @param taskRef a referência.
+     * @param taskRef
+     *            a referência.
      * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getLatestTask(ITaskDefinition taskRef) {
@@ -905,9 +1024,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Encontra a mais nova tarefa encerrada ou ativa do tipo informado.</p>
+     * <p>
+     * Encontra a mais nova tarefa encerrada ou ativa do tipo informado.
+     * </p>
      *
-     * @param tipo o tipo informado.
+     * @param tipo
+     *            o tipo informado.
      * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getLatestTask(MTask<?> tipo) {
@@ -919,9 +1041,12 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Encontra a mais nova tarefa encerrada e com a mesma sigla da referência.</p>
+     * <p>
+     * Encontra a mais nova tarefa encerrada e com a mesma sigla da referência.
+     * </p>
      *
-     * @param taskRef a referência.
+     * @param taskRef
+     *            a referência.
      * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getFinishedTask(ITaskDefinition taskRef) {
@@ -929,23 +1054,29 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Encontra a mais nova tarefa encerrada e com a mesma sigla do tipo.</p>
+     * <p>
+     * Encontra a mais nova tarefa encerrada e com a mesma sigla do tipo.
+     * </p>
      *
-     * @param tipo o tipo.
+     * @param tipo
+     *            o tipo.
      * @return a tarefa; ou {@code null} caso não encotre a tarefa.
      */
     public TaskInstance getFinishedTask(MTask<?> tipo) {
         return getFinishedTask(tipo.getAbbreviation());
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
         return getProcessDefinition().getPersistenceService();
     }
 
     /**
-     * <p>Configura o contexto de execução.</p>
+     * <p>
+     * Configura o contexto de execução.
+     * </p>
      *
-     * @param execucaoTask o novo contexto de execução.
+     * @param execucaoTask
+     *            o novo contexto de execução.
      */
     final void setExecutionContext(ExecucaoMTask execucaoTask) {
         if (this.executionContext != null && execucaoTask != null) {
@@ -955,17 +1086,20 @@ public class ProcessInstance {
     }
 
     /**
-     * <p>Retorna o <i>wrapper</i> das variáveis desta instância de processo.</p>
+     * <p>
+     * Retorna o <i>wrapper</i> das variáveis desta instância de processo.
+     * </p>
      *
-     * @param <T> o tipo de <i>wrapper</i>.
-     * @param variableWrapperClass a classe do <i>wrapper</i>.
+     * @param <T>
+     *            o tipo de <i>wrapper</i>.
+     * @param variableWrapperClass
+     *            a classe do <i>wrapper</i>.
      * @return o <i>wrapper</i>.
      */
     protected final <T extends VariableWrapper> T getVariablesWrapper(Class<T> variableWrapperClass) {
         if (variableWrapper == null) {
             if (variableWrapperClass != getProcessDefinition().getVariableWrapperClass()) {
-                throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName()
-                        + ") é diferente da definida em "
+                throw new SingularFlowException("A classe do parâmetro (" + variableWrapperClass.getName() + ") é diferente da definida em "
                         + getDescription().getClass().getName() + ". A definição do processo informou o wrapper como sendo "
                         + getProcessDefinition().getVariableWrapperClass());
             }

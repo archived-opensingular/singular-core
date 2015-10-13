@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.model;
+package br.net.mirante.singular.form.wicket.model.instancia;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
@@ -10,7 +10,8 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
 public class MInstanciaValorModel<T>
     implements
     IModel<T>,
-    IObjectClassAwareModel<T> {
+    IObjectClassAwareModel<T>,
+    IMInstanciaAwareModel<T> {
 
     private IModel<? extends MInstancia> instanciaModel;
 
@@ -41,6 +42,11 @@ public class MInstanciaValorModel<T>
             return (Class<T>) ((MTipoSimples<?, ?>) mtipo).getClasseTipoNativo();
         }
         return (Class<T>) mtipo.getClasseInstancia();
+    }
+
+    @Override
+    public MInstancia getMInstancia() {
+        return instanciaModel.getObject();
     }
 
     @Override

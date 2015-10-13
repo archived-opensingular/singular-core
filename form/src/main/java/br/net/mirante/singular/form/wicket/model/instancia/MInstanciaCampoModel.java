@@ -1,8 +1,9 @@
-package br.net.mirante.singular.form.wicket.model;
+package br.net.mirante.singular.form.wicket.model.instancia;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public class MInstanciaCampoModel<I extends MInstancia> extends AbstractMInstanciaCampoModel<I> {
+public class MInstanciaCampoModel<I extends MInstancia>
+    extends AbstractMInstanciaCampoModel<I> {
 
     private String propertyExpression;
 

@@ -19,8 +19,8 @@ import br.net.mirante.singular.form.wicket.AtrWicket;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
-import br.net.mirante.singular.util.wicket.behavior.StatelessBehaviors;
+import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
+import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -43,7 +43,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         final BSGrid grid = parentCol.newGrid();
         final BSRow row = grid.newRow();
 
-        grid.add(StatelessBehaviors.DISABLED_ATTR);
+        grid.add(DisabledClassBehavior.INSTANCE);
 
         for (String nomeCampo : tComposto.getCampos()) {
             final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);

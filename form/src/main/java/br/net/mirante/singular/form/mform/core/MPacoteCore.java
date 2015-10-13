@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form.mform.core;
 
+import java.util.function.Function;
+
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -56,5 +59,9 @@ public class MPacoteCore extends MPacote {
 
         pb.createTipo(MTipoFormula.class);
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
+    }
+    
+    public static Function<MAtributoEnabled, AtrCore> aspect() {
+        return AtrCore::new;
     }
 }

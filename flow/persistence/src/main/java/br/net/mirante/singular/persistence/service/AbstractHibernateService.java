@@ -1,7 +1,7 @@
 package br.net.mirante.singular.persistence.service;
 
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
-import org.hibernate.Session;
+import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
 public abstract class AbstractHibernateService {
 
@@ -15,4 +15,15 @@ public abstract class AbstractHibernateService {
         return sessionLocator;
     }
 
+    protected SessionWrapper getSession() {
+        return new SessionWrapper(getSessionLocator().getCurrentSession());
+    }
+
+    protected static <T> T newInstanceOf(Class<T> classe) {
+        try {
+            return classe.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro instanciando entidade " + classe.getName(), e);
+        }
+    }
 }

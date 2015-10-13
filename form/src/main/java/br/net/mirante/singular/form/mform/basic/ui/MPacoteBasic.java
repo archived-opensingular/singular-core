@@ -32,8 +32,6 @@ public class MPacoteBasic extends MPacote {
                                                                                          MTipoInteger.class, MIInteger.class, Integer.class);
     public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_VISIVEL         = new AtrRef<>(MPacoteBasic.class, "visivel",
                                                                                          MTipoBoolean.class, MIBoolean.class, Boolean.class);
-    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_OBRIGATORIO     = new AtrRef<>(MPacoteBasic.class, "obrigatorio",
-                                                                                         MTipoBoolean.class, MIBoolean.class, Boolean.class);
     public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_ORDEM           = new AtrRef<>(MPacoteBasic.class, "ordemExibicao",
                                                                                          MTipoInteger.class, MIInteger.class, Integer.class);
     public static final AtrRef<MTipoBoolean, MIBoolean, Boolean> ATR_MULTI_LINHA     = new AtrRef<>(MPacoteBasic.class, "multiLinha",
@@ -56,7 +54,6 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_LABEL);
         pb.createTipoAtributo(MTipo.class, ATR_SUBTITLE);
         pb.createTipoAtributo(MTipo.class, ATR_VISIVEL).withDefaultValueIfNull(true);
-        pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO).withDefaultValueIfNull(false);
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
 
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_MAXIMO, 100);
@@ -76,7 +73,6 @@ public class MPacoteBasic extends MPacote {
         pb.getAtributo(ATR_TAMANHO_EDICAO).as(AtrBasic.class).label("Tamanho edição").tamanhoEdicao(3).tamanhoMaximo(3);
         pb.getAtributo(ATR_MULTI_LINHA).as(AtrBasic.class).label("Multi linha");
         pb.getAtributo(ATR_VISIVEL).as(AtrBasic.class).label("Visível");
-        pb.getAtributo(ATR_OBRIGATORIO).as(AtrBasic.class).label("Obrigatório");
         pb.getAtributo(ATR_ORDEM).as(AtrBasic.class).label("Ordem");
     }
 

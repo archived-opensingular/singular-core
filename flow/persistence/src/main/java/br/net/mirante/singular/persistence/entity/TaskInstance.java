@@ -15,9 +15,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -105,6 +107,7 @@ public class TaskInstance implements IEntityTaskInstance {
         return suspensionTargetDate;
     }
 
+    @Override
     public void setSuspensionTargetDate(Date suspensionTargetDate) {
         this.suspensionTargetDate = suspensionTargetDate;
     }
@@ -122,6 +125,7 @@ public class TaskInstance implements IEntityTaskInstance {
         return endDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
@@ -131,6 +135,7 @@ public class TaskInstance implements IEntityTaskInstance {
         return beginDate;
     }
 
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
@@ -157,6 +162,11 @@ public class TaskInstance implements IEntityTaskInstance {
         return allocatedUser;
     }
 
+    @Override
+    public void setAllocatedUser(MUser allocatedUser) {
+        setAllocatedUser((Actor) allocatedUser);
+    }
+
     public void setAllocatedUser(Actor allocatedUser) {
         this.allocatedUser = allocatedUser;
     }
@@ -164,6 +174,11 @@ public class TaskInstance implements IEntityTaskInstance {
     @Override
     public Actor getResponsibleUser() {
         return responsibleUser;
+    }
+
+    @Override
+    public void setResponsibleUser(MUser responsibleUser) {
+        setResponsibleUser((Actor) responsibleUser);
     }
 
     public void setResponsibleUser(Actor responsibleUser) {
@@ -191,6 +206,11 @@ public class TaskInstance implements IEntityTaskInstance {
     @Override
     public Transition getExecutedTransition() {
         return executedTransition;
+    }
+
+    @Override
+    public void setExecutedTransition(IEntityTaskTransition transition) {
+        setExecutedTransition((Transition) executedTransition);
     }
 
     public void setExecutedTransition(Transition executedTransition) {
