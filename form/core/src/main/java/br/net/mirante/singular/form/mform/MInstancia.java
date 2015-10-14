@@ -133,8 +133,8 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
     }
 
-    public <K extends MInstancia> K getPai(MTipo<K> tipoPai) {
-        throw new RuntimeException("implementar");
+    public MInstancia getPai() {
+        return this.pai;
     }
 
     public <K extends MInstancia> K getIrmao(MTipo<K> tipoPai) {

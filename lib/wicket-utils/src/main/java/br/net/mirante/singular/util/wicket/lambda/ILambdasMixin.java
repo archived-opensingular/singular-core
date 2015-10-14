@@ -21,7 +21,7 @@ public interface ILambdasMixin {
     }
 
     @SuppressWarnings("unchecked")
-    default <T, R> IFunction<? super T, Stream<R>> instancesOf(Class<R> resultType) {
+    default <T, R> IFunction<? super T, Stream<R>> instancesOf(Class<? super R> resultType) {
         return it -> (it != null && resultType.isAssignableFrom(it.getClass())) ? Stream.of((R) it) : Stream.empty();
     }
 

@@ -3,6 +3,9 @@ package br.net.mirante.singular.form.wicket.mapper;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
@@ -21,15 +24,15 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
-    static HintKey<Boolean> NO_DECORATION   = () -> false;
-    static HintKey<Boolean> MATERIAL_DESIGN = () -> false;
+    static HintKey<Boolean> NO_DECORATION = () -> false;
 
     Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
     @Override
     default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
-        final boolean hintMaterialDesign = ctx.getHint(MATERIAL_DESIGN);
+
+        final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.ERROR);
 
         final BSControls controls = ctx.getContainer().newFormGroup();
 
@@ -37,29 +40,23 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
         final AtributoModel<Integer> size = new AtributoModel<>(model, MPacoteBasic.ATR_TAMANHO_EDICAO);
 
-        final BSLabel label = new BSLabel("label", labelModel).setContainer(controls);
+        final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
         if (hintNoDecoration) {
             label.add($b.classAppender("visible-sm visible-xs"));
         }
 
-        final Component input;
-        if (hintMaterialDesign) {
-            input = appendInput(controls, model, labelModel);
-            controls.appendLabel(label);
-            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        } else {
-            controls.appendLabel(label);
-            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
-            input = appendInput(controls, model, labelModel);
-        }
+        controls.appendLabel(label);
+        controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
+        final Component input = appendInput(controls, model, labelModel);
+        controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());
 
         if (input instanceof FormComponent<?>) {
             ctx.configure((FormComponent<?>) input);
         }
-        if (input instanceof LabeledWebMarkupContainer) {
+        if (input instanceof LabeledWebMarkupContainer && ((LabeledWebMarkupContainer) input).getLabel() == null) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 
