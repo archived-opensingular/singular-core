@@ -7,6 +7,8 @@ import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod {
 
+    @Deprecated
+    // TODO renomear para getProcessVersion()
     IEntityProcessVersion getProcess();
 
     String getDescription();
@@ -17,9 +19,17 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     Date getBeginDate();
 
+    void setBeginDate(Date beginDate);
+
     Date getEndDate();
 
+    void setEndDate(Date end);
+
     IEntityTaskInstance getParentTask();
+
+    void setParentTask(IEntityTaskInstance parent);
+
+    void addTask(IEntityTaskInstance taskInstance);
 
     List<? extends IEntityTaskInstance> getTasks();
 
@@ -28,7 +38,6 @@ public interface IEntityProcessInstance extends IEntityByCod {
     List<? extends IEntityExecutionVariable> getHistoricalVariables();
 
     List<? extends IEntityRole> getRoles();
-
 
     default IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
         for (IEntityRole dadosPapelInstancia : getRoles()) {

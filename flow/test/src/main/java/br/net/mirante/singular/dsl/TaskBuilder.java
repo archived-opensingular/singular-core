@@ -1,5 +1,7 @@
 package br.net.mirante.singular.dsl;
 
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
+
 public class TaskBuilder {
 
     public TaskBuilder(Builder builder) {
@@ -7,6 +9,10 @@ public class TaskBuilder {
     }
 
     public JavaBuilder1 java(String key) {
+        return new JavaBuilder1(this);
+    }
+
+    public <T extends Enum & ITaskDefinition> JavaBuilder1 java(T val) {
         return new JavaBuilder1(this);
     }
 

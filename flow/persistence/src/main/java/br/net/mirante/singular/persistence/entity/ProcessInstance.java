@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -53,12 +54,6 @@ public class ProcessInstance implements IEntityProcessInstance {
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_TAREFA_PAI")
     private TaskInstance parentTask;
-
-    // TODO remover este campo, era apenas provisorio no modelo
-    @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_ATUAL")
-    @Deprecated
-    private TaskDefinition currentTaskDefinition;
 
     //uni-directional many-to-one association to Process
     @ManyToOne
@@ -105,6 +100,7 @@ public class ProcessInstance implements IEntityProcessInstance {
         return endDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
@@ -114,6 +110,7 @@ public class ProcessInstance implements IEntityProcessInstance {
         return beginDate;
     }
 
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
@@ -132,16 +129,13 @@ public class ProcessInstance implements IEntityProcessInstance {
         return parentTask;
     }
 
+    @Override
+    public void setParentTask(IEntityTaskInstance parent) {
+        setParentTask((TaskInstance) parent);
+    }
+
     public void setParentTask(TaskInstance parentTask) {
         this.parentTask = parentTask;
-    }
-
-    public TaskDefinition getCurrentTaskDefinition() {
-        return currentTaskDefinition;
-    }
-
-    public void setCurrentTaskDefinition(TaskDefinition currentTaskDefinition) {
-        this.currentTaskDefinition = currentTaskDefinition;
     }
 
     @Override
@@ -189,19 +183,12 @@ public class ProcessInstance implements IEntityProcessInstance {
         this.roles = roles;
     }
 
-    public void addTask(TaskInstance taskInstance) {
+    @Override
+    public void addTask(IEntityTaskInstance taskInstance) {
         if (getTasks() == null) {
             setTasks(new ArrayList<>());
         }
 
-        getTasks().add(taskInstance);
-    }
-
-    public void addRole(RoleInstance roleInstance) {
-        if (getRoles() == null) {
-            setRoles(new ArrayList<>());
-        }
-
-        getRoles().add(roleInstance);
+        getTasks().add((TaskInstance) taskInstance);
     }
 }

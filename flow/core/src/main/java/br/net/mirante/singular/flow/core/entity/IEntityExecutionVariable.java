@@ -8,11 +8,17 @@ public interface IEntityExecutionVariable extends IEntityByCod {
 
     String getName();
 
+    void setName(String name);
+
     IEntityTaskInstance getOriginTask();
 
     IEntityTaskInstance getDestinationTask();
 
     String getValue();
 
+    void setValue(String value);
+
     Date getDate();
+
+    void setDate(Date date);
 }

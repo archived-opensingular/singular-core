@@ -41,7 +41,7 @@ public class RoleInstance implements IEntityRole {
     //uni-directional many-to-one association to Actor
     @ManyToOne
     @JoinColumn(name = "CO_ATOR_ALOCADOR")
-    private Actor allocatorActor;
+    private Actor allocatorUser;
 
     //uni-directional many-to-one association to ProcessInstance
     @ManyToOne
@@ -72,7 +72,7 @@ public class RoleInstance implements IEntityRole {
 
     @Override
     public Actor getAllocatorUser() {
-        return getActor();
+        return allocatorUser;
     }
 
     public void setCreateDate(Date createDate) {
@@ -87,12 +87,8 @@ public class RoleInstance implements IEntityRole {
         this.actor = actor;
     }
 
-    public Actor getAllocatorActor() {
-        return allocatorActor;
-    }
-
-    public void setAllocatorActor(Actor allocatorActor) {
-        this.allocatorActor = allocatorActor;
+    public void setAllocatorUser(Actor allocatorUser) {
+        this.allocatorUser = allocatorUser;
     }
 
     @Override
@@ -111,7 +107,7 @@ public class RoleInstance implements IEntityRole {
 
     @Override
     public Actor getUser() {
-        return actor;
+        return getActor();
     }
 
     public void setRole(Role role) {

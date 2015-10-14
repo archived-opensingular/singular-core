@@ -4,9 +4,7 @@ import java.util.Objects;
 
 public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
 
-    private EstrategiaAlertaTarefa estrategiaAlerta;
-
-    private boolean podeRealocar = true;
+    private boolean canReallocate = true;
 
     public MTaskPeople(FlowMap mapa, String nome, String abbreviation) {
         super(mapa, nome, abbreviation);
@@ -19,21 +17,12 @@ public class MTaskPeople extends MTaskUserExecutable<MTaskPeople> {
 
     @Override
     public boolean canReallocate() {
-        return podeRealocar;
+        return canReallocate;
     }
 
-    public MTaskPeople setPodeRealocar(boolean podeRealocar) {
-        this.podeRealocar = podeRealocar;
+    public MTaskPeople setCanReallocate(boolean canReallocate) {
+        this.canReallocate = canReallocate;
         return this;
-    }
-
-    public MTaskPeople setAlerta(EstrategiaAlertaTarefa estrategiaAlerta) {
-        this.estrategiaAlerta = estrategiaAlerta;
-        return this;
-    }
-
-    public EstrategiaAlertaTarefa getAlerta() {
-        return estrategiaAlerta;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package br.net.mirante.singular.flow.core.entity;
 
+
 public interface IEntityProcessRole extends IEntityByCod {
 
     String getAbbreviation();
@@ -12,4 +13,5 @@ public interface IEntityProcessRole extends IEntityByCod {
 
     IEntityProcessDefinition getProcessDefinition();
 
+    void setProcessDefinition(IEntityProcessDefinition processDefinition);
 }

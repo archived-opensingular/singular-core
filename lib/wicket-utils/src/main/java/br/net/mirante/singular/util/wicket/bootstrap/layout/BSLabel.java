@@ -1,14 +1,14 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$L;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.findChildren;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static java.util.stream.Collectors.*;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -53,13 +53,8 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
 
         // adiciona classe 'required' se algum FormComponent do
         // container é required
-        add($b.classAppender("required", $m.get(() ->
-            (container == null) ? false :
-                findChildren(container, FormComponent.class)
-                    .filter(comp -> targetComponentIds.isEmpty() || targetComponentIds.contains(comp.getId()))
-                    .flatMap($L.instancesOf(FormComponent.class))
-                    .anyMatch(it -> it.isRequired())
-            )));
+        add($b.classAppender("required", $m.get(() -> firstRequiredInput().map(it -> it.isRequired()).orElse(false))));
+        add($b.attr("for", firstRequiredInput().map(it -> it.getMarkupId()).orElse("")));
 
         // altera propriedade label dos componentes se com o valor desta
         // label, se a primeira for null
@@ -72,7 +67,16 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
                     .filter(it -> it.getLabel() == null)
                     .forEach(fc -> fc.setLabel(labelModel));
         }));
+    }
 
+    @SuppressWarnings("rawtypes")
+    protected Optional<FormComponent> firstRequiredInput() {
+        return (container == null)
+            ? Optional.empty()
+            : findChildren(container, FormComponent.class)
+                .filter(comp -> targetComponentIds.isEmpty() || targetComponentIds.contains(comp.getId()))
+                .flatMap($L.instancesOf(FormComponent.class))
+                .findFirst();
     }
 
     @Override
@@ -92,6 +96,12 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
     public BSLabel setTargetComponentIds(String targetIds) {
         this.targetComponentIds = new HashSet<>(Arrays.asList(
             (targetIds == null) ? new String[0] : targetIds.split("[, ]+")));
+        return this;
+    }
+    public BSLabel setTargetComponents(Component... targets) {
+        this.targetComponentIds = new HashSet<>(
+            Stream.of(targets)
+                .map(it -> it.getId()).collect(toList()));
         return this;
     }
 

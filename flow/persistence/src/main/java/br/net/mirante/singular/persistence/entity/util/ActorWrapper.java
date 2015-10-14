@@ -14,7 +14,7 @@ public class ActorWrapper {
             }
 
             @Override
-            public String getNomeGuerra() {
+            public String getSimpleName() {
                 return null;
             }
 

@@ -13,17 +13,29 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     Date getBeginDate();
 
+    void setBeginDate(Date begin);
+
     Date getEndDate();
+
+    void setEndDate(Date end);
 
     Date getTargetEndDate();
 
     void setTargetEndDate(Date targetEndDate);
 
+    void setAllocatedUser(MUser allocatedUser);
+
     MUser getAllocatedUser();
+
+    void setResponsibleUser(MUser responsibleUser);
 
     MUser getResponsibleUser();
 
-    IEntityTaskTransition getExecutedTransition();
+    void setSuspensionTargetDate(Date suspensionTargetDate);
+
+    IEntityTaskTransitionVersion getExecutedTransition();
+
+    void setExecutedTransition(IEntityTaskTransitionVersion transition);
 
     List<? extends IEntityExecutionVariable> getInputVariables();
 

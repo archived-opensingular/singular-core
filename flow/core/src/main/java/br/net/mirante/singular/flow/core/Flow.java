@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
@@ -17,7 +18,7 @@ public class Flow {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Flow.class);
 
-    private static AbstractMbpmBean mbpmBean;
+    private static SingularFlowConfigurationBean mbpmBean;
 
     private Flow() {
     }
@@ -33,11 +34,11 @@ public class Flow {
                 getMbpmBean().getScheduleService().schedule(scheduledJob);
             }
         }
-        //getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
         getMbpmBean().init();
     }
 
-    public static synchronized void setConf(AbstractMbpmBean conf) {
+    public static synchronized void setConf(SingularFlowConfigurationBean conf) {
         if(mbpmBean != null
                 && mbpmBean != conf){
             throw new SingularFlowException("O contexto já foi configurado.");
@@ -46,12 +47,12 @@ public class Flow {
         init();
     }
 
-    public static AbstractMbpmBean getMbpmBean() {
+    public static SingularFlowConfigurationBean getMbpmBean() {
         Objects.requireNonNull(mbpmBean, "Configuração do fluxo não realizada");
         return mbpmBean;
     }
 
-    public static <K extends ProcessDefinition<?>> K getDefinicao(Class<K> classe) {
+    public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
         return getMbpmBean().getProcessDefinition(classe);
     }
     public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
@@ -66,12 +67,6 @@ public class Flow {
     @SuppressWarnings("unchecked")
     public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
         return (List<K>) getMbpmBean().getDefinitions();
-    }
-
-    public static <T extends VariableWrapper> T newInitialVariables(Class<? extends ProcessDefinition<?>> processDefinitionClass,
-            Class<T> variableWrapperClass) {
-        ProcessDefinition<?> processDefinition = getDefinicao(processDefinitionClass);
-        return processDefinition.newInitialVariables(variableWrapperClass);
     }
 
     public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {
@@ -124,7 +119,7 @@ public class Flow {
     }
 
     public static MUser getUserIfAvailable() {
-        return getMbpmBean().getUserIfAvailable();
+        return getMbpmBean().getUserService().getUserIfAvailable();
     }
 
     public static AbstractProcessNotifiers getNotifiers() {
@@ -132,14 +127,14 @@ public class Flow {
     }
 
     static boolean canBeAllocated(MUser pessoa) {
-        return getMbpmBean().canBeAllocated(pessoa);
+        return getMbpmBean().getUserService().canBeAllocated(pessoa);
     }
 
     public static Lnk getDefaultHrefFor(ProcessInstance instanciaProcesso) {
-        return getMbpmBean().getDefaultHrefFor(instanciaProcesso);
+        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaProcesso);
     }
 
     public static Lnk getDefaultHrefFor(TaskInstance instanciaTarefa) {
-        return getMbpmBean().getDefaultHrefFor(instanciaTarefa);
+        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
     }
 }

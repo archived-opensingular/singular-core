@@ -11,7 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskTransition;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.persistence.util.Constants;
 
@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TRANSICAO", schema = Constants.SCHEMA)
-public class Transition implements IEntityTaskTransition {
+public class Transition implements IEntityTaskTransitionVersion {
     private static final long serialVersionUID = 1L;
 
     @Id

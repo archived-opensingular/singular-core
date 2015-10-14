@@ -101,7 +101,7 @@ public class MBPMUtil {
     }
 
     private static int calculateTaskOrder(IEntityTaskVersion entityTaskDefinition, ProcessDefinition<?> processDefinition) {
-        if (!processDefinition.getEntity().getProcessDefinition()
+        if (!processDefinition.getEntityProcessDefinition()
                 .equals(entityTaskDefinition.getProcess().getProcessDefinition())) {
             throw new SingularFlowException("Mistura de situações de definições diferrentes");
         }

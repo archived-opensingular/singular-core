@@ -6,17 +6,24 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import br.net.mirante.singular.commons.base.SingularException;
+import br.net.mirante.singular.flow.core.defaults.NullNotifier;
+import br.net.mirante.singular.flow.core.defaults.NullViewLocator;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
 import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
-import br.net.mirante.singular.flow.core.service.IProcessEntityService;
+import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
+import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
+import br.net.mirante.singular.flow.util.view.IViewLocator;
 
 //TODO implementacao default, essa classe deveria vir implementada por default, muita coisa para definir
-public abstract class AbstractMbpmBean {
+public abstract class SingularFlowConfigurationBean {
+
+    public static final String PREFIXO = "SGL";
 
     protected void init() {
 
@@ -24,7 +31,12 @@ public abstract class AbstractMbpmBean {
 
     // ------- Método de recuperação de definições --------------------
 
-    protected abstract ProcessDefinitionCache getDefinitionCache();
+    protected ProcessDefinitionCache getDefinitionCache(){
+        return ProcessDefinitionCache.get(getDefinitionsBasePackage());
+    }
+
+    protected abstract String getDefinitionsBasePackage();
+
 
     public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> processClass) {
         return ProcessDefinitionCache.getDefinition(processClass);
@@ -116,19 +128,37 @@ public abstract class AbstractMbpmBean {
 
 
     //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
-    @Deprecated
-    protected abstract String generateID(ProcessInstance instance);
+    protected String generateID(ProcessInstance instancia) {
+        return new StringBuilder(50)
+                .append(PREFIXO)
+                .append('.')
+                .append(instancia.getProcessDefinition().getAbbreviation())
+                .append('.')
+                .append(instancia.getId()).toString();
+    }
 
     //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
-    @Deprecated
-    protected abstract String generateID(TaskInstance taskInstance);
+
+    protected String generateID(TaskInstance instanciaTarefa) {
+        ProcessInstance instanciaProcesso = instanciaTarefa.getProcessInstance();
+        return new StringBuilder(generateID(instanciaProcesso))
+                .append('.')
+                .append(instanciaTarefa.getId())
+                .toString();
+    }
 
     //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
-    @Deprecated
-    protected abstract MappingId parseId(String instanceID);
+    protected MappingId parseId(String instanciaID) {
+        if (instanciaID == null || instanciaID.length() < 1){
+            throw new SingularException("O ID da instância não pode ser nulo ou vazio");
+        }
+        String parts[] = instanciaID.split("\\.");
+        String sigla = parts[parts.length - 2];
+        String id = parts[parts.length - 1];
+        return new MappingId(sigla, Integer.parseInt(id));
+    }
 
     //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
-    @Deprecated
     protected static class MappingId {
         public final String abbreviation;
         public final Integer cod;
@@ -140,30 +170,16 @@ public abstract class AbstractMbpmBean {
     }
 
     // ------- Geração de link ----------------------------------------
-
-    @Deprecated
-    //TODO deveria ser opcional esse tipo de definicao, deveria ser simplificado
-    public abstract Lnk getDefaultHrefFor(ProcessInstance processInstance);
-
-    @Deprecated
-    //TODO deveria ser opcional esse tipo de definico, deveria ser simplificado
-    public abstract Lnk getDefaultHrefFor(TaskInstance taskInstance);
+    protected IViewLocator getViewLocator(){
+        return new NullViewLocator();
+    }
 
     // ------- Manipulação de Usuário ---------------------------------
+    protected abstract IUserService getUserService();
 
-    /**
-     * Deveria delegar algo para que a aplicaçào cliente possa prover o usuário.
-     */
-    @Deprecated
-    public abstract MUser getUserIfAvailable();
-
-    public abstract boolean canBeAllocated(MUser user);
-
-    /**
-     * @deprecated deveria ser opcional
-     */
-    @Deprecated
-    protected abstract AbstractProcessNotifiers getNotifiers();
+    protected AbstractProcessNotifiers getNotifiers() {
+        return new NullNotifier();
+    }
 
     // ------- Consultas ----------------------------------------------
 
@@ -177,13 +193,15 @@ public abstract class AbstractMbpmBean {
         return YFilesFlowRenderer.getInstance();
     }
 
-    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
+    protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
-    protected abstract IScheduleService getScheduleService();
 
-    protected abstract IProcessEntityService<?, ?, ?, ?, ?, ?> getProcessEntityService();
+    protected abstract IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> getProcessEntityService();
 
-    protected abstract void notifyStateUpdate(ProcessInstance instanciaProcessoMBPM);
+
+    protected IScheduleService getScheduleService() {
+        return new QuartzScheduleService();
+    }
 
     public final Object executeTask(MTaskJava task) {
         final IProcessDataService<?> dataService = task.getFlowMap().getProcessDefinition().getDataService();
@@ -192,7 +210,7 @@ public abstract class AbstractMbpmBean {
             return task.executarByBloco(instancias);
         } else {
             for (final ProcessInstance instanciaProcessoMBPM : instancias) {
-                EngineProcessamentoMBPM.executeScheduledTransition(task, instanciaProcessoMBPM);
+                FlowEngine.executeScheduledTransition(task, instanciaProcessoMBPM);
             }
             return null;
         }
