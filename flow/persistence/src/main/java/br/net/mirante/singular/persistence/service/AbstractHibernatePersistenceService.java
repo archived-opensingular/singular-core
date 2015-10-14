@@ -103,7 +103,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         taskInstance.setBeginDate(agora);
         if (taskVersion.isEnd()) {
             processInstance.setEndDate(agora);
-            // taskInstance.setEndDate(agora);
+            taskInstance.setEndDate(agora);
         } else {
             processInstance.setEndDate(null);
         }
