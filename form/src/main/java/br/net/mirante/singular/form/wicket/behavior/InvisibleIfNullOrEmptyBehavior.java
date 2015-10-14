@@ -7,7 +7,10 @@ import br.net.mirante.singular.util.wicket.model.NullOrEmptyModel;
 
 public class InvisibleIfNullOrEmptyBehavior extends Behavior {
 
-    public static final InvisibleIfNullOrEmptyBehavior INSTANCE = new InvisibleIfNullOrEmptyBehavior();
+    private static final InvisibleIfNullOrEmptyBehavior INSTANCE = new InvisibleIfNullOrEmptyBehavior();
+    public static InvisibleIfNullOrEmptyBehavior getInstance() {
+        return INSTANCE;
+    }
 
     private InvisibleIfNullOrEmptyBehavior() {}
 

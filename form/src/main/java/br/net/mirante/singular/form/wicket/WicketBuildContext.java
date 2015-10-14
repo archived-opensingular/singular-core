@@ -3,7 +3,11 @@ package br.net.mirante.singular.form.wicket;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
+
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
+import br.net.mirante.singular.form.wicket.behavior.RequiredByMTipoObrigatorioBehavior;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 
@@ -46,5 +50,14 @@ public class WicketBuildContext implements Serializable {
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
         return new WicketBuildContext(this, childContainer, hintsInherited);
+    }
+
+    public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
+        formComponent.add(RequiredByMTipoObrigatorioBehavior.getInstance());
+        formComponent.add(new MInstanciaValidator<>());
+
+        // formComponent.setLabel(labelModel);
+
+        return formComponent;
     }
 }

@@ -4,6 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
@@ -14,8 +15,6 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
-import br.net.mirante.singular.form.wicket.behavior.RequiredByTipoBehavior;
-import br.net.mirante.singular.form.wicket.behavior.RequiredLabelIndicatorBehavior;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
@@ -38,8 +37,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
         final AtributoModel<Integer> size = new AtributoModel<>(model, MPacoteBasic.ATR_TAMANHO_EDICAO);
 
-        final BSLabel label = new BSLabel("label", labelModel);
-        label.add(DisabledClassBehavior.INSTANCE);
+        final BSLabel label = new BSLabel("label", labelModel).setContainer(controls);
+        label.add(DisabledClassBehavior.getInstance());
         if (hintNoDecoration) {
             label.add($b.classAppender("visible-sm visible-xs"));
         }
@@ -48,17 +47,20 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         if (hintMaterialDesign) {
             input = appendInput(controls, model, labelModel);
             controls.appendLabel(label);
-            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.INSTANCE);
+            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
         } else {
             controls.appendLabel(label);
-            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.INSTANCE);
+            controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
             input = appendInput(controls, model, labelModel);
         }
-        input.add(DisabledClassBehavior.INSTANCE);
+
+        input.add(DisabledClassBehavior.getInstance());
+
         if (input instanceof FormComponent<?>) {
-            FormComponent<?> fcInput = (FormComponent<?>) input;
-            fcInput.add(RequiredByTipoBehavior.INSTANCE);
-            label.add(RequiredLabelIndicatorBehavior.INSTANCE);
+            ctx.configure((FormComponent<?>) input);
+        }
+        if (input instanceof LabeledWebMarkupContainer) {
+            ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 
         if (input instanceof TextField<?>) {

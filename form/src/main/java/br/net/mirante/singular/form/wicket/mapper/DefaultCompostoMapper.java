@@ -43,7 +43,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         final BSGrid grid = parentCol.newGrid();
         final BSRow row = grid.newRow();
 
-        grid.add(DisabledClassBehavior.INSTANCE);
+        grid.add(DisabledClassBehavior.getInstance());
 
         for (String nomeCampo : tComposto.getCampos()) {
             final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
