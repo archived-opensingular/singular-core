@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
@@ -12,19 +11,6 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
-import br.net.mirante.singular.persistence.dao.ExecutionVariableDAO;
-import br.net.mirante.singular.persistence.dao.ProcessDAO;
-import br.net.mirante.singular.persistence.dao.ProcessDefinitionDAO;
-import br.net.mirante.singular.persistence.dao.ProcessInstanceDAO;
-import br.net.mirante.singular.persistence.dao.RoleInstanceDAO;
-import br.net.mirante.singular.persistence.dao.TaskDAO;
-import br.net.mirante.singular.persistence.dao.TaskDefinitionDAO;
-import br.net.mirante.singular.persistence.dao.TaskHistoryTypeDAO;
-import br.net.mirante.singular.persistence.dao.TaskInstanceDAO;
-import br.net.mirante.singular.persistence.dao.TaskInstanceHistoryDAO;
-import br.net.mirante.singular.persistence.dao.TransitionDAO;
-import br.net.mirante.singular.persistence.dao.VariableDAO;
-import br.net.mirante.singular.persistence.dao.VariableTypeDAO;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.Category;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
@@ -53,20 +39,6 @@ public class DefaultHibernatePersistenceService extends
                 Role,
                 RoleInstance> {
 
-    private final ProcessDAO processDAO = new ProcessDAO(getSessionLocator());
-    private final ProcessDefinitionDAO processDefinitionDAO = new ProcessDefinitionDAO(getSessionLocator());
-    private final ProcessInstanceDAO processInstanceDAO = new ProcessInstanceDAO(getSessionLocator());
-    private final TaskInstanceDAO taskInstanceDAO = new TaskInstanceDAO(getSessionLocator());
-    private final TaskDAO taskDAO = new TaskDAO(getSessionLocator());
-    private final TaskDefinitionDAO taskDefinitionDAO = new TaskDefinitionDAO(getSessionLocator());
-    private final TransitionDAO transitionDAO = new TransitionDAO(getSessionLocator());
-    private final RoleInstanceDAO roleInstanceDAO = new RoleInstanceDAO(getSessionLocator());
-    private final VariableDAO variableDAO = new VariableDAO(getSessionLocator());
-    private final VariableTypeDAO variableTypeDAO = new VariableTypeDAO(getSessionLocator());
-    private final TaskHistoryTypeDAO taskHistoryTypeDAO = new TaskHistoryTypeDAO(getSessionLocator());
-    private final TaskInstanceHistoryDAO taskInstanceHistoryDAO = new TaskInstanceHistoryDAO(getSessionLocator());
-    private final ExecutionVariableDAO executionVariableDAO = new ExecutionVariableDAO(getSessionLocator());
-
     public DefaultHibernatePersistenceService(SessionLocator sessionLocator) {
         super(sessionLocator);
     }
@@ -74,11 +46,6 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
     // ProcessIntance
     // -------------------------------------------------------
-
-    @Override
-    public ProcessInstance retrieveProcessInstanceByCod(Integer cod) {
-        return getSession().retrieve(ProcessInstance.class, cod);
-    }
 
     @Override
     protected ProcessInstance newProcessInstance(Process processVersion) {
@@ -104,8 +71,8 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    public TaskInstance retrieveTaskInstanceByCod(Integer cod) {
-        return getSession().retrieve(TaskInstance.class, cod);
+    protected Class<TaskInstance> getClassTaskInstance() {
+        return TaskInstance.class;
     }
 
     @Override
@@ -114,12 +81,6 @@ public class DefaultHibernatePersistenceService extends
         taskInstance.setProcessInstance(processInstance);
         taskInstance.setTask(taskVersion);
         return taskInstance;
-    }
-
-    @Override
-    public TaskInstance addTask(ProcessInstance processInstance, Task taskVersion) {
-        processInstance.setCurrentTaskDefinition(taskVersion.getTaskDefinition());
-        return super.addTask(processInstance, taskVersion);
     }
 
     @Override
@@ -145,7 +106,7 @@ public class DefaultHibernatePersistenceService extends
 
     @Override
     public Process retrieveProcessVersionByCod(Integer cod) {
-        return processDAO.retrieveById(cod);
+        return getSession().refreshByPk(Process.class, cod);
     }
 
     // -------------------------------------------------------
@@ -183,6 +144,11 @@ public class DefaultHibernatePersistenceService extends
         return VariableType.class;
     }
 
+    @Override
+    protected Class<ProcessInstance> getClassProcessInstance() {
+        return ProcessInstance.class;
+    }
+    
     // -------------------------------------------------------
     // Listagens
     // -------------------------------------------------------
@@ -192,15 +158,4 @@ public class DefaultHibernatePersistenceService extends
         throw new UnsupportedOperationException("Método não implementado");
     }
 
-    @Override
-    public List<ProcessInstance> retrieveProcessInstancesWith(ProcessDefinition process, Date minDataInicio, Date maxDataInicio,
-            Collection<? extends TaskDefinition> states) {
-        Objects.requireNonNull(process);
-        return processDAO.retrivePorEstado(minDataInicio, maxDataInicio, process, states);
-    }
-
-    @Override
-    public List<ProcessInstance> retrieveProcessInstancesWith(ProcessDefinition process, MUser creatingUser, Boolean active) {
-        throw new UnsupportedOperationException("Método não implementado");
-    }
 }

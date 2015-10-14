@@ -2,11 +2,21 @@ package br.net.mirante.singular.persistence.service;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.joda.time.LocalDate;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
@@ -30,7 +40,6 @@ import br.net.mirante.singular.flow.util.vars.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, PROCESS_ROLE extends IEntityProcessRole, ROLE_USER extends IEntityRole>
@@ -45,6 +54,11 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     // ProcessIntance
     // -------------------------------------------------------
 
+    @Override
+    public PROCESS_INSTANCE retrieveProcessInstanceByCod(Integer cod) {
+        return getSession().retrieve(getClassProcessInstance(), cod);
+    }
+    
     /**
      * Cria uma intancia de ProcessIntance parcialmente preenchida. Apenas isola
      * a persistencia do tipo correto.
@@ -90,6 +104,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(processInstance);
     }
 
+    
+    protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
+    
     /**
      * Cria uma nova taskInstance parcialmente preenchiada apenas com
      * processIntance e taskVersion.
@@ -97,13 +114,20 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     protected abstract TASK_INSTANCE newTaskInstance(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion);
 
     @Override
+    public TASK_INSTANCE retrieveTaskInstanceByCod(Integer cod) {
+        Objects.requireNonNull(cod);
+        return getSession().retrieve(getClassTaskInstance(), cod);
+    }
+
+    
+    @Override
     public TASK_INSTANCE addTask(PROCESS_INSTANCE processInstance, TASK_VERSION taskVersion) {
         Date agora = new Date();
         TASK_INSTANCE taskInstance = newTaskInstance(processInstance, taskVersion);
         taskInstance.setBeginDate(agora);
         if (taskVersion.isEnd()) {
             processInstance.setEndDate(agora);
-            // taskInstance.setEndDate(agora);
+            taskInstance.setEndDate(agora);
         } else {
             processInstance.setEndDate(null);
         }
@@ -242,7 +266,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             variavel = newVariableInstance(processInstance, mVariavel.getRef());
 
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variavel.getValue())) {
+            if (!Objects.equals(valorString, variavel.getValue())) {
                 variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variavel.setValue(valorString);
             }
@@ -251,7 +275,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             ss.refresh(processInstance);
         } else {
             String valorString = mVariavel.getStringPersistencia();
-            if (!Objects.equal(valorString, variavel.getValue())) {
+            if (!Objects.equals(valorString, variavel.getValue())) {
                 variavel.setType(retrieveOrCreateEntityVariableType(mVariavel.getTipo()));
                 variavel.setValue(valorString);
                 ss.merge(variavel);
@@ -317,6 +341,59 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         return variableType;
     }
 
+    protected abstract Class<PROCESS_INSTANCE> getClassProcessInstance();
+    
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date minDataInicio, Date maxDataInicio, java.util.Collection<? extends TASK_DEF> states) {
+        Objects.requireNonNull(process);
+        final Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
+        c.createAlias("PI.process", "DEF");
+        c.add(Restrictions.eq("DEF.processDefinition", process));
+        if (states != null && !states.isEmpty()) {
+            DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
+            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.isNull("T.endDate"));
+            sub.setProjection(Projections.id());
+            
+            c.add(Subqueries.exists(sub));
+        }
+        if (minDataInicio != null) {
+            c.add(Restrictions.ge("PI.beginDate", minDataInicio));
+        }
+        if (maxDataInicio != null) {
+            c.add(Restrictions.lt("PI.beginDate", LocalDate.fromDateFields(maxDataInicio).plusDays(1).toDate()));
+        }
+        c.addOrder(Order.desc("PI.beginDate"));
+        return c.list();
+    }
+
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, MUser creatingUser, Boolean active) {
+        Objects.requireNonNull(process);
+        Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
+        c.createAlias("PI.process", "DEF");
+        c.add(Restrictions.eq("DEF.processDefinition", process));
+
+        if (active != null) {
+            DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
+            sub.createAlias("T.task", "TA");
+            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.isNull("T.endDate"));
+            if (active) {
+                sub.add(Restrictions.ne("TA.type", TaskType.End));
+            } else {
+                sub.add(Restrictions.eq("TA.type", TaskType.End));
+            }
+            sub.setProjection(Projections.id());
+            
+            c.add(Subqueries.exists(sub));
+        }
+
+        if (creatingUser != null) {
+            c.add(Restrictions.eq("PI.userCreator", creatingUser));
+        }
+        c.setCacheable(true).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        return c.list();
+    }
+    
     // -------------------------------------------------------
     // Util
     // -------------------------------------------------------

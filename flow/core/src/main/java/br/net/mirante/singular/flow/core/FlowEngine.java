@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import com.google.common.base.Joiner;
-
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
@@ -22,7 +20,9 @@ import br.net.mirante.singular.flow.util.vars.VarDefinition;
 import br.net.mirante.singular.flow.util.vars.VarInstance;
 import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
 
-class EngineProcessamentoMBPM {
+import com.google.common.base.Joiner;
+
+class FlowEngine {
 
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();

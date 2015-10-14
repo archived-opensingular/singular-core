@@ -17,6 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
 
+@SuppressWarnings("unchecked")
 public class SessionWrapper {
 
     private final Session session;
@@ -242,15 +243,15 @@ public class SessionWrapper {
      * @return Nunca null
      */
     public <T> List<T> retrieveAll(Class<T> classe, boolean cacheResult) {
-        Criteria c = createCriteria(classe, cacheResult).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        // if (retriveAllPropertyOrdenamento_ != null) {
-        // c.addOrder(Order.asc(retriveAllPropertyOrdenamento_));
-        // }
-        return c.list();
+        return createCriteria(classe, cacheResult).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).setCacheable(cacheResult).list();
     }
 
     public Criteria createCriteria(Class<?> tipoCriteria) {
         return getSession().createCriteria(tipoCriteria);
+    }
+
+    public Criteria createCriteria(Class<?> tipoCriteria, String alias) {
+        return getSession().createCriteria(tipoCriteria, alias);
     }
 
     public Criteria createCriteria(Class<?> tipoCriteria, boolean fazerCache) {
@@ -261,7 +262,6 @@ public class SessionWrapper {
      * Metodo Responsavel por fazer o merge com um objeto na base de dados, a
      * escolha
      */
-    @SuppressWarnings("unchecked")
     public <T> T merge(T novoObj) {
         return (T) getSession().merge(novoObj);
     }

@@ -211,7 +211,13 @@ public class FlowMap implements Serializable {
         }
     }
 
-    private <T extends MTask> T addTask(T task) {
+    /**
+     * <p>Adiciona uma nova tarefa.</p>
+     *
+     * @param task a tarefa para adicionar.
+     * @return a tarefa adicionada.
+     */
+    protected <T extends MTask> T addTask(T task) {
         if (tasksByName.containsKey(task.getName())) {
             throw new SingularFlowException(createErrorMsg("Task with name '" + task.getName() + "' already defined"));
         }

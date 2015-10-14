@@ -12,7 +12,6 @@ import br.net.mirante.singular.flow.core.builder.BPeople;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
 
 import java.util.Calendar;

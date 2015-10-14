@@ -210,7 +210,7 @@ public abstract class SingularFlowConfigurationBean {
             return task.executarByBloco(instancias);
         } else {
             for (final ProcessInstance instanciaProcessoMBPM : instancias) {
-                EngineProcessamentoMBPM.executeScheduledTransition(task, instanciaProcessoMBPM);
+                FlowEngine.executeScheduledTransition(task, instanciaProcessoMBPM);
             }
             return null;
         }
