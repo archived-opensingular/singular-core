@@ -82,6 +82,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
             valores = new ArrayList<>();
         }
         valores.add(instancia);
+        instancia.setPai(this);
     }
 
     private void addAtInterno(int index, E instancia) {
@@ -89,6 +90,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
             valores = new ArrayList<>();
         }
         valores.add(Math.min(index, valores.size()), instancia);
+        instancia.setPai(this);
     }
     
     public MInstancia get(int index) {

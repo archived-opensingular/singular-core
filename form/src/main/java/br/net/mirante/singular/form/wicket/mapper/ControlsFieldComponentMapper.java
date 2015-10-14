@@ -59,7 +59,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         if (input instanceof FormComponent<?>) {
             ctx.configure((FormComponent<?>) input);
         }
-        if (input instanceof LabeledWebMarkupContainer) {
+        if (input instanceof LabeledWebMarkupContainer && ((LabeledWebMarkupContainer) input).getLabel() == null) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 
