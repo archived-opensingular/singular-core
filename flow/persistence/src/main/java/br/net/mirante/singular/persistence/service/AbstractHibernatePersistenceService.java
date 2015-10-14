@@ -1,6 +1,5 @@
 package br.net.mirante.singular.persistence.service;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -8,8 +7,12 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.joda.time.LocalDate;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
@@ -342,47 +345,52 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     
     public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date minDataInicio, Date maxDataInicio, java.util.Collection<? extends TASK_DEF> states) {
         Objects.requireNonNull(process);
-        final Criteria c = getSession().createCriteria(getClassProcessInstance());
-        c.createAlias("process", "DEF");
+        final Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
+        c.createAlias("PI.process", "DEF");
         c.add(Restrictions.eq("DEF.processDefinition", process));
         if (states != null && !states.isEmpty()) {
-            c.add(Restrictions.in("currentTaskDefinition", states));
+            DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
+            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.isNull("T.endDate"));
+            sub.setProjection(Projections.id());
+            
+            c.add(Subqueries.exists(sub));
         }
         if (minDataInicio != null) {
-            c.add(Restrictions.ge("beginDate", minDataInicio));
+            c.add(Restrictions.ge("PI.beginDate", minDataInicio));
         }
         if (maxDataInicio != null) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(maxDataInicio);
-            calendar.add(Calendar.DAY_OF_YEAR, 1);
-            calendar.add(Calendar.MILLISECOND, -1);
-            c.add(Restrictions.le("beginDate", calendar.getTime()));
+            c.add(Restrictions.lt("PI.beginDate", LocalDate.fromDateFields(maxDataInicio).plusDays(1).toDate()));
         }
-        c.addOrder(Order.desc("beginDate"));
+        c.addOrder(Order.desc("PI.beginDate"));
         return c.list();
     }
 
     public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, MUser creatingUser, Boolean active) {
         Objects.requireNonNull(process);
-        Criteria c = getSession().createCriteria(getClassProcessInstance());
-        c.createAlias("process", "DEF");
+        Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
+        c.createAlias("PI.process", "DEF");
         c.add(Restrictions.eq("DEF.processDefinition", process));
-        c.addOrder(Order.desc("dataSituacaoAtual"))
-            .setCacheable(true);
-        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (active != null) {
-            c.createAlias("situacao", "ST");
+            DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
+            sub.createAlias("T.task", "TA");
+            sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.add(Restrictions.isNull("T.endDate"));
             if (active) {
-                c.add(Restrictions.ne("ST.type", TaskType.End));
+                sub.add(Restrictions.ne("TA.type", TaskType.End));
             } else {
-                c.add(Restrictions.eq("ST.type", TaskType.End));
+                sub.add(Restrictions.eq("TA.type", TaskType.End));
             }
+            sub.setProjection(Projections.id());
+            
+            c.add(Subqueries.exists(sub));
         }
 
         if (creatingUser != null) {
-            c.add(Restrictions.eq("userCreator", creatingUser));
+            c.add(Restrictions.eq("PI.userCreator", creatingUser));
         }
+        c.setCacheable(true).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return c.list();
     }
     

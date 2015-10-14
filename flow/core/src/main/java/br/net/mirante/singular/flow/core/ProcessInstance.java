@@ -104,7 +104,7 @@ public class ProcessInstance implements Serializable {
     @Deprecated
     public TaskInstance start(VarInstanceMap<?> varInstanceMap) {
         getPersistedDescription(); // Força a geração da descricação
-        return EngineProcessamentoMBPM.start(this, varInstanceMap);
+        return FlowEngine.start(this, varInstanceMap);
     }
 
     /**
@@ -113,7 +113,7 @@ public class ProcessInstance implements Serializable {
      * </p>
      */
     public void executeTransition() {
-        EngineProcessamentoMBPM.executeTransition(this, null, null);
+        FlowEngine.executeTransition(this, null, null);
     }
 
     /**
@@ -125,7 +125,7 @@ public class ProcessInstance implements Serializable {
      *            a transição especificada.
      */
     public void executeTransition(String transitionName) {
-        EngineProcessamentoMBPM.executeTransition(this, transitionName, null);
+        FlowEngine.executeTransition(this, transitionName, null);
     }
 
     /**
@@ -140,7 +140,7 @@ public class ProcessInstance implements Serializable {
      *            as variáveis fornecidas.
      */
     public void executeTransition(String transitionName, VarInstanceMap<?> param) {
-        EngineProcessamentoMBPM.executeTransition(this, transitionName, param);
+        FlowEngine.executeTransition(this, transitionName, param);
     }
 
     /**

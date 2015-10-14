@@ -55,12 +55,6 @@ public class ProcessInstance implements IEntityProcessInstance {
     @JoinColumn(name = "CO_INSTANCIA_TAREFA_PAI")
     private TaskInstance parentTask;
 
-    // TODO remover este campo, era apenas provisorio no modelo
-    @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_ATUAL")
-    @Deprecated
-    private TaskDefinition currentTaskDefinition;
-
     //uni-directional many-to-one association to Process
     @ManyToOne
     @JoinColumn(name = "CO_PROCESSO", nullable = false)
@@ -142,14 +136,6 @@ public class ProcessInstance implements IEntityProcessInstance {
 
     public void setParentTask(TaskInstance parentTask) {
         this.parentTask = parentTask;
-    }
-
-    public TaskDefinition getCurrentTaskDefinition() {
-        return currentTaskDefinition;
-    }
-
-    public void setCurrentTaskDefinition(TaskDefinition currentTaskDefinition) {
-        this.currentTaskDefinition = currentTaskDefinition;
     }
 
     @Override

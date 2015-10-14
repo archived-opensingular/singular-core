@@ -287,14 +287,14 @@ public class TaskInstance {
     }
 
     public void executeTransition() {
-        EngineProcessamentoMBPM.executeTransition(this, null, null);
+        FlowEngine.executeTransition(this, null, null);
     }
 
     public void executeTransition(String destino) {
-        EngineProcessamentoMBPM.executeTransition(this, destino, null);
+        FlowEngine.executeTransition(this, destino, null);
     }
 
     public void executeTransition(String destino, VarInstanceMap<?> param) {
-        EngineProcessamentoMBPM.executeTransition(this, destino, param);
+        FlowEngine.executeTransition(this, destino, param);
     }
 }

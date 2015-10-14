@@ -84,12 +84,6 @@ public class DefaultHibernatePersistenceService extends
     }
 
     @Override
-    public TaskInstance addTask(ProcessInstance processInstance, Task taskVersion) {
-        processInstance.setCurrentTaskDefinition(taskVersion.getTaskDefinition());
-        return super.addTask(processInstance, taskVersion);
-    }
-
-    @Override
     protected IEntityTaskInstanceHistory newTaskInstanceHistory(TaskInstance task, IEntityTaskHistoricType taskHistoryType,
             MUser allocatedUser, MUser responsibleUser) {
 
