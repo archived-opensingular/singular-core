@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,24 +63,32 @@ public class WicketBuildContext implements Serializable {
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
         formComponent.add(RequiredByMTipoObrigatorioBehavior.getInstance());
         formComponent.add(new MInstanciaValidator<>());
-
-        formComponent.setLabel((IReadOnlyModel<String>) () -> {
-            IModel<T> model = formComponent.getModel();
-            if (model instanceof IMInstanciaAwareModel<?>) {
-                MInstancia instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-                List<String> labels = new ArrayList<>();
-                while (instancia != null) {
-                    labels.add(instancia.as(MPacoteBasic.aspect()).getLabel());
-                    instancia = instancia.getPai();
-                }
-                labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
-                Collections.reverse(labels);
-                if (!labels.isEmpty())
-                    return Strings.join(" > ", labels);
-            }
-            return null;
-        });
-
+        formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
         return formComponent;
+    }
+
+    protected static <T> String getLabel(FormComponent<?> formComponent) {
+        IModel<?> model = formComponent.getModel();
+        if (model instanceof IMInstanciaAwareModel<?>) {
+            MInstancia instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            return instancia.as(MPacoteBasic.aspect()).getLabel();
+        }
+        return "[" + formComponent.getId() + "]";
+    }
+    protected static <T> String getLabelFullPath(FormComponent<?> formComponent) {
+        IModel<?> model = formComponent.getModel();
+        if (model instanceof IMInstanciaAwareModel<?>) {
+            MInstancia instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            List<String> labels = new ArrayList<>();
+            while (instancia != null) {
+                labels.add(instancia.as(MPacoteBasic.aspect()).getLabel());
+                instancia = instancia.getPai();
+            }
+            labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
+            Collections.reverse(labels);
+            if (!labels.isEmpty())
+                return Strings.join(" > ", labels);
+        }
+        return "[" + formComponent.getId() + "]";
     }
 }
