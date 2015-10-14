@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import br.net.mirante.singular.view.error.Error403Page;
-import br.net.mirante.singular.view.page.form.FormPage;
+import br.net.mirante.singular.view.page.form.ListPage;
 
 public class ShowcaseApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
 
@@ -25,7 +25,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
 
 	@Override
     public Class<? extends WebPage> getHomePage() {
-        return FormPage.class;
+        return ListPage.class;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
 
     @Override
     protected Class<? extends WebPage> getSignInPageClass() {
-        return FormPage.class;
+        return ListPage.class;
     }
 
     @Override

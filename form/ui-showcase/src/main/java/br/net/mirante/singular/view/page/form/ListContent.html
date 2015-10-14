@@ -16,5 +16,17 @@
             <wicket:message key="breadcrumb.form"/>
         </li>
     </wicket:fragment>
+    <form wicket:id="parametersForm">
+	    <div wicket:id="parametersModal">
+	    	<label wicket:id="formLabelName" ></label>
+	        <div class="table-scrollable">
+		        <table wicket:id="parameters-list"></table>
+		    </div>
+	    </div>
+    </form>
+    <div wicket:id="previewModal" class="portlet-body form">
+    	<label wicket:id="previewName" ></label>
+    	<div class="form-body" wicket:id="generated"></div>
+    </div>
 </wicket:extend>
 </html>
