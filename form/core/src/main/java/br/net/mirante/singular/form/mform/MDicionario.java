@@ -13,10 +13,6 @@ public class MDicionario implements IContextoTipo {
     public Collection<MPacote> getPacotes() {
         return pacotes.getValores();
     }
-    
-    public Collection<MTipo<?>> getTipos() {
-        return tipos.getValores();
-    }
 
     public static MDicionario create() {
         MDicionario dicionario = new MDicionario();

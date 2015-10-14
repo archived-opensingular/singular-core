@@ -1,7 +1,9 @@
 package br.net.mirante.singular.form.mform.core;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 import org.apache.commons.lang3.NotImplementedException;
-import org.joda.time.Period;
 
 import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
@@ -17,10 +19,10 @@ public class ValidadorDataBuilder {
         return this;
     }
 
-    public IValidator<MIData> build() {
-        return new IValidator<MIData>() {
+    public IValidator<LocalDate> build() {
+        return new IValidator<LocalDate>() {
             @Override
-            public void validate(IValidatable<MIData> validatable) {
+            public void validate(IValidatable<LocalDate> validatable) {
                 // TODO implementar
                 throw new NotImplementedException("TODO implementar");
             }
