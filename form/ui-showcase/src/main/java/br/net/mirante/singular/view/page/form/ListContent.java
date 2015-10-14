@@ -41,14 +41,14 @@ import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.view.template.Content;
 
+@SuppressWarnings("serial")
 class ListContent extends Content implements SingularWicketContainer<FormContent, Void> {
 
 	final static List<FormVO> formTypes ;
 	
 	private final BSModalBorder parametersModal = new BSModalBorder("parametersModal"),
 								previewModal = new BSModalBorder("previewModal");
-	private final Form<?> parametersForm = new Form<>("parametersForm"),
-						  previewForm = new Form<>("previewForm");
+	private final Form<?> parametersForm = new Form<>("parametersForm");
 	
 	private final Collection<FieldVO> fields = new ArrayList<>();
 	private final BSLabel formName = new BSLabel("formLabelName"),
@@ -135,7 +135,7 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 		parametersModal.queue(formName);
 		
 		previewModal.setSize(BSModalBorder.Size.FULL);
-		previewModal.setTitleText(getMessage("label.table.column.params"));
+		previewModal.setTitleText(getMessage("label.table.column.preview"));
 		
 		previewModal.queue(container);
 		previewModal.queue(previewName);
@@ -161,31 +161,14 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 				.appendPropertyColumn(getMessage("label.table.column.form"), 
 						"key", FormVO::getKey)
 				.appendColumn(new BSActionColumn<FormVO, String>(WicketUtils.$m.ofValue(""))
-						.appendAction(getMessage("label.table.column.params"), Icone.COGS, 
-								(target, model) -> {
-									openParameterModal(target, model);
-								})
+						.appendAction(getMessage("label.table.column.params"), 
+								Icone.COGS, this::openParameterModal
 						)
+				)
 				.appendColumn(new BSActionColumn<FormVO, String>(WicketUtils.$m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.preview"), Icone.EYE, 
-                        		(target, model) -> {
-                			FormVO form = model.getObject();
-                			MTipoComposto<?> formType = form.getValue();
-                			previewModal.remove(container);
-                			container = new BSGrid("generated");
-                			previewModal.queue(container);
-                	        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
-                	        IModel<MIComposto> mInstance = new MInstanciaRaizModel<MIComposto>() {
-                	            @Override
-                	            protected MTipo<MIComposto> getTipoRaiz() {
-                	                return (MTipo<MIComposto>) dicionario.getTipo(formType.getNome());
-                	            }
-                	        };
-                	        UIBuilderWicket.buildForEdit(ctx, mInstance);
-                	        
-                	        previewName.setDefaultModel(form);
-                			previewModal.show(target);
-                        })
+                        .appendAction(getMessage("label.table.column.preview"), 
+                        		Icone.EYE, this::openPreviewModal
+                        )
                  )
 				.setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
                 .build("form-list");
@@ -193,19 +176,51 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 	}
 
 	private void openParameterModal(AjaxRequestTarget target, IModel<FormVO> model) {
-		FormVO form = model.getObject();
+		FormVO form = model.getObject(); 
+		updateFields(form);
+		formName.setDefaultModel(form);
+		parametersModal.show(target);
+	}
+
+	private FormVO updateFields(FormVO form) {
 		MTipoComposto<?> formType = form.getValue();
 		fields.clear();
 		if(formType != null){
-			fields.addAll(formType.getCampos().stream().map(t -> {
-				MTipo<?> campo = formType.getCampo(t);
-				return new FieldVO(t, campo.getClasseInstancia().getName());
-			}).collect(Collectors.toList())); 
+			fields.addAll(convertCampos2FieldVO(formType)); 
 		}
-		
-		formName.setDefaultModel(form);
-		
-		parametersModal.show(target);
+		return form;
+	}
+
+	private List<FieldVO> convertCampos2FieldVO(MTipoComposto<?> formType) {
+		return formType.getCampos().stream().map(t -> {
+			MTipo<?> campo = formType.getCampo(t);
+			return new FieldVO(t, campo.getClasseInstancia().getName());
+		}).collect(Collectors.toList());
+	}
+	
+	private void openPreviewModal(AjaxRequestTarget target, IModel<FormVO> model) {
+		FormVO form = model.getObject();
+		updateContainer(form);
+		previewName.setDefaultModel(form);
+		previewModal.show(target);
+	}
+
+	private void updateContainer(FormVO form) {
+		previewModal.remove(container);
+		container = new BSGrid("generated");
+		previewModal.queue(container);
+		buildContainer(form.getValue());
+	}
+
+	private void buildContainer(MTipoComposto<?> formType) {
+		WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
+		IModel<MIComposto> mInstance = new MInstanciaRaizModel<MIComposto>() {
+		    @SuppressWarnings("unchecked")
+			protected MTipo<MIComposto> getTipoRaiz() {
+		        return (MTipo<MIComposto>) dicionario.getTipo(formType.getNome());
+		    }
+		};
+		UIBuilderWicket.buildForEdit(ctx, mInstance);
 	}
 	
 	protected WebMarkupContainer getBreadcrumbLinks(String id) {
