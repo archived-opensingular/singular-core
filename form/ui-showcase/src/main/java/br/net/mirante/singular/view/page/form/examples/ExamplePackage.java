@@ -41,19 +41,24 @@ public class ExamplePackage extends MPacote {
 		MTipoComposto<?> buyer = order.addCampoComposto("Buyer");
 		buyer.as(AtrBasic::new).label("Comprador");
 		
-		addField(order, "Name", "Nome", MTipoNomePessoa.class);
-		addField(order, "CPF", "CPF", MTipoCPF.class);
-		addField(order, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-		addField(order, "Address", "Endereço", MTipoString.class);
-		addField(order, "Zipcode", "CEP", MTipoCEP.class);
+		addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
+		addField(buyer, "CPF", "CPF", MTipoCPF.class);
+		addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
+		
+		MTipoComposto<?> address = order.addCampoComposto("Addresss");
+		address.as(AtrBasic::new).label("Endereço");
+		addField(address, "street", "Logradouro", MTipoString.class);
+		addField(address, "city", "Cidade", MTipoString.class);
+		addField(address, "state", "Estado", MTipoString.class);
+		addField(address, "Zipcode", "CEP", MTipoCEP.class);
 		
 		pb.debug();
 	}
 
 
-	private void addField(MTipoComposto<?> root, String name, String label, Class<? extends MTipo> type) {
-		MTipo<?> number = root.addCampo(name,type);
-		number.as(AtrBasic::new).label(label);
+	private void addField(MTipoComposto<?> root, String name, String label, 
+							Class<? extends MTipo<?>> type) {
+		root.addCampo(name,type).as(AtrBasic::new).label(label);
 	}
 	
 }

@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -192,10 +191,24 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 	}
 
 	private List<FieldVO> convertCampos2FieldVO(MTipoComposto<?> formType) {
-		return formType.getCampos().stream().map(t -> {
+		LinkedList<FieldVO> fields = new LinkedList();
+//		return formType.getCampos().stream().map(t -> {
+//			MTipo<?> campo = formType.getCampo(t);
+//			return new FieldVO(t, campo.getClasseInstancia().getName());
+//		}).collect(Collectors.toList());
+		addAllFields(formType, fields);
+		return fields;
+	}
+
+	private void addAllFields(MTipoComposto<?> formType, LinkedList<FieldVO> fields) {
+		formType.getCampos().forEach( t -> {
 			MTipo<?> campo = formType.getCampo(t);
-			return new FieldVO(t, campo.getClasseInstancia().getName());
-		}).collect(Collectors.toList());
+			fields.add(new FieldVO(t, campo.getClasseInstancia().getName()));
+			if(campo instanceof MTipoComposto){
+				MTipoComposto<?> mc = (MTipoComposto<?>) campo;
+				addAllFields(mc, fields);
+			}
+		});
 	}
 	
 	private void openPreviewModal(AjaxRequestTarget target, IModel<FormVO> model) {
