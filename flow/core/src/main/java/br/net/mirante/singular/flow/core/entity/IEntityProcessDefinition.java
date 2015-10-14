@@ -8,11 +8,19 @@ public interface IEntityProcessDefinition extends IEntityByCod {
 
     String getAbbreviation();
 
+    void setAbbreviation(String abbreviation);
+
     String getName();
+
+    void setName(String name);
 
     String getDefinitionClassName();
 
+    void setDefinitionClassName(String name);
+
     IEntityCategory getCategory();
+
+    void setCategory(IEntityCategory category);
 
     List<? extends IEntityTaskDefinition> getTaskDefinitions();
 

@@ -3,13 +3,13 @@ package br.net.mirante.singular.test;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.net.mirante.singular.definicao.DefinicaoComVariaveis;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import br.net.mirante.singular.DefinicaoComVariaveis;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.persistence.entity.ExecutionVariable;
 import br.net.mirante.singular.persistence.entity.Variable;
@@ -40,7 +40,7 @@ public class InstanciaDefinicaoComVariavelTest extends TestSupport {
     @Test()
     public void teste2PersistenciaVariaveis() {
         DefinicaoComVariaveis d = mbpmBean.getProcessDefinition(DefinicaoComVariaveis.class);
-        List<br.net.mirante.singular.persistence.entity.ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntity());
+        List<br.net.mirante.singular.persistence.entity.ProcessInstance> instances = testDAO.findAllProcessInstancesByDefinition(d.getEntityProcessVersion());
         for (br.net.mirante.singular.persistence.entity.ProcessInstance p : instances) {
             List<Variable> variables = testDAO.retrieveVariablesByInstance(p.getCod());
             assertEquals(2, variables.size());

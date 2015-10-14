@@ -74,14 +74,14 @@ public class DefinitionDAO {
                 + "             SELECT CO_DEFINICAO_PROCESSO AS COD, MONTH(DT_FIM) AS MES,"
                 + "                    COUNT(CO_INSTANCIA_PROCESSO) AS THRO"
                 + "             FROM TB_INSTANCIA_PROCESSO TBIP"
-                + "               INNER JOIN TB_PROCESSO TBP ON TBP.CO_PROCESSO = TBIP.CO_PROCESSO"
+                + "               INNER JOIN TB_VERSAO_PROCESSO TBP ON TBP.CO_VERSAO_PROCESSO = TBIP.CO_VERSAO_PROCESSO"
                 + "             WHERE DT_FIM IS NOT NULL AND TBP.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
                 + "             GROUP BY CO_DEFINICAO_PROCESSO, MONTH(DT_FIM)"
                 + "          ) SUBDEM GROUP BY SUBDEM.COD) AS THROU"
                 + "   FROM TB_DEFINICAO_PROCESSO DEF"
                 + "     INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
-                + "     INNER JOIN TB_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "     LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_PROCESSO = INS.CO_PROCESSO"
+                + "     INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                + "     LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + "   WHERE INS.DT_FIM IS NULL"
                 + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA "
                 + orderByStatement.toString();
@@ -108,15 +108,15 @@ public class DefinitionDAO {
     @SuppressWarnings("unchecked")
     public List<MetaDataDTO> retrieveMetaData(Long id) {
         long newestProcessVersionId = ((Number) getSession()
-                .createSQLQuery("SELECT MAX(CO_PROCESSO) FROM TB_PROCESSO WHERE CO_DEFINICAO_PROCESSO = :id")
+                .createSQLQuery("SELECT MAX(CO_VERSAO_PROCESSO) FROM TB_VERSAO_PROCESSO WHERE CO_DEFINICAO_PROCESSO = :id")
                 .setParameter("id", id)
                 .uniqueResult()).longValue();
         String sql =
-                "SELECT TAR.CO_TAREFA AS id, TAR.NO_TAREFA AS task, TIT.DS_TIPO_TAREFA AS type, '' AS executor"
-                        + " FROM TB_TAREFA TAR"
-                        + "   INNER JOIN TB_PROCESSO PRO ON PRO.CO_PROCESSO = TAR.CO_PROCESSO"
+                "SELECT TAR.CO_VERSAO_TAREFA AS id, TAR.NO_TAREFA AS task, TIT.DS_TIPO_TAREFA AS type, '' AS executor"
+                        + " FROM TB_VERSAO_TAREFA TAR"
+                        + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
                         + "   INNER JOIN TB_TIPO_TAREFA TIT ON TIT.CO_TIPO_TAREFA = TAR.CO_TIPO_TAREFA"
-                        + " WHERE TIT.CO_TIPO_TAREFA != :fim AND PRO.CO_PROCESSO = :id";
+                        + " WHERE TIT.CO_TIPO_TAREFA != :fim AND PRO.CO_VERSAO_PROCESSO = :id";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("id", LongType.INSTANCE)
                 .addScalar("task", StringType.INSTANCE)
@@ -136,10 +136,10 @@ public class DefinitionDAO {
     private List<ITransactionDTO> retrieveTransactions(Long id) {
         return getSession().createSQLQuery(
                 "SELECT TRA.NO_TRANSICAO AS name, SOU.NO_TAREFA AS source, TGT.NO_TAREFA AS target"
-                        + " FROM TB_TRANSICAO TRA"
-                        + "   INNER JOIN TB_TAREFA SOU ON SOU.CO_TAREFA = TRA.CO_TAREFA_ORIGEM"
-                        + "   INNER JOIN TB_TAREFA TGT ON TGT.CO_TAREFA = TRA.CO_TAREFA_DESTINO"
-                        + " WHERE SOU.CO_TAREFA = :id"
+                        + " FROM TB_VERSAO_TRANSICAO TRA"
+                        + "   INNER JOIN TB_VERSAO_TAREFA SOU ON SOU.CO_VERSAO_TAREFA = TRA.CO_VERSAO_TAREFA_ORIGEM"
+                        + "   INNER JOIN TB_VERSAO_TAREFA TGT ON TGT.CO_VERSAO_TAREFA = TRA.CO_VERSAO_TAREFA_DESTINO"
+                        + " WHERE SOU.CO_VERSAO_TAREFA = :id"
         ).addScalar("name", StringType.INSTANCE)
                 .addScalar("source", StringType.INSTANCE)
                 .addScalar("target", StringType.INSTANCE)

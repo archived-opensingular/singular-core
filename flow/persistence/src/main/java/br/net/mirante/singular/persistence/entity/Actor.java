@@ -51,7 +51,7 @@ public class Actor implements MUser {
     }
 
     @Override
-    public String getNomeGuerra() {
+    public String getSimpleName() {
         return getNome();
     }
 

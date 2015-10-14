@@ -9,8 +9,12 @@ public interface IEntityProcessVersion extends IEntityByCod {
 
     Date getVersionDate();
 
+    void setVersionDate(Date date);
+
+    // TODO Renomear para getVersionTasks();
+    @Deprecated
     List<? extends IEntityTaskVersion> getTasks();
-    
+
     default String getDefinitionClassName() {
         return getProcessDefinition().getDefinitionClassName();
     }
@@ -27,20 +31,12 @@ public interface IEntityProcessVersion extends IEntityByCod {
         return getProcessDefinition().getCategory();
     }
 
-    default IEntityTaskVersion getTask(String abbreviation) {
+    default IEntityTaskVersion getTaskVersion(String abbreviation) {
         for (IEntityTaskVersion situacao : getTasks()) {
             if (situacao.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return situacao;
             }
         }
         return null;
-    }
-
-    default IEntityTaskDefinition getTaskDefinition(String abbreviation) {
-        return getProcessDefinition().getTaskDefinition(abbreviation);
-    }
-    
-    default <X extends IEntityProcessRole> X getRole(String abbreviation) {
-        return getProcessDefinition().getRole(abbreviation);
     }
 }

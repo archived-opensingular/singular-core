@@ -24,7 +24,7 @@ public class TestUserService implements IUserService {
         }
 
         @Override
-        public String getNomeGuerra() {
+        public String getSimpleName() {
             return "Soldado Ryan";
         }
 

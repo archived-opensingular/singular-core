@@ -1,23 +1,17 @@
 package br.net.mirante.singular.flow.core;
 
-@Deprecated
 //TODO renomear para algo mais representativo para o singular.
 public interface MUser extends Comparable<MUser> {
 
-    /**
-     * @deprecated deveria ser serializable
-     */
-    //TODO refatorar
-    @Deprecated
     Integer getCod();
 
     /**
-     * @deprecated nome de guerra só faz sentido no contexto da mirante
+     * Nome curto do usuário, ou seja, não um nome que identifica a pessoa
+     * dentro da organização, mas que pode ser uma abreviação do nome completo
+     * ou um nome de guerra. Por exemplo, "João Magalhão do Santo Silva" pode
+     * ter seu nome simples como sendo "João Silva".
      */
-    // TODO renomear para um nome mais representativo para o singular. Sugestão
-    // getShortName()
-    @Deprecated
-    String getNomeGuerra();
+    String getSimpleName();
 
     String getEmail();
 
@@ -31,6 +25,6 @@ public interface MUser extends Comparable<MUser> {
 
     @Override
     default int compareTo(MUser p) {
-        return getNomeGuerra().compareTo(p.getNomeGuerra());
+        return getSimpleName().compareTo(p.getSimpleName());
     }
 }

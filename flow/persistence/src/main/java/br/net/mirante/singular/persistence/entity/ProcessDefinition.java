@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.persistence.util.Constants;
 
@@ -76,6 +77,7 @@ public class ProcessDefinition implements IEntityProcessDefinition {
         return definitionClassName;
     }
 
+    @Override
     public void setDefinitionClassName(String definitionClassName) {
         this.definitionClassName = definitionClassName;
     }
@@ -85,6 +87,7 @@ public class ProcessDefinition implements IEntityProcessDefinition {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -94,6 +97,7 @@ public class ProcessDefinition implements IEntityProcessDefinition {
         return abbreviation;
     }
 
+    @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
@@ -109,6 +113,11 @@ public class ProcessDefinition implements IEntityProcessDefinition {
     @Override
     public Category getCategory() {
         return category;
+    }
+
+    @Override
+    public void setCategory(IEntityCategory category) {
+        setCategory((Category) category);
     }
 
     public void setCategory(Category category) {

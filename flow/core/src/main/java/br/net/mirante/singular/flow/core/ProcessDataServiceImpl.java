@@ -14,13 +14,14 @@ import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
@@ -46,21 +47,18 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     @Override
     public final List<I> retrieveActiveInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
-                pessoa, true));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, true));
     }
 
     @Override
     public final List<I> retrieveEndedInstances() {
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
-                null, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, false));
     }
 
     @Override
     public final List<I> retrieveEndedInstancesCreatedBy(MUser pessoa) {
         Objects.requireNonNull(pessoa);
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(),
-                pessoa, false));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), pessoa, false));
     }
 
     @Override
@@ -87,11 +85,15 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     private List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
             Collection<IEntityTaskDefinition> situacoesAlvo) {
         if (!exibirEncerradas && (situacoesAlvo == null || situacoesAlvo.isEmpty())) {
-            situacoesAlvo = getEntityProcess().getTasks().stream().filter(t -> !t.isEnd()).map(t -> t.getTaskDefinition())
+            // TODO Daniel: o método abaixo dever ser convertido para usar
+            // getEntityProcessDefinition, mas nesse caso será necessário
+            // adicionar o método isEnd em TaskDefintion. Provavelmente será
+            // necessário alterar o modelo de BD
+            situacoesAlvo = getEntityProcessVersion().getTasks().stream().filter(t -> !t.isEnd()).map(t -> t.getTaskDefinition())
                     .collect(Collectors.toList());
         }
-        return convertToProcessInstance(
-                getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), minDataInicio, maxDataInicio, situacoesAlvo));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), minDataInicio,
+                maxDataInicio, situacoesAlvo));
     }
 
     @Override
@@ -102,7 +104,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     @Override
     public final List<I> retrieveAllInstancesIn(Collection<? extends IEntityTaskDefinition> situacoesAlvo) {
         return convertToProcessInstance(
-                getPersistenceService().retrieveProcessInstancesWith(getEntityProcess(), null, null, situacoesAlvo));
+                getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), null, null, situacoesAlvo));
     }
 
 
@@ -133,8 +135,16 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return retrieveAllInstancesIn(convertToEntityTask(getFlowMap().getTasks().stream().filter(t -> t.isPeople())));
     }
 
-    protected final IEntityProcessVersion getEntityProcess() {
-        return processDefinition.getEntity();
+    @Deprecated
+    // TODO Esta errado usar processVersion nas pesquisas. Apagar esse metodo
+    // assim que removida a última referencia
+    protected final IEntityProcessVersion getEntityProcessVersion() {
+        return processDefinition.getEntityProcessVersion();
+    }
+
+    protected final IEntityProcessDefinition getEntityProcessDefinition() {
+        return processDefinition.getEntityProcessDefinition();
+
     }
 
     protected final IEntityTaskDefinition getEntityTask(MTask<?> task) {
@@ -161,7 +171,7 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
         return processDefinition.convertToProcessInstance(entities);
     }
 
-    private IPersistenceService<IEntityCategory, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance,
+    private IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance,
             IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole,
             IEntityRole> getPersistenceService() {
         return processDefinition.getPersistenceService();
