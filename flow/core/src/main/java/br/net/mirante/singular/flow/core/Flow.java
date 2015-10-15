@@ -77,20 +77,20 @@ public class Flow {
         return getMbpmBean().getProcessInstance(dadosInstanciaProcesso);
     }
 
-    public static <K extends ProcessInstance> K getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
         return getMbpmBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstance(Class<T> expectedType, Integer cod) {
-        return getMbpmBean().getProcessInstance(expectedType, cod);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
+        return getMbpmBean().getProcessInstance(processClass, cod);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstance(Class<T> expectedType, String id) {
-        return getMbpmBean().getProcessInstance(expectedType, id);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
+        return getMbpmBean().getProcessInstance(processClass, id);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstanceOrException(Class<T> expectedType, String id) {
-        return getMbpmBean().getProcessInstanceOrException(expectedType, id);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
+        return getMbpmBean().getProcessInstanceOrException(processClass, id);
     }
 
     public static <X extends ProcessInstance> X getProcessInstance(String processInstanceID) {
