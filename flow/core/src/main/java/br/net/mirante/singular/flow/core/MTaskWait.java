@@ -51,5 +51,8 @@ public class MTaskWait extends MTaskUserExecutable<MTaskWait> {
         if (getExecutionPage() != null) {
             Objects.requireNonNull(getAccessStrategy(), "Não foi definida a estrategia de verificação de acesso da tarefa");
         }
+        if(getTransitions().size() > 1 && getDefaultTransition() == null && hasExecutionDateStrategy()){
+            throw new SingularFlowException(createErrorMsg("A transição default não foi definida"));
+        }
     }
 }

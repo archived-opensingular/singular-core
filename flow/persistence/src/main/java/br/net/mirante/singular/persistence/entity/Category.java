@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_CATEGORIA", schema = Constants.SCHEMA)
-public class Category implements IEntityCategory {
+public class Category extends BaseEntity implements IEntityCategory {
 
     private static final long serialVersionUID = 1L;
 

@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
-public class RoleInstance implements IEntityRole {
+public class RoleInstance extends BaseEntity implements IEntityRole {
     private static final long serialVersionUID = 1L;
 
     @Id

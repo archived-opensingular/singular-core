@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TRANSICAO", schema = Constants.SCHEMA)
-public class Transition implements IEntityTaskTransitionVersion {
+public class Transition extends BaseEntity implements IEntityTaskTransitionVersion {
     private static final long serialVersionUID = 1L;
 
     @Id

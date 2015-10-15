@@ -23,7 +23,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_PROCESSO", schema = Constants.SCHEMA)
-public class Process implements IEntityProcessVersion {
+public class Process extends BaseEntity implements IEntityProcessVersion {
     private static final long serialVersionUID = 1L;
 
     @Id

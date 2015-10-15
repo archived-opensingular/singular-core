@@ -22,7 +22,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
+public class TaskInstanceHistory extends BaseEntity implements IEntityTaskInstanceHistory {
     private static final long serialVersionUID = 1L;
 
     @Id

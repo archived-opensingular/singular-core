@@ -18,7 +18,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VARIAVEL", schema = Constants.SCHEMA)
-public class Variable implements IEntityVariableInstance {
+public class Variable extends BaseEntity implements IEntityVariableInstance {
     private static final long serialVersionUID = 1L;
 
     @Id

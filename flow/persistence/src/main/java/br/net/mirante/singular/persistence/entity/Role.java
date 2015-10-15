@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name="TB_PAPEL", schema = Constants.SCHEMA)
-public class Role implements IEntityProcessRole {
+public class Role extends BaseEntity implements IEntityProcessRole {
     private static final long serialVersionUID = 1L;
 
     @Id

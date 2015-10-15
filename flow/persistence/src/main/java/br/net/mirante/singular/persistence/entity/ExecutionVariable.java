@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
-public class ExecutionVariable implements IEntityExecutionVariable {
+public class ExecutionVariable extends BaseEntity implements IEntityExecutionVariable {
     private static final long serialVersionUID = 1L;
 
     @Id

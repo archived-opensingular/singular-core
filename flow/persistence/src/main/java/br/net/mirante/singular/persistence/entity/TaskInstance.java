@@ -27,7 +27,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-public class TaskInstance implements IEntityTaskInstance {
+public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
     private static final long serialVersionUID = 1L;
 
     @Id
