@@ -32,9 +32,9 @@ CREATE TABLE DBSINGULAR.RL_PERMISSAO_PROCESSO (
 /* Table: RL_PERMISSAO_TAREFA                                   */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.RL_PERMISSAO_TAREFA (
-  CO_TAREFA           BIGINT NOT NULL,
+  CO_PERMISSAO_TAREFA           BIGINT NOT NULL,
   CO_DEFINICAO_TAREFA BIGINT NULL,
-  CONSTRAINT PK_PERMISSAO_TAREFA PRIMARY KEY (CO_TAREFA)
+  CONSTRAINT PK_PERMISSAO_TAREFA PRIMARY KEY (CO_PERMISSAO_TAREFA)
 );
 
 /*==============================================================*/
@@ -98,11 +98,11 @@ CREATE TABLE DBSINGULAR.TB_HISTORICO_INSTANCIA_TAREFA (
 CREATE TABLE DBSINGULAR.TB_INSTANCIA_PAPEL (
   CO_INSTANCIA_PAPEL    BIGINT IDENTITY,
   CO_INSTANCIA_PROCESSO BIGINT   NOT NULL,
-  CO_PAPEL              BIGINT   NOT NULL,
+  CO_DEFINICAO_PAPEL              BIGINT   NOT NULL,
   CO_ATOR               BIGINT   NOT NULL,
   DT_CRIACAO            DATETIME NOT NULL,
   CO_ATOR_ALOCADOR      BIGINT   NULL,
-  CONSTRAINT AK_AK_INSTANCIA_PAPEL_TB_INSTA UNIQUE (CO_INSTANCIA_PROCESSO, CO_PAPEL)
+  CONSTRAINT AK_AK_INSTANCIA_PAPEL_TB_INSTA UNIQUE (CO_INSTANCIA_PROCESSO, CO_DEFINICAO_PAPEL)
 );
 
 /*==============================================================*/
@@ -110,13 +110,13 @@ CREATE TABLE DBSINGULAR.TB_INSTANCIA_PAPEL (
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_INSTANCIA_PROCESSO (
   CO_INSTANCIA_PROCESSO   BIGINT IDENTITY,
-  CO_PROCESSO             BIGINT       NOT NULL,
+  CO_VERSAO_PROCESSO             BIGINT       NOT NULL,
   DT_INICIO               DATETIME     NOT NULL,
   DT_FIM                  DATETIME     NULL,
   DS_INSTANCIA_PROCESSO   VARCHAR(300) NULL,
   CO_ATOR_CRIADOR         BIGINT       NULL,
   CO_INSTANCIA_TAREFA_PAI BIGINT       NULL,
-  CO_TAREFA_ATUAL         BIGINT       NULL
+  CO_VERSAO_TAREFA_ATUAL         BIGINT       NULL
 );
 
 /*==============================================================*/
@@ -125,49 +125,49 @@ CREATE TABLE DBSINGULAR.TB_INSTANCIA_PROCESSO (
 CREATE TABLE DBSINGULAR.TB_INSTANCIA_TAREFA (
   CO_INSTANCIA_TAREFA    BIGINT IDENTITY,
   CO_INSTANCIA_PROCESSO  BIGINT   NOT NULL,
-  CO_TAREFA              BIGINT   NOT NULL,
+  CO_VERSAO_TAREFA              BIGINT   NOT NULL,
   DT_INICIO              DATETIME NOT NULL,
   DT_FIM                 DATETIME NULL,
   DT_ESPERADA_FIM        DATETIME NULL,
   CO_ATOR_ALOCADO        BIGINT   NULL,
   CO_ATOR_CONCLUSAO      BIGINT   NULL,
-  CO_TRANSICAO_EXECUTADA BIGINT   NULL,
+  CO_VERSAO_TRANSICAO_EXECUTADA BIGINT   NULL,
   DATA_ALVO_SUSPENSAO    DATETIME NULL,
   SE_SUSPENSA            BIT      NULL,
   DATA_ALVO_FIM          DATETIME NULL
 );
 
 /*==============================================================*/
-/* Table: TB_PAPEL                                              */
+/* Table: TB_DEFINICAO_PAPEL                                              */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_PAPEL (
-  CO_PAPEL              BIGINT IDENTITY,
+CREATE TABLE DBSINGULAR.TB_DEFINICAO_PAPEL (
+  CO_DEFINICAO_PAPEL              BIGINT IDENTITY,
   CO_DEFINICAO_PROCESSO BIGINT       NULL,
   SG_PAPEL              VARCHAR(100) NOT NULL,
   NO_PAPEL              VARCHAR(300) NOT NULL,
-  CONSTRAINT AK_AK_PAPEL_TB_PAPEL UNIQUE (CO_DEFINICAO_PROCESSO, SG_PAPEL)
+  CONSTRAINT AK_AK_PAPEL_TB_DEFINICAO_PAPEL UNIQUE (CO_DEFINICAO_PROCESSO, SG_PAPEL)
 );
 
 /*==============================================================*/
-/* Table: TB_PROCESSO                                           */
+/* Table: TB_VERSAO_PROCESSO                                           */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_PROCESSO (
-  CO_PROCESSO           BIGINT IDENTITY,
+CREATE TABLE DBSINGULAR.TB_VERSAO_PROCESSO (
+  CO_VERSAO_PROCESSO           BIGINT IDENTITY,
   CO_DEFINICAO_PROCESSO BIGINT   NOT NULL,
   DT_VERSAO             DATETIME NOT NULL
 );
 
 /*==============================================================*/
-/* Table: TB_TAREFA                                             */
+/* Table: TB_VERSAO_TAREFA                                             */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_TAREFA (
-  CO_TAREFA           BIGINT IDENTITY,
-  CO_PROCESSO         BIGINT       NOT NULL,
+CREATE TABLE DBSINGULAR.TB_VERSAO_TAREFA (
+  CO_VERSAO_TAREFA           BIGINT IDENTITY,
+  CO_VERSAO_PROCESSO         BIGINT       NOT NULL,
   CO_DEFINICAO_TAREFA BIGINT       NOT NULL,
   NO_TAREFA           VARCHAR(300) NOT NULL,
   CO_TIPO_TAREFA      BIGINT       NOT NULL,
-  CONSTRAINT AK_AK_TAREFA_TB_TAREF UNIQUE (CO_PROCESSO, CO_DEFINICAO_TAREFA),
-  CONSTRAINT AK_AK_TAREFA_NOME_TB_TAREF UNIQUE (CO_PROCESSO, NO_TAREFA)
+  CONSTRAINT AK_AK_TAREFA_TB_TAREF UNIQUE (CO_VERSAO_PROCESSO, CO_DEFINICAO_TAREFA),
+  CONSTRAINT AK_AK_TAREFA_NOME_TB_TAREF UNIQUE (CO_VERSAO_PROCESSO, NO_TAREFA)
 );
 
 /*==============================================================*/
@@ -199,17 +199,17 @@ CREATE TABLE DBSINGULAR.TB_TIPO_VARIAVEL (
 );
 
 /*==============================================================*/
-/* Table: TB_TRANSICAO                                          */
+/* Table: TB_VERSAO_TRANSICAO                                          */
 /*==============================================================*/
-CREATE TABLE DBSINGULAR.TB_TRANSICAO (
-  CO_TRANSICAO      BIGINT IDENTITY,
-  CO_TAREFA_ORIGEM  BIGINT              NOT NULL,
-  CO_TAREFA_DESTINO BIGINT              NOT NULL,
+CREATE TABLE DBSINGULAR.TB_VERSAO_TRANSICAO (
+  CO_VERSAO_TRANSICAO      BIGINT IDENTITY,
+  CO_VERSAO_TAREFA_ORIGEM  BIGINT              NOT NULL,
+  CO_VERSAO_TAREFA_DESTINO BIGINT              NOT NULL,
   NO_TRANSICAO      VARCHAR(300)        NOT NULL,
   SG_TRANSICAO      VARCHAR(100)        NOT NULL,
   TP_TRANSICAO      CHAR(1) DEFAULT 'E' NOT NULL,
   CONSTRAINT CKC_TP_TRANSICAO_TB_TRANS CHECK (TP_TRANSICAO IN ('E', 'A', 'H')),
-  CONSTRAINT AK_AK_TRANSICAO_TB_TRANS UNIQUE (CO_TAREFA_ORIGEM, SG_TRANSICAO)
+  CONSTRAINT AK_AK_TRANSICAO_TB_TRANS UNIQUE (CO_VERSAO_TAREFA_ORIGEM, SG_TRANSICAO)
 );
 
 /*==============================================================*/

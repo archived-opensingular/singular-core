@@ -20,7 +20,7 @@ public class TaskRight {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TAREFA")
+    @Column(name = "CO_PERMISSAO_TAREFA")
     private Long cod;
 
     //bi-directional many-to-one association to TaskDefinition

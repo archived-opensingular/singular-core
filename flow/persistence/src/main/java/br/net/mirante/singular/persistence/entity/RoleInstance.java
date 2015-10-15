@@ -50,7 +50,7 @@ public class RoleInstance extends BaseEntity implements IEntityRole {
 
     //uni-directional many-to-one association to Role
     @ManyToOne
-    @JoinColumn(name = "CO_PAPEL", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false)
     private Role role;
 
     public RoleInstance() {

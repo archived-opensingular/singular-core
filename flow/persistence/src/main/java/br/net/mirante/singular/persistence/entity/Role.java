@@ -18,13 +18,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_PAPEL database table.
  */
 @Entity
-@Table(name="TB_PAPEL", schema = Constants.SCHEMA)
+@Table(name="TB_DEFINICAO_PAPEL", schema = Constants.SCHEMA)
 public class Role extends BaseEntity implements IEntityProcessRole {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_PAPEL")
+    @Column(name = "CO_DEFINICAO_PAPEL")
     private Integer cod;
 
     @Column(name = "NO_PAPEL", nullable = false)
