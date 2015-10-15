@@ -37,30 +37,12 @@ public class BSFormGroup extends BSContainer<BSFormGroup> {
     }
 
     public BSFormGroup appendSubgroupLabelControlsFeedback(
-        int labelColspan, String labelFor, Serializable labelValueOrModel,
-        int controlsColspan, IBSComponentFactory<BSControls> factory) {
-
-        return appendSubgroupLabelControls(
-            labelColspan, labelFor, labelValueOrModel,
-            controlsColspan, factory);
-    }
-
-    public BSFormGroup appendSubgroupLabelControlsFeedback(
         int labelColspan, Component labelFor, Serializable labelValueOrModel,
         int controlsColspan, IBSComponentFactory<BSControls> factory) {
 
         return appendSubgroupLabelControls(
             labelColspan, labelFor, labelValueOrModel,
             controlsColspan, factory);
-    }
-
-    public BSFormGroup appendSubgroupLabelControls(
-        int labelColspan, String labelFor, Serializable labelValueOrModel,
-        int controlsColspan, IBSComponentFactory<BSControls> factory) {
-
-        return newSubgroup()
-            .appendLabel(labelColspan, labelFor, labelValueOrModel)
-            .appendControls(controlsColspan, factory);
     }
 
     public BSFormGroup appendSubgroupLabelControls(
@@ -73,18 +55,13 @@ public class BSFormGroup extends BSContainer<BSFormGroup> {
     }
 
     public BSFormGroup appendLabel(int colspan, Serializable valueOrModel) {
-        return appendLabel(colspan, (String) null, valueOrModel);
+        return appendLabel(colspan, null, valueOrModel);
     }
 
     public BSFormGroup appendLabel(int colspan, Component labelFor, Serializable valueOrModel) {
-        return appendLabel(colspan, labelFor.getId(), valueOrModel);
-    }
-
-    public BSFormGroup appendLabel(int colspan, String labelFor, Serializable valueOrModel) {
         BSLabel label = newComponent(this::newLabel);
         getDefaultGridSize().col(label, colspan)
-            .setContainer(this)
-            .setTargetComponentIds(labelFor)
+            .setTargetComponent(labelFor)
             .setDefaultModel($m.wrapValue(valueOrModel));
         return this;
     }

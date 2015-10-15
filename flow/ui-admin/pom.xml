@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>singular-form</artifactId>
+            <artifactId>form-core</artifactId>
             <version>0.3.2-SNAPSHOT</version>
         </dependency>
         <dependency>

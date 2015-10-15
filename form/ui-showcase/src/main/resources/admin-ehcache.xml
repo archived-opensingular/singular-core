@@ -1,0 +1,149 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="true"
+         monitoring="autodetect"
+         dynamicConfig="true">
+
+    <defaultCache eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU"/>
+
+    <cache name="retrieveAllCategoriesMenu" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveCategoryDefinitionIdsByCodeMenu" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveFeed" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveMeanTimeByProcess" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveStatsByActiveTask" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveNewInstancesQuantityLastYear" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveEndStatusQuantityByPeriod" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveMeanTimeByTask" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveActiveInstanceStatus" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveMeanTimeActiveInstances" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveAverageTimesActiveInstances" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveMeanTimeFinishedInstances" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveCounterActiveInstances" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveProcessDefinitionName" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveProcessDefinitionId" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+</ehcache>
