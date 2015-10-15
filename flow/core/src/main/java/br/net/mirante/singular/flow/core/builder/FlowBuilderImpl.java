@@ -79,7 +79,8 @@ public class FlowBuilderImpl extends
             return task;
         }
 
-        protected FlowBuilder<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getFlowBuilder() {
+        @SuppressWarnings("rawtypes")
+        protected FlowBuilder getFlowBuilder() {
             return flowBuilder;
         }
 

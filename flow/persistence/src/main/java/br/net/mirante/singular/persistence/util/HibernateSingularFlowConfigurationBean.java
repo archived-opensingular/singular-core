@@ -1,6 +1,5 @@
 package br.net.mirante.singular.persistence.util;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.util.Assert;
 
@@ -16,13 +15,8 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
 
     private String   definitionsBasePackage;
     private IUserService userService;
-    private SessionLocator sessionLocator = new SessionLocator() {
-        @Override
-        public Session getCurrentSession() {
-            return sessionFactory.getCurrentSession();
-        }
-    };
     private SessionFactory sessionFactory;
+    private SessionLocator sessionLocator = ()-> sessionFactory.getCurrentSession();
 
     @Override
     protected String getDefinitionsBasePackage() {

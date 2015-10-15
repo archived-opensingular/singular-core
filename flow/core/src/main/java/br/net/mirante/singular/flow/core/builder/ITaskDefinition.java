@@ -7,12 +7,11 @@ public interface ITaskDefinition {
 
     String getName();
 
-    default String getKey(){
+    default String getKey() {
         return MBPMUtil.convertToJavaIdentity(getName(), true).toUpperCase();
     }
 
-    default boolean isNameEquals(String name){
+    default boolean isNameEquals(String name) {
         return getName().equals(name);
     }
-    
 }

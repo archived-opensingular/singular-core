@@ -1,22 +1,26 @@
 package br.net.mirante.singular.definicao;
 
+import java.util.Calendar;
+
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskPredicates;
-import br.net.mirante.singular.flow.core.builder.BEnd;
-import br.net.mirante.singular.flow.core.builder.BJava;
-import br.net.mirante.singular.flow.core.builder.BPeople;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
 
-import java.util.Calendar;
-
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.*;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 public class Peticao extends ProcessDefinition<ProcessInstance> {
 
@@ -69,31 +73,30 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
         BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
-        BJava notificarNovaInstancia = flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
-        BPeople aguardandoAnalise = flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
-        BPeople emExigencia = flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
-        BPeople aguardandoGerente = flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente);
-        aguardandoGerente.withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
-        BPeople aguardandoPublicacao = flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
-        BEnd indeferido = flow.addEnd(INDEFERIDO);
-        BEnd deferido = flow.addEnd(DEFERIDO);
-        BEnd publicado = flow.addEnd(PUBLICADO);
-        publicado.addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
-        flow.setStartTask(notificarNovaInstancia);
+        flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
+        flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
+        flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
+        flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente)
+                .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
+        flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
+        flow.addEnd(INDEFERIDO);
+        flow.addEnd(DEFERIDO);
+        flow.addEnd(PUBLICADO).addStartedTaskListener((taskIntance, execucaoTask) -> System.out.println(taskIntance.getName() + " Iniciado"));
+        flow.setStartTask(NOTIFICAR_NOVA_INSTANCIA);
 
-        flow.addTransition(notificarNovaInstancia, ENVIAR_PARA_ANALISE, aguardandoAnalise);
-        flow.addTransition(aguardandoAnalise, COLOCAR_EM_EXIGENCIA, emExigencia);
-        flow.addTransition(emExigencia, CUMPRIR_EXIGENCIA, aguardandoAnalise);
-        flow.addTransition(aguardandoAnalise, INDEFERIR, indeferido);
-        flow.addTransition(aguardandoAnalise, APROVAR_TECNICO, aguardandoGerente);
-        flow.addTransition(aguardandoGerente, APROVAR_GERENTE, aguardandoPublicacao);
-        flow.addTransition(aguardandoGerente, SOLICITAR_AJUSTE_ANALISE, aguardandoAnalise);
-        flow.addTransition(aguardandoPublicacao, PUBLICAR, publicado);
-        flow.addTransition(aguardandoGerente, DEFERIR, deferido);
+        flow.from(NOTIFICAR_NOVA_INSTANCIA).go(ENVIAR_PARA_ANALISE, AGUARDANDO_ANALISE);
+        flow.from(AGUARDANDO_ANALISE).go(COLOCAR_EM_EXIGENCIA, EM_EXIGENCIA);
+        flow.from(EM_EXIGENCIA).go(CUMPRIR_EXIGENCIA, AGUARDANDO_ANALISE);
+        flow.from(AGUARDANDO_ANALISE).go(INDEFERIR, INDEFERIDO);
+        flow.from(AGUARDANDO_ANALISE).go(APROVAR_TECNICO, AGUARDANDO_GERENTE);
+        flow.from(AGUARDANDO_GERENTE).go(APROVAR_GERENTE, AGUARDANDO_PUBLICACAO);
+        flow.from(AGUARDANDO_GERENTE).go(SOLICITAR_AJUSTE_ANALISE, AGUARDANDO_ANALISE);
+        flow.from(AGUARDANDO_PUBLICACAO).go(PUBLICAR, PUBLICADO);
+        flow.from(AGUARDANDO_GERENTE).go(DEFERIR, DEFERIDO);
 
         // Tarefa aguardando analise a mais de um dia é indeferida automaticamente
-        flow.addAutomaticTransition(aguardandoAnalise, TaskPredicates.timeLimitInDays(1), indeferido);
-        flow.addAutomaticTransition(aguardandoGerente, TaskPredicates.timeLimitInDays(1), aguardandoPublicacao);
+        flow.addAutomaticTransition(AGUARDANDO_ANALISE, TaskPredicates.timeLimitInDays(1), INDEFERIDO);
+        flow.addAutomaticTransition(AGUARDANDO_GERENTE, TaskPredicates.timeLimitInDays(1), AGUARDANDO_PUBLICACAO);
 
         return flow.build();
     }

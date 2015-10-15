@@ -50,20 +50,6 @@ public abstract class SingularFlowConfigurationBean {
         return getDefinitionCache().getDefinitions();
     }
 
-    /**
-     *
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    private <T extends ProcessInstance> ProcessDefinition<?> getDefinicaoForInstanciaOrException(Class<T> instanceClass) {
-        ProcessDefinition<?> def = getDefinitionCache().getDefinitionForInstance(instanceClass);
-        if (def == null) {
-            throw new SingularFlowException("Não existe definição de processo para '" + instanceClass.getName() + "'");
-        }
-        return def;
-    }
-
     // ------- Método de recuperação de instâncias --------------------
 
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
@@ -76,27 +62,27 @@ public abstract class SingularFlowConfigurationBean {
         return getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    protected final <T extends ProcessInstance> T getProcessInstance(Class<T> instanceClass, IEntityProcessInstance entityProcessInstance) {
-        return instanceClass.cast(getProcessInstanceByEntityCod(entityProcessInstance.getCod()));
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> instanceClass, IEntityProcessInstance entityProcessInstance) {
+        return (X) getProcessInstanceByEntityCod(entityProcessInstance.getCod());
     }
 
-    protected final <T extends ProcessInstance> T getProcessInstance(Class<T> instanceClass, Integer cod) {
-        return instanceClass.cast(getDefinicaoForInstanciaOrException(instanceClass).getDataService().retrieveInstance(cod));
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
+        return getProcessDefinition(processClass).getDataService().retrieveInstance(cod);
     }
 
-    protected final <T extends ProcessInstance> T getProcessInstanceOrException(Class<T> instanceClass, String id) {
-        T instance = getProcessInstance(instanceClass, id);
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
+        X instance = getProcessInstance(processClass, id);
         if (instance == null) {
-            throw new SingularFlowException("Não foi encontrada a instancia '" + id + "' do tipo " + instanceClass.getName());
+            throw new SingularFlowException("Não foi encontrada a instancia '" + id + "' do tipo " + processClass.getName());
         }
         return instance;
     }
 
-    protected final <T extends ProcessInstance> T getProcessInstance(Class<T> instanceClass, String id) {
+    protected final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
         if (StringUtils.isNumeric(id)) {
-            return getProcessInstance(instanceClass, Integer.parseInt(id));
+            return getProcessInstance(processClass, Integer.parseInt(id));
         } else {
-            return instanceClass.cast(getProcessInstance(id));
+            return (X) getProcessInstance(id);
         }
     }
 
