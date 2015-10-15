@@ -61,7 +61,7 @@ public class ProcessInstance implements IEntityProcessInstance {
 
     //uni-directional many-to-one association to Process
     @ManyToOne
-    @JoinColumn(name = "CO_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
     private Process process;
 
     //bi-directional many-to-one association to TaskInstance
