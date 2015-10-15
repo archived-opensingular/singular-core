@@ -60,7 +60,7 @@ public class ProcessInstance implements IEntityProcessInstance {
     private TaskInstance parentTask;
 
     //uni-directional many-to-one association to Process
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_PROCESSO", nullable = false)
     private Process process;
 

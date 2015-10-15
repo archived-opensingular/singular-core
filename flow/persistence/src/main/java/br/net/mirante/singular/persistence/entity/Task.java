@@ -34,7 +34,7 @@ public class Task implements IEntityTaskVersion {
     private String name;
 
     //uni-directional many-to-one association to TaskDefinition
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
     private TaskDefinition taskDefinition;
 
@@ -44,7 +44,7 @@ public class Task implements IEntityTaskVersion {
     private Process process;
 
     //uni-directional many-to-one association to TaskType
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CO_TIPO_TAREFA", nullable = false)
     private TaskType type;
 

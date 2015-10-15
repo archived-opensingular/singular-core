@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -73,7 +74,7 @@ public class TaskInstance implements IEntityTaskInstance {
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
     private ProcessInstance processInstance;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_TAREFA", nullable = false)
     private Task task;
 

@@ -37,7 +37,7 @@ public class Process implements IEntityProcessVersion {
     private Date versionDate;
 
     //uni-directional many-to-one association to ProcessDefinition
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
     private ProcessDefinition processDefinition;
 
