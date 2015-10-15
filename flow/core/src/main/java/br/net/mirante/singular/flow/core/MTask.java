@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import com.google.common.base.MoreObjects;
-
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.flow.util.props.MetaData;
 import br.net.mirante.singular.flow.util.props.MetaDataRef;
+
+import com.google.common.base.MoreObjects;
 
 @SuppressWarnings({ "serial", "unchecked" })
 public abstract class MTask<K extends MTask<?>> {
@@ -135,8 +135,7 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public MTransition addTransition(MTask<?> destination) {
-        defaultTransition = flowMap.newTransition(this, destination.getName(), destination, TransitionType.H);
-        return addTransition(defaultTransition);
+        return addTransition(flowMap.newTransition(this, destination.getName(), destination, TransitionType.H));
     }
 
     public MTransition addAutomaticTransition(ITaskPredicate predicate, MTask<?> destination) {
@@ -146,6 +145,13 @@ public abstract class MTask<K extends MTask<?>> {
         return addTransition(transition);
     }
 
+    public void setDefaultTransition(MTransition defaultTransition) {
+        if(this.defaultTransition != null){
+            throw new SingularFlowException(createErrorMsg("Default Transition already defined"));
+        }
+        this.defaultTransition = defaultTransition;
+    }
+    
     public MTransition getDefaultTransition() {
         return defaultTransition;
     }

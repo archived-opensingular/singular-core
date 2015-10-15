@@ -23,13 +23,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_PROCESSO database table.
  */
 @Entity
-@Table(name = "TB_PROCESSO", schema = Constants.SCHEMA)
-public class Process implements IEntityProcessVersion {
+@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
+public class Process extends BaseEntity implements IEntityProcessVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_PROCESSO")
+    @Column(name = "CO_VERSAO_PROCESSO")
     private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)

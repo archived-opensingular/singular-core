@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
-public class RoleInstance implements IEntityRole {
+public class RoleInstance extends BaseEntity implements IEntityRole {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -50,7 +50,7 @@ public class RoleInstance implements IEntityRole {
 
     //uni-directional many-to-one association to Role
     @ManyToOne
-    @JoinColumn(name = "CO_PAPEL", nullable = false)
+    @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false)
     private Role role;
 
     public RoleInstance() {

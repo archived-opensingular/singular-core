@@ -16,6 +16,11 @@ public interface BTransition<SELF extends BTransition<SELF>> {
         return (SELF) this;
     }
 
+    public default SELF markAsDefault() {
+        getTransition().getOrigin().setDefaultTransition(getTransition());
+        return (SELF) self();
+    }
+
     public default SELF thenGo(ITaskDefinition destination) {
         MTransition transition = getTransition().thenGo(destination);
         return (SELF) getFlowBuilder().newTransition(transition);

@@ -21,13 +21,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_TAREFA database table.
  */
 @Entity
-@Table(name = "TB_TAREFA", schema = Constants.SCHEMA)
-public class Task implements IEntityTaskVersion {
+@Table(name = "TB_VERSAO_TAREFA", schema = Constants.SCHEMA)
+public class Task extends BaseEntity implements IEntityTaskVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TAREFA")
+    @Column(name = "CO_VERSAO_TAREFA")
     private Integer cod;
 
     @Column(name = "NO_TAREFA", nullable = false)
@@ -40,7 +40,7 @@ public class Task implements IEntityTaskVersion {
 
     //uni-directional many-to-one association to Processo
     @ManyToOne
-    @JoinColumn(name = "CO_PROCESSO", nullable = false)
+    @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
     private Process process;
 
     //uni-directional many-to-one association to TaskType

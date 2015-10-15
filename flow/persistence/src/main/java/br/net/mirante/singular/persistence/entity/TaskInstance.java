@@ -28,7 +28,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-public class TaskInstance implements IEntityTaskInstance {
+public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -75,11 +75,11 @@ public class TaskInstance implements IEntityTaskInstance {
     private ProcessInstance processInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CO_TAREFA", nullable = false)
+    @JoinColumn(name = "CO_VERSAO_TAREFA", nullable = false)
     private Task task;
 
     @ManyToOne
-    @JoinColumn(name = "CO_TRANSICAO_EXECUTADA")
+    @JoinColumn(name = "CO_VERSAO_TRANSICAO_EXECUTADA")
     private Transition executedTransition;
 
     public TaskInstance() {
