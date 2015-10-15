@@ -8,8 +8,7 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("form/list")
 public class ListPage extends Template {
 
-	protected Content getContent(String id) {
-		return new ListContent(id);
-	}
-
+    protected Content getContent(String id) {
+        return new ListContent(id);
+    }
 }

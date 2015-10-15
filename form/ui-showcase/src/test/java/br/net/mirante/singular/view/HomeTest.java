@@ -27,7 +27,7 @@ public class HomeTest {
 
     @Before
     public void setup() {
-//		driver = new WicketTester(new ShowcaseApplication());
+        //driver = new WicketTester(new ShowcaseApplication());
         driver = new WicketTester(app);
     }
 

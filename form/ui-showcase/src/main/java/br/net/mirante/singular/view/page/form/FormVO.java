@@ -4,47 +4,43 @@ import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {
-	private String key;
-	private MTipoComposto<?> value;
+    private String key;
+    private MTipoComposto<?> value;
 
-	public FormVO(String key, MTipoComposto<?> value) {
-		this.key = key;
-		this.value = value;
-	}
-	
-	public String getKey() {
-		return key;
-	}
+    public FormVO(String key, MTipoComposto<?> value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public MTipoComposto<?> getValue() {
-		return value;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setValue(MTipoComposto<?> value) {
-		this.value = value;
-	}
+    public MTipoComposto<?> getValue() {
+        return value;
+    }
 
-	@Override
-	public void detach() {
-		// TODO Auto-generated method stub
-	}
+    public void setValue(MTipoComposto<?> value) {
+        this.value = value;
+    }
 
-	public String getObject() {
-		return getKey();
-	}
+    @Override
+    public void detach() {
+    }
 
-	public void setObject(String o) {
-		setKey(o);
-	}
-	
+    public String getObject() {
+        return getKey();
+    }
+
+    public void setObject(String o) {
+        setKey(o);
+    }
 }
