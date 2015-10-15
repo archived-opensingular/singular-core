@@ -1,11 +1,16 @@
 package br.net.mirante.singular.persistence.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import br.net.mirante.singular.flow.core.SingularFlowException;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
+import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
+import br.net.mirante.singular.persistence.util.Constants;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,10 +21,9 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.persistence.util.Constants;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * The persistent class for the TB_INSTANCIA_PROCESSO database table.
@@ -75,6 +79,11 @@ public class ProcessInstance implements IEntityProcessInstance {
 
     @OneToMany(mappedBy = "processInstance")
     private List<RoleInstance> roles;
+
+    @OneToMany(mappedBy = "processInstance", fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
+    @Where(clause = "DT_FIM is null")
+    private List<TaskInstance> currentTasks;
 
     @Override
     public Integer getCod() {
@@ -190,5 +199,23 @@ public class ProcessInstance implements IEntityProcessInstance {
         }
 
         getTasks().add((TaskInstance) taskInstance);
+    }
+
+    public List<TaskInstance> getCurrentTasks() {
+        return currentTasks;
+    }
+
+    public void setCurrentTasks(List<TaskInstance> currentTasks) {
+        this.currentTasks = currentTasks;
+    }
+
+    public TaskInstance getCurrentTask() {
+        if (currentTasks != null && currentTasks.size() == 1) {
+            return currentTasks.stream().findFirst().get();
+        } else if (currentTasks != null && currentTasks.size() != 1) {
+            throw new SingularFlowException("Esse fluxo possui mais de um estado atual," +
+                    " não é possível determinar um único estado atual");
+        }
+        return null;
     }
 }

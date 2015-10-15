@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +34,7 @@ public class Task implements IEntityTaskVersion {
     private String name;
 
     //uni-directional many-to-one association to TaskDefinition
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
     private TaskDefinition taskDefinition;
 
@@ -43,7 +44,7 @@ public class Task implements IEntityTaskVersion {
     private Process process;
 
     //uni-directional many-to-one association to TaskType
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_TIPO_TAREFA", nullable = false)
     private TaskType type;
 
