@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 
 @SuppressWarnings("serial")

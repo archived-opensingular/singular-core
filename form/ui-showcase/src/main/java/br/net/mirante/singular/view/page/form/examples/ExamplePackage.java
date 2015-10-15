@@ -51,8 +51,6 @@ public class ExamplePackage extends MPacote {
 		addField(address, "city", "Cidade", MTipoString.class);
 		addField(address, "state", "Estado", MTipoString.class);
 		addField(address, "Zipcode", "CEP", MTipoCEP.class);
-		
-		pb.debug();
 	}
 
 

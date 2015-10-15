@@ -1,13 +1,11 @@
 package br.net.mirante.singular.view.page.form;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -15,14 +13,12 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.reflections.Reflections;
 
+import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
@@ -37,13 +33,13 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
 class ListContent extends Content implements SingularWicketContainer<FormContent, Void> {
 
 	final static List<FormVO> formTypes ;
+	static final MDicionario dicionario ;
 	
 	private final BSModalBorder parametersModal = new BSModalBorder("parametersModal"),
 								previewModal = new BSModalBorder("previewModal");
@@ -54,56 +50,24 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 						  previewName = new BSLabel("previewName");
 	private BSGrid container = new BSGrid("generated");
 	
-	private static final MDicionario dicionario = MDicionario.create();
 	
-	static{
-		dicionario.carregarPacote(MPacoteCurriculo.class);
-		dicionario.carregarPacote(ExamplePackage.class);
-//		loadAllPackages(dicionario);
-//		formTypes = dicionario.getTipos().stream()
-//			.filter( t -> {
-//				return t instanceof MTipoComposto;
-//			})
-//			.map(t -> {
-//				return new FormVO(t.getNomeSimples(), (MTipoComposto)t);
-//			})
-//			.collect(Collectors.toList());
-		formTypes = new LinkedList<FormVO>(){{
-			add(new FormVO("Currículo",(MTipoComposto<?>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO)));
-			add(new FormVO("Pedido",(MTipoComposto<?>) dicionario.getTipo(ExamplePackage.Types.ORDER.name)));
-		}};
+	static {
+		dicionario = TemplateRepository.dicionario();
+		formTypes = TemplateRepository.formTemplates().stream().map( t -> {
+			return new FormVO(t.getNomeSimples(), t);
+		}).collect(Collectors.toList());
 	}
-
-	private static void loadAllPackages(MDicionario dicionario) {
-		Reflections reflections = new Reflections("br");
-		Set<Class<? extends MPacote>> subTypes = reflections.getSubTypesOf(MPacote.class);
-		subTypes.stream()
-			.filter( new Predicate<Class<? extends MPacote>>() {
-				public boolean test(Class<? extends MPacote> mClass) {
-					int modifiers = mClass.getModifiers();
-					return !Modifier.isAbstract(modifiers) && 
-							!Modifier.isAbstract(modifiers); 
-				}
-			})
-			.forEach( mClass -> {
-					try {
-						dicionario.carregarPacote(mClass);
-					} catch (Exception e) {
-//						throw new RuntimeException(e);
-					}
-				}
-			);
-	}
+	
 	
 	public ListContent(String id) {
-		super(id);
+		super(id, false, true);
 	}
 
 	@Override
 	protected void onInitialize() {
 		super.onInitialize();
-		queue(new BSFeedbackPanel("feedback"));
 		
+		queue(new BSFeedbackPanel("feedback"));
 		queue(buildFormDataTable());
 		parametersModal.setSize(BSModalBorder.Size.FIT);
 		parametersModal.setTitleText(getMessage("label.table.column.params"));
@@ -191,11 +155,7 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 	}
 
 	private List<FieldVO> convertCampos2FieldVO(MTipoComposto<?> formType) {
-		LinkedList<FieldVO> fields = new LinkedList();
-//		return formType.getCampos().stream().map(t -> {
-//			MTipo<?> campo = formType.getCampo(t);
-//			return new FieldVO(t, campo.getClasseInstancia().getName());
-//		}).collect(Collectors.toList());
+		LinkedList<FieldVO> fields = new LinkedList<>();
 		addAllFields(formType, fields);
 		return fields;
 	}
@@ -205,8 +165,7 @@ class ListContent extends Content implements SingularWicketContainer<FormContent
 			MTipo<?> campo = formType.getCampo(t);
 			fields.add(new FieldVO(t, campo.getClasseInstancia().getName()));
 			if(campo instanceof MTipoComposto){
-				MTipoComposto<?> mc = (MTipoComposto<?>) campo;
-				addAllFields(mc, fields);
+				addAllFields((MTipoComposto<?>) campo, fields);
 			}
 		});
 	}
