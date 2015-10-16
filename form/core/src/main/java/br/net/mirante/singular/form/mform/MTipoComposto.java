@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
-@MFormTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
 public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
 
     private final Map<String, MTipo<?>> campos = new LinkedHashMap<>();

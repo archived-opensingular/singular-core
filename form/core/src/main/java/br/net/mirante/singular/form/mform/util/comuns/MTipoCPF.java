@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.mform.util.comuns;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
-@MFormTipo(nome = "CPF", pacote = MPacoteUtil.class)
+@MInfoTipo(nome = "CPF", pacote = MPacoteUtil.class)
 public class MTipoCPF extends MTipoString {
 
     @Override

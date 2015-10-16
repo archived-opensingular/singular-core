@@ -8,7 +8,7 @@ import org.apache.commons.beanutils.Converter;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
-@MFormTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
 public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends MTipo<I> {
 
     private final Class<TIPO_NATIVO> classeTipoNativo;

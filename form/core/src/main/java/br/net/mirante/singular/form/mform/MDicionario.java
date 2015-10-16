@@ -48,10 +48,10 @@ public class MDicionario implements IContextoTipo {
         }
     }
 
-    final static MFormTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
-        MFormTipo mFormTipo = classeAlvo.getAnnotation(MFormTipo.class);
+    final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
+        MInfoTipo mFormTipo = classeAlvo.getAnnotation(MInfoTipo.class);
         if (mFormTipo == null) {
-            throw new RuntimeException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MFormTipo.class.getSimpleName()
+            throw new RuntimeException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MInfoTipo.class.getSimpleName()
                     + " em sua definição.");
         }
         return mFormTipo;
@@ -62,7 +62,7 @@ public class MDicionario implements IContextoTipo {
         if (pacote == null) {
             throw new RuntimeException(
                     "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
-                    + MFormTipo.class.getSimpleName());
+                    + MInfoTipo.class.getSimpleName());
         }
         return pacote;
     }

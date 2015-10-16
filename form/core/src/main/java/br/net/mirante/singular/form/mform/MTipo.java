@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.mform.function.IComportamento;
 import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
 
-@MFormTipo(nome = "MTipo", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
 
     private String                          nomeSimples;
@@ -83,7 +83,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         tb.chamouSuper = true;
     }
 
-    final MFormTipo getAnotacaoMFormTipo() {
+    final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
     }
 

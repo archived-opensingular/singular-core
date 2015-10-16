@@ -228,11 +228,11 @@ public class TestMPacoteCore extends TestCaseForm {
             pb.createTipo(TestTipoComCargaInterna.class);
         }
 
-        @MFormTipo(nome = "TestTipoA", pacote = TestPacoteA.class)
+        @MInfoTipo(nome = "TestTipoA", pacote = TestPacoteA.class)
         public static final class TestTipoA extends MTipoInteger {
         }
 
-        @MFormTipo(nome = "TestTipoComCargaInterna", pacote = TestPacoteA.class)
+        @MInfoTipo(nome = "TestTipoComCargaInterna", pacote = TestPacoteA.class)
         public static final class TestTipoComCargaInterna extends MTipoInteger {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
