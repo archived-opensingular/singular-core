@@ -22,8 +22,8 @@ import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
@@ -174,7 +174,6 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     @Override
     public void relocateTask(TASK_INSTANCE taskInstance, MUser user) {
         taskInstance.setAllocatedUser(user);
-        taskInstance.setSuspensionTargetDate(null);
 
         updateTask(taskInstance);
     }

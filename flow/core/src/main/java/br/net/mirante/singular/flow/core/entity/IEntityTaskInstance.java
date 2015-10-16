@@ -31,8 +31,6 @@ public interface IEntityTaskInstance extends IEntityByCod {
 
     MUser getResponsibleUser();
 
-    void setSuspensionTargetDate(Date suspensionTargetDate);
-
     IEntityTaskTransitionVersion getExecutedTransition();
 
     void setExecutedTransition(IEntityTaskTransitionVersion transition);

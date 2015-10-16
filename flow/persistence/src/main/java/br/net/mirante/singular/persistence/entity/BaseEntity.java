@@ -41,7 +41,7 @@ public abstract class BaseEntity implements IEntityByCod {
             return true;
         }
         if (getCod() == null) {
-            return false; // Sen�o s�o a mesma instacia e ambos cod== Null
+            return false; 
         }
         if (!other.getClass().isAssignableFrom(me.getClass())) {
             return false;
