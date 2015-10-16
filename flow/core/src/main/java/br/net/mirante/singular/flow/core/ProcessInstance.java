@@ -944,6 +944,16 @@ public class ProcessInstance implements Serializable {
 
     /**
      * <p>
+     * Retorna os usuários alocados nas tarefas ativas
+     * </p>
+     * @return a lista de usuários (<i>null safe</i>).
+     */
+    public Set<MUser> getAllocatedUsers() {
+        return getEntity().getTasks().stream().filter(tarefa -> tarefa.isActive() && tarefa.getAllocatedUser() != null).map(tarefa -> tarefa.getAllocatedUser()).collect(Collectors.toSet());
+    }
+
+    /**
+     * <p>
      * Verifica se o usuário especificado está alocado em alguma tarefa desta
      * instância de processo.
      * </p>

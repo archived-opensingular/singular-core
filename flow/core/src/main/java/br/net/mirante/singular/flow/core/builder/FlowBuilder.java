@@ -98,7 +98,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
     }
 
-    public BUILDER_JAVA addJava(TASK_DEF taskDefinition) {
+    public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
         return newJavaTask(getFlowMap().addJavaTask(taskDefinition));
     }
 
@@ -160,34 +160,8 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return getFlowMap().getTask(taskRef);
     }
 
-    //TODO - remover
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination, boolean showTransitionInExecution) {
-        return newTransition(origin.getTask().addTransition(actionName, destination.getTask(), showTransitionInExecution));
-    }
-
-    //TODO - remover
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, TASK_DEF actionName, BTask destination) {
-        return addTransition(origin, actionName.getName(), destination);
-    }
-
-    //TODO - remover
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination) {
-        return newTransition(origin.getTask().addTransition(actionName, destination.getTask()));
-    }
-
-    //TODO - remover
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, BTask destination) {
-        return newTransition(origin.getTask().addTransition(destination.getTask()));
-    }
-
-    //TODO - remover
-    @Deprecated
-    public BUILDER_TRANSITION addAutomaticTransition(BTask origin, ITaskPredicate condition, BTask destination) {
-        return newTransition(origin.getTask().addAutomaticTransition(condition, destination.getTask()));
+    protected BUILDER_TRANSITION addTransition(BTask origin, String actionName, TASK_DEF destination) {
+        return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
     
     public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
