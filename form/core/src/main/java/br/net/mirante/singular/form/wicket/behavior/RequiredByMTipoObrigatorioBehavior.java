@@ -8,7 +8,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.wicket.model.instancia.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public final class RequiredByMTipoObrigatorioBehavior extends AttributeAppender {
 

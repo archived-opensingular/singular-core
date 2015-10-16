@@ -6,7 +6,7 @@ import org.apache.wicket.validation.ValidationError;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.wicket.model.instancia.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public class MInstanciaValidator<T> extends Behavior implements org.apache.wicket.validation.IValidator<T> {
 
