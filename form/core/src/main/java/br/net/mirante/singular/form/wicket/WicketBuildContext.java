@@ -12,6 +12,7 @@ import org.apache.wicket.util.string.Strings;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.validation.MInstanciaValidator;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.RequiredByMTipoObrigatorioBehavior;
 import br.net.mirante.singular.form.wicket.model.instancia.IMInstanciaAwareModel;

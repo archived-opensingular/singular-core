@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.validation;
 
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.IModel;
@@ -6,8 +6,6 @@ import org.apache.wicket.validation.ValidationError;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.validation.IValidatable;
-import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.wicket.model.instancia.IMInstanciaAwareModel;
 
 public class MInstanciaValidator<T> extends Behavior implements org.apache.wicket.validation.IValidator<T> {
