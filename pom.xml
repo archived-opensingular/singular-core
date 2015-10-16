@@ -109,16 +109,6 @@
                             <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>aggregate-javadocs</id>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <configuration>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                            <useStandardDocletOptions>false</useStandardDocletOptions>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>
