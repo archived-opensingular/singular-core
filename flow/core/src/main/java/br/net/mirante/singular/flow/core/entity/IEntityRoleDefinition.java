@@ -1,7 +1,7 @@
 package br.net.mirante.singular.flow.core.entity;
 
 
-public interface IEntityProcessRole extends IEntityByCod {
+public interface IEntityRoleDefinition extends IEntityByCod {
 
     String getAbbreviation();
 

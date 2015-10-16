@@ -15,7 +15,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TIPO_TAREFA", schema = Constants.SCHEMA)
-public class TaskType implements IEntityTaskType {
+public class TaskTypeEntity implements IEntityTaskType {
 
     public static final Long AUTOMATICA = 1L;
     public static final Long TAREFA_DE_USUARIO = 2L;
@@ -30,10 +30,10 @@ public class TaskType implements IEntityTaskType {
     @Column(name = "DS_TIPO_TAREFA", nullable = false)
     private String name;
 
-    public TaskType() {
+    public TaskTypeEntity() {
     }
 
-    public TaskType(Long cod) {
+    public TaskTypeEntity(Long cod) {
         this.cod = cod;
     }
 

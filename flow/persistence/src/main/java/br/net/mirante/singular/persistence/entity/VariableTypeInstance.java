@@ -7,27 +7,29 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
+import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.persistence.util.Constants;
 
-
 /**
- * The persistent class for the TB_TIPO_HISTORICO_TAREFA database table.
+ * The persistent class for the TB_TIPO_VARIAVEL database table.
  */
 @Entity
-@Table(name = "TB_TIPO_HISTORICO_TAREFA", schema = Constants.SCHEMA)
-public class TaskHistoryType extends BaseEntity implements IEntityTaskHistoricType {
+@Table(name = "TB_TIPO_VARIAVEL", schema = Constants.SCHEMA)
+public class VariableTypeInstance extends BaseEntity implements IEntityVariableType {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TIPO_HISTORICO_TAREFA")
+    @Column(name = "CO_TIPO_VARIAVEL")
     private Integer cod;
 
-    @Column(name = "DS_TIPO_HISTORICO_TAREFA", nullable = false)
+    @Column(name = "DS_TIPO_VARIAVEL", nullable = false)
     private String description;
 
-    public TaskHistoryType() {
+    @Column(name = "NO_CLASSE_JAVA", nullable = false)
+    private String typeClassName;
+
+    public VariableTypeInstance() {
     }
 
     @Override
@@ -39,12 +41,21 @@ public class TaskHistoryType extends BaseEntity implements IEntityTaskHistoricTy
         this.cod = cod;
     }
 
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     @Override
-    public String getDescription() {
-        return this.description;
+    public String getTypeClassName() {
+        return typeClassName;
+    }
+
+    public void setTypeClassName(String typeClassName) {
+        this.typeClassName = typeClassName;
     }
 }

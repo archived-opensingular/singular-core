@@ -32,9 +32,9 @@ import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
-import br.net.mirante.singular.persistence.entity.TaskInstance;
-import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PeticaoTest extends TestSupport {
@@ -141,7 +141,7 @@ public class PeticaoTest extends TestSupport {
         System.out.println("Id - " + ip.getId());
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity currentTask = ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
 
@@ -173,9 +173,9 @@ public class PeticaoTest extends TestSupport {
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_3);
         ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_4);
 
-        IEntityRole role = null;
+        IEntityRoleInstance role = null;
         testDAO.refresh(ip.getEntity());
-        for (IEntityRole entityRole : ip.getEntity().getRoles()) {
+        for (IEntityRoleInstance entityRole : ip.getEntity().getRoles()) {
             if (entityRole.getRole().getAbbreviation().equalsIgnoreCase(Peticao.PAPEL_ANALISTA)) {
                 role = entityRole;
             }
@@ -219,7 +219,7 @@ public class PeticaoTest extends TestSupport {
         ip.getCurrentTask().relocateTask(Flow.getUserIfAvailable(), ConstantesUtil.USER_1, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        List<TaskInstanceHistory> lastHistories = testDAO.retrieveLastHistories(4);
+        List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(4);
         assertEquals(Flow.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
         assertEquals(ConstantesUtil.USER_1, lastHistories.get(0).getAllocatedUser());
         assertEquals("Alocação", lastHistories.get(0).getTaskHistoryType().getDescription());
@@ -237,13 +237,13 @@ public class PeticaoTest extends TestSupport {
         ProcessInstance ip = startInstance();
         ip.executeTransition(Peticao.APROVAR_TECNICO);
 
-        TaskInstance currentTask = ip.getCurrentTask().getEntityTaskInstance();
+        TaskInstanceEntity currentTask = ip.getCurrentTask().getEntityTaskInstance();
         addDaysToTaskTargetDate(currentTask, -3);
         testDAO.update(currentTask);
         new ExecuteWaitingTasksJob(null).run();
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        List<TaskInstanceHistory> lastHistories = testDAO.retrieveLastHistories(1);
+        List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(1);
         assertEquals("Transição Automática", lastHistories.get(0).getTaskHistoryType().getDescription());
     }
 
@@ -270,7 +270,7 @@ public class PeticaoTest extends TestSupport {
                 instanciaPeticao.getLatestTask().getName());
     }
 
-    private void addDaysToTaskTargetDate(TaskInstance taskInstance, int days) {
+    private void addDaysToTaskTargetDate(TaskInstanceEntity taskInstance, int days) {
         Calendar newEndDate = Calendar.getInstance();
         newEndDate.setTime(taskInstance.getTargetEndDate());
         newEndDate.add(Calendar.DATE, days);

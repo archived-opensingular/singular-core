@@ -13,13 +13,13 @@ import org.hibernate.criterion.Projections;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.persistence.entity.ExecutionVariable;
-import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
-import br.net.mirante.singular.persistence.entity.TaskType;
-import br.net.mirante.singular.persistence.entity.Variable;
-import br.net.mirante.singular.persistence.entity.VariableType;
+import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
+import br.net.mirante.singular.persistence.entity.TaskTypeEntity;
+import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
+import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 
-@SuppressWarnings("JpaQlInspection")
 @Named
 @Transactional
 public class TestDAO {
@@ -28,8 +28,8 @@ public class TestDAO {
     private SessionFactory sessionFactory;
 
     @SuppressWarnings("unchecked")
-    public List<TaskType> listTaskType() {
-        return (List<TaskType>) getSession().createCriteria(TaskType.class).list();
+    public List<TaskTypeEntity> listTaskType() {
+        return (List<TaskTypeEntity>) getSession().createCriteria(TaskTypeEntity.class).list();
     }
 
     public void save(Object o) {
@@ -51,41 +51,41 @@ public class TestDAO {
 
     public Integer countHistoty() {
         return ((Number) getSession()
-                .createCriteria(TaskInstanceHistory.class).setProjection(Projections.count("cod"))
+                .createCriteria(TaskInstanceHistoryEntity.class).setProjection(Projections.count("cod"))
                 .uniqueResult()).intValue();
     }
 
     @SuppressWarnings("unchecked")
-    public List<TaskInstanceHistory> retrieveLastHistories(int count) {
-        return getSession().createCriteria(TaskInstanceHistory.class).setMaxResults(count)
+    public List<TaskInstanceHistoryEntity> retrieveLastHistories(int count) {
+        return getSession().createCriteria(TaskInstanceHistoryEntity.class).setMaxResults(count)
                 .addOrder(Order.desc("cod")).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<br.net.mirante.singular.persistence.entity.ProcessInstance> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
+    public List<br.net.mirante.singular.persistence.entity.ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
         return getSession().createQuery(
-                "select pi from ProcessInstance pi inner join pi.process p where p.cod = :id"
+                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.process p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Variable> retrieveVariablesByInstance(Integer id) {
+    public List<VariableInstanceEntity> retrieveVariablesByInstance(Integer id) {
         return getSession().createQuery(
-                "select v from Variable v inner join v.processInstance pi where pi.cod = :id"
+                "select v from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<ExecutionVariable> retrieveExecutionVariablesByInstance(Integer id) {
+    public List<ExecutionVariableEntity> retrieveExecutionVariablesByInstance(Integer id) {
         return getSession().createQuery(
-                "select v from ExecutionVariable v inner join v.processInstance pi where pi.cod = :id"
+                "select v from "+ExecutionVariableEntity.class.getSimpleName()+" v inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<VariableType> retrieveVariablesTypesByInstance(Integer id) {
+    public List<VariableTypeInstance> retrieveVariablesTypesByInstance(Integer id) {
         return getSession().createQuery(
-                "select distinct vt from Variable v inner join v.type vt inner join v.processInstance pi where pi.cod = :id"
+                "select distinct vt from "+VariableInstanceEntity.class.getSimpleName()+" v inner join v.type vt inner join v.processInstance pi where pi.cod = :id"
         ).setParameter("id", id).list();
     }
 

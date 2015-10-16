@@ -18,7 +18,7 @@ import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -56,7 +56,7 @@ public class ProcessVersoesTest extends TestSupport {
         ProcessVersoes processVersao1 = new DefinicaoProcessVersoes().newInstance();
         TaskInstance start1 = processVersao1.start();
 
-        List<? extends IEntityProcessRole> rolesBefore = new ArrayList<>(
+        List<? extends IEntityRoleDefinition> rolesBefore = new ArrayList<>(
                 start1.getProcessInstance().getProcessDefinition().getEntityProcessDefinition().getRoles());
 
         DefinicaoProcessVersoes.changeFlowToVersao1ComPapeis();
@@ -67,7 +67,7 @@ public class ProcessVersoesTest extends TestSupport {
 
         ProcessInstance pi1 = start1.getProcessInstance();
         ProcessInstance pi2 = start2.getProcessInstance();
-        List<? extends IEntityProcessRole> rolesAfter = start2.getProcessInstance().getProcessDefinition().getEntityProcessDefinition()
+        List<? extends IEntityRoleDefinition> rolesAfter = start2.getProcessInstance().getProcessDefinition().getEntityProcessDefinition()
                 .getRoles();
 
         assertNotEquals("As instancias de processo devem ser diferentes", pi1, pi2);

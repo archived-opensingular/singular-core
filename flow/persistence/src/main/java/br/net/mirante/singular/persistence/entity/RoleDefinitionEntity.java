@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.persistence.util.Constants;
 
 
@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name="TB_DEFINICAO_PAPEL", schema = Constants.SCHEMA)
-public class Role extends BaseEntity implements IEntityProcessRole {
+public class RoleDefinitionEntity extends BaseEntity implements IEntityRoleDefinition {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,9 +36,9 @@ public class Role extends BaseEntity implements IEntityProcessRole {
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO")
-    private ProcessDefinition processDefinition;
+    private ProcessDefinitionEntity processDefinition;
 
-    public Role() {
+    public RoleDefinitionEntity() {
     }
 
     @Override
@@ -52,16 +52,16 @@ public class Role extends BaseEntity implements IEntityProcessRole {
 
 
     @Override
-    public ProcessDefinition getProcessDefinition() {
+    public ProcessDefinitionEntity getProcessDefinition() {
         return this.processDefinition;
     }
 
     @Override
     public void setProcessDefinition(IEntityProcessDefinition processDefinition) {
-        setProcessDefinition((ProcessDefinition) processDefinition);
+        setProcessDefinition((ProcessDefinitionEntity) processDefinition);
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
+    public void setProcessDefinition(ProcessDefinitionEntity processDefinition) {
         this.processDefinition = processDefinition;
     }
 

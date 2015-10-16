@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
-public class ProcessDefinition extends BaseEntity implements IEntityProcessDefinition {
+public class ProcessDefinitionEntity extends BaseEntity implements IEntityProcessDefinition {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,21 +46,21 @@ public class ProcessDefinition extends BaseEntity implements IEntityProcessDefin
     //uni-directional many-to-one association to Category
     @ManyToOne
     @JoinColumn(name = "CO_CATEGORA")
-    private Category category;
+    private CategoryEntity category;
 
     //bi-directional many-to-one association to TaskDefinition
     @OneToMany(mappedBy = "processDefinition")
-    private List<TaskDefinition> taskDefinitions;
+    private List<TaskDefinitionEntity> taskDefinitions;
 
     //bi-directional many-to-one association to Role
     @OneToMany(mappedBy = "processDefinition")
-    private List<Role> roles;
+    private List<RoleDefinitionEntity> roles;
 
     //bi-directional many-to-one association to Role
     @OneToMany(mappedBy = "processDefinition")
-    private List<Process> versions;
+    private List<ProcessVersionEntity> versions;
 
-    public ProcessDefinition() {
+    public ProcessDefinitionEntity() {
     }
 
     @Override
@@ -111,43 +111,43 @@ public class ProcessDefinition extends BaseEntity implements IEntityProcessDefin
     }
 
     @Override
-    public Category getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
     @Override
     public void setCategory(IEntityCategory category) {
-        setCategory((Category) category);
+        setCategory((CategoryEntity) category);
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
     @Override
-    public List<TaskDefinition> getTaskDefinitions() {
+    public List<TaskDefinitionEntity> getTaskDefinitions() {
         return taskDefinitions;
     }
 
-    public void setTaskDefinitions(List<TaskDefinition> taskDefinitions) {
+    public void setTaskDefinitions(List<TaskDefinitionEntity> taskDefinitions) {
         this.taskDefinitions = taskDefinitions;
     }
 
     @Override
-    public List<Role> getRoles() {
+    public List<RoleDefinitionEntity> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(List<RoleDefinitionEntity> roles) {
         this.roles = roles;
     }
 
     @Override
-    public List<Process> getVersions() {
+    public List<ProcessVersionEntity> getVersions() {
         return versions;
     }
 
-    public void setVersions(List<Process> versions) {
+    public void setVersions(List<ProcessVersionEntity> versions) {
         this.versions = versions;
     }
 }

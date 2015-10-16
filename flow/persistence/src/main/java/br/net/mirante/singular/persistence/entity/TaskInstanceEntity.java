@@ -28,7 +28,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
+public class TaskInstanceEntity extends BaseEntity implements IEntityTaskInstance {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -60,7 +60,7 @@ public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
     private Boolean suspended;
 
     @OneToMany(mappedBy = "parentTask")
-    private List<ProcessInstance> childProcesses;
+    private List<ProcessInstanceEntity> childProcesses;
 
     @ManyToOne
     @JoinColumn(name = "CO_ATOR_ALOCADO")
@@ -72,17 +72,17 @@ public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
 
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private ProcessInstance processInstance;
+    private ProcessInstanceEntity processInstance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_VERSAO_TAREFA", nullable = false)
-    private Task task;
+    private TaskVersionEntity task;
 
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_TRANSICAO_EXECUTADA")
-    private Transition executedTransition;
+    private TaskTransitionVersionEntity executedTransition;
 
-    public TaskInstance() {
+    public TaskInstanceEntity() {
     }
 
     @Override
@@ -150,11 +150,11 @@ public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
     }
 
     @Override
-    public List<ProcessInstance> getChildProcesses() {
+    public List<ProcessInstanceEntity> getChildProcesses() {
         return childProcesses;
     }
 
-    public void setChildProcesses(List<ProcessInstance> childProcesses) {
+    public void setChildProcesses(List<ProcessInstanceEntity> childProcesses) {
         this.childProcesses = childProcesses;
     }
 
@@ -187,34 +187,34 @@ public class TaskInstance extends BaseEntity implements IEntityTaskInstance {
     }
 
     @Override
-    public ProcessInstance getProcessInstance() {
+    public ProcessInstanceEntity getProcessInstance() {
         return processInstance;
     }
 
-    public void setProcessInstance(ProcessInstance processInstance) {
+    public void setProcessInstance(ProcessInstanceEntity processInstance) {
         this.processInstance = processInstance;
     }
 
     @Override
-    public Task getTask() {
+    public TaskVersionEntity getTask() {
         return task;
     }
 
-    public void setTask(Task task) {
+    public void setTask(TaskVersionEntity task) {
         this.task = task;
     }
 
     @Override
-    public Transition getExecutedTransition() {
+    public TaskTransitionVersionEntity getExecutedTransition() {
         return executedTransition;
     }
 
     @Override
     public void setExecutedTransition(IEntityTaskTransitionVersion transition) {
-        setExecutedTransition((Transition) executedTransition);
+        setExecutedTransition((TaskTransitionVersionEntity) executedTransition);
     }
 
-    public void setExecutedTransition(Transition executedTransition) {
+    public void setExecutedTransition(TaskTransitionVersionEntity executedTransition) {
         this.executedTransition = executedTransition;
     }
 
