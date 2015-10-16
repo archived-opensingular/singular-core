@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
-import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 public class Flow {
@@ -23,28 +21,13 @@ public class Flow {
     private Flow() {
     }
 
-    private static void init() {
-        for (final ProcessDefinition<?> processDefinition : getMbpmBean().getDefinitions()) {
-            for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
-                if (!task.isImmediateExecution()) {
-                    getMbpmBean().getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> getMbpmBean().executeTask(task)));
-                }
-            }
-            for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
-                getMbpmBean().getScheduleService().schedule(scheduledJob);
-            }
-        }
-        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
-        getMbpmBean().init();
-    }
-
     public static synchronized void setConf(SingularFlowConfigurationBean conf) {
         if(mbpmBean != null
                 && mbpmBean != conf){
             throw new SingularFlowException("O contexto já foi configurado.");
         }
         mbpmBean = conf;
-        init();
+        mbpmBean.start();
     }
 
     public static SingularFlowConfigurationBean getMbpmBean() {
