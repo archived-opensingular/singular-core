@@ -35,7 +35,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
  * <p>
  * Must declare a {@link GenericGenerator} with name {@link AbstractProcessInstanceEntity#PK_GENERATOR_NAME}.
  * </p>
- * <code>@GenericGenerator(name = ProcessInstanceBase.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
+ * <code>@GenericGenerator(name = AbstractProcessInstanceEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  * 
  * @param <USER>
  * @param <PROCESS_VERSION>
