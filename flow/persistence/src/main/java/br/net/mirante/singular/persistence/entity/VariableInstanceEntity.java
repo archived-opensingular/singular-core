@@ -18,7 +18,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VARIAVEL", schema = Constants.SCHEMA)
-public class Variable implements IEntityVariableInstance {
+public class VariableInstanceEntity extends BaseEntity implements IEntityVariableInstance {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -35,14 +35,14 @@ public class Variable implements IEntityVariableInstance {
     //bi-directional many-to-one association to ProcessInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private ProcessInstance processInstance;
+    private ProcessInstanceEntity processInstance;
 
     //uni-directional many-to-one association to VariableType
     @ManyToOne
     @JoinColumn(name = "CO_TIPO_VARIAVEL", nullable = false)
-    private VariableType type;
+    private VariableTypeInstance type;
 
-    public Variable() {
+    public VariableInstanceEntity() {
     }
 
     @Override
@@ -74,25 +74,25 @@ public class Variable implements IEntityVariableInstance {
     }
 
     @Override
-    public ProcessInstance getProcessInstance() {
+    public ProcessInstanceEntity getProcessInstance() {
         return processInstance;
     }
 
-    public void setProcessInstance(ProcessInstance processInstance) {
+    public void setProcessInstance(ProcessInstanceEntity processInstance) {
         this.processInstance = processInstance;
     }
 
     @Override
-    public VariableType getType() {
+    public VariableTypeInstance getType() {
         return type;
     }
 
     @Override
     public void setType(IEntityVariableType type) {
-        setType((VariableType) type);
+        setType((VariableTypeInstance) type);
     }
 
-    public void setType(VariableType type) {
+    public void setType(VariableTypeInstance type) {
         this.type = type;
     }
 }

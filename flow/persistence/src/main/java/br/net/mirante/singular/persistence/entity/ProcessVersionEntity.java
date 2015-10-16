@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,13 +23,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_PROCESSO database table.
  */
 @Entity
-@Table(name = "TB_PROCESSO", schema = Constants.SCHEMA)
-public class Process implements IEntityProcessVersion {
+@Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
+public class ProcessVersionEntity extends BaseEntity implements IEntityProcessVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_PROCESSO")
+    @Column(name = "CO_VERSAO_PROCESSO")
     private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -38,12 +39,12 @@ public class Process implements IEntityProcessVersion {
     //uni-directional many-to-one association to ProcessDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
-    private ProcessDefinition processDefinition;
+    private ProcessDefinitionEntity processDefinition;
 
     @OneToMany(mappedBy = "process")
-    private List<Task> tasks;
+    private List<TaskVersionEntity> tasks;
 
-    public Process() {
+    public ProcessVersionEntity() {
     }
 
     @Override
@@ -65,20 +66,20 @@ public class Process implements IEntityProcessVersion {
     }
 
     @Override
-    public ProcessDefinition getProcessDefinition() {
+    public ProcessDefinitionEntity getProcessDefinition() {
         return processDefinition;
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
+    public void setProcessDefinition(ProcessDefinitionEntity processDefinition) {
         this.processDefinition = processDefinition;
     }
 
     @Override
-    public List<Task> getTasks() {
+    public List<TaskVersionEntity> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(List<TaskVersionEntity> tasks) {
         this.tasks = tasks;
     }
 

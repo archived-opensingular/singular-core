@@ -9,6 +9,7 @@ import br.net.mirante.singular.flow.core.builder.BEnd;
 import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.FlowBuilder;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionImpl;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeDecimal;
 import br.net.mirante.singular.flow.util.vars.types.VarTypeString;
@@ -30,21 +31,22 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
     protected FlowMap createFlowMap() {
         FlowBuilder f = new FlowBuilderImpl(this);
 
-        BJava PRINT = f.addJava(() -> "Print Variavel");
-        PRINT.call(this::printVar);
+        ITaskDefinition PRINT = () -> "Print Variavel";
+        f.addJavaTask(PRINT).call(this::printVar);
 
-        BJava SET_VARIAVEL = f.addJava(() -> "Definir Variavel");
-        SET_VARIAVEL.call(this::setVar);
+        ITaskDefinition SET_VARIAVEL = () -> "Definir Variavel";
+        f.addJavaTask(SET_VARIAVEL).call(this::setVar);
 
-        BJava APROVAR = f.addJava(() -> "Aprovar Definiçâo");
-        APROVAR.call(this::print);
+        ITaskDefinition APROVAR = () -> "Aprovar Definiçâo";
+        f.addJavaTask(APROVAR).call(this::print);
 
-        BEnd END = f.addEnd(() -> "Aprovado");
+        ITaskDefinition END = () -> "Aprovado";
+        f.addEnd(END);
 
         f.setStartTask(SET_VARIAVEL);
-        f.addTransition(SET_VARIAVEL, APROVAR);
-        f.addTransition(APROVAR, PRINT);
-        f.addTransition(PRINT, END);
+        f.from(SET_VARIAVEL).go(APROVAR);
+        f.from(APROVAR).go(PRINT);
+        f.from(PRINT).go(END);
 
         return f.build();
     }

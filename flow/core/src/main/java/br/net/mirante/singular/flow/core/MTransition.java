@@ -139,6 +139,10 @@ public class MTransition implements Serializable {
         return thenGo(getFlowMap().getTask(destination));
     }
 
+    public MTransition thenGo(String acao, ITaskDefinition destination) {
+        return thenGo(acao, getFlowMap().getTask(destination));
+    }
+
     public MTransition thenGo(MTask<?> destination) {
         return this.destination.addTransition(destination);
     }

@@ -15,7 +15,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TIPO_VARIAVEL", schema = Constants.SCHEMA)
-public class VariableType implements IEntityVariableType {
+public class VariableTypeInstance extends BaseEntity implements IEntityVariableType {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -29,7 +29,7 @@ public class VariableType implements IEntityVariableType {
     @Column(name = "NO_CLASSE_JAVA", nullable = false)
     private String typeClassName;
 
-    public VariableType() {
+    public VariableTypeInstance() {
     }
 
     @Override

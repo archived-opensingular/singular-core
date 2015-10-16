@@ -16,7 +16,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_TIPO_HISTORICO_TAREFA", schema = Constants.SCHEMA)
-public class TaskHistoryType implements IEntityTaskHistoricType {
+public class TaskHistoricTypeEntity extends BaseEntity implements IEntityTaskHistoricType {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -27,7 +27,7 @@ public class TaskHistoryType implements IEntityTaskHistoricType {
     @Column(name = "DS_TIPO_HISTORICO_TAREFA", nullable = false)
     private String description;
 
-    public TaskHistoryType() {
+    public TaskHistoricTypeEntity() {
     }
 
     @Override

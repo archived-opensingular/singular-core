@@ -8,6 +8,7 @@ import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.BPeople;
 import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
+import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 
 public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
@@ -45,18 +46,19 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
-                BJava<?> start = flow.addJava(() -> "Start");
-                start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJava(() -> "Task");
-                task.call((ProcessVersoes p) -> {});
-                BPeople<?> people = flow.addPeopleTask(() -> "People", papelTecnico);
-                people.withExecutionPage(new NullPageStrategy());
-                BEnd<?> end = flow.addEnd(() -> "End");
+                ITaskDefinition start = () -> "Start";
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
+                ITaskDefinition task = () -> "Task";
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
+                ITaskDefinition people = () -> "People";
+                flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End";
+                flow.addEnd(end);
 
                 flow.setStartTask(start);
-                flow.addTransition(start, task);
-                flow.addTransition(task, people);
-                flow.addTransition(people, end);
+                flow.from(start).go(task);
+                flow.from(task).go(people);
+                flow.from(people).go(end);
 
                 return flow.build();
             }
@@ -71,18 +73,19 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
-                BJava<?> start = flow.addJava(() -> "Start");
-                start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJava(() -> "Task");
-                task.call((ProcessVersoes p) -> {});
-                BPeople<?> people = flow.addPeopleTask(() -> "People", papelAnalista);
-                people.withExecutionPage(new NullPageStrategy());
-                BEnd<?> end = flow.addEnd(() -> "End");
+                ITaskDefinition start = () -> "Start";
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
+                ITaskDefinition task = () -> "Task";
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
+                ITaskDefinition people = () -> "People";
+                flow.addPeopleTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End";
+                flow.addEnd(end);
 
                 flow.setStartTask(start);
-                flow.addTransition(start, task);
-                flow.addTransition(task, people);
-                flow.addTransition(people, end);
+                flow.from(start).go(task);
+                flow.from(task).go(people);
+                flow.from(people).go(end);
 
                 return flow.build();
             }
@@ -97,18 +100,19 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
-                BJava<?> start = flow.addJava(() -> "Start 2");
-                start.call((ProcessVersoes p) -> {});
-                BJava<?> task = flow.addJava(() -> "Task 2");
-                task.call((ProcessVersoes p) -> {});
-                BPeople<?> people = flow.addPeopleTask(() -> "People 2", papelTecnico);
-                people.withExecutionPage(new NullPageStrategy());
-                BEnd<?> end = flow.addEnd(() -> "End 2");
+                ITaskDefinition start = () -> "Start 2";
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
+                ITaskDefinition task = () -> "Task 2";
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
+                ITaskDefinition people = () -> "People 2";
+                flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
+                ITaskDefinition end = () -> "End 2";
+                flow.addEnd(end);
 
                 flow.setStartTask(start);
-                flow.addTransition(start, task);
-                flow.addTransition(task, people);
-                flow.addTransition(people, end);
+                flow.from(start).go(task);
+                flow.from(task).go(people);
+                flow.from(people).go(end);
 
                 return flow.build();
             }

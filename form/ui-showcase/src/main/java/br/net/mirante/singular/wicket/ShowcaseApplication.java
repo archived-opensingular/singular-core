@@ -23,7 +23,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
 
     private ApplicationContext ctx;
 
-	@Override
+    @Override
     public Class<? extends WebPage> getHomePage() {
         return ListPage.class;
     }
@@ -40,10 +40,10 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
 
-        if(ctx != null){
-        	getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));
-        }else{
-        	getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+        if (ctx != null) {
+            getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));
+        } else {
+            getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         }
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
     }
@@ -65,10 +65,10 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if (System.getProperty("singular.development") != null) {
-            return RuntimeConfigurationType.DEVELOPMENT;
-        } else {
+        if (System.getProperty("singular.deployment") != null) {
             return RuntimeConfigurationType.DEPLOYMENT;
+        } else {
+            return RuntimeConfigurationType.DEVELOPMENT;
         }
     }
 
@@ -76,8 +76,8 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
         return (ShowcaseApplication) WebApplication.get();
     }
 
-	@Override
-	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
-		this.ctx = ctx;
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+        this.ctx = ctx;
+    }
 }

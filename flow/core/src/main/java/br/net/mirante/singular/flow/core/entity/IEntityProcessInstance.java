@@ -37,10 +37,10 @@ public interface IEntityProcessInstance extends IEntityByCod {
 
     List<? extends IEntityExecutionVariable> getHistoricalVariables();
 
-    List<? extends IEntityRole> getRoles();
+    List<? extends IEntityRoleInstance> getRoles();
 
-    default IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
-        for (IEntityRole dadosPapelInstancia : getRoles()) {
+    default IEntityRoleInstance getRoleUserByAbbreviation(String roleAbbreviation) {
+        for (IEntityRoleInstance dadosPapelInstancia : getRoles()) {
             if (roleAbbreviation.equalsIgnoreCase(dadosPapelInstancia.getRole().getAbbreviation())) {
                 return dadosPapelInstancia;
             }

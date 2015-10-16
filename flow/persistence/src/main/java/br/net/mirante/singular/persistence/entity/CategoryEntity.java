@@ -19,7 +19,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_CATEGORIA", schema = Constants.SCHEMA)
-public class Category implements IEntityCategory {
+public class CategoryEntity extends BaseEntity implements IEntityCategory {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,9 +32,9 @@ public class Category implements IEntityCategory {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<ProcessDefinition> processDefinitions;
+    private List<ProcessDefinitionEntity> processDefinitions;
 
-    public Category() {
+    public CategoryEntity() {
     }
 
     @Override
@@ -56,11 +56,11 @@ public class Category implements IEntityCategory {
     }
 
     @Override
-    public List<ProcessDefinition> getProcessDefinitions() {
+    public List<ProcessDefinitionEntity> getProcessDefinitions() {
         return processDefinitions;
     }
 
-    public void setProcessDefinitions(List<ProcessDefinition> processDefinitions) {
+    public void setProcessDefinitions(List<ProcessDefinitionEntity> processDefinitions) {
         this.processDefinitions = processDefinitions;
     }
 }

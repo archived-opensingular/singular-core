@@ -56,12 +56,8 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return flowMap;
     }
 
-    public void setStart(ITaskDefinition initialTask) {
-        getFlowMap().setStartTask(initialTask);
-    }
-
-    public void setStartTask(BTask initialTask) {
-        getFlowMap().setStartTask(initialTask.getTask());
+    public void setStartTask(TASK_DEF taskDefinition) {
+        getFlowMap().setStartTask(getFlowMap().getTask(taskDefinition));
     }
 
     public <T extends ProcessInstance> void setRoleChangeListener(IRoleChangeListener<T> roleChangeListener) {
@@ -102,7 +98,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newProcessRole(getFlowMap().addRoleDefinition(description, abbreviation, new EmptyUserRoleSettingStrategy(), automaticUserAllocation));
     }
 
-    public BUILDER_JAVA addJava(TASK_DEF taskDefinition) {
+    public BUILDER_JAVA addJavaTask(TASK_DEF taskDefinition) {
         return newJavaTask(getFlowMap().addJavaTask(taskDefinition));
     }
 
@@ -135,7 +131,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
         return newWaitTask(getFlowMap().addWaitTask(taskDefinition, executionDateStrategy));
     }
 
-    public <T extends ProcessInstance> BUILDER_WAIT addWait(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
+    public <T extends ProcessInstance> BUILDER_WAIT addWaitTask(TASK_DEF taskDefinition, IExecutionDateStrategy<T> executionDateStrategy,
             TaskAccessStrategy<?> accessStrategy) {
         BUILDER_WAIT wait = addWaitTask(taskDefinition, executionDateStrategy);
         wait.addAccessStrategy(accessStrategy);
@@ -150,7 +146,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
      * Retorna um builder de task para uma tarefa já adicionada anteriormente ou
      * exception senão encontrar.
      */
-    public BUILDER_TASK from(ITaskDefinition taskRef) {
+    public BUILDER_TASK from(TASK_DEF taskRef) {
         return newTask(getTask(taskRef));
     }
 
@@ -160,32 +156,16 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
      *
      * @return Sempre diferente de null
      */
-    protected MTask<?> getTask(ITaskDefinition taskRef) {
+    protected MTask<?> getTask(TASK_DEF taskRef) {
         return getFlowMap().getTask(taskRef);
     }
 
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination, boolean showTransitionInExecution) {
-        return newTransition(origin.getTask().addTransition(actionName, destination.getTask(), showTransitionInExecution));
+    protected BUILDER_TRANSITION addTransition(BTask origin, String actionName, TASK_DEF destination) {
+        return newTransition(origin.getTask().addTransition(actionName, getTask(destination)));
     }
-
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, TASK_DEF actionName, BTask destination) {
-        return addTransition(origin, actionName.getName(), destination);
-    }
-
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, String actionName, BTask destination) {
-        return newTransition(origin.getTask().addTransition(actionName, destination.getTask()));
-    }
-
-    @Deprecated
-    public BUILDER_TRANSITION addTransition(BTask origin, BTask destination) {
-        return newTransition(origin.getTask().addTransition(destination.getTask()));
-    }
-
-    public BUILDER_TRANSITION addAutomaticTransition(BTask origin, ITaskPredicate condition, BTask destination) {
-        return newTransition(origin.getTask().addAutomaticTransition(condition, destination.getTask()));
+    
+    public BUILDER_TRANSITION addAutomaticTransition(TASK_DEF origin, ITaskPredicate condition, TASK_DEF destination) {
+        return newTransition(getFlowMap().getTask(origin).addAutomaticTransition(condition, getFlowMap().getTask(destination)));
     }
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy) {

@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Testes
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:0,0,64,1&cht=p&chl=failure%20%280%29|error%20%280%29|success%20%2864%29|skipped%20%281%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:0,0,64,1&cht=p&chl=failure%20%280%29|error%20%280%29|success%20%2866%29|skipped%20%281%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
@@ -18,7 +18,7 @@ Módulos JAVA do projeto SINGULAR.
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
-        * [Documentação](http://git.mirante.net.br/blob/MIRANTE%2Fsingular.git/docs/_docs%2Findex.md)
+        * [Documentação](http://10.0.10.1/docs/home)
 
 # Módulo UI-Admin
 

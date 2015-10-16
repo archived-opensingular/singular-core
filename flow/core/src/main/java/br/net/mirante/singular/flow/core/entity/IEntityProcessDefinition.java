@@ -24,7 +24,7 @@ public interface IEntityProcessDefinition extends IEntityByCod {
 
     List<? extends IEntityTaskDefinition> getTaskDefinitions();
 
-    List<? extends IEntityProcessRole> getRoles();
+    List<? extends IEntityRoleDefinition> getRoles();
 
     List<? extends IEntityProcessVersion> getVersions();
 
@@ -44,8 +44,8 @@ public interface IEntityProcessDefinition extends IEntityByCod {
         return null;
     }
     @SuppressWarnings("unchecked")
-    default <X extends IEntityProcessRole> X getRole(String abbreviation) {
-        for (IEntityProcessRole papel : getRoles()) {
+    default <X extends IEntityRoleDefinition> X getRole(String abbreviation) {
+        for (IEntityRoleDefinition papel : getRoles()) {
             if (papel.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return (X) papel;
             }

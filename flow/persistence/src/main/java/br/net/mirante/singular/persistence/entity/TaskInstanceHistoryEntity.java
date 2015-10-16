@@ -22,7 +22,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_HISTORICO_INSTANCIA_TAREFA", schema = Constants.SCHEMA)
-public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
+public class TaskInstanceHistoryEntity extends BaseEntity implements IEntityTaskInstanceHistory {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -54,14 +54,14 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
     //uni-directional many-to-one association to TaskInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_TAREFA", nullable = false)
-    private TaskInstance taskInstance;
+    private TaskInstanceEntity taskInstance;
 
     //uni-directional many-to-one association to TaskHistoryType
     @ManyToOne
     @JoinColumn(name = "CO_TIPO_HISTORICO_TAREFA", nullable = false)
-    private TaskHistoryType taskHistoryType;
+    private TaskHistoricTypeEntity taskHistoryType;
 
-    public TaskInstanceHistory() {
+    public TaskInstanceHistoryEntity() {
     }
 
     @Override
@@ -119,19 +119,19 @@ public class TaskInstanceHistory implements IEntityTaskInstanceHistory {
     }
 
     @Override
-    public TaskInstance getTaskInstance() {
+    public TaskInstanceEntity getTaskInstance() {
         return taskInstance;
     }
 
-    public void setTaskInstance(TaskInstance taskInstance) {
+    public void setTaskInstance(TaskInstanceEntity taskInstance) {
         this.taskInstance = taskInstance;
     }
 
-    public TaskHistoryType getTaskHistoryType() {
+    public TaskHistoricTypeEntity getTaskHistoryType() {
         return taskHistoryType;
     }
 
-    public void setTaskHistoryType(TaskHistoryType taskHistoryType) {
+    public void setTaskHistoryType(TaskHistoricTypeEntity taskHistoryType) {
         this.taskHistoryType = taskHistoryType;
     }
 

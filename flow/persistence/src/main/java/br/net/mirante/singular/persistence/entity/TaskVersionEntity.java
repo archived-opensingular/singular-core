@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,13 +21,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_TAREFA database table.
  */
 @Entity
-@Table(name = "TB_TAREFA", schema = Constants.SCHEMA)
-public class Task implements IEntityTaskVersion {
+@Table(name = "TB_VERSAO_TAREFA", schema = Constants.SCHEMA)
+public class TaskVersionEntity extends BaseEntity implements IEntityTaskVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TAREFA")
+    @Column(name = "CO_VERSAO_TAREFA")
     private Integer cod;
 
     @Column(name = "NO_TAREFA", nullable = false)
@@ -35,22 +36,22 @@ public class Task implements IEntityTaskVersion {
     //uni-directional many-to-one association to TaskDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
-    private TaskDefinition taskDefinition;
+    private TaskDefinitionEntity taskDefinition;
 
     //uni-directional many-to-one association to Processo
     @ManyToOne
-    @JoinColumn(name = "CO_PROCESSO", nullable = false)
-    private Process process;
+    @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
+    private ProcessVersionEntity process;
 
     //uni-directional many-to-one association to TaskType
     @ManyToOne
     @JoinColumn(name = "CO_TIPO_TAREFA", nullable = false)
-    private TaskType type;
+    private TaskTypeEntity type;
 
     @OneToMany(mappedBy = "originTask")
-    private List<Transition> transitions;
+    private List<TaskTransitionVersionEntity> transitions;
 
-    public Task() {
+    public TaskVersionEntity() {
     }
 
     @Override
@@ -63,20 +64,20 @@ public class Task implements IEntityTaskVersion {
     }
 
     @Override
-    public TaskDefinition getTaskDefinition() {
+    public TaskDefinitionEntity getTaskDefinition() {
         return this.taskDefinition;
     }
 
-    public void setTaskDefinition(TaskDefinition taskDefinition) {
+    public void setTaskDefinition(TaskDefinitionEntity taskDefinition) {
         this.taskDefinition = taskDefinition;
     }
 
     @Override
-    public Process getProcess() {
+    public ProcessVersionEntity getProcess() {
         return this.process;
     }
 
-    public void setProcess(Process process) {
+    public void setProcess(ProcessVersionEntity process) {
         this.process = process;
     }
 
@@ -90,20 +91,20 @@ public class Task implements IEntityTaskVersion {
     }
 
     @Override
-    public TaskType getType() {
+    public TaskTypeEntity getType() {
         return type;
     }
 
-    public void setType(TaskType type) {
+    public void setType(TaskTypeEntity type) {
         this.type = type;
     }
 
     @Override
-    public List<Transition> getTransitions() {
+    public List<TaskTransitionVersionEntity> getTransitions() {
         return transitions;
     }
 
-    public void setTransitions(List<Transition> transitions) {
+    public void setTransitions(List<TaskTransitionVersionEntity> transitions) {
         this.transitions = transitions;
     }
 }

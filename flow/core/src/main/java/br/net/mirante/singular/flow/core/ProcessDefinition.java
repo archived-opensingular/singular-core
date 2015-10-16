@@ -15,16 +15,14 @@ import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.MoreObjects;
-
 import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -36,6 +34,8 @@ import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
 import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * <p>
@@ -61,8 +61,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private FlowMap flowMap;
 
     private Integer entityVersionCod;
-
-    private Integer entityDefinitionCod;
 
     private IProcessCreationPageStrategy creationPage;
 
@@ -238,6 +236,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     /**
      * <p>
+     * Determina o serviço de consulta das instâncias deste tipo de processo.
+     * </p>
+     * @param processDataService
+     */
+    protected void setProcessDataService(IProcessDataService<I> processDataService) {
+        this.processDataService = processDataService;
+    }
+    
+    /**
+     * <p>
      * Retorna o serviço de consulta das definições de variáveis.
      * </p>
      *
@@ -388,10 +396,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
                     if (Flow.getMbpmBean().getProcessEntityService().isDifferentVersion(oldVersion, newVersion)) {
 
                         entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
-                        entityDefinitionCod = newVersion.getProcessDefinition().getCod();
                     } else {
                         entityVersionCod = oldVersion.getCod();
-                        entityDefinitionCod = oldVersion.getProcessDefinition().getCod();
                     }
                 } catch (Exception e) {
                     throw new SingularFlowException(createErrorMsg("Erro ao criar entidade para o processo"), e);
@@ -428,32 +434,15 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getFlowMap().getTask(taskDefinition);
     }
 
-    @Deprecated
-    public final Set<IEntityTaskVersion> getEntityNotJavaTasksVersion() {
-        // TODO não faz sentido retornar IEntityTask. Deveria ser
-        // IEntityTaskDefinition
-        return convertToEntityTaskVersion(getFlowMap().getAllTasks().stream().filter(t -> !t.isJava()));
-    }
-
-    @Deprecated
-    public final Set<IEntityTaskVersion> getEntityPeopleTasksVersion() {
-        // TODO não faz sentido retornar IEntityTask. Deveria ser
-        // IEntityTaskDefinition
-        return convertToEntityTaskVersion(getFlowMap().getPeopleTasks().stream());
+    public final Set<IEntityTaskDefinition> getEntityTasksDefinitionNotJava() {
+        return getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isJava()).collect(Collectors.toSet());
     }
 
     final IEntityTaskVersion getEntityStartTaskVersion() {
         return getEntityTaskVersion(getFlowMap().getStartTask());
     }
 
-    @Deprecated
-    public final IEntityTaskVersion getEntityTaskVersionByAbbreviation(String sigla) {
-        return getEntityTaskVersion(getFlowMap().getTaskBybbreviation(sigla));
-    }
-
-    @Deprecated
-    public final IEntityTaskVersion getEntityTaskVersion(MTask<?> task) {
-        // TODO esse metodo deve deixar de ser público
+    final IEntityTaskVersion getEntityTaskVersion(MTask<?> task) {
         if (task == null) {
             return null;
         }
@@ -782,8 +771,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getPersistenceService().createProcessInstance(getEntityProcessVersion(), getEntityStartTaskVersion());
     }
 
-    final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow
+    final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
                 .getMbpmBean().getPersistenceService();
     }
 

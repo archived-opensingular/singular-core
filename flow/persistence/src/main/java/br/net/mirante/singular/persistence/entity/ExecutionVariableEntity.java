@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VARIAVEL_EXECUCAO_TRANSICAO", schema = Constants.SCHEMA)
-public class ExecutionVariable implements IEntityExecutionVariable {
+public class ExecutionVariableEntity extends BaseEntity implements IEntityExecutionVariable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -42,29 +42,29 @@ public class ExecutionVariable implements IEntityExecutionVariable {
     //bi-directional many-to-one association to ProcessInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private ProcessInstance processInstance;
+    private ProcessInstanceEntity processInstance;
 
     //uni-directional many-to-one association to TaskInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_TAREFA_DESTINO", nullable = false)
-    private TaskInstance destinationTask;
+    private TaskInstanceEntity destinationTask;
 
     //uni-directional many-to-one association to TaskInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_TAREFA_ORIGEM", nullable = false)
-    private TaskInstance originTask;
+    private TaskInstanceEntity originTask;
 
     //uni-directional many-to-one association to VariableType
     @ManyToOne
     @JoinColumn(name = "CO_TIPO_VARIAVEL", nullable = false)
-    private VariableType variableType;
+    private VariableTypeInstance variableType;
 
     //bi-directional many-to-one association to Variable
     @ManyToOne
     @JoinColumn(name = "CO_VARIAVEL_INSTANCIA_PROCESSO")
-    private Variable variable;
+    private VariableInstanceEntity variable;
 
-    public ExecutionVariable() {
+    public ExecutionVariableEntity() {
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ExecutionVariable implements IEntityExecutionVariable {
     }
 
     @Override
-    public ProcessInstance getProcessInstance() {
+    public ProcessInstanceEntity getProcessInstance() {
         return this.processInstance;
     }
 
@@ -86,12 +86,12 @@ public class ExecutionVariable implements IEntityExecutionVariable {
         return this.name;
     }
 
-    public void setProcessInstance(ProcessInstance processInstance) {
+    public void setProcessInstance(ProcessInstanceEntity processInstance) {
         this.processInstance = processInstance;
     }
 
     @Override
-    public TaskInstance getDestinationTask() {
+    public TaskInstanceEntity getDestinationTask() {
         return this.destinationTask;
     }
 
@@ -105,32 +105,32 @@ public class ExecutionVariable implements IEntityExecutionVariable {
         return this.date;
     }
 
-    public void setDestinationTask(TaskInstance destinationTask) {
+    public void setDestinationTask(TaskInstanceEntity destinationTask) {
         this.destinationTask = destinationTask;
     }
 
     @Override
-    public TaskInstance getOriginTask() {
+    public TaskInstanceEntity getOriginTask() {
         return this.originTask;
     }
 
-    public void setOriginTask(TaskInstance originTask) {
+    public void setOriginTask(TaskInstanceEntity originTask) {
         this.originTask = originTask;
     }
 
-    public VariableType getVariableType() {
+    public VariableTypeInstance getVariableType() {
         return this.variableType;
     }
 
-    public void setVariableType(VariableType variableType) {
+    public void setVariableType(VariableTypeInstance variableType) {
         this.variableType = variableType;
     }
 
-    public Variable getVariable() {
+    public VariableInstanceEntity getVariable() {
         return this.variable;
     }
 
-    public void setVariable(Variable variable) {
+    public void setVariable(VariableInstanceEntity variable) {
         this.variable = variable;
     }
 

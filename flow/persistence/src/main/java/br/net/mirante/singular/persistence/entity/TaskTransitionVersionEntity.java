@@ -20,13 +20,13 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_TRANSICAO database table.
  */
 @Entity
-@Table(name = "TB_TRANSICAO", schema = Constants.SCHEMA)
-public class Transition implements IEntityTaskTransitionVersion {
+@Table(name = "TB_VERSAO_TRANSICAO", schema = Constants.SCHEMA)
+public class TaskTransitionVersionEntity extends BaseEntity implements IEntityTaskTransitionVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TRANSICAO")
+    @Column(name = "CO_VERSAO_TRANSICAO")
     private Integer cod;
 
     @Column(name = "NO_TRANSICAO", nullable = false)
@@ -41,15 +41,15 @@ public class Transition implements IEntityTaskTransitionVersion {
 
     //uni-directional many-to-one association to Task
     @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_DESTINO", nullable = false)
-    private Task destinationTask;
+    @JoinColumn(name = "CO_VERSAO_TAREFA_DESTINO", nullable = false)
+    private TaskVersionEntity destinationTask;
 
     //uni-directional many-to-one association to Task
     @ManyToOne
-    @JoinColumn(name = "CO_TAREFA_ORIGEM", nullable = false)
-    private Task originTask;
+    @JoinColumn(name = "CO_VERSAO_TAREFA_ORIGEM", nullable = false)
+    private TaskVersionEntity originTask;
 
-    public Transition() {
+    public TaskTransitionVersionEntity() {
     }
 
     @Override
@@ -89,20 +89,20 @@ public class Transition implements IEntityTaskTransitionVersion {
     }
 
     @Override
-    public Task getDestinationTask() {
+    public TaskVersionEntity getDestinationTask() {
         return destinationTask;
     }
 
-    public void setDestinationTask(Task destinationTask) {
+    public void setDestinationTask(TaskVersionEntity destinationTask) {
         this.destinationTask = destinationTask;
     }
 
     @Override
-    public Task getOriginTask() {
+    public TaskVersionEntity getOriginTask() {
         return originTask;
     }
 
-    public void setOriginTask(Task originTask) {
+    public void setOriginTask(TaskVersionEntity originTask) {
         this.originTask = originTask;
     }
 }

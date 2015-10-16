@@ -10,8 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
-import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 public class Flow {
@@ -23,28 +21,13 @@ public class Flow {
     private Flow() {
     }
 
-    private static void init() {
-        for (final ProcessDefinition<?> processDefinition : getMbpmBean().getDefinitions()) {
-            for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
-                if (!task.isImmediateExecution()) {
-                    getMbpmBean().getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> getMbpmBean().executeTask(task)));
-                }
-            }
-            for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
-                getMbpmBean().getScheduleService().schedule(scheduledJob);
-            }
-        }
-        getMbpmBean().getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
-        getMbpmBean().init();
-    }
-
     public static synchronized void setConf(SingularFlowConfigurationBean conf) {
         if(mbpmBean != null
                 && mbpmBean != conf){
             throw new SingularFlowException("O contexto já foi configurado.");
         }
         mbpmBean = conf;
-        init();
+        mbpmBean.start();
     }
 
     public static SingularFlowConfigurationBean getMbpmBean() {
@@ -77,20 +60,20 @@ public class Flow {
         return getMbpmBean().getProcessInstance(dadosInstanciaProcesso);
     }
 
-    public static <K extends ProcessInstance> K getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
+    public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
         return getMbpmBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstance(Class<T> expectedType, Integer cod) {
-        return getMbpmBean().getProcessInstance(expectedType, cod);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
+        return getMbpmBean().getProcessInstance(processClass, cod);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstance(Class<T> expectedType, String id) {
-        return getMbpmBean().getProcessInstance(expectedType, id);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
+        return getMbpmBean().getProcessInstance(processClass, id);
     }
 
-    public static final <T extends ProcessInstance> T getProcessInstanceOrException(Class<T> expectedType, String id) {
-        return getMbpmBean().getProcessInstanceOrException(expectedType, id);
+    public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
+        return getMbpmBean().getProcessInstanceOrException(processClass, id);
     }
 
     public static <X extends ProcessInstance> X getProcessInstance(String processInstanceID) {
