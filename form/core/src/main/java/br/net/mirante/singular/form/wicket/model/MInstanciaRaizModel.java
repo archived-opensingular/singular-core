@@ -1,13 +1,12 @@
 package br.net.mirante.singular.form.wicket.model;
 
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
-public abstract class MInstanciaRaizModel<I extends MInstancia> implements IModel<I> {
+public abstract class MInstanciaRaizModel<I extends MInstancia> extends AbstractMInstanciaModel<I> {
+
     private MElement    serial;
     private transient I object;
     public MInstanciaRaizModel() {}

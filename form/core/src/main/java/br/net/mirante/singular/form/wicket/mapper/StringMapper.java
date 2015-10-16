@@ -8,7 +8,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class StringMapper implements ControlsFieldComponentMapper {
