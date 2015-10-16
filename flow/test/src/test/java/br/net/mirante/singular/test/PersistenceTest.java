@@ -3,7 +3,7 @@ package br.net.mirante.singular.test;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.persistence.entity.TaskInstance;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +29,9 @@ public class PersistenceTest extends TestSupport {
         //Clear da sessão para evidenciar a consulta como única.
         sessionFactory.getCurrentSession().clear();
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD BEGIN: Clear na sessão, recarregando process instance: ");
-        br.net.mirante.singular.persistence.entity.ProcessInstance pientity = (br.net.mirante.singular.persistence.entity.ProcessInstance) sessionFactory.getCurrentSession().load(br.net.mirante.singular.persistence.entity.ProcessInstance.class, cod);
+        br.net.mirante.singular.persistence.entity.ProcessInstanceEntity pientity = (br.net.mirante.singular.persistence.entity.ProcessInstanceEntity) sessionFactory.getCurrentSession().load(br.net.mirante.singular.persistence.entity.ProcessInstanceEntity.class, cod);
         Assert.assertNotNull(pientity.getCurrentTask());
-        Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstance.class);
+        Assert.assertEquals(pientity.getCurrentTask().getClass(), TaskInstanceEntity.class);
         Logger.getLogger(getClass().getSimpleName()).info("##LOAD END. ");
     }
 }

@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VERSAO_TRANSICAO", schema = Constants.SCHEMA)
-public class Transition extends BaseEntity implements IEntityTaskTransitionVersion {
+public class TaskTransitionVersionEntity extends BaseEntity implements IEntityTaskTransitionVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -42,14 +42,14 @@ public class Transition extends BaseEntity implements IEntityTaskTransitionVersi
     //uni-directional many-to-one association to Task
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_TAREFA_DESTINO", nullable = false)
-    private Task destinationTask;
+    private TaskVersionEntity destinationTask;
 
     //uni-directional many-to-one association to Task
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_TAREFA_ORIGEM", nullable = false)
-    private Task originTask;
+    private TaskVersionEntity originTask;
 
-    public Transition() {
+    public TaskTransitionVersionEntity() {
     }
 
     @Override
@@ -89,20 +89,20 @@ public class Transition extends BaseEntity implements IEntityTaskTransitionVersi
     }
 
     @Override
-    public Task getDestinationTask() {
+    public TaskVersionEntity getDestinationTask() {
         return destinationTask;
     }
 
-    public void setDestinationTask(Task destinationTask) {
+    public void setDestinationTask(TaskVersionEntity destinationTask) {
         this.destinationTask = destinationTask;
     }
 
     @Override
-    public Task getOriginTask() {
+    public TaskVersionEntity getOriginTask() {
         return originTask;
     }
 
-    public void setOriginTask(Task originTask) {
+    public void setOriginTask(TaskVersionEntity originTask) {
         this.originTask = originTask;
     }
 }

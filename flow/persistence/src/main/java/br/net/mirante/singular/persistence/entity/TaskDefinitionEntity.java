@@ -20,7 +20,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_DEFINICAO_TAREFA", schema = Constants.SCHEMA)
-public class TaskDefinition extends BaseEntity implements IEntityTaskDefinition {
+public class TaskDefinitionEntity extends BaseEntity implements IEntityTaskDefinition {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -38,12 +38,12 @@ public class TaskDefinition extends BaseEntity implements IEntityTaskDefinition 
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
-    private ProcessDefinition processDefinition;
+    private ProcessDefinitionEntity processDefinition;
 
     @OneToMany(mappedBy = "taskDefinition")
-    private List<Task> versions;
+    private List<TaskVersionEntity> versions;
 
-    public TaskDefinition() {
+    public TaskDefinitionEntity() {
     }
 
     @Override
@@ -73,20 +73,20 @@ public class TaskDefinition extends BaseEntity implements IEntityTaskDefinition 
     }
 
     @Override
-    public ProcessDefinition getProcessDefinition() {
+    public ProcessDefinitionEntity getProcessDefinition() {
         return processDefinition;
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
+    public void setProcessDefinition(ProcessDefinitionEntity processDefinition) {
         this.processDefinition = processDefinition;
     }
 
     @Override
-    public List<Task> getVersions() {
+    public List<TaskVersionEntity> getVersions() {
         return versions;
     }
 
-    public void setVersions(List<Task> versions) {
+    public void setVersions(List<TaskVersionEntity> versions) {
         this.versions = versions;
     }
 }

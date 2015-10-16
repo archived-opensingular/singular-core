@@ -13,27 +13,46 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 
+/**
+ * The base persistent class for the TB_INSTANCIA_PROCESSO database table.
+ * <p>
+ * Must declare a {@link GenericGenerator} with name {@link AbstractProcessInstanceEntity#PK_GENERATOR_NAME}.
+ * </p>
+ * <code>@GenericGenerator(name = ProcessInstanceBase.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
+ * 
+ * @param <USER>
+ * @param <PROCESS_VERSION>
+ * @param <TASK_INSTANCE>
+ * @param <VARIABLE_INSTANCE>
+ * @param <ROLE_USER>
+ * @param <EXECUTION_VAR>
+ */
 @MappedSuperclass
-public abstract class ProcessInstanceBase<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRole, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity implements IEntityProcessInstance {
+@Table(name = "TB_INSTANCIA_PROCESSO")
+public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity implements IEntityProcessInstance {
+
+    public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PROCESSO";
 
     @Id
     @Column(name = "CO_INSTANCIA_PROCESSO")
-    @GeneratedValue(generator = "generated_demanda_id")
+    @GeneratedValue(generator = PK_GENERATOR_NAME)
     private Integer cod;
 
     @ManyToOne(fetch = FetchType.LAZY)

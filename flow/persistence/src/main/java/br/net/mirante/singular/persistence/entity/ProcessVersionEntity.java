@@ -24,7 +24,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VERSAO_PROCESSO", schema = Constants.SCHEMA)
-public class Process extends BaseEntity implements IEntityProcessVersion {
+public class ProcessVersionEntity extends BaseEntity implements IEntityProcessVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -39,12 +39,12 @@ public class Process extends BaseEntity implements IEntityProcessVersion {
     //uni-directional many-to-one association to ProcessDefinition
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", nullable = false)
-    private ProcessDefinition processDefinition;
+    private ProcessDefinitionEntity processDefinition;
 
     @OneToMany(mappedBy = "process")
-    private List<Task> tasks;
+    private List<TaskVersionEntity> tasks;
 
-    public Process() {
+    public ProcessVersionEntity() {
     }
 
     @Override
@@ -66,20 +66,20 @@ public class Process extends BaseEntity implements IEntityProcessVersion {
     }
 
     @Override
-    public ProcessDefinition getProcessDefinition() {
+    public ProcessDefinitionEntity getProcessDefinition() {
         return processDefinition;
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
+    public void setProcessDefinition(ProcessDefinitionEntity processDefinition) {
         this.processDefinition = processDefinition;
     }
 
     @Override
-    public List<Task> getTasks() {
+    public List<TaskVersionEntity> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(List<TaskVersionEntity> tasks) {
         this.tasks = tasks;
     }
 

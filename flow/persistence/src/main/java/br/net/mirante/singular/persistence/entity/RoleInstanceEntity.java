@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.persistence.util.Constants;
 
 /**
@@ -21,7 +21,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
-public class RoleInstance extends BaseEntity implements IEntityRole {
+public class RoleInstanceEntity extends BaseEntity implements IEntityRoleInstance {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -46,14 +46,14 @@ public class RoleInstance extends BaseEntity implements IEntityRole {
     //uni-directional many-to-one association to ProcessInstance
     @ManyToOne
     @JoinColumn(name = "CO_INSTANCIA_PROCESSO", nullable = false)
-    private ProcessInstance processInstance;
+    private ProcessInstanceEntity processInstance;
 
     //uni-directional many-to-one association to Role
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PAPEL", nullable = false)
-    private Role role;
+    private RoleDefinitionEntity role;
 
-    public RoleInstance() {
+    public RoleInstanceEntity() {
     }
 
     @Override
@@ -92,16 +92,16 @@ public class RoleInstance extends BaseEntity implements IEntityRole {
     }
 
     @Override
-    public ProcessInstance getProcessInstance() {
+    public ProcessInstanceEntity getProcessInstance() {
         return processInstance;
     }
 
-    public void setProcessInstance(ProcessInstance processInstance) {
+    public void setProcessInstance(ProcessInstanceEntity processInstance) {
         this.processInstance = processInstance;
     }
 
     @Override
-    public Role getRole() {
+    public RoleDefinitionEntity getRole() {
         return role;
     }
 
@@ -110,7 +110,7 @@ public class RoleInstance extends BaseEntity implements IEntityRole {
         return getActor();
     }
 
-    public void setRole(Role role) {
+    public void setRole(RoleDefinitionEntity role) {
         this.role = role;
     }
 }

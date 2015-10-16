@@ -22,7 +22,7 @@ public class ProcessRight {
     //bi-directional many-to-one association to ProcessDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_PROCESSO", insertable = false, updatable = false)
-    private ProcessDefinition processDefinition;
+    private ProcessDefinitionEntity processDefinition;
 
     public ProcessRight() {
     }
@@ -35,11 +35,11 @@ public class ProcessRight {
         this.id = id;
     }
 
-    public ProcessDefinition getProcessDefinition() {
+    public ProcessDefinitionEntity getProcessDefinition() {
         return this.processDefinition;
     }
 
-    public void setProcessDefinition(ProcessDefinition processDefinition) {
+    public void setProcessDefinition(ProcessDefinitionEntity processDefinition) {
         this.processDefinition = processDefinition;
     }
 

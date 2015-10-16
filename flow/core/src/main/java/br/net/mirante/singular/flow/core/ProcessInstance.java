@@ -24,9 +24,9 @@ import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -441,7 +441,7 @@ public class ProcessInstance implements Serializable {
      * @return o usuário atribuído ao papel.
      */
     public final MUser getUserWithRole(String roleAbbreviation) {
-        final IEntityRole entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
+        final IEntityRoleInstance entityRole = getEntity().getRoleUserByAbbreviation(roleAbbreviation);
         if (entityRole != null) {
             return entityRole.getUser();
         }
@@ -458,7 +458,7 @@ public class ProcessInstance implements Serializable {
      */
     // TODO Daniel deveria retornar um objeto que isolasse da persistência
     @Deprecated
-    public final List<? extends IEntityRole> getUserRoles() {
+    public final List<? extends IEntityRoleInstance> getUserRoles() {
         return getEntity().getRoles();
     }
 
@@ -472,7 +472,7 @@ public class ProcessInstance implements Serializable {
      *            a sigla especificada.
      * @return os papeis.
      */
-    public final IEntityRole getRoleUserByAbbreviation(String roleAbbreviation) {
+    public final IEntityRoleInstance getRoleUserByAbbreviation(String roleAbbreviation) {
         return getEntity().getRoleUserByAbbreviation(roleAbbreviation);
     }
 
@@ -1076,7 +1076,7 @@ public class ProcessInstance implements Serializable {
         return getFinishedTask(tipo.getAbbreviation());
     }
 
-    protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
+    protected IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
         return getProcessDefinition().getPersistenceService();
     }
 

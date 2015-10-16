@@ -19,9 +19,9 @@ import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -29,7 +29,7 @@ import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
-public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityProcessRole, PROCESS_ROLE extends IEntityRole>
+public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, TRANSITION extends IEntityTaskTransitionVersion, PROCESS_ROLE_DEF extends IEntityRoleDefinition, PROCESS_ROLE extends IEntityRoleInstance>
         extends AbstractHibernateService
         implements IProcessDefinitionEntityService<CATEGORY, PROCESS_DEF, PROCESS_VERSION, TASK_DEF, TASK_VERSION, TRANSITION, PROCESS_ROLE_DEF> {
 
@@ -125,7 +125,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         SessionWrapper sw = getSession();
 
         Set<String> abbreviations = new HashSet<>();
-        for (IEntityProcessRole role : new ArrayList<>(entityProcessDefinition.getRoles())) {
+        for (IEntityRoleDefinition role : new ArrayList<>(entityProcessDefinition.getRoles())) {
             MProcessRole roleAbbreviation = processDefinition.getFlowMap().getRoleWithAbbreviation(role.getAbbreviation());
             if (roleAbbreviation == null) {
                 if (!hasRoleInstances(sw, role)) {
@@ -155,7 +155,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         sw.refresh(entityProcessDefinition);
     }
     
-    private boolean hasRoleInstances(SessionWrapper sw, IEntityProcessRole role){
+    private boolean hasRoleInstances(SessionWrapper sw, IEntityRoleDefinition role){
         Criteria criteria = sw.createCriteria(getClassProcessRole());
         criteria.add(Restrictions.eq("role", role));
         criteria.setProjection(Projections.rowCount());

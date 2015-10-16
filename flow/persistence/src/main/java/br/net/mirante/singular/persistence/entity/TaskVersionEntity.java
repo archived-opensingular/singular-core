@@ -22,7 +22,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_VERSAO_TAREFA", schema = Constants.SCHEMA)
-public class Task extends BaseEntity implements IEntityTaskVersion {
+public class TaskVersionEntity extends BaseEntity implements IEntityTaskVersion {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,22 +36,22 @@ public class Task extends BaseEntity implements IEntityTaskVersion {
     //uni-directional many-to-one association to TaskDefinition
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
-    private TaskDefinition taskDefinition;
+    private TaskDefinitionEntity taskDefinition;
 
     //uni-directional many-to-one association to Processo
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
-    private Process process;
+    private ProcessVersionEntity process;
 
     //uni-directional many-to-one association to TaskType
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_TIPO_TAREFA", nullable = false)
-    private TaskType type;
+    private TaskTypeEntity type;
 
     @OneToMany(mappedBy = "originTask")
-    private List<Transition> transitions;
+    private List<TaskTransitionVersionEntity> transitions;
 
-    public Task() {
+    public TaskVersionEntity() {
     }
 
     @Override
@@ -64,20 +64,20 @@ public class Task extends BaseEntity implements IEntityTaskVersion {
     }
 
     @Override
-    public TaskDefinition getTaskDefinition() {
+    public TaskDefinitionEntity getTaskDefinition() {
         return this.taskDefinition;
     }
 
-    public void setTaskDefinition(TaskDefinition taskDefinition) {
+    public void setTaskDefinition(TaskDefinitionEntity taskDefinition) {
         this.taskDefinition = taskDefinition;
     }
 
     @Override
-    public Process getProcess() {
+    public ProcessVersionEntity getProcess() {
         return this.process;
     }
 
-    public void setProcess(Process process) {
+    public void setProcess(ProcessVersionEntity process) {
         this.process = process;
     }
 
@@ -91,20 +91,20 @@ public class Task extends BaseEntity implements IEntityTaskVersion {
     }
 
     @Override
-    public TaskType getType() {
+    public TaskTypeEntity getType() {
         return type;
     }
 
-    public void setType(TaskType type) {
+    public void setType(TaskTypeEntity type) {
         this.type = type;
     }
 
     @Override
-    public List<Transition> getTransitions() {
+    public List<TaskTransitionVersionEntity> getTransitions() {
         return transitions;
     }
 
-    public void setTransitions(List<Transition> transitions) {
+    public void setTransitions(List<TaskTransitionVersionEntity> transitions) {
         this.transitions = transitions;
     }
 }
