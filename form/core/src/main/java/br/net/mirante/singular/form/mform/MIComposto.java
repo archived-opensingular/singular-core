@@ -37,9 +37,6 @@ public class MIComposto extends MInstancia {
     }
 
     public MInstancia getCampo(LeitorPath leitorPath) {
-        if (!leitorPath.isNomeSimplesValido()) {
-            throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um nome de campo válido"));
-        }
         MInstancia instancia = null;
         if (campos != null) {
             instancia = campos.get(leitorPath.getTrecho());
@@ -69,9 +66,6 @@ public class MIComposto extends MInstancia {
 
     @Override
     void setValor(LeitorPath leitorPath, Object valor) {
-        if (!leitorPath.isNomeSimplesValido()) {
-            throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um nome de campo válido"));
-        }
         MInstancia instancia = null;
         if (campos != null) {
             instancia = campos.get(leitorPath.getTrecho());
