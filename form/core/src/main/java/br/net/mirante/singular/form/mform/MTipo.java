@@ -160,10 +160,36 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return false;
     }
 
+    /**
+     * <p>
+     * Verificar se o tipo atual é do tipo informado, diretamente ou se é um
+     * tipo extendido. Para isso percorre toda a hierarquia de derivação do tipo
+     * atual verificando se encontra parentTypeCandidate na hierarquia.
+     * </p>
+     * <p>
+     * Ambos o tipo tem que pertencer à mesma instância de dicionário para serem
+     * considerado compatíveis, ou seja, se dois tipo forem criados em
+     * dicionário diferentes, nunca serão considerado compatíveis mesmo se
+     * proveniente da mesma classe de definição.
+     * </p>
+     *
+     * @return true se o tipo atual for do tipo informado.
+     */
+    public boolean isTypeOf(MTipo<?> parentTypeCandidate) {
+        MTipo<I> atual = this;
+        while (atual != null) {
+            if (atual == parentTypeCandidate) {
+                return true;
+            }
+            atual = atual.superTipo;
+        }
+        return false;
+    }
+
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -363,7 +389,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
