@@ -38,8 +38,7 @@ public class TemplateRepository {
                 .filter(new Predicate<Class<? extends MPacote>>() {
                     public boolean test(Class<? extends MPacote> mClass) {
                         int modifiers = mClass.getModifiers();
-                        return !Modifier.isAbstract(modifiers) &&
-                                !Modifier.isAbstract(modifiers);
+                        return !Modifier.isAbstract(modifiers);
                     }
                 })
                 .forEach(mClass -> {
