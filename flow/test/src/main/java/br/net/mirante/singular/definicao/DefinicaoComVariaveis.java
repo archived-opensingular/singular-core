@@ -32,13 +32,13 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         FlowBuilder f = new FlowBuilderImpl(this);
 
         ITaskDefinition PRINT = () -> "Print Variavel";
-        f.addJava(PRINT).call(this::printVar);
+        f.addJavaTask(PRINT).call(this::printVar);
 
         ITaskDefinition SET_VARIAVEL = () -> "Definir Variavel";
-        f.addJava(SET_VARIAVEL).call(this::setVar);
+        f.addJavaTask(SET_VARIAVEL).call(this::setVar);
 
         ITaskDefinition APROVAR = () -> "Aprovar Definiçâo";
-        f.addJava(APROVAR).call(this::print);
+        f.addJavaTask(APROVAR).call(this::print);
 
         ITaskDefinition END = () -> "Aprovado";
         f.addEnd(END);

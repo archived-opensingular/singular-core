@@ -9,25 +9,24 @@
 
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSourceSingular" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver"/>
-        <property name="url" value="jdbc:jtds:sqlserver://miraloc:1433/miranteDev8"/>
-        <property name="username" value="miranteDev"/>
-        <property name="password" value="miranteDev"/>
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:." />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
     </bean>
 
     <!-- HIBERNATE CONFIGURATION -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSourceSingular"/>
         <!-- Incluir o pacote quando tiver um -->
-        <!--<property name="packagesToScan" value="br.com.montrealonline.persistence.entidade" />-->
+        <property name="packagesToScan" value="br.net.mirante.singular.dao.form" />
 
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2005Dialect</prop>
-                <prop key="hibernate.connection.isolation">2</prop>
-                <prop key="hibernate.jdbc.batch_size">30</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
     </bean>

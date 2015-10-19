@@ -6,8 +6,11 @@
             <div class="page-head">
                 <!-- BEGIN PAGE TITLE -->
                 <div class="page-title">
-                    <h1><wicket:container wicket:id="contentTitle"/>
-                        <small><wicket:container wicket:id="contentSubtitle"/></small>
+                    <h1>
+                        <wicket:container wicket:id="contentTitle"/>
+                        <small>
+                            <wicket:container wicket:id="contentSubtitle"/>
+                        </small>
                     </h1>
                 </div>
                 <!-- END PAGE TITLE -->
@@ -28,7 +31,9 @@
             <!-- BEGIN PAGE BREADCRUMB -->
             <ul wicket:id="breadcrumb" class="page-breadcrumb breadcrumb">
                 <li>
-                    <a wicket:id="breadcrumbDashboard"><wicket:message key="breadcrumb.home"/></a><i class="fa fa-circle"></i>
+                    <a wicket:id="breadcrumbDashboard">
+                        <wicket:message key="breadcrumb.home"/>
+                    </a><i class="fa fa-circle"></i>
                 </li>
                 <wicket:container wicket:id="_BreadcrumbLinks"/>
             </ul>
@@ -37,7 +42,9 @@
             <wicket:child/>
             <!-- END PAGE CONTENT INNER -->
         </div>
-
+        <!-- BEGIN QUICK SIDEBAR -->
+        <wicket:container wicket:id="_SideBar"/>
+        <!-- END QUICK SIDEBAR -->
     </div>
 </wicket:panel>
 </html>
