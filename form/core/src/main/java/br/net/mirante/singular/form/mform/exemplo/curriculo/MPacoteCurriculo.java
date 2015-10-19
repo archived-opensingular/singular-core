@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
@@ -100,6 +101,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
+        final MTipoInteger academicoHorasEstagio = cursoAcademico.addCampo("horasEstagio", MTipoInteger.class, true);
         {
             formacao
                 .withView(MGridListaView::new)
@@ -116,6 +118,9 @@ public class MPacoteCurriculo extends MPacote {
             academicoMesConclusao
                 .as(AtrBasic::new).label("Mês conclusão")
                 .as(AtrWicket::new).larguraPref(2);
+            academicoHorasEstagio
+                    .as(AtrBasic::new).label("Horas de estágio")
+                    .as(AtrWicket::new).larguraPref(2);
         }
 
         final MTipoLista<MTipoComposto<?>> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
