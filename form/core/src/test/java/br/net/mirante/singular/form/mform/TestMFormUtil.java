@@ -45,7 +45,8 @@ public class TestMFormUtil extends TestCaseForm {
         MTipoInteger integer2 = tipoSubBloco.addCampoInteger("integer2");
         MTipoString tipoString2 = pb.createTipo("string2", MTipoString.class);
         MTipoLista<MTipoString> tipoListaString2 = tipoBloco.addCampoListaOf("enderecos", tipoString2);
-        MTipoLista<MTipoString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", MTipoString.class);
+        MTipoString tipoString3 = pb.createTipo("string3", MTipoString.class);
+        MTipoLista<MTipoString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", tipoString3);
         MTipoLista<MTipoComposto<?>> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
         MTipoInteger tipoQtd = listaSubBloco2.getTipoElementos().addCampoInteger("qtd");
 
