@@ -11,31 +11,31 @@
             <wicket:message key="breadcrumb.form"/>
         </li>
     </wicket:fragment>
-    
+
     <form wicket:id="optionsForm">
-    	<div class="form-group">
-    		<label for="options">Template</label>
-	    	<select class="form-control" wicket:id="options"></select>
-    	</div>
+        <div class="form-group">
+            <label for="options">Template</label>
+            <select class="form-control" wicket:id="options"></select>
+        </div>
     </form>
     <form wicket:id="form" role="form">
-	    <button type="submit" class="btn blue" wicket:id="insert">
-	    	<wicket:message key="label.button.insert"/>
-	    </button>
+        <button type="submit" class="btn blue" wicket:id="insert">
+            <wicket:message key="label.button.insert"/>
+        </button>
     </form>
     <div class="table-scrollable">
         <table wicket:id="data-list"></table>
     </div>
-    
+
     <div wicket:id="inputModal" class="portlet-body form">
-    	<form wicket:id="save-form">
-	    	<div class="form-body" wicket:id="generated"></div>
-	    	<div class="form-actions noborder">
-		    	<button type="submit" class="btn blue" wicket:id="save-btn">
-		    		<wicket:message key="label.button.save"/>
-		    	</button>
-	    	</div>
-    	</form>
+        <form wicket:id="save-form">
+            <div class="form-body" wicket:id="generated"></div>
+            <div class="form-actions noborder">
+                <button type="submit" class="btn blue" wicket:id="save-btn">
+                    <wicket:message key="label.button.save"/>
+                </button>
+            </div>
+        </form>
     </div>
 </wicket:extend>
 </html>

@@ -8,9 +8,8 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("form/crud")
 public class CrudPage extends Template {
 
-	@Override
-	protected Content getContent(String id) {
-		return new CrudContent(id);
-	}
-	
+    @Override
+    protected Content getContent(String id) {
+        return new CrudContent(id);
+    }
 }
