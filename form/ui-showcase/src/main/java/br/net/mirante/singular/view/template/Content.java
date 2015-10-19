@@ -58,6 +58,7 @@ public abstract class Content extends Panel {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
         add(new SettingsMenu("_SettingsMenu").setVisible(withSettingsMenu));
+        add(new SideBar("_SideBar").setVisible(withSideBar));
         WebMarkupContainer infoLink = new WebMarkupContainer("_Info");
         add(infoLink.setVisible(withInfoLink));
         if (withInfoLink) {

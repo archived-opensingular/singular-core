@@ -15,7 +15,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaItemListaModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.resource.Icone;

@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket.model;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.AtrRef;
-import br.net.mirante.singular.form.wicket.model.instancia.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.model.IBooleanModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.model.NullOrEmptyModel;

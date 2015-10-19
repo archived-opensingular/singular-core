@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
-import br.net.mirante.singular.form.wicket.model.instancia.MInstanciaRaizModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;

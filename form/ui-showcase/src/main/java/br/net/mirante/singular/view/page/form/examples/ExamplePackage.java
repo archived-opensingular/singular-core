@@ -14,49 +14,49 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 
 public class ExamplePackage extends MPacote {
 
-    private static final String PACKAGE = "mform.exemplo.uiShowcase";
+	private static final String PACKAGE = "mform.exemplo.uiShowcase";
 
-    public enum Types {
-        ORDER(PACKAGE + ".Order");
+	public enum Types {
+		ORDER(PACKAGE+".Order");
+		
+		public final String name;
+		private Types(String name) {
+			this.name = name;
+		}
+	}
+	
+	public ExamplePackage() {
+		super(PACKAGE);
+	}
 
-        public final String name;
+	
+	@Override
+	public void carregarDefinicoes(PacoteBuilder pb) {
+		MTipoComposto<?> order = pb.createTipoComposto("Order");
+		
+		order.as(AtrBasic::new).label("Pedido");
+		
+		addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
+		
+		MTipoComposto<?> buyer = order.addCampoComposto("Buyer");
+		buyer.as(AtrBasic::new).label("Comprador");
+		
+		addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
+		addField(buyer, "CPF", "CPF", MTipoCPF.class);
+		addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
+		
+		MTipoComposto<?> address = order.addCampoComposto("Addresss");
+		address.as(AtrBasic::new).label("Endereço");
+		addField(address, "street", "Logradouro", MTipoString.class);
+		addField(address, "city", "Cidade", MTipoString.class);
+		addField(address, "state", "Estado", MTipoString.class);
+		addField(address, "Zipcode", "CEP", MTipoCEP.class);
+	}
 
-        private Types(String name) {
-            this.name = name;
-        }
-    }
 
-    public ExamplePackage() {
-        super(PACKAGE);
-    }
-
-    @Override
-    public void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> order = pb.createTipoComposto("Order");
-
-        order.as(AtrBasic::new).label("Pedido");
-
-        addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
-
-        MTipoComposto<?> buyer = order.addCampoComposto("Buyer");
-        buyer.as(AtrBasic::new).label("Comprador");
-
-        addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
-        addField(buyer, "CPF", "CPF", MTipoCPF.class);
-        addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-
-        MTipoComposto<?> address = order.addCampoComposto("Addresss");
-        address.as(AtrBasic::new).label("Endereço");
-        addField(address, "street", "Logradouro", MTipoString.class);
-        addField(address, "city", "Cidade", MTipoString.class);
-        addField(address, "state", "Estado", MTipoString.class);
-        addField(address, "Zipcode", "CEP", MTipoCEP.class);
-
-        pb.debug();
-    }
-
-    private void addField(MTipoComposto<?> root, String name, String label,
-            Class<? extends MTipo<?>> type) {
-        root.addCampo(name, type).as(AtrBasic::new).label(label);
-    }
+	private void addField(MTipoComposto<?> root, String name, String label, 
+							Class<? extends MTipo<?>> type) {
+		root.addCampo(name,type).as(AtrBasic::new).label(label);
+	}
+	
 }
