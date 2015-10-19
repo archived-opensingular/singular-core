@@ -3,7 +3,7 @@
     <div wicket:id="feedback"></div>
 
 
-	<div class="table-scrollable">
+    <div class="table-scrollable">
         <table wicket:id="form-list"></table>
     </div>
     <wicket:fragment wicket:id="breadcrumbForm">
@@ -17,16 +17,18 @@
         </li>
     </wicket:fragment>
     <form wicket:id="parametersForm">
-	    <div wicket:id="parametersModal">
-	    	<label wicket:id="formLabelName" ></label>
-	        <div class="table-scrollable">
-		        <table wicket:id="parameters-list"></table>
-		    </div>
-	    </div>
+        <div wicket:id="parametersModal">
+            <label wicket:id="formLabelName"></label>
+
+            <div class="table-scrollable">
+                <table wicket:id="parameters-list"></table>
+            </div>
+        </div>
     </form>
     <div wicket:id="previewModal" class="portlet-body form">
-    	<label wicket:id="previewName" ></label>
-    	<div class="form-body" wicket:id="generated"></div>
+        <label wicket:id="previewName"></label>
+
+        <div class="form-body" wicket:id="generated"></div>
     </div>
 </wicket:extend>
 </html>
