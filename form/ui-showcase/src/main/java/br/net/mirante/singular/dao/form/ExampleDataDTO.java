@@ -9,68 +9,69 @@ import javax.persistence.Table;
 import org.apache.wicket.model.IModel;
 
 @Entity
-@Table(name="example_data")
-@SuppressWarnings({ "rawtypes", "serial" })
+@Table(name = "example_data")
+@SuppressWarnings({"rawtypes", "serial"})
 public class ExampleDataDTO implements IModel {
-	@Id @GeneratedValue(strategy=GenerationType.IDENTITY) Long id;
-	
-	private String key, type, xml;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-	public ExampleDataDTO() {}
-	
-	public ExampleDataDTO(String key) {
-		this.key = key;
-	}
-	
-	public Long getId() {
-		return id;
-	}
+    private String key, type, xml;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public ExampleDataDTO() {
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public ExampleDataDTO(String key) {
+        this.key = key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getXml() {
-		return xml;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setXml(String xml) {
-		this.xml = xml;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getXml() {
+        return xml;
+    }
 
-	@Override
-	public void detach() {
-		// TODO Auto-generated method stub
-		
-	}
+    public void setXml(String xml) {
+        this.xml = xml;
+    }
 
-	@Override
-	public Object getObject() {
-		// TODO Auto-generated method stub
-		return this;
-	}
+    public String getType() {
+        return type;
+    }
 
-	@Override
-	public void setObject(Object arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public void detach() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public Object getObject() {
+        // TODO Auto-generated method stub
+        return this;
+    }
+
+    @Override
+    public void setObject(Object arg0) {
+        // TODO Auto-generated method stub
+
+    }
 }
