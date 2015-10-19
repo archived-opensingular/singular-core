@@ -14,16 +14,16 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.CategoryEntity;
 import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
-import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 import br.net.mirante.singular.persistence.entity.RoleDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.RoleInstanceEntity;
-import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.TaskHistoricTypeEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
@@ -59,7 +59,7 @@ public class DefaultHibernatePersistenceService extends
     protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, MUser user, MUser allocator) {
         final RoleInstanceEntity entityRole = new RoleInstanceEntity();
         entityRole.setProcessInstance(instance);
-        entityRole.setActor((Actor) user);
+        entityRole.setUser((Actor) user);
         entityRole.setRole(role);
         entityRole.setAllocatorUser((Actor) allocator);
         entityRole.setCreateDate(new Date());
@@ -89,7 +89,7 @@ public class DefaultHibernatePersistenceService extends
 
         TaskInstanceHistoryEntity history = new TaskInstanceHistoryEntity();
         history.setTaskInstance(task);
-        history.setTaskHistoryType((TaskHistoricTypeEntity) taskHistoryType);
+        history.setType((TaskHistoricTypeEntity) taskHistoryType);
         history.setAllocatedUser((Actor) allocatedUser);
         history.setAllocatorUser((Actor) responsibleUser);
         return history;

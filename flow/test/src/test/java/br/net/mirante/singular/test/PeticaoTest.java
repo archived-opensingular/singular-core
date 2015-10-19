@@ -222,11 +222,11 @@ public class PeticaoTest extends TestSupport {
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(4);
         assertEquals(Flow.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
         assertEquals(ConstantesUtil.USER_1, lastHistories.get(0).getAllocatedUser());
-        assertEquals("Alocação", lastHistories.get(0).getTaskHistoryType().getDescription());
-        assertEquals("Papel definido", lastHistories.get(1).getTaskHistoryType().getDescription());
+        assertEquals("Alocação", lastHistories.get(0).getType().getDescription());
+        assertEquals("Papel definido", lastHistories.get(1).getType().getDescription());
         assertEquals(ConstantesUtil.USER_2, lastHistories.get(2).getAllocatedUser());
-        assertEquals("Alocação Automática", lastHistories.get(2).getTaskHistoryType().getDescription());
-        assertEquals("Papel definido", lastHistories.get(3).getTaskHistoryType().getDescription());
+        assertEquals("Alocação Automática", lastHistories.get(2).getType().getDescription());
+        assertEquals("Papel definido", lastHistories.get(3).getType().getDescription());
     }
 
     @Test
@@ -244,7 +244,7 @@ public class PeticaoTest extends TestSupport {
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(1);
-        assertEquals("Transição Automática", lastHistories.get(0).getTaskHistoryType().getDescription());
+        assertEquals("Transição Automática", lastHistories.get(0).getType().getDescription());
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////

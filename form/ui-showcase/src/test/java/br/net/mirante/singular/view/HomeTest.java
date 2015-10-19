@@ -13,8 +13,7 @@ import br.net.mirante.singular.view.page.form.FormPage;
 import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/test-context.xml"})
-//BASED on https://ci.apache.org/projects/wicket/guide/6.x/guide/testingspring.html
+@ContextConfiguration(locations = {"/applicationContext.xml"})
 public class HomeTest {
 
     private WicketTester driver;
