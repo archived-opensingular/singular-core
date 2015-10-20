@@ -18,20 +18,4 @@ Módulos JAVA do projeto SINGULAR.
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
-        * [Documentação](http://10.0.10.1/docs/home)
-
-# Módulo UI-Admin
-
-Módulo de monitoramento (BAM) de processos. Este é um sub-módulo do **Singular Flow**.
-
-## Notas
-
-Este módulo é usado como um _overlay_ **MAVEN** de outros sistemas, mas também pode ser implantada como um _standalone_.
-
-Para iniciar em modo de desenvolvimento defina a variável de sistema **singular.development**. Por exemplo, passe o seguinte argumento para o **Tomcat**:
-
-```bash
--Dsingular.development=true
-```
-
-Por padrão, o modo iniciado é o de produção. Nesse modo apenas usuários autenticados com o papel **ADMIN** podem acessar o sistema.
+        * [Site do Projeto](http://10.0.10.1/docs/home)

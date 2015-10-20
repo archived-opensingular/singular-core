@@ -101,7 +101,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
-        final MTipoInteger academicoHorasEstagio = cursoAcademico.addCampo("horasEstagio", MTipoInteger.class, true);
+        final MTipoInteger academicoCargaHoraria = cursoAcademico.addCampo("cargaHoraria", MTipoInteger.class, true);
         {
             formacao
                 .withView(MGridListaView::new)
@@ -116,10 +116,11 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrWicket::new).larguraPref(3);
             academicoMesConclusao
-                .as(AtrBasic::new).label("Mês conclusão")
+                .as(AtrBasic::new).label("Mês de Conclusão")
                 .as(AtrWicket::new).larguraPref(2);
-            academicoHorasEstagio
-                    .as(AtrBasic::new).label("Horas de estágio")
+            academicoCargaHoraria
+                    .as(AtrBasic::new).label("Carga Horária (h)")
+                    .as(AtrBasic::new).tamanhoMaximo(5)
                     .as(AtrWicket::new).larguraPref(2);
         }
 
@@ -157,7 +158,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes
-                .withView(() -> new MTableListaView())
+                .withView(MTableListaView::new)
                 .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
             certificacao
                 .as(AtrBasic::new).label("Certificação");
