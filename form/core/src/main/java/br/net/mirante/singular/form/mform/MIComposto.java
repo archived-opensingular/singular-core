@@ -119,11 +119,12 @@ public class MIComposto extends MInstancia {
                 return instancia.getValor(leitor.proximo(), classeDestino);
             }
         }
-        MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        // if (!(tipo instanceof MTipoSimples)) {
-        // throw new RuntimeException(leitor.getTextoErro(this,
-        // "Não é um tipo simples definido"));
-        // }
+        MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        //MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        //if (!(tipo instanceof MTipoSimples)) {
+        //    throw new RuntimeException(leitor.getTextoErro(this,
+        //            "Não é um tipo simples definido"));
+        //}
         return null;
     }
 

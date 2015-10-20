@@ -31,6 +31,10 @@ public abstract class ActionAjaxButton extends AjaxButton {
 
     protected abstract void onAction(AjaxRequestTarget target, Form<?> form);
 
+    public void setMetronicUiBlocker(MetronicUiBlockerAjaxCallListener metronicUiBlocker) {
+        this.metronicUiBlocker = metronicUiBlocker;
+    }
+
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);

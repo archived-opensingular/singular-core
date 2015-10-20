@@ -114,7 +114,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
                 return instancia.getValor(leitor.proximo(), classeDestino);
             }
         }
-        MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        //MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
         return null;
     }
 
