@@ -51,7 +51,11 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara para CNPJ.</p>
          */
-        CNPJ("99-999.999/9999-99");
+        CNPJ("99-999.999/9999-99"),
+        /**
+         * <p>Máscara para CEP.</p>
+         */
+        CEP("99.999-999");
 
         private String mask;
 

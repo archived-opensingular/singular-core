@@ -8,12 +8,16 @@ import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
 
 public class MEmailValidator implements IValidator<String> {
+
     private static final MEmailValidator INSTANCE = new MEmailValidator();
+
     public static MEmailValidator getInstance() {
         return INSTANCE;
     }
 
-    protected MEmailValidator() {}
+    protected MEmailValidator() {
+        /* COSNTRUTOR VAZIO */
+    }
 
     @Override
     public void validate(IValidatable<String> validatable) {

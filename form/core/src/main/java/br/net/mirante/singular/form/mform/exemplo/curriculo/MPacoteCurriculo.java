@@ -20,6 +20,8 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
+import br.net.mirante.singular.form.validation.validator.MCPFValidator;
 import br.net.mirante.singular.form.validation.validator.MEmailValidator;
 import br.net.mirante.singular.form.wicket.AtrWicket;
 
@@ -42,7 +44,7 @@ public class MPacoteCurriculo extends MPacote {
 
         final MTipoComposto<?> informacoesPessoais = curriculo.addCampoComposto("informacoesPessoais");
         final MTipoNomePessoa nome = informacoesPessoais.addCampo("nome", MTipoNomePessoa.class, true);
-        final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class);
+        final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class, true);
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         {
             informacoesPessoais
@@ -51,6 +53,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
+                .addValidacao(MCPFValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")
@@ -117,6 +120,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrWicket::new).larguraPref(3);
             academicoCNPJ
+                .addValidacao(MCNPJValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             academicoCargaHoraria
                 .as(AtrBasic::new).label("Carga Horária (h)")
