@@ -31,7 +31,35 @@ import br.net.mirante.singular.util.wicket.jquery.JQuery;
  */
 public class InputMaskBehavior extends Behavior {
 
+    public static final String MASK_ATTR = "mask";
+    public static final String MAX_LENGTH_ATTR = "repeat";
+
     private String jsonOptions;
+
+    /**
+     * <p>Enumerador com algumas máscaras predefinidas.</p>
+     */
+    public enum Masks {
+        /**
+         * <p>Máscara que permite apenas valores numéricos: [0-9].</p>
+         */
+        NUMERIC("9");
+
+        private String mask;
+
+        Masks(String mask) {
+            this.mask = mask;
+        }
+
+        /**
+         * <p>Retorna a máscara correspondente a este enumerador.</p>
+         *
+         * @return a máscara correspondente a este enumerador.
+         */
+        public String getMask() {
+            return mask;
+        }
+    }
 
     /**
      * <p>Instancia um novo <i>behavior</i> com a máscara especificada.</p>
@@ -46,6 +74,18 @@ public class InputMaskBehavior extends Behavior {
     }
 
     /**
+     * <p>Instancia um novo <i>behavior</i> com a máscara especificada.</p>
+     *
+     * <p>Apenas as opções de máscaras padrões serão carregadas.</p>
+     *
+     * @param mask a máscara especificada.
+     * @see <a href="https://github.com/RobinHerbots/jquery.inputmask">JQuery InputMask</a>
+     */
+    public InputMaskBehavior(Masks mask) {
+        this(mask.getMask(), null);
+    }
+
+    /**
      * <p>Instancia um novo <i>behavior</i> com máscara e opções especificadas.</p>
      *
      * <p>Além das opções especificadas, as opções padrões também serão carregadas.</p>
@@ -56,6 +96,19 @@ public class InputMaskBehavior extends Behavior {
      */
     public InputMaskBehavior(String mask, Map<String, Object> options) {
         this(mask, options, true);
+    }
+
+    /**
+     * <p>Instancia um novo <i>behavior</i> com máscara e opções especificadas.</p>
+     *
+     * <p>Além das opções especificadas, as opções padrões também serão carregadas.</p>
+     *
+     * @param mask a máscara especificada.
+     * @param options as opções especificadas.
+     * @see <a href="https://github.com/RobinHerbots/jquery.inputmask">JQuery InputMask</a>
+     */
+    public InputMaskBehavior(Masks mask, Map<String, Object> options) {
+        this(mask.getMask(), options, true);
     }
 
     /**
@@ -78,9 +131,24 @@ public class InputMaskBehavior extends Behavior {
             setDefaultOpcoes(opts);
         }
         if (Objects.nonNull(mask)) {
-            opts.put("mask", mask);
+            opts.put(MASK_ATTR, mask);
         }
         setJsonOptions(opts);
+    }
+
+    /**
+     * <p>Instancia um novo <i>behavior</i> com máscara e opções especificadas.</p>
+     *
+     * <p>Além das opções especificadas, as opções padrões poderão ser carregadas dependendo
+     * do parâmetro {@code appendDefaultOptions}.</p>
+     *
+     * @param mask a máscara especificada.
+     * @param options as opções especificadas.
+     * @param appendDefaultOptions indica quando carregar as opções padrões.
+     * @see <a href="https://github.com/RobinHerbots/jquery.inputmask">JQuery InputMask</a>
+     */
+    public InputMaskBehavior(final Masks mask, final Map<String, Object> options, boolean appendDefaultOptions) {
+        this(mask.getMask(), options, appendDefaultOptions);
     }
 
     private void setDefaultOpcoes(Map<String, Object> options) {
