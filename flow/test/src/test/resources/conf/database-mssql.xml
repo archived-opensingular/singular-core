@@ -13,11 +13,10 @@
 
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <!--<property name="url" value="jdbc:hsqldb:hsql://localhost/singulardb"/>-->
-        <property name="url" value="jdbc:hsqldb:file:singulardb"/>
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;mode=MSSQLServer;"/>
         <property name="username" value="sa"/>
-        <property name="password" value=""/>
+        <property name="password" value="sa"/>
     </bean>
 
     <!-- HIBERNATE CONFIGURATION -->
@@ -29,7 +28,7 @@
         <property name="hibernateProperties">
             <props>
                 <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com oracle  -->
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2005Dialect</prop>
                 <prop key="hibernate.connection.isolation">2</prop>
                 <prop key="hibernate.jdbc.batch_size">30</prop>
                 <prop key="hibernate.show_sql">true</prop>

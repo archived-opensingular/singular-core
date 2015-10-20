@@ -30,20 +30,4 @@ public abstract class TestSupport {
     @Inject
     protected SessionFactory sessionFactory;
 
-    /**
-     * Método que faz com que seja aberto o gerenciador de BD do HSQL e pausa a execução dos testes aguardando a tecla
-     * ENTER no console.
-     */
-    public void inspecionarDB() {
-        org.hsqldb.util.DatabaseManagerSwing.main(new String[]{
-                "--url", "jdbc:hsqldb:file:singulardb", "--noexit"
-        });
-//        aguardarEnter();
-    }
-
-    private void aguardarEnter() {
-        System.out.println("Aperte ENTER para continuar...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine();
-    }
 }
