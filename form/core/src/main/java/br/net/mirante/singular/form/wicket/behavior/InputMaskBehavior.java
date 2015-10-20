@@ -43,7 +43,11 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara que permite apenas valores numéricos: [0-9].</p>
          */
-        NUMERIC("9");
+        NUMERIC("9"),
+        /**
+         * <p>Máscara para CPF.</p>
+         */
+        CPF("999.999.999-99");
 
         private String mask;
 

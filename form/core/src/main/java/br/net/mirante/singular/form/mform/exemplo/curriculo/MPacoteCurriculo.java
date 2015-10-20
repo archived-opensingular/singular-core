@@ -50,7 +50,6 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
-                .as(AtrBasic::new).label("CPF")
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")
