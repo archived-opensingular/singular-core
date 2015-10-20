@@ -238,7 +238,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         getDicionario().garantirPacoteCarregado(atr.getClassePacote());
         MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
         if (subPath != null) {
-            instancia.setValor(subPath, valor);
+            instancia.setValor(new LeitorPath(subPath), valor);
         } else {
             instancia.setValor(valor);
         }

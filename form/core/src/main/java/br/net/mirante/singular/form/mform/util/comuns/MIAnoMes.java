@@ -10,7 +10,7 @@ public class MIAnoMes extends MIComparable<YearMonth> {
     }
 
     public YearMonth getJavaYearMonth() {
-        if (isNull()) {
+        if (isEmptyOfData()) {
             return null;
         }
 
@@ -18,14 +18,14 @@ public class MIAnoMes extends MIComparable<YearMonth> {
     }
 
     public Integer getAno() {
-        if (isNull()) {
+        if (isEmptyOfData()) {
             return null;
         }
         return getValor().getYear();
     }
 
     public Integer getMes() {
-        if (isNull()) {
+        if (isEmptyOfData()) {
             return null;
         }
         return getValor().getMonthValue();

@@ -41,7 +41,8 @@ public class PacoteBuilder {
         return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
     }
 
-    public <T extends MTipo<?>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo,
+            Class<T> classeTipoLista) {
         T tipoLista = (T) dicionario.getTipo(classeTipoLista);
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoLista);
     }
@@ -168,11 +169,11 @@ public class PacoteBuilder {
             atr.bind(escopo.getNome());
         } else {
             throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNomeSimples() + "' do pacote " + atr.getClassePacote().getName()
-                + " durante a construção do pacote " + pacote.getNome());
+ + " durante a construção do pacote " + pacote.getNome());
         }
         if (!atr.isSelfReference() && !(atr.getClasseTipo().isInstance(tipoAtributo))) {
             throw new RuntimeException("O atributo " + atr.getNomeCompleto() + " esperava ser do tipo " + atr.getClasseTipo().getName()
-                + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
+                    + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
         }
     }
 
