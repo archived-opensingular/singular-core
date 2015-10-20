@@ -42,7 +42,27 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     public abstract Object getValor();
 
-    public abstract boolean isNull();
+    /**
+     * <p>
+     * Retorna true se a instancia não conter nenhuma informação diferente de
+     * null. A pesquisa é feita em profundidade, ou seja, em todos os subitens
+     * (se houverem) da intância atual serão verificados.
+     * </p>
+     * <p>
+     * Para o tipo simples retorna true se o valor for null.
+     * </p>
+     * <p>
+     * Para o tipo lista retorna true se a lista for vazia ou se todos os seus
+     * elementos retornarem isEmptyOfData() como true.
+     * </p>
+     * <p>
+     * Para o tipo registro (composto) retorna true se todos so seus campos
+     * retornarem isEmptyOfData().
+     * </p>
+     *
+     * @return
+     */
+    public abstract boolean isEmptyOfData();
 
     public Object getValorWithDefault() {
         throw new RuntimeException("Método não suportado");
@@ -62,15 +82,23 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().converter(getValor(), classeDestino);
     }
 
-    public final Object getValor(String pathCampo) {
-        return getValor(new LeitorPath(pathCampo), null);
+    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
+        MInstancia instancia = this;
+        while (true) {
+            if (leitor.isEmpty()) {
+                return instancia.getValor(classeDestino);
+            }
+            MInstancia instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
+            if (instanciaFilha == null) {
+                MFormUtil.resolverTipoCampo(instancia.getMTipo(), leitor);
+                return null;
+            }
+            instancia = instanciaFilha;
+            leitor = leitor.proximo();
+        }
     }
 
-    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new LeitorPath(pathCampo), classeDestino);
-    }
-
-    <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
+    <T extends Object> MInstancia getCampoLocalSemCriar(LeitorPath leitor) {
         throw new RuntimeException("Método não suportado");
     }
 
@@ -78,28 +106,29 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException("Método não suportado");
     }
 
-    public final String getValorString(String pathCampo) {
-        return getValor(pathCampo, String.class);
-    }
-
-    public final <T extends Enum<T>> T getValorEnum(String pathCampo, Class<T> enumType) {
-        String valor = getValorString(pathCampo);
-        if (valor != null) {
-            return Enum.valueOf(enumType, valor);
-        }
-        return null;
-    }
-
-    public final void setValor(String pathCampo, Object valor) {
-        setValor(new LeitorPath(pathCampo), valor);
-    }
-
     void setValor(LeitorPath leitorPath, Object valor) {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException("Método não suportado por " + getClass().getName());
+    }
+
+    final MInstancia getCampo(LeitorPath leitor) {
+        MInstancia instancia = this;
+        while (true) {
+            instancia = instancia.getCampoLocal(leitor);
+            if (leitor.isUltimo()) {
+                return instancia;
+            } else if (!(instancia instanceof IPathEnabledInstance)) {
+                throw new RuntimeException(leitor.getTextoErro(instancia, "Não suporta leitura de subCampos"));
+            }
+            leitor = leitor.proximo();
+        }
+    }
+
+    MInstancia getCampoLocal(LeitorPath leitor) {
+        throw new RuntimeException("Método não suportado por " + getClass().getName());
     }
 
     public String getDisplayString() {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException("Método não suportado por " + getClass().getName());
     }
 
     @Override
@@ -116,7 +145,7 @@ public abstract class MInstancia implements MAtributoEnabled {
             atributos.put(atr.getNomeCompleto(), instanciaAtr);
         }
         if (subPath != null) {
-            instanciaAtr.setValor(subPath, valor);
+            instanciaAtr.setValor(new LeitorPath(subPath), valor);
         } else {
             instanciaAtr.setValor(valor);
         }

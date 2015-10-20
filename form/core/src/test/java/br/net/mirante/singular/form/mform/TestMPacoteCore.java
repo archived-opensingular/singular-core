@@ -100,6 +100,25 @@ public class TestMPacoteCore extends TestCaseForm {
         testarAtribuicao(tipoS, true, " true ", "true");
     }
 
+    private static void testarAtribuicao(MTipoSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
+        MISimples<?> instancia = tipo.novaInstancia();
+        if (valorValido) {
+            instancia.setValor(valor);
+            Object resultado = instancia.getValor();
+            Assert.assertEquals(valorFinalEsperado, resultado);
+
+            Object resultado2 = instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo());
+            Assert.assertEquals(resultado, resultado2);
+        } else {
+            assertException(() -> instancia.setValor(valor), "não consegue converter", "Deveria dar erro de conversão");
+
+            Assert.assertEquals(valorFinalEsperado, instancia.getValor());
+
+            assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
+                    "não consegue converter", "Deveria dar erro de conversão");
+        }
+    }
+
     public void testSelfReference() {
         MDicionario dicionario = MDicionario.create();
 

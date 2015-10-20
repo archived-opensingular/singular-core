@@ -48,10 +48,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     private static void assertLista(MILista<?> lista, Object[] valoresEsperados) {
-        assertEquals(valoresEsperados.length, lista.size());
-        for (int i = 0; i < valoresEsperados.length; i++) {
-            assertEquals(valoresEsperados[i], lista.getValorAt(i));
-        }
+        assertEqualsList(lista.getValor(), valoresEsperados);
     }
 
     @SuppressWarnings("unchecked")

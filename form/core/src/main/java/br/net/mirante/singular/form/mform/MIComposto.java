@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class MIComposto extends MInstancia {
+public class MIComposto extends MInstancia implements IPathEnabledInstance {
 
     private Map<String, MInstancia> campos;
 
@@ -21,8 +21,8 @@ public class MIComposto extends MInstancia {
     }
 
     @Override
-    public boolean isNull() {
-        return campos == null || campos.values().stream().allMatch(i -> i.isNull());
+    public boolean isEmptyOfData() {
+        return campos == null || campos.values().stream().allMatch(i -> i.isEmptyOfData());
     }
 
     public Collection<MInstancia> getCampos() {
@@ -32,36 +32,47 @@ public class MIComposto extends MInstancia {
         return campos.values();
     }
 
+    @Override
     public MInstancia getCampo(String path) {
         return getCampo(new LeitorPath(path));
     }
 
-    public MInstancia getCampo(LeitorPath leitorPath) {
+    @Override
+    final MInstancia getCampoLocal(LeitorPath leitor) {
         MInstancia instancia = null;
         if (campos != null) {
-            instancia = campos.get(leitorPath.getTrecho());
+            instancia = campos.get(leitor.getTrecho());
         }
         if (instancia == null) {
-            MTipo<?> tipoCampo = getMTipo().getCampo(leitorPath.getTrecho());
+            MTipo<?> tipoCampo = getMTipo().getCampo(leitor.getTrecho());
             if (tipoCampo == null) {
-                throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um campo definido"));
+                throw new RuntimeException(leitor.getTextoErro(this, "Não é um campo definido"));
             }
             instancia = tipoCampo.novaInstancia();
             instancia.setPai(this);
             if (campos == null) {
                 campos = new LinkedHashMap<>();
             }
-            campos.put(leitorPath.getTrecho(), instancia);
+            campos.put(leitor.getTrecho(), instancia);
         }
-        if (leitorPath.isUltimo()) {
-            return instancia;
-        } else {
-            return ((MIComposto) instancia).getCampo(leitorPath.proximo());
+        return instancia;
+    }
+
+    @Override
+    final MInstancia getCampoLocalSemCriar(LeitorPath leitor) {
+        if (leitor.isIndice()) {
+            throw new RuntimeException(leitor.getTextoErro(this, "Não é uma lista"));
         }
+        return (campos == null) ? null : campos.get(leitor.getTrecho());
     }
 
     public <T extends MInstancia> T getFilho(MTipo<T> tipoPai) {
         throw new RuntimeException("Método não implementado");
+    }
+
+    @Override
+    public final void setValor(String pathCampo, Object valor) {
+        setValor(new LeitorPath(pathCampo), valor);
     }
 
     @Override
@@ -96,8 +107,9 @@ public class MIComposto extends MInstancia {
         }
     }
 
-    public boolean isCampoNull(String pathCampo) {
-        return getValor() == null;
+    @Override
+    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
+        return getValor(new LeitorPath(pathCampo), classeDestino);
     }
 
     public Optional<Object> getValorOpt(String pathCampo) {
@@ -106,26 +118,6 @@ public class MIComposto extends MInstancia {
 
     public final <T extends Object> Optional<T> getValorOpt(String pathCampo, Class<T> classeDestino) {
         return Optional.ofNullable(getValor(pathCampo, classeDestino));
-    }
-
-    @Override
-    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        if (campos != null) {
-            if (leitor.isEmpty()) {
-                return getValor(classeDestino);
-            }
-            MInstancia instancia = campos.get(leitor.getTrecho());
-            if (instancia != null) {
-                return instancia.getValor(leitor.proximo(), classeDestino);
-            }
-        }
-        MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        //MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        //if (!(tipo instanceof MTipoSimples)) {
-        //    throw new RuntimeException(leitor.getTextoErro(this,
-        //            "Não é um tipo simples definido"));
-        //}
-        return null;
     }
 
     @Override

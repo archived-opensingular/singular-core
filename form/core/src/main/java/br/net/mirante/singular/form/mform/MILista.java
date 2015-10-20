@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MILista<E extends MInstancia> extends MInstancia implements Iterable<E> {
+public class MILista<E extends MInstancia> extends MInstancia implements Iterable<E>, IPathEnabledInstance {
 
     private List<E> valores;
 
@@ -37,13 +37,21 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    public Object getValor() {
-        throw new RuntimeException("Método não implementado");
+    public List<Object> getValor() {
+        if (valores == null) {
+            return Collections.emptyList();
+        }
+        return valores.stream().map(v -> v.getValor()).collect(Collectors.toList());
     }
 
     @Override
-    public boolean isNull() {
-        return isEmpty();
+    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
+        return getValor(new LeitorPath(pathCampo), classeDestino);
+    }
+
+    @Override
+    public boolean isEmptyOfData() {
+        return isEmpty() || valores.stream().allMatch(i -> i.isEmptyOfData());
     }
 
     public E addNovo() {
@@ -70,7 +78,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         }
         E instancia = getTipoElementos().novaInstancia();
         instancia.setValor(valor);
-        if (instancia.isNull()) {
+        if (instancia.isEmptyOfData()) {
             throw new RuntimeException("Apesar da opção '" + valor
                     + "' não ser null, o resultado na instância foi convertido para null. Não é permitido ter uma opção com valor null");
         }
@@ -89,10 +97,10 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         if (valores == null) {
             valores = new ArrayList<>();
         }
-        valores.add(Math.min(index, valores.size()), instancia);
+        valores.add(index, instancia);
         instancia.setPai(this);
     }
-    
+
     public MInstancia get(int index) {
         if (valores == null) {
             throw new IndexOutOfBoundsException("A lista " + getNome() + " está vazia (index=" + index + ")");
@@ -101,22 +109,33 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        if (valores != null) {
-            if (leitor.isEmpty()) {
-                return getValor(classeDestino);
-            } else if (!leitor.isIndice()) {
-                throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
-            }
+    public MInstancia getCampo(String path) {
+        return getCampo(new LeitorPath(path));
+    }
 
-            MInstancia instancia = valores.get(leitor.getIndice());
-            if (instancia != null) {
-                return instancia.getValor(leitor.proximo(), classeDestino);
-            }
+    @Override
+    final MInstancia getCampoLocal(LeitorPath leitor) {
+        if (!leitor.isIndice()) {
+            throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        //MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        return null;
+        MInstancia instancia = isEmpty() ? null : valores.get(leitor.getIndice());
+        if (instancia == null) {
+            MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        }
+        return instancia;
+    }
+
+    @Override
+    final MInstancia getCampoLocalSemCriar(LeitorPath leitor) {
+        if (!leitor.isIndice()) {
+            throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
+        }
+        return isEmpty() ? null : valores.get(leitor.getIndice());
+    }
+
+    @Override
+    public final void setValor(String pathCampo, Object valor) {
+        setValor(new LeitorPath(pathCampo), valor);
     }
 
     @Override
@@ -125,7 +144,11 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
             throw new RuntimeException(leitorPath.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
         MInstancia instancia = get(leitorPath.getIndice());
-        instancia.setValor(leitorPath.proximo(), valor);
+        if (leitorPath.isUltimo()) {
+            instancia.setValor(valor);
+        } else {
+            instancia.setValor(leitorPath.proximo(), valor);
+        }
     }
 
     public MInstancia remove(int index) {
