@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Testes
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:0,0,94,2&cht=p&chl=failure%20%280%29|error%20%280%29|success%20%2894%29|skipped%20%282%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:0,0,95,2&cht=p&chl=failure%20%280%29|error%20%280%29|success%20%2895%29|skipped%20%282%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
