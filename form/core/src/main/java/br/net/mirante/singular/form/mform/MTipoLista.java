@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
-@MFormTipo(nome = "MTipoLista", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipoLista", pacote = MPacoteCore.class)
 public class MTipoLista<E extends MTipo<?>> extends MTipo<MILista<?>> {
 
     private E tipoElementos;

@@ -7,10 +7,10 @@ import java.util.GregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
-@MFormTipo(nome = "AnoMes", pacote = MPacoteUtil.class)
+@MInfoTipo(nome = "AnoMes", pacote = MPacoteUtil.class)
 public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
 
     public MTipoAnoMes() {

@@ -1,8 +1,34 @@
 package br.net.mirante.singular.form.mform;
 
+import org.junit.Assert;
+
 import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase {
+
+    protected static void testarAtribuicao(MTipoSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
+        MISimples<?> instancia = tipo.novaInstancia();
+        if (valorValido) {
+            instancia.setValor(valor);
+            Object resultado = instancia.getValor();
+            Assert.assertEquals(valorFinalEsperado, resultado);
+
+            Object resultado2 = instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo());
+            Assert.assertEquals(resultado, resultado2);
+        } else {
+            assertException(() -> instancia.setValor(valor), "não consegue converter", "Deveria dar erro de conversão");
+
+            Assert.assertEquals(valorFinalEsperado, instancia.getValor());
+
+            assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
+                    "não consegue converter", "Deveria dar erro de conversão");
+        }
+    }
+
+    protected static void testAtribuicao(MInstancia registro, String path, Object valor) {
+        registro.setValor(path, valor);
+        assertEquals(valor, registro.getValor(path));
+    }
 
     protected static void assertException(Runnable acao, String trechoMsgEsperada) {
         assertException(acao, RuntimeException.class, trechoMsgEsperada, null);

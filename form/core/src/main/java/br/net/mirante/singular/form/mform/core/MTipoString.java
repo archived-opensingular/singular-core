@@ -2,11 +2,11 @@ package br.net.mirante.singular.form.mform.core;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MProviderOpcoes;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
-@MFormTipo(nome = "String", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "String", pacote = MPacoteCore.class)
 public class MTipoString extends MTipoSimples<MIString, String> {
 
     public MTipoString() {

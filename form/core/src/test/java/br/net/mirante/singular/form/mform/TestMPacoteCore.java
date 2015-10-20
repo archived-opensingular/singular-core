@@ -1,17 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.Collection;
-
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoComCargaInterna;
-import br.net.mirante.singular.form.mform.core.MIFormula;
 import br.net.mirante.singular.form.mform.core.MIInteger;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoFormula;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
@@ -102,25 +98,6 @@ public class TestMPacoteCore extends TestCaseForm {
         testarAtribuicao(tipoS, true, "", null);
         testarAtribuicao(tipoS, true, "  ", null);
         testarAtribuicao(tipoS, true, " true ", "true");
-    }
-
-    private static void testarAtribuicao(MTipoSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
-        MISimples<?> instancia = tipo.novaInstancia();
-        if (valorValido) {
-            instancia.setValor(valor);
-            Object resultado = instancia.getValor();
-            Assert.assertEquals(valorFinalEsperado, resultado);
-
-            Object resultado2 = instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo());
-            Assert.assertEquals(resultado, resultado2);
-        } else {
-            assertException(() -> instancia.setValor(valor), "não consegue converter", "Deveria dar erro de conversão");
-
-            Assert.assertEquals(valorFinalEsperado, instancia.getValor());
-
-            assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
-                    "não consegue converter", "Deveria dar erro de conversão");
-        }
     }
 
     public void testSelfReference() {
@@ -228,11 +205,11 @@ public class TestMPacoteCore extends TestCaseForm {
             pb.createTipo(TestTipoComCargaInterna.class);
         }
 
-        @MFormTipo(nome = "TestTipoA", pacote = TestPacoteA.class)
+        @MInfoTipo(nome = "TestTipoA", pacote = TestPacoteA.class)
         public static final class TestTipoA extends MTipoInteger {
         }
 
-        @MFormTipo(nome = "TestTipoComCargaInterna", pacote = TestPacoteA.class)
+        @MInfoTipo(nome = "TestTipoComCargaInterna", pacote = TestPacoteA.class)
         public static final class TestTipoComCargaInterna extends MTipoInteger {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
@@ -364,164 +341,5 @@ public class TestMPacoteCore extends TestCaseForm {
 
         assertException(() -> pb.createTipoAtributo(TestPacoteA.ATR_XX), "Tentativa de criar o atributo",
                 "Deveria dar uma exception pois o atributo pertence a outro pacote");
-    }
-
-    public void testTipoCompostoCriacao() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipoComposto<?> tipoEndereco = pb.createTipoComposto("endereco");
-        tipoEndereco.addCampo("rua", MTipoString.class);
-        tipoEndereco.addCampoString("bairro", true);
-        tipoEndereco.addCampoInteger("cep", true);
-
-        MTipoComposto<?> tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
-        tipoClassificacao.addCampoInteger("prioridade");
-        tipoClassificacao.addCampoString("descricao");
-
-        assertTipo(tipoEndereco.getTipoLocal("rua"), "rua");
-        assertTipo(tipoEndereco.getCampo("rua"), "rua");
-        assertEquals((Object) false, tipoEndereco.getTipoLocal("rua").isObrigatorio());
-        assertEquals((Object) true, tipoEndereco.getTipoLocal("cep").isObrigatorio());
-
-        assertTipo(tipoEndereco.getTipoLocal("classificacao"), "classificacao");
-        assertTipo(tipoEndereco.getTipoLocal("classificacao.prioridade"), "prioridade");
-        assertEquals(MTipoInteger.class, tipoEndereco.getTipoLocal("classificacao.prioridade").getClass());
-
-        assertNull(tipoEndereco.getTipoLocalOpcional("classificacao.prioridade.x.y"));
-        assertException(() -> tipoEndereco.getTipoLocal("classificacao.prioridade.x.y"), "Não existe o tipo");
-
-        MIComposto endereco = tipoEndereco.novaInstancia();
-
-        assertNull(endereco.getValor("rua"));
-        assertNull(endereco.getValor("bairro"));
-        assertNull(endereco.getValor("cep"));
-        assertNull(endereco.getValor("classificacao"));
-        assertNull(endereco.getValor("classificacao.prioridade"));
-        assertNull(endereco.getValor("classificacao.descricao"));
-
-        assertException(() -> endereco.setValor(100), "Método não suportado");
-
-        testAtribuicao(endereco, "rua", "Pontes");
-        testAtribuicao(endereco, "bairro", "Norte");
-        testAtribuicao(endereco, "classificacao.prioridade", 1);
-        assertNotNull(endereco.getValor("classificacao"));
-        assertTrue(endereco.getValor("classificacao") instanceof Collection);
-        assertTrue(((Collection<?>) endereco.getValor("classificacao")).size() >= 1);
-        testAtribuicao(endereco, "classificacao.prioridade", 1);
-
-        testAtribuicao(endereco, "classificacao", null);
-        assertNull(endereco.getValor("classificacao.prioridade"));
-        testAtribuicao(endereco, "classificacao.prioridade", null);
-
-        assertException(() -> endereco.setValor("classificacao", "X"), "Método não suportado");
-    }
-
-    private static void assertTipo(MTipo<?> tipo, String nomeEsperado) {
-        assertNotNull(tipo);
-        assertEquals(nomeEsperado, tipo.getNomeSimples());
-    }
-
-    private static void testAtribuicao(MInstancia registro, String path, Object valor) {
-        registro.setValor(path, valor);
-        assertEquals(valor, registro.getValor(path));
-    }
-
-    private static void assertLista(MILista<?> lista, Object[] valoresEsperados) {
-        assertEquals(valoresEsperados.length, lista.size());
-        for (int i = 0; i < valoresEsperados.length; i++) {
-            assertEquals(valoresEsperados[i], lista.getValorAt(i));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void testTipoListaCriacaoOfTipoSimples() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipoLista<MTipoString> nomes = pb.createTipoListaOf("nomes", MTipoString.class);
-
-        MILista<MIString> lista = (MILista<MIString>) nomes.novaInstancia();
-        lista.addValor("Paulo");
-        assertLista(lista, new String[] {"Paulo"});
-        lista.addValor("Joao");
-        assertLista(lista, new String[] {"Paulo", "Joao"});
-        lista.addValor("Maria");
-        assertLista(lista, new String[] {"Paulo", "Joao", "Maria"});
-
-        lista.remove(1);
-        assertLista(lista, new String[] {"Paulo", "Maria"});
-        assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
-
-        assertException(() -> lista.addValor(null), "Não é aceito null");
-        assertException(() -> lista.addValor(""), "Não é permitido");
-        assertException(() -> lista.addNovo(), "não é um tipo composto");
-
-        MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
-        listaInt.addValor(10);
-        assertLista(listaInt, new Integer[] {10});
-        listaInt.addValor("20");
-        assertLista(listaInt, new Integer[] {10, 20});
-        assertException(() -> listaInt.addValor("XX"), "não consegue converter");
-
-        assertEquals(lista.getValor("[0]"), "Paulo");
-        assertEquals(listaInt.getValor("[1]"), 20);
-        assertException(() -> listaInt.getValor("[20]"), IndexOutOfBoundsException.class);
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public void testTipoListaCriacaoOfTipoComposto() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipoLista<MTipoComposto<?>> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
-        tipoPedidos.getTipoElementos().addCampoString("descricao");
-        tipoPedidos.getTipoElementos().addCampoInteger("qtd");
-
-        MILista<MIComposto> pedidos = (MILista<MIComposto>) tipoPedidos.novaInstancia();
-        MIComposto pedido;
-        assertException(() -> pedidos.addValor("Paulo"), "Método não suportado");
-        pedido = pedidos.addNovo();
-        assertNotNull(pedido);
-        assertEquals(1, pedidos.size());
-        assertTrue((pedidos.get(0)) instanceof MIComposto);
-        assertTrue((pedidos.getValorAt(0)) instanceof Collection);
-
-        assertException(() -> pedidos.get(10), IndexOutOfBoundsException.class);
-        assertException(() -> pedidos.getValorAt(10), IndexOutOfBoundsException.class);
-
-        pedido.setValor("descricao", "bola");
-        pedido.setValor("qtd", 20);
-
-        pedido = pedidos.addNovo();
-        pedido.setValor("descricao", "rede");
-        pedido.setValor("qtd", -10);
-
-        assertException(() -> pedidos.getValorAt(10), IndexOutOfBoundsException.class);
-
-        assertEquals(pedidos.getValor("[0].descricao"), "bola");
-        assertEquals(pedidos.getValor("[0].qtd"), 20);
-
-        testAtribuicao(pedidos, "[1].descricao", "rede2");
-        testAtribuicao(pedidos, "[1].qtd", 20);
-        assertException(() -> pedidos.setValor("[1].marca", 10), "Não é um campo definido");
-    }
-
-    @SuppressWarnings("unchecked")
-    public void testTipoCriacaoOfTipoCompostoTipado() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        MTipoLista<MTipoFormula> tipoFormulas = pb.createTipoListaOf("formulas", MTipoFormula.class);
-
-        MILista<MIFormula> formulas = (MILista<MIFormula>) tipoFormulas.novaInstancia();
-
-        MIFormula formula = formulas.addNovo();
-        formula.setSciptJS("XXX");
-        assertEquals(MTipoFormula.TipoScript.JS, formula.getTipoScriptEnum());
-
-        assertEquals("XXX", formulas.getValorString("[0].script"));
-        assertEquals("JS", formulas.getValorString("[0].tipoScript"));
     }
 }
