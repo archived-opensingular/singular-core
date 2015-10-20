@@ -12,12 +12,15 @@ import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class IntegerMapper implements ControlsFieldComponentMapper {
+
     @Override
     public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         TextField<Integer> comp = new TextField<>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), Integer.class);
         formGroup.appendInputText(comp.setLabel(labelModel)
-                .add(new InputMaskBehavior("9", new HashMap<String, Object>() {{ put("repeat", 9); }})));
+                .add(new InputMaskBehavior("9", new HashMap<String, Object>() {{
+                    put("repeat", 9);
+                }})));
         return comp;
     }
 }
