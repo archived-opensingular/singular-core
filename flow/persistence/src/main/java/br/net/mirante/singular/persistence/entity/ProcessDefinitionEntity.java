@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_DEFINICAO_PROCESSO database table.
@@ -26,7 +28,8 @@ public class ProcessDefinitionEntity extends BaseEntity implements IEntityProces
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     @Column(name = "CO_DEFINICAO_PROCESSO")
     private Integer cod;
 

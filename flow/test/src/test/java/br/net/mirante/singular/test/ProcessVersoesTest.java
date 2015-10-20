@@ -1,33 +1,33 @@
 package br.net.mirante.singular.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
 import br.net.mirante.singular.definicao.DefinicaoProcessVersoes;
 import br.net.mirante.singular.definicao.ProcessVersoes;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
+import br.net.mirante.singular.test.support.TestSupport;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runners.MethodSorters;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ProcessVersoesTest extends TestSupport {
+public abstract class ProcessVersoesTest extends TestSupport {
 
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean);
+        Flow.setConf(mbpmBean, true);
     }
 
     @Test

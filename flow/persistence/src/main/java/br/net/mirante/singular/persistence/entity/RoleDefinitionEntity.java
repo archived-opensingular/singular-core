@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -23,8 +25,9 @@ public class RoleDefinitionEntity extends BaseEntity implements IEntityRoleDefin
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_DEFINICAO_PAPEL")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Integer cod;
 
     @Column(name = "NO_PAPEL", nullable = false)

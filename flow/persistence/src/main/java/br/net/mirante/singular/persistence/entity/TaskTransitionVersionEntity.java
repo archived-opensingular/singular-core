@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -25,8 +27,9 @@ public class TaskTransitionVersionEntity extends BaseEntity implements IEntityTa
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VERSAO_TRANSICAO")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Integer cod;
 
     @Column(name = "NO_TRANSICAO", nullable = false)

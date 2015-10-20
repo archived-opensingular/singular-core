@@ -9,6 +9,8 @@ import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_TIPO_TAREFA database table.
@@ -23,8 +25,9 @@ public class TaskTypeEntity implements IEntityTaskType {
     public static final Long FIM = 4L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_TIPO_TAREFA")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Long cod;
 
     @Column(name = "DS_TIPO_TAREFA", nullable = false)

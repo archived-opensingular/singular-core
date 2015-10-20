@@ -9,6 +9,8 @@ import javax.persistence.Table;
 
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_ATOR database table.
@@ -17,8 +19,8 @@ import br.net.mirante.singular.persistence.util.Constants;
 @Table(name = "TB_ATOR", schema = Constants.SCHEMA)
 public class Actor extends BaseEntity implements MUser {
 
+    /* nao deve ter generator, deve ser uma view*/
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_ATOR")
     private Long cod;
 

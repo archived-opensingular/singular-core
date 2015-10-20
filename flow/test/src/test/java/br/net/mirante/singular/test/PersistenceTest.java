@@ -4,6 +4,7 @@ import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.test.support.TestSupport;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,12 +13,12 @@ import java.util.logging.Logger;
 
 import static org.junit.Assert.assertNotNull;
 
-public class PersistenceTest extends TestSupport {
+public abstract class PersistenceTest extends TestSupport {
 
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean);
+        Flow.setConf(mbpmBean, true);
     }
 
     @Test

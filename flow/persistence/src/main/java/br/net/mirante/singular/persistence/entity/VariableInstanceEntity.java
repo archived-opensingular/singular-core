@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_VARIAVEL database table.
@@ -22,8 +24,9 @@ public class VariableInstanceEntity extends BaseEntity implements IEntityVariabl
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VARIAVEL")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Integer cod;
 
     @Column(name = "NO_VARIAVEL", nullable = false)

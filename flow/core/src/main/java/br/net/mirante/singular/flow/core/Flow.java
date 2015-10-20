@@ -21,13 +21,19 @@ public class Flow {
     private Flow() {
     }
 
-    public static synchronized void setConf(SingularFlowConfigurationBean conf) {
-        if(mbpmBean != null
-                && mbpmBean != conf){
-            throw new SingularFlowException("O contexto já foi configurado.");
+    public static synchronized void setConf(SingularFlowConfigurationBean conf, boolean force) {
+        if (!force){
+            if(mbpmBean != null
+                    && mbpmBean != conf){
+                throw new SingularFlowException("O contexto já foi configurado.");
+            }
         }
         mbpmBean = conf;
         mbpmBean.start();
+    }
+
+    public static synchronized void setConf(SingularFlowConfigurationBean conf) {
+        setConf(conf, false);
     }
 
     public static SingularFlowConfigurationBean getMbpmBean() {

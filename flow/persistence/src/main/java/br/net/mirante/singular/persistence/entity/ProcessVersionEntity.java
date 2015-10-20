@@ -18,6 +18,8 @@ import javax.persistence.TemporalType;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_PROCESSO database table.
@@ -28,8 +30,9 @@ public class ProcessVersionEntity extends BaseEntity implements IEntityProcessVe
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VERSAO_PROCESSO")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)

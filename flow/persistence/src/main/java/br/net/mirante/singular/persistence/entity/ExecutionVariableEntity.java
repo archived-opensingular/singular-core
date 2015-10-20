@@ -15,6 +15,8 @@ import javax.persistence.TemporalType;
 
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_VARIAVEL_EXECUCAO_TRANSICAO database table.
@@ -25,8 +27,9 @@ public class ExecutionVariableEntity extends BaseEntity implements IEntityExecut
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "CO_VARIAVEL_EXECUCAO_TRANSICAO")
+    @GeneratedValue(generator = "singular")
+    @GenericGenerator(name = "singular", strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
     private Integer cod;
 
     @Temporal(TemporalType.TIMESTAMP)
