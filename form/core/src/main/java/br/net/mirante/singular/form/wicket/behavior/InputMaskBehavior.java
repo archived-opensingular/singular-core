@@ -47,7 +47,11 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara para CPF.</p>
          */
-        CPF("999.999.999-99");
+        CPF("999.999.999-99"),
+        /**
+         * <p>Máscara para CNPJ.</p>
+         */
+        CNPJ("99-999.999/9999-99");
 
         private String mask;
 

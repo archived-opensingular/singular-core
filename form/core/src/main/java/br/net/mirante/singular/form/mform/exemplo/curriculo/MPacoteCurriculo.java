@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
@@ -99,8 +100,9 @@ public class MPacoteCurriculo extends MPacote {
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
         final MTipoString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
         final MTipoString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
-        final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
+        final MTipoCNPJ academicoCNPJ = cursoAcademico.addCampo("cnpj", MTipoCNPJ.class, false);
         final MTipoInteger academicoCargaHoraria = cursoAcademico.addCampo("cargaHoraria", MTipoInteger.class, true);
+        final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
             formacao
                 .withView(MGridListaView::new)
@@ -114,13 +116,15 @@ public class MPacoteCurriculo extends MPacote {
             academicoInstituicao
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrWicket::new).larguraPref(3);
+            academicoCNPJ
+                .as(AtrWicket::new).larguraPref(3);
+            academicoCargaHoraria
+                .as(AtrBasic::new).label("Carga Horária (h)")
+                .as(AtrBasic::new).tamanhoMaximo(5)
+                .as(AtrWicket::new).larguraPref(2);
             academicoMesConclusao
                 .as(AtrBasic::new).label("Mês de Conclusão")
                 .as(AtrWicket::new).larguraPref(2);
-            academicoCargaHoraria
-                    .as(AtrBasic::new).label("Carga Horária (h)")
-                    .as(AtrBasic::new).tamanhoMaximo(5)
-                    .as(AtrWicket::new).larguraPref(2);
         }
 
         final MTipoLista<MTipoComposto<?>> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");

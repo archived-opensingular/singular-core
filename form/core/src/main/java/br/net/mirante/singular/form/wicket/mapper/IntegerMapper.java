@@ -25,7 +25,7 @@ public class IntegerMapper implements ControlsFieldComponentMapper {
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO));
         TextField<Integer> comp = new TextField<>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), Integer.class);
-        formGroup.appendInputText(comp.setLabel(labelModel)
+        formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
                 .add(new InputMaskBehavior(Masks.NUMERIC, new HashMap<String, Object>() {{
                     put(InputMaskBehavior.MAX_LENGTH_ATTR, size.orElse(DEFAULT_SIZE));
                 }})));

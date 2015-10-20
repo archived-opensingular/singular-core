@@ -41,6 +41,7 @@ public class StringMapper implements ControlsFieldComponentMapper {
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_BASIC_MASK));
         if (basicMask.isPresent()) {
             comp.add(new InputMaskBehavior(Masks.valueOf(basicMask.get())));
+            comp.setOutputMarkupId(true);
         }
 
         return comp;
