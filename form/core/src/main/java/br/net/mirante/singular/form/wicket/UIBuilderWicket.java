@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -20,6 +21,7 @@ import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
@@ -28,17 +30,18 @@ public class UIBuilderWicket {
 
     private static final WicketMapperRegistry MAPPER_REGISTRY = new WicketMapperRegistry();
     static {
-        MAPPER_REGISTRY.registerMapper(MTipoBoolean.class, /*   */MView.class, /*   */BooleanMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoInteger.class, /*   */MView.class, /*   */IntegerMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoString.class, /*    */MView.class, /*   */StringMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoData.class, /*      */MView.class, /*   */DateMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*    */MView.class, /*   */YearMonthMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MView.class, /*   */DefaultCompostoMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /*  */MTabView.class, /**/DefaultCompostoMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MView.class, /*   */TableListaMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MTableListaView.class, /* */TableListaMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MGridListaView.class, /*  */PanelListaMapper::new);
-        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*     */MPanelListaView.class, /* */PanelListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoBoolean.class, /* */MView.class, /*               */BooleanMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoInteger.class, /* */MView.class, /*               */IntegerMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MView.class, /*               */StringMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MSelecaoPorRadioView.class, /**/RadioMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoData.class, /*    */MView.class, /*               */DateMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*  */MView.class, /*               */YearMonthMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /**/MView.class, /*               */DefaultCompostoMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /**/MTabView.class, /*            */DefaultCompostoMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MView.class, /*               */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MTableListaView.class, /*     */TableListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MGridListaView.class, /*      */PanelListaMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MPanelListaView.class, /*     */PanelListaMapper::new);
     }
 
     public static void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
