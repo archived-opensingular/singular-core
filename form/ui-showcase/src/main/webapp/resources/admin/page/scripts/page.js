@@ -3,7 +3,9 @@ var handleDatePickers = function () {
         $('.date-picker').datepicker({
             rtl: Metronic.isRTL(),
             orientation: "right",
-            autoclose: true
+            autoclose: true,
+            format: 'dd/mm/yyyy',
+            language: 'pt-BR'
         });
     }
 };
