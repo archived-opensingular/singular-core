@@ -20,6 +20,7 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
 import br.net.mirante.singular.form.validation.validator.MCPFValidator;
 import br.net.mirante.singular.form.validation.validator.MEmailValidator;
@@ -53,7 +54,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
-                .addValidacao(MCPFValidator.getInstance())
+                .addValidacao(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")

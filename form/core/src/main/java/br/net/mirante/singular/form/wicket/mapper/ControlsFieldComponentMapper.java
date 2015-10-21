@@ -32,7 +32,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
-        final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.ERROR);
+        final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
 
         final BSControls controls = ctx.getContainer().newFormGroup();
 

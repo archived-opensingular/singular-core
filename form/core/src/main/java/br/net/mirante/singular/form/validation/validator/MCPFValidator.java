@@ -13,9 +13,8 @@ public class MCPFValidator implements IValidator<String> {
     private static final Logger LOGGER = Logger.getLogger("MCPFValidator");
 
     private List<String> invalidPatterns = Arrays.asList(
-            "00000000000", "11111111111", "22222222222", "33333333333", "44444444444",
-            "55555555555", "66666666666", "77777777777", "88888888888", "99999999999"
-    );
+        "00000000000", "11111111111", "22222222222", "33333333333", "44444444444",
+        "55555555555", "66666666666", "77777777777", "88888888888", "99999999999");
 
     private static final MCPFValidator INSTANCE = new MCPFValidator();
 

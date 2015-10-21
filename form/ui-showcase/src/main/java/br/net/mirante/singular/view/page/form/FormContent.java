@@ -2,7 +2,9 @@ package br.net.mirante.singular.view.page.form;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Iterator;
 
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -52,22 +54,29 @@ public class FormContent extends Content implements SingularWicketContainer<Form
         BSGrid container = new BSGrid("generated");
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
+        Form<Object> form = new Form<>("form");
         add(new BSFeedbackPanel("feedback"));
-        add(new Form<>("form")
-                .add(container)
-                .add(new Button("enviar") {
-                    @Override
-                    public void onSubmit() {
-
-                        MIComposto iCurriculo = mCurriculo.getObject();
-                        StringWriter buffer = new StringWriter();
-                        MformPersistenciaXML.toXML(iCurriculo).printTabulado(new PrintWriter(buffer));
-                        info(buffer.toString());
-
-                        MILista<MInstancia> listaCurso = (MILista<MInstancia>) iCurriculo.getCampo("formacaoAcademica");
-                        listaCurso.addNovo();
+        add(form
+            .add(container)
+            .add(new Button("enviar") {
+                @Override
+                public void onSubmit() {
+                    Iterator<FeedbackMessage> it = form.getFeedbackMessages().iterator();
+                    while (it.hasNext()) {
+                        if (it.next().isLevel(FeedbackMessage.WARNING)) {
+                            return;
+                        }
                     }
-                }));
+
+                    MIComposto iCurriculo = mCurriculo.getObject();
+                    StringWriter buffer = new StringWriter();
+                    MformPersistenciaXML.toXML(iCurriculo).printTabulado(new PrintWriter(buffer));
+                    info(buffer.toString());
+
+                    MILista<MInstancia> listaCurso = (MILista<MInstancia>) iCurriculo.getCampo("formacaoAcademica");
+                    listaCurso.addNovo();
+                }
+            }));
     }
 
     @Override

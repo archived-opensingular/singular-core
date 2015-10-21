@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -17,43 +16,44 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IComportamento;
 import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
 
-    private String                          nomeSimples;
+    private String nomeSimples;
 
-    private String                          nomeCompleto;
+    private String nomeCompleto;
 
-    private MDicionario                     dicionario;
+    private MDicionario dicionario;
 
-    private MEscopo                         escopo;
+    private MEscopo escopo;
 
-    private MapaAtributos                   atributosDefinidos = new MapaAtributos();
+    private MapaAtributos atributosDefinidos = new MapaAtributos();
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
-    private List<IValidator<?>>             validadores        = new ArrayList<>();
+    private Map<IValidator<?>, ValidationErrorLevel> validadores = new LinkedHashMap<>();
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
      */
-    private boolean                         apenasCampo;
+    private boolean apenasCampo;
 
     /**
      * Representa um campo que não será persistido. Se aplica somente se
      * apenasCampo=true.
      */
-    private boolean                         seCampoTransiente;
+    private boolean seCampoTransiente;
 
-    private Class<MTipo>                    classeSuperTipo;
+    private Class<MTipo> classeSuperTipo;
 
-    private final Class<? extends I>        classeInstancia;
+    private final Class<? extends I> classeInstancia;
 
-    private MTipo<I>                        superTipo;
+    private MTipo<I> superTipo;
 
-    private MView                           view;
+    private MView view;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -189,7 +189,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -360,13 +360,18 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
     public MTipo<I> addValidacao(IValidator<?> validador) {
-        this.validadores.add(validador);
+        return addValidacao(ValidationErrorLevel.ERROR, validador);
+    }
+    public MTipo<I> addValidacao(ValidationErrorLevel level, IValidator<?> validador) {
+        this.validadores.put(validador, level);
         return this;
     }
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validar(IValidatable<?> validatable) {
-        for (IValidator<?> validador : this.validadores)
+        for (IValidator<?> validador : this.validadores.keySet()) {
+            validatable.setDefaultLevel(this.validadores.get(validador));
             validador.validate((IValidatable) validatable);
+        }
     }
 
     public I castInstancia(MInstancia instancia) {
@@ -389,7 +394,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
