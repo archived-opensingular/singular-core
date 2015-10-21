@@ -15,19 +15,18 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
 public class BooleanMapper implements IWicketComponentMapper {
+
     @Override
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
-
         final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
 
         formGroup.appendLabel(new BSLabel("label", "")
-            .add(DisabledClassBehavior.getInstance()));
+                .add(DisabledClassBehavior.getInstance()));
         formGroup.appendCheckbox(
-            input,
-            labelModel);
-        //formGroup.appendFeedback();
+                input,
+                labelModel);
 
         input.add(DisabledClassBehavior.getInstance());
     }
