@@ -25,8 +25,8 @@ public class DateMapper implements ControlsFieldComponentMapper {
         @SuppressWarnings("unchecked") TextField<?> comp = new TextField<Date>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), Date.class) {
             @Override
-            public IConverter getConverter(Class type) {
-                return (new IConverter<Date>() {
+            public <C> IConverter<C> getConverter(Class<C> type) {
+                return (IConverter<C>) (new IConverter<Date>() {
                     @Override
                     public Date convertToObject(String date, Locale locale) throws ConversionException {
                         try {

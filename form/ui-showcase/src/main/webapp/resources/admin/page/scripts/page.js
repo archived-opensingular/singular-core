@@ -4,7 +4,6 @@ var handleDatePickers = function () {
             rtl: Metronic.isRTL(),
             orientation: "right",
             autoclose: true,
-            format: 'dd/mm/yyyy',
             language: 'pt-BR'
         });
     }

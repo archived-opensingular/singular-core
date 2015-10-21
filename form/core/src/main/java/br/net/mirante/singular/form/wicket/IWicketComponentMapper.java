@@ -8,12 +8,11 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 
 @FunctionalInterface
-public interface IWicketComponentMapper {
+public interface IWicketComponentMapper extends Serializable {
 
-    public interface HintKey<T> extends Serializable {
+    interface HintKey<T> extends Serializable {
         T getDefaultValue();
     }
 
     void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model);
 }
-//{ public Component create(String componentId, WicketBuildContext<?> ctx, IModel<? extends MInstancia> model);}

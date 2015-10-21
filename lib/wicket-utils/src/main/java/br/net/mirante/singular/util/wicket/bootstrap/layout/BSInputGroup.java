@@ -1,5 +1,8 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import java.util.Map;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -17,6 +20,13 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup appendExtraClasses(String extraClasses) {
         this.add(new AttributeAppender("class", extraClasses, " "));
+        return this;
+    }
+
+    public BSInputGroup appendExtraAttributes(Map<String, String> attributes) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+            this.add(new AttributeModifier(attribute.getKey(), attribute.getValue()));
+        }
         return this;
     }
 
