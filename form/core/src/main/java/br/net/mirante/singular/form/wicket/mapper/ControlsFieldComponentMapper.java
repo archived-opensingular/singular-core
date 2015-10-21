@@ -24,7 +24,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
-    static HintKey<Boolean> NO_DECORATION = () -> false;
+    HintKey<Boolean> NO_DECORATION = () -> false;
 
     Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 

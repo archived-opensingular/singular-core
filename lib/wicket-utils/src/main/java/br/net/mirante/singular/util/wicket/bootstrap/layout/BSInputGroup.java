@@ -12,7 +12,12 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup(String id) {
         super(id);
-        add(new AttributeAppender("class", "input-group", " "));
+        this.add(new AttributeAppender("class", "input-group", " "));
+    }
+
+    public BSInputGroup appendExtraClasses(String extraClasses) {
+        this.add(new AttributeAppender("class", extraClasses, " "));
+        return this;
     }
 
     public BSInputGroup appendCheckboxAddon(Component checkbox) {
@@ -23,6 +28,13 @@ public class BSInputGroup extends BSControls {
     public BSInputGroup appendIconAddon(Icone icone) {
         return appendTag("div", true, "class='input-group-addon'", id -> new BSContainer<>(id)
             .appendTag("i", true, "class='" + icone.getCssClass() + "'", new WebMarkupContainer("i")));
+    }
+
+    public BSInputGroup appendButtonAddon(Icone icone) {
+        return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
+                .appendTag("button", true, "class='btn default btn-sm icon' type='button'",
+                        iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
+                                new WebMarkupContainer("i"))));
     }
 
     public BSInputGroup appendTextAddon(IModel<String> text) {

@@ -15,6 +15,7 @@ import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -24,8 +25,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls(String id, boolean addGridBehavior) {
         super(id);
-        if (addGridBehavior)
+        if (addGridBehavior) {
             add(newBSGridColBehavior());
+        }
     }
 
     public BSControls appendCheckbox(Component checkbox) {
@@ -42,7 +44,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                     .appendTag("span", label)
                 )
             );
-
         return this;
     }
 
@@ -62,6 +63,14 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
 
+    public BSControls appendDatepicker(Component datepicker) {
+        this.appendInputGroup(componentId -> newInputGroup()
+                .appendExtraClasses("input-medium date date-picker")
+                .appendInputText(datepicker)
+                .appendButtonAddon(Icone.CALENDAR));
+        return this;
+    }
+
     public BSControls appendSelect(Component select) {
         return super.appendTag("select", true, "class='form-control'", select);
     }
@@ -69,10 +78,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendStaticText(Component text) {
         return super.appendTag("p", true, "class='form-control-static'", text);
     }
-
-    //    public BSControls appendSwitcher(Component checkbox) {
-    //        return super.tag("input", false, "type='checkbox' class='make-switch'", checkbox);
-    //    }
 
     public BSControls appendTextarea(Component textarea) {
         return super.appendTag("textarea", true, "class='form-control' rows='3'", textarea);

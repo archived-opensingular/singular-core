@@ -24,7 +24,7 @@ public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
     @Override
     public YearMonth converterNaoNativoNaoString(Object valor) {
         if (valor instanceof Integer) {
-            return converterFromInteger(((Integer) valor).intValue());
+            return converterFromInteger((Integer) valor);
         } else if (valor instanceof Date) {
             Calendar cal = new GregorianCalendar();
             cal.setTime((Date) valor);

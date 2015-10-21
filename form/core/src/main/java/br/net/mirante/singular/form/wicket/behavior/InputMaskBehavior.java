@@ -45,6 +45,14 @@ public class InputMaskBehavior extends Behavior {
          */
         NUMERIC("9"),
         /**
+         * <p>Máscara para datas do tipo DD/MM/AAAA.</p>
+         */
+        FULL_DATE("99/99/9999"),
+        /**
+         * <p>Máscara para datas do tipo MM/AAAA.</p>
+         */
+        SHORT_DATE("99/9999"),
+        /**
          * <p>Máscara para CPF.</p>
          */
         CPF("999.999.999-99"),
