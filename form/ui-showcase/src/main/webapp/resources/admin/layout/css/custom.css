@@ -62,5 +62,6 @@ table.dataTable thead th > a {
 }
 
 .has-error .input-group .input-group-btn .btn {
-    color: #F3565D;
+    background-color: #F3565D;
+    color: white;
 }
