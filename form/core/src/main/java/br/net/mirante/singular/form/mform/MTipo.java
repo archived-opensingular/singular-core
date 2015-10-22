@@ -9,8 +9,6 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import com.google.common.base.Preconditions;
-
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
@@ -144,7 +142,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public MEscopo getEscopoPai() {
-        Preconditions.checkNotNull(escopo);
+        if (escopo == null) {
+            throw new RuntimeException(
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+        }
         return escopo;
     }
 
@@ -235,7 +237,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().garantirPacoteCarregado(atr.getClassePacote());
+        getDicionario().carregarPacote(atr.getClassePacote());
         MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
         if (subPath != null) {
             instancia.setValor(new LeitorPath(subPath), valor);

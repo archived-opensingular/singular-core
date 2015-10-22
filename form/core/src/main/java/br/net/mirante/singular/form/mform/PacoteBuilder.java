@@ -86,7 +86,7 @@ public class PacoteBuilder {
     }
 
     private MAtributo getAtributoOpcional(AtrRef<?, ?, ?> atr) {
-        dicionario.garantirPacoteCarregado(atr.getClassePacote());
+        dicionario.carregarPacote(atr.getClassePacote());
 
         if (!atr.isBinded()) {
             return null;

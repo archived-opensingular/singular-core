@@ -21,9 +21,11 @@ public class MDicionario implements IContextoTipo {
     }
 
     public <T extends MPacote> void carregarPacote(Class<T> classePacote) {
-        T novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
-        pacotes.vericaNaoDeveEstarPresente(novo);
-        carregarInterno(novo);
+        if (classePacote != null && pacotes.get(classePacote) == null) {
+            T novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
+            pacotes.vericaNaoDeveEstarPresente(novo);
+            carregarInterno(novo);
+        }
     }
 
     public PacoteBuilder criarNovoPacote(String nome) {
@@ -40,12 +42,6 @@ public class MDicionario implements IContextoTipo {
         Class<? extends MPacote> classPacote = getAnotacaoPacote(classeTipo);
 //        garantirPacoteCarregado(classPacote);
         carregarPacote(classPacote);
-    }
-
-    final <T extends MPacote> void garantirPacoteCarregado(Class<T> classePacote) {
-        if (classePacote != null && pacotes.get(classePacote) == null) {
-            carregarPacote(classePacote);
-        }
     }
 
     final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
