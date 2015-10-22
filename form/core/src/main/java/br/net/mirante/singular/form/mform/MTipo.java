@@ -6,9 +6,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -189,7 +188,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -356,21 +355,25 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.view = v;
         return v;
     }
+
     public MView getView() {
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
+
     public MTipo<I> addValidacao(IValidator<?> validador) {
         return addValidacao(ValidationErrorLevel.ERROR, validador);
     }
+
     public MTipo<I> addValidacao(ValidationErrorLevel level, IValidator<?> validador) {
         this.validadores.put(validador, level);
         return this;
     }
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void validar(IValidatable<?> validatable) {
-        for (IValidator<?> validador : this.validadores.keySet()) {
-            validatable.setDefaultLevel(this.validadores.get(validador));
-            validador.validate((IValidatable) validatable);
+        for (Map.Entry<IValidator<?>, ValidationErrorLevel> entry : this.validadores.entrySet()) {
+            validatable.setDefaultLevel(entry.getValue());
+            entry.getKey().validate((IValidatable) validatable);
         }
     }
 
@@ -394,7 +397,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -449,13 +452,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
 
         atributosDefinidos
-            .getAtributos()
-            .stream()
-            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
-            .forEach(
-                att -> pad(System.out, nivel + 1).println(
-                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                        + (att.isSelfReference() ? " SELF" : "")));
+                .getAtributos()
+                .stream()
+                .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+                .forEach(
+                        att -> pad(System.out, nivel + 1).println(
+                                "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
+                                        + (att.isSelfReference() ? " SELF" : "")));
 
         super.debug(nivel + 1);
     }
@@ -465,7 +468,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (vals.size() != 0) {
             System.out.append(" {");
             vals.entrySet().stream()
-                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
+                    .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
             System.out.append("}");
         }
     }
