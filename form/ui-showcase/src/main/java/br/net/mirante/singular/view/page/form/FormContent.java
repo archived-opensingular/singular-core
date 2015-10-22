@@ -2,7 +2,6 @@ package br.net.mirante.singular.view.page.form;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Iterator;
 
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -17,7 +16,6 @@ import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -25,6 +23,7 @@ import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.page.form.examples.MPacoteCurriculo;
 import br.net.mirante.singular.view.template.Content;
 
 public class FormContent extends Content implements SingularWicketContainer<FormContent, Void> {
@@ -61,9 +60,8 @@ public class FormContent extends Content implements SingularWicketContainer<Form
             .add(new Button("enviar") {
                 @Override
                 public void onSubmit() {
-                    Iterator<FeedbackMessage> it = form.getFeedbackMessages().iterator();
-                    while (it.hasNext()) {
-                        if (it.next().isLevel(FeedbackMessage.WARNING)) {
+                    for (FeedbackMessage feedbackMessage : form.getFeedbackMessages()) {
+                        if (feedbackMessage.isLevel(FeedbackMessage.WARNING)) {
                             return;
                         }
                     }

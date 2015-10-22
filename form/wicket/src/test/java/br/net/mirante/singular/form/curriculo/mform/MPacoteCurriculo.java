@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.exemplo.curriculo;
+package br.net.mirante.singular.form.curriculo.mform;
 
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -21,10 +21,10 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
-import br.net.mirante.singular.form.validation.validator.MCPFValidator;
-import br.net.mirante.singular.form.validation.validator.MEmailValidator;
 import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.validator.MCNPJValidator;
+import br.net.mirante.singular.form.wicket.validator.MCPFValidator;
+import br.net.mirante.singular.form.wicket.validator.MEmailValidator;
 
 public class MPacoteCurriculo extends MPacote {
 
@@ -251,6 +251,5 @@ public class MPacoteCurriculo extends MPacote {
         //                validatable.error(new ValidationError("O mês de conclusão não pode ser anterior ao início"));
         //            }
         //        });
-
     }
 }

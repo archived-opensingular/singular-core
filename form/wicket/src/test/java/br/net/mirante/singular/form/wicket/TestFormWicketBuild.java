@@ -11,6 +11,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 
+import br.net.mirante.singular.form.curriculo.mform.MPacoteCurriculo;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -18,7 +19,6 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;

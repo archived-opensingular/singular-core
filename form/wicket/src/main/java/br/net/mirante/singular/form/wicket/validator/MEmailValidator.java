@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.validation.validator;
+package br.net.mirante.singular.form.wicket.validator;
 
 import java.util.regex.Pattern;
 
