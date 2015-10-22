@@ -1,12 +1,9 @@
-package br.net.mirante.singular.form.wicket.validator;
+package br.net.mirante.singular.form.validation;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import br.net.mirante.singular.form.validation.IValidatable;
-import br.net.mirante.singular.form.validation.IValidator;
 
 public class MCNPJValidator implements IValidator<String> {
 

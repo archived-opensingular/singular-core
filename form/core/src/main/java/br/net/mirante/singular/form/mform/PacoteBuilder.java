@@ -12,6 +12,9 @@ public class PacoteBuilder {
         this.pacote = pacote;
     }
 
+    public MDicionario getDicionario() {
+        return dicionario;
+    }
     public MPacote getPacote() {
         return pacote;
     }
