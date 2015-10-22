@@ -24,7 +24,7 @@ public class SQueryTest {
         ((MIComposto) enderecos.get(2)).getCampo("numero").setValor(12);
         ((MIComposto) enderecos.get(3)).getCampo("numero").setValor(13);
 
-        SQuery.$(contato)
+        SQuery.$i(contato)
             .find(pacote.enderecoNumero)
             .each(it -> System.out.println(it.getValor()));
     }

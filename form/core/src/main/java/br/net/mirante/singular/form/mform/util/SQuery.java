@@ -21,13 +21,13 @@ public interface SQuery<I extends MInstancia> {
     public Stream<I> stream();
     //====================================================================================
 
-    public static <I extends MInstancia> SQuery<I> $s(Supplier<Stream<I>> stream) {
+    public static <I extends MInstancia> SQuery<I> $ss(Supplier<Stream<I>> stream) {
         return () -> stream.get();
     }
-    public static <I extends MInstancia> SQuery<I> $(I raiz) {
-        return $(() -> raiz);
+    public static <I extends MInstancia> SQuery<I> $i(I raiz) {
+        return $si(() -> raiz);
     }
-    public static <I extends MInstancia> SQuery<I> $(Supplier<I> raiz) {
+    public static <I extends MInstancia> SQuery<I> $si(Supplier<I> raiz) {
         return () -> StreamSupport.stream(
             () -> Spliterators.spliterator(Arrays.asList(raiz.get()), Spliterator.IMMUTABLE | Spliterator.CONCURRENT),
             Spliterator.IMMUTABLE | Spliterator.CONCURRENT,
@@ -50,8 +50,8 @@ public interface SQuery<I extends MInstancia> {
     default SQuery<MInstancia> findAll() {
         return () -> this.stream()
             .flatMap(c -> Stream.concat(
-                $(c).children().stream(),
-                StreamSupport.stream(() -> $(() -> c).children().findAll().stream().spliterator(), 0, false)));
+                $i(c).children().stream(),
+                StreamSupport.stream(() -> $si(() -> c).children().findAll().stream().spliterator(), 0, false)));
     }
     default <T extends MInstancia> SQuery<T> find(MTipo<T> tipo) {
         return findAll().filter(tipo);
@@ -81,7 +81,7 @@ public interface SQuery<I extends MInstancia> {
     default <T extends MInstancia> SQuery<T> siblings(Class<T> type) {
         return () -> children().stream()
             .flatMap(it -> Stream.of(it.getPai()))
-            .flatMap(it -> $(it).children().stream()
+            .flatMap(it -> $i(it).children().stream()
                 .filter(child -> child != this)
                 .filter(child -> type.isAssignableFrom(child.getClass())))
             .map(type::cast);
@@ -97,7 +97,7 @@ public interface SQuery<I extends MInstancia> {
                 ? Stream.empty() //
                 : Stream.concat(
                     Stream.of(c),
-                    $(c).parents().stream()))
+                    $i(c).parents().stream()))
             .distinct();
     }
     default <T extends MInstancia> SQuery<T> parents(Class<T> type, Predicate<T> filter) {
