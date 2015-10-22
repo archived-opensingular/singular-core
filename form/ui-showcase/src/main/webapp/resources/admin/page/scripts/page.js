@@ -16,12 +16,17 @@ var handleBootstrapSelect = function() {
     });
 };
 
+var handleMultiSelect = function() {
+    $('.picklist').multiSelect();
+};
+
 var Page = function() {
 
     return {
         init: function() {
             handleDatePickers();
             handleBootstrapSelect();
+            handleMultiSelect();
         }
     };
 
