@@ -88,7 +88,13 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select) {
-        return super.appendTag("select", true, "class='form-control'", select);
+        return appendSelect(select, true);
+    }
+
+    public BSControls appendSelect(Component select, boolean bootstrap) {
+        return super.appendTag("select", true, bootstrap
+                ? "class='bs-select form-control' data-width='80%' title='Selecione...'"
+                : "class='form-control'", select);
     }
 
     public BSControls appendStaticText(Component text) {

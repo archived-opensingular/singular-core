@@ -1,4 +1,4 @@
-var handleDatePickers = function () {
+var handleDatePickers = function() {
     if (jQuery().datepicker) {
         $('.date-picker').datepicker({
             rtl: Metronic.isRTL(),
@@ -9,11 +9,19 @@ var handleDatePickers = function () {
     }
 };
 
-var Page = function () {
+var handleBootstrapSelect = function() {
+    $('.bs-select').selectpicker({
+        iconBase: 'fa',
+        tickIcon: 'fa-check'
+    });
+};
+
+var Page = function() {
 
     return {
-        init: function () {
+        init: function() {
             handleDatePickers();
+            handleBootstrapSelect();
         }
     };
 
