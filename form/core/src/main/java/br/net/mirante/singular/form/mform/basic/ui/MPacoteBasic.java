@@ -24,6 +24,8 @@ public class MPacoteBasic extends MPacote {
                                                                                          MIString.class, String.class);
     public static final AtrRef<MTipoString, MIString, String>    ATR_SUBTITLE        = new AtrRef<>(MPacoteBasic.class, "subtitle", MTipoString.class,
                                                                                          MIString.class, String.class);
+    public static final AtrRef<MTipoString, MIString, String>    ATR_BASIC_MASK      = new AtrRef<>(MPacoteBasic.class, "basicMask", MTipoString.class,
+                                                                                         MIString.class, String.class);
     public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_TAMANHO_MAXIMO  = new AtrRef<>(MPacoteBasic.class, "tamanhoMaximo",
                                                                                          MTipoInteger.class, MIInteger.class, Integer.class);
     public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_TAMANHO_EDICAO  = new AtrRef<>(MPacoteBasic.class, "tamanhoEdicao",
@@ -53,6 +55,7 @@ public class MPacoteBasic extends MPacote {
         // Aplica os atributos ao tipos
         pb.createTipoAtributo(MTipo.class, ATR_LABEL);
         pb.createTipoAtributo(MTipo.class, ATR_SUBTITLE);
+        pb.createTipoAtributo(MTipo.class, ATR_BASIC_MASK);
         pb.createTipoAtributo(MTipo.class, ATR_VISIVEL).withDefaultValueIfNull(true);
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
 
@@ -69,6 +72,7 @@ public class MPacoteBasic extends MPacote {
         // defina o meta dado do meta dado
         pb.getAtributo(ATR_LABEL).as(AtrBasic.class).label("Label").tamanhoEdicao(30).tamanhoMaximo(50);
         pb.getAtributo(ATR_SUBTITLE).as(AtrBasic.class).label("Subtítulo").tamanhoEdicao(30).tamanhoMaximo(50);
+        pb.getAtributo(ATR_BASIC_MASK).as(AtrBasic.class).label("Máscara básica").tamanhoEdicao(10).tamanhoMaximo(20);
         pb.getAtributo(ATR_TAMANHO_MAXIMO).as(AtrBasic.class).label("Tamanho maximo").tamanhoEdicao(3).tamanhoMaximo(4);
         pb.getAtributo(ATR_TAMANHO_EDICAO).as(AtrBasic.class).label("Tamanho edição").tamanhoEdicao(3).tamanhoMaximo(3);
         pb.getAtributo(ATR_MULTI_LINHA).as(AtrBasic.class).label("Multi linha");

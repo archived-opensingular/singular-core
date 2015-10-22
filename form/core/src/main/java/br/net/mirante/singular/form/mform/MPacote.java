@@ -37,15 +37,15 @@ public class MPacote extends MEscopoBase {
         super.debug(nivel + 1);
     }
 
-    protected static boolean isNull(MISimples campo) {
+    protected static boolean isNull(MISimples<?> campo) {
         return campo == null || campo.isNull();
     }
 
-    protected static boolean isNotNull(MISimples campo) {
+    protected static boolean isNotNull(MISimples<?> campo) {
         return campo != null && !campo.isNull();
     }
 
-    protected static boolean isTrue(MISimples campo) {
+    protected static boolean isTrue(MISimples<?> campo) {
         if (campo != null) {
             return campo.getValorWithDefault(Boolean.class);
         }

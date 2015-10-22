@@ -1,5 +1,8 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.apache.wicket.Component;
@@ -15,6 +18,7 @@ import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -24,8 +28,9 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls(String id, boolean addGridBehavior) {
         super(id);
-        if (addGridBehavior)
+        if (addGridBehavior) {
             add(newBSGridColBehavior());
+        }
     }
 
     public BSControls appendCheckbox(Component checkbox) {
@@ -42,7 +47,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                     .appendTag("span", label)
                 )
             );
-
         return this;
     }
 
@@ -62,6 +66,27 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
 
+    public BSControls appendRadioChoice(Component input) {
+        return super.appendTag("div", true, "class='radio-list'", input);
+    }
+
+    public BSControls appendDatepicker(Component datepicker) {
+        return this.appendDatepicker(datepicker, new HashMap<String, String>() {{
+            put("data-date-format", "dd/mm/yyyy");
+            put("data-date-start-view", "days");
+            put("data-date-min-view-mode", "days");
+        }});
+    }
+
+    public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
+        this.appendInputGroup(componentId -> newInputGroup()
+                .appendExtraClasses("input-medium date date-picker")
+                .appendExtraAttributes(extraAttributes)
+                .appendInputText(datepicker)
+                .appendButtonAddon(Icone.CALENDAR));
+        return this;
+    }
+
     public BSControls appendSelect(Component select) {
         return super.appendTag("select", true, "class='form-control'", select);
     }
@@ -69,10 +94,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendStaticText(Component text) {
         return super.appendTag("p", true, "class='form-control-static'", text);
     }
-
-    //    public BSControls appendSwitcher(Component checkbox) {
-    //        return super.tag("input", false, "type='checkbox' class='make-switch'", checkbox);
-    //    }
 
     public BSControls appendTextarea(Component textarea) {
         return super.appendTag("textarea", true, "class='form-control' rows='3'", textarea);

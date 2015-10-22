@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import javax.lang.model.SourceVersion;
 
-public class MFormUtil {
+final class MFormUtil {
 
     public static boolean isNomeSimplesValido(String nome) {
         return SourceVersion.isIdentifier(nome);
@@ -49,5 +49,4 @@ public class MFormUtil {
             throw new RuntimeException(leitor.getTextoErro(tipo, "Não implementado para " + tipo.getClass()));
         }
     }
-
 }

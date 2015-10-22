@@ -41,6 +41,13 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return novo;
     }
 
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+        T tipo = resolverTipo(classeTipoLista);
+        MTipoLista<T> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
+        campos.put(nomeSimplesNovoTipo, novo);
+        return novo;
+    }
+
     public <T extends MTipo<?>> MTipoLista<T> addCampoListaOf(String nomeCampo, T tipoElementos) {
         MTipoLista<T> novo = createTipoListaOf(nomeCampo, tipoElementos);
         campos.put(nomeCampo, novo);
@@ -56,7 +63,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
     public MTipo<?> getCampo(String nomeCampo) {
         return campos.get(nomeCampo);
     }
-    
+
     public Set<String> getCampos() {
         return campos.keySet();
     }

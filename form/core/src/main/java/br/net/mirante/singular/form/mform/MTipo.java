@@ -1,15 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -17,43 +15,44 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IComportamento;
 import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
 
-    private String                          nomeSimples;
+    private String nomeSimples;
 
-    private String                          nomeCompleto;
+    private String nomeCompleto;
 
-    private MDicionario                     dicionario;
+    private MDicionario dicionario;
 
-    private MEscopo                         escopo;
+    private MEscopo escopo;
 
-    private MapaAtributos                   atributosDefinidos = new MapaAtributos();
+    private MapaAtributos atributosDefinidos = new MapaAtributos();
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
-    private List<IValidator<?>>             validadores        = new ArrayList<>();
+    private Map<IValidator<?>, ValidationErrorLevel> validadores = new LinkedHashMap<>();
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
      */
-    private boolean                         apenasCampo;
+    private boolean apenasCampo;
 
     /**
      * Representa um campo que não será persistido. Se aplica somente se
      * apenasCampo=true.
      */
-    private boolean                         seCampoTransiente;
+    private boolean seCampoTransiente;
 
-    private Class<MTipo>                    classeSuperTipo;
+    private Class<MTipo> classeSuperTipo;
 
-    private final Class<? extends I>        classeInstancia;
+    private final Class<? extends I> classeInstancia;
 
-    private MTipo<I>                        superTipo;
+    private MTipo<I> superTipo;
 
-    private MView                           view;
+    private MView view;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -238,7 +237,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         getDicionario().garantirPacoteCarregado(atr.getClassePacote());
         MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
         if (subPath != null) {
-            instancia.setValor(subPath, valor);
+            instancia.setValor(new LeitorPath(subPath), valor);
         } else {
             instancia.setValor(valor);
         }
@@ -356,17 +355,26 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.view = v;
         return v;
     }
+
     public MView getView() {
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
+
     public MTipo<I> addValidacao(IValidator<?> validador) {
-        this.validadores.add(validador);
+        return addValidacao(ValidationErrorLevel.ERROR, validador);
+    }
+
+    public MTipo<I> addValidacao(ValidationErrorLevel level, IValidator<?> validador) {
+        this.validadores.put(validador, level);
         return this;
     }
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void validar(IValidatable<?> validatable) {
-        for (IValidator<?> validador : this.validadores)
-            validador.validate((IValidatable) validatable);
+        for (Map.Entry<IValidator<?>, ValidationErrorLevel> entry : this.validadores.entrySet()) {
+            validatable.setDefaultLevel(entry.getValue());
+            entry.getKey().validate((IValidatable) validatable);
+        }
     }
 
     public I castInstancia(MInstancia instancia) {
@@ -444,13 +452,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
 
         atributosDefinidos
-            .getAtributos()
-            .stream()
-            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
-            .forEach(
-                att -> pad(System.out, nivel + 1).println(
-                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                        + (att.isSelfReference() ? " SELF" : "")));
+                .getAtributos()
+                .stream()
+                .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+                .forEach(
+                        att -> pad(System.out, nivel + 1).println(
+                                "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
+                                        + (att.isSelfReference() ? " SELF" : "")));
 
         super.debug(nivel + 1);
     }
@@ -460,7 +468,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (vals.size() != 0) {
             System.out.append(" {");
             vals.entrySet().stream()
-                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
+                    .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
             System.out.append("}");
         }
     }

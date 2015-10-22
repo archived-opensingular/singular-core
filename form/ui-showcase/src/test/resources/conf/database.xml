@@ -12,11 +12,10 @@
 
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <!--<property name="url" value="jdbc:hsqldb:hsql://localhost/singulardb"/>-->
-        <property name="url" value="jdbc:hsqldb:file:singulardb"/>
+        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;mode=MSSQLServer;"/>
         <property name="username" value="sa"/>
-        <property name="password" value=""/>
+        <property name="password" value="sa"/>
     </bean>
 
     <!-- HIBERNATE CONFIGURATION -->

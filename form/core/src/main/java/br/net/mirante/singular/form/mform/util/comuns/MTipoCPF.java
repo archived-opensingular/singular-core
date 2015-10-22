@@ -11,8 +11,6 @@ public class MTipoCPF extends MTipoString {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
-        as(AtrBasic.class).label("CPF").tamanhoMaximo(11);
-
+        as(AtrBasic.class).label("CPF").basicMask("CPF");
     }
-
 }

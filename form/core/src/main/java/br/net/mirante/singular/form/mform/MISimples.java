@@ -22,14 +22,6 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
     }
 
     @Override
-    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        if (!leitor.isEmpty()) {
-            throw new RuntimeException("Não ser aplica path a um tipo simples");
-        }
-        return getValor(classeDestino);
-    }
-
-    @Override
     final <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
             throw new RuntimeException("Não ser aplica path a um tipo simples");
@@ -37,8 +29,13 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
         return getValorWithDefault(classeDestino);
     }
 
-    @Override
+    /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
+        return valor == null;
+    }
+
+    @Override
+    public boolean isEmptyOfData() {
         return valor == null;
     }
 
