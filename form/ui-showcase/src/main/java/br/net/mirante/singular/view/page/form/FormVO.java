@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {
     private String key;
-    private MTipoComposto<?> value;
+    transient private MTipoComposto<?> value;
 
     public FormVO(String key, MTipoComposto<?> value) {
         this.key = key;
@@ -34,6 +34,7 @@ public class FormVO implements Serializable, IModel<String> {
 
     @Override
     public void detach() {
+        // TODO Auto-generated method stub
     }
 
     public String getObject() {

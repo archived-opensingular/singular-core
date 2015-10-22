@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.wicket.model;
 
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -9,7 +8,7 @@ import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 
 public abstract class AbstractMInstanciaCampoModel<I extends MInstancia>
-    extends AbstractReadOnlyModel<I>
+    extends AbstractMInstanciaModel<I>
     implements IChainingModel<I> {
 
     private Object rootTarget;

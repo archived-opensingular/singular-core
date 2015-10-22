@@ -21,7 +21,7 @@ public class ExamplePackage extends MPacote {
 
         public final String name;
 
-        private Types(String name) {
+        Types(String name) {
             this.name = name;
         }
     }
@@ -51,8 +51,6 @@ public class ExamplePackage extends MPacote {
         addField(address, "city", "Cidade", MTipoString.class);
         addField(address, "state", "Estado", MTipoString.class);
         addField(address, "Zipcode", "CEP", MTipoCEP.class);
-
-        pb.debug();
     }
 
     private void addField(MTipoComposto<?> root, String name, String label,
