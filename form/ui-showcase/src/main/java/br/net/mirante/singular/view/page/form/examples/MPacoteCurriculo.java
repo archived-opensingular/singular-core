@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -47,6 +48,8 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoNomePessoa nome = informacoesPessoais.addCampo("nome", MTipoNomePessoa.class, true);
         final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class, true);
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
+        final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
+                .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
         {
             informacoesPessoais
                 .as(AtrBasic::new).label("Informações Pessoais");
@@ -55,9 +58,14 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrWicket::new).larguraPref(7);
             cpf
                 .addValidacao(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
+                .as(AtrBasic::new).subtitle("cadastro de pessoa física")
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
-                .as(AtrBasic::new).label("Dt.Nasc.")
+                .as(AtrBasic::new).label("Dt.Nasc.").subtitle("dd/mm/aaaa")
+                .as(AtrWicket::new).larguraPref(2);
+            estadoCivil
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Estado Civil")
                 .as(AtrWicket::new).larguraPref(2);
         }
 
