@@ -20,11 +20,11 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.MCNPJValidator;
+import br.net.mirante.singular.form.validation.MCPFValidator;
+import br.net.mirante.singular.form.validation.MEmailValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.AtrWicket;
-import br.net.mirante.singular.form.wicket.validator.MCNPJValidator;
-import br.net.mirante.singular.form.wicket.validator.MCPFValidator;
-import br.net.mirante.singular.form.wicket.validator.MEmailValidator;
 
 public class MPacoteCurriculo extends MPacote {
 
@@ -221,11 +221,11 @@ public class MPacoteCurriculo extends MPacote {
         // ---------------------------------------------------------------------------------------------
         // dtNasc.addValidacao(MTipoData.validadorBuilder().entre(Period.ofYears(-100), Period.ofYears(-14)).build());
 
-        //        informacoesPessoais.addValidacao((IValidatable<MIComposto> validatable) -> {
-        //            if (validatable.getValue().isCampoNull("telefoneFixo") && validatable.getValue().isCampoNull("telefoneCelular")) {
-        //                validatable.error(new ValidationError("Ao menos um telefone deve ser preenchido."));
-        //            }
-        //        });
+//        informacoesPessoais.addValidacao((IValidatable<MIComposto> validatable) -> {
+//            //            if (validatable.getValue().isCampoNull("telefoneFixo") && validatable.getValue().isCampoNull("telefoneCelular")) {
+//            //                validatable.error(new ValidationError("Ao menos um telefone deve ser preenchido."));
+//            //            }
+//        });
 
         //        academicoMesConclusao.addValidacao((IValidatable<MInstancia> validatable) -> {
         //            MIAnoMes mesConclusao = academicoMesConclusao.castInstancia(validatable.getValue());
