@@ -66,6 +66,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
 
+    public BSControls appendRadioChoice(Component input) {
+        return super.appendTag("div", true, "class='radio-list'", input);
+    }
+
     public BSControls appendDatepicker(Component datepicker) {
         return this.appendDatepicker(datepicker, new HashMap<String, String>() {{
             put("data-date-format", "dd/mm/yyyy");

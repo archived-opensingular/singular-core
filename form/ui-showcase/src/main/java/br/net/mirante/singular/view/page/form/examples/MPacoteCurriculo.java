@@ -113,8 +113,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Formação Acadêmica").tamanhoInicial(1);
             academicoTipo
                 .withView(MSelecaoPorRadioView::new)
-                .as(AtrBasic::new).label("Tipo")
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrBasic::new).label("Tipo");
             academicoNomeCurso
                 .as(AtrBasic::new).label("Nome");
             academicoInstituicao
