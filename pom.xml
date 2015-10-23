@@ -95,7 +95,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.3</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -111,6 +111,7 @@
                     <buildNumberPropertyName>revisionNumber</buildNumberPropertyName>
                 </configuration>
             </plugin>
+            <!-- Rollback para a versão 2.6 (versão atual bugada!) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
