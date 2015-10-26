@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core.defaults;
 
-import br.net.mirante.singular.flow.core.AbstractProcessNotifiers;
+import br.net.mirante.singular.flow.core.ProcessNotifier;
 import br.net.mirante.singular.flow.core.ExecucaoMTask;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessInstance;
@@ -9,7 +9,8 @@ import br.net.mirante.singular.flow.core.TaskInstance;
 
 import java.util.List;
 
-public class NullNotifier extends AbstractProcessNotifiers {
+public class NullNotifier implements ProcessNotifier {
+
     @Override
     public void notifyUserTaskRelocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser, MUser removedUser) {
 

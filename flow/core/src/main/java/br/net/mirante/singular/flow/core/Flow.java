@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -111,8 +112,18 @@ public class Flow {
         return getMbpmBean().getUserService().getUserIfAvailable();
     }
 
-    public static AbstractProcessNotifiers getNotifiers() {
+
+    /**
+     *
+     * @deprecated utilizar {@link #notifyListeners(Consumer) notifyListeners} para fazer uma notificação.
+     */
+    @Deprecated
+    public static ProcessNotifier getNotifiers() {
         return getMbpmBean().getNotifiers();
+    }
+
+    public static void notifyListeners(Consumer<ProcessNotifier> operation){
+        getMbpmBean().notifyListeners(operation);
     }
 
     static boolean canBeAllocated(MUser pessoa) {

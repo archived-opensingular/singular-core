@@ -1,8 +1,8 @@
 package br.net.mirante.singular.flow.core;
 
-import java.util.List;
-
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
+
+import java.util.List;
 
 public final class TaskHistoricLog {
 
@@ -17,7 +17,7 @@ public final class TaskHistoricLog {
     }
 
     public void sendEmail(List<MUser> users) {
-        Flow.getNotifiers().notifyLogToUsers(this, users);
+        Flow.notifyListeners(n -> n.notifyLogToUsers(this, users));
     }
 
     public ProcessInstance getProcessInstance() {
