@@ -1,6 +1,5 @@
 package br.net.mirante.singular.view.page.form.crud;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -21,14 +20,12 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.xml.sax.SAXException;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
@@ -56,6 +53,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private static final MDicionario dicionario = TemplateRepository.dicionario();
 
+    private BSDataTable<ExampleDataDTO, String> listTable;
     private List<ExampleDataDTO> dataList = new LinkedList<>();
     transient private MTipoComposto<?> selectedTemplate;
 
@@ -69,6 +67,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
     IModel<MIComposto> currentInstance;
     ExampleDataDTO currentModel;
 
+
     public CrudContent(String id) {
         super(id, false, true);
     }
@@ -80,7 +79,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         optionsForm.queue(setUpTemplatesOptions());
         queue(optionsForm);
         queue(setUpInsertButton());
-        queue(setupDataTable());
+        listTable = setupDataTable();
+		queue(listTable);
         queue(setupInputModal());
 
     }
@@ -111,14 +111,13 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private MarkupContainer setUpInsertButton() {
         return new Form<>("form").add(new AjaxButton("insert") {
-            @Override
+			@SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
                 model.setType(selectedTemplate.getNome());
                 openInputModal(target, model);
             }
 
-            @Override
             public boolean isVisible() {
                 return selectedTemplate != null;
             }
@@ -140,7 +139,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         )
                         .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
                                         .appendAction(getMessage("label.table.column.delete"),
-                                                Icone.MINUS, this::openInputModal
+                                                Icone.MINUS, this::deleteSelected
                                         )
                         )
                         .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
@@ -164,32 +163,36 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         return provider;
     }
 
-    private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
+    @SuppressWarnings("unchecked")
+	private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-        final MTipo<MIComposto> tipo = 
-        		(MTipo<MIComposto>) dicionario.getTipo(selectedTemplate.getNome());
-        currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            @SuppressWarnings("unchecked")
-            protected MTipo<MIComposto> getTipoRaiz() {
-				return tipo;
-            }
-        };
-//        MParser p = new MParser();
-        MElement xml;
-		try {
-//			xml = p.parseComResolver(currentModel.getXml());
-			xml = MParser.parse(currentModel.getXml());
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-		
-        MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
+        createInstance((MTipo<MIComposto>) 
+        		dicionario.getTipo(selectedTemplate.getNome()));
         updateContainer(selectedTemplate);
         inputModal.show(target);
     }
 
-    private void updateContainer(MTipoComposto template) {
+	private void createInstance(final MTipo<MIComposto> tipo) {
+		currentInstance = new MInstanciaRaizModel<MIComposto>() {
+            protected MTipo<MIComposto> getTipoRaiz() {
+				return tipo;
+            }
+        };
+		populateInstance(tipo);
+		
+	}
+
+	private void populateInstance(final MTipo<MIComposto> tipo) {
+		if(currentModel.getXml() == null) return;
+		try {
+			MElement xml = MParser.parse(currentModel.getXml());
+			MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+    private void updateContainer(MTipoComposto<?> template) {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
@@ -198,26 +201,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private void buildContainer(MTipoComposto<?> formType) {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
-        
-//        MIComposto object = currentInstance.getObject();
-
-        /*for(String campoName : formType.getCampos()){
-            MTipo<?> t = formType.getCampo(campoName);
-            if(t instanceof MTipoComposto){
-//                MIComposto mci = (MIComposto) ci;
-//                for(MInstancia innerci : mci.getCampos()){
-//                    if(innerci.getMTipo() instanceof MTipoString){
-//                        innerci.setValor("Abacate");
-//                    }
-//                }
-            }
-            if(t instanceof MTipoString){
-                object.setValor(t.getNomeSimples(), "Abacate");
-            }
-            if(t instanceof MTipoInteger){
-                object.setValor(t.getNomeSimples(), "123456");
-            }
-        }*/
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
     }
 
@@ -234,12 +217,23 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         new PrintWriter(buffer));
                 currentModel.setXml(buffer.toString());
                 dao.save(currentModel);
-                queue(setupDataTable());
+                CrudContent.this.remove(listTable);
+                listTable = setupDataTable();
+                CrudContent.this.queue(listTable);
                 inputModal.hide(target);
             }
         }));
 
         return inputModal;
+    }
+    
+   	private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
+           currentModel = model.getObject();
+           dao.remvoe(currentModel);
+           currentModel = null;
+           CrudContent.this.remove(listTable);
+           listTable = setupDataTable();
+           CrudContent.this.queue(listTable);
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
