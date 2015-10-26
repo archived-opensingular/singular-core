@@ -135,7 +135,7 @@ public class DefaultHibernatePersistenceService extends
         novo.setProcessInstance(instance);
         novo.setOriginTask(originTask);
         novo.setDestinationTask(destinationTask);
-        novo.setVariableType((VariableTypeInstance) type);
+        novo.setType((VariableTypeInstance) type);
         return novo;
     }
 
