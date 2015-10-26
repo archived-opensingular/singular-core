@@ -1,5 +1,6 @@
 package br.net.mirante.singular.view.page.form.crud;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -20,15 +21,19 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.xml.sax.SAXException;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
@@ -126,8 +131,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                 new BSDataTableBuilder<>(createDataProvider())
                         .appendPropertyColumn(getMessage("label.table.column.key"),
                                 "key", ExampleDataDTO::getKey)
-                        .appendPropertyColumn(getMessage("label.table.column.xml"),
-                                "xml", ExampleDataDTO::getXml)
+//                        .appendPropertyColumn(getMessage("label.table.column.xml"),
+//                                "xml", ExampleDataDTO::getXml)
                         .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
                                         .appendAction(getMessage("label.table.column.edit"),
                                                 Icone.PENCIL_SQUARE, this::openInputModal
@@ -161,13 +166,25 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
+        final MTipo<MIComposto> tipo = 
+        		(MTipo<MIComposto>) dicionario.getTipo(selectedTemplate.getNome());
         currentInstance = new MInstanciaRaizModel<MIComposto>() {
             @SuppressWarnings("unchecked")
             protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo(selectedTemplate.getNome());
+				return tipo;
             }
         };
-
+//        MParser p = new MParser();
+        MElement xml;
+		try {
+//			xml = p.parseComResolver(currentModel.getXml());
+			xml = MParser.parse(currentModel.getXml());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
+        MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
         updateContainer(selectedTemplate);
         inputModal.show(target);
     }
@@ -181,7 +198,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private void buildContainer(MTipoComposto<?> formType) {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
-
+        
 //        MIComposto object = currentInstance.getObject();
 
         /*for(String campoName : formType.getCampos()){
@@ -217,7 +234,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         new PrintWriter(buffer));
                 currentModel.setXml(buffer.toString());
                 dao.save(currentModel);
-                dataList = dao.list(selectedTemplate.getNome());
+                queue(setupDataTable());
                 inputModal.hide(target);
             }
         }));
