@@ -101,6 +101,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                 + (multiple ? "multiple" : ""), select);
     }
 
+    public BSControls appendPicklist(Component select) {
+        return super.appendTag("select", true, "class='multi-select' multiple", select);
+    }
+
     public BSControls appendStaticText(Component text) {
         return super.appendTag("p", true, "class='form-control-static'", text);
     }

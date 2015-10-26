@@ -65,3 +65,7 @@ table.dataTable thead th > a {
     background-color: #F3565D;
     color: white;
 }
+
+.has-error > .ms-container .ms-list {
+    border-color: #F3565D;
+}

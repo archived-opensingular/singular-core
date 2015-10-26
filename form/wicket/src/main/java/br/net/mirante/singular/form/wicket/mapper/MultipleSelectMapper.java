@@ -41,6 +41,10 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         final ListMultipleChoice<String> choices = new ListMultipleChoice<>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), opcoesValue);
 
+        return formGroupAppender(formGroup, choices);
+    }
+
+    protected Component formGroupAppender(BSControls formGroup, final ListMultipleChoice<String> choices) {
         formGroup.appendSelect(choices.setMaxRows(5), true);
         return choices;
     }
