@@ -1,6 +1,5 @@
 package br.net.mirante.singular.util.wicket.application;
 
-import br.net.mirante.singular.commons.util.log.Loggable;
 import org.apache.wicket.protocol.https.Scheme;
 import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
@@ -11,6 +10,8 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.handler.RedirectRequestHandler;
 import org.apache.wicket.util.lang.Args;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,7 +23,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author vinicius
  *
  */
-public class HttpsOnlyRequestMapper implements IRequestMapper, Loggable {
+public class HttpsOnlyRequestMapper implements IRequestMapper {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpsOnlyRequestMapper.class);
     private final IRequestMapper delegate;
 
     /**
@@ -73,7 +76,7 @@ public class HttpsOnlyRequestMapper implements IRequestMapper, Loggable {
         return toHttps(url);
     }
 
-    public static class HandlerWrapper implements IRequestHandler, Loggable {
+    public static class HandlerWrapper implements IRequestHandler {
 
         private final RedirectRequestHandler handler;
 
@@ -102,8 +105,8 @@ public class HttpsOnlyRequestMapper implements IRequestMapper, Loggable {
                 location = location.replaceFirst("http", "https");
             }
             location = location.replaceFirst(":80", "");
-            getLogger().info(location);
-            getLogger().info(url);
+            logger.info(location);
+            logger.info(url);
             
             
             WebResponse response = (WebResponse) requestCycle.getResponse();
