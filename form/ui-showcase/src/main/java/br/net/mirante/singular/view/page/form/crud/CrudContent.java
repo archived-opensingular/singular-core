@@ -57,9 +57,11 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
     private List<ExampleDataDTO> dataList = new LinkedList<>();
     transient private MTipoComposto<?> selectedTemplate;
 
-    private final BSModalBorder inputModal = new BSModalBorder("inputModal");
+    private final BSModalBorder inputModal = new BSModalBorder("inputModal"),
+    							deleteModal = new BSModalBorder("deleteModal");
     private BSGrid container = new BSGrid("generated");
-    private Form<?> inputForm = new Form<>("save-form");
+    private Form<?> inputForm = new Form<>("save-form"),
+    				deleteForm = new Form<>("delete-form");
 
     @Inject
     ExampleDataDAO dao;
@@ -82,6 +84,16 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         listTable = setupDataTable();
 		queue(listTable);
         queue(setupInputModal());
+        deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
+        	 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+//        		 currentModel = model.getObject();
+                 dao.remove(currentModel);
+                 currentModel = null;
+                 updateListTableFromModal(target);
+        		 deleteModal.hide(target);
+        	 }
+        }));
+        queue(deleteModal);
 
     }
 
@@ -103,10 +115,15 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
             protected void onSelectionChanged(SelectOption newSelection) {
                 FormVO value = (FormVO) newSelection.getValue();
                 selectedTemplate = value.getValue();
-                dataList = dao.list(selectedTemplate.getNome());
+                updateDataList();
             }
+
         };
         return formChoices;
+    }
+    
+    private void updateDataList() {
+    	dataList = dao.list(selectedTemplate.getNome());
     }
 
     private MarkupContainer setUpInsertButton() {
@@ -130,8 +147,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                 new BSDataTableBuilder<>(createDataProvider())
                         .appendPropertyColumn(getMessage("label.table.column.key"),
                                 "key", ExampleDataDTO::getKey)
-//                        .appendPropertyColumn(getMessage("label.table.column.xml"),
-//                                "xml", ExampleDataDTO::getXml)
                         .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
                                         .appendAction(getMessage("label.table.column.edit"),
                                                 Icone.PENCIL_SQUARE, this::openInputModal
@@ -218,9 +233,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         new PrintWriter(buffer));
                 currentModel.setXml(buffer.toString());
                 dao.save(currentModel);
-                CrudContent.this.remove(listTable);
-                listTable = setupDataTable();
-                CrudContent.this.queue(listTable);
+                updateListTableFromModal(target);
                 inputModal.hide(target);
             }
         }));
@@ -230,12 +243,16 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
     
    	private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
            currentModel = model.getObject();
-           dao.remvoe(currentModel);
-           currentModel = null;
-           CrudContent.this.remove(listTable);
-           listTable = setupDataTable();
-           CrudContent.this.queue(listTable);
+//           dao.remove(currentModel);
+//           currentModel = null;
+//           updateListTableFromModal(target);
+           deleteModal.show(target);
     }
+
+	private void updateListTableFromModal(AjaxRequestTarget target) {
+		updateDataList();
+        target.add(listTable);
+	}
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         return new Fragment(id, "breadcrumbForm", this);

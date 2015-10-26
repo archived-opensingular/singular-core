@@ -27,7 +27,7 @@ public class ExampleDataDAO {
     }
     
     @Transactional
-    public void remvoe(ExampleDataDTO o) {
+    public void remove(ExampleDataDTO o) {
         session().delete(o);
     }
 
