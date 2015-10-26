@@ -64,8 +64,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private IProcessCreationPageStrategy creationPage;
 
-    private Class<? extends VariableWrapper> variableWrapperClass;
-
     private VarDefinitionMap<?> variableDefinitions;
 
     private VarService variableService;
@@ -116,74 +114,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return processInstanceClass;
     }
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
-        this.variableWrapperClass = variableWrapperClass;
-        if (variableWrapperClass != null) {
-            if (!VariableEnabled.class.isAssignableFrom(processInstanceClass)) {
-                throw new SingularFlowException(
-                        "A classe " + processInstanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
-                                + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
-            }
-            newVariableWrapper(variableWrapperClass).configVariables(getVariables());
-        }
-    }
-
-    private static <T extends VariableWrapper> T newVariableWrapper(Class<T> variableWrapperClass) {
-        try {
-            return variableWrapperClass.newInstance();
-        } catch (Exception e) {
-            throw new SingularFlowException("Erro instanciando " + variableWrapperClass.getName(), e);
-        }
-    }
-
-    /**
-     * <p>
-     * Retorna a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo.
-     * </p>
-     *
-     * @return a classe do <i>wrapper</i>.
-     */
-    public final Class<? extends VariableWrapper> getVariableWrapperClass() {
-        return variableWrapperClass;
-    }
-
-    /**
-     * <p>
-     * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
-     * </p>
-     * <p>
-     * <p>
-     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo é igual à informada.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo informado.
-     * @param variableWrapperClass
-     *            a classe do <i>wrapper</i> a ser criado.
-     * @return um novo <i>wrapper</i> para o tipo informado.
-     * @throws SingularFlowException
-     *             caso as classes não sejam iguais.
-     */
-    public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
-        verifyVariableWrapperClass(variableWrapperClass);
-        T wrapper = newVariableWrapper(variableWrapperClass);
-        wrapper.setVariables(new VarInstanceTableProcess(this));
-        return wrapper;
-    }
-
-    final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
-        if (expectedVariableWrapperClass != variableWrapperClass) {
-            throw new SingularFlowException(getClass().getName()
- + " espera que as variáveis sejam do tipo " + variableWrapperClass);
-        }
-    }
+    
 
     /**
      * <p>
