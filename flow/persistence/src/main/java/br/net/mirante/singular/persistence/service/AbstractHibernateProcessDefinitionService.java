@@ -54,7 +54,7 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             TASK_VERSION entityTask = createEntityTaskVersion(entityProcessVersion, entityTaskDefinition, task);
             entityTask.setName(task.getName());
 
-            ((List<TASK_VERSION>) entityProcessVersion.getTasks()).add(entityTask);
+            ((List<TASK_VERSION>) entityProcessVersion.getVersionTasks()).add(entityTask);
         }
         for (MTask<?> task : processDefinition.getFlowMap().getAllTasks()) {
             TASK_VERSION originTask = (TASK_VERSION) entityProcessVersion.getTaskVersion(task.getAbbreviation());
@@ -84,12 +84,12 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         SessionWrapper sw = getSession();
         requireNonNull(definicao);
         PROCESS_DEF def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
-                pd -> pd.getAbbreviation().equals(definicao.getAbbreviation()));
+                pd -> pd.getKey().equals(definicao.getKey()));
         if (def == null) {
             def = newInstanceOf(getClassProcessDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
             def.setName(definicao.getName());
-            def.setAbbreviation(definicao.getAbbreviation());
+            def.setKey(definicao.getKey());
             def.setDefinitionClassName(definicao.getClass().getName());
 
             sw.save(def);
@@ -189,10 +189,10 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
 
     @Override
     public boolean isDifferentVersion(IEntityProcessVersion oldEntity, IEntityProcessVersion newEntity) {
-        if (oldEntity == null || oldEntity.getTasks().size() != newEntity.getTasks().size()) {
+        if (oldEntity == null || oldEntity.getVersionTasks().size() != newEntity.getVersionTasks().size()) {
             return true;
         }
-        for (IEntityTaskVersion newEntitytask : newEntity.getTasks()) {
+        for (IEntityTaskVersion newEntitytask : newEntity.getVersionTasks()) {
             IEntityTaskVersion oldEntityTask = oldEntity.getTaskVersion(newEntitytask.getAbbreviation());
             if (isNewVersion(oldEntityTask, newEntitytask)) {
                 return true;

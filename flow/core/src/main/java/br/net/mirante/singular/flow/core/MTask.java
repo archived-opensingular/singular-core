@@ -71,7 +71,7 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public String getCompleteName() {
-        return getFlowMap().getProcessDefinition().getAbbreviation() + '.' + name;
+        return getFlowMap().getProcessDefinition().getKey() + '.' + name;
     }
 
     public final boolean isEnd() {

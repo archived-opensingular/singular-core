@@ -50,7 +50,7 @@ public class DefaultHibernatePersistenceService extends
     @Override
     protected ProcessInstanceEntity newProcessInstance(ProcessVersionEntity processVersion) {
         ProcessInstanceEntity processInstance = new ProcessInstanceEntity();
-        processInstance.setProcess(processVersion);
+        processInstance.setProcessVersion(processVersion);
         processInstance.setRoles(new ArrayList<>());
         return processInstance;
     }

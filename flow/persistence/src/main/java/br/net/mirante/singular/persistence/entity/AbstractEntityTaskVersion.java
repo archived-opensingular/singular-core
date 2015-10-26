@@ -49,7 +49,7 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
 
     @ManyToOne
     @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
-    private PROCESS_VERSION process;
+    private PROCESS_VERSION processVersion;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "CO_DEFINICAO_TAREFA", nullable = false)
@@ -73,12 +73,12 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
         this.cod = cod;
     }
 
-    public PROCESS_VERSION getProcess() {
-        return process;
+    public PROCESS_VERSION getProcessVersion() {
+        return processVersion;
     }
 
-    public void setProcess(PROCESS_VERSION process) {
-        this.process = process;
+    public void setProcessVersion(PROCESS_VERSION processVersion) {
+        this.processVersion = processVersion;
     }
 
     public TASK_DEF getTaskDefinition() {

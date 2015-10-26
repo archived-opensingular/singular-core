@@ -45,6 +45,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
  * @param <EXECUTION_VAR>
  */
 @MappedSuperclass
+@SuppressWarnings("unchecked")
 @Table(name = "TB_INSTANCIA_PROCESSO")
 public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity implements IEntityProcessInstance {
 
@@ -57,7 +58,7 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_VERSAO_PROCESSO", nullable = false)
-    private PROCESS_VERSION process;
+    private PROCESS_VERSION processVersion;
 
     @Column(name = "DS_INSTANCIA_PROCESSO", length = 250)
     private String description;
@@ -118,13 +119,12 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
         this.cod = cod;
     }
 
-    @Override
-    public PROCESS_VERSION getProcess() {
-        return process;
+    public PROCESS_VERSION getProcessVersion() {
+        return processVersion;
     }
 
-    public void setProcess(PROCESS_VERSION process) {
-        this.process = process;
+    public void setProcessVersion(PROCESS_VERSION processVersion) {
+        this.processVersion = processVersion;
     }
 
     @Override

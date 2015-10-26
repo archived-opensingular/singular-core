@@ -7,7 +7,7 @@ import br.net.mirante.singular.flow.core.IEntityTaskType;
 
 public interface IEntityTaskVersion extends IEntityByCod {
 
-    IEntityProcessVersion getProcess();
+    IEntityProcessVersion getProcessVersion();
 
     String getName();
 
@@ -20,7 +20,7 @@ public interface IEntityTaskVersion extends IEntityByCod {
     List<? extends IEntityTaskTransitionVersion> getTransitions();
 
     default Date getVersionDate(){
-        return getProcess().getVersionDate();
+        return getProcessVersion().getVersionDate();
     }
 
     default IEntityTaskTransitionVersion getTransition(String abbreviation) {
