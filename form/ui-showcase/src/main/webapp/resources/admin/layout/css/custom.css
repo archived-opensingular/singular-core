@@ -69,3 +69,7 @@ table.dataTable thead th > a {
 .has-error > .ms-container .ms-list {
     border-color: #F3565D;
 }
+
+.has-error > .checkbox-list {
+    color: #F3565D;
+}
