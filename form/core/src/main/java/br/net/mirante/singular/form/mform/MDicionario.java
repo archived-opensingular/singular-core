@@ -10,6 +10,16 @@ public class MDicionario implements IContextoTipo {
 
     private MapaNomeClasseValor<MTipo<?>> tipos = new MapaNomeClasseValor<>(t -> t.getNome());
 
+    private final SDocument internalDocument = new SDocument();
+
+    /**
+     * Apenas para uso interno do dicionario de modo que os atributos dos tipos
+     * tenha um documento de referencia.
+     */
+    final SDocument getInternalDicionaryDocument() {
+        return internalDocument;
+    }
+
     public Collection<MPacote> getPacotes() {
         return pacotes.getValores();
     }

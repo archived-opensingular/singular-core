@@ -53,6 +53,10 @@ public abstract class MEscopoBase implements MEscopo {
     }
 
     final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
+        if (getDicionario() != tipoPai.getDicionario()) {
+            throw new SingularFormException(
+                    "O tipo " + tipoPai.getNome() + " foi criado dentro de outro dicionário, que não o atual de " + getNome());
+        }
         T novo = tipoPai.extender(nomeSimplesNovoTipo);
         return registrarTipo(novo, null);
     }

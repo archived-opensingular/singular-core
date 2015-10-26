@@ -20,6 +20,10 @@ public class PacoteBuilder {
         return pacote.extenderTipo(nome, classePai);
     }
 
+    final <T extends MTipo<?>> T createTipo(String nomeSimplesNovoTipo, T tipoPai) {
+        return pacote.extenderTipo(nomeSimplesNovoTipo, tipoPai);
+    }
+
     public <T extends MTipo<?>> T createTipo(Class<T> classeNovoTipo) {
         T novo = dicionario.getTiposInterno().vericaNaoDeveEstarPresente(classeNovoTipo);
         novo = pacote.registrarTipo(novo, classeNovoTipo);
@@ -27,7 +31,7 @@ public class PacoteBuilder {
         TipoBuilder tb = new TipoBuilder();
         novo.onCargaTipo(tb);
         if (!tb.chamouSuper) {
-            throw new RuntimeException("O tipo da classe " + classeNovoTipo.getName() + " não chama o super no método onCargaTipo()");
+            throw new SingularFormException("O tipo da classe " + classeNovoTipo.getName() + " não chama o super no método onCargaTipo()");
         }
         return novo;
     }
