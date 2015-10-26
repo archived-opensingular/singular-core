@@ -61,7 +61,7 @@ table.dataTable thead th > a {
     font-size: 12px;
 }
 
-.has-error .input-group .input-group-btn .btn {
+.has-error .input-group .input-group-btn .btn, .has-error > .bs-select > .selectpicker {
     background-color: #F3565D;
     color: white;
 }

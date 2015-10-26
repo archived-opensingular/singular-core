@@ -30,7 +30,7 @@ public final class YearMonthField extends TextField<YearMonth> {
 
             @Override
             public String convertToString(YearMonth value, Locale locale) {
-                return value.toString();
+                return String.format("%02d%04d", value.getMonthValue(), value.getYear());
             }
         };
     }

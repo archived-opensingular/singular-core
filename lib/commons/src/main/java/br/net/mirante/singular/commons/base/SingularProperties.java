@@ -15,8 +15,11 @@ public enum SingularProperties {
     private static final Logger logger = LoggerFactory.getLogger(SingularProperties.class);
     private Properties p = new Properties();
 
-    private SingularProperties() {
-        load(ClassLoader.getSystemClassLoader().getResourceAsStream("singular.properties"));
+    SingularProperties() {
+        InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("singular.properties");
+        if (is != null) {
+            load(is);
+        }
     }
 
     private void load(InputStream is) {
@@ -33,7 +36,7 @@ public enum SingularProperties {
      * As propriedades previamente existentes serão removidas
      * Esse método é utilizado para testes unitários com difererentes contextos.
      *
-     * @param propertiesStream
+     * @param propertiesStream o arquivo
      */
     public void loadFrom(InputStream propertiesStream) {
         load(propertiesStream);
@@ -42,5 +45,4 @@ public enum SingularProperties {
     public String getProperty(String key) {
         return p.getProperty(key);
     }
-
 }

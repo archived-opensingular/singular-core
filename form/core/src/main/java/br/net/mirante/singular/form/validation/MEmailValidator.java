@@ -1,11 +1,6 @@
-package br.net.mirante.singular.form.wicket.validator;
+package br.net.mirante.singular.form.validation;
 
 import java.util.regex.Pattern;
-
-import org.apache.wicket.validation.validator.EmailAddressValidator;
-
-import br.net.mirante.singular.form.validation.IValidatable;
-import br.net.mirante.singular.form.validation.IValidator;
 
 public class MEmailValidator implements IValidator<String> {
 
@@ -21,7 +16,8 @@ public class MEmailValidator implements IValidator<String> {
 
     @Override
     public void validate(IValidatable<String> validatable) {
-        Pattern pattern = EmailAddressValidator.getInstance().getPattern();
+        // versão *simplificada* da regex, copiada do validador do wicket 
+        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*((\\.[A-Za-z]{2,}){1}$)");
         String value = validatable.getValue();
         if (!pattern.matcher(value).matches()) {
             validatable.error("Email inválido");
