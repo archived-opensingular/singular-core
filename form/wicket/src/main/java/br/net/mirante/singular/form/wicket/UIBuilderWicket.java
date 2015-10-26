@@ -23,6 +23,7 @@ import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
+import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.PicklistMapper;

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
@@ -29,7 +28,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
             tipoLista = null;
         }
         if (tipoLista != null && tipoLista.getTipoElementos() instanceof MTipoString
-            && ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes() != null) {
+                && ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes() != null) {
             MProviderOpcoes opcoes = ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes();
             opcoesValue = new ArrayList<>();
             opcoesValue.addAll(opcoes.getOpcoes().getValor()
@@ -38,13 +37,17 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
             opcoesValue = Collections.emptyList();
         }
 
-        final ListMultipleChoice<String> choices = new ListMultipleChoice<>(model.getObject().getNome(),
-                new MInstanciaValorModel<>(model), opcoesValue);
-
-        return formGroupAppender(formGroup, choices);
+        return formGroupAppender(formGroup, model, opcoesValue);
     }
 
-    protected Component formGroupAppender(BSControls formGroup, final ListMultipleChoice<String> choices) {
+    protected ListMultipleChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
+            final List<String> opcoesValue) {
+        return new ListMultipleChoice<>(model.getObject().getNome(), new MInstanciaValorModel<>(model), opcoesValue);
+    }
+
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
+            final List<String> opcoesValue) {
+        final ListMultipleChoice<String> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setMaxRows(5), true);
         return choices;
     }

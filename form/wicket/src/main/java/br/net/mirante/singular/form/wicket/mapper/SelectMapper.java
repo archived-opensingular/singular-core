@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 
@@ -30,9 +31,17 @@ public class SelectMapper implements ControlsFieldComponentMapper {
             opcoesValue = Collections.emptyList();
         }
 
-        final DropDownChoice<String> choices = new DropDownChoice<>(model.getObject().getNome(),
-                new MInstanciaValorModel<>(model), opcoesValue);
+        return formGroupAppender(formGroup, model, opcoesValue);
+    }
 
+    protected AbstractSingleSelectChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
+            final List<String> opcoesValue) {
+        return new DropDownChoice<>(model.getObject().getNome(), new MInstanciaValorModel<>(model), opcoesValue);
+    }
+
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
+            final List<String> opcoesValue) {
+        final DropDownChoice<String> choices = (DropDownChoice<String>) retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setNullValid(true));
         return choices;
     }
