@@ -4,19 +4,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.apache.wicket.model.IModel;
 
 @Entity
-@Table(name = "example_data")
+@Table(name = "EXAMPLE_DATA")
 @SuppressWarnings({"rawtypes", "serial"})
 public class ExampleDataDTO implements IModel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
-    private String key, type, xml;
+    private String key, type;
+    @Lob private String xml;
 
     public ExampleDataDTO() {
     }
