@@ -27,7 +27,7 @@
         <property name="hibernateProperties">
             <props>
                 <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com sql server  -->
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
                 <prop key="hibernate.connection.isolation">2</prop>
                 <prop key="hibernate.jdbc.batch_size">30</prop>
                 <prop key="hibernate.show_sql">true</prop>

@@ -39,17 +39,17 @@ public interface SQuery<I extends MInstancia> {
     @SuppressWarnings("unchecked")
     default SQuery<MInstancia> children() {
         return () -> {
-			Stream<MInstancia> outter = (Stream<MInstancia>) this.stream();
-			return outter
-			    .flatMap(o -> {
-			    	Stream<MInstancia> inner = (o instanceof MIComposto)
-			            ? ((MIComposto) o).getCampos().stream()
-			            : (o instanceof MILista)
-			                ? ((MILista<MInstancia>) o).stream()
-			                : Stream.empty();
-					return inner;
-			    });
-		};
+            Stream<MInstancia> outter = (Stream<MInstancia>) this.stream();
+            return outter
+                .flatMap(o -> {
+                    Stream<MInstancia> inner = (o instanceof MIComposto)
+                        ? ((MIComposto) o).getCampos().stream()
+                        : (o instanceof MILista)
+                            ? ((MILista<MInstancia>) o).stream()
+                            : Stream.empty();
+                    return inner;
+                });
+        };
     }
     default SQuery<MInstancia> findAll() {
         return () -> this.stream()
