@@ -19,14 +19,6 @@ public final class ProcessDefinitionCache {
     private final ImmutableList<ProcessDefinition<?>> definitions;
     private final ImmutableMap<String, ProcessDefinition<?>> definitionsById;
 
-    /**
-     *
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    private final ImmutableMap<Class<? extends ProcessInstance>, ProcessDefinition<?>> definitionsByInstanceType;
-
     private static LoadingCache<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>> definitionsByClass = CacheBuilder
         .newBuilder().weakValues()
         .build(new CacheLoader<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>>() {
@@ -54,15 +46,14 @@ public final class ProcessDefinitionCache {
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
             cache.add(def);
-            if (cacheById.containsKey(def.getAbbreviation())) {
-                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
+            if (cacheById.containsKey(def.getKey())) {
+                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getKey());
             }
-            cacheById.put(def.getAbbreviation(), def);
+            cacheById.put(def.getKey(), def);
             cacheByInstanceType.put(def.getProcessInstanceClass(), def);
         }
         definitions = cache.build();
         definitionsById = ImmutableMap.copyOf(cacheById);
-        definitionsByInstanceType = ImmutableMap.copyOf(cacheByInstanceType);
     }
 
     public static ProcessDefinitionCache get(String packageName) {
@@ -93,16 +84,6 @@ public final class ProcessDefinitionCache {
 
     public ProcessDefinition<?> getDefinition(String id) {
         return definitionsById.get(id);
-    }
-
-    /**
-     *
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    public ProcessDefinition<?> getDefinitionForInstance(Class<? extends ProcessInstance> classeInstancia) {
-        return definitionsByInstanceType.get(classeInstancia);
     }
 
     public List<ProcessDefinition<?>> getDefinitions() {

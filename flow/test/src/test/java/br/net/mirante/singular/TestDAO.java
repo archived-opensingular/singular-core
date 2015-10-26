@@ -58,7 +58,7 @@ public class TestDAO {
     @SuppressWarnings("unchecked")
     public List<br.net.mirante.singular.persistence.entity.ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
         return getSession().createQuery(
-                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.process p where p.cod = :id"
+                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.processVersion p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();
     }
 

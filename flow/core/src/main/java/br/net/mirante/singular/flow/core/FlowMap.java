@@ -414,7 +414,7 @@ public class FlowMap implements Serializable {
         MTask<?> task = getTaskWithName(taskDefinition.getName());
         if (task == null) {
             throw new SingularException(
-                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getAbbreviation());
+                    "Task " + taskDefinition.getKey() + " não encontrada em " + getProcessDefinition().getKey());
         }
         return task;
     }

@@ -54,7 +54,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private String category;
 
-    private String abbreviation;
+    private String key;
 
     private String name;
 
@@ -580,16 +580,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * @deprecated o termo sigla deve ser substituido por key
+     * <p>Retorna a chave deste processo.</p>
+     * 
+     * @return a chave deste processo.
      */
-    //TODO renomear
-    @Deprecated
-    public final String getAbbreviation() {
-        if (abbreviation == null) {
-            getLogger().warn("!!! process definition abbreviation not set, using  class simple name !!!");
-            abbreviation = this.getClass().getSimpleName();
+    public final String getKey() {
+        if (key == null) {
+            getLogger().warn("!!! process definition key not set, using  class simple name !!!");
+            key = this.getClass().getSimpleName();
         }
-        return abbreviation;
+        return key;
     }
 
     /**
@@ -691,7 +691,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private void setName(String category, String abbreviation, String name) {
         this.category = category;
-        this.abbreviation = abbreviation;
+        this.key = abbreviation;
         this.name = name;
     }
 

@@ -45,7 +45,7 @@ public class DefaultHibernateProcessDefinitionService
     public ProcessVersionEntity createEntityProcessVersion(ProcessDefinitionEntity entityProcessDefinition) {
         ProcessVersionEntity entityProcess = new ProcessVersionEntity();
         entityProcess.setProcessDefinition(entityProcessDefinition);
-        entityProcess.setTasks(new ArrayList<>());
+        entityProcess.setVersionTasks(new ArrayList<>());
         return entityProcess;
     }
 
@@ -60,7 +60,7 @@ public class DefaultHibernateProcessDefinitionService
     @Override
     public TaskVersionEntity createEntityTaskVersion(ProcessVersionEntity process, TaskDefinitionEntity entityTaskDefinition, MTask<?> task) {
         TaskVersionEntity taskEntity = new TaskVersionEntity();
-        taskEntity.setProcess(process);
+        taskEntity.setProcessVersion(process);
         taskEntity.setTaskDefinition(entityTaskDefinition);
         // TODO Daniel: essa solução do createType deveria ser unificada entre
         // as implementações

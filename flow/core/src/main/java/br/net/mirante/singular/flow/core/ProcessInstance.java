@@ -2,21 +2,13 @@ package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Date;
 import java.util.List;
-import java.util.List;
-import java.util.Objects;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.commons.base.SingularException;
@@ -24,8 +16,8 @@ import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
@@ -162,9 +154,9 @@ public class ProcessInstance implements Serializable {
             if (codEntity != null) {
                 IEntityProcessInstance newfromDB = getPersistenceService().retrieveProcessInstanceByCod(codEntity);
                 if (newfromDB != null) {
-                    if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcess().getProcessDefinition())) {
+                    if (!getProcessDefinition().getEntityProcessDefinition().equals(newfromDB.getProcessVersion().getProcessDefinition())) {
                         throw new SingularException(getProcessDefinition().getName() + " id=" + codEntity
-                                + " se refere a definição de processo " + newfromDB.getProcess().getProcessDefinition().getAbbreviation()
+                                + " se refere a definição de processo " + newfromDB.getProcessVersion().getProcessDefinition().getKey()
                                 + " mas era esperado que referenciasse " + getProcessDefinition().getEntityProcessDefinition());
 
                     }
@@ -349,7 +341,7 @@ public class ProcessInstance implements Serializable {
      *         {@code false} caso contrário.
      */
     public boolean canVisualize(MUser user) {
-        MTask<?> tt = getCurrentTaskOrException().getFlowTask();
+        MTask<?> tt = getLatestTask().getFlowTask();
         if (tt.isPeople() || tt.isWait()) {
             if (hasAllocatedUser() && isAllocated(user.getCod())) {
                 return true;

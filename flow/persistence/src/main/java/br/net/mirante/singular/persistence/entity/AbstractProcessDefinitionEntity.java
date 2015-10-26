@@ -52,7 +52,7 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
     private CATEGORY category;
 
     @Column(name = "SG_PROCESSO", length = 200, nullable = false)
-    private String abbreviation;
+    private String key;
 
     @Column(name = "NO_PROCESSO", length = 200, nullable = false)
     private String name;
@@ -87,12 +87,12 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
         this.category = (CATEGORY) category;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getKey() {
+        return key;
     }
 
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public String getName() {

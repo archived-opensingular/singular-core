@@ -54,9 +54,9 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
     @Column(name = "DT_VERSAO", nullable = false)
     private Date versionDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "process")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "processVersion")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private List<TASK_VERSION> tasks = new ArrayList<>();
+    private List<TASK_VERSION> versionTasks = new ArrayList<>();
 
     public Integer getCod() {
         return cod;
@@ -82,12 +82,12 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
         this.versionDate = versionDate;
     }
 
-    public List<TASK_VERSION> getTasks() {
-        return tasks;
+    public List<TASK_VERSION> getVersionTasks() {
+        return versionTasks;
     }
 
-    public void setTasks(List<TASK_VERSION> tasks) {
-        this.tasks = tasks;
+    public void setVersionTasks(List<TASK_VERSION> versionTasks) {
+        this.versionTasks = versionTasks;
     }
 
 }
