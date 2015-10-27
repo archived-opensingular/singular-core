@@ -47,7 +47,7 @@ public class ProcessInstance implements Serializable {
 
     private transient MTask<?> estadoAtual;
 
-    private transient ExecucaoMTask executionContext;
+    private transient ExecutionContext executionContext;
 
     private transient VarInstanceMap<?> variables;
 
@@ -519,7 +519,7 @@ public class ProcessInstance implements Serializable {
                 null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         }
 
-        ExecucaoMTask execucaoMTask = new ExecucaoMTask(this, tarefaNova, null);
+        ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
         task.notifyTaskStart(getLatestTask(task), execucaoMTask);
     }
 
@@ -1032,7 +1032,7 @@ public class ProcessInstance implements Serializable {
      *
      * @param execucaoTask o novo contexto de execução.
      */
-    final void setExecutionContext(ExecucaoMTask execucaoTask) {
+    final void setExecutionContext(ExecutionContext execucaoTask) {
         if (this.executionContext != null && execucaoTask != null) {
             throw new SingularFlowException(createErrorMsg("A instancia já está com um tarefa em processo de execução"));
         }
