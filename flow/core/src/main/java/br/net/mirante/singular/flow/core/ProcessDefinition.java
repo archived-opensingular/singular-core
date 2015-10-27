@@ -660,10 +660,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return a instância.
      */
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
-        Objects.requireNonNull(dadosInstancia);
-        I novo = newUnbindedInstance();
-        novo.setInternalEntity(dadosInstancia);
-        return novo;
+        if(dadosInstancia.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(getKey())){
+            Objects.requireNonNull(dadosInstancia);
+            I novo = newUnbindedInstance();
+            novo.setInternalEntity(dadosInstancia);
+            return novo;
+        } else {
+            throw new SingularFlowException(createErrorMsg("A entidade com id "+dadosInstancia.getCod()+" não pertence ao processo."));
+        }
     }
 
     /**
