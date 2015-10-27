@@ -32,8 +32,8 @@ public class MBPMUtil {
     private static final int PESO_TASK_FIM = 100000;
 
     public static void sortInstancesByDistanceFromBeginning(List<? extends ProcessInstance> instancias, ProcessDefinition<?> definicao) {
-        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getCurrentTask().getEntityTaskInstance().getTask(),
-                s2.getCurrentTask().getEntityTaskInstance().getTask(), definicao));
+        instancias.sort((s1, s2) -> compareByDistanceFromBeginning(s1.getLatestTask().getEntityTaskInstance().getTask(),
+                s2.getLatestTask().getEntityTaskInstance().getTask(), definicao));
     }
 
     private static int compareByDistanceFromBeginning(IEntityTaskVersion s1, IEntityTaskVersion s2, ProcessDefinition<?> definicao) {
