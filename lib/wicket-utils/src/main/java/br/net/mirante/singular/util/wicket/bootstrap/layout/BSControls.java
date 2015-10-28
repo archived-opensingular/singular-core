@@ -71,7 +71,12 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendInputFile(Component input) {
-        return super.appendTag("input", false, "type='file' class='form-control'", input);
+//        return super.appendTag("input", false, "type='file' class='form-control'", input);
+        return this.appendTag("span", true, "class='btn btn-file'", 
+        	new BSContainer<>("_" + input.getId())
+        	 .appendTag("span", new Label("_", Model.of("Carregar ...")))
+        	 .appendTag("input", true, "type='file' class='form-control'", input)
+            );
     }
 
     
