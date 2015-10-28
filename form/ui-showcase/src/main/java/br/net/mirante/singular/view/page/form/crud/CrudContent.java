@@ -65,7 +65,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
     ExampleDataDTO currentModel;
 
     public CrudContent(String id) {
-        super(id, false, true);
+        super(id, false, false);
     }
 
     protected void onInitialize() {
@@ -169,6 +169,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         };
 
         updateContainer(selectedTemplate);
+        target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
 

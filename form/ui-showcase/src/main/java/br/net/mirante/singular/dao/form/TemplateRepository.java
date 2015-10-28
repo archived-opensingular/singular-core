@@ -11,8 +11,8 @@ import org.reflections.Reflections;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.exemplo.curriculo.MPacoteCurriculo;
 import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
+import br.net.mirante.singular.view.page.form.examples.MPacoteCurriculo;
 
 @SuppressWarnings({"rawtypes", "serial"})
 public class TemplateRepository {

@@ -36,7 +36,6 @@ public class MPacoteCore extends MPacote {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-
         pb.createTipo(MTipo.class);
         pb.createTipo(MTipoSimples.class);
         pb.createTipo(MTipoComposto.class);

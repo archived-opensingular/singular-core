@@ -19,5 +19,4 @@ public class MTipoData extends MTipoSimples<MIData, Date> {
     public static ValidadorDataBuilder validadorBuilder() {
         return new ValidadorDataBuilder();
     }
-
 }

@@ -1,7 +1,9 @@
 package br.net.mirante.singular.flow.core;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,8 @@ import br.net.mirante.singular.flow.util.view.IViewLocator;
 public abstract class SingularFlowConfigurationBean {
 
     public static final String PREFIXO = "SGL";
+
+    private List<ProcessNotifier> notifiers = new ArrayList<>();
 
     final void start() {
         for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
@@ -181,8 +185,34 @@ public abstract class SingularFlowConfigurationBean {
     // ------- Manipulação de Usuário ---------------------------------
     protected abstract IUserService getUserService();
 
-    protected AbstractProcessNotifiers getNotifiers() {
+    /**
+     *
+     * @deprecated utilizar {@link #addListener(ProcessNotifier) addListener} para registrar um listener
+     * ou o método {@link #notifyListeners(Consumer) notifyListeners} para fazer uma notificação.
+     * Será removido na proxima versão.
+     */
+    @Deprecated
+    protected ProcessNotifier getNotifiers() {
         return new NullNotifier();
+    }
+
+
+    /**
+     * Notifica os listeners registrados sobre um evento.
+     * @param operation
+     */
+    public void notifyListeners(Consumer<ProcessNotifier> operation){
+        for (ProcessNotifier n : notifiers){
+            operation.accept(n);
+        }
+    }
+
+    /**
+     * Registra um listener para receber notificações do Engine
+     * @param p
+     */
+    public void addListener(ProcessNotifier p){
+        notifiers.add(p);
     }
 
     // ------- Consultas ----------------------------------------------
