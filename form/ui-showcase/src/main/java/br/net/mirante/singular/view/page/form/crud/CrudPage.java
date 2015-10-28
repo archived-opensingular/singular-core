@@ -15,6 +15,6 @@ public class CrudPage extends Template {
 
     @Override
     protected boolean withMenu() {
-        return false;
+        return true;
     }
 }

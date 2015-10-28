@@ -29,7 +29,7 @@ import br.net.mirante.singular.view.template.Content;
 public class FormContent extends Content implements SingularWicketContainer<FormContent, Void> {
 
     public FormContent(String id, boolean withSideBar) {
-        super(id, false, withSideBar, false, true);
+        super(id);
     }
 
     static MDicionario dicionario = MDicionario.create();
