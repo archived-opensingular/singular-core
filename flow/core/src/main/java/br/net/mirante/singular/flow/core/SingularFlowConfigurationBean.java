@@ -74,7 +74,7 @@ public abstract class SingularFlowConfigurationBean {
 
     // ------- Método de recuperação de instâncias --------------------
 
-    private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
+    protected ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
         ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
