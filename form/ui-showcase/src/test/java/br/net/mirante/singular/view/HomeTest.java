@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view;
 
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.TagTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +11,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import br.net.mirante.singular.view.page.form.ListPage;
+import br.net.mirante.singular.view.page.form.crud.CrudPage;
+import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,13 +30,18 @@ public class HomeTest {
 
     @Before
     public void setup() {
-        //driver = new WicketTester(new ShowcaseApplication());
         driver = new WicketTester(app);
     }
 
     @Test
     public void what() {
-//        driver.startPage(FormPage.class);
-//        driver.assertRenderedPage(FormPage.class);
+        driver.startPage(CrudPage.class);
+        driver.assertRenderedPage(CrudPage.class);
+        TagTester optionsForm = driver.getTagByWicketId("optionsForm");
+	FormTester options = driver.newFormTester(optionsForm.getValue(), false);
+        options.setValue("options", ExamplePackage.Types.ORDER.name);
+        options.submit();
+//        driver.assertInvisible("");
+        
     }
 }
