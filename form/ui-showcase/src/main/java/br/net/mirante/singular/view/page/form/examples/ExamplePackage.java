@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoFileUpload;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 
@@ -44,6 +45,7 @@ public class ExamplePackage extends MPacote {
         addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
         addField(buyer, "CPF", "CPF", MTipoCPF.class);
         addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
+        addField(buyer, "Avatar", "Imagem", MTipoFileUpload.class);
 
         MTipoComposto<?> address = order.addCampoComposto("Addresss");
         address.as(AtrBasic::new).label("Endereço");

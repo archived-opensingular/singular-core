@@ -21,6 +21,7 @@ public class MPacoteUtil extends MPacote {
         pb.createTipo(MTipoAnoMes.class);
         pb.createTipo(MTipoNomePessoa.class);
         pb.createTipo(MTipoTelefoneNacional.class);
+        pb.createTipo(MTipoFileUpload.class);
 
         pb.addAtributo(MTipoAnoMes.class, MPacoteBasic.ATR_TAMANHO_EDICAO, 7);
 

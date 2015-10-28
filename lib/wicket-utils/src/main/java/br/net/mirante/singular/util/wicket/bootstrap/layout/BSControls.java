@@ -70,6 +70,11 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
 
+    public BSControls appendInputFile(Component input) {
+        return super.appendTag("input", false, "type='file' class='form-control'", input);
+    }
+
+    
     public BSControls appendRadioChoice(Component input) {
         return super.appendTag("div", true, "class='radio-list'", input);
     }
