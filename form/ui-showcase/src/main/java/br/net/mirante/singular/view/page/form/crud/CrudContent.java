@@ -44,12 +44,11 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.page.form.FormContent;
 import br.net.mirante.singular.view.page.form.FormVO;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
-public class CrudContent extends Content implements SingularWicketContainer<FormContent, Void> {
+public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
     private static final MDicionario dicionario = TemplateRepository.dicionario();
 
@@ -85,7 +84,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         queue(setupInputModal());
         deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
              protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-//                 currentModel = model.getObject();
                  dao.remove(currentModel);
                  currentModel = null;
                  updateListTableFromModal(target);

@@ -36,7 +36,7 @@ import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
-class ListContent extends Content implements SingularWicketContainer<FormContent, Void> {
+class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
 
     final static List<FormVO> formTypes;
     static final MDicionario dicionario;
