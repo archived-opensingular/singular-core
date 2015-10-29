@@ -19,8 +19,8 @@ import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
@@ -86,6 +86,10 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         PROCESS_DEF def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
                 pd -> pd.getKey().equals(definicao.getKey()));
         if (def == null) {
+            def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
+                pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
+        }
+        if (def == null) {
             def = newInstanceOf(getClassProcessDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
             def.setName(definicao.getName());
@@ -96,6 +100,10 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             sw.refresh(def);
         } else {
             boolean mudou = false;
+            if (!definicao.getKey().equals(def.getKey())) {
+                def.setKey(definicao.getKey());
+                mudou = true;
+            }
             if (!definicao.getName().equals(def.getName())) {
                 def.setName(definicao.getName());
                 mudou = true;
