@@ -76,8 +76,8 @@ public class TableListaMapper extends AbstractListaMapper {
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha())) {
                 tr.newTHeaderCell($m.ofValue(""));
             }
-            for (String nomeCampo : tComposto.getCampos()) {
-                tr.newTHeaderCell($m.ofValue(tComposto.getCampo(nomeCampo).as(MPacoteBasic.aspect()).getLabel()));
+            for (MTipo<?> tCampo : tComposto.getFields()) {
+                tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
             }
         } else {
             thead.setVisible(false);
@@ -124,9 +124,9 @@ public class TableListaMapper extends AbstractListaMapper {
             if (instancia instanceof MIComposto) {
                 MIComposto composto = (MIComposto) instancia;
                 MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
-                for (String nomeCampo : tComposto.getCampos()) {
-                    final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
-                    final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
+                for (MTipo<?> tCampo : tComposto.getFields()) {
+                    final MInstanciaCampoModel<MInstancia> mCampo =
+                            new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
                     UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
                 }
             } else {
@@ -139,5 +139,4 @@ public class TableListaMapper extends AbstractListaMapper {
             item.add(tr);
         }
     }
-
 }
