@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
@@ -49,7 +50,10 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoCPF cpf = informacoesPessoais.addCampo("cpf", MTipoCPF.class, true);
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
-                .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+            .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+        final MTipoLista<MTipoString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
+                pb.createTipo("tipoContato", MTipoString.class)
+                        .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax"));
         {
             informacoesPessoais
                 .as(AtrBasic::new).label("Informações Pessoais");
@@ -66,6 +70,11 @@ public class MPacoteCurriculo extends MPacote {
             estadoCivil
                 .withView(MSelecaoPorSelectView::new)
                 .as(AtrBasic::new).label("Estado Civil")
+                .as(AtrWicket::new).larguraPref(2);
+            infoPub
+                .withObrigatorio(true)
+                .withView(MSelecaoMultiplaPorSelectView::new)
+                .as(AtrBasic::new).label("Informação Pública")
                 .as(AtrWicket::new).larguraPref(2);
         }
 

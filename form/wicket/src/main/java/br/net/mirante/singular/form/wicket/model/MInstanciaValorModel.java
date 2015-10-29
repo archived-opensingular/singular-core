@@ -1,8 +1,11 @@
 package br.net.mirante.singular.form.wicket.model;
 
+import java.util.List;
+
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
+import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
@@ -30,8 +33,14 @@ public class MInstanciaValorModel<T>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setObject(T object) {
-        getTarget().setValor(object);
+        MInstancia target = getTarget();
+        if (target instanceof MILista) {
+            ((List) object).forEach(((MILista) target)::addValor);
+        } else {
+            target.setValor(object);
+        }
     }
 
     @Override

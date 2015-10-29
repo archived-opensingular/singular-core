@@ -10,7 +10,7 @@
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSourceSingular" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:.;mode=MSSQLServer;"/>
+        <property name="url" value="jdbc:h2:file:./singulardb;mode=MSSQLServer;"/>
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
     </bean>
@@ -23,7 +23,7 @@
 
         <property name="hibernateProperties">
             <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>

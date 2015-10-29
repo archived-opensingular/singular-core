@@ -50,6 +50,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return this;
     }
 
+    public BSControls appendCheckboxChoice(Component checkbox) {
+        return super.appendTag("div", true, "class='checkbox-list'", checkbox);
+    }
+
     public BSControls appendLabel(Component label) {
         return this.appendTag("label", label);
     }
@@ -88,13 +92,21 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select) {
-        return appendSelect(select, true);
+        return appendSelect(select, false, true);
     }
 
-    public BSControls appendSelect(Component select, boolean bootstrap) {
-        return super.appendTag("select", true, bootstrap
-                ? "class='bs-select form-control' data-width='80%' title='Selecione...'"
-                : "class='form-control'", select);
+    public BSControls appendSelect(Component select, boolean multiple) {
+        return appendSelect(select, multiple, true);
+    }
+
+    public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
+        return super.appendTag("select", true, (bootstrap
+                ? "class='bs-select form-control' data-width='80%' title='Selecione...'" : "class='form-control'")
+                + (multiple ? "multiple" : ""), select);
+    }
+
+    public BSControls appendPicklist(Component select) {
+        return super.appendTag("select", true, "class='multi-select' multiple", select);
     }
 
     public BSControls appendStaticText(Component text) {

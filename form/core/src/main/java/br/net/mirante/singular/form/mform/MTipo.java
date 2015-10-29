@@ -143,7 +143,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public MEscopo getEscopoPai() {
-        Preconditions.checkNotNull(escopo);
+        if (escopo == null) {
+            throw new RuntimeException(
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+        }
         return escopo;
     }
 
@@ -234,7 +238,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().garantirPacoteCarregado(atr.getClassePacote());
+        getDicionario().carregarPacote(atr.getClassePacote());
         MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
         if (subPath != null) {
             instancia.setValor(new LeitorPath(subPath), valor);
@@ -382,18 +386,26 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new NotImplementedException("TODO implementar");
     }
 
-    public I novaInstancia() {
-        return novaInstancia(this);
+    public final I novaInstancia() {
+        SDocument owner = new SDocument();
+        I instance = newInstance(this, owner);
+        owner.setRoot(instance);
+        return instance;
+    }
+
+    /** Cria uma nova instância pertencente ao documento informado. */
+    I newInstance(SDocument owner) {
+        return newInstance(this, owner);
     }
 
     public MILista<?> novaLista() {
         return MILista.of(this);
     }
 
-    private I novaInstancia(MTipo<?> original) {
+    private I newInstance(MTipo<?> original, SDocument owner) {
         Class<? extends I> c = classeInstancia;
         if (c == null && superTipo != null) {
-            return superTipo.novaInstancia(original);
+            return superTipo.newInstance(original, owner);
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
@@ -401,6 +413,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         try {
             I novo = classeInstancia.newInstance();
+            novo.setDocument(owner);
             novo.setTipo(this);
             if (novo instanceof MISimples) {
                 Object valorInicial = original.getValorAtributoValorInicial();

@@ -18,29 +18,19 @@ public abstract class Content extends Panel {
     private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     private boolean withBreadcrumb;
-    private boolean withSettingsMenu;
     private boolean withInfoLink;
-    private boolean withSideBar;
 
     public Content(String id) {
-        this(id, false, false, false, false);
+        this(id, false, false);
     }
 
-    public Content(String id, boolean withSettingsMenu, boolean withSideBar) {
-        this(id, withSettingsMenu, withSideBar, false, false);
-    }
-
-    public Content(String id, boolean withSettingsMenu, boolean withSideBar,
-            boolean withInfoLink, boolean withBreadcrumb) {
+    public Content(String id, boolean withInfoLink, boolean withBreadcrumb) {
         super(id);
         this.withBreadcrumb = withBreadcrumb;
-        this.withSettingsMenu = withSettingsMenu;
         this.withInfoLink = withInfoLink;
-        this.withSideBar = withSideBar;
     }
 
     public Content addSideBar() {
-        this.withSideBar = true;
         return this;
     }
 
@@ -57,8 +47,6 @@ public abstract class Content extends Panel {
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));
         }
-        add(new SettingsMenu("_SettingsMenu").setVisible(withSettingsMenu));
-        add(new SideBar("_SideBar").setVisible(withSideBar));
         WebMarkupContainer infoLink = new WebMarkupContainer("_Info");
         add(infoLink.setVisible(withInfoLink));
         if (withInfoLink) {

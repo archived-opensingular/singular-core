@@ -17,7 +17,7 @@ var handleBootstrapSelect = function() {
 };
 
 var handleMultiSelect = function() {
-    $('.picklist').multiSelect();
+    $('.multi-select').multiSelect();
 };
 
 var Page = function() {
