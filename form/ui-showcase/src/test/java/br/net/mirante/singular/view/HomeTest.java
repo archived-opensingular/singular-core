@@ -34,14 +34,15 @@ public class HomeTest {
     }
 
     @Test
-    public void what() {
+    public void onlyShowTheNewButtonAfterTemplateIsSelected() {
         driver.startPage(CrudPage.class);
         driver.assertRenderedPage(CrudPage.class);
-        TagTester optionsForm = driver.getTagByWicketId("optionsForm");
-	FormTester options = driver.newFormTester(optionsForm.getValue(), false);
+//        TagTester optionsForm = driver.getTagByWicketId("optionsForm");
+        driver.assertInvisible("pageBody:_Content:form:insert");
+	FormTester options = driver.newFormTester("pageBody:_Content:optionsForm", false);
         options.setValue("options", ExamplePackage.Types.ORDER.name);
         options.submit();
-//        driver.assertInvisible("");
+//        driver.assertVisible("pageBody:_Content:form:insert");
         
     }
 }

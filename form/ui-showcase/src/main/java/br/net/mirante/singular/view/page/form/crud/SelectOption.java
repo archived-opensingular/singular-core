@@ -41,7 +41,9 @@ public class SelectOption<T> implements IModel {
     @SuppressWarnings("unchecked")
     public void setObject(Object o) {
         SelectOption s = (SelectOption) o;
-        this.setKey(s.getKey());
-        this.setValue((T) s.getValue());
+        if(o != null){
+            this.setKey(s.getKey());
+            this.setValue((T) s.getValue());
+        }
     }
 }
