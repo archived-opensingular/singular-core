@@ -27,7 +27,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 
 public class DefaultCompostoMapper implements IWicketComponentMapper {
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = HashMap::new;
     static final HintKey<Boolean>                  INLINE     = () -> false;
 
     @Override
@@ -45,13 +46,12 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         grid.add(DisabledClassBehavior.getInstance());
 
-        for (String nomeCampo : tComposto.getCampos()) {
-            final MTipo<?> tCampo = tComposto.getCampo(nomeCampo);
+        for (MTipo<?> tCampo : tComposto.getFields()) {
             final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
             final MInstancia iCampo = mCampo.getObject();
             final IModel<String> label = $m.ofValue(trimToEmpty(iCampo.as(AtrBasic::new).getLabel()));
-            final int colspan = (hintColWidths.containsKey(nomeCampo))
-                ? hintColWidths.get(nomeCampo)
+            final int colspan = (hintColWidths.containsKey(tCampo.getNome()))
+                ? hintColWidths.get(tCampo.getNome())
                 : iCampo.as(AtrWicket::new).getLarguraPref(BSCol.MAX_COLS);
             if (iCampo instanceof MIComposto) {
                 final BSCol col = row.newCol().md(colspan);
