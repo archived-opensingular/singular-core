@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.commons.base.SingularException;
-import br.net.mirante.singular.flow.core.defaults.NullNotifier;
 import br.net.mirante.singular.flow.core.defaults.NullViewLocator;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
@@ -36,7 +35,7 @@ public abstract class SingularFlowConfigurationBean {
             for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
                     getScheduleService()
-                            .schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
+                        .schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
             }
             for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
@@ -53,12 +52,11 @@ public abstract class SingularFlowConfigurationBean {
 
     // ------- Método de recuperação de definições --------------------
 
-    protected ProcessDefinitionCache getDefinitionCache(){
+    protected ProcessDefinitionCache getDefinitionCache() {
         return ProcessDefinitionCache.get(getDefinitionsBasePackage());
     }
 
     protected abstract String getDefinitionsBasePackage();
-
 
     public <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> processClass) {
         return ProcessDefinitionCache.getDefinition(processClass);
@@ -134,30 +132,32 @@ public abstract class SingularFlowConfigurationBean {
 
     // ------- Manipulação de ID --------------------------------------
 
-
-    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
+    // estar nesse lugar
     protected String generateID(ProcessInstance instancia) {
         return new StringBuilder(50)
-                .append(PREFIXO)
-                .append('.')
-                .append(instancia.getProcessDefinition().getKey())
-                .append('.')
-                .append(instancia.getId()).toString();
+            .append(PREFIXO)
+            .append('.')
+            .append(instancia.getProcessDefinition().getKey())
+            .append('.')
+            .append(instancia.getId()).toString();
     }
 
-    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
+    // estar nesse lugar
 
     protected String generateID(TaskInstance instanciaTarefa) {
         ProcessInstance instanciaProcesso = instanciaTarefa.getProcessInstance();
         return new StringBuilder(generateID(instanciaProcesso))
-                .append('.')
-                .append(instanciaTarefa.getId())
-                .toString();
+            .append('.')
+            .append(instanciaTarefa.getId())
+            .toString();
     }
 
-    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
+    // estar nesse lugar
     protected MappingId parseId(String instanciaID) {
-        if (instanciaID == null || instanciaID.length() < 1){
+        if (instanciaID == null || instanciaID.length() < 1) {
             throw new SingularException("O ID da instância não pode ser nulo ou vazio");
         }
         String parts[] = instanciaID.split("\\.");
@@ -166,7 +166,8 @@ public abstract class SingularFlowConfigurationBean {
         return new MappingId(sigla, Integer.parseInt(id));
     }
 
-    //TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse estar nesse lugar
+    // TODO rever generateID e parseId, deveria ser tipado, talvez nem devesse
+    // estar nesse lugar
     protected static class MappingId {
         public final String abbreviation;
         public final Integer cod;
@@ -178,7 +179,7 @@ public abstract class SingularFlowConfigurationBean {
     }
 
     // ------- Geração de link ----------------------------------------
-    protected IViewLocator getViewLocator(){
+    protected IViewLocator getViewLocator() {
         return new NullViewLocator();
     }
 
@@ -186,32 +187,22 @@ public abstract class SingularFlowConfigurationBean {
     protected abstract IUserService getUserService();
 
     /**
-     *
-     * @deprecated utilizar {@link #addListener(ProcessNotifier) addListener} para registrar um listener
-     * ou o método {@link #notifyListeners(Consumer) notifyListeners} para fazer uma notificação.
-     * Será removido na proxima versão.
-     */
-    @Deprecated
-    protected ProcessNotifier getNotifiers() {
-        return new NullNotifier();
-    }
-
-
-    /**
      * Notifica os listeners registrados sobre um evento.
+     * 
      * @param operation
      */
-    public void notifyListeners(Consumer<ProcessNotifier> operation){
-        for (ProcessNotifier n : notifiers){
+    public void notifyListeners(Consumer<ProcessNotifier> operation) {
+        for (ProcessNotifier n : notifiers) {
             operation.accept(n);
         }
     }
 
     /**
      * Registra um listener para receber notificações do Engine
+     * 
      * @param p
      */
-    public void addListener(ProcessNotifier p){
+    public void addListener(ProcessNotifier p) {
         notifiers.add(p);
     }
 
@@ -229,9 +220,7 @@ public abstract class SingularFlowConfigurationBean {
 
     protected abstract IPersistenceService<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getPersistenceService();
 
-
     protected abstract IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> getProcessEntityService();
-
 
     protected IScheduleService getScheduleService() {
         return new QuartzScheduleService();
