@@ -3,6 +3,7 @@ package br.net.mirante.singular.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.persistence.util.Constants;

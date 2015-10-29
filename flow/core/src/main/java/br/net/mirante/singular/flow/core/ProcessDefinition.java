@@ -520,7 +520,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     public final String getKey() {
         if (key == null) {
-            getLogger().warn("!!! process definition key not set, using  class simple name !!!");
+            logger.warn("!!! process definition key not set, using  class simple name !!!");
             key = this.getClass().getSimpleName();
         }
         return key;

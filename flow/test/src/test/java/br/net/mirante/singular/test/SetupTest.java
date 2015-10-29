@@ -20,7 +20,6 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.persistence.entity.TaskRight;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
-import br.net.mirante.singular.persistence.entity.TaskTypeEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
