@@ -13,7 +13,7 @@
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:file:./singulardb;mode=MSSQLServer;"/>
+        <property name="url" value="jdbc:h2:file:/tmp/singulardb-test"/>
         <property name="username" value="sa"/>
         <property name="password" value="sa"/>
     </bean>
@@ -28,11 +28,9 @@
             <props>
                 <!-- Esse dialect do sql server foi colocado para testar se o script é compatível com sql server  -->
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
-                <prop key="hibernate.connection.isolation">2</prop>
-                <prop key="hibernate.jdbc.batch_size">30</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
-                <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
     </bean>
@@ -43,11 +41,5 @@
         <property name="sessionFactory" ref="sessionFactory"/>
         <property name="dataSource" ref="dataSource"/>
     </bean>
-
-    <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
-        <jdbc:script location="classpath:/db/ddl/create-tables.sql"/>
-        <jdbc:script location="classpath:/db/ddl/create-constraints.sql"/>
-        <jdbc:script location="classpath:/db/dml/load-data.sql"/>
-    </jdbc:initialize-database>
 
 </beans>

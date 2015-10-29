@@ -1,5 +1,6 @@
 package br.net.mirante.singular.view;
 
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.TagTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -20,6 +21,10 @@ import br.net.mirante.singular.wicket.ShowcaseApplication;
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class HomeTest {
 
+    private static final String ROOT_PATH = "pageBody:_Content",
+	    			OPTIONS_FORM = ROOT_PATH+":optionsForm",
+	    			NEW_BUTTON = ROOT_PATH+":form:insert";
+
     private WicketTester driver;
 
     @Autowired
@@ -37,12 +42,10 @@ public class HomeTest {
     public void onlyShowTheNewButtonAfterTemplateIsSelected() {
         driver.startPage(CrudPage.class);
         driver.assertRenderedPage(CrudPage.class);
-//        TagTester optionsForm = driver.getTagByWicketId("optionsForm");
-        driver.assertInvisible("pageBody:_Content:form:insert");
-	FormTester options = driver.newFormTester("pageBody:_Content:optionsForm", false);
-        options.setValue("options", ExamplePackage.Types.ORDER.name);
-        options.submit();
-//        driver.assertVisible("pageBody:_Content:form:insert");
+        driver.assertInvisible(NEW_BUTTON);
+	FormTester options = driver.newFormTester(OPTIONS_FORM, false);
+        options.select("options", 0);
+        driver.assertVisible(NEW_BUTTON);
         
     }
 }
