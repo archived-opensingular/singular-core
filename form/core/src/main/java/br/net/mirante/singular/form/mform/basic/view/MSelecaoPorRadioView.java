@@ -9,5 +9,4 @@ public class MSelecaoPorRadioView extends MView {
     public boolean aplicavelEm(MTipo<?> tipo) {
         return tipo instanceof MTipoSimples;
     }
-
 }

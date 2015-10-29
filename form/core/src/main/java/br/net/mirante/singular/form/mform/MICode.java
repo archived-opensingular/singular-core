@@ -10,7 +10,7 @@ public class MICode extends MInstancia {
     }
 
     @Override
-    public boolean isNull() {
+    public boolean isEmptyOfData() {
         return code != null;
     }
 

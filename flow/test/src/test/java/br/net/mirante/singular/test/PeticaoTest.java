@@ -1,30 +1,5 @@
 package br.net.mirante.singular.test;
 
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runners.MethodSorters;
-
 import br.net.mirante.singular.ConstantesUtil;
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
@@ -35,16 +10,41 @@ import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
+import br.net.mirante.singular.test.support.TestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runners.MethodSorters;
+
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PeticaoTest extends TestSupport {
+public abstract class PeticaoTest extends TestSupport {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() {
-        Flow.setConf(mbpmBean);
+        Flow.setConf(mbpmBean, true);
     }
 
     @After

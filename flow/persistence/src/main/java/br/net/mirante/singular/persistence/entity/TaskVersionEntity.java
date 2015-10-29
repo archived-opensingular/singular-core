@@ -7,12 +7,14 @@ import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_VERSAO_TAREFA database table.
  */
 @Entity
-@GenericGenerator(name = AbstractEntityTaskVersion.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")
+@GenericGenerator(name = AbstractEntityTaskVersion.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_VERSAO_TAREFA", schema = Constants.SCHEMA)
 public class TaskVersionEntity extends AbstractEntityTaskVersion<ProcessVersionEntity, TaskDefinitionEntity, TaskTransitionVersionEntity, TaskType> {
     private static final long serialVersionUID = 1L;

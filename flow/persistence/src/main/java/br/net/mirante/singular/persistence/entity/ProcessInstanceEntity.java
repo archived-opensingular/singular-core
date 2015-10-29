@@ -7,6 +7,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -19,7 +20,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  * The persistent class for the TB_INSTANCIA_PROCESSO database table.
  */
 @Entity
-@GenericGenerator(name = AbstractProcessInstanceEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")
+@GenericGenerator(name = AbstractProcessInstanceEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_INSTANCIA_PROCESSO", schema = Constants.SCHEMA)
 public class ProcessInstanceEntity extends AbstractProcessInstanceEntity<Actor, ProcessVersionEntity, TaskInstanceEntity, VariableInstanceEntity, RoleInstanceEntity, ExecutionVariableEntity> {
     private static final long serialVersionUID = 1L;

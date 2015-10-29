@@ -20,14 +20,22 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.persistence.entity.TaskRight;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
+import br.net.mirante.singular.persistence.entity.TaskTypeEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
+import br.net.mirante.singular.test.support.TestSupport;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Testes gerais para o setup de teste do projeto
  */
-public class SetupTest extends TestSupport {
+public abstract class SetupTest extends TestSupport {
 
     @Test
     public void checkLoadTestExecuted() {

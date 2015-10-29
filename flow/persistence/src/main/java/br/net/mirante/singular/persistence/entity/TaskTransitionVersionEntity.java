@@ -6,12 +6,14 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_TRANSICAO database table.
  */
 @Entity
-@GenericGenerator(name = AbstractTaskTransitionVersionEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")
+@GenericGenerator(name = AbstractTaskTransitionVersionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_VERSAO_TRANSICAO", schema = Constants.SCHEMA)
 public class TaskTransitionVersionEntity extends AbstractTaskTransitionVersionEntity<TaskVersionEntity> {
     private static final long serialVersionUID = 1L;

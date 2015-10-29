@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.commons.util.log.Loggable;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
@@ -36,6 +35,8 @@ import br.net.mirante.singular.flow.util.vars.VarService;
 import br.net.mirante.singular.flow.util.view.Lnk;
 
 import com.google.common.base.MoreObjects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -48,7 +49,9 @@ import com.google.common.base.MoreObjects;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class ProcessDefinition<I extends ProcessInstance>
-        implements Comparable<ProcessDefinition<?>>, Loggable {
+        implements Comparable<ProcessDefinition<?>> {
+
+    static final Logger logger = LoggerFactory.getLogger(ProcessDefinition.class);
 
     private final Class<I> processInstanceClass;
 
@@ -504,7 +507,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     public final String getName() {
         if (name == null) {
-            getLogger().warn("!!! process definition name not set, using  class simple name !!!");
+            logger.warn("!!! process definition name not set, using  class simple name !!!");
             name = this.getClass().getSimpleName();
         }
         return name;
@@ -530,7 +533,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      */
     public final String getCategory() {
         if (category == null) {
-            getLogger().warn("!!! process definition category not set, using  class simple name !!!");
+            logger.warn("!!! process definition category not set, using  class simple name !!!");
             category = this.getClass().getSimpleName();
         }
         return category;

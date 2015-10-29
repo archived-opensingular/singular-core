@@ -12,10 +12,11 @@
 -- Colocar script de insert no fim
 -- Executar em comandos separados o DROP, depois os creates de tabela e schema, depois incluir FKs, depois os inserts
 
-SET DATABASE SQL SYNTAX MSS TRUE;
+--SET DATABASE SQL SYNTAX MSS TRUE;
 
-DROP SCHEMA DBSINGULAR
-IF EXISTS CASCADE;
+--DROP SCHEMA DBSINGULAR
+--IF EXISTS CASCADE;
+DROP ALL OBJECTS;
 CREATE SCHEMA DBSINGULAR;
 
 /*==============================================================*/

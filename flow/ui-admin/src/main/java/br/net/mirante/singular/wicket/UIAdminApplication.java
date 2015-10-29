@@ -58,7 +58,7 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
     public RuntimeConfigurationType getConfigurationType() {
         if (System.getProperty("singular.development") != null) {
             return RuntimeConfigurationType.DEVELOPMENT;
-        } else {
+       } else {
             return RuntimeConfigurationType.DEPLOYMENT;
         }
     }

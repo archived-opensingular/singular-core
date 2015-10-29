@@ -23,9 +23,9 @@ public class MAtributo extends MTipo<MInstancia> {
 
     final MInstancia novaInstanciaPara(MTipo<?> dono) {
         if (selfReference) {
-            return dono.novaInstancia();
+            return dono.newInstance(getDicionario().getInternalDicionaryDocument());
         }
-        return super.novaInstancia();
+        return super.newInstance(getDicionario().getInternalDicionaryDocument());
     }
 
     public MTipo<?> getTipoDono() {

@@ -1,8 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -10,10 +15,12 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
-@MFormTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
 public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
 
-    private final Map<String, MTipo<?>> campos = new LinkedHashMap<>();
+    private Map<String, MTipo<?>> fieldsLocal;
+
+    private transient FieldMapOfRecordType fieldsConsolidated;
 
     @SuppressWarnings("unchecked")
     public MTipoComposto() {
@@ -22,6 +29,37 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     protected MTipoComposto(Class<TIPO_INSTANCIA> classeInstancia) {
         super(classeInstancia);
+    }
+
+    private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
+        if (fieldsLocal == null) {
+            fieldsLocal = new LinkedHashMap<>();
+        }
+        fieldsConsolidated = null;
+
+        fieldsLocal.put(localName, type);
+        return type;
+    }
+
+    final FieldMapOfRecordType getFieldsConsolidated() {
+        if (fieldsConsolidated == null) {
+            if (fieldsLocal == null) {
+                if (getSuperTipo() != null && getSuperTipo() instanceof MTipoComposto) {
+                    // Busca reaproveitar, pois muitas extensões são locais e
+                    // não acrescentam campso
+                    fieldsConsolidated = ((MTipoComposto<?>) getSuperTipo()).getFieldsConsolidated();
+                } else {
+                    fieldsConsolidated = new FieldMapOfRecordType();
+                }
+            } else {
+                fieldsConsolidated = new FieldMapOfRecordType();
+                if (getSuperTipo() != null && getSuperTipo() instanceof MTipoComposto) {
+                    fieldsConsolidated.addAll(((MTipoComposto<?>) getSuperTipo()).getFieldsConsolidated());
+                }
+                fieldsConsolidated.addAll(fieldsLocal);
+            }
+        }
+        return fieldsConsolidated;
     }
 
     public <I extends MInstancia, T extends MTipo<I>> T addCampo(Class<T> classeTipo) {
@@ -35,30 +73,43 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return novo;
     }
 
-    public <I extends MInstancia, T extends MTipo<?>> T addCampo(String nomeCampo, Class<T> classeTipo) {
+    public <I extends MInstancia, T extends MTipo<I>> T addCampo(String nomeCampo, Class<T> classeTipo) {
         T novo = extenderTipo(nomeCampo, classeTipo);
-        campos.put(nomeCampo, novo);
-        return novo;
+        return addInterno(nomeCampo, novo);
+    }
+
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+        T tipo = resolverTipo(classeTipoLista);
+        MTipoLista<T> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
+        return addInterno(nomeSimplesNovoTipo, novo);
     }
 
     public <T extends MTipo<?>> MTipoLista<T> addCampoListaOf(String nomeCampo, T tipoElementos) {
         MTipoLista<T> novo = createTipoListaOf(nomeCampo, tipoElementos);
-        campos.put(nomeCampo, novo);
-        return novo;
+        return addInterno(nomeCampo, novo);
     }
 
     public MTipoLista<MTipoComposto<?>> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
         MTipoLista<MTipoComposto<?>> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
-        campos.put(nomeCampo, novo);
-        return novo;
+        return addInterno(nomeCampo, novo);
     }
 
     public MTipo<?> getCampo(String nomeCampo) {
-        return campos.get(nomeCampo);
+        return getFieldsConsolidated().get(nomeCampo);
     }
-    
+
+    public Collection<MTipo<?>> getFields() {
+        return getFieldsConsolidated().getFields();
+    }
+
+    public Collection<MTipo<?>> getFieldsLocal() {
+        return (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
+
+    }
+
+    @Deprecated
     public Set<String> getCampos() {
-        return campos.keySet();
+        return getFields().stream().map(f -> f.getNome()).collect(Collectors.toSet());
     }
 
     // --------------------------------------------------------------------------
@@ -99,5 +150,108 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoInteger addCampoInteger(String nomeCampo, boolean obrigatorio) {
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
+    }
+
+    /**
+     * Mapa de alto nível que funciona tanto por nome quanto por índice do campo
+     * ordenado. Otimiza a performance e mantem a ordem original da criação dos
+     * campos.
+     */
+    final static class FieldMapOfRecordType {
+
+        private LinkedHashMap<String, FieldRef> fields;
+
+        private List<MTipo<?>> fieldsList;
+
+        public int size() {
+            return (fields == null) ? 0 : fields.size();
+        }
+
+        public boolean isEmpty() {
+            return (fields == null) || fields.isEmpty();
+        }
+
+        public List<MTipo<?>> getFields() {
+            return (fields == null) ? Collections.emptyList() : garantirLista();
+        }
+
+        public MTipo<?> get(String fieldName) {
+            if (fields != null) {
+                FieldRef fr = fields.get(fieldName);
+                if (fr != null) {
+                    return fr.getField();
+                }
+            }
+            return null;
+        }
+
+        public void addAll(FieldMapOfRecordType toBeAdded) {
+            if (! toBeAdded.isEmpty()) {
+                toBeAdded.fields.values().forEach(fr -> addInterno(fr.getField()));
+            }
+        }
+
+        public void addAll(Map<String, MTipo<?>> toBeAdded) {
+            toBeAdded.values().forEach(f -> addInterno(f));
+        }
+
+        private void addInterno(MTipo<?> field) {
+            if (fields == null) {
+                fields = new LinkedHashMap<>();
+            }
+            fields.put(field.getNomeSimples(), new FieldRef(field));
+        }
+
+        public int findIndex(String fieldName) {
+            if (fields != null) {
+                garantirLista();
+                FieldRef fr = fields.get(fieldName);
+                if (fr != null) {
+                    return fr.getIndex();
+                }
+            }
+            return -1;
+        }
+
+        public MTipo<?> getByIndex(int fieldIndex) {
+            if (fields != null) {
+                return garantirLista().get(fieldIndex);
+            }
+            throw new SingularFormException("Indice do campo incorreto: " + fieldIndex);
+        }
+
+        private List<MTipo<?>> garantirLista() {
+            if (fieldsList == null) {
+                int index = 0;
+                fieldsList = new ArrayList<>(fields.size());
+                for (FieldRef ref : fields.values()) {
+                    ref.setIndex(index);
+                    fieldsList.add(ref.getField());
+                    index++;
+                }
+            }
+            return fieldsList;
+        }
+    }
+
+    private static final class FieldRef {
+        private final MTipo<?> field;
+        private int index = -1;
+
+        public FieldRef(MTipo<?> field) {
+            this.field = field;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public MTipo<?> getField() {
+            return field;
+        }
     }
 }

@@ -15,6 +15,7 @@
         <property name="userService" ref="testUserService"/>
     </bean>
 
-    <import resource="conf/database.xml"/>
+    <import resource="conf/database-mssql.xml" />
+    <import resource="conf/database-oracle.xml" />
 
 </beans>

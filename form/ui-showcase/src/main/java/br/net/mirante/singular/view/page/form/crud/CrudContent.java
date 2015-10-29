@@ -29,6 +29,8 @@ import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
@@ -42,21 +44,23 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.page.form.FormContent;
 import br.net.mirante.singular.view.page.form.FormVO;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
-public class CrudContent extends Content implements SingularWicketContainer<FormContent, Void> {
+public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
     private static final MDicionario dicionario = TemplateRepository.dicionario();
 
+    private BSDataTable<ExampleDataDTO, String> listTable;
     private List<ExampleDataDTO> dataList = new LinkedList<>();
     transient private MTipoComposto<?> selectedTemplate;
 
-    private final BSModalBorder inputModal = new BSModalBorder("inputModal");
+    private final BSModalBorder inputModal = new BSModalBorder("inputModal"),
+                                deleteModal = new BSModalBorder("deleteModal");
     private BSGrid container = new BSGrid("generated");
-    private Form<?> inputForm = new Form<>("save-form");
+    private Form<?> inputForm = new Form<>("save-form"),
+                    deleteForm = new Form<>("delete-form");
 
     @Inject
     ExampleDataDAO dao;
@@ -65,7 +69,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
     ExampleDataDTO currentModel;
 
     public CrudContent(String id) {
-        super(id, false, true);
+        super(id, false, false);
     }
 
     protected void onInitialize() {
@@ -75,9 +79,18 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         optionsForm.queue(setUpTemplatesOptions());
         queue(optionsForm);
         queue(setUpInsertButton());
-        queue(setupDataTable());
+        listTable = setupDataTable();
+        queue(listTable);
         queue(setupInputModal());
-
+        deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
+             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                 dao.remove(currentModel);
+                 currentModel = null;
+                 updateListTableFromModal(target);
+                 deleteModal.hide(target);
+             }
+        }));
+        queue(deleteModal);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -98,22 +111,26 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
             protected void onSelectionChanged(SelectOption newSelection) {
                 FormVO value = (FormVO) newSelection.getValue();
                 selectedTemplate = value.getValue();
-                dataList = dao.list(selectedTemplate.getNome());
+                updateDataList();
             }
+
         };
         return formChoices;
+    }
+    
+    private void updateDataList() {
+        dataList = dao.list(selectedTemplate.getNome());
     }
 
     private MarkupContainer setUpInsertButton() {
         return new Form<>("form").add(new AjaxButton("insert") {
-            @Override
+            @SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
                 model.setType(selectedTemplate.getNome());
                 openInputModal(target, model);
             }
 
-            @Override
             public boolean isVisible() {
                 return selectedTemplate != null;
             }
@@ -126,8 +143,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                 new BSDataTableBuilder<>(createDataProvider())
                         .appendPropertyColumn(getMessage("label.table.column.key"),
                                 "key", ExampleDataDTO::getKey)
-                        .appendPropertyColumn(getMessage("label.table.column.xml"),
-                                "xml", ExampleDataDTO::getXml)
                         .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
                                         .appendAction(getMessage("label.table.column.edit"),
                                                 Icone.PENCIL_SQUARE, this::openInputModal
@@ -135,7 +150,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         )
                         .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
                                         .appendAction(getMessage("label.table.column.delete"),
-                                                Icone.MINUS, this::openInputModal
+                                                Icone.MINUS, this::deleteSelected
                                         )
                         )
                         .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
@@ -159,20 +174,37 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
         return provider;
     }
 
+    @SuppressWarnings("unchecked")
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-        currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            @SuppressWarnings("unchecked")
-            protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo(selectedTemplate.getNome());
-            }
-        };
-
+        createInstance((MTipo<MIComposto>) 
+                dicionario.getTipo(selectedTemplate.getNome()));
         updateContainer(selectedTemplate);
+        target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
 
-    private void updateContainer(MTipoComposto template) {
+    private void createInstance(final MTipo<MIComposto> tipo) {
+        currentInstance = new MInstanciaRaizModel<MIComposto>() {
+            protected MTipo<MIComposto> getTipoRaiz() {
+                return tipo;
+            }
+        };
+        populateInstance(tipo);
+
+    }
+
+    private void populateInstance(final MTipo<MIComposto> tipo) {
+        if(currentModel.getXml() == null) return;
+        try {
+            MElement xml = MParser.parse(currentModel.getXml());
+            MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void updateContainer(MTipoComposto<?> template) {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
@@ -181,26 +213,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
 
     private void buildContainer(MTipoComposto<?> formType) {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
-
-//        MIComposto object = currentInstance.getObject();
-
-        /*for(String campoName : formType.getCampos()){
-            MTipo<?> t = formType.getCampo(campoName);
-            if(t instanceof MTipoComposto){
-//                MIComposto mci = (MIComposto) ci;
-//                for(MInstancia innerci : mci.getCampos()){
-//                    if(innerci.getMTipo() instanceof MTipoString){
-//                        innerci.setValor("Abacate");
-//                    }
-//                }
-            }
-            if(t instanceof MTipoString){
-                object.setValor(t.getNomeSimples(), "Abacate");
-            }
-            if(t instanceof MTipoInteger){
-                object.setValor(t.getNomeSimples(), "123456");
-            }
-        }*/
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
     }
 
@@ -217,12 +229,25 @@ public class CrudContent extends Content implements SingularWicketContainer<Form
                         new PrintWriter(buffer));
                 currentModel.setXml(buffer.toString());
                 dao.save(currentModel);
-                dataList = dao.list(selectedTemplate.getNome());
+                updateListTableFromModal(target);
                 inputModal.hide(target);
             }
         }));
 
         return inputModal;
+    }
+    
+    private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
+        currentModel = model.getObject();
+//      dao.remove(currentModel);
+//      currentModel = null;
+//      updateListTableFromModal(target);
+        deleteModal.show(target);
+    }
+
+    private void updateListTableFromModal(AjaxRequestTarget target) {
+        updateDataList();
+        target.add(listTable);
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {

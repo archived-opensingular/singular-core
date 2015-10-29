@@ -551,7 +551,7 @@ public class ProcessInstance implements Serializable {
             TaskInstance tarefaNova = getTaskInstance(tarefa);
             estadoAtual = task;
 
-            Flow.getMbpmBean().getNotifiers().notifyStateUpdate(this);
+            Flow.notifyListeners(n -> n.notifyStateUpdate(ProcessInstance.this));
             return tarefaNova;
         }
     }

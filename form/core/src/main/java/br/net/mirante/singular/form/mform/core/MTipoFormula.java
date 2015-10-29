@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 
-@MFormTipo(nome = "Formula", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "Formula", pacote = MPacoteCore.class)
 public class MTipoFormula extends MTipoComposto<MIFormula> {
 
     public static final String CAMPO_SCRIPT = "script";

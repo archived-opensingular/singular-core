@@ -14,9 +14,8 @@ public class MPacoteUtil extends MPacote {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-
         pb.createTipo(MTipoCPF.class);
-        pb.createTipo(MTipoCNPJ.class).as(AtrBasic.class).label("CNPJ").tamanhoMaximo(14);
+        pb.createTipo(MTipoCNPJ.class);
         pb.createTipo(MTipoCEP.class);
         pb.createTipo(MTipoEMail.class);
         pb.createTipo(MTipoAnoMes.class);

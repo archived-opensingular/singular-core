@@ -1,6 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 /**
  * Reresenta uma referência a ProcessDefinition que pode ser serializada de modo
@@ -9,21 +10,18 @@ import java.io.Serializable;
  *
  * @author Daniel C. Bordin
  */
-public abstract class RefProcessDefinition implements Serializable {
+public abstract class RefProcessDefinition implements Serializable, Supplier<ProcessDefinition<?>> {
 
     private transient ProcessDefinition<?> processDefinition;
 
     protected abstract ProcessDefinition<?> reload();
 
+    @Override
     public final ProcessDefinition<?> get() {
         if (processDefinition == null) {
             processDefinition = reload();
         }
         return processDefinition;
-    }
-
-    public void detach() {
-        processDefinition = null;
     }
 
     public static RefProcessDefinition of(Class<? extends ProcessDefinition<?>> processDefinitionClass) {

@@ -1,14 +1,17 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class MIComposto extends MInstancia {
+import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
 
-    private Map<String, MInstancia> campos;
+public class MIComposto extends MInstancia implements ICompositeInstance {
+
+    private FieldMapOfRecordInstance fields;
 
     @Override
     public MTipoComposto<?> getMTipo() {
@@ -21,46 +24,43 @@ public class MIComposto extends MInstancia {
     }
 
     @Override
-    public boolean isNull() {
-        return campos == null || campos.values().stream().allMatch(i -> i.isNull());
+    public boolean isEmptyOfData() {
+        return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
     }
 
     public Collection<MInstancia> getCampos() {
-        if (campos == null) {
-            return Collections.emptyList();
-        }
-        return campos.values();
+        return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
 
+    @Override
+    public Collection<MInstancia> getChildren() {
+        return getCampos();
+    }
+
+    @Override
+    public Stream<? extends MInstancia> stream() {
+        return fields == null ? Stream.empty() : fields.stream();
+    }
+
+    @Override
     public MInstancia getCampo(String path) {
         return getCampo(new LeitorPath(path));
     }
 
-    public MInstancia getCampo(LeitorPath leitorPath) {
-        if (!leitorPath.isNomeSimplesValido()) {
-            throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um nome de campo válido"));
-        }
-        MInstancia instancia = null;
-        if (campos != null) {
-            instancia = campos.get(leitorPath.getTrecho());
-        }
+    @Override
+    final MInstancia getCampoLocal(LeitorPath leitor) {
+        int fieldIndex = findIndexTrecho(leitor);
+        MInstancia instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
-            MTipo<?> tipoCampo = getMTipo().getCampo(leitorPath.getTrecho());
-            if (tipoCampo == null) {
-                throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um campo definido"));
-            }
-            instancia = tipoCampo.novaInstancia();
-            instancia.setPai(this);
-            if (campos == null) {
-                campos = new LinkedHashMap<>();
-            }
-            campos.put(leitorPath.getTrecho(), instancia);
+            instancia = createField(fieldIndex);
         }
-        if (leitorPath.isUltimo()) {
-            return instancia;
-        } else {
-            return ((MIComposto) instancia).getCampo(leitorPath.proximo());
-        }
+        return instancia;
+    }
+
+    @Override
+    final MInstancia getCampoLocalSemCriar(LeitorPath leitor) {
+        int fieldIndex = findIndexTrecho(leitor);
+        return (fields == null) ? null : fields.getByIndex(fieldIndex);
     }
 
     public <T extends MInstancia> T getFilho(MTipo<T> tipoPai) {
@@ -68,32 +68,27 @@ public class MIComposto extends MInstancia {
     }
 
     @Override
+    public final void setValor(String pathCampo, Object valor) {
+        setValor(new LeitorPath(pathCampo), valor);
+    }
+
+    private FieldMapOfRecordType getFieldsDef() {
+        return getMTipo().getFieldsConsolidated();
+    }
+
+    @Override
     void setValor(LeitorPath leitorPath, Object valor) {
-        if (!leitorPath.isNomeSimplesValido()) {
-            throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um nome de campo válido"));
-        }
-        MInstancia instancia = null;
-        if (campos != null) {
-            instancia = campos.get(leitorPath.getTrecho());
-        }
+        int fieldIndex = findIndexTrecho(leitorPath);
+        MInstancia instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
-            MTipo<?> tipoCampo = getMTipo().getCampo(leitorPath.getTrecho());
-            if (tipoCampo == null) {
-                throw new RuntimeException(leitorPath.getTextoErro(this, "Não é um campo definido"));
-            }
             if (valor == null) {
                 return;
             }
-            instancia = tipoCampo.novaInstancia();
-            instancia.setPai(this);
-            if (campos == null) {
-                campos = new LinkedHashMap<>();
-            }
-            campos.put(leitorPath.getTrecho(), instancia);
+            instancia = createField(fieldIndex);
         }
         if (leitorPath.isUltimo()) {
             if (valor == null) {
-                campos.remove(leitorPath.getTrecho());
+                fields.remove(fieldIndex);
             } else {
                 instancia.setValor(valor);
             }
@@ -102,41 +97,38 @@ public class MIComposto extends MInstancia {
         }
     }
 
-    public boolean isCampoNull(String pathCampo) {
-        return getValor() == null;
+    private MInstancia createField(int fieldIndex) {
+        MInstancia instancia;
+        MTipo<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
+        instancia = tipoCampo.newInstance(getDocument());
+        instancia.setPai(this);
+        if (fields == null) {
+            fields = new FieldMapOfRecordInstance(getFieldsDef());
+        }
+        fields.set(fieldIndex, instancia);
+        return instancia;
     }
 
-    public Optional<Object> getValorOpt(String pathCampo) {
-        return getValorOpt(pathCampo, null);
-    }
-
-    public final <T extends Object> Optional<T> getValorOpt(String pathCampo, Class<T> classeDestino) {
-        return Optional.ofNullable(getValor(pathCampo, classeDestino));
+    private int findIndexTrecho(LeitorPath leitor) {
+        if (leitor.isIndice()) {
+            throw new SingularFormException(leitor.getTextoErro(this, "Não é uma lista"));
+        }
+        int fieldIndex = getFieldsDef().findIndex(leitor.getTrecho());
+        if (fieldIndex == -1) {
+            throw new SingularFormException(leitor.getTextoErro(this, "Não é um campo definido"));
+        }
+        return fieldIndex;
     }
 
     @Override
-    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        if (campos != null) {
-            if (leitor.isEmpty()) {
-                return getValor(classeDestino);
-            }
-            MInstancia instancia = campos.get(leitor.getTrecho());
-            if (instancia != null) {
-                return instancia.getValor(leitor.proximo(), classeDestino);
-            }
-        }
-        MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
-        // if (!(tipo instanceof MTipoSimples)) {
-        // throw new RuntimeException(leitor.getTextoErro(this,
-        // "Não é um tipo simples definido"));
-        // }
-        return null;
+    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
+        return getValor(new LeitorPath(pathCampo), classeDestino);
     }
 
     @Override
     final <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
-        if (campos != null) {
-            MInstancia instancia = campos.get(leitor.getTrecho());
+        if (fields != null) {
+            MInstancia instancia = fields.getByIndex(findIndexTrecho(leitor));
             if (instancia != null) {
                 return instancia.getValorWithDefaultIfNull(leitor.proximo(), classeDestino);
             }
@@ -145,8 +137,32 @@ public class MIComposto extends MInstancia {
         return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
     }
 
-    public final <T extends Object> T getValorInterno(String nomeSimples, Class<T> classeDestino) {
-        MInstancia instancia = campos.get(nomeSimples);
-        return instancia.getValor(classeDestino);
+    private final static class FieldMapOfRecordInstance {
+
+        private final MInstancia[] instances;
+
+        public FieldMapOfRecordInstance(FieldMapOfRecordType fieldsDef) {
+            this.instances = new MInstancia[fieldsDef.size()];
+        }
+
+        public MInstancia getByIndex(int fieldIndex) {
+            return instances[fieldIndex];
+        }
+
+        public void remove(int fieldIndex) {
+            instances[fieldIndex] = null;
+        }
+
+        public void set(int fieldIndex, MInstancia instance) {
+            instances[fieldIndex] = instance;
+        }
+
+        public List<MInstancia> getFields() {
+            return stream().collect(Collectors.toList());
+        }
+
+        public Stream<MInstancia> stream() {
+            return Arrays.stream(instances).filter(i -> i != null);
+        }
     }
 }
