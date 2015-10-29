@@ -22,7 +22,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
     public static final String STRING_USADA_NO_TESTE = "Pessoa X";
 
     public DefinicaoComVariaveis() {
-        super(ProcessInstance.class);
+        super("DefVar",ProcessInstance.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }

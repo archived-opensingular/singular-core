@@ -51,13 +51,13 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
     @JoinColumn(name = "CO_CATEGORIA")
     private CATEGORY category;
 
-    @Column(name = "SG_PROCESSO", length = 200, nullable = false)
+    @Column(name = "SG_PROCESSO", length = 200, nullable = false, unique = true)
     private String key;
 
     @Column(name = "NO_PROCESSO", length = 200, nullable = false)
     private String name;
 
-    @Column(name = "NO_CLASSE_JAVA", length = 250)
+    @Column(name = "NO_CLASSE_JAVA", length = 250, nullable = false, unique = true)
     private String definitionClassName;
 
     @OneToMany(mappedBy = "processDefinition", fetch = FetchType.LAZY)

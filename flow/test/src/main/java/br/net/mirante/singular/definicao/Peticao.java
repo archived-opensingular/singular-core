@@ -61,7 +61,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
     public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
-        super(ProcessInstance.class);
+        super("Peticoes",ProcessInstance.class);
     }
 
     @Override

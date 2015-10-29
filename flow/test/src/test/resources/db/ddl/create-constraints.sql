@@ -177,3 +177,10 @@ CREATE INDEX IX_PROCESSO ON DBSINGULAR.TB_VERSAO_PROCESSO (
   CO_DEFINICAO_PROCESSO ASC,
   DT_VERSAO ASC
 );
+
+/*==============================================================*/
+/* Index: IX_CLASSE_DEFINICAO                                   */
+/*==============================================================*/
+CREATE UNIQUE INDEX IX_CLASSE_DEFINICAO ON DBSINGULAR.TB_DEFINICAO_PROCESSO (
+	NO_CLASSE_JAVA ASC
+)

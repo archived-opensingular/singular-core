@@ -20,8 +20,8 @@ import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
@@ -29,6 +29,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
+import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
 import br.net.mirante.singular.flow.util.props.MetaData;
 import br.net.mirante.singular.flow.util.props.MetaDataRef;
 import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
@@ -51,10 +52,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         implements Comparable<ProcessDefinition<?>>, Loggable {
 
     private final Class<I> processInstanceClass;
+    
+    private final String key;
 
     private String category;
-
-    private String key;
 
     private String name;
 
@@ -81,11 +82,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Instancia uma nova definição de processo do tipo informado.
      * </p>
      *
+     * @param key
+     *            a chave do processo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      */
-    protected ProcessDefinition(Class<I> instanceClass) {
-        this(instanceClass, VarService.basic());
+    protected ProcessDefinition(String key, Class<I> instanceClass) {
+        this(key, instanceClass, VarService.basic());
     }
 
     /**
@@ -93,13 +96,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Instancia uma nova definição de processo do tipo informado.
      * </p>
      *
+     * @param key
+     *            a chave do processo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
-        this.processInstanceClass = instanceClass;
+    protected ProcessDefinition(String key, Class<I> processInstanceClass, VarService varService) {
+        Objects.requireNonNull(key, "key");
+        Objects.requireNonNull(processInstanceClass, "processInstanceClass");
+        if(getClass().getSimpleName().equalsIgnoreCase(key)){
+            throw new SingularFlowException("A chave do processo("+getClass().getSimpleName()+") não pode ser igual a key.");
+        }
+        this.key = key;
+        this.processInstanceClass = processInstanceClass;
         this.variableService = varService;
     }
 
@@ -321,10 +332,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         synchronized (this) {
             if (entityVersionCod == null) {
                 try {
-                    IEntityProcessVersion newVersion = Flow.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getMbpmBean().getProcessEntityService();
+                    IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
 
                     IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
-                    if (Flow.getMbpmBean().getProcessEntityService().isDifferentVersion(oldVersion, newVersion)) {
+                    if (processEntityService.isDifferentVersion(oldVersion, newVersion)) {
 
                         entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
                     } else {
@@ -516,10 +528,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return a chave deste processo.
      */
     public final String getKey() {
-        if (key == null) {
-            getLogger().warn("!!! process definition key not set, using  class simple name !!!");
-            key = this.getClass().getSimpleName();
-        }
         return key;
     }
 
@@ -617,12 +625,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            o nome.
      */
     protected final void setName(String category, String name) {
-        setName(category, generateAbbreviation(), name);
-    }
-
-    private void setName(String category, String abbreviation, String name) {
         this.category = category;
-        this.key = abbreviation;
         this.name = name;
     }
 
