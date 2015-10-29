@@ -1,17 +1,8 @@
 package br.net.mirante.singular.definicao;
 
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
-
 import java.util.Calendar;
 
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
@@ -21,6 +12,15 @@ import br.net.mirante.singular.flow.core.builder.BProcessRole;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.defaults.NullTaskAccessStrategy;
+
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_ANALISE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_GERENTE;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.EM_EXIGENCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.NOTIFICAR_NOVA_INSTANCIA;
+import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
 
 public class Peticao extends ProcessDefinition<ProcessInstance> {
 
@@ -73,11 +73,11 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", PAPEL_ANALISTA, false);
         BProcessRole<?> papelGerente = flow.addRoleDefinition("GERENTE", PAPEL_GERENTE, false);
 
-        flow.addJava(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
+        flow.addJavaTask(NOTIFICAR_NOVA_INSTANCIA).call(this::notificar);
         flow.addPeopleTask(AGUARDANDO_ANALISE, papelAnalista);
         flow.addPeopleTask(EM_EXIGENCIA, new NullTaskAccessStrategy());
         flow.addPeopleTask(AGUARDANDO_GERENTE, papelGerente)
-            .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
+                .withTargetDate((processInstance, taskInstance) -> addDias(processInstance, 1).getTime());
         flow.addPeopleTask(AGUARDANDO_PUBLICACAO, new NullTaskAccessStrategy());
         flow.addEnd(INDEFERIDO);
         flow.addEnd(DEFERIDO);
@@ -108,7 +108,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         return calendar;
     }
 
-    public void notificar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void notificar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("Notificado");
 
     }

@@ -15,7 +15,7 @@ import br.net.mirante.singular.persistence.util.Constants;
  */
 @Entity
 @Table(name = "TB_ATOR", schema = Constants.SCHEMA)
-public class Actor implements MUser {
+public class Actor extends BaseEntity implements MUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

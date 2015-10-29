@@ -1,17 +1,11 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-import static java.util.stream.Collectors.*;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -19,9 +13,8 @@ import org.apache.wicket.model.IModel;
 
 public class BSLabel extends Label implements IBSGridCol<BSLabel> {
 
-    private Set<String>     targetComponentIds = new HashSet<>();
-    private MarkupContainer container;
-    private String          tagName;
+    private Component targetComponent;
+    private String    tagName;
 
     public BSLabel(String id, IModel<?> model) {
         super(id, model);
@@ -44,7 +37,6 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onInitialize() {
         super.onInitialize();
         add($b.classAppender("control-label"));
@@ -53,30 +45,24 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
 
         // adiciona classe 'required' se algum FormComponent do
         // container é required
-        add($b.classAppender("required", $m.get(() -> firstRequiredInput().map(it -> it.isRequired()).orElse(false))));
-        add($b.attr("for", firstRequiredInput().map(it -> it.getMarkupId()).orElse("")));
+        add($b.classAppender("required", $m.get(() -> findTargetFormComponent().map(it -> it.isRequired()).orElse(false))));
+        add($b.attr("for", $m.get(() -> findTargetFormComponent().map(it -> it.getMarkupId()).orElse(""))));
 
         // altera propriedade label dos componentes se com o valor desta
         // label, se a primeira for null
-        IModel<?> labelModel = getDefaultModel();
-        add($b.onConfigure(c -> {
-            if (container != null)
-                findChildren(container, Component.class)
-                    .filter(comp -> targetComponentIds.isEmpty() || targetComponentIds.contains(comp.getId()))
-                    .flatMap($L.instancesOf(FormComponent.class))
-                    .filter(it -> it.getLabel() == null)
-                    .forEach(fc -> fc.setLabel(labelModel));
-        }));
+        IModel<String> labelModel = $m.get(() -> getDefaultModelObjectAsString());
+        add($b.onConfigure(c ->
+            findTargetFormComponent()
+                .filter(it -> it.getLabel() == null)
+                .ifPresent(it -> it.setLabel(labelModel))
+            ));
     }
 
-    @SuppressWarnings("rawtypes")
-    protected Optional<FormComponent> firstRequiredInput() {
-        return (container == null)
-            ? Optional.empty()
-            : findChildren(container, FormComponent.class)
-                .filter(comp -> targetComponentIds.isEmpty() || targetComponentIds.contains(comp.getId()))
-                .flatMap($L.instancesOf(FormComponent.class))
-                .findFirst();
+    protected Optional<? extends Component> findTargetComponent() {
+        return Optional.ofNullable(targetComponent);
+    }
+    protected Optional<? extends FormComponent<?>> findTargetFormComponent() {
+        return findTargetComponent().flatMap($L.instanceOf(FormComponent.class));
     }
 
     @Override
@@ -88,20 +74,8 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
         }
     }
 
-    public BSLabel setContainer(MarkupContainer container) {
-        this.container = container;
-        return this;
-    }
-
-    public BSLabel setTargetComponentIds(String targetIds) {
-        this.targetComponentIds = new HashSet<>(Arrays.asList(
-            (targetIds == null) ? new String[0] : targetIds.split("[, ]+")));
-        return this;
-    }
-    public BSLabel setTargetComponents(Component... targets) {
-        this.targetComponentIds = new HashSet<>(
-            Stream.of(targets)
-                .map(it -> it.getId()).collect(toList()));
+    public BSLabel setTargetComponent(Component target) {
+        this.targetComponent = target;
         return this;
     }
 

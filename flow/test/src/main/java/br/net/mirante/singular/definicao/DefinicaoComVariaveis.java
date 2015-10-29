@@ -1,6 +1,6 @@
 package br.net.mirante.singular.definicao;
 
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
@@ -32,13 +32,13 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         FlowBuilder f = new FlowBuilderImpl(this);
 
         ITaskDefinition PRINT = () -> "Print Variavel";
-        f.addJava(PRINT).call(this::printVar);
+        f.addJavaTask(PRINT).call(this::printVar);
 
         ITaskDefinition SET_VARIAVEL = () -> "Definir Variavel";
-        f.addJava(SET_VARIAVEL).call(this::setVar);
+        f.addJavaTask(SET_VARIAVEL).call(this::setVar);
 
         ITaskDefinition APROVAR = () -> "Aprovar Definiçâo";
-        f.addJava(APROVAR).call(this::print);
+        f.addJavaTask(APROVAR).call(this::print);
 
         ITaskDefinition END = () -> "Aprovado";
         f.addEnd(END);
@@ -57,18 +57,18 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         return instancia;
     }
 
-    public void print(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("legal");
     }
 
-    public void setVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void setVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         instancia.setVariavel("nome", STRING_USADA_NO_TESTE);
         instancia.setVariavel("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
 
         instancia.saveEntity();
     }
 
-    public void printVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void printVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("########### nome          #####>" + instancia.getValorVariavel("nome"));
         System.out.println("########### qualquerCoisa #####>" + instancia.getValorVariavel("qualquerCoisa"));
     }

@@ -17,6 +17,8 @@ import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
 import br.net.mirante.singular.flow.core.service.IUserService;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
+import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
+import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
 import br.net.mirante.singular.flow.util.view.IViewLocator;
 
@@ -24,6 +26,22 @@ import br.net.mirante.singular.flow.util.view.IViewLocator;
 public abstract class SingularFlowConfigurationBean {
 
     public static final String PREFIXO = "SGL";
+
+    final void start() {
+        for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
+            for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
+                if (!task.isImmediateExecution()) {
+                    getScheduleService()
+                            .schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
+                }
+            }
+            for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
+                getScheduleService().schedule(scheduledJob);
+            }
+        }
+        getScheduleService().schedule(new ExecuteWaitingTasksJob(ScheduleDataBuilder.buildHourly(1)));
+        init();
+    }
 
     protected void init() {
 
@@ -54,7 +72,7 @@ public abstract class SingularFlowConfigurationBean {
 
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
-        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
+        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcessVersion().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
     }
 
@@ -118,7 +136,7 @@ public abstract class SingularFlowConfigurationBean {
         return new StringBuilder(50)
                 .append(PREFIXO)
                 .append('.')
-                .append(instancia.getProcessDefinition().getAbbreviation())
+                .append(instancia.getProcessDefinition().getKey())
                 .append('.')
                 .append(instancia.getId()).toString();
     }

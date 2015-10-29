@@ -89,7 +89,7 @@ public class FlowBuilderImpl extends
          * com o nome informado.
          */
         public BTransition<?> go(String actionName, ITaskDefinition taskRefDestiny) {
-            return getFlowBuilder().addTransition(this, actionName, getFlowBuilder().from(taskRefDestiny));
+            return getFlowBuilder().addTransition(this, actionName, taskRefDestiny);
         }
 
         /**

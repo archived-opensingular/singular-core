@@ -12,32 +12,32 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.persistence.entity.Actor;
-import br.net.mirante.singular.persistence.entity.Category;
-import br.net.mirante.singular.persistence.entity.ExecutionVariable;
-import br.net.mirante.singular.persistence.entity.Process;
-import br.net.mirante.singular.persistence.entity.ProcessDefinition;
-import br.net.mirante.singular.persistence.entity.ProcessInstance;
-import br.net.mirante.singular.persistence.entity.Role;
-import br.net.mirante.singular.persistence.entity.RoleInstance;
-import br.net.mirante.singular.persistence.entity.Task;
-import br.net.mirante.singular.persistence.entity.TaskDefinition;
-import br.net.mirante.singular.persistence.entity.TaskHistoryType;
-import br.net.mirante.singular.persistence.entity.TaskInstance;
-import br.net.mirante.singular.persistence.entity.TaskInstanceHistory;
-import br.net.mirante.singular.persistence.entity.Variable;
-import br.net.mirante.singular.persistence.entity.VariableType;
+import br.net.mirante.singular.persistence.entity.CategoryEntity;
+import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
+import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
+import br.net.mirante.singular.persistence.entity.RoleDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.RoleInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.TaskHistoricTypeEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
+import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
+import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
+import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
 public class DefaultHibernatePersistenceService extends
-        AbstractHibernatePersistenceService<Category, ProcessDefinition,
-                Process,
-                ProcessInstance,
-                TaskInstance,
-                TaskDefinition,
-                Task,
-                Variable,
-                Role,
-                RoleInstance> {
+        AbstractHibernatePersistenceService<CategoryEntity, ProcessDefinitionEntity,
+                ProcessVersionEntity,
+                ProcessInstanceEntity,
+                TaskInstanceEntity,
+                TaskDefinitionEntity,
+                TaskVersionEntity,
+                VariableInstanceEntity,
+                RoleDefinitionEntity,
+                RoleInstanceEntity> {
 
     public DefaultHibernatePersistenceService(SessionLocator sessionLocator) {
         super(sessionLocator);
@@ -48,18 +48,18 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    protected ProcessInstance newProcessInstance(Process processVersion) {
-        ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setProcess(processVersion);
+    protected ProcessInstanceEntity newProcessInstance(ProcessVersionEntity processVersion) {
+        ProcessInstanceEntity processInstance = new ProcessInstanceEntity();
+        processInstance.setProcessVersion(processVersion);
         processInstance.setRoles(new ArrayList<>());
         return processInstance;
     }
 
     @Override
-    protected RoleInstance newEntityRole(ProcessInstance instance, Role role, MUser user, MUser allocator) {
-        final RoleInstance entityRole = new RoleInstance();
+    protected RoleInstanceEntity newEntityRole(ProcessInstanceEntity instance, RoleDefinitionEntity role, MUser user, MUser allocator) {
+        final RoleInstanceEntity entityRole = new RoleInstanceEntity();
         entityRole.setProcessInstance(instance);
-        entityRole.setActor((Actor) user);
+        entityRole.setUser((Actor) user);
         entityRole.setRole(role);
         entityRole.setAllocatorUser((Actor) allocator);
         entityRole.setCreateDate(new Date());
@@ -71,33 +71,33 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    protected Class<TaskInstance> getClassTaskInstance() {
-        return TaskInstance.class;
+    protected Class<TaskInstanceEntity> getClassTaskInstance() {
+        return TaskInstanceEntity.class;
     }
 
     @Override
-    protected TaskInstance newTaskInstance(ProcessInstance processInstance, Task taskVersion) {
-        TaskInstance taskInstance = new TaskInstance();
+    protected TaskInstanceEntity newTaskInstance(ProcessInstanceEntity processInstance, TaskVersionEntity taskVersion) {
+        TaskInstanceEntity taskInstance = new TaskInstanceEntity();
         taskInstance.setProcessInstance(processInstance);
         taskInstance.setTask(taskVersion);
         return taskInstance;
     }
 
     @Override
-    protected IEntityTaskInstanceHistory newTaskInstanceHistory(TaskInstance task, IEntityTaskHistoricType taskHistoryType,
+    protected IEntityTaskInstanceHistory newTaskInstanceHistory(TaskInstanceEntity task, IEntityTaskHistoricType taskHistoryType,
             MUser allocatedUser, MUser responsibleUser) {
 
-        TaskInstanceHistory history = new TaskInstanceHistory();
+        TaskInstanceHistoryEntity history = new TaskInstanceHistoryEntity();
         history.setTaskInstance(task);
-        history.setTaskHistoryType((TaskHistoryType) taskHistoryType);
+        history.setType((TaskHistoricTypeEntity) taskHistoryType);
         history.setAllocatedUser((Actor) allocatedUser);
         history.setAllocatorUser((Actor) responsibleUser);
         return history;
     }
 
     @Override
-    protected Class<? extends TaskHistoryType> getClassEntityTaskHistoricType() {
-        return TaskHistoryType.class;
+    protected Class<? extends TaskHistoricTypeEntity> getClassEntityTaskHistoricType() {
+        return TaskHistoricTypeEntity.class;
     }
 
     // -------------------------------------------------------
@@ -105,8 +105,8 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    public Process retrieveProcessVersionByCod(Integer cod) {
-        return getSession().refreshByPk(Process.class, cod);
+    public ProcessVersionEntity retrieveProcessVersionByCod(Integer cod) {
+        return getSession().refreshByPk(ProcessVersionEntity.class, cod);
     }
 
     // -------------------------------------------------------
@@ -114,13 +114,13 @@ public class DefaultHibernatePersistenceService extends
     // -------------------------------------------------------
 
     @Override
-    protected Variable retrieveVariableInstanceByCod(Integer cod) {
-        return getSession().retrieve(Variable.class, cod);
+    protected VariableInstanceEntity retrieveVariableInstanceByCod(Integer cod) {
+        return getSession().retrieve(VariableInstanceEntity.class, cod);
     }
 
     @Override
-    protected Variable newVariableInstance(ProcessInstance processInstance, String name) {
-        Variable variable = new Variable();
+    protected VariableInstanceEntity newVariableInstance(ProcessInstanceEntity processInstance, String name) {
+        VariableInstanceEntity variable = new VariableInstanceEntity();
         variable.setProcessInstance(processInstance);
         variable.setName(name);
         return variable;
@@ -128,25 +128,25 @@ public class DefaultHibernatePersistenceService extends
 
 
     @Override
-    protected IEntityExecutionVariable newExecutionVariable(ProcessInstance instance, IEntityVariableInstance processInstanceVar,
-            TaskInstance originTask, TaskInstance destinationTask, IEntityVariableType type) {
-        ExecutionVariable novo = new ExecutionVariable();
-        novo.setVariable((Variable) processInstanceVar);
+    protected IEntityExecutionVariable newExecutionVariable(ProcessInstanceEntity instance, IEntityVariableInstance processInstanceVar,
+            TaskInstanceEntity originTask, TaskInstanceEntity destinationTask, IEntityVariableType type) {
+        ExecutionVariableEntity novo = new ExecutionVariableEntity();
+        novo.setVariable((VariableInstanceEntity) processInstanceVar);
         novo.setProcessInstance(instance);
         novo.setOriginTask(originTask);
         novo.setDestinationTask(destinationTask);
-        novo.setVariableType((VariableType) type);
+        novo.setType((VariableTypeInstance) type);
         return novo;
     }
 
     @Override
     protected Class<? extends IEntityVariableType> getClassEntityVariableType() {
-        return VariableType.class;
+        return VariableTypeInstance.class;
     }
 
     @Override
-    protected Class<ProcessInstance> getClassProcessInstance() {
-        return ProcessInstance.class;
+    protected Class<ProcessInstanceEntity> getClassProcessInstance() {
+        return ProcessInstanceEntity.class;
     }
     
     // -------------------------------------------------------

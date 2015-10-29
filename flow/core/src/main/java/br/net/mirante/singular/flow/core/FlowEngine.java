@@ -7,9 +7,9 @@ import java.util.function.BiFunction;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -89,14 +89,14 @@ class FlowEngine {
                         }
                     }
                 }
-                final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
+                final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
                 }
                 instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
                 return instanciaTarefa;
             }
-            final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
+            final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
             instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
 
             instancia.setExecutionContext(execucaoTask);
@@ -109,7 +109,7 @@ class FlowEngine {
             } finally {
                 instancia.setExecutionContext(null);
             }
-            final String nomeTransicao = execucaoTask.getTransicaoResultado();
+            final String nomeTransicao = execucaoTask.getTransition();
             transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
@@ -117,7 +117,7 @@ class FlowEngine {
     }
 
     public static void executeScheduledTransition(MTaskJava taskJava, ProcessInstance instancia) {
-        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, instancia.getCurrentTask(), null);
+        final ExecutionContext execucaoTask = new ExecutionContext(instancia, instancia.getCurrentTask(), null);
         instancia.setExecutionContext(execucaoTask);
         try {
             taskJava.execute(execucaoTask);
@@ -125,7 +125,7 @@ class FlowEngine {
             instancia.setExecutionContext(null);
         }
 
-        executeTransition(instancia, execucaoTask.getTransicaoResultado(), null);
+        executeTransition(instancia, execucaoTask.getTransition(), null);
     }
 
     static TaskInstance executeTransition(ProcessInstance instancia, String transitionName, VarInstanceMap<?> param) {
@@ -171,8 +171,8 @@ class FlowEngine {
     }
 
     @SuppressWarnings("unchecked")
-    private static IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow
+    private static IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
                 .getMbpmBean().getPersistenceService();
     }
 

@@ -12,9 +12,9 @@ public abstract class AbstractProcessNotifiers {
     public abstract void notifyUserTaskAllocation(TaskInstance taskInstance, MUser responsibleUser, MUser userToNotify, MUser allocatedUser,
             MUser removedUser, String justification);
 
-    public abstract void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask);
+    public abstract void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecutionContext execucaoTask);
 
-    public abstract void notifyStartToInterestedUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask);
+    public abstract void notifyStartToInterestedUser(TaskInstance taskInstance, ExecutionContext execucaoTask);
 
     public abstract <X extends MUser> void notifyLogToUsers(TaskHistoricLog taskHistoricLog, List<X> usersToNotify);
 

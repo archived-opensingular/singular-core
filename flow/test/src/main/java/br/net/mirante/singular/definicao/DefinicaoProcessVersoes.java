@@ -47,9 +47,9 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJava(start).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
                 ITaskDefinition task = () -> "Task";
-                flow.addJava(task).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
                 ITaskDefinition people = () -> "People";
                 flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End";
@@ -74,9 +74,9 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BProcessRole<?> papelAnalista = flow.addRoleDefinition("ANALISTA", "ANALISTA", false);
 
                 ITaskDefinition start = () -> "Start";
-                flow.addJava(start).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
                 ITaskDefinition task = () -> "Task";
-                flow.addJava(task).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
                 ITaskDefinition people = () -> "People";
                 flow.addPeopleTask(people, papelAnalista).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End";
@@ -101,9 +101,9 @@ public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
                 BProcessRole<?> papelTecnico = flow.addRoleDefinition("TECNICO", "TECNICO", false);
 
                 ITaskDefinition start = () -> "Start 2";
-                flow.addJava(start).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(start).call((ProcessVersoes p) -> {});
                 ITaskDefinition task = () -> "Task 2";
-                flow.addJava(task).call((ProcessVersoes p) -> {});
+                flow.addJavaTask(task).call((ProcessVersoes p) -> {});
                 ITaskDefinition people = () -> "People 2";
                 flow.addPeopleTask(people, papelTecnico).withExecutionPage(new NullPageStrategy());
                 ITaskDefinition end = () -> "End 2";

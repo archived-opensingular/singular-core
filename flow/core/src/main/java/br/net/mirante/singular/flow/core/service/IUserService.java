@@ -12,6 +12,12 @@ public interface IUserService {
      */
     public MUser getUserIfAvailable();
 
+    /**
+     * Verifica se o flow pode alocar uma task para o usuário passado como
+     * parâmetro.
+     *
+     * @return Retorna true caso possa e false caso contrário
+     */
     public boolean canBeAllocated(MUser user);
 
 }

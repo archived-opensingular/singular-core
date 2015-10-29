@@ -8,49 +8,16 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.3.2-SNAPSHOT</version>
+        <version>0.3.3</version>
     </parent>
 
     <artifactId>singular-form</artifactId>
     <name>[singular :: form]</name>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>br.net.mirante</groupId>
-            <artifactId>wicket-utils</artifactId>
-            <version>0.3.2-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-core</artifactId>
-            <version>${wicket.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-extensions</artifactId>
-            <version>${wicket.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.wicket</groupId>
-            <artifactId>wicket-devutils</artifactId>
-            <version>${wicket.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>core</module>
+        <module>ui-showcase</module>
+    </modules>
 
 </project>

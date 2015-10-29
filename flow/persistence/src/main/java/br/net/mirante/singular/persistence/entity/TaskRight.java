@@ -20,13 +20,13 @@ public class TaskRight {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CO_TAREFA")
+    @Column(name = "CO_PERMISSAO_TAREFA")
     private Long cod;
 
     //bi-directional many-to-one association to TaskDefinition
     @ManyToOne
     @JoinColumn(name = "CO_DEFINICAO_TAREFA")
-    private TaskDefinition taskDefinition;
+    private TaskDefinitionEntity taskDefinition;
 
     public TaskRight() {
     }
@@ -39,11 +39,11 @@ public class TaskRight {
         this.cod = cod;
     }
 
-    public TaskDefinition getTaskDefinition() {
+    public TaskDefinitionEntity getTaskDefinition() {
         return this.taskDefinition;
     }
 
-    public void setTaskDefinition(TaskDefinition taskDefinition) {
+    public void setTaskDefinition(TaskDefinitionEntity taskDefinition) {
         this.taskDefinition = taskDefinition;
     }
 }

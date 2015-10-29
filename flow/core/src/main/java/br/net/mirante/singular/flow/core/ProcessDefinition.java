@@ -20,9 +20,9 @@ import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityProcessRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
-import br.net.mirante.singular.flow.core.entity.IEntityRole;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
@@ -54,7 +54,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private String category;
 
-    private String abbreviation;
+    private String key;
 
     private String name;
 
@@ -63,8 +63,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private Integer entityVersionCod;
 
     private IProcessCreationPageStrategy creationPage;
-
-    private Class<? extends VariableWrapper> variableWrapperClass;
 
     private VarDefinitionMap<?> variableDefinitions;
 
@@ -116,74 +114,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return processInstanceClass;
     }
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
-        this.variableWrapperClass = variableWrapperClass;
-        if (variableWrapperClass != null) {
-            if (!VariableEnabled.class.isAssignableFrom(processInstanceClass)) {
-                throw new SingularFlowException(
-                        "A classe " + processInstanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
-                                + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
-            }
-            newVariableWrapper(variableWrapperClass).configVariables(getVariables());
-        }
-    }
-
-    private static <T extends VariableWrapper> T newVariableWrapper(Class<T> variableWrapperClass) {
-        try {
-            return variableWrapperClass.newInstance();
-        } catch (Exception e) {
-            throw new SingularFlowException("Erro instanciando " + variableWrapperClass.getName(), e);
-        }
-    }
-
-    /**
-     * <p>
-     * Retorna a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo.
-     * </p>
-     *
-     * @return a classe do <i>wrapper</i>.
-     */
-    public final Class<? extends VariableWrapper> getVariableWrapperClass() {
-        return variableWrapperClass;
-    }
-
-    /**
-     * <p>
-     * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
-     * </p>
-     * <p>
-     * <p>
-     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo é igual à informada.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo informado.
-     * @param variableWrapperClass
-     *            a classe do <i>wrapper</i> a ser criado.
-     * @return um novo <i>wrapper</i> para o tipo informado.
-     * @throws SingularFlowException
-     *             caso as classes não sejam iguais.
-     */
-    public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
-        verifyVariableWrapperClass(variableWrapperClass);
-        T wrapper = newVariableWrapper(variableWrapperClass);
-        wrapper.setVariables(new VarInstanceTableProcess(this));
-        return wrapper;
-    }
-
-    final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
-        if (expectedVariableWrapperClass != variableWrapperClass) {
-            throw new SingularFlowException(getClass().getName()
- + " espera que as variáveis sejam do tipo " + variableWrapperClass);
-        }
-    }
+    
 
     /**
      * <p>
@@ -580,16 +511,16 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * @deprecated o termo sigla deve ser substituido por key
+     * <p>Retorna a chave deste processo.</p>
+     * 
+     * @return a chave deste processo.
      */
-    //TODO renomear
-    @Deprecated
-    public final String getAbbreviation() {
-        if (abbreviation == null) {
-            getLogger().warn("!!! process definition abbreviation not set, using  class simple name !!!");
-            abbreviation = this.getClass().getSimpleName();
+    public final String getKey() {
+        if (key == null) {
+            getLogger().warn("!!! process definition key not set, using  class simple name !!!");
+            key = this.getClass().getSimpleName();
         }
-        return abbreviation;
+        return key;
     }
 
     /**
@@ -691,7 +622,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     private void setName(String category, String abbreviation, String name) {
         this.category = category;
-        this.abbreviation = abbreviation;
+        this.key = abbreviation;
         this.name = name;
     }
 
@@ -771,8 +702,8 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return getPersistenceService().createProcessInstance(getEntityProcessVersion(), getEntityStartTaskVersion());
     }
 
-    final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole> getPersistenceService() {
-        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityProcessRole, IEntityRole>) Flow
+    final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
+        return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
                 .getMbpmBean().getPersistenceService();
     }
 
