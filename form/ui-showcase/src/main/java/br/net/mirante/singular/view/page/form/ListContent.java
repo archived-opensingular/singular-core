@@ -52,9 +52,8 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     static {
         dicionario = TemplateRepository.dicionario();
-        formTypes = TemplateRepository.formTemplates().stream().map(t -> {
-            return new FormVO(t.getNomeSimples(), t);
-        }).collect(Collectors.toList());
+        formTypes = TemplateRepository.formTemplates().stream().map(t -> new FormVO(t.getNomeSimples(), t))
+                .collect(Collectors.toList());
     }
 
     public ListContent(String id) {
@@ -117,7 +116,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
                     }
                 };
 
-        BSDataTable<FormVO, String> formDataTable = new BSDataTableBuilder<>(provider)
+        return new BSDataTableBuilder<>(provider)
                 .appendPropertyColumn(getMessage("label.table.column.form"),
                         "key", FormVO::getKey)
                 .appendColumn(new BSActionColumn<FormVO, String>(WicketUtils.$m.ofValue(""))
@@ -132,7 +131,6 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
                 )
                 .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
                 .build("form-list");
-        return formDataTable;
     }
 
     private void openParameterModal(AjaxRequestTarget target, IModel<FormVO> model) {
@@ -158,9 +156,8 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     }
 
     private void addAllFields(MTipoComposto<?> formType, LinkedList<FieldVO> fields) {
-        formType.getCampos().forEach(t -> {
-            MTipo<?> campo = formType.getCampo(t);
-            fields.add(new FieldVO(t, campo.getClasseInstancia().getName()));
+        formType.getFields().forEach(campo -> {
+            fields.add(new FieldVO(campo.getNome(), campo.getClasseInstancia().getName()));
             if (campo instanceof MTipoComposto) {
                 addAllFields((MTipoComposto<?>) campo, fields);
             }
@@ -171,6 +168,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
         FormVO form = model.getObject();
         updateContainer(form);
         previewName.setDefaultModel(form);
+        target.appendJavaScript("Metronic.init();Page.init();");
         previewModal.show(target);
     }
 
