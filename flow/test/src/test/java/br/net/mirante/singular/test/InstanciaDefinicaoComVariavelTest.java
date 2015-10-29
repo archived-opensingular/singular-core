@@ -1,30 +1,30 @@
 package br.net.mirante.singular.test;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import br.net.mirante.singular.definicao.DefinicaoComVariaveis;
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessInstance;
+import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
+import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
+import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
+import br.net.mirante.singular.test.support.TestSupport;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
-import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
-import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
+import java.math.BigDecimal;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class InstanciaDefinicaoComVariavelTest extends TestSupport {
+public abstract class InstanciaDefinicaoComVariavelTest extends TestSupport {
 
     @Before
     public void setup() {
         assertNotNull(mbpmBean);
-        Flow.setConf(mbpmBean);
+        Flow.setConf(mbpmBean, true);
     }
 
     @Test

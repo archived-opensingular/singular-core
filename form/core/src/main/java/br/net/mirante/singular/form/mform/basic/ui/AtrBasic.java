@@ -20,6 +20,11 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
+    public AtrBasic basicMask(String mask) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_BASIC_MASK, mask);
+        return this;
+    }
+
     public AtrBasic tamanhoEdicao(Integer valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO, valor);
         return this;

@@ -1,5 +1,8 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import java.util.Map;
+
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -12,7 +15,19 @@ public class BSInputGroup extends BSControls {
 
     public BSInputGroup(String id) {
         super(id);
-        add(new AttributeAppender("class", "input-group", " "));
+        this.add(new AttributeAppender("class", "input-group", " "));
+    }
+
+    public BSInputGroup appendExtraClasses(String extraClasses) {
+        this.add(new AttributeAppender("class", extraClasses, " "));
+        return this;
+    }
+
+    public BSInputGroup appendExtraAttributes(Map<String, String> attributes) {
+        for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+            this.add(new AttributeModifier(attribute.getKey(), attribute.getValue()));
+        }
+        return this;
     }
 
     public BSInputGroup appendCheckboxAddon(Component checkbox) {
@@ -23,6 +38,13 @@ public class BSInputGroup extends BSControls {
     public BSInputGroup appendIconAddon(Icone icone) {
         return appendTag("div", true, "class='input-group-addon'", id -> new BSContainer<>(id)
             .appendTag("i", true, "class='" + icone.getCssClass() + "'", new WebMarkupContainer("i")));
+    }
+
+    public BSInputGroup appendButtonAddon(Icone icone) {
+        return appendTag("span", true, "class='input-group-btn'", bid -> new BSContainer<>(bid)
+                .appendTag("button", true, "class='btn default btn-sm icon' type='button'",
+                        iid -> new BSContainer<>(iid).appendTag("i", true, "class='" + icone.getCssClass() + "'",
+                                new WebMarkupContainer("i"))));
     }
 
     public BSInputGroup appendTextAddon(IModel<String> text) {

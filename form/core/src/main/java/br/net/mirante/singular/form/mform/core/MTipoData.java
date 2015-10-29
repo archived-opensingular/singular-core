@@ -2,10 +2,10 @@ package br.net.mirante.singular.form.mform.core;
 
 import java.util.Date;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
-@MFormTipo(nome = "Data", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "Data", pacote = MPacoteCore.class)
 public class MTipoData extends MTipoSimples<MIData, Date> {
 
     public MTipoData() {
@@ -19,5 +19,4 @@ public class MTipoData extends MTipoSimples<MIData, Date> {
     public static ValidadorDataBuilder validadorBuilder() {
         return new ValidadorDataBuilder();
     }
-
 }

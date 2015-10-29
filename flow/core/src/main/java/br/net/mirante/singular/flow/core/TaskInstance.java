@@ -180,18 +180,18 @@ public class TaskInstance {
 
         getPersistenceService().relocateTask(getEntityTaskInstance(), user);
 
-        relocationCause = StringUtils.trimToNull(relocationCause);
+        String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
         String acao = (user == null) ? "Desalocação" : "Alocação";
         if (author == null) {
-            log(acao + " Automática", relocationCause, user, null, new Date());
+            log(acao + " Automática", trimmedRelocationCause, user, null, new Date());
         } else {
-            log(acao, relocationCause, user, author, new Date());
+            log(acao, trimmedRelocationCause, user, author, new Date());
         }
 
         if (notify) {
-            Flow.getNotifiers().notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes);
-            Flow.getNotifiers().notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, relocationCause);
+            Flow.notifyListeners(n -> n.notifyUserTaskRelocation(this, author, pessoaAlocadaAntes, user, pessoaAlocadaAntes));
+            Flow.notifyListeners(n -> n.notifyUserTaskAllocation(this, author, user, user, pessoaAlocadaAntes, trimmedRelocationCause));
         }
 
         notifyStateUpdate();
@@ -223,7 +223,7 @@ public class TaskInstance {
     }
 
     private void notifyStateUpdate() {
-        Flow.getMbpmBean().getNotifiers().notifyStateUpdate(getProcessInstance());
+        Flow.notifyListeners(n -> n.notifyStateUpdate(getProcessInstance()));
     }
 
     public TaskHistoricLog log(String tipoHistorico, String detalhamento) {

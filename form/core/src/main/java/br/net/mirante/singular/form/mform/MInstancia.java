@@ -16,9 +16,24 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private Map<String, MInstancia> atributos;
 
+    private SDocument document;
+
     public MTipo<?> getMTipo() {
         return mTipo;
     }
+
+    public SDocument getDocument() {
+        // if (document == null) {
+        // throw new RuntimeException(errorMsg("Documento não foi configurado na
+        // instância"));
+        // }
+        return document;
+    }
+
+    final void setDocument(SDocument document) {
+        this.document = document;
+    }
+
     public MView getView() {
         return getMTipo().getView();
     }
@@ -37,15 +52,35 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     public void setValor(Object valor) {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     public abstract Object getValor();
 
-    public abstract boolean isNull();
+    /**
+     * <p>
+     * Retorna true se a instancia não conter nenhuma informação diferente de
+     * null. A pesquisa é feita em profundidade, ou seja, em todos os subitens
+     * (se houverem) da intância atual serão verificados.
+     * </p>
+     * <p>
+     * Para o tipo simples retorna true se o valor for null.
+     * </p>
+     * <p>
+     * Para o tipo lista retorna true se a lista for vazia ou se todos os seus
+     * elementos retornarem isEmptyOfData() como true.
+     * </p>
+     * <p>
+     * Para o tipo registro (composto) retorna true se todos so seus campos
+     * retornarem isEmptyOfData().
+     * </p>
+     *
+     * @return
+     */
+    public abstract boolean isEmptyOfData();
 
     public Object getValorWithDefault() {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
@@ -62,44 +97,53 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().converter(getValor(), classeDestino);
     }
 
-    public final Object getValor(String pathCampo) {
-        return getValor(new LeitorPath(pathCampo), null);
+    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
+        MInstancia instancia = this;
+        while (true) {
+            if (leitor.isEmpty()) {
+                return instancia.getValor(classeDestino);
+            }
+            MInstancia instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
+            if (instanciaFilha == null) {
+                MFormUtil.resolverTipoCampo(instancia.getMTipo(), leitor);
+                return null;
+            }
+            instancia = instanciaFilha;
+            leitor = leitor.proximo();
+        }
     }
 
-    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new LeitorPath(pathCampo), classeDestino);
-    }
-
-    <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        throw new RuntimeException("Método não suportado");
+    <T extends Object> MInstancia getCampoLocalSemCriar(LeitorPath leitor) {
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
-        throw new RuntimeException("Método não suportado");
-    }
-
-    public final String getValorString(String pathCampo) {
-        return getValor(pathCampo, String.class);
-    }
-
-    public final <T extends Enum<T>> T getValorEnum(String pathCampo, Class<T> enumType) {
-        String valor = getValorString(pathCampo);
-        if (valor != null) {
-            return Enum.valueOf(enumType, valor);
-        }
-        return null;
-    }
-
-    public final void setValor(String pathCampo, Object valor) {
-        setValor(new LeitorPath(pathCampo), valor);
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     void setValor(LeitorPath leitorPath, Object valor) {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    }
+
+    final MInstancia getCampo(LeitorPath leitor) {
+        MInstancia instancia = this;
+        while (true) {
+            instancia = instancia.getCampoLocal(leitor);
+            if (leitor.isUltimo()) {
+                return instancia;
+            } else if (!(instancia instanceof ICompositeInstance)) {
+                throw new RuntimeException(leitor.getTextoErro(instancia, "Não suporta leitura de subCampos"));
+            }
+            leitor = leitor.proximo();
+        }
+    }
+
+    MInstancia getCampoLocal(LeitorPath leitor) {
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     public String getDisplayString() {
-        throw new RuntimeException("Método não suportado");
+        throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
     @Override
@@ -112,11 +156,11 @@ public abstract class MInstancia implements MAtributoEnabled {
         }
         if (instanciaAtr == null) {
             MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(atr.getNomeCompleto());
-            instanciaAtr = tipoAtributo.novaInstancia();
+            instanciaAtr = tipoAtributo.newInstance(getDocument());
             atributos.put(atr.getNomeCompleto(), instanciaAtr);
         }
         if (subPath != null) {
-            instanciaAtr.setValor(subPath, valor);
+            instanciaAtr.setValor(new LeitorPath(subPath), valor);
         } else {
             instanciaAtr.setValor(valor);
         }
@@ -145,7 +189,8 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
-        throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
+        throw new RuntimeException(
+                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -178,5 +223,18 @@ public abstract class MInstancia implements MAtributoEnabled {
         } else {
             xml.printTabulado();
         }
+    }
+
+    final String erroMsgMetodoNaoSuportado() {
+        return errorMsg("Método não suportado por " + getClass().getName());
+    }
+
+    /**
+     * Cria uma mensagem de erro com o path da instância atual acrescido da
+     * mensagem fornecida.
+     */
+    protected final String errorMsg(String msgToBeAppended) {
+        return "'" + getCaminhoCompleto() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
+                + msgToBeAppended;
     }
 }

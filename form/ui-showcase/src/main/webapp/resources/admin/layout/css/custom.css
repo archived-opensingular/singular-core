@@ -43,8 +43,8 @@ table.dataTable thead th > a {
 
 /*noinspection CssInvalidPropertyValue*/
 .modal-fit.modal-dialog {
-    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
-    width: -moz-max-content;    /* Firefox/Gecko */
+    width: intrinsic; /* Safari/WebKit uses a non-standard name */
+    width: -moz-max-content; /* Firefox/Gecko */
     width: -webkit-max-content; /* Chrome */
 }
 
@@ -55,4 +55,21 @@ table.dataTable thead th > a {
 .feeds li .col2 {
     width: 120px;
     margin-left: -120px;
+}
+
+.btn.btn-sm.icon {
+    font-size: 12px;
+}
+
+.has-error .input-group .input-group-btn .btn, .has-error > .bs-select > .selectpicker {
+    background-color: #F3565D;
+    color: white;
+}
+
+.has-error > .ms-container .ms-list {
+    border-color: #F3565D;
+}
+
+.has-error > .checkbox-list {
+    color: #F3565D;
 }

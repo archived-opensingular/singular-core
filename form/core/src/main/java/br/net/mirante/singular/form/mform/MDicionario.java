@@ -10,6 +10,16 @@ public class MDicionario implements IContextoTipo {
 
     private MapaNomeClasseValor<MTipo<?>> tipos = new MapaNomeClasseValor<>(t -> t.getNome());
 
+    private final SDocument internalDocument = new SDocument();
+
+    /**
+     * Apenas para uso interno do dicionario de modo que os atributos dos tipos
+     * tenha um documento de referencia.
+     */
+    final SDocument getInternalDicionaryDocument() {
+        return internalDocument;
+    }
+
     public Collection<MPacote> getPacotes() {
         return pacotes.getValores();
     }
@@ -20,10 +30,14 @@ public class MDicionario implements IContextoTipo {
         return dicionario;
     }
 
-    public <T extends MPacote> void carregarPacote(Class<T> classePacote) {
-        T novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
-        pacotes.vericaNaoDeveEstarPresente(novo);
-        carregarInterno(novo);
+    public <T extends MPacote> T carregarPacote(Class<T> classePacote) {
+        T novo = pacotes.get(classePacote);
+        if (classePacote != null && novo == null) {
+            novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
+            pacotes.vericaNaoDeveEstarPresente(novo);
+            carregarInterno(novo);
+        }
+        return novo;
     }
 
     public PacoteBuilder criarNovoPacote(String nome) {
@@ -38,20 +52,14 @@ public class MDicionario implements IContextoTipo {
     public <T extends MTipo<?>> void carregarPacoteFromTipo(Class<T> classeTipo) {
         // TODO tentar esconder esse método. Não é interessante ficar público
         Class<? extends MPacote> classPacote = getAnotacaoPacote(classeTipo);
-//        garantirPacoteCarregado(classPacote);
+        //        garantirPacoteCarregado(classPacote);
         carregarPacote(classPacote);
     }
 
-    final <T extends MPacote> void garantirPacoteCarregado(Class<T> classePacote) {
-        if (classePacote != null && pacotes.get(classePacote) == null) {
-            carregarPacote(classePacote);
-        }
-    }
-
-    final static MFormTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
-        MFormTipo mFormTipo = classeAlvo.getAnnotation(MFormTipo.class);
+    final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
+        MInfoTipo mFormTipo = classeAlvo.getAnnotation(MInfoTipo.class);
         if (mFormTipo == null) {
-            throw new RuntimeException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MFormTipo.class.getSimpleName()
+            throw new RuntimeException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MInfoTipo.class.getSimpleName()
                     + " em sua definição.");
         }
         return mFormTipo;
@@ -62,7 +70,7 @@ public class MDicionario implements IContextoTipo {
         if (pacote == null) {
             throw new RuntimeException(
                     "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
-                    + MFormTipo.class.getSimpleName());
+                    + MInfoTipo.class.getSimpleName());
         }
         return pacote;
     }
@@ -88,7 +96,7 @@ public class MDicionario implements IContextoTipo {
             MPacote pacoteDestino = findPacote(escopo);
             if (!pacoteDestino.getNome().equals(pacoteAnotado.getNome())) {
                 throw new RuntimeException("Tentativa de carregar o tipo '" + novo.getNomeSimples() + "' anotado para o pacote '"
-                        + pacoteAnotado.getNome() + "' como sendo do pacote '" + pacoteDestino.getNome() + "'");
+                    + pacoteAnotado.getNome() + "' como sendo do pacote '" + pacoteDestino.getNome() + "'");
             }
         }
         novo.setEscopo(escopo);

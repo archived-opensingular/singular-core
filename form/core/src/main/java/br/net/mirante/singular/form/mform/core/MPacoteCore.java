@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 
 public class MPacoteCore extends MPacote {
 
@@ -35,7 +36,6 @@ public class MPacoteCore extends MPacote {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-
         pb.createTipo(MTipo.class);
         pb.createTipo(MTipoSimples.class);
         pb.createTipo(MTipoComposto.class);
@@ -59,8 +59,10 @@ public class MPacoteCore extends MPacote {
 
         pb.createTipo(MTipoFormula.class);
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
+
+        pb.createTipo(MTipoAttachment.class);
     }
-    
+
     public static Function<MAtributoEnabled, AtrCore> aspect() {
         return AtrCore::new;
     }

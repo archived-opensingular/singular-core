@@ -53,7 +53,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
 
     public ProcessInstance start() {
         ProcessInstance instancia = newInstance();
-        TaskInstance tarefa = instancia.start();
+        instancia.start();
         return instancia;
     }
 

@@ -12,12 +12,19 @@ public class PacoteBuilder {
         this.pacote = pacote;
     }
 
+    public MDicionario getDicionario() {
+        return dicionario;
+    }
     public MPacote getPacote() {
         return pacote;
     }
 
     public <T extends MTipo<?>> T createTipo(String nome, Class<T> classePai) {
         return pacote.extenderTipo(nome, classePai);
+    }
+
+    final <T extends MTipo<?>> T createTipo(String nomeSimplesNovoTipo, T tipoPai) {
+        return pacote.extenderTipo(nomeSimplesNovoTipo, tipoPai);
     }
 
     public <T extends MTipo<?>> T createTipo(Class<T> classeNovoTipo) {
@@ -27,7 +34,7 @@ public class PacoteBuilder {
         TipoBuilder tb = new TipoBuilder();
         novo.onCargaTipo(tb);
         if (!tb.chamouSuper) {
-            throw new RuntimeException("O tipo da classe " + classeNovoTipo.getName() + " não chama o super no método onCargaTipo()");
+            throw new SingularFormException("O tipo da classe " + classeNovoTipo.getName() + " não chama o super no método onCargaTipo()");
         }
         return novo;
     }
@@ -41,7 +48,8 @@ public class PacoteBuilder {
         return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
     }
 
-    public <T extends MTipo<?>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo,
+            Class<T> classeTipoLista) {
         T tipoLista = (T) dicionario.getTipo(classeTipoLista);
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoLista);
     }
@@ -85,7 +93,7 @@ public class PacoteBuilder {
     }
 
     private MAtributo getAtributoOpcional(AtrRef<?, ?, ?> atr) {
-        dicionario.garantirPacoteCarregado(atr.getClassePacote());
+        dicionario.carregarPacote(atr.getClassePacote());
 
         if (!atr.isBinded()) {
             return null;
@@ -168,11 +176,11 @@ public class PacoteBuilder {
             atr.bind(escopo.getNome());
         } else {
             throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNomeSimples() + "' do pacote " + atr.getClassePacote().getName()
-                + " durante a construção do pacote " + pacote.getNome());
+ + " durante a construção do pacote " + pacote.getNome());
         }
         if (!atr.isSelfReference() && !(atr.getClasseTipo().isInstance(tipoAtributo))) {
             throw new RuntimeException("O atributo " + atr.getNomeCompleto() + " esperava ser do tipo " + atr.getClasseTipo().getName()
-                + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
+                    + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
         }
     }
 

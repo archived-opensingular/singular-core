@@ -7,10 +7,10 @@ import java.util.GregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.MFormTipo;
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
-@MFormTipo(nome = "AnoMes", pacote = MPacoteUtil.class)
+@MInfoTipo(nome = "AnoMes", pacote = MPacoteUtil.class)
 public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
 
     public MTipoAnoMes() {
@@ -24,7 +24,7 @@ public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
     @Override
     public YearMonth converterNaoNativoNaoString(Object valor) {
         if (valor instanceof Integer) {
-            return converterFromInteger(((Integer) valor).intValue());
+            return converterFromInteger((Integer) valor);
         } else if (valor instanceof Date) {
             Calendar cal = new GregorianCalendar();
             cal.setTime((Date) valor);

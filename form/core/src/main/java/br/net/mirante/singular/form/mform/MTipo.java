@@ -1,15 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -17,43 +15,44 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IComportamento;
 import br.net.mirante.singular.form.validation.IValidatable;
 import br.net.mirante.singular.form.validation.IValidator;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
-@MFormTipo(nome = "MTipo", pacote = MPacoteCore.class)
+@MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
 
-    private String                          nomeSimples;
+    private String nomeSimples;
 
-    private String                          nomeCompleto;
+    private String nomeCompleto;
 
-    private MDicionario                     dicionario;
+    private MDicionario dicionario;
 
-    private MEscopo                         escopo;
+    private MEscopo escopo;
 
-    private MapaAtributos                   atributosDefinidos = new MapaAtributos();
+    private MapaAtributos atributosDefinidos = new MapaAtributos();
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
-    private List<IValidator<?>>             validadores        = new ArrayList<>();
+    private Map<IValidator<?>, ValidationErrorLevel> validadores = new LinkedHashMap<>();
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
      * outros pontos.
      */
-    private boolean                         apenasCampo;
+    private boolean apenasCampo;
 
     /**
      * Representa um campo que não será persistido. Se aplica somente se
      * apenasCampo=true.
      */
-    private boolean                         seCampoTransiente;
+    private boolean seCampoTransiente;
 
-    private Class<MTipo>                    classeSuperTipo;
+    private Class<MTipo> classeSuperTipo;
 
-    private final Class<? extends I>        classeInstancia;
+    private final Class<? extends I> classeInstancia;
 
-    private MTipo<I>                        superTipo;
+    private MTipo<I> superTipo;
 
-    private MView                           view;
+    private MView view;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -83,7 +82,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         tb.chamouSuper = true;
     }
 
-    final MFormTipo getAnotacaoMFormTipo() {
+    final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
     }
 
@@ -144,7 +143,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public MEscopo getEscopoPai() {
-        Preconditions.checkNotNull(escopo);
+        if (escopo == null) {
+            throw new RuntimeException(
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+        }
         return escopo;
     }
 
@@ -160,10 +163,36 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return false;
     }
 
+    /**
+     * <p>
+     * Verificar se o tipo atual é do tipo informado, diretamente ou se é um
+     * tipo extendido. Para isso percorre toda a hierarquia de derivação do tipo
+     * atual verificando se encontra parentTypeCandidate na hierarquia.
+     * </p>
+     * <p>
+     * Ambos o tipo tem que pertencer à mesma instância de dicionário para serem
+     * considerado compatíveis, ou seja, se dois tipo forem criados em
+     * dicionário diferentes, nunca serão considerado compatíveis mesmo se
+     * proveniente da mesma classe de definição.
+     * </p>
+     *
+     * @return true se o tipo atual for do tipo informado.
+     */
+    public boolean isTypeOf(MTipo<?> parentTypeCandidate) {
+        MTipo<I> atual = this;
+        while (atual != null) {
+            if (atual == parentTypeCandidate) {
+                return true;
+            }
+            atual = atual.superTipo;
+        }
+        return false;
+    }
+
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -209,10 +238,10 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().garantirPacoteCarregado(atr.getClassePacote());
+        getDicionario().carregarPacote(atr.getClassePacote());
         MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
         if (subPath != null) {
-            instancia.setValor(subPath, valor);
+            instancia.setValor(new LeitorPath(subPath), valor);
         } else {
             instancia.setValor(valor);
         }
@@ -330,17 +359,26 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.view = v;
         return v;
     }
+
     public MView getView() {
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
+
     public MTipo<I> addValidacao(IValidator<?> validador) {
-        this.validadores.add(validador);
+        return addValidacao(ValidationErrorLevel.ERROR, validador);
+    }
+
+    public MTipo<I> addValidacao(ValidationErrorLevel level, IValidator<?> validador) {
+        this.validadores.put(validador, level);
         return this;
     }
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void validar(IValidatable<?> validatable) {
-        for (IValidator<?> validador : this.validadores)
-            validador.validate((IValidatable) validatable);
+        for (Map.Entry<IValidator<?>, ValidationErrorLevel> entry : this.validadores.entrySet()) {
+            validatable.setDefaultLevel(entry.getValue());
+            entry.getKey().validate((IValidatable) validatable);
+        }
     }
 
     public I castInstancia(MInstancia instancia) {
@@ -348,25 +386,34 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new NotImplementedException("TODO implementar");
     }
 
-    public I novaInstancia() {
-        return novaInstancia(this);
+    public final I novaInstancia() {
+        SDocument owner = new SDocument();
+        I instance = newInstance(this, owner);
+        owner.setRoot(instance);
+        return instance;
+    }
+
+    /** Cria uma nova instância pertencente ao documento informado. */
+    I newInstance(SDocument owner) {
+        return newInstance(this, owner);
     }
 
     public MILista<?> novaLista() {
         return MILista.of(this);
     }
 
-    private I novaInstancia(MTipo<?> original) {
+    private I newInstance(MTipo<?> original, SDocument owner) {
         Class<? extends I> c = classeInstancia;
         if (c == null && superTipo != null) {
-            return superTipo.novaInstancia(original);
+            return superTipo.newInstance(original, owner);
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
+            novo.setDocument(owner);
             novo.setTipo(this);
             if (novo instanceof MISimples) {
                 Object valorInicial = original.getValorAtributoValorInicial();
@@ -418,13 +465,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
 
         atributosDefinidos
-            .getAtributos()
-            .stream()
-            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
-            .forEach(
-                att -> pad(System.out, nivel + 1).println(
-                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                        + (att.isSelfReference() ? " SELF" : "")));
+                .getAtributos()
+                .stream()
+                .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+                .forEach(
+                        att -> pad(System.out, nivel + 1).println(
+                                "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
+                                        + (att.isSelfReference() ? " SELF" : "")));
 
         super.debug(nivel + 1);
     }
@@ -434,7 +481,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (vals.size() != 0) {
             System.out.append(" {");
             vals.entrySet().stream()
-                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
+                    .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
             System.out.append("}");
         }
     }
