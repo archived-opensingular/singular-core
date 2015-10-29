@@ -1,6 +1,5 @@
 package br.net.mirante.singular.flow.core.entity;
 
-import java.util.List;
 
 public interface IEntityCategory extends IEntityByCod {
 
@@ -8,5 +7,4 @@ public interface IEntityCategory extends IEntityByCod {
 
     void setName(String name);
 
-    List<? extends IEntityProcessDefinition> getProcessDefinitions();
 }

@@ -2,17 +2,16 @@ package br.net.mirante.singular.persistence.service;
 
 import java.util.ArrayList;
 
-import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.MTask;
+import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.entity.CategoryEntity;
-import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 import br.net.mirante.singular.persistence.entity.RoleDefinitionEntity;
 import br.net.mirante.singular.persistence.entity.RoleInstanceEntity;
-import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskDefinitionEntity;
-import br.net.mirante.singular.persistence.entity.TaskTypeEntity;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
+import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 
 public class DefaultHibernateProcessDefinitionService
@@ -46,7 +45,7 @@ public class DefaultHibernateProcessDefinitionService
     public ProcessVersionEntity createEntityProcessVersion(ProcessDefinitionEntity entityProcessDefinition) {
         ProcessVersionEntity entityProcess = new ProcessVersionEntity();
         entityProcess.setProcessDefinition(entityProcessDefinition);
-        entityProcess.setTasks(new ArrayList<>());
+        entityProcess.setVersionTasks(new ArrayList<>());
         return entityProcess;
     }
 
@@ -61,21 +60,15 @@ public class DefaultHibernateProcessDefinitionService
     @Override
     public TaskVersionEntity createEntityTaskVersion(ProcessVersionEntity process, TaskDefinitionEntity entityTaskDefinition, MTask<?> task) {
         TaskVersionEntity taskEntity = new TaskVersionEntity();
-        taskEntity.setProcess(process);
+        taskEntity.setProcessVersion(process);
         taskEntity.setTaskDefinition(entityTaskDefinition);
         // TODO Daniel: essa solução do createType deveria ser unificada entre
         // as implementações
-        taskEntity.setType(createTaskType(task.getEffectiveTaskType()));
+        taskEntity.setType((TaskType) task.getEffectiveTaskType());
         taskEntity.setTransitions(new ArrayList<>());
         return taskEntity;
     }
 
-    private TaskTypeEntity createTaskType(IEntityTaskType entityTaskType) {
-        br.net.mirante.singular.flow.core.TaskType effectiveTaskType = ((br.net.mirante.singular.flow.core.TaskType) entityTaskType);
-        TaskTypeEntity taskType = new TaskTypeEntity();
-        taskType.setCod((long)effectiveTaskType.ordinal() + 1L);
-        return taskType;
-    }
 
     @Override
     protected TaskDefinitionEntity createEntityDefinitionTask(ProcessDefinitionEntity process) {

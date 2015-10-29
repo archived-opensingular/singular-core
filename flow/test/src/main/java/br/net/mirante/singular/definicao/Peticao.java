@@ -2,7 +2,7 @@ package br.net.mirante.singular.definicao;
 
 import java.util.Calendar;
 
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
@@ -61,7 +61,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
     public static final String PAPEL_GERENTE = "GERENTE";
 
     public Peticao() {
-        super(ProcessInstance.class);
+        super("Peticoes",ProcessInstance.class);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class Peticao extends ProcessDefinition<ProcessInstance> {
         return calendar;
     }
 
-    public void notificar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void notificar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("Notificado");
 
     }

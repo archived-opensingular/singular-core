@@ -31,8 +31,11 @@ public class MDicionario implements IContextoTipo {
     }
 
     public <T extends MPacote> T carregarPacote(Class<T> classePacote) {
+        if (classePacote == null){
+            throw new SingularFormException("Classe pacote não pode ser nula");
+        }
         T novo = pacotes.get(classePacote);
-        if (classePacote != null && novo == null) {
+        if (novo == null) {
             novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
             pacotes.vericaNaoDeveEstarPresente(novo);
             carregarInterno(novo);
