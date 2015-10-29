@@ -72,11 +72,49 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendInputFile(Component input) {
 //        return super.appendTag("input", false, "type='file' class='form-control'", input);
-        return this.appendTag("span", true, "class='btn btn-file'", 
-        	new BSContainer<>("_" + input.getId())
-        	 .appendTag("span", new Label("_", Model.of("Carregar ...")))
-        	 .appendTag("input", true, "type='file' class='form-control'", input)
-            );
+//	return this.appendTag("span", true, "class='btn btn-file'",
+	
+         BSContainer container = new BSContainer<>("_" + input.getId());
+         container.appendTag("span", new Label("_", Model.of("Selecionar ...")));
+         BSContainer fileTag = container.appendTag("input", true, "type='file' id='"+input.getMarkupId()+"'", input);
+            
+//         TemplatePanel fileContainer = (TemplatePanel) container.newComponent(id -> new TemplatePanel(id, () ->
+//         "<input wicket:id='" + input.getId() + "' type='file' class='form-control'>"
+//                 +  "</input>\n" ));
+//         fileContainer
+//                 .add(input)
+//                 .setRenderBodyOnly(true);
+         
+         TemplatePanel scriptContainer = (TemplatePanel) container.newComponent(id -> new TemplatePanel(id, () ->
+                 "<script > "
+         	 +"$(function () {"
+                 +"  $('#"+input.getMarkupId()+"').fileupload({  "
+                 +"    url: 'TODO',  "
+                 +"    dataType: 'json',  "
+                 +"    done: function (e, data) {  "
+                 +"        $.each(data.result.files, function (index, file) {  "
+//                 +"            $('<p/>').text(file.name).appendTo('#files');  "
+                 +"        });  "
+                 +"    },  "
+                 +"    progressall: function (e, data) {  "
+//                 +"        var progress = parseInt(data.loaded / data.total * 100, 10);  "
+//                 +"        $('#progress .progress-bar').css(  "
+//                 +"            'width',  "
+//                 +"            progress + '%'  "
+//                 +"        );  "
+                 +"    }  "
+                 +"  }).prop('disabled', !$.support.fileInput)  "
+                 +"    .parent().addClass($.support.fileInput ? undefined : 'disabled');  "
+                 +"});"
+                 +" </script>\n"));
+         scriptContainer
+//                 .add(component)
+                 .setRenderBodyOnly(true);   
+         
+         
+        return this.appendTag("span", true, "class='btn btn-success fileinput-button'", 
+        		container
+        	);
     }
 
     
