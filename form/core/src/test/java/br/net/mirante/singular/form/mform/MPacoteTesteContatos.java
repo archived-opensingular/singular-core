@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.util;
+package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 
-public class MPacoteSQuery extends MPacote {
+public class MPacoteTesteContatos extends MPacote {
 
     public MTipoComposto<?>                  contato;
     public MTipoLista<MTipoComposto<?>>      enderecos;
@@ -24,7 +24,7 @@ public class MPacoteSQuery extends MPacote {
     public MTipoLista<MTipoTelefoneNacional> telefones;
     public MTipoLista<MTipoString>           emails;
 
-    public MPacoteSQuery() {
+    public MPacoteTesteContatos() {
         super("mform.exemplo.squery");
     }
 

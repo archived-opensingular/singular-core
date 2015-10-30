@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -145,8 +144,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new RuntimeException(
-                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -192,7 +191,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -373,7 +372,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validar(IValidatable<?> validatable) {
         for (Map.Entry<IValidator<?>, ValidationErrorLevel> entry : this.validadores.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
@@ -381,9 +380,12 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
     }
 
+    @SuppressWarnings("unchecked")
     public I castInstancia(MInstancia instancia) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+        // TODO verificar se essa é a verificação correta
+        if (instancia.getMTipo() != this)
+            throw new IllegalArgumentException("A instância " + instancia + " não é do tipo " + this);
+        return (I) instancia;
     }
 
     public final I novaInstancia() {
@@ -409,7 +411,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -465,13 +467,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
 
         atributosDefinidos
-                .getAtributos()
-                .stream()
-                .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
-                .forEach(
-                        att -> pad(System.out, nivel + 1).println(
-                                "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                                        + (att.isSelfReference() ? " SELF" : "")));
+            .getAtributos()
+            .stream()
+            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+            .forEach(
+                att -> pad(System.out, nivel + 1).println(
+                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
+                        + (att.isSelfReference() ? " SELF" : "")));
 
         super.debug(nivel + 1);
     }
@@ -481,7 +483,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (vals.size() != 0) {
             System.out.append(" {");
             vals.entrySet().stream()
-                    .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
+                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
             System.out.append("}");
         }
     }

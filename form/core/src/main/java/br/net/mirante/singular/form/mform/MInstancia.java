@@ -7,7 +7,6 @@ import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.mform.util.MInstanciaUtils;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public abstract class MInstancia implements MAtributoEnabled {
@@ -191,7 +190,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         return findAncestor(ancestorType).get();
     }
     public <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MTipo<A> ancestorType) {
-        return MInstanciaUtils.findAncestor(this, ancestorType);
+        return MInstances.findAncestor(this, ancestorType);
     }
 
     @SuppressWarnings("unchecked")

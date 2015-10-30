@@ -9,13 +9,14 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MPacoteTesteContatos;
 
 public class SQueryTest {
 
     @Test
     public void test() {
         MDicionario dicionario = MDicionario.create();
-        MPacoteSQuery pacote = dicionario.carregarPacote(MPacoteSQuery.class);
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
 
         MIComposto contato = pacote.contato.novaInstancia();
 
@@ -40,7 +41,7 @@ public class SQueryTest {
     @Test
     public void testList() {
         MDicionario dicionario = MDicionario.create();
-        MPacoteSQuery pacote = dicionario.carregarPacote(MPacoteSQuery.class);
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
 
         MIComposto contato = pacote.contato.novaInstancia();
 
