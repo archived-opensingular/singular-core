@@ -1,6 +1,6 @@
 package br.net.mirante.singular.test;
 
-import br.net.mirante.singular.ConstantesUtil;
+
 import br.net.mirante.singular.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
@@ -8,6 +8,7 @@ import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
+import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.TaskInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.test.support.TestSupport;
@@ -152,26 +153,32 @@ public abstract class PeticaoTest extends TestSupport {
 
     @Test
     public void verificarUserTemPermissaoAcesso() {
+        Actor user1 = testDAO.getSomeUser(1);
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
         ip.executeTransition(Peticao.APROVAR_TECNICO);
-        assertTrue("Usuário não tem permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
+        assertTrue("Usuário não tem permissao", ip.canExecuteTask(user1));
     }
 
     @Test
     public void verificarUserNaoPermissaoAcesso() {
+        Actor user1 = testDAO.getSomeUser(1);
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
-        assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(ConstantesUtil.USER_1));
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
+        assertFalse("Usuário não deveria ter permissao", ip.canExecuteTask(user1));
     }
 
     @Test
     public void trocarUsuarioPapel() {
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_1);
-        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
-        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_3);
-        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_4);
+        Actor user1 = testDAO.getSomeUser(1);
+        Actor user2 = testDAO.getSomeUser(2);
+        Actor user3 = testDAO.getSomeUser(3);
+        Actor user4 = testDAO.getSomeUser(4);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user1);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user2);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user3);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user4);
 
         IEntityRoleInstance role = null;
         testDAO.refresh(ip.getEntity());
@@ -182,49 +189,53 @@ public abstract class PeticaoTest extends TestSupport {
         }
 
         assertNotNull(role);
-        assertEquals("Usuário diferente do esperado.", ConstantesUtil.USER_4, role.getUser());
+        assertEquals("Usuário diferente do esperado.", user4, role.getUser());
     }
 
     @Test
     public void atribuirPapelInexistente() {
+        Actor user1 = testDAO.getSomeUser(1);
         thrown.expect(SingularFlowException.class);
         thrown.expectMessage("Não foi possível encontrar a role: Inexistente");
 
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole("Inexistente", ConstantesUtil.USER_1);
+        ip.addOrReplaceUserRole("Inexistente", user1);
     }
 
     @Test
     public void atribuirPapelExistenteEmOutraTask() {
+        Actor user1 = testDAO.getSomeUser(1);
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
     }
 
     @Test
     public void verificarHistoricoAlocacaoTarefa() {
+        Actor user1 = testDAO.getSomeUser(1);
+        Actor user2 = testDAO.getSomeUser(2);
         Integer counterHistory = testDAO.countHistoty();
         assertNotNull(counterHistory);
 
         ProcessInstance ip = startInstance();
-        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, ConstantesUtil.USER_2);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_ANALISTA, user1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(null, ConstantesUtil.USER_2, false, "Testando...");
+        ip.getCurrentTask().relocateTask(null, user2, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         ip.executeTransition(Peticao.APROVAR_TECNICO);
-        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, ConstantesUtil.USER_1);
+        ip.addOrReplaceUserRole(Peticao.PAPEL_GERENTE, user1);
         assertEquals(++counterHistory, testDAO.countHistoty());
 
-        ip.getCurrentTask().relocateTask(Flow.getUserIfAvailable(), ConstantesUtil.USER_1, false, "Testando...");
+        ip.getCurrentTask().relocateTask(Flow.getUserIfAvailable(), user1, false, "Testando...");
         assertEquals(++counterHistory, testDAO.countHistoty());
 
         List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(4);
         assertEquals(Flow.getUserIfAvailable(), lastHistories.get(0).getAllocatorUser());
-        assertEquals(ConstantesUtil.USER_1, lastHistories.get(0).getAllocatedUser());
+        assertEquals(user1, lastHistories.get(0).getAllocatedUser());
         assertEquals("Alocação", lastHistories.get(0).getType().getDescription());
         assertEquals("Papel definido", lastHistories.get(1).getType().getDescription());
-        assertEquals(ConstantesUtil.USER_2, lastHistories.get(2).getAllocatedUser());
+        assertEquals(user2, lastHistories.get(2).getAllocatedUser());
         assertEquals("Alocação Automática", lastHistories.get(2).getType().getDescription());
         assertEquals("Papel definido", lastHistories.get(3).getType().getDescription());
     }

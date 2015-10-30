@@ -14,7 +14,7 @@
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
     <property name="driverClassName" value="org.h2.Driver"/>
-    <property name="url" value="jdbc:h2:file:./singulardb;mode=ORACLE;"/>
+    <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=ORACLE;"/>
     <property name="username" value="sa"/>
     <property name="password" value="sa"/>
 </bean>
@@ -50,8 +50,10 @@
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="NONE">
         <jdbc:script location="classpath:/db/ddl/create-tables.sql"/>
+        <jdbc:script location="classpath:/db/ddl/create-tables-ator.sql"/>
         <jdbc:script location="classpath:/db/ddl/create-constraints.sql"/>
         <jdbc:script location="classpath:/db/dml/load-data.sql"/>
+        <jdbc:script location="classpath:/db/dml/load-data-ator.sql"/>
         <jdbc:script location="classpath:/db/ddl/create-oracle.sql"/>
     </jdbc:initialize-database>
 

@@ -42,9 +42,8 @@ CREATE TABLE DBSINGULAR.RL_PERMISSAO_TAREFA (
 /* Table: TB_ATOR                                               */
 /*==============================================================*/
 CREATE TABLE DBSINGULAR.TB_ATOR (
-  CO_ATOR  BIGINT       NOT NULL,
-  NO_ATOR  VARCHAR(200) NOT NULL,
-  DS_EMAIL VARCHAR(200) NOT NULL,
+   CO_ATOR  BIGINT       IDENTITY,
+   CO_USUARIO           VARCHAR(60)          NOT NULL,
   CONSTRAINT PK_ATOR PRIMARY KEY (CO_ATOR)
 );
 
