@@ -18,7 +18,7 @@ import com.google.common.collect.ImmutableSet;
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.vars.VarService;
+import br.net.mirante.singular.flow.core.variable.VarService;
 
 /**
  * <p>Esta classe representa o mapa de fluxo de uma dada definição de processo.</p>

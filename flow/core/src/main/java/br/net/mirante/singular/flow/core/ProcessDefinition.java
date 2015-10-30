@@ -26,16 +26,17 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.property.MetaData;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
-import br.net.mirante.singular.flow.util.props.MetaData;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
-import br.net.mirante.singular.flow.util.vars.VarService;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.core.variable.VarDefinitionMap;
+import br.net.mirante.singular.flow.core.variable.VarService;
+import br.net.mirante.singular.flow.core.view.Lnk;
 
 import com.google.common.base.MoreObjects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

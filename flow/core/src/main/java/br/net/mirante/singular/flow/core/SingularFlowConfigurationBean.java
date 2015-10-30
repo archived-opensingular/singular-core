@@ -17,11 +17,11 @@ import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
 import br.net.mirante.singular.flow.core.service.IUserService;
+import br.net.mirante.singular.flow.core.view.IViewLocator;
 import br.net.mirante.singular.flow.schedule.IScheduleService;
 import br.net.mirante.singular.flow.schedule.ScheduleDataBuilder;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
 import br.net.mirante.singular.flow.schedule.quartz.QuartzScheduleService;
-import br.net.mirante.singular.flow.util.view.IViewLocator;
 
 //TODO implementacao default, essa classe deveria vir implementada por default, muita coisa para definir
 public abstract class SingularFlowConfigurationBean {
