@@ -48,13 +48,13 @@ public class PacoteBuilder {
         return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
     }
 
-    public <T extends MTipo<I>, I extends MInstancia> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo,
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo,
             Class<T> classeTipoLista) {
         T tipoLista = (T) dicionario.getTipo(classeTipoLista);
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoLista);
     }
 
-    public <T extends MTipo<I>, I extends MInstancia> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoElementos);
     }
 
@@ -156,7 +156,7 @@ public class PacoteBuilder {
         return novo;
     }
 
-    public <T extends MTipo<I>, I extends MInstancia> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
+    public <I extends MInstancia, T extends MTipo<I>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
         if (atr.isSelfReference()) {
             throw new RuntimeException("Não pode ser criado um atributo global que seja selfReference");
         }
