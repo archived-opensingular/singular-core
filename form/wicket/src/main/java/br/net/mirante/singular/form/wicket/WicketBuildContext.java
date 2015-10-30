@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.RequiredByMTipoObrigatorioBehavior;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.validator.MInstanciaValidator;
+import br.net.mirante.singular.form.wicket.validator.MInstanciaValueValidator;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
@@ -63,7 +63,7 @@ public class WicketBuildContext implements Serializable {
 
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
         formComponent.add(RequiredByMTipoObrigatorioBehavior.getInstance());
-        formComponent.add(new MInstanciaValidator<>());
+        formComponent.add(new MInstanciaValueValidator<>());
         formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
         return formComponent;
     }

@@ -12,8 +12,8 @@ import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IComportamento;
-import br.net.mirante.singular.form.validation.IValidatable;
-import br.net.mirante.singular.form.validation.IValidator;
+import br.net.mirante.singular.form.validation.IValueValidatable;
+import br.net.mirante.singular.form.validation.IValueValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
@@ -31,7 +31,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
-    private Map<IValidator<?>, ValidationErrorLevel> validadores = new LinkedHashMap<>();
+    private Map<IValueValidator<?>, ValidationErrorLevel> validators = new LinkedHashMap<>();
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
@@ -363,20 +363,20 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return (this.view != null) ? this.view : MView.DEFAULT;
     }
 
-    public MTipo<I> addValidacao(IValidator<?> validador) {
+    public MTipo<I> addValidacao(IValueValidator<?> validador) {
         return addValidacao(ValidationErrorLevel.ERROR, validador);
     }
 
-    public MTipo<I> addValidacao(ValidationErrorLevel level, IValidator<?> validador) {
-        this.validadores.put(validador, level);
+    public MTipo<I> addValidacao(ValidationErrorLevel level, IValueValidator<?> validador) {
+        this.validators.put(validador, level);
         return this;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void validar(IValidatable<?> validatable) {
-        for (Map.Entry<IValidator<?>, ValidationErrorLevel> entry : this.validadores.entrySet()) {
+    public void validateValue(IValueValidatable<?> validatable) {
+        for (Map.Entry<IValueValidator<?>, ValidationErrorLevel> entry : this.validators.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
-            entry.getKey().validate((IValidatable) validatable);
+            entry.getKey().validate((IValueValidatable) validatable);
         }
     }
 
