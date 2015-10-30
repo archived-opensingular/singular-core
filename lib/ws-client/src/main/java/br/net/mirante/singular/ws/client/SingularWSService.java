@@ -1,16 +1,14 @@
 
 package br.net.mirante.singular.ws.client;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceFeature;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -63,7 +61,7 @@ public class SingularWSService
     }
 
     /**
-     * 
+     *
      * @return
      *     returns SingularWS
      */
@@ -73,7 +71,7 @@ public class SingularWSService
     }
 
     /**
-     * 
+     *
      * @param features
      *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
      * @return
@@ -83,5 +81,4 @@ public class SingularWSService
     public SingularWS getSingularWSPort(WebServiceFeature... features) {
         return super.getPort(new QName("http://ws.core.flow.singular.mirante.net.br/", "SingularWSPort"), SingularWS.class, features);
     }
-
 }

@@ -25,17 +25,21 @@ public interface SingularWS {
 
     /**
      * 
+     * @param processAbbreviation
      * @param codProcessInstance
      */
     @WebMethod(action = "executeDefaultTransition")
     @RequestWrapper(localName = "executeDefaultTransition", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.ExecuteDefaultTransition")
     @ResponseWrapper(localName = "executeDefaultTransitionResponse", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.ExecuteDefaultTransitionResponse")
     public void executeDefaultTransition(
+        @WebParam(name = "processAbbreviation", targetNamespace = "")
+        String processAbbreviation,
         @WebParam(name = "codProcessInstance", targetNamespace = "")
         Long codProcessInstance);
 
     /**
      * 
+     * @param processAbbreviation
      * @param codProcessInstance
      * @param transitionName
      */
@@ -43,6 +47,8 @@ public interface SingularWS {
     @RequestWrapper(localName = "executeTransition", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.ExecuteTransition")
     @ResponseWrapper(localName = "executeTransitionResponse", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.ExecuteTransitionResponse")
     public void executeTransition(
+        @WebParam(name = "processAbbreviation", targetNamespace = "")
+        String processAbbreviation,
         @WebParam(name = "codProcessInstance", targetNamespace = "")
         Long codProcessInstance,
         @WebParam(name = "transitionName", targetNamespace = "")

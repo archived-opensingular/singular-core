@@ -20,6 +20,7 @@
 
   <xs:complexType name="executeDefaultTransition">
     <xs:sequence>
+      <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
       <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
     </xs:sequence>
   </xs:complexType>
@@ -30,6 +31,7 @@
 
   <xs:complexType name="executeTransition">
     <xs:sequence>
+      <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
       <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
       <xs:element minOccurs="0" name="transitionName" type="xs:string"/>
     </xs:sequence>
