@@ -69,7 +69,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     ExampleDataDTO currentModel;
 
     public CrudContent(String id) {
-        super(id, false, false);
+        super(id, false, true);
     }
 
     protected void onInitialize() {
@@ -95,12 +95,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.formTemplates().stream().map(t -> {
-            return new SelectOption(t.getNomeSimples(), new FormVO(t.getNomeSimples(), t));
-        }).collect(Collectors.toList());
+        List<SelectOption> options = TemplateRepository.formTemplates().stream()
+                .map(t -> new SelectOption(t.getNomeSimples(), new FormVO(t.getNomeSimples(), t)))
+                .collect(Collectors.toList());
 
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
-        DropDownChoice formChoices = new DropDownChoice<SelectOption>("options",
+        return new DropDownChoice<SelectOption>("options",
                 new SelectOption(null, null), options, choiceRenderer) {
             @Override
             protected boolean wantOnSelectionChangedNotifications() {
@@ -115,7 +115,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
 
         };
-        return formChoices;
     }
     
     private void updateDataList() {
@@ -139,39 +138,35 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
-        BSDataTable<ExampleDataDTO, String> formDataTable =
-                new BSDataTableBuilder<>(createDataProvider())
-                        .appendPropertyColumn(getMessage("label.table.column.key"),
-                                "key", ExampleDataDTO::getKey)
-                        .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
-                                        .appendAction(getMessage("label.table.column.edit"),
-                                                Icone.PENCIL_SQUARE, this::openInputModal
-                                        )
-                        )
-                        .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
-                                        .appendAction(getMessage("label.table.column.delete"),
-                                                Icone.MINUS, this::deleteSelected
-                                        )
-                        )
-                        .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
-                        .build("data-list");
-        return formDataTable;
+        return new BSDataTableBuilder<>(createDataProvider())
+                .appendPropertyColumn(getMessage("label.table.column.key"),
+                        "key", ExampleDataDTO::getKey)
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                                .appendAction(getMessage("label.table.column.edit"),
+                                        Icone.PENCIL_SQUARE, this::openInputModal
+                                )
+                )
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                                .appendAction(getMessage("label.table.column.delete"),
+                                        Icone.MINUS, this::deleteSelected
+                                )
+                )
+                .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
+                .build("data-list");
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
-        BaseDataProvider<ExampleDataDTO, String> provider =
-                new BaseDataProvider<ExampleDataDTO, String>() {
+        return new BaseDataProvider<ExampleDataDTO, String>() {
 
-                    public long size() {
-                        return dataList.size();
-                    }
+            public long size() {
+                return dataList.size();
+            }
 
-                    public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
-                            String sortProperty, boolean ascending) {
-                        return dataList.iterator();
-                    }
-                };
-        return provider;
+            public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
+                    String sortProperty, boolean ascending) {
+                return dataList.iterator();
+            }
+        };
     }
 
     @SuppressWarnings("unchecked")
@@ -179,7 +174,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         currentModel = model.getObject();
         createInstance((MTipo<MIComposto>) 
                 dicionario.getTipo(selectedTemplate.getNome()));
-        updateContainer(selectedTemplate);
+        updateContainer();
         target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
@@ -204,14 +199,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         }
     }
 
-    private void updateContainer(MTipoComposto<?> template) {
+    private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
-        buildContainer(template);
+        buildContainer();
     }
 
-    private void buildContainer(MTipoComposto<?> formType) {
+    private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
     }
@@ -239,9 +234,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     
     private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-//      dao.remove(currentModel);
-//      currentModel = null;
-//      updateListTableFromModal(target);
         deleteModal.show(target);
     }
 

@@ -76,7 +76,7 @@ public abstract class SingularFlowConfigurationBean {
 
     private ProcessInstance getProcessInstanceByEntityCod(Integer cod) {
         IEntityProcessInstance dadosInstanciaProcesso = getPersistenceService().retrieveProcessInstanceByCod(cod);
-        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcess().getAbbreviation());
+        ProcessDefinition<?> def = getProcessDefinition(dadosInstanciaProcesso.getProcessVersion().getAbbreviation());
         return def.convertToProcessInstance(dadosInstanciaProcesso);
     }
 
@@ -140,7 +140,7 @@ public abstract class SingularFlowConfigurationBean {
         return new StringBuilder(50)
                 .append(PREFIXO)
                 .append('.')
-                .append(instancia.getProcessDefinition().getAbbreviation())
+                .append(instancia.getProcessDefinition().getKey())
                 .append('.')
                 .append(instancia.getId()).toString();
     }

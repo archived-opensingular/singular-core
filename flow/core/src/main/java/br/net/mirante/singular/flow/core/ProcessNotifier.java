@@ -16,11 +16,11 @@ public interface ProcessNotifier {
 
     }
 
-    public default void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask) {
+    public default void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecutionContext executionContext) {
 
     }
 
-    public default void notifyStartToInterestedUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask) {
+    public default void notifyStartToInterestedUser(TaskInstance taskInstance, ExecutionContext executionContext) {
 
     }
 

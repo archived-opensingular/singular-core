@@ -14,7 +14,7 @@ import br.net.mirante.singular.persistence.util.Constants;
 @Entity
 @GenericGenerator(name = AbstractRoleInstance.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_INSTANCIA_PAPEL", schema = Constants.SCHEMA)
-public class RoleInstanceEntity extends AbstractRoleInstance<Actor, ProcessInstanceEntity, RoleDefinitionEntity> {
+public class RoleInstanceEntity extends AbstractRoleInstanceEntity<Actor, ProcessInstanceEntity, RoleDefinitionEntity> {
     private static final long serialVersionUID = 1L;
 
 }

@@ -6,9 +6,9 @@ import java.util.stream.Collectors;
 
 public interface IEntityProcessDefinition extends IEntityByCod {
 
-    String getAbbreviation();
+    String getKey();
 
-    void setAbbreviation(String abbreviation);
+    void setKey(String abbreviation);
 
     String getName();
 

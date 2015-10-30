@@ -14,7 +14,7 @@ import br.net.mirante.singular.flow.core.defaults.NullPageStrategy;
 public class DefinicaoProcessVersoes extends ProcessDefinition<ProcessVersoes> {
 
     public DefinicaoProcessVersoes() {
-        super(ProcessVersoes.class);
+        super("DefVersoes",ProcessVersoes.class);
     }
 
     public static InstanceProcessVersao flow = InstanceProcessVersao.VERSAO_1;

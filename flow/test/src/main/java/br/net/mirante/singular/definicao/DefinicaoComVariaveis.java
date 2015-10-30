@@ -1,6 +1,6 @@
 package br.net.mirante.singular.definicao;
 
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
@@ -22,7 +22,7 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
     public static final String STRING_USADA_NO_TESTE = "Pessoa X";
 
     public DefinicaoComVariaveis() {
-        super(ProcessInstance.class);
+        super("DefVar",ProcessInstance.class);
         getVariables().addVariable(new VarDefinitionImpl("nome", "Nome de Alguém", new VarTypeString(), false));
         getVariables().addVariable(new VarDefinitionImpl("qualquerCoisa", "Qualquer Coisa Numerica", new VarTypeDecimal(), false));
     }
@@ -57,18 +57,18 @@ public class DefinicaoComVariaveis extends ProcessDefinition<ProcessInstance> {
         return instancia;
     }
 
-    public void print(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void print(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("legal");
     }
 
-    public void setVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void setVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         instancia.setVariavel("nome", STRING_USADA_NO_TESTE);
         instancia.setVariavel("qualquerCoisa", BIGDECIMAL_USADO_NO_TESTE);
 
         instancia.saveEntity();
     }
 
-    public void printVar(ProcessInstance instancia, ExecucaoMTask ctxExecucao) {
+    public void printVar(ProcessInstance instancia, ExecutionContext ctxExecucao) {
         System.out.println("########### nome          #####>" + instancia.getValorVariavel("nome"));
         System.out.println("########### qualquerCoisa #####>" + instancia.getValorVariavel("qualquerCoisa"));
     }

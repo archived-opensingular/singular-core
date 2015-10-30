@@ -11,16 +11,14 @@ public interface IEntityProcessVersion extends IEntityByCod {
 
     void setVersionDate(Date date);
 
-    // TODO Renomear para getVersionTasks();
-    @Deprecated
-    List<? extends IEntityTaskVersion> getTasks();
+    List<? extends IEntityTaskVersion> getVersionTasks();
 
     default String getDefinitionClassName() {
         return getProcessDefinition().getDefinitionClassName();
     }
 
     default String getAbbreviation() {
-        return getProcessDefinition().getAbbreviation();
+        return getProcessDefinition().getKey();
     }
 
     default String getName() {
@@ -32,7 +30,7 @@ public interface IEntityProcessVersion extends IEntityByCod {
     }
 
     default IEntityTaskVersion getTaskVersion(String abbreviation) {
-        for (IEntityTaskVersion situacao : getTasks()) {
+        for (IEntityTaskVersion situacao : getVersionTasks()) {
             if (situacao.getAbbreviation().equalsIgnoreCase(abbreviation)) {
                 return situacao;
             }
