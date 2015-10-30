@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -137,23 +135,6 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         }
         MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
         return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
-    }
-
-    public <D extends MInstancia> D getDescendant(MTipo<D> descendantType) {
-        return MInstances.getDescendant(this, descendantType);
-    }
-    public <D extends MInstancia> Optional<D> findDescendant(MTipo<D> descendantType) {
-        return MInstances.findDescendant(this, descendantType);
-    }
-    public <D extends MInstancia> List<D> listDescendants(MTipo<D> descendantType) {
-        return MInstances.listDescendants(this, descendantType);
-    }
-    public <D extends MInstancia, V> List<V> listDescendants(MTipo<?> descendantType, Function<D, V> function) {
-        return MInstances.listDescendants(this, descendantType, function);
-    }
-    @SuppressWarnings("unchecked")
-    public <V> List<V> listDescendantValues(MTipo<?> descendantType, Class<V> valueType) {
-        return MInstances.listDescendants(this, descendantType, node -> (V) node.getValor());
     }
 
     private final static class FieldMapOfRecordInstance {

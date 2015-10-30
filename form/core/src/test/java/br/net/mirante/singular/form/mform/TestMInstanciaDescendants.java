@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.core.MIString;
+
 public class TestMInstanciaDescendants {
 
     @Test
@@ -16,18 +18,21 @@ public class TestMInstanciaDescendants {
 
         contato.getDescendant(pacote.nome).setValor("Fulano");
         contato.getDescendant(pacote.sobrenome).setValor("de Tal");
-        contato.getDescendant(pacote.enderecos).addNovo(novo -> {
-            MIComposto end = pacote.endereco.castInstancia(novo);
-            end.getDescendant(pacote.enderecoLogradouro).setValor("QI 25");
-            end.getDescendant(pacote.enderecoComplemento).setValor("Bloco G");
-            end.getDescendant(pacote.enderecoNumero).setValor(402);
-            end.getDescendant(pacote.enderecoCidade).setValor("Guará II");
-            end.getDescendant(pacote.enderecoEstado).setValor("DF");
-        });
-        contato.getDescendant(pacote.telefones).addValor("8888-8888");
-        contato.getDescendant(pacote.telefones).addValor("9999-8888");
-        contato.getDescendant(pacote.telefones).addValor("9999-9999");
-        contato.getDescendant(pacote.emails).addValor("fulano@detal.com");
+
+        MIComposto endereco = contato.getDescendant(pacote.enderecos).addNovo();
+        endereco.getDescendant(pacote.enderecoLogradouro).setValor("QI 25");
+        endereco.getDescendant(pacote.enderecoComplemento).setValor("Bloco G");
+        endereco.getDescendant(pacote.enderecoNumero).setValor(402);
+        endereco.getDescendant(pacote.enderecoCidade).setValor("Guará II");
+        endereco.getDescendant(pacote.enderecoEstado).setValor("DF");
+
+        MILista<MIString> telefones = contato.getDescendant(pacote.telefones);
+        telefones.addValor("8888-8888");
+        telefones.addValor("9999-8888");
+        telefones.addValor("9999-9999");
+
+        MILista<MIString> emails = contato.getDescendant(pacote.emails);
+        emails.addValor("fulano@detal.com");
 
         Assert.assertEquals(
             Arrays.asList("8888-8888", "9999-8888", "9999-9999"),
@@ -58,5 +63,28 @@ public class TestMInstanciaDescendants {
         Assert.assertEquals(
             Arrays.asList("C0", "C1", "C2", "C3"),
             contato.listDescendantValues(pacote.enderecoCidade, String.class));
+    }
+
+    @Test
+    public void testIncorrectAncestor() {
+        MDicionario dicionario = MDicionario.create();
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        MIComposto contato = pacote.contato.novaInstancia();
+
+        Assert.assertFalse(contato.getDescendant(pacote.telefones).findAncestor(pacote.enderecos).isPresent());
+        Assert.assertFalse(contato.getDescendant(pacote.enderecos).findAncestor(pacote.endereco).isPresent());
+    }
+
+    @Test
+    public void testIncorrectDescendant() {
+        MDicionario dic = MDicionario.create();
+        MPacoteTesteContatos pac = dic.carregarPacote(MPacoteTesteContatos.class);
+        MIComposto contato = pac.contato.novaInstancia();
+
+        Assert.assertFalse(contato.getDescendant(pac.telefones).findDescendant(pac.endereco).isPresent());
+        Assert.assertFalse(contato.getDescendant(pac.enderecos).findDescendant(pac.telefones).isPresent());
+
+        contato.getDescendant(pac.enderecos).addNovo();
+        Assert.assertFalse(contato.getDescendant(pac.endereco).findDescendant(pac.emails).isPresent());
     }
 }
