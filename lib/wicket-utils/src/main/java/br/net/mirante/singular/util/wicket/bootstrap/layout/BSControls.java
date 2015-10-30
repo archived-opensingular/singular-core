@@ -1,9 +1,11 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import javax.servlet.ServletContext;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
@@ -15,6 +17,7 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebApplication;
 
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -69,52 +72,57 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendInputText(Component input) {
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
-
+    
     public BSControls appendInputFile(Component input) {
-//        return super.appendTag("input", false, "type='file' class='form-control'", input);
-//	return this.appendTag("span", true, "class='btn btn-file'",
+	BSContainer buttonContainer = new BSContainer<>("_bt_" + input.getId())		
+		.appendTag("span", new Label("_", Model.of("Selecionar ...")))
+		.appendTag("input", true, "type='file' id='" + input.getMarkupId() + "'", input)
+		;
+
+	final String path = buttonContainer.getRequest().getContextPath() + "/fileUpload"; //TODO : need to be a service
+	TemplatePanel scriptContainer = (TemplatePanel) buttonContainer.newComponent(id -> new TemplatePanel(id,
+		() -> "<script > " 
+			+ "$(function () {" 
+			+ "  $('#" + input.getMarkupId() 
+			+ "').fileupload({  "
+			+ "    url: '"+path+"',  " 
+			+ "    paramName: 'FILE-UPLOAD',  " 
+			+ "    singleFileUploads: true,  " 
+//			+ "    dataType: 'json',  "
+			+ "    start: function (e, data) {  "
+			+ "        $('#files_"+ input.getMarkupId()+"').html('');"
+			+ "        $('#progress_"+ input.getMarkupId()+" .progress-bar').css('width','0%')"
+			+ "    },"
+			+ "    done: function (e, data) {  "
+			+ "        console.log(e,data);    "
+			+ "        $.each(data.result.files, function (index, file) {  "
+			+ "            $('<p/>').text(file.name).appendTo('#files_"+ input.getMarkupId()+"'); "
+			+ "        });  " 
+			+ "    },  " 
+			+ "    progressall: function (e, data) {  "
+			+ "        var progress = parseInt(data.loaded / data.total * 100, 10); "
+			+ "        $('#progress_"+ input.getMarkupId()+" .progress-bar').css( 'width', "
+			+ "                        progress + '%' ); "
+			+ "    }  " 
+			+ "  }).prop('disabled', !$.support.fileInput)  "
+			+ "    .parent().addClass($.support.fileInput ? undefined : 'disabled');  " 
+			+ "});"
+			+ " </script>\n"));
+	scriptContainer
+		// .add(component)
+		.setRenderBodyOnly(true);
+
+//	BSControls button = this.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
 	
-         BSContainer container = new BSContainer<>("_" + input.getId());
-         container.appendTag("span", new Label("_", Model.of("Selecionar ...")));
-         BSContainer fileTag = container.appendTag("input", true, "type='file' id='"+input.getMarkupId()+"'", input);
-            
-//         TemplatePanel fileContainer = (TemplatePanel) container.newComponent(id -> new TemplatePanel(id, () ->
-//         "<input wicket:id='" + input.getId() + "' type='file' class='form-control'>"
-//                 +  "</input>\n" ));
-//         fileContainer
-//                 .add(input)
-//                 .setRenderBodyOnly(true);
-         
-         TemplatePanel scriptContainer = (TemplatePanel) container.newComponent(id -> new TemplatePanel(id, () ->
-                 "<script > "
-         	 +"$(function () {"
-                 +"  $('#"+input.getMarkupId()+"').fileupload({  "
-                 +"    url: 'TODO',  "
-                 +"    dataType: 'json',  "
-                 +"    done: function (e, data) {  "
-                 +"        $.each(data.result.files, function (index, file) {  "
-//                 +"            $('<p/>').text(file.name).appendTo('#files');  "
-                 +"        });  "
-                 +"    },  "
-                 +"    progressall: function (e, data) {  "
-//                 +"        var progress = parseInt(data.loaded / data.total * 100, 10);  "
-//                 +"        $('#progress .progress-bar').css(  "
-//                 +"            'width',  "
-//                 +"            progress + '%'  "
-//                 +"        );  "
-                 +"    }  "
-                 +"  }).prop('disabled', !$.support.fileInput)  "
-                 +"    .parent().addClass($.support.fileInput ? undefined : 'disabled');  "
-                 +"});"
-                 +" </script>\n"));
-         scriptContainer
-//                 .add(component)
-                 .setRenderBodyOnly(true);   
-         
-         
-        return this.appendTag("span", true, "class='btn btn-success fileinput-button'", 
-        		container
-        	);
+	BSContainer progressContainer = new BSContainer<>("_progress_" + input.getId());
+	progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'",new Label("_", Model.of("")));
+	
+	BSContainer inputContainer = new BSContainer<>("_" + input.getId());
+	inputContainer.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
+	inputContainer.appendTag("div", true, "class='progress' id='progress_" + input.getMarkupId() + "'",progressContainer);
+	inputContainer.appendTag("div", true, "class='files' id='files_" + input.getMarkupId() + "'",new Label("_", Model.of("")));
+	
+	return this.appendTag("div", inputContainer);
     }
 
     
