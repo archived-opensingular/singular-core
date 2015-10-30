@@ -17,8 +17,7 @@ import java.util.function.Function;
  */
 public abstract class MInstances {
 
-    private MInstances() {
-    }
+    private MInstances() {}
 
     /**
      * Percorre todos as instâncias filha da instancia informada chamando o
@@ -138,22 +137,16 @@ public abstract class MInstances {
         }
         return result;
     }
-    
+
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
     private static Collection<MInstancia> children(MInstancia node) {
         List<MInstancia> result = new ArrayList<>();
         if (node instanceof MIComposto) {
-            final MIComposto composite = (MIComposto) node;
-            @SuppressWarnings("unchecked")
-            final MTipoComposto<MIComposto> nodeType = (MTipoComposto<MIComposto>) node.getMTipo();
-            for (MTipo<?> fieldType : ((MTipoComposto<?>) nodeType).getFields())
-                result.add(composite.getField(fieldType.getNomeSimples(), fieldType.getClasseInstancia()));
-
+            result.addAll(((MIComposto) node).getAllFields());
         } else if (node instanceof MILista<?>) {
-            final MILista<?> list = (MILista<?>) node;
-            result.addAll(list.getChildren());
+            result.addAll(((MILista<?>) node).getChildren());
         }
         return result;
     }

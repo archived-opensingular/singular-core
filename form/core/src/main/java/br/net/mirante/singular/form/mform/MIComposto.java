@@ -28,8 +28,21 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
     }
 
+    /**
+     * Retorna apenas os campos do tipo que já foram instanciados.
+     * @return instancias dos campos
+     */
     public Collection<MInstancia> getCampos() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
+    }
+    /**
+     * Retorna todos os campos do tipo, instanciando os que ainda não foram.
+     * @return instancias dos campos
+     */
+    public Collection<MInstancia> getAllFields() {
+        for (MTipo<?> field : getMTipo().getFields())
+            getCampo(field.getNomeSimples());
+        return getCampos();
     }
 
     @Override

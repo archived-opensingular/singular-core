@@ -2,13 +2,9 @@ package br.net.mirante.singular.form.validation;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 
-public interface IValidatable<T> {
+public interface IInstanceValidatable<T> {
 
-    T getValue();
-
-    MInstancia getMInstancia();
-
-    boolean isValid();
+    MInstancia getInstance();
 
     void setDefaultLevel(ValidationErrorLevel level);
 

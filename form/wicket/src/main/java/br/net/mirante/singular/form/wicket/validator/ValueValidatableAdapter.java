@@ -1,18 +1,18 @@
 package br.net.mirante.singular.form.wicket.validator;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.validation.IValidatable;
+import br.net.mirante.singular.form.validation.IValueValidatable;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
-final class ValidatableAdapter<V> implements IValidatable<V> {
+final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
     private final org.apache.wicket.Component                  component;
     private final org.apache.wicket.validation.IValidator<V>   wicketValidator;
     private final org.apache.wicket.validation.IValidatable<V> wicketValidatable;
     private final IMInstanciaAwareModel<V>                     model;
     private ValidationErrorLevel                               defaultLevel = ValidationErrorLevel.ERROR;
-    public ValidatableAdapter(
+    public ValueValidatableAdapter(
         org.apache.wicket.Component component,
         org.apache.wicket.validation.IValidator<V> wValidator,
         org.apache.wicket.validation.IValidatable<V> wValidatable,
@@ -22,6 +22,7 @@ final class ValidatableAdapter<V> implements IValidatable<V> {
         this.wicketValidatable = wValidatable;
         this.model = model;
     }
+    @Override
     public void setDefaultLevel(ValidationErrorLevel defaultLevel) {
         this.defaultLevel = defaultLevel;
     }
@@ -30,7 +31,7 @@ final class ValidatableAdapter<V> implements IValidatable<V> {
         return wicketValidatable.getValue();
     }
     @Override
-    public MInstancia getMInstancia() {
+    public MInstancia getInstance() {
         return model.getMInstancia();
     }
     @Override
@@ -57,7 +58,7 @@ final class ValidatableAdapter<V> implements IValidatable<V> {
         } else {
             component.warn(msg);
         }
-        return new ValidationErrorAdapter(wicketError);
+        return new ValidationErrorAdapter(level, wicketError);
     }
     @Override
     public boolean isValid() {

@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
-public class MInstanciaValidator<T> extends Behavior implements org.apache.wicket.validation.IValidator<T> {
+public class MInstanciaValueValidator<T> extends Behavior implements org.apache.wicket.validation.IValidator<T> {
 
     private Component component;
 
@@ -25,6 +25,6 @@ public class MInstanciaValidator<T> extends Behavior implements org.apache.wicke
         IMInstanciaAwareModel<T> instAwareModel = (IMInstanciaAwareModel<T>) model;
         MInstancia instancia = instAwareModel.getMInstancia();
         MTipo<?> tipo = instancia.getMTipo();
-        tipo.validar(new ValidatableAdapter<T>(component, this, wicketValidatable, instAwareModel));
+        tipo.validateValue(new ValueValidatableAdapter<T>(component, this, wicketValidatable, instAwareModel));
     }
 }

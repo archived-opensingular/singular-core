@@ -98,10 +98,16 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return getFieldsConsolidated().get(nomeCampo);
     }
 
+    /**
+     * @return todos os campos deste tipo específico, incluindo os campos do tipo pai.
+     */
     public Collection<MTipo<?>> getFields() {
         return getFieldsConsolidated().getFields();
     }
 
+    /**
+     * @return campos declarados neste tipo específico, não incluindo os campos do tipo pai.
+     */
     public Collection<MTipo<?>> getFieldsLocal() {
         return (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
 

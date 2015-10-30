@@ -1,11 +1,14 @@
-package br.net.mirante.singular.form.validation;
+package br.net.mirante.singular.form.validation.validator;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MCPFValidator implements IValidator<String> {
+import br.net.mirante.singular.form.validation.IValueValidatable;
+import br.net.mirante.singular.form.validation.IValueValidator;
+
+public class MCPFValidator implements IValueValidator<String> {
 
     private static final Logger LOGGER = Logger.getLogger("MCPFValidator");
 
@@ -24,7 +27,7 @@ public class MCPFValidator implements IValidator<String> {
     }
 
     @Override
-    public void validate(IValidatable<String> validatable) {
+    public void validate(IValueValidatable<String> validatable) {
         String value = validatable.getValue();
         if (!isValid(value)) {
             validatable.error("CPF inválido");
