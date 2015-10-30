@@ -169,7 +169,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
         assertTipo(tipoBloco.getTipoLocal("enderecos"), "enderecos", MTipoLista.class);
         assertTipo(tipoBloco.getCampo("enderecos"), "enderecos", MTipoLista.class);
-        assertTipo(((MTipoLista<?>) tipoBloco.getCampo("enderecos")).getTipoElementos(), "String", MTipoString.class);
+        assertTipo(((MTipoLista<?, ?>) tipoBloco.getCampo("enderecos")).getTipoElementos(), "String", MTipoString.class);
 
         MIComposto bloco = tipoBloco.novaInstancia();
         assertNull(bloco.getValor("enderecos"));
@@ -199,7 +199,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
         MTipoComposto<? extends MIComposto> tipoBloco = pb.createTipoComposto("bloco");
-        MTipoLista<MTipoComposto<?>> tipoEnderecos = tipoBloco.addCampoListaOfComposto("enderecos", "endereco");
+        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoEnderecos = tipoBloco.addCampoListaOfComposto("enderecos", "endereco");
         MTipoComposto<?> tipoEndereco = tipoEnderecos.getTipoElementos();
         tipoEndereco.addCampoString("rua");
         tipoEndereco.addCampoString("cidade");

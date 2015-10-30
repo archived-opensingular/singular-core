@@ -1,5 +1,6 @@
 package br.net.mirante.singular.view.page.form.examples;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
@@ -12,6 +13,7 @@ import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
@@ -51,7 +53,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
             .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
-        final MTipoLista<MTipoString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
+        final MTipoLista<MTipoString, MIString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
                 pb.createTipo("tipoContato", MTipoString.class)
                         .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax"));
         {
@@ -115,7 +117,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrWicket::new).larguraPref(8);
         }
 
-        final MTipoLista<MTipoComposto<?>> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
         final MTipoComposto<?> cursoAcademico = formacao.getTipoElementos();
         final MTipoString academicoTipo = cursoAcademico.addCampoString("tipo", true)
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
@@ -148,7 +150,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrWicket::new).larguraPref(2);
         }
 
-        final MTipoLista<MTipoComposto<?>> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
         final MTipoComposto<?> experiencia = experiencias.getTipoElementos();
         final MTipoAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", MTipoAnoMes.class, true);
         final MTipoAnoMes dtFimExperiencia = experiencia.addCampo("fim", MTipoAnoMes.class);
@@ -174,7 +176,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Atividades Desenvolvidas").multiLinha(true);
         }
 
-        final MTipoLista<MTipoComposto<?>> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
         final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
         final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
         final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);

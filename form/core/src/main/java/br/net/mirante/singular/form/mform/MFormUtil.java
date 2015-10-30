@@ -40,7 +40,7 @@ final class MFormUtil {
             return campo;
         } else if (tipo instanceof MTipoLista) {
             if (leitor.isIndice()) {
-                return ((MTipoLista<?>) tipo).getTipoElementos();
+                return ((MTipoLista<?, ?>) tipo).getTipoElementos();
             }
             throw new RuntimeException(leitor.getTextoErro(tipo, "Não se aplica a um tipo lista"));
         } else if (tipo instanceof MTipoSimples) {

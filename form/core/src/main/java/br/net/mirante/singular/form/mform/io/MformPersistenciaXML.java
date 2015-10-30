@@ -32,7 +32,7 @@ public class MformPersistenciaXML {
             MTipoSimples<?, ?> tipos = (MTipoSimples<?, ?>) tipo;
             instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
 
-        } else if (tipo instanceof MTipoLista<?>) {
+        } else if (tipo instanceof MTipoLista<?, ?>) {
 
         } else if (tipo instanceof MAtributo) {
 

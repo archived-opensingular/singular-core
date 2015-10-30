@@ -26,8 +26,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    public MTipoLista<?> getMTipo() {
-        return (MTipoLista<?>) super.getMTipo();
+    public MTipoLista<?, ?> getMTipo() {
+        return (MTipoLista<?, ?>) super.getMTipo();
     }
 
     @SuppressWarnings("unchecked")
