@@ -78,7 +78,7 @@ public abstract class MEscopoBase implements MEscopo {
     }
 
     @SuppressWarnings("unchecked")
-    final <T extends MTipo<I>, I extends MInstancia> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
+    final <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         Preconditions.checkNotNull(tipoElementos);
         MTipoLista<T, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
         tipoLista.setTipoElementos(tipoElementos);
