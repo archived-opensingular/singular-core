@@ -17,6 +17,9 @@ public enum SingularProperties {
 
     SingularProperties() {
         InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("singular.properties");
+        if (is == null) {
+            is = SingularProperties.class.getClassLoader().getResourceAsStream("singular.properties");
+        }
         if (is != null) {
             load(is);
         }

@@ -10,9 +10,9 @@ import br.net.mirante.singular.flow.core.builder.BJava;
 import br.net.mirante.singular.flow.core.builder.FlowBuilder;
 import br.net.mirante.singular.flow.core.builder.FlowBuilderImpl;
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
-import br.net.mirante.singular.flow.util.vars.VarDefinitionImpl;
-import br.net.mirante.singular.flow.util.vars.types.VarTypeDecimal;
-import br.net.mirante.singular.flow.util.vars.types.VarTypeString;
+import br.net.mirante.singular.flow.core.variable.VarDefinitionImpl;
+import br.net.mirante.singular.flow.core.variable.type.VarTypeDecimal;
+import br.net.mirante.singular.flow.core.variable.type.VarTypeString;
 
 import java.math.BigDecimal;
 

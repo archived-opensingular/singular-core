@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -185,12 +186,20 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException("implementar");
     }
 
+    public <A extends MInstancia & ICompositeInstance> A getAncestor(MTipo<A> ancestorType) {
+        return findAncestor(ancestorType).get();
+    }
+    public <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MTipo<A> ancestorType) {
+        return MInstances.findAncestor(this, ancestorType);
+    }
+
+    @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -235,6 +244,6 @@ public abstract class MInstancia implements MAtributoEnabled {
      */
     protected final String errorMsg(String msgToBeAppended) {
         return "'" + getCaminhoCompleto() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
-                + msgToBeAppended;
+            + msgToBeAppended;
     }
 }

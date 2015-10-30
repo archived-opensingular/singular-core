@@ -1,8 +1,6 @@
 package br.net.mirante.singular.dsl;
 
-import br.net.mirante.singular.flow.util.vars.VarType;
-
-import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.flow.core.variable.VarType;
 
 public class VariableConfiguration {
 

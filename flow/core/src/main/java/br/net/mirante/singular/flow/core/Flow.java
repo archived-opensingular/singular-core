@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.core.view.Lnk;
 
 public class Flow {
 
@@ -23,9 +23,9 @@ public class Flow {
     }
 
     public static synchronized void setConf(SingularFlowConfigurationBean conf, boolean force) {
-        if (!force){
-            if(mbpmBean != null
-                    && mbpmBean != conf){
+        if (!force) {
+            if (mbpmBean != null
+                && mbpmBean != conf) {
                 throw new SingularFlowException("O contexto já foi configurado.");
             }
         }
@@ -45,7 +45,8 @@ public class Flow {
     public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
         return getMbpmBean().getProcessDefinition(classe);
     }
-    public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
+
+    public static ProcessDefinition<?> getProcessDefinition(String abbreviation) {
         return getMbpmBean().getProcessDefinition(abbreviation);
     }
 
@@ -112,17 +113,7 @@ public class Flow {
         return getMbpmBean().getUserService().getUserIfAvailable();
     }
 
-
-    /**
-     *
-     * @deprecated utilizar {@link #notifyListeners(Consumer) notifyListeners} para fazer uma notificação.
-     */
-    @Deprecated
-    public static ProcessNotifier getNotifiers() {
-        return getMbpmBean().getNotifiers();
-    }
-
-    public static void notifyListeners(Consumer<ProcessNotifier> operation){
+    public static void notifyListeners(Consumer<ProcessNotifier> operation) {
         getMbpmBean().notifyListeners(operation);
     }
 

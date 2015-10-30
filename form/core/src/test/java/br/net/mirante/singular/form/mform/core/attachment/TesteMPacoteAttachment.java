@@ -107,7 +107,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     public void testRepeatedAttachment() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoLista<MTipoAttachment> tipoLista = pb.createTipoListaOf("anexos", MTipoAttachment.class);
+        MTipoLista<MTipoAttachment, MIAttachment> tipoLista = pb.createTipoListaOf("anexos", MTipoAttachment.class);
         MILista<MIAttachment> lista = tipoLista.novaInstancia(MIAttachment.class);
 
         MIAttachment arquivo1 = lista.addNovo();

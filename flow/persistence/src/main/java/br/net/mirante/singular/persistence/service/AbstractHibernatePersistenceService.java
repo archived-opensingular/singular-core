@@ -34,9 +34,9 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.flow.core.variable.VarInstance;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 

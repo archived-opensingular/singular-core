@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,8 +26,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    public MTipoLista<?> getMTipo() {
-        return (MTipoLista<?>) super.getMTipo();
+    public MTipoLista<?, ?> getMTipo() {
+        return (MTipoLista<?, ?>) super.getMTipo();
     }
 
     @SuppressWarnings("unchecked")
@@ -64,6 +65,12 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
     }
 
+    public E addNovo(Consumer<E> consumer) {
+        E novo = addNovo();
+        consumer.accept(novo);
+        return novo;
+    }
+    
     public E addNovoAt(int index) {
         if (getTipoElementos() instanceof MTipoComposto) {
             E instancia = getTipoElementos().newInstance(getDocument());

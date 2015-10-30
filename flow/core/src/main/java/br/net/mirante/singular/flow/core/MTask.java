@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.props.MetaData;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import br.net.mirante.singular.flow.core.property.MetaData;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 
 import com.google.common.base.MoreObjects;
 
