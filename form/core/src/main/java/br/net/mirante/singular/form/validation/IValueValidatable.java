@@ -6,7 +6,7 @@ public interface IValueValidatable<T> {
 
     T getValue();
 
-    MInstancia getMInstancia();
+    MInstancia getInstance();
 
     boolean isValid();
 

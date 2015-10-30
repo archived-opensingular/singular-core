@@ -6,8 +6,6 @@ public interface IInstanceValidatable<T> {
 
     MInstancia getInstance();
 
-    boolean isValid();
-
     void setDefaultLevel(ValidationErrorLevel level);
 
     void error(IValidationError error);

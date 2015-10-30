@@ -22,6 +22,7 @@ final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
         this.wicketValidatable = wValidatable;
         this.model = model;
     }
+    @Override
     public void setDefaultLevel(ValidationErrorLevel defaultLevel) {
         this.defaultLevel = defaultLevel;
     }
@@ -30,7 +31,7 @@ final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
         return wicketValidatable.getValue();
     }
     @Override
-    public MInstancia getMInstancia() {
+    public MInstancia getInstance() {
         return model.getMInstancia();
     }
     @Override
@@ -57,7 +58,7 @@ final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
         } else {
             component.warn(msg);
         }
-        return new ValidationErrorAdapter(wicketError);
+        return new ValidationErrorAdapter(level, wicketError);
     }
     @Override
     public boolean isValid() {

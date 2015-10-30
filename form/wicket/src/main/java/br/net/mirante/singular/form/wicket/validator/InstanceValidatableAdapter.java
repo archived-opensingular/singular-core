@@ -53,10 +53,6 @@ final class InstanceValidatableAdapter<V> implements IInstanceValidatable<V> {
         } else {
             component.warn(msg);
         }
-        return new ValidationErrorAdapter(wicketError);
-    }
-    @Override
-    public boolean isValid() {
-        return wicketValidatable.isValid();
+        return new ValidationErrorAdapter(level, wicketError);
     }
 }
