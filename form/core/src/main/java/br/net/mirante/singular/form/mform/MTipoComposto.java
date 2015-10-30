@@ -78,13 +78,13 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return addInterno(nomeCampo, novo);
     }
 
-    public <T extends MTipo<I>, I extends MInstancia> MTipoLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
         T tipo = resolverTipo(classeTipoLista);
         MTipoLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
         return addInterno(nomeSimplesNovoTipo, novo);
     }
 
-    public <T extends MTipo<I>, I extends MInstancia> MTipoLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
         MTipoLista<T, I> novo = createTipoListaOf(nomeCampo, tipoElementos);
         return addInterno(nomeCampo, novo);
     }
