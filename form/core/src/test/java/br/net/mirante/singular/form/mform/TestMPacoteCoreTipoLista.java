@@ -18,7 +18,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoLista<MTipoString> nomes = pb.createTipoListaOf("nomes", MTipoString.class);
+        MTipoLista<MTipoString, MIString> nomes = pb.createTipoListaOf("nomes", MTipoString.class);
 
         MILista<MIString> lista = (MILista<MIString>) nomes.novaInstancia();
         lista.addValor("Paulo");
@@ -58,7 +58,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoLista<MTipoComposto<?>> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
+        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
         tipoPedidos.getTipoElementos().addCampoString("descricao");
         tipoPedidos.getTipoElementos().addCampoInteger("qtd");
 
@@ -98,7 +98,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoLista<MTipoFormula> tipoFormulas = pb.createTipoListaOf("formulas", MTipoFormula.class);
+        MTipoLista<MTipoFormula, MIFormula> tipoFormulas = pb.createTipoListaOf("formulas", MTipoFormula.class);
 
         MILista<MIFormula> formulas = (MILista<MIFormula>) tipoFormulas.novaInstancia();
 
@@ -138,7 +138,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         }
 
         @MInfoTipo(nome = "TestTipoListaComCargaInterna", pacote = TestPacoteListaA.class)
-        public static final class TestTipoListaComCargaInterna extends MTipoLista<MTipoString> {
+        public static final class TestTipoListaComCargaInterna extends MTipoLista<MTipoString, MIString> {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
                 super.onCargaTipo(tb);

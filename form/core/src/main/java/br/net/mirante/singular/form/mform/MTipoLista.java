@@ -3,14 +3,23 @@ package br.net.mirante.singular.form.mform;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
+/**
+ * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
+ * elementos. Basicamente representa um array.
+ *
+ * @author Daniel C. Bordin
+ */
 @MInfoTipo(nome = "MTipoLista", pacote = MPacoteCore.class)
-public class MTipoLista<E extends MTipo<?>> extends MTipo<MILista<?>> {
+public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<MILista<I>> {
 
     private E tipoElementos;
 
     @SuppressWarnings("unchecked")
     public MTipoLista() {
-        super((Class<? extends MILista<?>>) (Class<? extends MInstancia>) MILista.class);
+        // O cast na linha abaixo parece redundante, mas é necessário para
+        // contornar um erro de compilação do JDK 8.0.60. Talvez no futuro
+        // possa ser retirada
+        super((Class<? extends MILista<I>>) (Class<? extends MInstancia>) MILista.class);
     }
 
     /**
@@ -38,12 +47,12 @@ public class MTipoLista<E extends MTipo<?>> extends MTipo<MILista<?>> {
     }
 
     @Override
-    MILista<?> newInstance(SDocument owner) {
+    MILista<I> newInstance(SDocument owner) {
         if (tipoElementos == null) {
             throw new RuntimeException("Não é possível instanciar o tipo '" + getNome()
                     + "' pois o tipo da lista (o tipo de seus elementos) não foram definidos");
         }
-        MILista<?> lista = new MILista<>();
+        MILista<I> lista = new MILista<>();
         lista.setTipo(this);
         lista.setDocument(owner);
         Integer tamanhoInicial = lista.as(AtrBasic.class).getTamanhoInicial();
@@ -60,11 +69,17 @@ public class MTipoLista<E extends MTipo<?>> extends MTipo<MILista<?>> {
         this.tipoElementos = tipoElementos;
     }
 
+    /**
+     * Define que o tipo da lista sera um novo tipo record (tipo composto) com o
+     * nome infomado. O novo tipo é criado sem campos, devendo ser estruturado
+     * na sequencia.
+     */
     void setTipoElementosNovoTipoComposto(String nomeSimplesNovoTipoComposto) {
         MTipoComposto<?> tipo = extenderTipo(nomeSimplesNovoTipoComposto, MTipoComposto.class);
         setTipoElementos((E) tipo);
     }
 
+    /** Retorna o tipo do elementos contido na lista. */
     public E getTipoElementos() {
         return tipoElementos;
     }

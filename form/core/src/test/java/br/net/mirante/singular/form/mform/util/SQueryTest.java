@@ -2,42 +2,67 @@ package br.net.mirante.singular.form.mform.util;
 
 import static br.net.mirante.singular.form.mform.util.SQuery.*;
 
+import java.util.Arrays;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.MPacoteTesteContatos;
 
 public class SQueryTest {
 
     @Test
-    public void testRaiz() {
+    public void test() {
         MDicionario dicionario = MDicionario.create();
-        MPacoteSQuery pacote = dicionario.carregarPacote(MPacoteSQuery.class);
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
 
         MIComposto contato = pacote.contato.novaInstancia();
-        MILista<?> enderecos = contato.getFieldList(pacote.enderecos.getNomeSimples());
-        enderecos.addNovo();
-        enderecos.addNovo();
-        enderecos.addNovo();
-        enderecos.addNovo();
-        ((MIComposto) enderecos.get(0)).getCampo("numero").setValor(0);
-        ((MIComposto) enderecos.get(1)).getCampo("numero").setValor(1);
-        ((MIComposto) enderecos.get(2)).getCampo("numero").setValor(2);
-        ((MIComposto) enderecos.get(3)).getCampo("numero").setValor(3);
 
-        $i(contato)
-            .find(pacote.endereco)
-            .each(it -> it.getCampo("cidade").setValor("C" + it.getCampo("numero").getValor()))
+        $(contato)
+            .find(pacote.nome).val("Fulano").end()
+            .find(pacote.sobrenome).val("de Tal").end()
+            .find(pacote.enderecos).addNew(end -> $(end)
+                .find(pacote.enderecoLogradouro).val("QI 25").end()
+                .find(pacote.enderecoComplemento).val("Bloco G").end()
+                .find(pacote.enderecoNumero).val(402).end()
+                .find(pacote.enderecoCidade).val("Guará II").end()
+                .find(pacote.enderecoEstado).val("DF").end())
             .end()
-            .find(pacote.enderecoNumero)
-            .each(it -> System.out.println(it.getValor()))
-            .end()
-            .find(pacote.enderecoCidade)
-            .each(it -> System.out.println(it.getValor()))
-            .end()
-            .find(MIString.class)
-            .each(it -> System.out.println(it.getNome() + " = " + it.getValor()));
+            .find(pacote.telefones).addVal("8888-8888").addVal("9999-8888").addVal("9999-9999").end()
+            .find(pacote.emails).addVal("fulano@detal.com").end();
+
+        System.out.println($(contato).find(pacote.telefones).children().val());
+
+        contato.debug();
+    }
+
+    @Test
+    public void testList() {
+        MDicionario dicionario = MDicionario.create();
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+
+        MIComposto contato = pacote.contato.novaInstancia();
+
+        $(contato).find(pacote.enderecos)
+            .each(it -> it.addNovo())
+            .each(it -> it.addNovo())
+            .each(it -> it.addNovo())
+            .each(it -> it.addNovo())
+            .each(it -> $(it)
+                .find(pacote.enderecoNumero)
+                .each((num, idx) -> num.setValor(idx)));
+
+        Assert.assertEquals(
+            Arrays.asList(0, 1, 2, 3),
+            $(contato).find(pacote.enderecoNumero).list(it -> it.getValor().intValue()));
+
+        $(contato).find(pacote.enderecoCidade)
+            .each(cid -> cid.setValor("C" + $(cid).parent().find(pacote.enderecoNumero).val(Integer.class)));
+
+        Assert.assertEquals(
+            Arrays.asList("C0", "C1", "C2", "C3"),
+            $(contato).find(pacote.enderecoCidade).list(it -> it.getValor()));
     }
 }

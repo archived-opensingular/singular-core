@@ -78,19 +78,19 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return addInterno(nomeCampo, novo);
     }
 
-    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
         T tipo = resolverTipo(classeTipoLista);
-        MTipoLista<T> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
+        MTipoLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
         return addInterno(nomeSimplesNovoTipo, novo);
     }
 
-    public <T extends MTipo<?>> MTipoLista<T> addCampoListaOf(String nomeCampo, T tipoElementos) {
-        MTipoLista<T> novo = createTipoListaOf(nomeCampo, tipoElementos);
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
+        MTipoLista<T, I> novo = createTipoListaOf(nomeCampo, tipoElementos);
         return addInterno(nomeCampo, novo);
     }
 
-    public MTipoLista<MTipoComposto<?>> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
-        MTipoLista<MTipoComposto<?>> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
+    public <I extends MIComposto> MTipoLista<MTipoComposto<I>, I> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
+        MTipoLista<MTipoComposto<I>, I> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
         return addInterno(nomeCampo, novo);
     }
 
@@ -186,7 +186,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         }
 
         public void addAll(FieldMapOfRecordType toBeAdded) {
-            if (! toBeAdded.isEmpty()) {
+            if (!toBeAdded.isEmpty()) {
                 toBeAdded.fields.values().forEach(fr -> addInterno(fr.getField()));
             }
         }
@@ -236,7 +236,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     private static final class FieldRef {
         private final MTipo<?> field;
-        private int index = -1;
+        private int            index = -1;
 
         public FieldRef(MTipo<?> field) {
             this.field = field;

@@ -33,7 +33,7 @@ public class TestSDocument extends TestCaseForm {
     public void testHerancaPelosSubcampos() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoLista<MTipoComposto<?>> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
+        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
         MTipoComposto<?> tipoComposto = tipoLista.getTipoElementos();
         tipoComposto.addCampoString("nome");
         tipoComposto.addCampoListaOf("dependentes", MTipoString.class);

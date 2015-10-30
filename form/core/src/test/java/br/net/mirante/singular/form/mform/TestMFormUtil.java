@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import org.junit.Assert;
 
+import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
@@ -44,10 +45,10 @@ public class TestMFormUtil extends TestCaseForm {
         MTipoComposto<?> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
         MTipoInteger integer2 = tipoSubBloco.addCampoInteger("integer2");
         MTipoString tipoString2 = pb.createTipo("string2", MTipoString.class);
-        MTipoLista<MTipoString> tipoListaString2 = tipoBloco.addCampoListaOf("enderecos", tipoString2);
+        MTipoLista<MTipoString, MIString> tipoListaString2 = tipoBloco.addCampoListaOf("enderecos", tipoString2);
         MTipoString tipoString3 = pb.createTipo("string3", MTipoString.class);
-        MTipoLista<MTipoString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", tipoString3);
-        MTipoLista<MTipoComposto<?>> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
+        MTipoLista<MTipoString, MIString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", tipoString3);
+        MTipoLista<MTipoComposto<MIComposto>, MIComposto> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
         MTipoInteger tipoQtd = listaSubBloco2.getTipoElementos().addCampoInteger("qtd");
 
         tipoBloco.debug();
