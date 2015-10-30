@@ -34,9 +34,9 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.flow.core.variable.VarInstance;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.VarType;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
@@ -231,9 +231,9 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         SessionWrapper sw = getSession();
         sw.saveOrUpdate(processVersion.getProcessDefinition());
         sw.saveOrUpdate(processVersion);
-        sw.saveOrUpdate(processVersion.getTasks().stream().map(tv -> tv.getTaskDefinition()));
-        sw.saveOrUpdate(processVersion.getTasks());
-        sw.saveOrUpdate(processVersion.getTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
+        sw.saveOrUpdate(processVersion.getVersionTasks().stream().map(tv -> tv.getTaskDefinition()));
+        sw.saveOrUpdate(processVersion.getVersionTasks());
+        sw.saveOrUpdate(processVersion.getVersionTasks().stream().flatMap(tv -> tv.getTransitions().stream()));
         return retrieveProcessVersionByCod(processVersion.getCod());
     }
 
@@ -345,7 +345,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date minDataInicio, Date maxDataInicio, java.util.Collection<? extends TASK_DEF> states) {
         Objects.requireNonNull(process);
         final Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
-        c.createAlias("PI.process", "DEF");
+        c.createAlias("PI.processVersion", "DEF");
         c.add(Restrictions.eq("DEF.processDefinition", process));
         if (states != null && !states.isEmpty()) {
             DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
@@ -368,7 +368,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
     public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, MUser creatingUser, Boolean active) {
         Objects.requireNonNull(process);
         Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
-        c.createAlias("PI.process", "DEF");
+        c.createAlias("PI.processVersion", "DEF");
         c.add(Restrictions.eq("DEF.processDefinition", process));
 
         if (active != null) {

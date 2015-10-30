@@ -10,6 +10,16 @@ public class MDicionario implements IContextoTipo {
 
     private MapaNomeClasseValor<MTipo<?>> tipos = new MapaNomeClasseValor<>(t -> t.getNome());
 
+    private final SDocument internalDocument = new SDocument();
+
+    /**
+     * Apenas para uso interno do dicionario de modo que os atributos dos tipos
+     * tenha um documento de referencia.
+     */
+    final SDocument getInternalDicionaryDocument() {
+        return internalDocument;
+    }
+
     public Collection<MPacote> getPacotes() {
         return pacotes.getValores();
     }
@@ -21,9 +31,15 @@ public class MDicionario implements IContextoTipo {
     }
 
     public <T extends MPacote> T carregarPacote(Class<T> classePacote) {
-        T novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
-        pacotes.vericaNaoDeveEstarPresente(novo);
-        carregarInterno(novo);
+        if (classePacote == null){
+            throw new SingularFormException("Classe pacote não pode ser nula");
+        }
+        T novo = pacotes.get(classePacote);
+        if (novo == null) {
+            novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
+            pacotes.vericaNaoDeveEstarPresente(novo);
+            carregarInterno(novo);
+        }
         return novo;
     }
 
@@ -43,17 +59,11 @@ public class MDicionario implements IContextoTipo {
         carregarPacote(classPacote);
     }
 
-    final <T extends MPacote> void garantirPacoteCarregado(Class<T> classePacote) {
-        if (classePacote != null && pacotes.get(classePacote) == null) {
-            carregarPacote(classePacote);
-        }
-    }
-
     final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
         MInfoTipo mFormTipo = classeAlvo.getAnnotation(MInfoTipo.class);
         if (mFormTipo == null) {
             throw new RuntimeException("O tipo '" + classeAlvo.getName() + " não possui a anotação @" + MInfoTipo.class.getSimpleName()
-                + " em sua definição.");
+                    + " em sua definição.");
         }
         return mFormTipo;
     }
@@ -62,7 +72,7 @@ public class MDicionario implements IContextoTipo {
         Class<? extends MPacote> pacote = getAnotacaoMFormTipo(classeAlvo).pacote();
         if (pacote == null) {
             throw new RuntimeException(
-                "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
+                    "O tipo '" + classeAlvo.getName() + "' não define o atributo 'pacote' na anotação @"
                     + MInfoTipo.class.getSimpleName());
         }
         return pacote;

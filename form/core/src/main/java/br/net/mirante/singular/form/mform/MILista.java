@@ -1,13 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MILista<E extends MInstancia> extends MInstancia implements Iterable<E>, IPathEnabledInstance {
+public class MILista<E extends MInstancia> extends MInstancia implements Iterable<E>, ICompositeInstance {
 
     private List<E> valores;
 
@@ -24,8 +26,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    public MTipoLista<?> getMTipo() {
-        return (MTipoLista<?>) super.getMTipo();
+    public MTipoLista<?, ?> getMTipo() {
+        return (MTipoLista<?, ?>) super.getMTipo();
     }
 
     @SuppressWarnings("unchecked")
@@ -56,33 +58,40 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public E addNovo() {
         if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().novaInstancia();
+            E instancia = getTipoElementos().newInstance(getDocument());
             addInterno(instancia);
             return instancia;
         }
-        throw new RuntimeException("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")");
+        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
     }
 
+    public E addNovo(Consumer<E> consumer) {
+        E novo = addNovo();
+        consumer.accept(novo);
+        return novo;
+    }
+    
     public E addNovoAt(int index) {
         if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().novaInstancia();
+            E instancia = getTipoElementos().newInstance(getDocument());
             addAtInterno(index, instancia);
             return instancia;
         }
-        throw new RuntimeException("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")");
+        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
     }
 
-    public void addValor(Object valor) {
+    public E addValor(Object valor) {
         if (valor == null) {
-            throw new RuntimeException("Não é aceito null na lista de instâncias");
+            throw new RuntimeException(errorMsg("Não é aceito null na lista de instâncias"));
         }
-        E instancia = getTipoElementos().novaInstancia();
+        E instancia = getTipoElementos().newInstance(getDocument());
         instancia.setValor(valor);
         if (instancia.isEmptyOfData()) {
-            throw new RuntimeException("Apesar da opção '" + valor
-                    + "' não ser null, o resultado na instância foi convertido para null. Não é permitido ter uma opção com valor null");
+            throw new RuntimeException(errorMsg("Apesar da opção '" + valor
+                    + "' não ser null, o resultado na instância foi convertido para null. Não é permitido ter uma opção com valor null"));
         }
         addInterno(instancia);
+        return instancia;
     }
 
     private void addInterno(E instancia) {
@@ -103,7 +112,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public MInstancia get(int index) {
         if (valores == null) {
-            throw new IndexOutOfBoundsException("A lista " + getNome() + " está vazia (index=" + index + ")");
+            throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
         return valores.get(index);
     }
@@ -153,7 +162,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public MInstancia remove(int index) {
         if (valores == null) {
-            throw new IndexOutOfBoundsException("A lista " + getNome() + " está vazia (index=" + index + ")");
+            throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
         return valores.remove(index);
     }
@@ -176,6 +185,11 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public List<E> getValores() {
         return (valores == null) ? Collections.emptyList() : valores;
+    }
+
+    @Override
+    public Collection<E> getChildren() {
+        return getValores();
     }
 
     @Override

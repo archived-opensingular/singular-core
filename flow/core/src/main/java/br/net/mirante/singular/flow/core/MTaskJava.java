@@ -58,13 +58,13 @@ public class MTaskJava extends MTask<MTaskJava> {
     }
 
     @Override
-    public void execute(ExecucaoMTask execucaoTask) {
+    public void execute(ExecutionContext execucaoTask) {
         if (taskImpl == null) {
             throw new SingularFlowException(createErrorMsg("Chamada inválida. Não foi configurado o código de execução da tarefa"));
         }
         Object result = taskImpl.call(execucaoTask);
         if (result instanceof String) {
-            execucaoTask.setTransicaoResultado((String) result);
+            execucaoTask.setTransition((String) result);
         }
     }
 
@@ -83,7 +83,7 @@ public class MTaskJava extends MTask<MTaskJava> {
 
     @FunctionalInterface
     public interface ImplTaskJava extends Serializable {
-        Object call(ExecucaoMTask execucaoTask);
+        Object call(ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface

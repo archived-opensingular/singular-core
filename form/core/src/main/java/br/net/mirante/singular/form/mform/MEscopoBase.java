@@ -53,6 +53,10 @@ public abstract class MEscopoBase implements MEscopo {
     }
 
     final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
+        if (getDicionario() != tipoPai.getDicionario()) {
+            throw new SingularFormException(
+                    "O tipo " + tipoPai.getNome() + " foi criado dentro de outro dicionário, que não o atual de " + getNome());
+        }
         T novo = tipoPai.extender(nomeSimplesNovoTipo);
         return registrarTipo(novo, null);
     }
@@ -67,16 +71,16 @@ public abstract class MEscopoBase implements MEscopo {
     }
 
     @SuppressWarnings("unchecked")
-    final MTipoLista<MTipoComposto<?>> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
-        MTipoLista<MTipoComposto<?>> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
+    final <I extends MIComposto> MTipoLista<MTipoComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
+        MTipoLista<MTipoComposto<I>, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
         tipoLista.setTipoElementosNovoTipoComposto(nomeSimplesNovoTipoComposto);
         return tipoLista;
     }
 
     @SuppressWarnings("unchecked")
-    final <T extends MTipo<?>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
+    final <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         Preconditions.checkNotNull(tipoElementos);
-        MTipoLista<T> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
+        MTipoLista<T, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
         tipoLista.setTipoElementos(tipoElementos);
         return tipoLista;
     }

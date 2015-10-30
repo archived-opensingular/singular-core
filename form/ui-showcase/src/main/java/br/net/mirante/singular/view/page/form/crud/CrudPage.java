@@ -12,9 +12,4 @@ public class CrudPage extends Template {
     protected Content getContent(String id) {
         return new CrudContent(id);
     }
-
-    @Override
-    protected boolean withMenu() {
-        return true;
-    }
 }

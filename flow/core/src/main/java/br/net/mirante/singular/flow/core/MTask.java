@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.props.MetaData;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import br.net.mirante.singular.flow.core.property.MetaData;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 
 import com.google.common.base.MoreObjects;
 
@@ -71,7 +71,7 @@ public abstract class MTask<K extends MTask<?>> {
     }
 
     public String getCompleteName() {
-        return getFlowMap().getProcessDefinition().getAbbreviation() + '.' + name;
+        return getFlowMap().getProcessDefinition().getKey() + '.' + name;
     }
 
     public final boolean isEnd() {
@@ -183,7 +183,7 @@ public abstract class MTask<K extends MTask<?>> {
         return automaticActions;
     }
 
-    public void execute(ExecucaoMTask execucaoTask) {
+    public void execute(ExecutionContext execucaoTask) {
         throw new SingularFlowException("Operation not supported");
     }
 
@@ -203,7 +203,7 @@ public abstract class MTask<K extends MTask<?>> {
         return transitionsByName.get(transitionName.toLowerCase());
     }
 
-    public void notifyTaskStart(TaskInstance taskInstance, ExecucaoMTask execucaoTask) {
+    public void notifyTaskStart(TaskInstance taskInstance, ExecutionContext execucaoTask) {
         if (startedTaskListeners != null) {
             for (StartedTaskListener listener : startedTaskListeners) {
                 listener.onTaskStart(taskInstance, execucaoTask);

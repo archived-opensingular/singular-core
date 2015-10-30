@@ -11,12 +11,12 @@ public interface MAtributoEnabled {
     public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino);
 
     public default <T extends Object> T getValorAtributo(AtrRef<?, ?, ?> atr, Class<T> classeDestino) {
-        getDicionario().garantirPacoteCarregado(atr.getClassePacote());
+        getDicionario().carregarPacote(atr.getClassePacote());
         return getValorAtributo(atr.getNomeCompleto(), classeDestino);
     }
 
     public default <V extends Object> V getValorAtributo(AtrRef<?, ?, V> atr) {
-        getDicionario().garantirPacoteCarregado(atr.getClassePacote());
+        getDicionario().carregarPacote(atr.getClassePacote());
         return getValorAtributo(atr.getNomeCompleto(), atr.getClasseValor());
     }
 
