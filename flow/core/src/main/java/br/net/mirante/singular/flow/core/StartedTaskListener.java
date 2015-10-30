@@ -5,5 +5,5 @@ import java.io.Serializable;
 @FunctionalInterface
 public interface StartedTaskListener extends Serializable {
 
-    public void onTaskStart(TaskInstance taskIntance, ExecucaoMTask execucaoTask);
+    public void onTaskStart(TaskInstance taskIntance, ExecutionContext execucaoTask);
 }

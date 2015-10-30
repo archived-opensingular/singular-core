@@ -1,7 +1,7 @@
 package br.net.mirante.singular.flow.core.defaults;
 
 import br.net.mirante.singular.flow.core.ProcessNotifier;
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskHistoricLog;
@@ -22,12 +22,12 @@ public class NullNotifier implements ProcessNotifier {
     }
 
     @Override
-    public void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask) {
+    public void notifyStartToResponsibleUser(TaskInstance taskInstance, ExecutionContext execucaoTask) {
 
     }
 
     @Override
-    public void notifyStartToInterestedUser(TaskInstance taskInstance, ExecucaoMTask execucaoTask) {
+    public void notifyStartToInterestedUser(TaskInstance taskInstance, ExecutionContext execucaoTask) {
 
     }
 

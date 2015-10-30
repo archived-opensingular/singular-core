@@ -16,7 +16,6 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
-import br.net.mirante.singular.persistence.entity.TaskTypeEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 
@@ -26,11 +25,6 @@ public class TestDAO {
 
     @Inject
     private SessionFactory sessionFactory;
-
-    @SuppressWarnings("unchecked")
-    public List<TaskTypeEntity> listTaskType() {
-        return (List<TaskTypeEntity>) getSession().createCriteria(TaskTypeEntity.class).list();
-    }
 
     public void save(Object o) {
         getSession().save(o);
@@ -64,7 +58,7 @@ public class TestDAO {
     @SuppressWarnings("unchecked")
     public List<br.net.mirante.singular.persistence.entity.ProcessInstanceEntity> findAllProcessInstancesByDefinition(IEntityProcessVersion entity) {
         return getSession().createQuery(
-                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.process p where p.cod = :id"
+                "select pi from "+ProcessInstanceEntity.class.getSimpleName()+" pi inner join pi.processVersion p where p.cod = :id"
         ).setParameter("id", entity.getCod()).list();
     }
 
