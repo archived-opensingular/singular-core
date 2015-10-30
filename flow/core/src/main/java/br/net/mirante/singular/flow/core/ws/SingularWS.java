@@ -25,15 +25,18 @@ public class SingularWS {
     }
 
     @WebMethod(action = "executeDefaultTransition")
-    public void executeDefaultTransition(@WebParam(name = "codProcessInstance") Long codProcessInstance) {
-        ProcessInstance processInstance = Flow.getProcessInstance(codProcessInstance.intValue());
+    public void executeDefaultTransition(@WebParam(name = "processAbbreviation") String processAbbreviation, @WebParam(name = "codProcessInstance") Long codProcessInstance) {
+        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition();
     }
 
     @WebMethod(action = "executeTransition")
-    public void executeTransition(@WebParam(name = "codProcessInstance") Long codProcessInstance, @WebParam(name = "transitionName") String transitionName) {
-        ProcessInstance processInstance = Flow.getProcessInstance(codProcessInstance.intValue());
+    public void executeTransition(@WebParam(name = "processAbbreviation") String processAbbreviation, @WebParam(name = "codProcessInstance") Long codProcessInstance, @WebParam(name = "transitionName") String transitionName) {
+        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition(transitionName);
     }
 
+    private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
+        return Flow.getProcessDefinition(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
+    }
 }

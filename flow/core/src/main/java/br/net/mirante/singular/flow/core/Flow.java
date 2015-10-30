@@ -72,13 +72,6 @@ public class Flow {
         return getMbpmBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
-    /**
-     * @deprecated combinei com o Daniel que passaremos o nome do processo.
-     */
-    public static final ProcessInstance getProcessInstance(Integer cod) {
-        return getMbpmBean().getProcessInstanceByEntityCod(cod);
-    }
-
     public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
         return getMbpmBean().getProcessInstance(processClass, cod);
     }
