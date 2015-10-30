@@ -12,35 +12,13 @@ import javax.inject.Named;
 @Named
 public class TestUserService implements IUserService {
 
-    public static final Actor USER = new Actor() {
-        @Override
-        public Integer getCod() {
-            return 1;
-        }
-
-        @Override
-        public Long getCodigo() {
-            return 1l;
-        }
-
-        @Override
-        public String getSimpleName() {
-            return "Soldado Ryan";
-        }
-
-        @Override
-        public String getEmail() {
-            return "mirante.teste@gmail.com";
-        }
-    };
 
     @Inject
-    private SessionFactory sessionFactory;
+    private TestDAO testDAO;
 
     @Override
     public MUser getUserIfAvailable() {
-        return (MUser) sessionFactory.getCurrentSession().createCriteria(Actor.class)
-                .add(Restrictions.idEq(USER.getCodigo())).uniqueResult();
+        return (MUser)testDAO.getSomeUser(1);
     }
 
     @Override

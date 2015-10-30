@@ -89,6 +89,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public ROLE_USER setInstanceUserRole(PROCESS_INSTANCE instance, PROCESS_ROLE role, MUser user) {
+        user = saveUserIfNeeded(user);
+
         ROLE_USER entityRole = newEntityRole(instance, role, user, Flow.getUserIfAvailable());
 
         SessionWrapper sw = getSession();
@@ -104,6 +106,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(processInstance);
     }
 
+    protected abstract MUser saveUserIfNeeded(MUser mUser);
     
     protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
     
@@ -154,6 +157,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void completeTask(TASK_INSTANCE task, String transitionAbbreviation, MUser responsibleUser) {
+        responsibleUser = saveUserIfNeeded(responsibleUser);
         task.setEndDate(new Date());
         IEntityTaskTransitionVersion transition = task.getTask().getTransition(transitionAbbreviation);
         task.setExecutedTransition(transition);
