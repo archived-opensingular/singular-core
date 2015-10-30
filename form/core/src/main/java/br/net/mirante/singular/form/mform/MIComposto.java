@@ -4,10 +4,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
+import br.net.mirante.singular.form.mform.util.MInstanciaUtils;
 
 public class MIComposto extends MInstancia implements ICompositeInstance {
 
@@ -135,6 +137,16 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         }
         MTipo<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
         return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
+    }
+
+    public <D extends MInstancia> D getDescendant(MTipo<D> descendantType) {
+        return MInstanciaUtils.getDescendant(this, descendantType);
+    }
+    public <D extends MInstancia> Optional<D> findDescendant(MTipo<D> descendantType) {
+        return MInstanciaUtils.findDescendant(this, descendantType);
+    }
+    public <D extends MInstancia> List<D> listAllDescendants(MTipo<D> descendantType) {
+        return MInstanciaUtils.listAllDescendants(this, descendantType);
     }
 
     private final static class FieldMapOfRecordInstance {
