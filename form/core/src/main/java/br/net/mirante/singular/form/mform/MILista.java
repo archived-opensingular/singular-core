@@ -57,49 +57,34 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     public E addNovo() {
-        if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().newInstance(getDocument());
-            addInterno(instancia);
-            return instancia;
-        }
-        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
+        return addInterno(getTipoElementos().newInstance(getDocument()));
     }
 
     public E addNovo(Consumer<E> consumer) {
-        E novo = addNovo();
+        E novo = getTipoElementos().newInstance(getDocument());
         consumer.accept(novo);
-        return novo;
-    }
-    
-    public E addNovoAt(int index) {
-        if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().newInstance(getDocument());
-            addAtInterno(index, instancia);
-            return instancia;
-        }
-        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
+        return addInterno(novo);
     }
 
-    public E addValor(Object valor) {
-        if (valor == null) {
-            throw new RuntimeException(errorMsg("Não é aceito null na lista de instâncias"));
-        }
+    public E addNovoAt(int index) {
         E instancia = getTipoElementos().newInstance(getDocument());
-        instancia.setValor(valor);
-        if (instancia.isEmptyOfData()) {
-            throw new RuntimeException(errorMsg("Apesar da opção '" + valor
-                    + "' não ser null, o resultado na instância foi convertido para null. Não é permitido ter uma opção com valor null"));
-        }
-        addInterno(instancia);
+        addAtInterno(index, instancia);
         return instancia;
     }
 
-    private void addInterno(E instancia) {
+    public E addValor(Object valor) {
+        E instancia = getTipoElementos().newInstance(getDocument());
+        instancia.setValor(valor);
+        return addInterno(instancia);
+    }
+
+    private E addInterno(E instancia) {
         if (valores == null) {
             valores = new ArrayList<>();
         }
         valores.add(instancia);
         instancia.setPai(this);
+        return instancia;
     }
 
     private void addAtInterno(int index, E instancia) {
@@ -197,6 +182,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return (valores == null) ? Collections.emptyIterator() : valores.iterator();
     }
 
+    @Override
     public Stream<E> stream() {
         return getValores().stream();
     }

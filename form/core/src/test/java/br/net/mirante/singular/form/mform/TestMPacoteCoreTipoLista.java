@@ -32,10 +32,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
 
-        assertException(() -> lista.addValor(null), "Não é aceito null");
-        assertException(() -> lista.addValor(""), "Não é permitido");
-        assertException(() -> lista.addNovo(), "não é um tipo composto");
-
         MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] { 10 });
