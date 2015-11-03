@@ -10,12 +10,12 @@ import com.google.common.base.MoreObjects;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.TransitionType;
-import br.net.mirante.singular.flow.util.props.MetaData;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-import br.net.mirante.singular.flow.util.vars.ValidationResult;
-import br.net.mirante.singular.flow.util.vars.VarDefinition;
-import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.core.property.MetaData;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
+import br.net.mirante.singular.flow.core.variable.ValidationResult;
+import br.net.mirante.singular.flow.core.variable.VarDefinition;
+import br.net.mirante.singular.flow.core.variable.VarDefinitionMap;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 
 @SuppressWarnings("serial")
 public class MTransition implements Serializable {

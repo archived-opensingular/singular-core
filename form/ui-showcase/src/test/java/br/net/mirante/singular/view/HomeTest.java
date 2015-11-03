@@ -7,7 +7,7 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.inject.Inject;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -27,10 +27,7 @@ public class HomeTest {
 
     private WicketTester driver;
 
-    @Autowired
-    private ApplicationContext ctx;
-
-    @Autowired
+    @Inject
     private ShowcaseApplication app;
 
     @Before

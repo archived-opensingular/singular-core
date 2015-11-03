@@ -7,9 +7,7 @@ import br.net.mirante.singular.flow.core.MUser;
 
 public interface IEntityProcessInstance extends IEntityByCod {
 
-    @Deprecated
-    // TODO renomear para getProcessVersion()
-    IEntityProcessVersion getProcess();
+    IEntityProcessVersion getProcessVersion();
 
     String getDescription();
 

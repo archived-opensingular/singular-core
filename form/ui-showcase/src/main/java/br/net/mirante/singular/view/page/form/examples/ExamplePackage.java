@@ -1,5 +1,6 @@
 package br.net.mirante.singular.view.page.form.examples;
 
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -55,8 +56,8 @@ public class ExamplePackage extends MPacote {
         addField(address, "Zipcode", "CEP", MTipoCEP.class);
     }
 
-    private void addField(MTipoComposto<?> root, String name, String label,
-            Class<? extends MTipo<?>> type) {
+    private <I extends MInstancia, T extends MTipo<I>> void addField(MTipoComposto<?> root, String name, String label,
+            Class<T> type) {
         root.addCampo(name, type).as(AtrBasic::new).label(label);
     }
 }

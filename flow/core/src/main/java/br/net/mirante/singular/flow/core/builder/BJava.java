@@ -2,7 +2,7 @@ package br.net.mirante.singular.flow.core.builder;
 
 import java.io.Serializable;
 
-import br.net.mirante.singular.flow.core.ExecucaoMTask;
+import br.net.mirante.singular.flow.core.ExecutionContext;
 import br.net.mirante.singular.flow.core.MTaskJava;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.flow.core.TaskInstance;
@@ -16,70 +16,70 @@ public interface BJava<SELF extends BJava<SELF>> extends BuilderTaskSelf<SELF, M
 
     @SuppressWarnings("unchecked")
     public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstanciaExecucao<T> impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getInstanciaProcesso(), execucaoTask));
+        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask));
     }
 
     public default SELF call(ImplTaskJavaReturnInstanciaTarefaExecucao impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getInstanciaTarefa(), execucaoTask));
+        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance(), execucaoTask));
     }
 
     @SuppressWarnings("unchecked")
     public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstanciaExecucao<T> impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
-            impl.executar((T) execucaoTask.getInstanciaProcesso(), execucaoTask);
+            impl.executar((T) execucaoTask.getProcessInstance(), execucaoTask);
             return null;
         });
     }
 
     public default SELF call(ImplTaskJavaVoidInstanciaTarefaExecucao impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
-            impl.executar(execucaoTask.getInstanciaTarefa(), execucaoTask);
+            impl.executar(execucaoTask.getTaskInstance(), execucaoTask);
             return null;
         });
     }
 
     @SuppressWarnings("unchecked")
     public default <T extends ProcessInstance> SELF call(ImplTaskJavaReturnInstancia<T> impl) {
-        return call((MTaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getInstanciaProcesso())));
+        return call((MTaskJava.ImplTaskJava) (execucaoTask -> impl.executar((T) execucaoTask.getProcessInstance())));
     }
 
     public default SELF call(ImplTaskJavaReturnInstanciaTarefa impl) {
-        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getInstanciaTarefa()));
+        return call((MTaskJava.ImplTaskJava) execucaoTask -> impl.executar(execucaoTask.getTaskInstance()));
     }
 
     @SuppressWarnings("unchecked")
     public default <T extends ProcessInstance> SELF call(ImplTaskJavaVoidInstancia<T> impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
-            impl.executar((T) execucaoTask.getInstanciaProcesso());
+            impl.executar((T) execucaoTask.getProcessInstance());
             return null;
         });
     }
 
     public default SELF call(ImplTaskJavaVoidInstanciaTarefa impl) {
         return call((MTaskJava.ImplTaskJava) execucaoTask -> {
-            impl.executar(execucaoTask.getInstanciaTarefa());
+            impl.executar(execucaoTask.getTaskInstance());
             return null;
         });
     }
 
     @FunctionalInterface
     public interface ImplTaskJavaVoidInstanciaExecucao<K extends ProcessInstance> extends Serializable {
-        public void executar(K processInstance, ExecucaoMTask execucaoTask);
+        public void executar(K processInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
     public interface ImplTaskJavaReturnInstanciaExecucao<K extends ProcessInstance> extends Serializable {
-        public Object executar(K processInstance, ExecucaoMTask execucaoTask);
+        public Object executar(K processInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
     public interface ImplTaskJavaVoidInstanciaTarefaExecucao extends Serializable {
-        public void executar(TaskInstance taskInstance, ExecucaoMTask execucaoTask);
+        public void executar(TaskInstance taskInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface
     public interface ImplTaskJavaReturnInstanciaTarefaExecucao extends Serializable {
-        public Object executar(TaskInstance taskInstance, ExecucaoMTask execucaoTask);
+        public Object executar(TaskInstance taskInstance, ExecutionContext execucaoTask);
     }
 
     @FunctionalInterface

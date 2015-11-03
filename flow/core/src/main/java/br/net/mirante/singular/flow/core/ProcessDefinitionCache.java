@@ -17,15 +17,7 @@ import com.google.common.collect.ImmutableMap;
 public final class ProcessDefinitionCache {
 
     private final ImmutableList<ProcessDefinition<?>> definitions;
-    private final ImmutableMap<String, ProcessDefinition<?>> definitionsById;
-
-    /**
-     *
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    private final ImmutableMap<Class<? extends ProcessInstance>, ProcessDefinition<?>> definitionsByInstanceType;
+    private final ImmutableMap<String, ProcessDefinition<?>> definitionsByKey;
 
     private static LoadingCache<Class<? extends ProcessDefinition<?>>, ProcessDefinition<?>> definitionsByClass = CacheBuilder
         .newBuilder().weakValues()
@@ -38,10 +30,13 @@ public final class ProcessDefinitionCache {
 
     private static ProcessDefinitionCache cache;
 
+    private final String packageName;
+    
     @SuppressWarnings("rawtypes")
     private ProcessDefinitionCache(String packageName) {
+        this.packageName = packageName;
         ImmutableList.Builder<ProcessDefinition<?>> cache = ImmutableList.builder();
-        Map<String, ProcessDefinition<?>> cacheById = new HashMap<>();
+        Map<String, ProcessDefinition<?>> cacheByKey = new HashMap<>();
         Map<Class<? extends ProcessInstance>, ProcessDefinition<?>> cacheByInstanceType = new HashMap<>();
 
         Reflections reflections = new Reflections(packageName);
@@ -54,15 +49,14 @@ public final class ProcessDefinitionCache {
             }
             ProcessDefinition<?> def = getDefinition(classeDefinicao);
             cache.add(def);
-            if (cacheById.containsKey(def.getAbbreviation())) {
-                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getAbbreviation());
+            if (cacheByKey.containsKey(def.getKey())) {
+                throw new SingularFlowException("Existe duas definições com a mesma sigla: " + def.getKey());
             }
-            cacheById.put(def.getAbbreviation(), def);
+            cacheByKey.put(def.getKey(), def);
             cacheByInstanceType.put(def.getProcessInstanceClass(), def);
         }
         definitions = cache.build();
-        definitionsById = ImmutableMap.copyOf(cacheById);
-        definitionsByInstanceType = ImmutableMap.copyOf(cacheByInstanceType);
+        definitionsByKey = ImmutableMap.copyOf(cacheByKey);
     }
 
     public static ProcessDefinitionCache get(String packageName) {
@@ -91,18 +85,12 @@ public final class ProcessDefinitionCache {
         return definitionClass.cast(def);
     }
 
-    public ProcessDefinition<?> getDefinition(String id) {
-        return definitionsById.get(id);
-    }
-
-    /**
-     *
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    public ProcessDefinition<?> getDefinitionForInstance(Class<? extends ProcessInstance> classeInstancia) {
-        return definitionsByInstanceType.get(classeInstancia);
+    public ProcessDefinition<?> getDefinition(String key) {
+        ProcessDefinition<?> processDefinition = definitionsByKey.get(key);
+        if(processDefinition == null){
+            throw new SingularFlowException("O processo com chave '"+key+"' não foi encontrado no pacote: "+packageName);
+        }
+        return processDefinition;
     }
 
     public List<ProcessDefinition<?>> getDefinitions() {

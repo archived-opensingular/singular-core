@@ -5,8 +5,8 @@ import java.time.Period;
 
 import org.apache.commons.lang3.NotImplementedException;
 
-import br.net.mirante.singular.form.validation.IValidatable;
-import br.net.mirante.singular.form.validation.IValidator;
+import br.net.mirante.singular.form.validation.IValueValidatable;
+import br.net.mirante.singular.form.validation.IValueValidator;
 
 public class ValidadorDataBuilder {
 
@@ -19,10 +19,10 @@ public class ValidadorDataBuilder {
         return this;
     }
 
-    public IValidator<LocalDate> build() {
-        return new IValidator<LocalDate>() {
+    public IValueValidator<LocalDate> build() {
+        return new IValueValidator<LocalDate>() {
             @Override
-            public void validate(IValidatable<LocalDate> validatable) {
+            public void validate(IValueValidatable<LocalDate> validatable) {
                 // TODO implementar
                 throw new NotImplementedException("TODO implementar");
             }

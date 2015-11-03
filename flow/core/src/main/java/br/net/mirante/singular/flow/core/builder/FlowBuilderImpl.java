@@ -12,10 +12,10 @@ import br.net.mirante.singular.flow.core.MTaskWait;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessInitializer;
 import br.net.mirante.singular.flow.core.MTransition.ITransitionParametersProcessValidator;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
+import br.net.mirante.singular.flow.core.variable.VarType;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-import br.net.mirante.singular.flow.util.vars.VarType;
 
 public class FlowBuilderImpl extends
         FlowBuilder<ProcessDefinition<?>, FlowMap, BTask, BJava<?>, BPeople<?>, BWait<?>, BEnd<?>, BTransition<?>, BProcessRole<?>, ITaskDefinition> {

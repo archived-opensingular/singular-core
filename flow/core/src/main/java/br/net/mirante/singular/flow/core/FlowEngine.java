@@ -15,10 +15,10 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
-import br.net.mirante.singular.flow.util.vars.ValidationResult;
-import br.net.mirante.singular.flow.util.vars.VarDefinition;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.ValidationResult;
+import br.net.mirante.singular.flow.core.variable.VarDefinition;
+import br.net.mirante.singular.flow.core.variable.VarInstance;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 
 import com.google.common.base.Joiner;
 
@@ -89,14 +89,14 @@ class FlowEngine {
                         }
                     }
                 }
-                final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
+                final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
                 }
                 instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
                 return instanciaTarefa;
             }
-            final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, tarefaOrigem, paramIn);
+            final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
             instanciaTarefa.getFlowTask().notifyTaskStart(instanciaTarefa, execucaoTask);
 
             instancia.setExecutionContext(execucaoTask);
@@ -109,7 +109,7 @@ class FlowEngine {
             } finally {
                 instancia.setExecutionContext(null);
             }
-            final String nomeTransicao = execucaoTask.getTransicaoResultado();
+            final String nomeTransicao = execucaoTask.getTransition();
             transicaoOrigem = searchTransition(instanciaTarefa, nomeTransicao);
             taskDestino = transicaoOrigem.getDestination();
             tarefaOrigem = instanciaTarefa;
@@ -117,7 +117,7 @@ class FlowEngine {
     }
 
     public static void executeScheduledTransition(MTaskJava taskJava, ProcessInstance instancia) {
-        final ExecucaoMTask execucaoTask = new ExecucaoMTask(instancia, instancia.getCurrentTask(), null);
+        final ExecutionContext execucaoTask = new ExecutionContext(instancia, instancia.getCurrentTask(), null);
         instancia.setExecutionContext(execucaoTask);
         try {
             taskJava.execute(execucaoTask);
@@ -125,7 +125,7 @@ class FlowEngine {
             instancia.setExecutionContext(null);
         }
 
-        executeTransition(instancia, execucaoTask.getTransicaoResultado(), null);
+        executeTransition(instancia, execucaoTask.getTransition(), null);
     }
 
     static TaskInstance executeTransition(ProcessInstance instancia, String transitionName, VarInstanceMap<?> param) {

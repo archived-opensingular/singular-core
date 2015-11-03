@@ -27,8 +27,8 @@ public class MTipoElementosModel
     public static MTipo<MInstancia> getTipoElementos(Object obj) {
         if (obj instanceof MILista<?>)
             return ((MILista<MInstancia>) obj).getTipoElementos();
-        if (obj instanceof MTipoLista<?>)
-            return ((MTipoLista<MTipo<MInstancia>>) obj).getTipoElementos();
+        if (obj instanceof MTipoLista<?, ?>)
+            return ((MTipoLista<MTipo<MInstancia>, MInstancia>) obj).getTipoElementos();
         if (obj instanceof IModel<?>)
             return getTipoElementos(((IModel<?>) obj).getObject());
 

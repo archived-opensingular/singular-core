@@ -1,7 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.VarType;
 
 /**
  * Representa a montagem (preparação) para execução de uma transanção a partir

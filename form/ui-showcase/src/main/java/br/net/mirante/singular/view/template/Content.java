@@ -42,7 +42,7 @@ public abstract class Content extends Panel {
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
-                $b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("dashboard"))));
+                $b.attr("href", uiAdminWicketFilterContext.getRelativeContext())));
         breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
         if (!withBreadcrumb) {
             breadcrumb.add(new AttributeAppender("class", "hide", " "));

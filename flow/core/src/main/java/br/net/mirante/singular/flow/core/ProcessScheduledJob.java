@@ -58,7 +58,7 @@ public class ProcessScheduledJob implements IScheduledJob {
     }
 
     public String getId() {
-        return Flow.getProcessDefinition(processDefinition).getAbbreviation() + "::" + getName() + "()";
+        return Flow.getProcessDefinition(processDefinition).getKey() + "::" + getName() + "()";
     }
 
     public IScheduleData getScheduleData() {

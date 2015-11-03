@@ -19,22 +19,24 @@ import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
+import br.net.mirante.singular.flow.core.property.MetaData;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
 import br.net.mirante.singular.flow.core.service.IProcessDataService;
-import br.net.mirante.singular.flow.util.props.MetaData;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-import br.net.mirante.singular.flow.util.vars.VarDefinitionMap;
-import br.net.mirante.singular.flow.util.vars.VarService;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
+import br.net.mirante.singular.flow.core.variable.VarDefinitionMap;
+import br.net.mirante.singular.flow.core.variable.VarService;
+import br.net.mirante.singular.flow.core.view.Lnk;
 
 import com.google.common.base.MoreObjects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +56,10 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     static final Logger logger = LoggerFactory.getLogger(ProcessDefinition.class);
 
     private final Class<I> processInstanceClass;
+    
+    private final String key;
 
     private String category;
-
-    private String abbreviation;
 
     private String name;
 
@@ -66,8 +68,6 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     private Integer entityVersionCod;
 
     private IProcessCreationPageStrategy creationPage;
-
-    private Class<? extends VariableWrapper> variableWrapperClass;
 
     private VarDefinitionMap<?> variableDefinitions;
 
@@ -86,11 +86,13 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Instancia uma nova definição de processo do tipo informado.
      * </p>
      *
+     * @param key
+     *            a chave do processo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      */
-    protected ProcessDefinition(Class<I> instanceClass) {
-        this(instanceClass, VarService.basic());
+    protected ProcessDefinition(String key, Class<I> instanceClass) {
+        this(key, instanceClass, VarService.basic());
     }
 
     /**
@@ -98,13 +100,21 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * Instancia uma nova definição de processo do tipo informado.
      * </p>
      *
+     * @param key
+     *            a chave do processo.
      * @param instanceClass
      *            o tipo da instância da definição a ser instanciada.
      * @param varService
      *            o serviço de consulta das definições de variáveis.
      */
-    protected ProcessDefinition(Class<I> instanceClass, VarService varService) {
-        this.processInstanceClass = instanceClass;
+    protected ProcessDefinition(String key, Class<I> processInstanceClass, VarService varService) {
+        Objects.requireNonNull(key, "key");
+        Objects.requireNonNull(processInstanceClass, "processInstanceClass");
+        if(getClass().getSimpleName().equalsIgnoreCase(key)){
+            throw new SingularFlowException("A chave do processo("+getClass().getSimpleName()+") não pode ser igual a key.");
+        }
+        this.key = key;
+        this.processInstanceClass = processInstanceClass;
         this.variableService = varService;
     }
 
@@ -119,74 +129,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         return processInstanceClass;
     }
 
-    /**
-     * @deprecated mover para a implementacao do alocpro
-     */
-    //TODO moverparaalocpro
-    @Deprecated
-    protected final void setVariableWrapperClass(Class<? extends VariableWrapper> variableWrapperClass) {
-        this.variableWrapperClass = variableWrapperClass;
-        if (variableWrapperClass != null) {
-            if (!VariableEnabled.class.isAssignableFrom(processInstanceClass)) {
-                throw new SingularFlowException(
-                        "A classe " + processInstanceClass.getName() + " não implementa " + VariableEnabled.class.getName()
-                                + " sendo que a definição do processo (" + getClass().getName() + ") trabalha com variáveis.");
-            }
-            newVariableWrapper(variableWrapperClass).configVariables(getVariables());
-        }
-    }
-
-    private static <T extends VariableWrapper> T newVariableWrapper(Class<T> variableWrapperClass) {
-        try {
-            return variableWrapperClass.newInstance();
-        } catch (Exception e) {
-            throw new SingularFlowException("Erro instanciando " + variableWrapperClass.getName(), e);
-        }
-    }
-
-    /**
-     * <p>
-     * Retorna a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo.
-     * </p>
-     *
-     * @return a classe do <i>wrapper</i>.
-     */
-    public final Class<? extends VariableWrapper> getVariableWrapperClass() {
-        return variableWrapperClass;
-    }
-
-    /**
-     * <p>
-     * Cria e retorna um novo <i>wrapper</i> de variáveis para o tipo informado.
-     * </p>
-     * <p>
-     * <p>
-     * Verifica se a classe do <i>wrapper</i> de variáveis desta definição de
-     * processo é igual à informada.
-     * </p>
-     *
-     * @param <T>
-     *            o tipo informado.
-     * @param variableWrapperClass
-     *            a classe do <i>wrapper</i> a ser criado.
-     * @return um novo <i>wrapper</i> para o tipo informado.
-     * @throws SingularFlowException
-     *             caso as classes não sejam iguais.
-     */
-    public <T extends VariableWrapper> T newInitialVariables(Class<T> variableWrapperClass) {
-        verifyVariableWrapperClass(variableWrapperClass);
-        T wrapper = newVariableWrapper(variableWrapperClass);
-        wrapper.setVariables(new VarInstanceTableProcess(this));
-        return wrapper;
-    }
-
-    final <T extends VariableWrapper> void verifyVariableWrapperClass(Class<T> expectedVariableWrapperClass) {
-        if (expectedVariableWrapperClass != variableWrapperClass) {
-            throw new SingularFlowException(getClass().getName()
- + " espera que as variáveis sejam do tipo " + variableWrapperClass);
-        }
-    }
+    
 
     /**
      * <p>
@@ -393,10 +336,11 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         synchronized (this) {
             if (entityVersionCod == null) {
                 try {
-                    IEntityProcessVersion newVersion = Flow.getMbpmBean().getProcessEntityService().generateEntityFor(this);
+                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getMbpmBean().getProcessEntityService();
+                    IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
 
                     IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
-                    if (Flow.getMbpmBean().getProcessEntityService().isDifferentVersion(oldVersion, newVersion)) {
+                    if (processEntityService.isDifferentVersion(oldVersion, newVersion)) {
 
                         entityVersionCod = getPersistenceService().saveProcessVersion(newVersion).getCod();
                     } else {
@@ -583,16 +527,12 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
     }
 
     /**
-     * @deprecated o termo sigla deve ser substituido por key
+     * <p>Retorna a chave deste processo.</p>
+     * 
+     * @return a chave deste processo.
      */
-    //TODO renomear
-    @Deprecated
-    public final String getAbbreviation() {
-        if (abbreviation == null) {
-            logger.warn("!!! process definition abbreviation not set, using  class simple name !!!");
-            abbreviation = this.getClass().getSimpleName();
-        }
-        return abbreviation;
+    public final String getKey() {
+        return key;
     }
 
     /**
@@ -689,12 +629,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      *            o nome.
      */
     protected final void setName(String category, String name) {
-        setName(category, generateAbbreviation(), name);
-    }
-
-    private void setName(String category, String abbreviation, String name) {
         this.category = category;
-        this.abbreviation = abbreviation;
         this.name = name;
     }
 
@@ -732,10 +667,14 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return a instância.
      */
     protected final I convertToProcessInstance(IEntityProcessInstance dadosInstancia) {
-        Objects.requireNonNull(dadosInstancia);
-        I novo = newUnbindedInstance();
-        novo.setInternalEntity(dadosInstancia);
-        return novo;
+        if(dadosInstancia.getProcessVersion().getProcessDefinition().getKey().equalsIgnoreCase(getKey())){
+            Objects.requireNonNull(dadosInstancia);
+            I novo = newUnbindedInstance();
+            novo.setInternalEntity(dadosInstancia);
+            return novo;
+        } else {
+            throw new SingularFlowException(createErrorMsg("A entidade com id "+dadosInstancia.getCod()+" não pertence ao processo."));
+        }
     }
 
     /**

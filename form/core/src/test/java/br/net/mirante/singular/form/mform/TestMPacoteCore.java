@@ -347,6 +347,17 @@ public class TestMPacoteCore extends TestCaseForm {
         assertEquals((Integer) 12, tipo.getValorAtributo(TestPacoteA.ATR_XX));
     }
 
+    public void testSeTipoBaseadoEmClasseCarregaConfiguracaoInternaDaClasseAoExtender() {
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        TestTipoComCargaInterna tipo = pb.createTipo("derivado", TestTipoComCargaInterna.class);
+
+        assertEquals((Boolean) true, tipo.isObrigatorio());
+        assertEquals((Integer) 10, tipo.getValorAtributoValorInicial());
+        assertEquals((Integer) 11, tipo.getValorAtributoOrDefaultValueIfNull());
+        assertEquals((Integer) 12, tipo.getValorAtributo(TestPacoteA.ATR_XX));
+    }
+
     public void testCargaTipoNoPacoteTrocado() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");

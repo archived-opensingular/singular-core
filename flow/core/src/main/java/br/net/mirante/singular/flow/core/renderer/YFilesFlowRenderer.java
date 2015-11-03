@@ -26,7 +26,7 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
 import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;

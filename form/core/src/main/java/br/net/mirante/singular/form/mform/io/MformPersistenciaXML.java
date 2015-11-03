@@ -15,6 +15,47 @@ import br.net.mirante.singular.form.util.xml.MElement;
 
 public class MformPersistenciaXML {
 
+    public static <T extends MInstancia> T fromXML(MTipo<T> tipo, MElement xml) {
+        T novo = tipo.novaInstancia();
+        fromXML(novo, xml);
+        return novo;
+    }
+
+    // TODO (de Daniel) Verifica se precisa desse método com essa assinatura
+    // mesmo. Aparetemente seria necessário apenas o método acima.
+    public static void fromXML(MInstancia instancia, MElement xml) {
+        if (xml == null)
+            return;
+        if (instancia instanceof MISimples) {
+            MISimples<?> instanciaS = (MISimples<?>) instancia;
+            MTipoSimples<?, ?> tipos = instanciaS.getMTipo();
+            instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
+
+        } else if (instancia instanceof MIComposto) {
+            MIComposto instc = (MIComposto) instancia;
+            for (MTipo<?> campo : instc.getMTipo().getFields()) {
+                MElement xmlFilho = xml.getElement(campo.getNomeSimples());
+                if (xmlFilho != null) {
+                    fromXML(instc.getCampo(campo.getNomeSimples()), xmlFilho);
+                }
+            }
+        } else if (instancia instanceof MILista) {
+            MILista<?> lista = (MILista<?>) instancia;
+            String nomeFilhos = lista.getMTipo().getTipoElementos().getNomeSimples();
+            for (MElement xmlFilho : xml.getElements(nomeFilhos)) {
+                MInstancia filho = lista.addNovo();
+                fromXML(filho, xmlFilho);
+            }
+
+        } else {
+            throw new UnsupportedOperationException(instancia.getClass().getName());
+        }
+    }
+
+    // TODO (de Daniel) Retirar as referencias desse método em prol dos acima e
+    // depois apagá-lo. A implementação abaixo não trata corretamente todos os
+    // casos.
+    @Deprecated
     public static void fromXML(MTipo<?> tipo, MInstancia instancia, MElement xml) {
         if (xml == null)
             return;
@@ -32,7 +73,7 @@ public class MformPersistenciaXML {
             MTipoSimples<?, ?> tipos = (MTipoSimples<?, ?>) tipo;
             instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
 
-        } else if (tipo instanceof MTipoLista<?>) {
+        } else if (tipo instanceof MTipoLista<?, ?>) {
 
         } else if (tipo instanceof MAtributo) {
 
@@ -45,6 +86,10 @@ public class MformPersistenciaXML {
 
     public static MElement toXML(MInstancia instancia) {
         return toXML(null, null, instancia, false);
+    }
+
+    public static MElement toXMLPreservingRuntimeEdition(MInstancia instancia) {
+        return toXML(null, null, instancia, true);
     }
 
     public static MElement toXML(MElement pai, String nomePai, MInstancia instancia, boolean persistirNull) {
