@@ -7,6 +7,28 @@ import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase {
 
+    protected static void testCaminho(MInstancia registro, String path, String caminhoCompletoEsperado) {
+        MInstancia esperada = (path == null) ? registro : ((ICompositeInstance) registro).getCampo(path);
+        assertNotNull(esperada);
+        String caminho = esperada.getPathFromRoot();
+        assertEquals(caminhoCompletoEsperado, caminho);
+
+        String esperadoFull;
+        MInstancia raiz = registro.getDocument().getRoot();
+        if (caminho == null) {
+            esperadoFull = raiz.getNome();
+        } else if (raiz instanceof MILista) {
+            esperadoFull = raiz.getNome() + caminho;
+        } else {
+            esperadoFull = raiz.getNome() + "." + caminho;
+        }
+        assertEquals(esperadoFull, esperada.getPathFull());
+
+        if (caminho != null) {
+            assertEquals(esperada, ((ICompositeInstance) registro.getDocument().getRoot()).getCampo(caminho));
+        }
+    }
+
     protected static <R extends MInstancia & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor,
             int qtdFilhosEsperados) {
         testAtribuicao(registro, path, valor);

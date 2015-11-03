@@ -28,13 +28,15 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         lista.addValor("Maria");
         assertLista(lista, new String[] { "Paulo", "Joao", "Maria" });
 
+        testCaminho(lista, null, null);
+        assertEquals(lista.getValor("[1]"), "Joao");
+        assertEquals(lista.indexOf(lista.get(1)), 1);
+        testCaminho(lista, "[1]", "[1]");
+        testCaminho(lista.getCampo("[1]"), null, "[1]");
+
         lista.remove(1);
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
-
-        assertException(() -> lista.addValor(null), "Não é aceito null");
-        assertException(() -> lista.addValor(""), "Não é permitido");
-        assertException(() -> lista.addNovo(), "não é um tipo composto");
 
         MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
         listaInt.addValor(10);
@@ -53,7 +55,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertEqualsList(lista.getValor(), valoresEsperados);
     }
 
-    @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoComposto() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
@@ -91,6 +92,13 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         testAtribuicao(pedidos, "[1].descricao", "rede2", 6);
         testAtribuicao(pedidos, "[1].qtd", 20, 6);
         assertException(() -> pedidos.setValor("[1].marca", 10), "Não é um campo definido");
+
+        testCaminho(pedidos, null, null);
+        testCaminho(pedidos, "[0]", "[0]");
+        testCaminho(pedidos, "[0].descricao", "[0].descricao");
+        testCaminho(pedidos.getCampo("[0]"), null, "[0]");
+        testCaminho(pedidos.getCampo("[0]"), "qtd", "[0].qtd");
+        testCaminho(pedidos.getCampo("[0].qtd"), null, "[0].qtd");
     }
 
     @SuppressWarnings("unchecked")

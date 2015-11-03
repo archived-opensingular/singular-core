@@ -1,9 +1,12 @@
 package br.net.mirante.singular.form.mform;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.common.collect.ImmutableMap;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.InMemoryAttachmentPersitenceHandler;
@@ -26,38 +29,41 @@ public class SDocument implements Serializable {
 
     private Map<String, ServiceRef<?>> services;
 
-    private ServiceRef<IAttachmentPersistenceHandler> attachmentPersistenceHandlerRef;
-
     SDocument() {
     }
 
-    // SDocument(MInstancia root) {
-    // this.root = Objects.requireNonNull(root);
-    // }
-
     public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
-        attachmentPersistenceHandlerRef = ref;
+        bindLocalService(IAttachmentPersistenceHandler.class, ref);
     }
 
     public IAttachmentPersistenceHandler getAttachmentPersistenceHandler() {
-        if (attachmentPersistenceHandlerRef == null) {
-            attachmentPersistenceHandlerRef = ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
+        IAttachmentPersistenceHandler ref = lookupLocalService(IAttachmentPersistenceHandler.class);
+        if (ref == null) {
+            ref = new InMemoryAttachmentPersitenceHandler();
+            bindLocalService(IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
         }
-        return attachmentPersistenceHandlerRef.get();
+        return ref;
     }
 
+    /**
+     * Obtêm a instância que representa o documento com um todo.
+     */
     public MInstancia getRoot() {
         if (root == null) {
-            throw new RuntimeException("Instancia raiz não foi configurada");
+            throw new SingularFormException("Instancia raiz não foi configurada");
         }
         return root;
     }
 
     final void setRoot(MInstancia root) {
         if (this.root != null) {
-            throw new RuntimeException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
+            throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
+    }
+
+    public Map<String, ServiceRef<?>> getLocalServices() {
+        return (services == null) ? Collections.emptyMap() : ImmutableMap.copyOf(services);
     }
 
     /**
@@ -68,6 +74,17 @@ public class SDocument implements Serializable {
      */
     public <T> T lookupLocalService(Class<T> targetClass) {
         return lookupLocalService(targetClass.getName(), targetClass);
+    }
+
+    /**
+     * Tenta encontrar um serviço da classe solicitada supondo que o nome no
+     * registro é o nome da própria classe junto com o subName. Ou seja, retorna
+     * um caso específico de targetClass.
+     *
+     * @return Null se não encontrado ou se o conteúdo do registro for null.
+     */
+    public <T> T lookupLocalService(Class<T> targetClass, String subName) {
+        return lookupLocalService(toLookupName(targetClass, subName), targetClass);
     }
 
     /**
@@ -101,6 +118,18 @@ public class SDocument implements Serializable {
      */
     public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
         bindLocalService(registerClass.getName(), provider);
+    }
+
+    /**
+     * Registar um serviço com o nome da classe informada mais o subNome. O
+     * provider pode ser uma classe derivada da registerClass.
+     */
+    public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
+        bindLocalService(toLookupName(registerClass, subName), provider);
+    }
+
+    private static <T> String toLookupName(Class<T> registerClass, String subName) {
+        return registerClass.getName() + ":" + Objects.requireNonNull(subName);
     }
 
     /**

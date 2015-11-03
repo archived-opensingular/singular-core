@@ -65,7 +65,7 @@ public class UIBuilderWicket {
 
     private static RuntimeException createErro(MInstancia instancia, MView view, String msg) {
         return new RuntimeException(
-            msg + " (instancia=" + instancia.getCaminhoCompleto()
+            msg + " (instancia=" + instancia.getPathFull()
                 + ", tipo=" + instancia.getMTipo().getNome()
                 + ", classeInstancia=" + instancia.getClass()
                 + ", tipo=" + instancia.getMTipo()
