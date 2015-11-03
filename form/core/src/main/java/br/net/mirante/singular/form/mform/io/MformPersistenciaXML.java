@@ -88,6 +88,10 @@ public class MformPersistenciaXML {
         return toXML(null, null, instancia, false);
     }
 
+    public static MElement toXMLPreservingRuntimeEdition(MInstancia instancia) {
+        return toXML(null, null, instancia, true);
+    }
+
     public static MElement toXML(MElement pai, String nomePai, MInstancia instancia, boolean persistirNull) {
 
         MDocument xmlDocument = (pai == null) ? MDocument.newInstance() : pai.getMDocument();

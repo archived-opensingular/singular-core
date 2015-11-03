@@ -15,13 +15,13 @@ public abstract class MInstanciaRaizModel<I extends MInstancia> extends Abstract
     }
     protected abstract MTipo<I> getTipoRaiz();
     protected I hydrate(MTipo<I> tipoRaiz, MElement xml) {
-        I instancia = tipoRaiz.novaInstancia();
-        if (xml != null)
-            MformPersistenciaXML.fromXML(tipoRaiz, instancia, xml);
-        return instancia;
+        if (xml != null) {
+            return MformPersistenciaXML.fromXML(tipoRaiz, xml);
+        }
+        return tipoRaiz.novaInstancia();
     }
     protected MElement dehydrate(I raiz) {
-        return MformPersistenciaXML.toXML(raiz);
+        return MformPersistenciaXML.toXMLPreservingRuntimeEdition(raiz);
     }
     @Override
     public I getObject() {

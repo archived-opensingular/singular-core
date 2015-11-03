@@ -60,7 +60,7 @@ public class FormSerializationUtil {
      * </p>
      */
     private static FormSerialized toSerialized(SDocument document) {
-        MElement xml = MformPersistenciaXML.toXML(document.getRoot());
+        MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
         FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml);
         Map<String, ServiceRef<?>> services = document.getLocalServices();
         if (!services.isEmpty()) {
