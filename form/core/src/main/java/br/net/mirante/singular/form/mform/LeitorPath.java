@@ -101,10 +101,10 @@ class LeitorPath {
 
     String getTextoErro(MInstancia instanciaContexto, String msg) {
         if (path.length() == trecho.length()) {
-            return "Em '" + instanciaContexto.getCaminhoCompleto() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
+            return "Em '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
                     + "' para o path '" + path + "': " + msg;
         }
-        return "Em '" + instanciaContexto.getCaminhoCompleto() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
+        return "Em '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
                 + "' para o trecho '" + trecho + "' do path '" + path + "': " + msg;
     }
 

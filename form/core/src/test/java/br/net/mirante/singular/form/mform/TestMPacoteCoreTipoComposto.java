@@ -50,6 +50,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         testAtribuicao(endereco, "rua", "Pontes", 1);
         testAtribuicao(endereco, "bairro", "Norte", 2);
         testAtribuicao(endereco, "classificacao.prioridade", 1, 4);
+
+        testCaminho(endereco, null, null);
+        testCaminho(endereco, "rua", "rua");
+        testCaminho(endereco, "classificacao.prioridade", "classificacao.prioridade");
+        testCaminho(endereco.getCampo("classificacao"), null, "classificacao");
+        testCaminho(endereco.getCampo("classificacao.prioridade"), null, "classificacao.prioridade");
+
         assertNotNull(endereco.getValor("classificacao"));
         assertTrue(endereco.getValor("classificacao") instanceof Collection);
         assertTrue(((Collection<?>) endereco.getValor("classificacao")).size() >= 1);
@@ -192,6 +199,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEqualsList(bloco.getValor("enderecos"), "E1");
 
         testAtribuicao(bloco, "enderecos[0]", "E2", 2);
+
+        testCaminho(bloco, "enderecos", "enderecos");
+        testCaminho(bloco, "enderecos[0]", "enderecos[0]");
+        testCaminho(bloco.getCampo("enderecos[0]"), null, "enderecos[0]");
     }
 
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoComposto() {
@@ -242,6 +253,12 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertFalse(bloco.isEmptyOfData());
         assertFalse(endereco.isEmptyOfData());
 
+        testCaminho(bloco, "enderecos", "enderecos");
+        testCaminho(bloco, "enderecos[0]", "enderecos[0]");
+        testCaminho(bloco, "enderecos[0].rua", "enderecos[0].rua");
+        testCaminho(bloco.getCampo("enderecos[0]"), null, "enderecos[0]");
+        testCaminho(bloco.getCampo("enderecos[0]"), "rua", "enderecos[0].rua");
+        testCaminho(bloco.getCampo("enderecos[0].rua"), null, "enderecos[0].rua");
     }
 
     public void testeOnCargaTipoDireto() {

@@ -156,8 +156,20 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return get(index).getValor();
     }
 
-    public int indexOf(MInstancia object) {
-        return valores.indexOf(object);
+    /**
+     * Retornar o índice da instancia dentro da lista. Utiliza identidade (==)
+     * em vez de equals().
+     *
+     * @param supposedChild
+     * @return -1 senão encontrou
+     */
+    public int indexOf(MInstancia supposedChild) {
+        for (int i = size() - 1; i != -1; i--) {
+            if (valores.get(i) == supposedChild) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int size() {

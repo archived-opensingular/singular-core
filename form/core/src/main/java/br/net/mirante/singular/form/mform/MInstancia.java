@@ -199,7 +199,7 @@ public abstract class MInstancia implements MAtributoEnabled {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
-            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -209,20 +209,44 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getNomeSimples();
     }
 
-    public final String getCaminhoCompleto() {
-        if (pai == null) {
-            return getNome();
-        }
-        return getCaminhoCompleto(new StringBuilder(), null).toString();
+    /**
+     * <p>
+     * Retorna o path da instancia atual relativa ao elemento raiz, ou seja, não
+     * inclui o nome da instância raiz no path gerado.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz (vamos dizer chamado cadastro):
+     * </p>
+     *
+     * <pre>
+     *     "enderecos[0].rua"
+     *     "experiencias[0].empresa.nome"
+     *     "experiencias[1].empresa.ramo"
+     * </pre>
+     *
+     * @return Null se chamado em uma instância raiz.
+     */
+    public final String getPathFromRoot() {
+        return MFormUtil.generatePath(this, i -> i.pai == null);
     }
 
-    protected StringBuilder getCaminhoCompleto(StringBuilder sb, MInstancia filhoReferencia) {
-        if (pai != null) {
-            pai.getCaminhoCompleto(sb, this);
-            sb.append('.');
-        }
-        sb.append(getNome());
-        return sb;
+    /**
+     * <p>
+     * Retorna o path da instancia atual desde o raiz, incluindo o nome da
+     * instancia raiz.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz (vamos dizer chamado cadastro):
+     * </p>
+     *
+     * <pre>
+     *     "cadastro.enderecos[0].rua"
+     *     "cadastro.experiencias[0].empresa.nome"
+     *     "cadastro.experiencias[1].empresa.ramo"
+     * </pre>
+     */
+    public final String getPathFull() {
+        return MFormUtil.generatePath(this, i -> i == null);
     }
 
     public void debug() {
@@ -243,7 +267,7 @@ public abstract class MInstancia implements MAtributoEnabled {
      * mensagem fornecida.
      */
     protected final String errorMsg(String msgToBeAppended) {
-        return "'" + getCaminhoCompleto() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
+        return "'" + getPathFull() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
             + msgToBeAppended;
     }
 }
