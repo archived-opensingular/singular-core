@@ -3,6 +3,9 @@ package br.net.mirante.singular;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,7 +17,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONException;
 import org.apache.wicket.ajax.json.JSONObject;
+
+import br.net.mirante.singular.form.mform.io.HashUtil;
 
 @SuppressWarnings("serial")
 public class FileUploadServlet extends HttpServlet {
@@ -68,9 +74,22 @@ public class FileUploadServlet extends HttpServlet {
     }
     
     private JSONObject createJsonFile(FileItem item) {
-	JSONObject jsonFile = new JSONObject();
-	jsonFile.put("name", item.getName());
-	jsonFile.put("size", item.getSize());
-	return jsonFile;
+	try {
+	    JSONObject jsonFile = new JSONObject();
+	    jsonFile.put("name", item.getName());
+	    jsonFile.put("fileId", item.getName());
+	    jsonFile.put("hashSHA1", calculateSha1(item));
+	    jsonFile.put("size", item.getSize());
+	    return jsonFile;
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	}
+    }
+
+    private String calculateSha1(FileItem item) throws IOException, NoSuchAlgorithmException {
+	DigestInputStream shaStream = new DigestInputStream(
+		item.getInputStream(), MessageDigest.getInstance("SHA-1"));
+	byte[] sha1 = shaStream.getMessageDigest().digest();
+	return HashUtil.toSHA1Base16(sha1);
     }
 }

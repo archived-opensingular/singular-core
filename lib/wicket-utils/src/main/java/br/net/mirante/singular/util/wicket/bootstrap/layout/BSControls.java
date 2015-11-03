@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -77,8 +78,10 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 	BSContainer buttonContainer = new BSContainer<>("_bt_" + input.getId())		
 		.appendTag("span", new Label("_", Model.of("Selecionar ...")))
 		.appendTag("input", true, "type='file' id='" + input.getMarkupId() + "'", input)
+		.appendTag("input", true, " id='data_" + input.getMarkupId() + "'", input)
 		;
-
+	//TODO: Dar uma olhada no FormComponentPanel 
+	// Extrair um componente externo
 	final String path = buttonContainer.getRequest().getContextPath() + "/fileUpload"; //TODO : need to be a service
 	TemplatePanel scriptContainer = (TemplatePanel) buttonContainer.newComponent(id -> new TemplatePanel(id,
 		() -> "<script > " 
@@ -97,6 +100,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 			+ "        console.log(e,data);    "
 			+ "        $.each(data.result.files, function (index, file) {  "
 			+ "            $('<p/>').text(file.name).appendTo('#files_"+ input.getMarkupId()+"'); "
+			+ "            $('#data_" + input.getMarkupId()+ "').val(file);"
 			+ "        });  " 
 			+ "    },  " 
 			+ "    progressall: function (e, data) {  "
@@ -111,7 +115,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 	scriptContainer
 		// .add(component)
 		.setRenderBodyOnly(true);
-
 //	BSControls button = this.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
 	
 	BSContainer progressContainer = new BSContainer<>("_progress_" + input.getId());
@@ -121,6 +124,18 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 	inputContainer.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
 	inputContainer.appendTag("div", true, "class='progress' id='progress_" + input.getMarkupId() + "'",progressContainer);
 	inputContainer.appendTag("div", true, "class='files' id='files_" + input.getMarkupId() + "'",new Label("_", Model.of("")));
+	
+	
+	AbstractAjaxBehavior upload = new AbstractAjaxBehavior() {
+	    
+	    @Override
+	    public void onRequest() {
+		// TODO Auto-generated method stub
+		
+	    }
+	};
+	upload.getCallbackUrl(); //TODO:usar essa
+	inputContainer.add(upload);
 	
 	return this.appendTag("div", inputContainer);
     }

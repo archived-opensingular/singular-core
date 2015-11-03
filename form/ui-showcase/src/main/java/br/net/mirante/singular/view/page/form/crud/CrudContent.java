@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
@@ -126,6 +127,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             @SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
+               /* new LoadableDetachableModel<ExampleDataDTO>(){
+                  @Override //TODO: Mudar para não ser mais misturado or just plain Model with serializable DTO
+                    protected ExampleDataDTO load() {
+                        return null;
+                    }  
+                };*/
                 model.setType(selectedTemplate.getNome());
                 openInputModal(target, model);
             }
@@ -172,20 +179,20 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     @SuppressWarnings("unchecked")
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-        createInstance((MTipo<MIComposto>) 
-                dicionario.getTipo(selectedTemplate.getNome()));
+        createInstance(selectedTemplate.getNome());
         updateContainer();
         target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
 
-    private void createInstance(final MTipo<MIComposto> tipo) {
+    @SuppressWarnings("unchecked")
+    private void createInstance(final String tipo) {
         currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            protected MTipo<MIComposto> getTipoRaiz() {
-                return tipo;
+	    protected MTipo<MIComposto> getTipoRaiz() {
+                return (MTipo<MIComposto>) dicionario.getTipo(tipo);
             }
         };
-        populateInstance(tipo);
+        populateInstance((MTipo<MIComposto>) dicionario.getTipo(tipo));
 
     }
 

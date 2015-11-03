@@ -8,8 +8,8 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-public class FileUploadMapper implements ControlsFieldComponentMapper {
-
+@SuppressWarnings("serial")
+public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
     public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
