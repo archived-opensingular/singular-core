@@ -101,11 +101,11 @@ class LeitorPath {
 
     String getTextoErro(MInstancia instanciaContexto, String msg) {
         if (path.length() == trecho.length()) {
-            return "Em '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
+            return "Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
                     + "' para o path '" + path + "': " + msg;
         }
-        return "Em '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
-                + "' para o trecho '" + trecho + "' do path '" + path + "': " + msg;
+        return "Ao tentar resolver '" + trecho + "' na instancia '" + instanciaContexto.getPathFull() + "' do tipo '"
+                + instanciaContexto.getMTipo().getNome() + "' referent ao path '" + path + "' ocorreu o erro: " + msg;
     }
 
     public String getTextoErro(MEscopo escopo, String msg) {
