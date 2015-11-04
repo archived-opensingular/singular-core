@@ -172,20 +172,19 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     @SuppressWarnings("unchecked")
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-        createInstance((MTipo<MIComposto>) 
-                dicionario.getTipo(selectedTemplate.getNome()));
+        createInstance(selectedTemplate.getNome());
         updateContainer();
         target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
 
-    private void createInstance(final MTipo<MIComposto> tipo) {
+    private void createInstance(String nomeDoTipo) {
         currentInstance = new MInstanciaRaizModel<MIComposto>() {
             protected MTipo<MIComposto> getTipoRaiz() {
-                return tipo;
+                return (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
             }
         };
-        populateInstance(tipo);
+        populateInstance((MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo));
 
     }
 
