@@ -9,6 +9,9 @@ import java.util.stream.Stream;
 public interface ICompositeInstance {
 
     public Collection<? extends MInstancia> getChildren();
+    public default Collection<? extends MInstancia> getAllChildren() {
+        return getChildren();
+    }
 
     public Stream<? extends MInstancia> stream();
 

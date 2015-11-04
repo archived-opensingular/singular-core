@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.validation;
 
-public interface IInstanceValidator<T> {
-    void validate(IValueValidatable<T> validatable);
+import br.net.mirante.singular.form.mform.MInstancia;
+
+public interface IInstanceValidator<I extends MInstancia> {
+    void validate(IInstanceValidatable<I> validatable);
 }

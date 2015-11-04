@@ -373,7 +373,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.valueValidators.put(validador, level);
         return this;
     }
-    public MTipo<I> addInstanceValidator(IInstanceValidator<?> validador) {
+    public MTipo<I> addInstanceValidator(IInstanceValidator<I> validador) {
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
     }
     public MTipo<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<?> validador) {
@@ -391,9 +391,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validateInstance(IInstanceValidatable<?> validatable) {
+        if (!instanceValidators.isEmpty())
+            System.out.println(instanceValidators);
         for (Map.Entry<IInstanceValidator<?>, ValidationErrorLevel> entry : this.instanceValidators.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
-            entry.getKey().validate((IValueValidatable) validatable);
+            entry.getKey().validate((IInstanceValidatable) validatable);
         }
     }
 
