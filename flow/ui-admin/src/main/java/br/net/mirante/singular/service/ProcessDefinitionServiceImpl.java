@@ -18,6 +18,9 @@ import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.InstanceDTO;
 import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
@@ -77,11 +80,20 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     }
 
     @Override
-    public byte[] retrieveProcessDiagram(String sigla) {
+    public byte[] retrieveProcessDiagramFromRestURL(String sigla) {
         RestTemplate restTemplate = new RestTemplate();
         UriComponentsBuilder uriComponentsBuilder =
                 UriComponentsBuilder.fromHttpUrl(retrieveProcessDiagramRestURL).queryParam("sigla", sigla);
         String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
         return Base64.getDecoder().decode(encodedImage);
+    }
+
+    @Override
+    public byte[] retrieveProcessDiagram(String sigla) {
+        ProcessDefinition<?> definicao = Flow.getProcessDefinitionWith(sigla);
+        if (definicao != null) {
+            return FlowRendererFactory.generateImageFor(definicao);
+        }
+        return null;
     }
 }

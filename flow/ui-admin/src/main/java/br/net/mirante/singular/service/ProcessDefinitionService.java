@@ -18,6 +18,8 @@ public interface ProcessDefinitionService {
 
     int countAll(Long id);
 
+    byte[] retrieveProcessDiagramFromRestURL(String sigla);
+
     byte[] retrieveProcessDiagram(String sigla);
 
     List<MetaDataDTO> retrieveMetaData(Long id);
