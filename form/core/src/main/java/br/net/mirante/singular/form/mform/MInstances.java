@@ -34,6 +34,25 @@ public abstract class MInstances {
     }
 
     /**
+     * Percorre todos as instâncias filha da instancia informada chamando o
+     * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
+     * profundidade. Não chama o consumidor para a instância raiz.
+     * @param instance
+     * @param includeEmpty se deve visitar tambem campos vazios
+     */
+    public static void visitAllChildren(MInstancia instance, boolean includeEmpty, Consumer<MInstancia> consumer) {
+        if (instance instanceof ICompositeInstance) {
+            Collection<? extends MInstancia> children = (includeEmpty)
+                ? ((ICompositeInstance) instance).getAllChildren()
+                : ((ICompositeInstance) instance).getChildren();
+            for (MInstancia child : children) {
+                consumer.accept(child);
+                visitAllChildren(child, includeEmpty, consumer);
+            }
+        }
+    }
+
+    /**
      * Percorre a instância informada e todos as instâncias filha da instancia
      * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
      * faz um pecorrimento em profundidade.

@@ -122,7 +122,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
     // Atalhos de conveniência
     // --------------------------------------------------------------------------
 
-    public MTipoComposto<?> addCampoComposto(String nomeCampo) {
+    public MTipoComposto<MIComposto> addCampoComposto(String nomeCampo) {
         return addCampo(nomeCampo, MTipoComposto.class);
     }
 
