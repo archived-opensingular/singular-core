@@ -6,16 +6,12 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.view.Lnk;
 
-public class Flow {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Flow.class);
+@SuppressWarnings("unchecked")
+public final class Flow {
 
     private static SingularFlowConfigurationBean mbpmBean;
 
@@ -46,16 +42,22 @@ public class Flow {
         return getMbpmBean().getProcessDefinition(classe);
     }
 
-    public static ProcessDefinition<?> getProcessDefinition(String abbreviation) {
-        return getMbpmBean().getProcessDefinition(abbreviation);
+    /**
+     * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
+     * @param key
+     * @return
+     */
+    public static ProcessDefinition<?> getProcessDefinitionUnchecked(String key) {
+        return getMbpmBean().getProcessDefinitionUnchecked(key);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String abbreviation) {
-        return (K) getMbpmBean().getProcessDefinition(abbreviation);
+    /**
+     * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
+     */
+    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String key) {
+        return (K) getMbpmBean().getProcessDefinition(key);
     }
 
-    @SuppressWarnings("unchecked")
     public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
         return (List<K>) getMbpmBean().getDefinitions();
     }
