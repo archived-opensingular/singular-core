@@ -4,6 +4,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.Model;
 
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
@@ -12,9 +13,9 @@ class AttachmentContainer extends BSContainer {
     public static String PARAM_NAME = "FILE-UPLOAD";
     private UploadBehavior uploader;
 
-    public AttachmentContainer(String id, FileUploadField field) {
+    public AttachmentContainer(String id, FileUploadField field, MInstancia instance) {
 	super(id);
-	this.add( this.uploader = new UploadBehavior());
+	this.add( this.uploader = new UploadBehavior(instance));
 	setup(field);
     }
 	

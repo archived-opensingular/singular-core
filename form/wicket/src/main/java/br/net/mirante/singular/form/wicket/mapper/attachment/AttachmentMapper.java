@@ -17,7 +17,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
 	MInstancia object = model.getObject();
 	FileUploadField field = new FileUploadField(object.getNome(), 
 					new MInstanciaValorModel<>(model));
-	formGroup.appendTypeahead(new AttachmentContainer("_" + field.getId(), field));
+	formGroup.appendTypeahead(new AttachmentContainer("_" + field.getId(), field, object));
 	return field;
     }
 

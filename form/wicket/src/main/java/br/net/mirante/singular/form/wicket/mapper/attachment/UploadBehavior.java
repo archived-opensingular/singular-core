@@ -1,10 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +18,21 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.crypt.Base64;
 import org.apache.wicket.util.lang.Bytes;
+
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SDocument;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 class UploadBehavior extends Behavior implements IResourceListener {
     private Component component;
+    private MInstancia instance;
+
+    public UploadBehavior(MInstancia instance) {
+	this.instance = instance;
+    }
 
     @Override
     public void bind(Component component) {
@@ -84,27 +89,24 @@ class UploadBehavior extends Behavior implements IResourceListener {
     private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
 	if (!item.isFormField()) {
 	    // writeFile(item); TODO:
-	    fileGroup.put(createJsonFile(item));
+	    SDocument rootDocument = instance.getDocument();
+	    IAttachmentPersistenceHandler handler = rootDocument.getAttachmentPersistenceHandler();
+	    IAttachmentRef ref = handler.addAttachment(item.getInputStream());
+	    fileGroup.put(createJsonFile(item,ref));
 	}
     }
 
-    private JSONObject createJsonFile(FileItem item) {
+    private JSONObject createJsonFile(FileItem item, IAttachmentRef ref) {
 	try {
 	    JSONObject jsonFile = new JSONObject();
 	    jsonFile.put("name", item.getName());
-	    jsonFile.put("fileId", item.getName());
-	    jsonFile.put("hashSHA1", calculateSha1(item));
-	    jsonFile.put("size", item.getSize());
+	    jsonFile.put("fileId", ref.getId());
+	    jsonFile.put("hashSHA1", ref.getHashSHA1());
+	    jsonFile.put("size", ref.getSize());
 	    return jsonFile;
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
-    }
-
-    private String calculateSha1(FileItem item) throws IOException, NoSuchAlgorithmException {
-	DigestInputStream shaStream = new DigestInputStream(item.getInputStream(), MessageDigest.getInstance("SHA-1"));
-	byte[] sha1 = shaStream.getMessageDigest().digest();
-	return new String(Base64.encodeBase64(sha1));
     }
 
     private void writeResponseAnswer(PrintWriter writer, JSONArray filesJson) {
