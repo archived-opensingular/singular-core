@@ -2,23 +2,41 @@ package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractAjaxBehavior;
+import org.apache.wicket.IResourceListener;
+import org.apache.wicket.ajax.json.JSONArray;
+import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.Response;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.crypt.Base64;
+import org.apache.wicket.util.lang.Bytes;
 
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -73,73 +91,6 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendInputText(Component input) {
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
-    
-    public BSControls appendInputFile(Component input) {
-	BSContainer buttonContainer = new BSContainer<>("_bt_" + input.getId())		
-		.appendTag("span", new Label("_", Model.of("Selecionar ...")))
-		.appendTag("input", true, "type='file' id='" + input.getMarkupId() + "'", input)
-		.appendTag("input", true, " id='data_" + input.getMarkupId() + "'", input)
-		;
-	//TODO: Dar uma olhada no FormComponentPanel 
-	// Extrair um componente externo
-	final String path = buttonContainer.getRequest().getContextPath() + "/fileUpload"; //TODO : need to be a service
-	TemplatePanel scriptContainer = (TemplatePanel) buttonContainer.newComponent(id -> new TemplatePanel(id,
-		() -> "<script > " 
-			+ "$(function () {" 
-			+ "  $('#" + input.getMarkupId() 
-			+ "').fileupload({  "
-			+ "    url: '"+path+"',  " 
-			+ "    paramName: 'FILE-UPLOAD',  " 
-			+ "    singleFileUploads: true,  " 
-//			+ "    dataType: 'json',  "
-			+ "    start: function (e, data) {  "
-			+ "        $('#files_"+ input.getMarkupId()+"').html('');"
-			+ "        $('#progress_"+ input.getMarkupId()+" .progress-bar').css('width','0%')"
-			+ "    },"
-			+ "    done: function (e, data) {  "
-			+ "        console.log(e,data);    "
-			+ "        $.each(data.result.files, function (index, file) {  "
-			+ "            $('<p/>').text(file.name).appendTo('#files_"+ input.getMarkupId()+"'); "
-			+ "            $('#data_" + input.getMarkupId()+ "').val(file);"
-			+ "        });  " 
-			+ "    },  " 
-			+ "    progressall: function (e, data) {  "
-			+ "        var progress = parseInt(data.loaded / data.total * 100, 10); "
-			+ "        $('#progress_"+ input.getMarkupId()+" .progress-bar').css( 'width', "
-			+ "                        progress + '%' ); "
-			+ "    }  " 
-			+ "  }).prop('disabled', !$.support.fileInput)  "
-			+ "    .parent().addClass($.support.fileInput ? undefined : 'disabled');  " 
-			+ "});"
-			+ " </script>\n"));
-	scriptContainer
-		// .add(component)
-		.setRenderBodyOnly(true);
-//	BSControls button = this.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
-	
-	BSContainer progressContainer = new BSContainer<>("_progress_" + input.getId());
-	progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'",new Label("_", Model.of("")));
-	
-	BSContainer inputContainer = new BSContainer<>("_" + input.getId());
-	inputContainer.appendTag("span", true, "class='btn btn-success fileinput-button'", buttonContainer);
-	inputContainer.appendTag("div", true, "class='progress' id='progress_" + input.getMarkupId() + "'",progressContainer);
-	inputContainer.appendTag("div", true, "class='files' id='files_" + input.getMarkupId() + "'",new Label("_", Model.of("")));
-	
-	
-	AbstractAjaxBehavior upload = new AbstractAjaxBehavior() {
-	    
-	    @Override
-	    public void onRequest() {
-		// TODO Auto-generated method stub
-		
-	    }
-	};
-	upload.getCallbackUrl(); //TODO:usar essa
-	inputContainer.add(upload);
-	
-	return this.appendTag("div", inputContainer);
-    }
-
     
     public BSControls appendRadioChoice(Component input) {
         return super.appendTag("div", true, "class='radio-list'", input);

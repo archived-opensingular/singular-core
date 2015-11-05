@@ -23,7 +23,6 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
-import br.net.mirante.singular.form.wicket.mapper.AttachmentMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
@@ -33,6 +32,7 @@ import br.net.mirante.singular.form.wicket.mapper.SelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
+import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
 
 public class UIBuilderWicket {
 

@@ -46,7 +46,7 @@ public class ExamplePackage extends MPacote {
         addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
         addField(buyer, "CPF", "CPF", MTipoCPF.class);
         addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-//        addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
+        addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
         MTipoComposto<?> address = order.addCampoComposto("Addresss");
         address.as(AtrBasic::new).label("Endereço");
