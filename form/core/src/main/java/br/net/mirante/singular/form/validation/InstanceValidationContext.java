@@ -2,7 +2,9 @@ package br.net.mirante.singular.form.validation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -19,16 +21,22 @@ public class InstanceValidationContext {
     public List<IValidationError> getErrors() {
         return errors;
     }
-
-    public void validate() {
-        MInstances.visitAll(instance, inst -> inst.getMTipo().validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e))));
+    public Map<MInstancia, List<IValidationError>> getErrorsByInstance() {
+        return getErrors().stream()
+            .collect(Collectors.groupingBy(it -> it.getInstance()));
     }
 
-    private static class InstanceValidatable<T extends MInstancia> implements IInstanceValidatable<T> {
+    public void validate() {
+        MInstances.visitAllChildren(instance, true, inst -> {
+            inst.getMTipo().validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
+        });
+    }
+
+    private static class InstanceValidatable<I extends MInstancia> implements IInstanceValidatable<I> {
         private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
-        private final MInstancia                instance;
+        private final I                         instance;
         private final Consumer<ValidationError> onError;
-        public InstanceValidatable(MInstancia instance, Consumer<ValidationError> onError) {
+        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
             this.instance = instance;
             this.onError = onError;
         }
@@ -37,7 +45,7 @@ public class InstanceValidationContext {
             this.defaultLevel = defaultLevel;
         }
         @Override
-        public MInstancia getInstance() {
+        public I getInstance() {
             return instance;
         }
         @Override
@@ -57,9 +65,16 @@ public class InstanceValidationContext {
             return errorInternal(level, msg);
         }
         private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
-            ValidationError error = new ValidationError(level, msg);
+            ValidationError error = new ValidationError(instance, level, msg);
             onError.accept(error);
             return error;
         }
+    }
+
+    public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
+        return getErrors().stream()
+            .filter(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0)
+            .findAny()
+            .isPresent();
     }
 }

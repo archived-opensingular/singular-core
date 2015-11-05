@@ -49,6 +49,10 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
     public Collection<MInstancia> getChildren() {
         return getCampos();
     }
+    @Override
+    public Collection<MInstancia> getAllChildren() {
+        return getAllFields();
+    }
 
     @Override
     public Stream<? extends MInstancia> stream() {

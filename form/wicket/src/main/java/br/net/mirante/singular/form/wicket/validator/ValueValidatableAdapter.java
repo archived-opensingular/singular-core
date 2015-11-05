@@ -58,7 +58,7 @@ final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
         } else {
             component.warn(msg);
         }
-        return new ValidationErrorAdapter(level, wicketError);
+        return new ValidationErrorAdapter(getInstance(), level, wicketError);
     }
     @Override
     public boolean isValid() {

@@ -1,5 +1,10 @@
 package br.net.mirante.singular.view.page.form.examples;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -27,35 +32,60 @@ public class ExamplePackage extends MPacote {
         }
     }
 
+    public MTipoComposto<? extends MIComposto> order;
+    public MTipoInteger                        orderNumber;
+    public MTipoComposto<?>                    buyer;
+    public MTipoNomePessoa                     buyerNome;
+    public MTipoCPF                            buyerCpf;
+    public MTipoTelefoneNacional               buyerTelephone;
+    public MTipoComposto<MIComposto>           address;
+    public MTipoString                         addressStreet;
+    public MTipoString                         addressCity;
+    public MTipoString                         addressState;
+    public MTipoCEP                            addressZipcode;
+
     public ExamplePackage() {
         super(PACKAGE);
     }
 
     @Override
     public void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> order = pb.createTipoComposto("Order");
+        this.order = pb.createTipoComposto("Order");
+        this.order.as(AtrBasic::new).label("Pedido");
 
-        order.as(AtrBasic::new).label("Pedido");
+        this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
 
-        addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.buyer = order.addCampoComposto("Buyer");
+        this.buyer.as(AtrBasic::new).label("Comprador");
+        this.buyerNome = addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
+        this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
+        this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
 
-        MTipoComposto<?> buyer = order.addCampoComposto("Buyer");
-        buyer.as(AtrBasic::new).label("Comprador");
+        this.address = order.addCampoComposto("Addresss");
+        this.address.as(AtrBasic::new).label("Endereço");
+        this.addressStreet = addField(address, "street", "Logradouro", MTipoString.class);
+        this.addressCity = addField(address, "city", "Cidade", MTipoString.class);
+        this.addressState = addField(address, "state", "Estado", MTipoString.class);
+        this.addressZipcode = addField(address, "Zipcode", "CEP", MTipoCEP.class);
 
-        addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
-        addField(buyer, "CPF", "CPF", MTipoCPF.class);
-        addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
+        this.address.addInstanceValidator(v -> {
+            MIComposto iAddress = v.getInstance();
+            Set<Boolean> list = new HashSet<>(Arrays.asList(
+                iAddress.getDescendant(addressStreet).getValor() == null,
+                iAddress.getDescendant(addressCity).getValor() == null,
+                iAddress.getDescendant(addressState).getValor() == null,
+                iAddress.getDescendant(addressZipcode).getValor() == null));
 
-        MTipoComposto<?> address = order.addCampoComposto("Addresss");
-        address.as(AtrBasic::new).label("Endereço");
-        addField(address, "street", "Logradouro", MTipoString.class);
-        addField(address, "city", "Cidade", MTipoString.class);
-        addField(address, "state", "Estado", MTipoString.class);
-        addField(address, "Zipcode", "CEP", MTipoCEP.class);
+            // os campos devem ser todos nulos ou todos preenchidos
+            if (list.size() != 1)
+                v.error("Endereço incompleto");
+        });
     }
 
-    private <I extends MInstancia, T extends MTipo<I>> void addField(MTipoComposto<?> root, String name, String label,
-            Class<T> type) {
-        root.addCampo(name, type).as(AtrBasic::new).label(label);
+    private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,
+        Class<T> type) {
+        T campo = root.addCampo(name, type);
+        campo.as(AtrBasic::new).label(label);
+        return campo;
     }
 }
