@@ -36,6 +36,8 @@ public class ExamplePackage extends MPacote {
     public MTipoNomePessoa                     buyerNome;
     public MTipoCPF                            buyerCpf;
     public MTipoTelefoneNacional               buyerTelephone;
+    public MTipoAttachment                     buyerAvatar;
+    
     public MTipoComposto<MIComposto>           address;
     public MTipoString                         addressStreet;
     public MTipoString                         addressCity;
@@ -48,22 +50,30 @@ public class ExamplePackage extends MPacote {
 
     @Override
     public void carregarDefinicoes(PacoteBuilder pb) {
-        this.order = pb.createTipoComposto("Order");
+        buildOrderType(pb);
+    }
+
+    private void buildOrderType(PacoteBuilder pb) {
+	this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
         this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        
+        buildBuyerField(); 
+        buildAddressField();
+    }
 
-        this.buyer = order.addCampoComposto("Buyer");
+    private void buildBuyerField() {
+	this.buyer = order.addCampoComposto("Buyer");
         this.buyer.as(AtrBasic::new).label("Comprador");
         this.buyerNome = addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
         this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-
-		pb.addAtributo(MTipoAttachment.class, MPacoteBasic.ATR_TAMANHO_EDICAO);
-        addField(buyer, "Avatar", "Imagem", MTipoAttachment.class).tamanhoEdicao(1024); //TODO: Talk with Tetsuo about this issue
-
-
-        this.address = order.addCampoComposto("Addresss");
+        this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
+    }
+    
+    private void buildAddressField() {
+	this.address = order.addCampoComposto("Addresss");
         this.address.as(AtrBasic::new).label("Endereço");
         this.addressStreet = addField(address, "street", "Logradouro", MTipoString.class);
         this.addressCity = addField(address, "city", "Cidade", MTipoString.class);

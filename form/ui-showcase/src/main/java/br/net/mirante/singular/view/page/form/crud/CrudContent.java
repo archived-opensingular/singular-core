@@ -184,9 +184,10 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.show(target);
     }
 
+    @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
         currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            protected MTipo<MIComposto> getTipoRaiz() {
+	    protected MTipo<MIComposto> getTipoRaiz() {
                 return (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
             }
         };
