@@ -1,9 +1,5 @@
 package br.net.mirante.singular.view.page.form.examples;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MPacote;
@@ -17,6 +13,7 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
 
 public class ExamplePackage extends MPacote {
 
@@ -68,18 +65,7 @@ public class ExamplePackage extends MPacote {
         this.addressState = addField(address, "state", "Estado", MTipoString.class);
         this.addressZipcode = addField(address, "Zipcode", "CEP", MTipoCEP.class);
 
-        this.address.addInstanceValidator(v -> {
-            MIComposto iAddress = v.getInstance();
-            Set<Boolean> list = new HashSet<>(Arrays.asList(
-                iAddress.getDescendant(addressStreet).getValor() == null,
-                iAddress.getDescendant(addressCity).getValor() == null,
-                iAddress.getDescendant(addressState).getValor() == null,
-                iAddress.getDescendant(addressZipcode).getValor() == null));
-
-            // os campos devem ser todos nulos ou todos preenchidos
-            if (list.size() != 1)
-                v.error("Endereço incompleto");
-        });
+        this.address.addInstanceValidator(new AllOrNothingInstanceValidator());
     }
 
     private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,
