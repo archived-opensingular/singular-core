@@ -1,10 +1,15 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
@@ -12,16 +17,50 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 class AttachmentContainer extends BSContainer {
     public static String PARAM_NAME = "FILE-UPLOAD";
     private UploadBehavior uploader;
+    private FormComponent fileField, nameField, hashField, sizeField, idField;
 
-    public AttachmentContainer(String id, FileUploadField field, MInstancia instance) {
-	super(id);
+    public AttachmentContainer(IModel<? extends MInstancia> model) {
+	super("_attachment_"+model.getObject().getNome());
+	MInstancia instance = model.getObject();
+	setupFields(model);
 	this.add( this.uploader = new UploadBehavior(instance));
-	setup(field);
+	
+	setup(field());
     }
 	
+    @SuppressWarnings("unchecked")
+    protected FormComponent setupFields(IModel<? extends MInstancia> model){
+	String name = model.getObject().getNome();
+	fileField = new FileUploadField(name, 
+		    new IMInstanciaAwareModel() {
+			public Object getObject() {
+			    return null;
+			}
+
+			public void setObject(Object object) {}
+
+			public void detach() {}
+
+			public MInstancia getMInstancia() {
+			    return model.getObject().getMTipo().novaInstancia();
+			}
+		    });
+	nameField = new HiddenField("file_name_"+name, 
+			new PropertyModel<>(model, "fileName")); 
+	hashField = new HiddenField("file_hash_"+name, 
+		    	new PropertyModel<>(model, "fileHashSHA1")); 
+	sizeField = new HiddenField("fiel_size_"+name, 
+	    		new PropertyModel<>(model, "fileSize"));
+	idField = new HiddenField("file_id_"+name, 
+	    		new PropertyModel<>(model, "fileId"));
+	return field();
+    }
     
+    protected FormComponent field(){
+	return fileField;
+    }
     
-    public void setup(FileUploadField field) {
+    public void setup(FormComponent field) {
 	String fieldId = field.getMarkupId();
 
 	appendTag("span", true, "class='btn btn-success fileinput-button'", 
@@ -30,16 +69,23 @@ class AttachmentContainer extends BSContainer {
 		createProgressBar(field));
 	appendTag("div", true, "class='files' id='files_" + fieldId + "'", 
 		emptyLabel());
-	appendTag("input", true, "type='hidden' id='data_" + fieldId + "'", 
-		emptyLabel());
+	appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", 
+		nameField);
+	appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", 
+		hashField);
+	appendTag("input", true, "type='hidden' id='" + idField.getMarkupId() + "'", 
+		idField);
+	appendTag("input", true, "type='hidden' id='" + sizeField.getMarkupId() + "'", 
+		sizeField);
 	
 	
     }
 
-    private BSContainer appendInputButton(FileUploadField field) {
+    private BSContainer appendInputButton(FormComponent field) {
 	BSContainer buttonContainer = new BSContainer<>("_bt_" + field.getId())
 		.appendTag("span", new Label("_", Model.of("Selecionar ...")))
-		.appendTag("input", true, "type='file' id='" + field.getMarkupId() + "'", field);
+		.appendTag("input", true, 
+		"type='file' id='" + fileField.getMarkupId() + "'",fileField);
 
 	appendScriptContainer(field.getMarkupId(), buttonContainer);
 	return buttonContainer;
@@ -52,7 +98,7 @@ class AttachmentContainer extends BSContainer {
 			() -> {
 			    return "<script > " 
 			    	+ "$(function () {" 
-			    	+ "  $('#" + fieldId 
+			    	+ "  $('#" + fileField.getMarkupId() 
 			    	+ "').fileupload({  "
 			    	+ "    url: '"+uploader.getUrl()+"',  " 
 			    	+ "    paramName: '"+PARAM_NAME+"',  " 
@@ -66,7 +112,10 @@ class AttachmentContainer extends BSContainer {
 			    	+ "        console.log(e,data);    "
 			    	+ "        $.each(data.result.files, function (index, file) {  "
 			    	+ "            $('<p/>').text(file.name).appendTo('#files_"+ fieldId+"'); "
-			    	+ "            $('#data_" + fieldId+ "').val(JSON.stringify(file));"
+			    	+ "            $('#" + nameField.getMarkupId()+ "').val(file.name);"
+			    	+ "            $('#" + idField.getMarkupId()+ "').val(file.fileId);"
+			    	+ "            $('#" + hashField.getMarkupId()+ "').val(file.hashSHA1);"
+			    	+ "            $('#" + sizeField.getMarkupId()+ "').val(file.size);"
 			    	+ "        });  " 
 			    	+ "    },  " 
 			    	+ "    progressall: function (e, data) {  "
@@ -82,7 +131,7 @@ class AttachmentContainer extends BSContainer {
 		scriptContainer.setRenderBodyOnly(true);
 	}
 
-	private BSContainer createProgressBar(FileUploadField field) {
+	private BSContainer createProgressBar(FormComponent field) {
 	    BSContainer progressContainer = new BSContainer<>("_progress_" + field.getId());
 	    progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'",emptyLabel());
 	    return progressContainer;

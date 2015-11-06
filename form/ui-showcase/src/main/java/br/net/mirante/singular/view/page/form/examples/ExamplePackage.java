@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
@@ -46,7 +47,8 @@ public class ExamplePackage extends MPacote {
         addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
         addField(buyer, "CPF", "CPF", MTipoCPF.class);
         addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-        addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
+        pb.addAtributo(MTipoAttachment.class, MPacoteBasic.ATR_TAMANHO_EDICAO);
+        addField(buyer, "Avatar", "Imagem", MTipoAttachment.class).tamanhoEdicao(1024); //TODO: Talk with Tetsuo about this issue
 
         MTipoComposto<?> address = order.addCampoComposto("Addresss");
         address.as(AtrBasic::new).label("Endereço");
@@ -56,8 +58,8 @@ public class ExamplePackage extends MPacote {
         addField(address, "Zipcode", "CEP", MTipoCEP.class);
     }
 
-    private <I extends MInstancia, T extends MTipo<I>> void addField(MTipoComposto<?> root, String name, String label,
+    private <I extends MInstancia, T extends MTipo<I>> AtrBasic addField(MTipoComposto<?> root, String name, String label,
             Class<T> type) {
-        root.addCampo(name, type).as(AtrBasic::new).label(label);
+        return root.addCampo(name, type).as(AtrBasic::new).label(label);
     }
 }

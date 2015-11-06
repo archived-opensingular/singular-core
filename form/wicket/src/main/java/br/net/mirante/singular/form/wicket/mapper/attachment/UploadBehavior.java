@@ -28,7 +28,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 @SuppressWarnings("serial")
 class UploadBehavior extends Behavior implements IResourceListener {
     private Component component;
-    private MInstancia instance;
+    transient private MInstancia instance;
 
     public UploadBehavior(MInstancia instance) {
 	this.instance = instance;
