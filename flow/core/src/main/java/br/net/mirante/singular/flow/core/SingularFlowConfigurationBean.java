@@ -62,8 +62,20 @@ public abstract class SingularFlowConfigurationBean {
         return ProcessDefinitionCache.getDefinition(processClass);
     }
 
-    protected ProcessDefinition<?> getProcessDefinition(String abbreviation) {
-        return getDefinitionCache().getDefinition(abbreviation);
+    /**
+     * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
+     */
+    protected ProcessDefinition<?> getProcessDefinition(String key) {
+        return getDefinitionCache().getDefinition(key);
+    }
+
+    /**
+     * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
+     * @param key
+     * @return
+     */
+    protected ProcessDefinition<?> getProcessDefinitionUnchecked(String key) {
+        return getDefinitionCache().getDefinitionUnchecked(key);
     }
 
     protected List<ProcessDefinition<?>> getDefinitions() {

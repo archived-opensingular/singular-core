@@ -9,6 +9,9 @@ import java.util.stream.Stream;
 public interface ICompositeInstance {
 
     public Collection<? extends MInstancia> getChildren();
+    public default Collection<? extends MInstancia> getAllChildren() {
+        return getChildren();
+    }
 
     public Stream<? extends MInstancia> stream();
 
@@ -133,6 +136,12 @@ public interface ICompositeInstance {
     @SuppressWarnings("unchecked")
     public default <V> List<V> listDescendantValues(MTipo<?> descendantType, Class<V> valueType) {
         return MInstances.listDescendants((MInstancia) this, descendantType, node -> (V) node.getValor());
+    }
+    public default Stream<MInstancia> streamDescendants(boolean includeRoot) {
+        return MInstances.streamDescendants((MInstancia) this, includeRoot);
+    }
+    public default <D extends MInstancia> Stream<D> streamDescendants(MTipo<D> descendantType, boolean includeRoot) {
+        return MInstances.streamDescendants((MInstancia) this, includeRoot, descendantType);
     }
 
 }

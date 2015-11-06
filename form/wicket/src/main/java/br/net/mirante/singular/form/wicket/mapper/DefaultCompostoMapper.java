@@ -45,6 +45,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         final BSRow row = grid.newRow();
 
         grid.add(DisabledClassBehavior.getInstance());
+        grid.setDefaultModel(model);
 
         for (MTipo<?> tCampo : tComposto.getFields()) {
             final MInstanciaCampoModel<MInstancia> mCampo = new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());

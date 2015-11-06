@@ -10,16 +10,18 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
@@ -32,9 +34,12 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
+import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -117,7 +122,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
         };
     }
-    
+
     private void updateDataList() {
         dataList = dao.list(selectedTemplate.getNome());
     }
@@ -127,12 +132,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             @SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
-               /* new LoadableDetachableModel<ExampleDataDTO>(){
-                  @Override //TODO: Mudar para não ser mais misturado or just plain Model with serializable DTO
-                    protected ExampleDataDTO load() {
-                        return null;
-                    }  
-                };*/
                 model.setType(selectedTemplate.getNome());
                 openInputModal(target, model);
             }
@@ -170,7 +169,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
 
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
-                    String sortProperty, boolean ascending) {
+                String sortProperty, boolean ascending) {
                 return dataList.iterator();
             }
         };
@@ -185,19 +184,19 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.show(target);
     }
 
-    @SuppressWarnings("unchecked")
-    private void createInstance(final String tipo) {
+    private void createInstance(String nomeDoTipo) {
         currentInstance = new MInstanciaRaizModel<MIComposto>() {
-	    protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo(tipo);
+            protected MTipo<MIComposto> getTipoRaiz() {
+                return (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
             }
         };
-        populateInstance((MTipo<MIComposto>) dicionario.getTipo(tipo));
+        populateInstance((MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo));
 
     }
 
     private void populateInstance(final MTipo<MIComposto> tipo) {
-        if(currentModel.getXml() == null) return;
+        if (currentModel.getXml() == null)
+            return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
             MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
@@ -222,23 +221,40 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.setSize(BSModalBorder.Size.FULL);
         inputModal.setTitleText(getMessage("label.form.title"));
 
-        inputModal.queue(inputForm.queue(new AjaxButton("save-btn") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                StringWriter buffer = new StringWriter();
-                MIComposto trueInstance = currentInstance.getObject();
-                MformPersistenciaXML.toXML(trueInstance).printTabulado(
+        inputModal.queue(inputForm
+            .queue(new FencedFeedbackPanel("feedback", inputForm)
+                .add(new Behavior() {
+                    @Override
+                    public void onConfigure(Component component) {
+                        component.setVisible(((FencedFeedbackPanel) component).anyMessage());
+                    }
+                }))
+            .queue(new AjaxButton("save-btn") {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    StringWriter buffer = new StringWriter();
+                    MIComposto trueInstance = currentInstance.getObject();
+
+                    InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+                    InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+
+                    if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+                        target.add(form);
+                        return;
+                    }
+
+                    MformPersistenciaXML.toXML(trueInstance).printTabulado(
                         new PrintWriter(buffer));
-                currentModel.setXml(buffer.toString());
-                dao.save(currentModel);
-                updateListTableFromModal(target);
-                inputModal.hide(target);
-            }
-        }));
+                    currentModel.setXml(buffer.toString());
+                    dao.save(currentModel);
+                    updateListTableFromModal(target);
+                    inputModal.hide(target);
+                }
+            }));
 
         return inputModal;
     }
-    
+
     private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
         deleteModal.show(target);
