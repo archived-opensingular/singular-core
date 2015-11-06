@@ -1,34 +1,38 @@
-package br.net.mirante.singular.form.wicket.validator;
+package br.net.mirante.singular.form.wicket.validation;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
+import br.net.mirante.singular.form.validation.IValueValidatable;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
-final class InstanceValidatableAdapter<I extends MInstancia> implements IInstanceValidatable<I> {
+final class ValueValidatableAdapter<V> implements IValueValidatable<V> {
     private final org.apache.wicket.Component                  component;
-    private final org.apache.wicket.validation.IValidator<I>   wicketValidator;
-    private final org.apache.wicket.validation.IValidatable<I> wicketValidatable;
-    private final IMInstanciaAwareModel<?>                     model;
+    private final org.apache.wicket.validation.IValidator<V>   wicketValidator;
+    private final org.apache.wicket.validation.IValidatable<V> wicketValidatable;
+    private final IMInstanciaAwareModel<V>                     model;
     private ValidationErrorLevel                               defaultLevel = ValidationErrorLevel.ERROR;
-    public InstanceValidatableAdapter(
+    public ValueValidatableAdapter(
         org.apache.wicket.Component component,
-        org.apache.wicket.validation.IValidator<I> wValidator,
-        org.apache.wicket.validation.IValidatable<I> wValidatable,
-        IMInstanciaAwareModel<I> model) {
+        org.apache.wicket.validation.IValidator<V> wValidator,
+        org.apache.wicket.validation.IValidatable<V> wValidatable,
+        IMInstanciaAwareModel<V> model) {
         this.component = component;
         this.wicketValidator = wValidator;
         this.wicketValidatable = wValidatable;
         this.model = model;
     }
+    @Override
     public void setDefaultLevel(ValidationErrorLevel defaultLevel) {
         this.defaultLevel = defaultLevel;
     }
     @Override
-    @SuppressWarnings("unchecked")
-    public I getInstance() {
-        return (I) model.getMInstancia();
+    public V getValue() {
+        return wicketValidatable.getValue();
+    }
+    @Override
+    public MInstancia getInstance() {
+        return model.getMInstancia();
     }
     @Override
     public void error(IValidationError singularError) {
@@ -54,6 +58,10 @@ final class InstanceValidatableAdapter<I extends MInstancia> implements IInstanc
         } else {
             component.warn(msg);
         }
-        return new ValidationErrorAdapter(model.getMInstancia(), level, wicketError);
+        return new ValidationErrorAdapter(getInstance(), level, wicketError);
+    }
+    @Override
+    public boolean isValid() {
+        return wicketValidatable.isValid();
     }
 }

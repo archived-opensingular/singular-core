@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,5 +88,40 @@ public class TestMInstanciaDescendants {
 
         contato.getDescendant(pac.enderecos).addNovo();
         Assert.assertFalse(contato.getDescendant(pac.endereco).findDescendant(pac.emails).isPresent());
+    }
+
+    @Test
+    public void testStream() {
+        MDicionario dicionario = MDicionario.create();
+        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+
+        Set<MTipo<?>> tipos = new HashSet<>(Arrays.asList(
+            pacote.contato,
+            pacote.identificacao,
+            pacote.nome,
+            pacote.sobrenome,
+            pacote.enderecos,
+            pacote.endereco,
+            pacote.enderecoLogradouro,
+            pacote.enderecoNumero,
+            pacote.enderecoComplemento,
+            pacote.enderecoCidade,
+            pacote.enderecoEstado,
+            pacote.telefones,
+            pacote.telefone,
+            pacote.emails,
+            pacote.email));
+
+        MIComposto contato = pacote.contato.novaInstancia();
+        contato.getDescendant(pacote.enderecos).addNovo();
+        contato.getDescendant(pacote.telefones).addNovo();
+        contato.getDescendant(pacote.emails).addNovo();
+
+        contato.streamDescendants(true)
+            .forEachOrdered(instancia -> Assert.assertTrue(
+                "Tipo não encontrado: " + instancia.getMTipo(),
+                tipos.remove(instancia.getMTipo())));
+
+        Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());
     }
 }

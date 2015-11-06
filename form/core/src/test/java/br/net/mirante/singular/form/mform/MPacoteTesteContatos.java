@@ -23,7 +23,9 @@ public class MPacoteTesteContatos extends MPacote {
     public MTipoString                                       enderecoCidade;
     public MTipoString                                       enderecoEstado;
     public MTipoLista<MTipoTelefoneNacional, MIString>       telefones;
+    public MTipoTelefoneNacional                             telefone;
     public MTipoLista<MTipoString, MIString>                 emails;
+    public MTipoString                                       email;
 
     public MPacoteTesteContatos() {
         super("mform.exemplo.squery");
@@ -46,6 +48,8 @@ public class MPacoteTesteContatos extends MPacote {
         enderecoEstado = endereco.addCampoString("estado");
 
         telefones = contato.addCampoListaOf("telefones", MTipoTelefoneNacional.class);
+        telefone = telefones.getTipoElementos();
         emails = contato.addCampoListaOf("emails", MTipoString.class);
+        email = emails.getTipoElementos();
     }
 }
