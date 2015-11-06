@@ -25,5 +25,8 @@ public class Menu extends Panel {
         queue(new WebMarkupContainer("crud")
                 .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
                         .concat("form/crud"))));
+        queue(new WebMarkupContainer("showcase")
+                .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
+                        .concat("showcase"))));
     }
 }
