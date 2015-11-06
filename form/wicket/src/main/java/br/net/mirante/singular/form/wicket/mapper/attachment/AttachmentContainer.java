@@ -25,7 +25,7 @@ class AttachmentContainer extends BSContainer {
 	setupFields(model);
 	this.add( this.uploader = new UploadBehavior(instance));
 	
-	setup(field());
+	setup(field(),model);
     }
 	
     @SuppressWarnings("unchecked")
@@ -60,7 +60,7 @@ class AttachmentContainer extends BSContainer {
 	return fileField;
     }
     
-    public void setup(FormComponent field) {
+    public void setup(FormComponent field, IModel<? extends MInstancia> model) {
 	String fieldId = field.getMarkupId();
 
 	appendTag("span", true, "class='btn btn-success fileinput-button'", 
@@ -68,7 +68,7 @@ class AttachmentContainer extends BSContainer {
 	appendTag("div", true, "class='progress' id='progress_" + fieldId + "'", 
 		createProgressBar(field));
 	appendTag("div", true, "class='files' id='files_" + fieldId + "'", 
-		emptyLabel());
+		new Label("_",new PropertyModel(model, "fileName")));
 	appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", 
 		nameField);
 	appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", 

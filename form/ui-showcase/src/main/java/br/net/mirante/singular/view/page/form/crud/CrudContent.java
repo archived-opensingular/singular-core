@@ -200,7 +200,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
-            MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
+            MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
+            currentInstance = new MInstanciaRaizModel<MIComposto>(instance) {
+		protected MTipo<MIComposto> getTipoRaiz() {
+		    return (MTipo<MIComposto>) instance.getMTipo();
+		}
+	    };
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
