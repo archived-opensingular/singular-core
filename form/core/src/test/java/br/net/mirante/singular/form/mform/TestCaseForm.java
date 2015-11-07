@@ -85,19 +85,19 @@ public abstract class TestCaseForm extends TestCase {
         }
     }
 
-    protected static void assertException(Runnable acao, String trechoMsgEsperada) {
+    public static void assertException(Runnable acao, String trechoMsgEsperada) {
         assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
-    protected static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
+    public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
         assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
-    protected static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
+    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
         assertException(acao, exceptionEsperada, null, null);
     }
 
-    protected static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
+    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
         try {
             acao.run();
