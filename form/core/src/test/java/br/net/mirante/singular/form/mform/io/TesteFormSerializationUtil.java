@@ -11,7 +11,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +30,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SDocument;
+import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
@@ -169,7 +169,18 @@ public class TesteFormSerializationUtil {
         TestCaseForm.assertException(() -> testSerializacaoComResolverSerializado(instancia, resolver), "NotSerializableException");
     }
 
-    private static final class DicionarioResolverStaticTest extends MDicionarioResolver implements Serializable {
+    @Test
+    public void testSerializacaoReferenciaServico() {
+        MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
+            pacote.createTipo("endereco", MTipoString.class);
+        });
+        MInstancia instancia = resolver.loadType("teste.endereco").novaInstancia();
+
+        instancia.getDocument().bindLocalService("A", ServiceRef.of("B"));
+        testSerializacao(instancia, resolver);
+    }
+
+    private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
         @SuppressWarnings("unused")
         private Object ref;
 
@@ -186,8 +197,7 @@ public class TesteFormSerializationUtil {
 
     }
 
-    private static <DR extends MDicionarioResolver & Serializable> void testSerializacaoComResolverSerializado(MInstancia original,
-            DR resolver) {
+    private static void testSerializacaoComResolverSerializado(MInstancia original, MDicionarioResolverSerializable resolver) {
         testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
     }
 

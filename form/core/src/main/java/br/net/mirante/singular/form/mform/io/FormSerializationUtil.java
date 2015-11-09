@@ -29,10 +29,11 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * {@link MDicionarioResolver#setDefault(MDicionarioResolver)}</li>
  * <li>Ao deserializar informar MDicionarioResolver a ser utilizado:
  * {@link #toInstance(FormSerialized, MDicionarioResolver)}</li>
- * <li>Ao gerar a versão serialização, passar um MDicionarioResolver
- * serializável para também ser serializado junto com os dados. Na volta usa
- * esse resolver que foi serializado junto com os dados:
- * {@link #toInstance(FormSerialized, MDicionarioResolver)}</li>
+ * <li>Ao gerar a versão serialização, passar um
+ * {@link MDicionarioResolverSerializable} para também ser serializado junto com
+ * os dados. Na volta (deserialização) usa esse resolver que foi serializado
+ * junto com os dados:
+ * {@link #toInstance(FormSerialized, MDicionarioResolverSerializable)}</li>
  * </ul >
  * </p>
  *
@@ -69,14 +70,13 @@ public class FormSerializationUtil {
      * Não serializa a definição do tipo (dicionário). Guarda apenas o nome do
      * tipo.
      *
-     * @param dicionaroResolverSerializable
+     * @param dicionarioResolverSerializable
      *            Pode ser null. Se for passado também serializa o dicionário
      *            resolver para facilitar a recuperação.
      *            </p>
      */
-    public static <DR extends MDicionarioResolver & Serializable> FormSerialized toSerializedObject(MInstancia instance,
-            DR dicionaroResolverSerializable) {
-        FormSerialized fs = toSerialized(instance.getDocument(), dicionaroResolverSerializable);
+    public static FormSerialized toSerializedObject(MInstancia instance, MDicionarioResolverSerializable dicionarioResolverSerializable) {
+        FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
         }
@@ -92,8 +92,7 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    private static <DR extends MDicionarioResolver & Serializable> FormSerialized toSerialized(SDocument document,
-            DR dicionaroResolverSerializable) {
+    private static FormSerialized toSerialized(SDocument document, MDicionarioResolverSerializable dicionaroResolverSerializable) {
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
         FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml, dicionaroResolverSerializable);
         Map<String, ServiceRef<?>> services = document.getLocalServices();
@@ -173,13 +172,13 @@ public class FormSerializationUtil {
      */
     public static final class FormSerialized implements Serializable {
 
-        private final MDicionarioResolver dicionarioResolver;
+        private final MDicionarioResolverSerializable dicionarioResolver;
         private final String rootType;
         private final MElement xml;
         private String focusFieldPath;
         private Map<String, ServiceRef<?>> services;
 
-        public <DR extends MDicionarioResolver & Serializable> FormSerialized(String rootType, MElement xml, DR dicionarioResolver) {
+        public FormSerialized(String rootType, MElement xml, MDicionarioResolverSerializable dicionarioResolver) {
             this.dicionarioResolver = dicionarioResolver;
             this.rootType = rootType;
             this.xml = xml;
@@ -209,7 +208,7 @@ public class FormSerializationUtil {
             this.services = services;
         }
 
-        public MDicionarioResolver getDicionarioResolver() {
+        public MDicionarioResolverSerializable getDicionarioResolver() {
             return dicionarioResolver;
         }
 

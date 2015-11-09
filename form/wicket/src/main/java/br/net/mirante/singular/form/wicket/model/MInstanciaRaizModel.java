@@ -5,10 +5,12 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
+@Deprecated
 public abstract class MInstanciaRaizModel<I extends MInstancia> extends AbstractMInstanciaModel<I> {
 
     private MElement    serial;
     private transient I object;
+
     public MInstanciaRaizModel() {}
     public MInstanciaRaizModel(I object) {
         setObject(object);
