@@ -1,20 +1,16 @@
 package br.net.mirante.singular.view;
 
-import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
+import javax.inject.Inject;
+
 import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.TagTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import javax.inject.Inject;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.net.mirante.singular.view.page.form.ListPage;
 import br.net.mirante.singular.view.page.form.crud.CrudPage;
-import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)

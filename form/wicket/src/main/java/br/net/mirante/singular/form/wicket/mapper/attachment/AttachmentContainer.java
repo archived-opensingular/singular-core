@@ -49,7 +49,7 @@ class AttachmentContainer extends BSContainer {
 			new PropertyModel<>(model, "fileName")); 
 	hashField = new HiddenField("file_hash_"+name, 
 		    	new PropertyModel<>(model, "fileHashSHA1")); 
-	sizeField = new HiddenField("fiel_size_"+name, 
+	sizeField = new HiddenField("file_size_"+name, 
 	    		new PropertyModel<>(model, "fileSize"));
 	idField = new HiddenField("file_id_"+name, 
 	    		new PropertyModel<>(model, "fileId"));
