@@ -26,7 +26,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PAPEL")
-public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity implements IEntityRoleDefinition {
+public abstract class AbstractRoleDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity<Integer> implements IEntityRoleDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_PAPEL";
 

@@ -34,7 +34,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_PAPEL")
-public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity implements IEntityRoleInstance {
+public abstract class AbstractRoleInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, ROLE_DEF extends IEntityRoleDefinition> extends BaseEntity<Integer> implements IEntityRoleInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PAPEL";
 

@@ -14,12 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessGroup;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
@@ -31,14 +30,15 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
  * </p>
  * <code>@GenericGenerator(name = AbstractProcessDefinitionEntity.PK_GENERATOR_NAME, strategy = "org.hibernate.id.IdentityGenerator")</code>
  *
- * @param <CATEGORY>
- * @param <TASK_DEF>
- * @param <ROLE_DEF>
- * @param <PROCESS_VERSION>
+ * @param <IEntityProcessGroup>
+ * @param <IEntityCategory>
+ * @param <IEntityTaskDefinition>
+ * @param <IEntityRoleDefinition>
+ * @param <IEntityProcessVersion>
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_PROCESSO")
-public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCategory, TASK_DEF extends IEntityTaskDefinition, ROLE_DEF extends IEntityRoleDefinition, PROCESS_VERSION extends IEntityProcessVersion> extends BaseEntity implements IEntityProcessDefinition {
+public abstract class AbstractProcessDefinitionEntity<GROUP extends IEntityProcessGroup, CATEGORY extends IEntityCategory, TASK_DEF extends IEntityTaskDefinition, ROLE_DEF extends IEntityRoleDefinition, PROCESS_VERSION extends IEntityProcessVersion> extends BaseEntity<Integer> implements IEntityProcessDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_PROCESSO";
 
@@ -51,6 +51,10 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
     @JoinColumn(name = "CO_CATEGORIA")
     private CATEGORY category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CO_GRUPO_PROCESSO", nullable = false)
+    private GROUP processGroup;
+
     @Column(name = "SG_PROCESSO", length = 200, nullable = false, unique = true)
     private String key;
 
@@ -61,7 +65,6 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
     private String definitionClassName;
 
     @OneToMany(mappedBy = "processDefinition", fetch = FetchType.LAZY)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<TASK_DEF> taskDefinitions;
 
     @OrderBy("NO_PAPEL")
@@ -135,4 +138,13 @@ public abstract class AbstractProcessDefinitionEntity<CATEGORY extends IEntityCa
         this.versions = versions;
     }
 
+    public GROUP getProcessGroup() {
+        return processGroup;
+    }
+
+    public void setProcessGroup(IEntityProcessGroup processGroup) {
+        this.processGroup = (GROUP) processGroup;
+    }
+
+    
 }

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core.entity;
 
-public interface IEntityVariableType extends IEntityByCod {
+public interface IEntityVariableType extends IEntityByCod<Integer> {
 
     String getTypeClassName();
 

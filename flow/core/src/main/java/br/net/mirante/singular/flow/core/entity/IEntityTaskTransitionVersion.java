@@ -1,7 +1,7 @@
 package br.net.mirante.singular.flow.core.entity;
 
 
-public interface IEntityTaskTransitionVersion extends IEntityByCod {
+public interface IEntityTaskTransitionVersion extends IEntityByCod<Integer> {
 
     IEntityTaskVersion getOriginTask();
 

@@ -336,7 +336,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
         synchronized (this) {
             if (entityVersionCod == null) {
                 try {
-                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getMbpmBean().getProcessEntityService();
+                    IProcessDefinitionEntityService<?, ?, ?, ?, ?, ?, ?> processEntityService = Flow.getConfigBean().getProcessEntityService();
                     IEntityProcessVersion newVersion = processEntityService.generateEntityFor(this);
 
                     IEntityProcessVersion oldVersion = newVersion.getProcessDefinition().getLastVersion();
@@ -715,7 +715,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
 
     final IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance> getPersistenceService() {
         return (IPersistenceService<IEntityCategory, IEntityProcessDefinition, IEntityProcessVersion, IEntityProcessInstance, IEntityTaskInstance, IEntityTaskDefinition, IEntityTaskVersion, IEntityVariableInstance, IEntityRoleDefinition, IEntityRoleInstance>) Flow
-                .getMbpmBean().getPersistenceService();
+                .getConfigBean().getPersistenceService();
     }
 
     /**

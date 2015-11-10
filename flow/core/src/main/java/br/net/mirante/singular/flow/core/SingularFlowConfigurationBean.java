@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -28,14 +29,23 @@ public abstract class SingularFlowConfigurationBean {
 
     public static final String PREFIXO = "SGL";
 
+    private String processGroupCod;
+    
     private List<ProcessNotifier> notifiers = new ArrayList<>();
+
+    /**
+     * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
+     */
+    protected SingularFlowConfigurationBean(String processGroupCod) {
+        super();
+        this.processGroupCod = processGroupCod;
+    }
 
     final void start() {
         for (final ProcessDefinition<?> processDefinition : getDefinitions()) {
             for (final MTaskJava task : processDefinition.getFlowMap().getJavaTasks()) {
                 if (!task.isImmediateExecution()) {
-                    getScheduleService()
-                        .schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
+                    getScheduleService().schedule(new ScheduledJob(task.getCompleteName(), task.getScheduleData(), () -> executeTask(task)));
                 }
             }
             for (ProcessScheduledJob scheduledJob : processDefinition.getScheduledJobs()) {
@@ -50,6 +60,18 @@ public abstract class SingularFlowConfigurationBean {
 
     }
 
+    public final void setProcessGroupCod(String processGroupCod) {
+        this.processGroupCod = processGroupCod;
+    }
+    
+    public final String getProcessGroupCod() {
+        Objects.requireNonNull(processGroupCod);
+        if (processGroupCod == null) {
+            throw new SingularFlowException("Não foi definido o ProcessGroupCod");
+        }
+        return processGroupCod;
+    }
+    
     // ------- Método de recuperação de definições --------------------
 
     protected ProcessDefinitionCache getDefinitionCache() {

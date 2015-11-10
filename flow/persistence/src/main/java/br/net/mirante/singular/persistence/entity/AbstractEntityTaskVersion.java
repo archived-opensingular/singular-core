@@ -14,8 +14,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
@@ -38,7 +36,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_TAREFA")
-public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, TASK_TYPE extends Enum<?> & IEntityTaskType> extends BaseEntity implements IEntityTaskVersion {
+public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityProcessVersion, TASK_DEF extends IEntityTaskDefinition, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, TASK_TYPE extends Enum<?> & IEntityTaskType> extends BaseEntity<Integer> implements IEntityTaskVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_TAREFA";
 
@@ -62,7 +60,6 @@ public abstract class AbstractEntityTaskVersion<PROCESS_VERSION extends IEntityP
     private TASK_TYPE type;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "originTask")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<TASK_TRANSITION_VERSION> transitions = new ArrayList<>();
 
     public Integer getCod() {
