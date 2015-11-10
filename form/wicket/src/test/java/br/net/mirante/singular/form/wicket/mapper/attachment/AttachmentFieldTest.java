@@ -26,7 +26,10 @@ public class AttachmentFieldTest {
     private static TestPackage pacote;
     private WicketTester driver;
     private TestPage page;
+    private FormTester form;
 
+    //TODO: Document the classes for testing and for upload
+    
     @BeforeClass
     public static void createDicionario() {
 	dicionario = MDicionario.create();
@@ -41,9 +44,12 @@ public class AttachmentFieldTest {
 	page.build();
 	driver.startPage(page);
     }
+    
+    @Before public void setupFormAssessor(){
+	form = driver.newFormTester("test-form", false);
+    }
 
     @Test public void generatesFieldsResposibleForCompositeParts() {
-	FormTester form = driver.newFormTester("test-form", false);
 	driver.assertEnabled(formField(form, "file_name_fileField"));
 	driver.assertEnabled(formField(form,  "file_hash_fileField"));
 	driver.assertEnabled(formField(form, "file_size_fileField"));
@@ -56,7 +62,6 @@ public class AttachmentFieldTest {
     
     @SuppressWarnings("unchecked")
     @Test public void onSubmissionItPopulatesTheFieldsOfTheAttachmentComposite(){
-	FormTester form = driver.newFormTester("test-form", false);
 	form.setValue(findId(form.getForm(), "file_name_fileField").get(), "abacate.png");
 	form.setValue(findId(form.getForm(), "file_hash_fileField").get(), "1234567890asdfghj");
 	form.setValue(findId(form.getForm(), "file_size_fileField").get(), "1234");
@@ -69,6 +74,14 @@ public class AttachmentFieldTest {
 	assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
 	assertThat(findValueInList(values, "size")).isEqualTo(1234);
 	assertThat(findValueInList(values, "fileId")).isEqualTo("1020304050");
+    }
+    
+    @Test public void componentMustHaveAUploadBehaviourWhichReflectsTheUploadUrl(){
+	Component attachmentComponent = page.get(formField(form, "_attachment_fileField"));
+	List<UploadBehavior> behaviours = attachmentComponent.getBehaviors(UploadBehavior.class);
+	assertThat(behaviours).hasSize(1);
+	//TODO: test the behaviour?
+	//TODO: can we test the url?
     }
     
     private Object findValueInList(List<MISimples> list, String propName){

@@ -42,12 +42,31 @@ class UploadBehavior extends Behavior implements IResourceListener {
     @Override
     public void onResourceRequested() {
 	try {
-	    ServletWebRequest request = (ServletWebRequest) RequestCycle.get().getRequest();
-	    Response response = RequestCycle.get().getResponse();
-	    handleRequest(request, response);
+	    handleRequest(request(), response());
 	} catch (FileUploadException e) {
 	    throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	}
+    }
+
+    //TODO: I believe a wrapper would be useful for this task in the future
+    private Response _response;
+    
+    public void set_response(Response _response) {
+        this._response = _response;
+    }
+    
+    private Response response() {
+	return _response != null ? _response : RequestCycle.get().getResponse();
+    }
+
+    private ServletWebRequest _request;
+    
+    public void set_request(ServletWebRequest _request) {
+	this._request = _request;
+    }
+    
+    private ServletWebRequest request() {
+	return _request != null ? _request : (ServletWebRequest) RequestCycle.get().getRequest();
     }
 
     private void handleRequest(ServletWebRequest request, Response response) throws FileUploadException {
