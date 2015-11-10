@@ -38,7 +38,7 @@ import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel2;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -175,7 +175,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         };
     }
 
-    @SuppressWarnings("unchecked")
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
         createInstance(selectedTemplate.getNome());
@@ -186,12 +185,9 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
-        currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
-            }
-        };
-        populateInstance((MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo));
+	MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
+        currentInstance = new MInstanciaRaizModel2<MIComposto>(tipo.novaInstancia()) ;
+        populateInstance(tipo);
 
     }
 
@@ -201,11 +197,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         try {
             MElement xml = MParser.parse(currentModel.getXml());
             MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
-            currentInstance = new MInstanciaRaizModel<MIComposto>(instance) {
-                protected MTipo<MIComposto> getTipoRaiz() {
-                    return (MTipo<MIComposto>) instance.getMTipo();
-                }
-            };
+            currentInstance = new MInstanciaRaizModel2<MIComposto>(instance) ;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
