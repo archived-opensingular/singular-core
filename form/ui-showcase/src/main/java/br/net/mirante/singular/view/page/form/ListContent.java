@@ -22,7 +22,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel2;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -184,7 +184,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     private void buildContainer(MTipoComposto<?> formType) {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(formType.getNome());
-        IModel<MIComposto> mInstance = new MInstanciaRaizModel2<MIComposto>(tipo.novaInstancia());
+        IModel<MIComposto> mInstance = new MInstanceRootModel<MIComposto>(tipo.novaInstancia());
         UIBuilderWicket.buildForEdit(ctx, mInstance);
     }
 

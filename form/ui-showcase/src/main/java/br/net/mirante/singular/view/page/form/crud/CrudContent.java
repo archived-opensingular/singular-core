@@ -38,7 +38,7 @@ import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel2;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -186,7 +186,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
 	MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
-        currentInstance = new MInstanciaRaizModel2<MIComposto>(tipo.novaInstancia()) ;
+        currentInstance = new MInstanceRootModel<MIComposto>(tipo.novaInstancia()) ;
         populateInstance(tipo);
 
     }
@@ -197,7 +197,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         try {
             MElement xml = MParser.parse(currentModel.getXml());
             MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
-            currentInstance = new MInstanciaRaizModel2<MIComposto>(instance) ;
+            currentInstance = new MInstanceRootModel<MIComposto>(instance) ;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

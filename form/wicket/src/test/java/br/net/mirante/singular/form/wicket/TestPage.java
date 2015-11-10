@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel2;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
 @SuppressWarnings("serial")
@@ -39,13 +39,13 @@ public class TestPage extends WebPage {
     }
 
     @SuppressWarnings("rawtypes")
-    private MInstanciaRaizModel2 createTipoModel(MDicionario dicionario) {
+    private MInstanceRootModel createTipoModel(MDicionario dicionario) {
 	return newModelFromInstance(currentInstance);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private MInstanciaRaizModel2 newModelFromInstance(MInstancia instance) {
-	return new MInstanciaRaizModel2(instance) /*{
+    private MInstanceRootModel newModelFromInstance(MInstancia instance) {
+	return new MInstanceRootModel(instance) /*{
 		protected MTipo getTipoRaiz() {
 		    return instance.getMTipo();
 		}
