@@ -20,7 +20,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
  */
 @MappedSuperclass
 @Table(name = "TB_TIPO_HISTORICO_TAREFA")
-public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity implements IEntityTaskHistoricType {
+public abstract class AbstractTaskHistoricTypeEntity extends BaseEntity<Integer> implements IEntityTaskHistoricType {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_TIPO_HISTORICO_TAREFA";
 

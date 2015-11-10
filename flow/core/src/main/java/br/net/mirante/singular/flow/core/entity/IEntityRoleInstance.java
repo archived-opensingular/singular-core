@@ -4,7 +4,7 @@ import java.util.Date;
 
 import br.net.mirante.singular.flow.core.MUser;
 
-public interface IEntityRoleInstance extends IEntityByCod {
+public interface IEntityRoleInstance extends IEntityByCod<Integer> {
 
     IEntityRoleDefinition getRole();
 

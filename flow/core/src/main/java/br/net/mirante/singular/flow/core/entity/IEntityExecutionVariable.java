@@ -2,7 +2,7 @@ package br.net.mirante.singular.flow.core.entity;
 
 import java.util.Date;
 
-public interface IEntityExecutionVariable extends IEntityByCod {
+public interface IEntityExecutionVariable extends IEntityByCod<Integer> {
 
     IEntityProcessInstance getProcessInstance();
 

@@ -8,6 +8,7 @@ import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
 @MountPath("form/crud")
+@SuppressWarnings("serial")
 public class CrudPage extends Template {
 
     @Override

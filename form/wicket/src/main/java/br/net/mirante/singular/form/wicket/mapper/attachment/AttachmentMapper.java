@@ -12,10 +12,9 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
     public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
-	AttachmentContainer container = new AttachmentContainer(model);
-	formGroup.appendTypeahead(container);
-	return container.field();
-//	return container;
+        AttachmentContainer container = new AttachmentContainer(model);
+        formGroup.appendTypeahead(container);
+        return container.field();
+//    return container;
     }
-
 }

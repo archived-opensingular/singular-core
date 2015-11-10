@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.net.mirante.singular.flow.core.IEntityTaskType;
 
-public interface IEntityTaskVersion extends IEntityByCod {
+public interface IEntityTaskVersion extends IEntityByCod<Integer> {
 
     IEntityProcessVersion getProcessVersion();
 

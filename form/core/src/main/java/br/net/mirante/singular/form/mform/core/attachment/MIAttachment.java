@@ -60,11 +60,11 @@ public class MIAttachment extends MIComposto {
     }
     
     public void setFileHashSHA1(String hash) {
-	setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
+    setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
     }
     
     public void setFileId(String id) {
-	setValor(MTipoAttachment.FIELD_FILE_ID, id);
+    setValor(MTipoAttachment.FIELD_FILE_ID, id);
     }
     
     public void setFileSize(Integer size) {

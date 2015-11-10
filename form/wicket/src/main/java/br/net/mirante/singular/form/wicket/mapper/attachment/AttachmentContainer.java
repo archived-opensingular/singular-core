@@ -13,29 +13,29 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
-@SuppressWarnings({ "serial", "rawtypes" })
+@SuppressWarnings({"serial", "rawtypes"})
 class AttachmentContainer extends BSContainer {
     public static String PARAM_NAME = "FILE-UPLOAD";
     private UploadBehavior uploader;
     private FormComponent fileField, nameField, hashField, sizeField, idField;
 
     public AttachmentContainer(IModel<? extends MInstancia> model) {
-	super("_attachment_"+model.getObject().getNome());
-	MInstancia instance = model.getObject();
-	setupFields(model);
-	this.add( this.uploader = new UploadBehavior(instance));
-	
-	setup(field(),model);
+        super("_attachment_" + model.getObject().getNome());
+        MInstancia instance = model.getObject();
+        setupFields(model);
+        this.add(this.uploader = new UploadBehavior(instance));
+
+        setup(field(), model);
     }
-	
+
     @SuppressWarnings("unchecked")
-    protected FormComponent setupFields(IModel<? extends MInstancia> model){
-	String name = model.getObject().getNome();
-	fileField = new FileUploadField(name, 
-		    new IMInstanciaAwareModel() {
-			public Object getObject() {
-			    return null;
-			}
+    protected FormComponent setupFields(IModel<? extends MInstancia> model) {
+        String name = model.getObject().getNome();
+        fileField = new FileUploadField(name,
+                new IMInstanciaAwareModel() {
+                    public Object getObject() {
+                        return null;
+                    }
 
 			public void setObject(Object object) {}
 
@@ -49,7 +49,7 @@ class AttachmentContainer extends BSContainer {
 			new PropertyModel<>(model, "fileName")); 
 	hashField = new HiddenField("file_hash_"+name, 
 		    	new PropertyModel<>(model, "fileHashSHA1")); 
-	sizeField = new HiddenField("fiel_size_"+name, 
+	sizeField = new HiddenField("file_size_"+name, 
 	    		new PropertyModel<>(model, "fileSize"));
 	idField = new HiddenField("file_id_"+name, 
 	    		new PropertyModel<>(model, "fileId"));
@@ -68,7 +68,7 @@ class AttachmentContainer extends BSContainer {
 	appendTag("div", true, "class='progress' id='progress_" + fieldId + "'", 
 		createProgressBar(field));
 	appendTag("div", true, "class='files' id='files_" + fieldId + "'", 
-		new Label("_",new PropertyModel(model, "fileName")));
+		new Label("_", new PropertyModel(model, "fileName")));
 	appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", 
 		nameField);
 	appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", 

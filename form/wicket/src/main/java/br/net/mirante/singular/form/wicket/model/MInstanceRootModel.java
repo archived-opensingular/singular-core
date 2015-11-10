@@ -34,24 +34,24 @@ import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
  * @see {@link br.net.mirante.singular.form.mform.io.FormSerializationUtil}
  * @author Daniel C. Bordin
  */
-public class MInstanciaRaizModel2<I extends MInstancia> extends AbstractMInstanciaModel<I>implements Externalizable {
+public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstanciaModel<I>implements Externalizable {
 
     private transient I object;
 
     private MDicionarioResolverSerializable dicionarioResolverSerializable;
 
-    public MInstanciaRaizModel2() {
+    public MInstanceRootModel() {
     }
 
-    public MInstanciaRaizModel2(MDicionarioResolverSerializable dicionarioResolverSerializable) {
+    public MInstanceRootModel(MDicionarioResolverSerializable dicionarioResolverSerializable) {
         this.dicionarioResolverSerializable = dicionarioResolverSerializable;
     }
 
-    public MInstanciaRaizModel2(I object) {
+    public MInstanceRootModel(I object) {
         setObject(object);
     }
 
-    public MInstanciaRaizModel2(I object, MDicionarioResolverSerializable dicionarioResolverSerializable) {
+    public MInstanceRootModel(I object, MDicionarioResolverSerializable dicionarioResolverSerializable) {
         setObject(object);
         this.dicionarioResolverSerializable = dicionarioResolverSerializable;
     }
@@ -82,7 +82,7 @@ public class MInstanciaRaizModel2<I extends MInstancia> extends AbstractMInstanc
             return false;
         if (getClass() != obj.getClass())
             return false;
-        MInstanciaRaizModel2<?> other = (MInstanciaRaizModel2<?>) obj;
+        MInstanceRootModel<?> other = (MInstanceRootModel<?>) obj;
         return Objects.equals(object, other.object);
     }
 

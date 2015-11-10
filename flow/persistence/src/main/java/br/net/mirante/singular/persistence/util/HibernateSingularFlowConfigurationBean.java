@@ -12,12 +12,22 @@ import br.net.mirante.singular.persistence.service.DefaultHibernatePersistenceSe
 import br.net.mirante.singular.persistence.service.DefaultHibernateProcessDefinitionService;
 
 public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigurationBean {
-
     private String   definitionsBasePackage;
     private IUserService userService;
     private SessionFactory sessionFactory;
     private SessionLocator sessionLocator = ()-> sessionFactory.getCurrentSession();
 
+    public HibernateSingularFlowConfigurationBean() {
+        super(null);
+    }
+    
+    /**
+     * @param processGroupCod - chave do sistema cadastrado no em <code>TB_GRUPO_PROCESSO</code>
+     */
+    protected HibernateSingularFlowConfigurationBean(String processGroupCod) {
+        super(processGroupCod);
+    }
+    
     @Override
     protected String getDefinitionsBasePackage() {
         return this.definitionsBasePackage;
