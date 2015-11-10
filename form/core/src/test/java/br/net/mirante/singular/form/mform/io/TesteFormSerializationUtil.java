@@ -13,24 +13,35 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MDicionarioLoader;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SDocument;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
 
 public class TesteFormSerializationUtil {
+
+    @Before
+    public void clean() {
+        MDicionarioResolver.setDefault(null);
+    }
 
     @Test
     public void testVerySimplesCase() {
@@ -38,7 +49,7 @@ public class TesteFormSerializationUtil {
             pacote.createTipo("endereco", MTipoString.class);
         });
         MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
-        testSerializacao(loader, instancia);
+        testSerializacao(instancia, loader);
 
     }
 
@@ -53,10 +64,10 @@ public class TesteFormSerializationUtil {
         MIComposto instancia = (MIComposto) loader.loadType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "A1");
         instancia.setValor("bairro", "A2");
-        testSerializacao(loader, instancia);
+        testSerializacao(instancia, loader);
 
         // Testa um subPath
-        testSerializacao(loader, instancia.getCampo("bairro"));
+        testSerializacao(instancia.getCampo("bairro"), loader);
     }
 
     @Test
@@ -69,10 +80,10 @@ public class TesteFormSerializationUtil {
         instancia.addValor("A2");
         instancia.addValor("A3");
         instancia.addValor("A4");
-        testSerializacao(loader, instancia);
+        testSerializacao(instancia, loader);
 
         // Testa um subPath
-        testSerializacao(loader, instancia.getCampo("[1]"));
+        testSerializacao(instancia.getCampo("[1]"), loader);
     }
 
     @Test
@@ -90,11 +101,11 @@ public class TesteFormSerializationUtil {
             e.setValor("rua", "A31");
             e.setValor("bairro", "A32");
         });
-        testSerializacao(loader, instancia);
+        testSerializacao(instancia, loader);
 
         // Testa um subPath
-        testSerializacao(loader, instancia.getCampo("[0].rua"));
-        testSerializacao(loader, instancia.getCampo("[2].bairro"));
+        testSerializacao(instancia.getCampo("[0].rua"), loader);
+        testSerializacao(instancia.getCampo("[2].bairro"), loader);
     }
 
     @Test
@@ -116,17 +127,89 @@ public class TesteFormSerializationUtil {
         contato.getFieldList("enderecos").addNovo();
         contato.setValor("enderecos[0].rua", "A31");
         contato.setValor("enderecos[0].cidade", "A32");
-        testSerializacao(loader, instancia);
+        testSerializacao(instancia, loader);
 
         // Testa um subPath
-        testSerializacao(loader, instancia.getCampo("nome"));
-        testSerializacao(loader, instancia.getCampo("contatos"));
+        testSerializacao(instancia.getCampo("nome"), loader);
+        testSerializacao(instancia.getCampo("contatos"), loader);
     }
 
-    private static void testSerializacao(MDicionarioLoader loader, MInstancia original) {
+    @Test
+    public void testUsoDicionarioResolverDefault() {
+        TestCaseForm.assertException(() -> MDicionarioResolver.getDefault(), "resolver default não está configurado");
+
+        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+            pacote.createTipo("endereco", MTipoString.class);
+        });
+        MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
+        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+
+        MDicionarioResolver.setDefault(loader);
+        testSerializacao(instancia, null);
+
+    }
+
+    @Test
+    public void testUsoDicionarResolverSerializado() {
+        DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(null);
+        MInstancia instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        instancia.setValor("Fulano");
+
+        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+
+        testSerializacaoComResolverSerializado(instancia, resolver);
+    }
+
+    @Test
+    public void testUsoDicionarResolverSerializadoMasComReferenciaInternaNaoSerializavel() {
+        DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(this);
+        MInstancia instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        instancia.setValor("Fulano");
+
+        TestCaseForm.assertException(() -> testSerializacaoComResolverSerializado(instancia, resolver), "NotSerializableException");
+    }
+
+    @Test
+    public void testSerializacaoReferenciaServico() {
+        MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
+            pacote.createTipo("endereco", MTipoString.class);
+        });
+        MInstancia instancia = resolver.loadType("teste.endereco").novaInstancia();
+
+        instancia.getDocument().bindLocalService("A", ServiceRef.of("B"));
+        testSerializacao(instancia, resolver);
+    }
+
+    private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
+        @SuppressWarnings("unused")
+        private Object ref;
+
+        public DicionarioResolverStaticTest(Object ref) {
+            this.ref = ref;
+
+        }
+        @Override
+        public Optional<MDicionario> loadDicionaryForType(String typeName) {
+            MDicionario novo = MDicionario.create();
+            novo.criarNovoPacote("teste").createTipo("cadastro", MTipoString.class);
+            return Optional.of(novo);
+        }
+
+    }
+
+    private static void testSerializacaoComResolverSerializado(MInstancia original, MDicionarioResolverSerializable resolver) {
+        testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
+    }
+
+    private static void testSerializacao(MInstancia original, MDicionarioResolver loader) {
+        testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i), fs -> FormSerializationUtil.toInstance(fs, loader));
+    }
+
+    private static void testSerializacao(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
+            Function<FormSerialized, MInstancia> fromSerial) {
         // Testa sem transformar em array de bytes
-        FormSerialized fs = FormSerializationUtil.toSerializedObject(original);
-        MInstancia instancia2 = FormSerializationUtil.toInstance(fs, loader);
+        FormSerialized fs = toSerial.apply(original);
+        MInstancia instancia2 = fromSerial.apply(fs);
         assertEquivalent(original.getDocument(), instancia2.getDocument());
         assertEquivalent(original, instancia2);
 
@@ -139,7 +222,7 @@ public class TesteFormSerializationUtil {
 
             ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
             fs = (FormSerialized) in.readObject();
-            instancia2 = FormSerializationUtil.toInstance(fs, loader);
+            instancia2 = fromSerial.apply(fs);
             assertEquivalent(original.getDocument(), instancia2.getDocument());
             assertEquivalent(original, instancia2);
         } catch (IOException | ClassNotFoundException e) {

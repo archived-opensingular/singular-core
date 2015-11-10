@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.core.attachment;
 import java.io.InputStream;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {
 
     private final int size;

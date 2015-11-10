@@ -25,4 +25,6 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
         addCampoString(FIELD_HASH_SHA1);
         addCampoInteger(FIELD_SIZE);
     }
+    
+    
 }

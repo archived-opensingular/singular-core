@@ -21,6 +21,8 @@ import br.net.mirante.singular.view.page.form.ListPage;
 
 public class ShowcaseApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
 
+    public static final String BASE_FOLDER = "/tmp/fileUploader";
+    
     private ApplicationContext ctx;
 
     @Override

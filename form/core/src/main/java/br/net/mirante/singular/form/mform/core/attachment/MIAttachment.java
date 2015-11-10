@@ -58,6 +58,18 @@ public class MIAttachment extends MIComposto {
     public void setFileName(String name) {
         setValor(MTipoAttachment.FIELD_NAME, name);
     }
+    
+    public void setFileHashSHA1(String hash) {
+    setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
+    }
+    
+    public void setFileId(String id) {
+    setValor(MTipoAttachment.FIELD_FILE_ID, id);
+    }
+    
+    public void setFileSize(Integer size) {
+        setValor(MTipoAttachment.FIELD_SIZE, size);
+    }
 
     /**
      * Retorna o tamanho do arquivo binário associado ou -1 se não houver
@@ -92,4 +104,5 @@ public class MIAttachment extends MIComposto {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
     }
+    
 }

@@ -1,5 +1,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
@@ -9,8 +11,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @SuppressWarnings("unchecked")
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {

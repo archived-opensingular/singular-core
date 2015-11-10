@@ -14,6 +14,17 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <servlet>
+        <servlet-name>File Servlet</servlet-name>
+        <servlet-class>br.net.mirante.singular.FileUploadServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>File Servlet</servlet-name>
+        <url-pattern>/fileUpload/*</url-pattern>
+    </servlet-mapping>
+
     <!-- CONFIGURACOES WICKET -->
     <filter>
         <filter-name>UIAdminApplication</filter-name>
