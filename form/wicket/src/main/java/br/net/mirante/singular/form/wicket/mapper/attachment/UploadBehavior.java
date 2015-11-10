@@ -70,77 +70,77 @@ class UploadBehavior extends Behavior implements IResourceListener {
     }
 
     private void handleRequest(ServletWebRequest request, Response response) throws FileUploadException {
-	validateFormType(request);
-	MultipartServletWebRequest multipart = extractMultipartRequest(request);
-	handleFiles(multipart, new PrintWriter(response.getOutputStream()));
+		validateFormType(request);
+		MultipartServletWebRequest multipart = extractMultipartRequest(request);
+		handleFiles(multipart, new PrintWriter(response.getOutputStream()));
     }
 
     private MultipartServletWebRequest extractMultipartRequest(ServletWebRequest request) throws FileUploadException {
-	MultipartServletWebRequest multipart = request.newMultipartWebRequest(Bytes.MAX,
-	    component.getPage().getId());
-	multipart.parseFileParts();
-	RequestCycle.get().setRequest(multipart);
-	return multipart;
+		MultipartServletWebRequest multipart = request.newMultipartWebRequest(Bytes.MAX,
+			component.getPage().getId());
+		multipart.parseFileParts();
+		RequestCycle.get().setRequest(multipart);
+		return multipart;
     }
 
     private void validateFormType(ServletWebRequest request) {
-	if (!request.getContainerRequest().getContentType().startsWith("multipart/form-data"))
-	throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_BAD_REQUEST, "Request is not Multipart as Expected");
+		if (!request.getContainerRequest().getContentType().startsWith("multipart/form-data"))
+		throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_BAD_REQUEST, "Request is not Multipart as Expected");
     }
 
     private void handleFiles(MultipartServletWebRequest request, PrintWriter writer) {
-	JSONArray filesJson = new JSONArray();
-	try {
-	    processFiles(filesJson, request.getFile(AttachmentContainer.PARAM_NAME));
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	} finally {
-	    writeResponseAnswer(writer, filesJson);
-	}
+		JSONArray filesJson = new JSONArray();
+		try {
+			processFiles(filesJson, request.getFile(AttachmentContainer.PARAM_NAME));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			writeResponseAnswer(writer, filesJson);
+		}
     }
 
     private void processFiles(JSONArray fileGroup, List<FileItem> items) throws Exception {
-	for (FileItem item : items) {
-	    processFileItem(fileGroup, item);
-	}
+		for (FileItem item : items) {
+			processFileItem(fileGroup, item);
+		}
     }
 
     private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
-	if (!item.isFormField()) {
-	    // writeFile(item); TODO:
-	    SDocument rootDocument = instance.getDocument();
-	    IAttachmentPersistenceHandler handler = rootDocument.getAttachmentPersistenceHandler();
-	    IAttachmentRef ref = handler.addAttachment(item.getInputStream());
-	    fileGroup.put(createJsonFile(item,ref));
-	}
+		if (!item.isFormField()) {
+			// writeFile(item); TODO:
+			SDocument rootDocument = instance.getDocument();
+			IAttachmentPersistenceHandler handler = rootDocument.getAttachmentPersistenceHandler();
+			IAttachmentRef ref = handler.addAttachment(item.getInputStream());
+			fileGroup.put(createJsonFile(item,ref));
+		}
     }
 
     private JSONObject createJsonFile(FileItem item, IAttachmentRef ref) {
-	try {
-	    JSONObject jsonFile = new JSONObject();
-	    jsonFile.put("name", item.getName());
-	    jsonFile.put("fileId", ref.getId());
-	    jsonFile.put("hashSHA1", ref.getHashSHA1());
-	    jsonFile.put("size", ref.getSize());
-	    return jsonFile;
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	}
+		try {
+			JSONObject jsonFile = new JSONObject();
+			jsonFile.put("name", item.getName());
+			jsonFile.put("fileId", ref.getId());
+			jsonFile.put("hashSHA1", ref.getHashSHA1());
+			jsonFile.put("size", ref.getSize());
+			return jsonFile;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
 
     private void writeResponseAnswer(PrintWriter writer, JSONArray filesJson) {
-	JSONObject answer = new JSONObject();
-	answer.put("files", filesJson);
-	writer.write(answer.toString());
-	writer.close();
+		JSONObject answer = new JSONObject();
+		answer.put("files", filesJson);
+		writer.write(answer.toString());
+		writer.close();
     }
 
     @Override
     public boolean getStatelessHint(Component component) {
-	return false;
+		return false;
     }
 
     public String getUrl() {
-	return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
+		return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
     }
 }

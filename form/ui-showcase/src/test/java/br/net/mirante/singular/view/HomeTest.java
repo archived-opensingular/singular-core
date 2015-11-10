@@ -18,8 +18,8 @@ import br.net.mirante.singular.wicket.ShowcaseApplication;
 public class HomeTest {
 
     private static final String ROOT_PATH = "pageBody:_Content",
-	    			OPTIONS_FORM = ROOT_PATH+":optionsForm",
-	    			NEW_BUTTON = ROOT_PATH+":form:insert";
+            OPTIONS_FORM = ROOT_PATH + ":optionsForm",
+            NEW_BUTTON = ROOT_PATH + ":form:insert";
 
     private WicketTester driver;
 
@@ -36,9 +36,8 @@ public class HomeTest {
         driver.startPage(CrudPage.class);
         driver.assertRenderedPage(CrudPage.class);
         driver.assertInvisible(NEW_BUTTON);
-	FormTester options = driver.newFormTester(OPTIONS_FORM, false);
+        FormTester options = driver.newFormTester(OPTIONS_FORM, false);
         options.select("options", 0);
         driver.assertVisible(NEW_BUTTON);
-        
     }
 }
