@@ -13,12 +13,15 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
+import br.net.mirante.singular.flow.core.SingularFlowException;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
+import br.net.mirante.singular.flow.core.entity.IEntityProcessGroup;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
@@ -26,6 +29,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
@@ -89,9 +93,11 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             def = sw.retrieveFirstFromCachedRetriveAll(getClassProcessDefinition(),
                 pd -> pd.getDefinitionClassName().equals(definicao.getClass().getName()));
         }
+        IEntityProcessGroup processGroup = retrieveProcessGroup();
         if (def == null) {
             def = newInstanceOf(getClassProcessDefinition());
             def.setCategory(retrieveOrCreateCategoryWith(definicao.getCategory()));
+            def.setProcessGroup(processGroup);
             def.setName(definicao.getName());
             def.setKey(definicao.getKey());
             def.setDefinitionClassName(definicao.getClass().getName());
@@ -99,6 +105,9 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
             sw.save(def);
             sw.refresh(def);
         } else {
+            if(!def.getProcessGroup().equals(processGroup)){
+                throw new SingularFlowException("O processo "+definicao.getName()+" esta associado a outro grupo/sistema: "+def.getProcessGroup().getCod()+" - "+def.getProcessGroup().getName());
+            }
             boolean mudou = false;
             if (!definicao.getKey().equals(def.getKey())) {
                 def.setKey(definicao.getKey());
@@ -123,6 +132,16 @@ public abstract class AbstractHibernateProcessDefinitionService<CATEGORY extends
         }
 
         return def;
+    }
+
+    protected final IEntityProcessGroup retrieveProcessGroup() {
+        IEntityProcessGroup group = getSession().retrieve(getClassProcessGroup(), Flow.getConfigBean().getProcessGroupCod());
+        Objects.requireNonNull(group);
+        return group;
+    }
+
+    protected Class<? extends IEntityProcessGroup> getClassProcessGroup() {
+        return ProcessGroupEntity.class;
     }
 
     protected abstract Class<? extends PROCESS_ROLE_DEF> getClassProcessRoleDef();

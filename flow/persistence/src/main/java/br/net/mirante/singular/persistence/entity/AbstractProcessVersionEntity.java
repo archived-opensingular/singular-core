@@ -16,8 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
@@ -37,7 +35,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_PROCESSO")
-public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity implements IEntityProcessVersion {
+public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityProcessVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_PROCESSO";
 
@@ -55,7 +53,6 @@ public abstract class AbstractProcessVersionEntity<PROCESS_DEF extends IEntityPr
     private Date versionDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "processVersion")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<TASK_VERSION> versionTasks = new ArrayList<>();
 
     public Integer getCod() {

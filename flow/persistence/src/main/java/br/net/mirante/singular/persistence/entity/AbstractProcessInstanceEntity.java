@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 
@@ -47,7 +45,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 @MappedSuperclass
 @SuppressWarnings("unchecked")
 @Table(name = "TB_INSTANCIA_PROCESSO")
-public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity implements IEntityProcessInstance {
+public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_VERSION extends IEntityProcessVersion, TASK_INSTANCE extends IEntityTaskInstance, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE_USER extends IEntityRoleInstance, EXECUTION_VAR extends IEntityExecutionVariable> extends BaseEntity<Integer> implements IEntityProcessInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_PROCESSO";
 
@@ -80,16 +78,13 @@ public abstract class AbstractProcessInstanceEntity<USER extends MUser, PROCESS_
     private TASK_INSTANCE parentTask;
 
     @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<VARIABLE_INSTANCE> variables;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "processInstance", cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<ROLE_USER> roles;
 
     @OrderBy(clause = "DT_INICIO asc")
     @OneToMany(mappedBy = "processInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<TASK_INSTANCE> tasks;
 
     @OrderBy(clause = "DT_HISTORICO asc")
