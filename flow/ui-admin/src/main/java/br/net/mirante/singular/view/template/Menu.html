@@ -12,27 +12,14 @@
             <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
             <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
             <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
-                <li id="_menuItemHome" class="start">
-                    <a wicket:id="dashboard">
-                        <i class="icon-home"></i>
-                        <span class="title"><wicket:message key="main.menu.dashboard"/></span>
-                    </a>
+                <li class="heading start">
+                    <h3 class="uppercase"><wicket:message key="dashboads.menu.header"/></h3>
                 </li>
-                <li id="_menuSubFlow">
-                    <a href="javascript:">
-                        <i class="icon-folder"></i>
-                        <span class="title"><wicket:message key="main.menu.flow"/></span>
-                        <span class="arrow "></span>
+                <li id="_menuItemHome" >
+                    <a wicket:id="dashboard">
+                        <i class="icon-speedometer"></i>
+                        <span class="title"><wicket:message key="main.menu.dashboard.default"/></span>
                     </a>
-                    <ul class="sub-menu">
-                        <li id="_menuItemFlowProcess">
-                            <a wicket:id="process">
-                                <i class="icon-list"></i>
-                                <span class="badge badge-danger"><wicket:message key="label.tag.new"/></span>
-                                <wicket:message key="main.menu.flow.definitions"/>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 <wicket:container wicket:id="categoriesContainer"/>
             </ul>
@@ -47,14 +34,13 @@
     </li>
     <li wicket:id="categories">
         <a href="javascript:">
-            <i class="icon-notebook"></i>
+            <i class="fa fa-cogs"></i>
             <span wicket:id="categoryLabel" class="title"></span>
             <span class="arrow"></span>
         </a>
         <ul class="sub-menu">
             <li wicket:id="definitions">
                 <a wicket:id="link">
-                    <i class="icon-grid"></i>
                     <span wicket:id="counter" class="badge badge-info"></span>
                     <wicket:container wicket:id="definitionLabel"/>
                 </a>
