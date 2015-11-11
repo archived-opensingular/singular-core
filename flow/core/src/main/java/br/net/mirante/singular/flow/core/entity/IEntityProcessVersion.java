@@ -3,7 +3,7 @@ package br.net.mirante.singular.flow.core.entity;
 import java.util.Date;
 import java.util.List;
 
-public interface IEntityProcessVersion extends IEntityByCod {
+public interface IEntityProcessVersion extends IEntityByCod<Integer> {
 
     IEntityProcessDefinition getProcessDefinition();
 

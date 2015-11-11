@@ -10,8 +10,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -29,7 +27,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
  */
 @MappedSuperclass
 @Table(name = "TB_CATEGORIA")
-public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity implements IEntityCategory {
+public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessDefinition> extends BaseEntity<Integer> implements IEntityCategory {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_CATEGORIA";
     
@@ -42,7 +40,6 @@ public abstract class AbstractCategoryEntity<PROCESS_DEF extends IEntityProcessD
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<PROCESS_DEF> processDefinitions;
 
     public Integer getCod() {

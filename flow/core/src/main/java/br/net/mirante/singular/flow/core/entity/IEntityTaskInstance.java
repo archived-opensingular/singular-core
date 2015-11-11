@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.net.mirante.singular.flow.core.MUser;
 
-public interface IEntityTaskInstance extends IEntityByCod {
+public interface IEntityTaskInstance extends IEntityByCod<Integer> {
 
     IEntityProcessInstance getProcessInstance();
 

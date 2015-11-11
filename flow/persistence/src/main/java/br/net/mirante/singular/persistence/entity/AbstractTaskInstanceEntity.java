@@ -15,8 +15,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OrderBy;
 
@@ -44,7 +42,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_INSTANCIA_TAREFA")
-public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity implements IEntityTaskInstance {
+public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_VERSION extends IEntityTaskVersion, TASK_TRANSITION_VERSION extends IEntityTaskTransitionVersion, EXECUTION_VARIABLE extends IEntityExecutionVariable, TASK_HISTORY extends IEntityTaskInstanceHistory> extends BaseEntity<Integer> implements IEntityTaskInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_INSTANCIA_TAREFA";
 
@@ -84,21 +82,17 @@ public abstract class AbstractTaskInstanceEntity<USER extends MUser, PROCESS_INS
 
     @OrderBy(clause = "DT_INICIO_ALOCACAO")
     @OneToMany(mappedBy = "taskInstance", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<TASK_HISTORY> taskHistoric = new ArrayList<>();
 
     @OrderBy(clause = "DT_HISTORICO")
     @OneToMany(mappedBy = "destinationTask", fetch = FetchType.LAZY)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<EXECUTION_VARIABLE> inputVariables = new ArrayList<>();
 
     @OrderBy(clause = "DT_HISTORICO")
     @OneToMany(mappedBy = "originTask", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<EXECUTION_VARIABLE> outputVariables = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentTask", cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private List<PROCESS_INSTANCE> childProcesses = new ArrayList<>();
 
     public Integer getCod() {

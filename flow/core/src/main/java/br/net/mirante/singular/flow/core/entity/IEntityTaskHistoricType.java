@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core.entity;
 
-public interface IEntityTaskHistoricType extends IEntityByCod {
+public interface IEntityTaskHistoricType extends IEntityByCod<Integer> {
 
     String getDescription();
 

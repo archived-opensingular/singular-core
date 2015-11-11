@@ -13,6 +13,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,7 +46,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testVerySimplesCase() {
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipo("endereco", MTipoString.class);
         });
         MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
@@ -55,7 +56,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testTipoComposto() {
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             MTipoComposto<? extends MIComposto> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
@@ -72,7 +73,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testTipoListSimples() {
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipoListaOf("enderecos", MTipoString.class);
         });
         MILista<MIString> instancia = (MILista<MIString>) loader.loadType("teste.enderecos").novaInstancia();
@@ -88,7 +89,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testTipoListComposto() {
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             MTipoComposto<MIComposto> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
@@ -110,7 +111,7 @@ public class TesteFormSerializationUtil {
 
     @Test
     public void testTipoCompostoListCompostoList() {
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             MTipoComposto<? extends MIComposto> tipoCurriculo = pacote.createTipoComposto("curriculo");
             tipoCurriculo.addCampoString("nome");
             MTipoComposto<MIComposto> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
@@ -138,7 +139,7 @@ public class TesteFormSerializationUtil {
     public void testUsoDicionarioResolverDefault() {
         TestCaseForm.assertException(() -> MDicionarioResolver.getDefault(), "resolver default não está configurado");
 
-        MDicionarioLoader loader = createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipo("endereco", MTipoString.class);
         });
         MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
@@ -176,8 +177,15 @@ public class TesteFormSerializationUtil {
         });
         MInstancia instancia = resolver.loadType("teste.endereco").novaInstancia();
 
-        instancia.getDocument().bindLocalService("A", ServiceRef.of("B"));
-        testSerializacao(instancia, resolver);
+        instancia.getDocument().bindLocalService("A", ServiceRef.of("AA"));
+        MInstancia instancia2 = testSerializacao(instancia, resolver);
+        assertEquals("AA", instancia2.getDocument().lookupLocalService("A", String.class));
+
+        // Testa itens não mantido entre serializações
+        instancia.getDocument().bindLocalService("B", ServiceRef.ofToBeDescartedIfSerialized("BB"));
+        instancia2 = serializarEDeserializar(instancia, resolver);
+        assertNull(instancia2.getDocument().lookupLocalService("B", String.class));
+
     }
 
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
@@ -201,11 +209,12 @@ public class TesteFormSerializationUtil {
         testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
     }
 
-    private static void testSerializacao(MInstancia original, MDicionarioResolver loader) {
-        testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i), fs -> FormSerializationUtil.toInstance(fs, loader));
+    public static MInstancia testSerializacao(MInstancia original, MDicionarioResolver loader) {
+        return testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i),
+                fs -> FormSerializationUtil.toInstance(fs, loader));
     }
 
-    private static void testSerializacao(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
+    private static MInstancia testSerializacao(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
             Function<FormSerialized, MInstancia> fromSerial) {
         // Testa sem transformar em array de bytes
         FormSerialized fs = toSerial.apply(original);
@@ -228,9 +237,30 @@ public class TesteFormSerializationUtil {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+        return instancia2;
     }
 
-    private static MDicionarioLoader createLoaderPacoteTeste(Consumer<PacoteBuilder> setupCode) {
+    public static MInstancia serializarEDeserializar(MInstancia original, MDicionarioResolver loader) {
+        return serializarEDeserializar(original, i -> FormSerializationUtil.toSerializedObject(i),
+                fs -> FormSerializationUtil.toInstance(fs, loader));
+    }
+
+    private static MInstancia serializarEDeserializar(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
+            Function<FormSerialized, MInstancia> fromSerial) {
+        try {
+            ByteArrayOutputStream out1 = new ByteArrayOutputStream();
+            ObjectOutputStream out2 = new ObjectOutputStream(out1);
+            out2.writeObject(toSerial.apply(original));
+            out2.close();
+
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
+            return fromSerial.apply((FormSerialized) in.readObject());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MDicionarioResolver createLoaderPacoteTeste(Consumer<PacoteBuilder> setupCode) {
         return new MDicionarioLoader() {
             @Override
             protected void configDicionary(MDicionario newDicionary, String taregetTypeName) {
@@ -248,15 +278,15 @@ public class TesteFormSerializationUtil {
         };
     }
 
-    private static void assertEquivalent(SDocument original, SDocument novo) {
+    public static void assertEquivalent(SDocument original, SDocument novo) {
         assertNotSame(original, novo);
-        for (String serviceName : original.getLocalServices().keySet()) {
-            Object originalService = original.lookupLocalService(serviceName, Object.class);
-            Object novoService = novo.lookupLocalService(serviceName, Object.class);
+        for (Entry<String, ServiceRef<?>> service : original.getLocalServices().entrySet()) {
+            Object originalService = original.lookupLocalService(service.getKey(), Object.class);
+            Object novoService = novo.lookupLocalService(service.getKey(), Object.class);
             if (originalService == null) {
                 assertNull(novoService);
-            } else if (novoService == null) {
-                fail("O documento deseriazado para o serviço '" + serviceName + "' em vez de retorna uma instancia de "
+            } else if (novoService == null && !(service.getValue() instanceof ServiceRefTransientValue)) {
+                fail("O documento deserializado para o serviço '" + service.getKey() + "' em vez de retorna uma instancia de "
                         + originalService.getClass().getName() + " retornou null");
             }
 

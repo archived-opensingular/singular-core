@@ -127,6 +127,18 @@ public abstract class PeticaoTest extends TestSupport {
         assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
     }
 
+//
+//    @Test
+//    public void testeComUsuarioCriador() {
+//        Peticao p = new Peticao();
+//        ProcessInstance ip = p.newInstance();
+//        p
+//        ip.executeTransition(Peticao.APROVAR_TECNICO);
+//
+//        assertNull("Instancia não deveria ter uma data de fim", ip.getEndDate());
+//        assertNull("Tarefa não deveria ter uma data de fim", ip.getLatestTask().getEndDate());
+//    }
+
     @Test
     public void deveriaTerDataDeFim() {
         ProcessInstance ip = startInstance();

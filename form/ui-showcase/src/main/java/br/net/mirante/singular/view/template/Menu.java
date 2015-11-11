@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
+@SuppressWarnings("serial")
 public class Menu extends Panel {
 
     @Inject

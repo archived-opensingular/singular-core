@@ -35,8 +35,6 @@ public class Menu extends Panel {
         super.onInitialize();
         queue(new WebMarkupContainer("dashboard").add(
                 WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("dashboard"))));
-        queue(new WebMarkupContainer("process").add(
-                WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
         queue(mountCategories());
     }
 

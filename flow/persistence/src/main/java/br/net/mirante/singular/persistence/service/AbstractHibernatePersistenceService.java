@@ -346,7 +346,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     protected abstract Class<PROCESS_INSTANCE> getClassProcessInstance();
     
-    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date minDataInicio, Date maxDataInicio, java.util.Collection<? extends TASK_DEF> states) {
+    public List<PROCESS_INSTANCE> retrieveProcessInstancesWith(PROCESS_DEF process, Date dataInicio, Date dataFim, java.util.Collection<? extends TASK_DEF> states) {
         Objects.requireNonNull(process);
         final Criteria c = getSession().createCriteria(getClassProcessInstance(), "PI");
         c.createAlias("PI.processVersion", "DEF");
@@ -359,11 +359,15 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             
             c.add(Subqueries.exists(sub));
         }
-        if (minDataInicio != null) {
-            c.add(Restrictions.ge("PI.beginDate", minDataInicio));
-        }
-        if (maxDataInicio != null) {
-            c.add(Restrictions.lt("PI.beginDate", LocalDate.fromDateFields(maxDataInicio).plusDays(1).toDate()));
+        if (dataInicio != null && dataFim != null) {
+            c.add(Restrictions.or(
+                Restrictions.and(Restrictions.ge("PI.beginDate", dataInicio), Restrictions.lt("PI.beginDate", LocalDate.fromDateFields(dataFim).plusDays(1).toDate())),
+                Restrictions.and(Restrictions.ge("PI.endDate", dataInicio), Restrictions.lt("PI.endDate", LocalDate.fromDateFields(dataFim).plusDays(1).toDate()))
+                ));
+        } else if(dataInicio != null){
+            c.add(Restrictions.or(Restrictions.ge("PI.beginDate", dataInicio), Restrictions.ge("PI.endDate", dataInicio)));
+        } else if (dataFim != null) {
+            c.add(Restrictions.or(Restrictions.le("PI.beginDate", dataFim), Restrictions.le("PI.endDate", dataFim)));
         }
         c.addOrder(Order.desc("PI.beginDate"));
         return c.list();

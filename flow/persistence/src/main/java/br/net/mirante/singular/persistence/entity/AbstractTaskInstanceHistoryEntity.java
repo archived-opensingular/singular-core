@@ -31,7 +31,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstanceHistory;
  */
 @MappedSuperclass
 @Table(name = "TB_HISTORICO_INSTANCIA_TAREFA")
-public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK_INSTANCE extends IEntityTaskInstance, TASK_HISTORIC_TYPE extends IEntityTaskHistoricType> extends BaseEntity implements IEntityTaskInstanceHistory {
+public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK_INSTANCE extends IEntityTaskInstance, TASK_HISTORIC_TYPE extends IEntityTaskHistoricType> extends BaseEntity<Integer> implements IEntityTaskInstanceHistory {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_HISTORICO_ALOCACAO";
 

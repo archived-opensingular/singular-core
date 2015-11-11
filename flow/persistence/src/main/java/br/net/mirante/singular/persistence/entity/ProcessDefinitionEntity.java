@@ -3,10 +3,10 @@ package br.net.mirante.singular.persistence.entity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
 import br.net.mirante.singular.persistence.util.Constants;
+import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
 
 /**
  * The persistent class for the TB_DEFINICAO_PROCESSO database table.
@@ -14,7 +14,7 @@ import br.net.mirante.singular.persistence.util.Constants;
 @Entity
 @GenericGenerator(name = AbstractProcessDefinitionEntity.PK_GENERATOR_NAME, strategy = HybridIdentityOrSequenceGenerator.CLASS_NAME)
 @Table(name = "TB_DEFINICAO_PROCESSO", schema = Constants.SCHEMA)
-public class ProcessDefinitionEntity extends AbstractProcessDefinitionEntity<CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, ProcessVersionEntity> {
+public class ProcessDefinitionEntity extends AbstractProcessDefinitionEntity<ProcessGroupEntity,CategoryEntity, TaskDefinitionEntity, RoleDefinitionEntity, ProcessVersionEntity> {
 
     private static final long serialVersionUID = 1L;
 }
