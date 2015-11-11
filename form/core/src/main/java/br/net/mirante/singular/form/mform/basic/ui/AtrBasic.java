@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
+import java.util.function.Predicate;
+
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
 public class AtrBasic extends MTranslatorParaAtributo {
@@ -44,7 +47,20 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIVEL, valor);
         return this;
     }
+    public AtrBasic visivel(Predicate<MInstancia> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION, valor);
+        return this;
+    }
 
+    public AtrBasic enabled(Boolean valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED, valor);
+        return this;
+    }
+    public AtrBasic enabled(Predicate<MInstancia> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION, valor);
+        return this;
+    }
+    
     public AtrBasic multiLinha(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
         return this;
