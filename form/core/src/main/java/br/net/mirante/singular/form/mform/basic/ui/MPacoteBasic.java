@@ -24,27 +24,27 @@ public class MPacoteBasic extends MPacote {
 
     public static final String NOME = "mform.basic";
 
-    public static final AtrRef<MTipoString, MIString, String>                                                           ATR_LABEL            = new AtrRef<>(MPacoteBasic.class, "label", MTipoString.class,
+    public static final AtrRef<MTipoString, MIString, String>                      ATR_LABEL            = new AtrRef<>(MPacoteBasic.class, "label", MTipoString.class,
         MIString.class, String.class);
-    public static final AtrRef<MTipoString, MIString, String>                                                           ATR_SUBTITLE         = new AtrRef<>(MPacoteBasic.class, "subtitle", MTipoString.class,
+    public static final AtrRef<MTipoString, MIString, String>                      ATR_SUBTITLE         = new AtrRef<>(MPacoteBasic.class, "subtitle", MTipoString.class,
         MIString.class, String.class);
-    public static final AtrRef<MTipoString, MIString, String>                                                           ATR_BASIC_MASK       = new AtrRef<>(MPacoteBasic.class, "basicMask", MTipoString.class,
+    public static final AtrRef<MTipoString, MIString, String>                      ATR_BASIC_MASK       = new AtrRef<>(MPacoteBasic.class, "basicMask", MTipoString.class,
         MIString.class, String.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer>                                                        ATR_TAMANHO_MAXIMO   = new AtrRef<>(MPacoteBasic.class, "tamanhoMaximo",
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>                   ATR_TAMANHO_MAXIMO   = new AtrRef<>(MPacoteBasic.class, "tamanhoMaximo",
         MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer>                                                        ATR_TAMANHO_EDICAO   = new AtrRef<>(MPacoteBasic.class, "tamanhoEdicao",
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>                   ATR_TAMANHO_EDICAO   = new AtrRef<>(MPacoteBasic.class, "tamanhoEdicao",
         MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoInteger, MIInteger, Integer>                                                        ATR_TAMANHO_INICIAL  = new AtrRef<>(MPacoteBasic.class, "tamanhoInicial",
+    public static final AtrRef<MTipoInteger, MIInteger, Integer>                   ATR_TAMANHO_INICIAL  = new AtrRef<>(MPacoteBasic.class, "tamanhoInicial",
         MTipoInteger.class, MIInteger.class, Integer.class);
-    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                                                        ATR_VISIVEL          = new AtrRef<>(MPacoteBasic.class, "visivel",
+    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                   ATR_VISIVEL          = new AtrRef<>(MPacoteBasic.class, "visivel",
         MTipoBoolean.class, MIBoolean.class, Boolean.class);
-    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                                                        ATR_ENABLED          = new AtrRef<>(MPacoteBasic.class, "enabled",
+    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                   ATR_ENABLED          = new AtrRef<>(MPacoteBasic.class, "enabled",
         MTipoBoolean.class, MIBoolean.class, Boolean.class);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static final AtrRef<MTipoPredicate<MIPredicate<MInstancia>>, MIPredicate<MInstancia>, Predicate<MInstancia>> ATR_VISIBLE_FUNCTION = new AtrRef(MPacoteBasic.class, "visivelFunction",
+    public static final AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> ATR_VISIBLE_FUNCTION = new AtrRef(MPacoteBasic.class, "visivelFunction",
         MTipoPredicate.class, MIPredicate.class, Predicate.class);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static final AtrRef<MTipoPredicate<MIPredicate<MInstancia>>, MIPredicate<MInstancia>, Predicate<MInstancia>> ATR_ENABLED_FUNCTION = new AtrRef(MPacoteBasic.class, "enabledFunction",
+    public static final AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> ATR_ENABLED_FUNCTION = new AtrRef(MPacoteBasic.class, "enabledFunction",
         MTipoPredicate.class, MIPredicate.class, Predicate.class);
 
     public static final AtrRef<MTipoInteger, MIInteger, Integer> ATR_ORDEM       = new AtrRef<>(MPacoteBasic.class, "ordemExibicao",

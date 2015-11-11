@@ -3,19 +3,19 @@ package br.net.mirante.singular.form.mform;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
 @MInfoTipo(nome = "MTipoCode", pacote = MPacoteCore.class)
-public class MTipoCode<T> extends MTipo<MICode<T>> {
+public class MTipoCode<I extends MICode<V>, V> extends MTipo<I> {
 
-    private Class<T> codeClass;
+    private Class<V> codeClass;
 
     public MTipoCode() {}
 
     @SuppressWarnings("unchecked")
-    public MTipoCode(Class<T> codeClass) {
-        super((Class<? extends MICode<T>>) MICode.class);
-        this.codeClass = codeClass;
+    public MTipoCode(Class<I> instanceClass, Class<V> valueClass) {
+        super((Class<? extends I>) MICode.class);
+        this.codeClass = valueClass;
     }
 
-    public Class<T> getCodeClass() {
+    public Class<V> getCodeClass() {
         return codeClass;
     }
     @SuppressWarnings("unchecked")

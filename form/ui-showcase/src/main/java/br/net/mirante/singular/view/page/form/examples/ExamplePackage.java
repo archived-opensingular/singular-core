@@ -75,12 +75,8 @@ public class ExamplePackage extends MPacote {
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
         buyerCpf.as(MPacoteBasic.aspect())
-            .visivel(i -> {
-                boolean visible = i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor() == null;
-                System.out.println(">>> " + visible);
-                return visible;
-            })
-            .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3);
+            .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
+            .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }
 
     private void buildAddressField() {

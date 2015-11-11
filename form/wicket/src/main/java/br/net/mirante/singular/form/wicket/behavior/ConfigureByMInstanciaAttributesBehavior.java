@@ -64,28 +64,33 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         return sb.toString();
     }
 
+    @SuppressWarnings("unchecked")
     protected boolean isInstanceRequired(Component component) {
         MInstancia instance = getInstanceFromModel(component);
-        Predicate<MInstancia> predicate = instance.getMTipo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+        Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION.getNomeCompleto());
         if (predicate != null)
             return predicate.test(instance);
-        return Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
+        return !Boolean.FALSE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
     }
 
     protected boolean isInstanceEnabled(Component component) {
         MInstancia instance = getInstanceFromModel(component);
-        Predicate<MInstancia> predicate = instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
+        Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION.getNomeCompleto());
         if (predicate != null)
             return predicate.test(instance);
-        return Boolean.TRUE.equals(instance.getValorAtributo(MPacoteBasic.ATR_ENABLED));
+        return !Boolean.FALSE.equals(instance.getValorAtributo(MPacoteBasic.ATR_ENABLED));
     }
 
     protected boolean isInstanceVisible(Component component) {
         MInstancia instance = getInstanceFromModel(component);
-        Predicate<MInstancia> predicate = instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
+        if ("CPF".equals(instance.getMTipo().getNomeSimples())) {
+            System.out.println(instance);
+        }
+
+        Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION.getNomeCompleto());
         if (predicate != null)
             return predicate.test(instance);
-        return Boolean.TRUE.equals(instance.getValorAtributo(MPacoteBasic.ATR_VISIVEL));
+        return !Boolean.FALSE.equals(instance.getValorAtributo(MPacoteBasic.ATR_VISIVEL));
     }
 
     private static MInstancia getInstanceFromModel(Component component) {

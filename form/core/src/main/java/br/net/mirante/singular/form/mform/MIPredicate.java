@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
-public class MIPredicate<T> extends MICode<T> {
+import java.util.function.Predicate;
+
+public class MIPredicate extends MICode<Predicate<MInstancia>> {
 
     public MIPredicate() {}
 }

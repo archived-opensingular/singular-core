@@ -32,7 +32,7 @@ public class MPacoteCore extends MPacote {
         MTipoBoolean.class, MIBoolean.class, Boolean.class);
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static final AtrRef<MTipoPredicate<MInstancia>, MIPredicate<MInstancia>, Predicate<MInstancia>> ATR_OBRIGATORIO_FUNCTION = new AtrRef(MPacoteCore.class, "obrigatorioFunction",
+    public static final AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> ATR_OBRIGATORIO_FUNCTION = new AtrRef(MPacoteCore.class, "obrigatorioFunction",
         MTipoPredicate.class, MIPredicate.class, Predicate.class);
 
     public static final AtrRef<MTipoFormula, MIComposto, Object> ATR_FORMULA = new AtrRef<>(MPacoteCore.class, "formula",
@@ -73,7 +73,7 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
-        
+
         pb.debug();
     }
 
