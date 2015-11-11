@@ -32,7 +32,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
  */
 @MappedSuperclass
 @Table(name = "TB_DEFINICAO_TAREFA")
-public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity implements IEntityTaskDefinition {
+public abstract class AbstractTaskDefinitionEntity<PROCESS_DEF extends IEntityProcessDefinition, TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskDefinition {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_DEFINICAO_TAREFA";
 

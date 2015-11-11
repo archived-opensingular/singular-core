@@ -28,7 +28,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
  */
 @MappedSuperclass
 @Table(name = "TB_VARIAVEL")
-public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IEntityProcessInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity implements IEntityVariableInstance {
+public abstract class AbstractVariableInstanceEntity<PROCESS_INSTANCE extends IEntityProcessInstance, VAR_TYPE extends IEntityVariableType> extends BaseEntity<Integer> implements IEntityVariableInstance {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VARIAVEL";
 

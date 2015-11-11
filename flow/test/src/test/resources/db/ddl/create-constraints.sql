@@ -144,6 +144,10 @@ ALTER TABLE DBSINGULAR.TB_VARIAVEL_EXECUCAO_TRANSICAO
 ADD CONSTRAINT FK_HISTORICO_VARIAVEL_VARIAVEL FOREIGN KEY (CO_VARIAVEL_EXECUCAO_TRANSICAO)
 REFERENCES DBSINGULAR.TB_VARIAVEL (CO_VARIAVEL);
 
+ALTER TABLE DBSINGULAR.TB_DEFINICAO_PROCESSO
+ADD CONSTRAINT FK_TB_DEFIN_REFERENCE_TB_GRUPO FOREIGN KEY (CO_GRUPO_PROCESSO)
+REFERENCES DBSINGULAR.TB_GRUPO_PROCESSO (CO_GRUPO_PROCESSO);
+
 /*==============================================================*/
 /* Index: IX_INSTANCIA_PROCESSO                                 */
 /*==============================================================*/
@@ -181,4 +185,14 @@ CREATE INDEX IX_PROCESSO ON DBSINGULAR.TB_VERSAO_PROCESSO (
 /*==============================================================*/
 CREATE UNIQUE INDEX IX_CLASSE_DEFINICAO ON DBSINGULAR.TB_DEFINICAO_PROCESSO (
 	NO_CLASSE_JAVA ASC
-)
+);
+
+/*==============================================================*/
+/* Index: IX_GRUPO_NOME                                         */
+/*==============================================================*/
+CREATE UNIQUE INDEX IX_GRUPO_NOME ON DBSINGULAR.TB_GRUPO_PROCESSO (NO_GRUPO ASC);
+
+/*==============================================================*/
+/* Index: IX_GRUPO_CONEXAO                                      */
+/*==============================================================*/
+CREATE UNIQUE INDEX IX_GRUPO_CONEXAO ON DBSINGULAR.TB_GRUPO_PROCESSO (URL_CONEXAO ASC);

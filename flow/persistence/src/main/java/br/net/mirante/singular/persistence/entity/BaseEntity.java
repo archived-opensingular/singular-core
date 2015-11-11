@@ -1,12 +1,14 @@
 package br.net.mirante.singular.persistence.entity;
 
+import java.io.Serializable;
+
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 
 import br.net.mirante.singular.flow.core.entity.IEntityByCod;
 
 @SuppressWarnings("serial")
-public abstract class BaseEntity implements IEntityByCod {
+public abstract class BaseEntity<PK extends Serializable> implements IEntityByCod<PK> {
 
     @Override
     public String toString() {
@@ -18,7 +20,7 @@ public abstract class BaseEntity implements IEntityByCod {
 
     @Override
     public int hashCode() {
-        Integer cod = getCod();
+        PK cod = getCod();
         return (cod == null) ? super.hashCode() : cod.hashCode();
     }
 

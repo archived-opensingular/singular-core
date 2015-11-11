@@ -29,7 +29,7 @@ import br.net.mirante.singular.flow.core.entity.TransitionType;
  */
 @MappedSuperclass
 @Table(name = "TB_VERSAO_TRANSICAO")
-public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends IEntityTaskVersion> extends BaseEntity implements IEntityTaskTransitionVersion {
+public abstract class AbstractTaskTransitionVersionEntity<TASK_VERSION extends IEntityTaskVersion> extends BaseEntity<Integer> implements IEntityTaskTransitionVersion {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_VERSAO_TRANSICAO";
 

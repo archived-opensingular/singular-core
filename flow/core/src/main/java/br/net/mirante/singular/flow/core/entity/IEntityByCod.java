@@ -2,7 +2,7 @@ package br.net.mirante.singular.flow.core.entity;
 
 import java.io.Serializable;
 
-public interface IEntityByCod extends Serializable {
+public interface IEntityByCod<PK extends Serializable> extends Serializable {
 
-    Integer getCod();
+    PK getCod();
 }
