@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public abstract class MInstancia implements MAtributoEnabled {
@@ -19,20 +19,43 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private SDocument document;
 
+    private Integer id;
+
     public MTipo<?> getMTipo() {
         return mTipo;
     }
 
     public SDocument getDocument() {
-        // if (document == null) {
-        // throw new RuntimeException(errorMsg("Documento não foi configurado na
-        // instância"));
-        // }
         return document;
+    }
+
+    /**
+     * Retorna um ID único dentre as instâncias do mesmo documento. Um ID nunca
+     * é reutilizado, mesmo se a instancia for removida de dentro do documento.
+     * Funcionamento semelhante a uma sequence de banco de dados.
+     *
+     * @return Nunca Null
+     */
+    public Integer getId() {
+        if (id == null) {
+            id = document.nextId();
+        }
+        return id;
+    }
+
+    /**
+     * Apenas para uso nas soluções de persistencia. Não deve ser usado fora
+     * dessa situação.
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     final void setDocument(SDocument document) {
         this.document = document;
+        if (id == null && document != null) {
+            id = document.nextId();
+        }
     }
 
     public MView getView() {
@@ -250,7 +273,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     public void debug() {
-        MElement xml = MformPersistenciaXML.toXML(this);
+        MElement xml = new PersistenceBuilderXML().withGerarId(false).toXML(this);
         if (xml == null) {
             System.out.println("null");
         } else {

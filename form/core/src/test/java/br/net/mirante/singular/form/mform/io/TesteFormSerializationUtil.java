@@ -280,6 +280,8 @@ public class TesteFormSerializationUtil {
 
     public static void assertEquivalent(SDocument original, SDocument novo) {
         assertNotSame(original, novo);
+        assertEquals(original.getLastId(), novo.getLastId());
+
         for (Entry<String, ServiceRef<?>> service : original.getLocalServices().entrySet()) {
             Object originalService = original.lookupLocalService(service.getKey(), Object.class);
             Object novoService = novo.lookupLocalService(service.getKey(), Object.class);
@@ -307,6 +309,7 @@ public class TesteFormSerializationUtil {
         assertEquals(original.getMTipo().getNome(), novo.getMTipo().getNome());
         assertEquals(original.getMTipo().getClass(), novo.getMTipo().getClass());
         assertEquals(original.getNome(), novo.getNome());
+        assertEquals(original.getId(), novo.getId());
         assertEquals(original.getPathFull(), novo.getPathFull());
         if (original.getPai() != null) {
             assertNotNull(novo.getPai());
