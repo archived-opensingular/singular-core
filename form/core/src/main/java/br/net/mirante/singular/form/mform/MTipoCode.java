@@ -9,9 +9,8 @@ public class MTipoCode<I extends MICode<V>, V> extends MTipo<I> {
 
     public MTipoCode() {}
 
-    @SuppressWarnings("unchecked")
     public MTipoCode(Class<I> instanceClass, Class<V> valueClass) {
-        super((Class<? extends I>) MICode.class);
+        super(instanceClass);
         this.codeClass = valueClass;
     }
 
