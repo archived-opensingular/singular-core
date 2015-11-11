@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.wicket.test.base;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
