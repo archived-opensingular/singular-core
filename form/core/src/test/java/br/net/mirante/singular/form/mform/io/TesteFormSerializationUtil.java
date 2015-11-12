@@ -33,6 +33,8 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.TestCaseForm;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
@@ -188,6 +190,29 @@ public class TesteFormSerializationUtil {
 
     }
 
+    @Test
+    public void testSerializacaoAtributos() {
+        MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
+            pacote.getDicionario().carregarPacote(MPacoteBasic.class);
+            MTipoComposto<?> tipoEndereco = pacote.createTipoComposto("endereco");
+            tipoEndereco.addCampoString("rua");
+            tipoEndereco.addCampoString("cidade");
+        });
+        MIComposto instancia = (MIComposto) resolver.loadType("teste.endereco").novaInstancia();
+        instancia.setValor("rua", "A");
+        instancia.as(AtrBasic.class).label("Address");
+        instancia.getCampo("rua").as(AtrBasic.class).label("Street");
+        instancia.getCampo("cidade").as(AtrBasic.class).label("City");
+
+
+        MIComposto instancia2 = (MIComposto) testSerializacao(instancia, resolver);
+
+        assertEquals("Address", instancia2.as(AtrBasic.class).getLabel());
+        assertEquals("Street", instancia2.getCampo("rua").as(AtrBasic.class).getLabel());
+        assertEquals("City", instancia2.getCampo("cidade").as(AtrBasic.class).getLabel());
+
+    }
+
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
         @SuppressWarnings("unused")
         private Object ref;
@@ -294,13 +319,7 @@ public class TesteFormSerializationUtil {
 
         }
 
-        try {
-            assertEquivalent(original.getRoot(), novo.getRoot());
-        } catch (AssertionError e) {
-            original.getRoot().debug();
-            novo.getRoot().debug();
-            throw e;
-        }
+        assertEquivalent(original.getRoot(), novo.getRoot());
     }
 
     private static void assertEquivalent(MInstancia original, MInstancia novo) {
@@ -326,6 +345,13 @@ public class TesteFormSerializationUtil {
             }
         } else {
             assertEquals(original.getValor(), novo.getValor());
+        }
+
+        assertEquals(original.getAtributos().size(), novo.getAtributos().size());
+        for (Entry<String, MInstancia> atrOriginal : original.getAtributos().entrySet()) {
+            MInstancia atrNovo = novo.getAtributos().get(atrOriginal.getKey());
+            assertNotNull(atrNovo);
+            assertEquals(atrOriginal.getValue(), atrNovo);
         }
     }
 }

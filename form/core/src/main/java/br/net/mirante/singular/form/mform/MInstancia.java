@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -172,16 +173,24 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
+        setValorAtributo(atr.getNomeCompleto(), subPath, valor);
+    }
+
+    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, V valor) {
+        setValorAtributo(nomeCompletoAtributo, null, valor);
+    }
+
+    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, String subPath, V valor) {
         MInstancia instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
         } else {
-            instanciaAtr = atributos.get(atr.getNomeCompleto());
+            instanciaAtr = atributos.get(nomeCompletoAtributo);
         }
         if (instanciaAtr == null) {
-            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(atr.getNomeCompleto());
+            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
-            atributos.put(atr.getNomeCompleto(), instanciaAtr);
+            atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
             instanciaAtr.setValor(new LeitorPath(subPath), valor);
@@ -199,6 +208,10 @@ public abstract class MInstancia implements MAtributoEnabled {
             }
         }
         return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
+    }
+
+    public Map<String, MInstancia> getAtributos() {
+        return atributos == null ? Collections.emptyMap() : atributos;
     }
 
     public MInstancia getPai() {
@@ -273,7 +286,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     public void debug() {
-        MElement xml = new PersistenceBuilderXML().withGerarId(false).toXML(this);
+        MElement xml = new PersistenceBuilderXML().withPersistId(false).toXML(this);
         if (xml == null) {
             System.out.println("null");
         } else {

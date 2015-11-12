@@ -1,7 +1,11 @@
 package br.net.mirante.singular.form.mform.io;
 
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -54,10 +58,7 @@ public class MformPersistenciaXML {
     }
 
     private static void fromXML(MInstancia instancia, MElement xml) {
-        String id = xml.getAttribute(ATRIBUTO_ID);
-        if (id != null) {
-            instancia.setId(Integer.parseInt(id));
-        }
+        lerAtributos(instancia, xml);
         if (xml == null) {
             // Não precisa fazer nada
         } else if (instancia instanceof MISimples) {
@@ -86,12 +87,26 @@ public class MformPersistenciaXML {
         }
     }
 
+    private static void lerAtributos(MInstancia instancia, MElement xml) {
+        NamedNodeMap atributos = xml.getAttributes();
+        if (atributos != null) {
+            for (int i = 0; i < atributos.getLength(); i++) {
+                Attr at = (Attr) atributos.item(i);
+                if (at.getName().equals(ATRIBUTO_ID)) {
+                    instancia.setId(Integer.parseInt(at.getValue()));
+                } else if (!at.getName().equals(ATRIBUTO_LAST_ID)) {
+                    instancia.setValorAtributo(at.getName(), at.getValue());
+                }
+            }
+        }
+    }
+
     public static MElement toXML(MInstancia instancia) {
-        return new PersistenceBuilderXML().withPersistirNull(false).toXML(instancia);
+        return new PersistenceBuilderXML().withPersistNull(false).toXML(instancia);
     }
 
     public static MElement toXMLPreservingRuntimeEdition(MInstancia instancia) {
-        return new PersistenceBuilderXML().withPersistirNull(true).toXML(instancia);
+        return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).toXML(instancia);
     }
 
     final static MElement toXML(MElement pai, String nomePai, MInstancia instancia, PersistenceBuilderXML builder) {
@@ -112,7 +127,7 @@ public class MformPersistenciaXML {
             return pai;
         }
         xmlDocument.setRaiz(xmlResultado);
-        if (builder.isGerarId()) {
+        if (builder.isPersistId()) {
             xmlResultado.setAttribute(ATRIBUTO_LAST_ID, Integer.toString(instancia.getDocument().getLastId()));
         }
 
@@ -173,20 +188,31 @@ public class MformPersistenciaXML {
         }
 
         public boolean isPersistirNull() {
-            return builder.isPersistirNull();
+            return builder.isPersistNull();
         }
 
         public MElement createMElement(MInstancia instancia) {
-            return addId(instancia, xmlDocument.createMElement(instancia.getMTipo().getNomeSimples()));
+            return complement(instancia, xmlDocument.createMElement(instancia.getMTipo().getNomeSimples()));
         }
 
         public MElement createMElementComValor(MInstancia instancia, String valorPersistencia) {
-            return addId(instancia, xmlDocument.createMElementComValor(instancia.getMTipo().getNomeSimples(), valorPersistencia));
+            return complement(instancia, xmlDocument.createMElementComValor(instancia.getMTipo().getNomeSimples(), valorPersistencia));
         }
 
-        private MElement addId(MInstancia instancia, MElement element) {
-            if (builder.isGerarId() && instancia.getId() != null) {
+        private MElement complement(MInstancia instancia, MElement element) {
+            if (builder.isPersistId() && instancia.getId() != null) {
                 element.setAttribute(ATRIBUTO_ID, instancia.getId().toString());
+            }
+            if (builder.isPersistAttributes()) {
+                for (Entry<String, MInstancia> atr : instancia.getAtributos().entrySet()) {
+                    if (atr.getValue() instanceof MISimples) {
+                        String sPersistencia = ((MISimples<?>) atr.getValue()).toStringPersistencia();
+                        element.setAttribute(atr.getKey(), sPersistencia);
+                    } else {
+                        throw new SingularFormException("Não implementada a persitência de atributos compostos: " + atr.getKey() + " em "
+                                + instancia.getPathFull());
+                    }
+                }
             }
             return element;
         }
