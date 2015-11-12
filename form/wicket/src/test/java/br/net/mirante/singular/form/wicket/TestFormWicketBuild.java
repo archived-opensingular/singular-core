@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
@@ -51,12 +51,7 @@ public class TestFormWicketBuild extends TestCase {
                 return tipoCidade;
             }
         };
-        IModel<MIString> mCidade = new MInstanciaRaizModel<MIString>() {
-            @Override
-            protected MTipoString getTipoRaiz() {
-                return tCidade.getObject();
-            }
-        };
+        IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
         mCidade.getObject().setValor("Brasilia");
         UIBuilderWicket.buildForEdit(ctx, mCidade);
 
@@ -88,12 +83,7 @@ public class TestFormWicketBuild extends TestCase {
                 return (MTipoComposto<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
             }
         };
-        IModel<MIComposto> mCurriculo = new MInstanciaRaizModel<MIComposto>() {
-            @Override
-            protected MTipoComposto<MIComposto> getTipoRaiz() {
-                return tCurriculo.getObject();
-            }
-        };
+        IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
         Form<Object> form = new Form<>("form");

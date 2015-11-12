@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface IEntityProcessDefinition extends IEntityByCod {
+public interface IEntityProcessDefinition extends IEntityByCod<Integer> {
 
     String getKey();
 
@@ -21,6 +21,10 @@ public interface IEntityProcessDefinition extends IEntityByCod {
     IEntityCategory getCategory();
 
     void setCategory(IEntityCategory category);
+
+    IEntityProcessGroup getProcessGroup();
+
+    void setProcessGroup(IEntityProcessGroup processGroup);
 
     List<? extends IEntityTaskDefinition> getTaskDefinitions();
 

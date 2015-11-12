@@ -1,12 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public abstract class MInstancia implements MAtributoEnabled {
@@ -19,20 +20,43 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private SDocument document;
 
+    private Integer id;
+
     public MTipo<?> getMTipo() {
         return mTipo;
     }
 
     public SDocument getDocument() {
-        // if (document == null) {
-        // throw new RuntimeException(errorMsg("Documento não foi configurado na
-        // instância"));
-        // }
         return document;
+    }
+
+    /**
+     * Retorna um ID único dentre as instâncias do mesmo documento. Um ID nunca
+     * é reutilizado, mesmo se a instancia for removida de dentro do documento.
+     * Funcionamento semelhante a uma sequence de banco de dados.
+     *
+     * @return Nunca Null
+     */
+    public Integer getId() {
+        if (id == null) {
+            id = document.nextId();
+        }
+        return id;
+    }
+
+    /**
+     * Apenas para uso nas soluções de persistencia. Não deve ser usado fora
+     * dessa situação.
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     final void setDocument(SDocument document) {
         this.document = document;
+        if (id == null && document != null) {
+            id = document.nextId();
+        }
     }
 
     public MView getView() {
@@ -149,16 +173,24 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     @Override
     public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
+        setValorAtributo(atr.getNomeCompleto(), subPath, valor);
+    }
+
+    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, V valor) {
+        setValorAtributo(nomeCompletoAtributo, null, valor);
+    }
+
+    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, String subPath, V valor) {
         MInstancia instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
         } else {
-            instanciaAtr = atributos.get(atr.getNomeCompleto());
+            instanciaAtr = atributos.get(nomeCompletoAtributo);
         }
         if (instanciaAtr == null) {
-            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(atr.getNomeCompleto());
+            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
-            atributos.put(atr.getNomeCompleto(), instanciaAtr);
+            atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
             instanciaAtr.setValor(new LeitorPath(subPath), valor);
@@ -176,6 +208,10 @@ public abstract class MInstancia implements MAtributoEnabled {
             }
         }
         return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
+    }
+
+    public Map<String, MInstancia> getAtributos() {
+        return atributos == null ? Collections.emptyMap() : atributos;
     }
 
     public MInstancia getPai() {
@@ -250,7 +286,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     public void debug() {
-        MElement xml = MformPersistenciaXML.toXML(this);
+        MElement xml = new PersistenceBuilderXML().withPersistId(false).toXML(this);
         if (xml == null) {
             System.out.println("null");
         } else {

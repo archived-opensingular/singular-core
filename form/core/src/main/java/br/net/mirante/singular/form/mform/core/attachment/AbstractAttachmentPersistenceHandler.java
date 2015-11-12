@@ -10,6 +10,7 @@ import com.google.common.io.CountingInputStream;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
+@SuppressWarnings("serial")
 abstract class AbstractAttachmentPersistenceHandler implements IAttachmentPersistenceHandler {
 
     @Override

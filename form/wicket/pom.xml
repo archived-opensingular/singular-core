@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.4.2</version>
+        <version>0.4.3</version>
     </parent>
 
     <artifactId>form-wicket</artifactId>
@@ -19,12 +19,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-core</artifactId>
-            <version>0.4.2</version>
+            <version>0.4.3</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.4.2</version>
+            <version>0.4.3</version>
         </dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
@@ -55,6 +55,19 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
             <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert-core</artifactId>
+            <version>2.0M10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

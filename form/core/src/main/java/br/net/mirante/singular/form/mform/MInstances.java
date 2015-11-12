@@ -9,6 +9,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Métodos utilitários para manipulação de MInstance.
@@ -157,10 +159,32 @@ public abstract class MInstances {
         return result;
     }
 
+    /**
+     * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
+     * @param node instância inicial da busca
+     * @param descendantType tipo do descendente
+     * @return Stream das instâncias de descendentes do tipo especificado
+     */
+    @SuppressWarnings("unchecked")
+    public static <D extends MInstancia> Stream<D> streamDescendants(MInstancia root, boolean includeRoot, MTipo<D> descendantType) {
+        return streamDescendants(root, includeRoot)
+            .filter(it -> it.getMTipo() == descendantType)
+            .map(it -> (D) it);
+    }
+
+    /**
+     * Retorna uma Stream que percorre os descendentes de <code>node</code> do tipo especificado.
+     * @param node instância inicial da busca
+     * @return Stream das instâncias de descendentes
+     */
+    public static Stream<MInstancia> streamDescendants(MInstancia root, boolean includeRoot) {
+        return StreamSupport.stream(new MInstanceRecursiveSpliterator(root, includeRoot), false);
+    }
+
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
-    private static Collection<MInstancia> children(MInstancia node) {
+    static Collection<MInstancia> children(MInstancia node) {
         List<MInstancia> result = new ArrayList<>();
         if (node instanceof MIComposto) {
             result.addAll(((MIComposto) node).getAllFields());

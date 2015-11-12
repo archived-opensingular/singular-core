@@ -13,9 +13,9 @@ import org.apache.wicket.util.string.Strings;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
-import br.net.mirante.singular.form.wicket.behavior.RequiredByMTipoObrigatorioBehavior;
+import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.validator.MInstanciaValueValidator;
+import br.net.mirante.singular.form.wicket.validation.MInstanciaValueValidator;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
@@ -62,7 +62,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
-        formComponent.add(RequiredByMTipoObrigatorioBehavior.getInstance());
+        formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
         formComponent.add(new MInstanciaValueValidator<>());
         formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
         return formComponent;
@@ -76,6 +76,12 @@ public class WicketBuildContext implements Serializable {
         }
         return "[" + formComponent.getId() + "]";
     }
+
+    /**
+     * Calcula o caminho completo de labels do campo, concatenando os nomes separados por ' > ',
+     * para ser usado em mensagens de erro.
+     * Exemplo: "O campo 'Contato > Endereços > Endereço > Logradouro' é obrigatório"
+     */
     protected static <T> String getLabelFullPath(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {

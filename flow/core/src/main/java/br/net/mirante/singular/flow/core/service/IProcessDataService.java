@@ -37,7 +37,7 @@ public interface IProcessDataService<I extends ProcessInstance> {
 
     List<I> retrieveAllInstancesIn(MTask<?> task);
 
-    List<I> retrieveAllInstancesIn(Date minCreateDate, Date maxCreateDate, boolean showEnded, ITaskDefinition... tasksNames);
+    List<I> retrieveAllInstancesIn(Date beginDate, Date endDate, boolean showEnded, ITaskDefinition... tasksNames);
 
-    List<I> retrieveAllInstancesIn(Date minCreateDate, Date maxCreateDate, boolean showEnded, IEntityTaskDefinition... entityTasks);
+    List<I> retrieveAllInstancesIn(Date beginDate, Date endDate, boolean showEnded, IEntityTaskDefinition... entityTasks);
 }

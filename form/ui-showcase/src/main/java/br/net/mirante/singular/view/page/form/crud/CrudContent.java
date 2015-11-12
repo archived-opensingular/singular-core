@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -15,6 +14,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -23,27 +23,23 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaRaizModel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -63,20 +59,20 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     private static final MDicionario dicionario = TemplateRepository.dicionario();
 
     private BSDataTable<ExampleDataDTO, String> listTable;
-    private List<ExampleDataDTO>                dataList = new LinkedList<>();
-    transient private MTipoComposto<?>          selectedTemplate;
+    private List<ExampleDataDTO> dataList = new LinkedList<>();
+    transient private MTipoComposto<?> selectedTemplate;
 
     private final BSModalBorder inputModal = new BSModalBorder("inputModal"),
-        deleteModal = new BSModalBorder("deleteModal");
-    private BSGrid              container  = new BSGrid("generated");
-    private Form<?>             inputForm  = new Form<>("save-form"),
-        deleteForm = new Form<>("delete-form");
+            deleteModal = new BSModalBorder("deleteModal");
+    private BSGrid container = new BSGrid("generated");
+    private Form<?> inputForm = new Form<>("save-form"),
+            deleteForm = new Form<>("delete-form");
 
     @Inject
     ExampleDataDAO dao;
 
     IModel<MIComposto> currentInstance;
-    ExampleDataDTO     currentModel;
+    ExampleDataDTO currentModel;
 
     public CrudContent(String id) {
         super(id, false, true);
@@ -91,7 +87,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         queue(setUpInsertButton());
         listTable = setupDataTable();
         queue(listTable);
-        queue(setupInputModal());
+        add(setupInputModal());
         deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 dao.remove(currentModel);
@@ -103,15 +99,15 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         queue(deleteModal);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private DropDownChoice setUpTemplatesOptions() {
         List<SelectOption> options = TemplateRepository.formTemplates().stream()
-            .map(t -> new SelectOption(t.getNomeSimples(), new FormVO(t.getNomeSimples(), t)))
-            .collect(Collectors.toList());
+                .map(t -> new SelectOption(t.getNomeSimples(), new FormVO(t.getNomeSimples(), t)))
+                .collect(Collectors.toList());
 
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
         return new DropDownChoice<SelectOption>("options",
-            new SelectOption(null, null), options, choiceRenderer) {
+                new SelectOption(null, null), options, choiceRenderer) {
             @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
@@ -149,16 +145,20 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
         return new BSDataTableBuilder<>(createDataProvider())
-            .appendPropertyColumn(getMessage("label.table.column.key"),
-                "key", ExampleDataDTO::getKey)
-            .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
-                .appendAction(getMessage("label.table.column.edit"),
-                    Icone.PENCIL_SQUARE, this::openInputModal))
-            .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
-                .appendAction(getMessage("label.table.column.delete"),
-                    Icone.MINUS, this::deleteSelected))
-            .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
-            .build("data-list");
+                .appendPropertyColumn(getMessage("label.table.column.key"),
+                        "key", ExampleDataDTO::getKey)
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.edit"),
+                                Icone.PENCIL_SQUARE, this::openInputModal
+                        )
+                )
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.delete"),
+                                Icone.MINUS, this::deleteSelected
+                        )
+                )
+                .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
+                .build("data-list");
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
@@ -169,13 +169,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
 
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
-                String sortProperty, boolean ascending) {
+                    String sortProperty, boolean ascending) {
                 return dataList.iterator();
             }
         };
     }
 
-    @SuppressWarnings("unchecked")
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
         createInstance(selectedTemplate.getNome());
@@ -184,13 +183,11 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.show(target);
     }
 
+    @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
-        currentInstance = new MInstanciaRaizModel<MIComposto>() {
-            protected MTipo<MIComposto> getTipoRaiz() {
-                return (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
-            }
-        };
-        populateInstance((MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo));
+        MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
+        currentInstance = new MInstanceRootModel<>(tipo.novaInstancia());
+        populateInstance(tipo);
 
     }
 
@@ -199,7 +196,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
-            MformPersistenciaXML.fromXML(tipo, currentInstance.getObject(), xml);
+            MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
+            currentInstance = new MInstanceRootModel<>(instance);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -221,54 +219,36 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.setSize(BSModalBorder.Size.FULL);
         inputModal.setTitleText(getMessage("label.form.title"));
 
-        inputModal.queue(inputForm
-            .queue(new FencedFeedbackPanel("feedback", inputForm))
-            .queue(new AjaxButton("save-btn") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                StringWriter buffer = new StringWriter();
-                MIComposto trueInstance = currentInstance.getObject();
-
-                InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-                validationContext.validate();
-                Map<MInstancia, List<IValidationError>> instanceErrors = validationContext.getErrorsByInstance();
-                form.visitChildren(new IVisitor<Component, Void>() {
-                    public void component(Component component, IVisit<Void> visit) {
-                        IModel<?> model = component.getDefaultModel();
-                        if (model instanceof IMInstanciaAwareModel<?>) {
-                            MInstancia instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-                            System.out.println(instance.getMTipo().getNome());
-                            if (instanceErrors.containsKey(instance)) {
-                                for (IValidationError error : instanceErrors.get(instance)) {
-                                    ValidationErrorLevel errorLevel = error.getErrorLevel();
-                                    switch (errorLevel) {
-                                        case ERROR:
-                                            component.error(error.getMessage());
-                                            break;
-                                        case WARNING:
-                                            component.warn(error.getMessage());
-                                            break;
-                                        default:
-                                            throw new IllegalStateException("Invalid error level: " + errorLevel);
-                                    }
-                                }
+        inputModal.add(inputForm
+                .add(new FencedFeedbackPanel("feedback", inputForm)
+                        .add(new Behavior() {
+                            @Override
+                            public void onConfigure(Component component) {
+                                component.setVisible(((FencedFeedbackPanel) component).anyMessage());
                             }
-                        }
-                    }
-                });
-                if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-                    target.add(form);
-                    return;
-                }
+                        }))
+                .add(new AjaxButton("save-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        StringWriter buffer = new StringWriter();
+                        MIComposto trueInstance = currentInstance.getObject();
 
-                MformPersistenciaXML.toXML(trueInstance).printTabulado(
-                    new PrintWriter(buffer));
-                currentModel.setXml(buffer.toString());
-                dao.save(currentModel);
-                updateListTableFromModal(target);
-                inputModal.hide(target);
-            }
-        }));
+                        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+                        InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+
+                        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+                            target.add(form);
+                            return;
+                        }
+
+                        MformPersistenciaXML.toXML(trueInstance).printTabulado(
+                                new PrintWriter(buffer));
+                        currentModel.setXml(buffer.toString());
+                        dao.save(currentModel);
+                        updateListTableFromModal(target);
+                        inputModal.hide(target);
+                    }
+                }));
 
         return inputModal;
     }

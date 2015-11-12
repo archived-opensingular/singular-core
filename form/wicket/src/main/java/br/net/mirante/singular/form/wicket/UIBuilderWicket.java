@@ -18,12 +18,12 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.PicklistMapper;
@@ -32,6 +32,7 @@ import br.net.mirante.singular.form.wicket.mapper.SelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
+import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
 
 public class UIBuilderWicket {
 
@@ -46,6 +47,7 @@ public class UIBuilderWicket {
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MSelecaoMultiplaPorPicklistView.class, /**/PicklistMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoData.class, /*    */MView.class, /*                          */DateMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoAnoMes.class, /*  */MView.class, /*                          */YearMonthMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoAttachment.class, /**/MView.class, /*                        */AttachmentMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /**/MView.class, /*                          */DefaultCompostoMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoComposto.class, /**/MTabView.class, /*                       */DefaultCompostoMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MView.class, /*                          */TableListaMapper::new);

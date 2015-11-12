@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.validator;
+package br.net.mirante.singular.form.wicket.validation;
 
 import org.apache.wicket.validation.ValidationError;
 

@@ -68,28 +68,28 @@ public class ProcessDataServiceImpl<I extends ProcessInstance> implements IProce
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+    public final List<I> retrieveAllInstancesIn(Date dataInicio, Date maxDataInicio, boolean exibirEncerradas,
             ITaskDefinition... situacoesAlvo) {
-        return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, convertToEntityTask(situacoesAlvo));
+        return retrieveAllInstancesIn(dataInicio, maxDataInicio, exibirEncerradas, convertToEntityTask(situacoesAlvo));
     }
 
     @Override
-    public final List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+    public final List<I> retrieveAllInstancesIn(Date dataInicio, Date dataFim, boolean exibirEncerradas,
             IEntityTaskDefinition... situacoesAlvo) {
         if (situacoesAlvo == null || situacoesAlvo.length == 0 || (situacoesAlvo.length == 1 && situacoesAlvo[0] == null)) {
-            return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, (Collection<IEntityTaskDefinition>) null);
+            return retrieveAllInstancesIn(dataInicio, dataFim, exibirEncerradas, (Collection<IEntityTaskDefinition>) null);
         }
-        return retrieveAllInstancesIn(minDataInicio, maxDataInicio, exibirEncerradas, Arrays.asList(situacoesAlvo));
+        return retrieveAllInstancesIn(dataInicio, dataFim, exibirEncerradas, Arrays.asList(situacoesAlvo));
     }
 
-    private List<I> retrieveAllInstancesIn(Date minDataInicio, Date maxDataInicio, boolean exibirEncerradas,
+    private List<I> retrieveAllInstancesIn(Date dataInicio, Date dataFim, boolean exibirEncerradas,
             Collection<IEntityTaskDefinition> situacoesAlvo) {
         if (!exibirEncerradas && (situacoesAlvo == null || situacoesAlvo.isEmpty())) {
             situacoesAlvo = getEntityProcessDefinition().getTaskDefinitions().stream().filter(t -> !t.getLastVersion().isEnd())
                     .collect(Collectors.toList());
         }
-        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), minDataInicio,
-                maxDataInicio, situacoesAlvo));
+        return convertToProcessInstance(getPersistenceService().retrieveProcessInstancesWith(getEntityProcessDefinition(), dataInicio,
+            dataFim, situacoesAlvo));
     }
 
     @Override

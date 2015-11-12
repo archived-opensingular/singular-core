@@ -1,9 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
@@ -23,7 +22,9 @@ public class MPacoteTesteContatos extends MPacote {
     public MTipoString                                       enderecoCidade;
     public MTipoString                                       enderecoEstado;
     public MTipoLista<MTipoTelefoneNacional, MIString>       telefones;
+    public MTipoTelefoneNacional                             telefone;
     public MTipoLista<MTipoString, MIString>                 emails;
+    public MTipoString                                       email;
 
     public MPacoteTesteContatos() {
         super("mform.exemplo.squery");
@@ -36,6 +37,13 @@ public class MPacoteTesteContatos extends MPacote {
         identificacao = contato.addCampoComposto("identificacao");
         nome = identificacao.addCampoString("nome", true);
         sobrenome = identificacao.addCampoString("sobrenome");
+//        sobrenome.as(MPacoteBasic.aspect())
+//            .visivel(i -> {
+//                boolean visible = i.findAncestor(contato).get().findDescendant(nome).get().getValor() == null;
+//                System.out.println(">>> " + visible);
+//                return visible;
+//            })
+//            .enabled(i -> defaultString(i.findAncestor(contato).get().findDescendant(nome).get().getValor()).length() > 3);
 
         enderecos = contato.addCampoListaOfComposto("enderecos", "endereco");
         endereco = enderecos.getTipoElementos();
@@ -46,6 +54,8 @@ public class MPacoteTesteContatos extends MPacote {
         enderecoEstado = endereco.addCampoString("estado");
 
         telefones = contato.addCampoListaOf("telefones", MTipoTelefoneNacional.class);
+        telefone = telefones.getTipoElementos();
         emails = contato.addCampoListaOf("emails", MTipoString.class);
+        email = emails.getTipoElementos();
     }
 }

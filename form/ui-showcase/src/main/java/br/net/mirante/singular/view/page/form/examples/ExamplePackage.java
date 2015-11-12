@@ -1,8 +1,6 @@
 package br.net.mirante.singular.view.page.form.examples;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import static org.apache.commons.lang3.StringUtils.*;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -11,12 +9,15 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
 
 public class ExamplePackage extends MPacote {
 
@@ -38,11 +39,13 @@ public class ExamplePackage extends MPacote {
     public MTipoNomePessoa                     buyerNome;
     public MTipoCPF                            buyerCpf;
     public MTipoTelefoneNacional               buyerTelephone;
-    public MTipoComposto<MIComposto>           address;
-    public MTipoString                         addressStreet;
-    public MTipoString                         addressCity;
-    public MTipoString                         addressState;
-    public MTipoCEP                            addressZipcode;
+    public MTipoAttachment                     buyerAvatar;
+
+    public MTipoComposto<MIComposto> address;
+    public MTipoString               addressStreet;
+    public MTipoString               addressCity;
+    public MTipoString               addressState;
+    public MTipoCEP                  addressZipcode;
 
     public ExamplePackage() {
         super(PACKAGE);
@@ -50,17 +53,33 @@ public class ExamplePackage extends MPacote {
 
     @Override
     public void carregarDefinicoes(PacoteBuilder pb) {
+        buildOrderType(pb);
+    }
+
+    private void buildOrderType(PacoteBuilder pb) {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
         this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
 
+        buildBuyerField();
+        buildAddressField();
+    }
+
+    private void buildBuyerField() {
         this.buyer = order.addCampoComposto("Buyer");
         this.buyer.as(AtrBasic::new).label("Comprador");
         this.buyerNome = addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
         this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
+        this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
+        buyerCpf.as(MPacoteBasic.aspect())
+            .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
+            .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
+    }
+
+    private void buildAddressField() {
         this.address = order.addCampoComposto("Addresss");
         this.address.as(AtrBasic::new).label("Endereço");
         this.addressStreet = addField(address, "street", "Logradouro", MTipoString.class);
@@ -68,18 +87,7 @@ public class ExamplePackage extends MPacote {
         this.addressState = addField(address, "state", "Estado", MTipoString.class);
         this.addressZipcode = addField(address, "Zipcode", "CEP", MTipoCEP.class);
 
-        this.address.addInstanceValidator(v -> {
-            MIComposto iAddress = v.getInstance();
-            Set<Boolean> list = new HashSet<>(Arrays.asList(
-                iAddress.getDescendant(addressStreet).getValor() == null,
-                iAddress.getDescendant(addressCity).getValor() == null,
-                iAddress.getDescendant(addressState).getValor() == null,
-                iAddress.getDescendant(addressZipcode).getValor() == null));
-
-            // os campos devem ser todos nulos ou todos preenchidos
-            if (list.size() != 1)
-                v.error("Endereço incompleto");
-        });
+        this.address.addInstanceValidator(new AllOrNothingInstanceValidator());
     }
 
     private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -13,6 +14,7 @@ import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.io.HashUtil;
+import br.net.mirante.singular.form.mform.io.TesteFormSerializationUtil;
 
 public class TesteMPacoteAttachment extends TestCaseForm {
 
@@ -208,7 +210,24 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
-        fail("Implementar essa verificação");
+        MDicionarioResolver resolver = TesteFormSerializationUtil.createLoaderPacoteTeste((pacote) -> {
+            MTipoComposto<? extends MIComposto> tipoBloco = pacote.createTipoComposto("bloco");
+            tipoBloco.addCampo("arquivo1", MTipoAttachment.class);
+            tipoBloco.addCampo("arquivo2", MTipoAttachment.class);
+        });
+        final byte[] conteudo1 = new byte[] { 1, 2, 3 };
+        final byte[] conteudo2 = new byte[] { 4, 5, 6 };
+
+        MIComposto bloco = (MIComposto) resolver.loadType("teste.bloco").novaInstancia();
+        bloco.getField("arquivo1", MIAttachment.class).setContent(conteudo1);
+        bloco.getField("arquivo2", MIAttachment.class).setContent(conteudo2);
+        assertConteudo(conteudo1, bloco.getField("arquivo1", MIAttachment.class), 2);
+        assertConteudo(conteudo2, bloco.getField("arquivo2", MIAttachment.class), 2);
+
+        MIComposto bloco2 = (MIComposto) TesteFormSerializationUtil.testSerializacao(bloco, resolver);
+
+        assertConteudo(conteudo1, bloco2.getField("arquivo1", MIAttachment.class), 2);
+        assertConteudo(conteudo2, bloco2.getField("arquivo2", MIAttachment.class), 2);
     }
 
     private static void assertBinariosAssociadosDocument(MInstancia ref, int expectedDistinctFiles) {

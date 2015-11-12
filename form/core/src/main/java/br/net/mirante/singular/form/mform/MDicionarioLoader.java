@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Optional;
+
 /**
  * Carrega as definições resolvendo dependências do dicionário bem como
  * carregando definições extras configuranda pela aplicação. Pode ser utilizada
@@ -7,7 +9,7 @@ package br.net.mirante.singular.form.mform;
  *
  * @author Daniel C. Bordin
  */
-public abstract class MDicionarioLoader {
+public abstract class MDicionarioLoader extends MDicionarioResolver {
 
     private final MDicionarioLoader parent;
 
@@ -27,15 +29,16 @@ public abstract class MDicionarioLoader {
      * Cria o dicionário necessário para o tipo informado. Se os loader
      * estiverem configurado, pode adicionar pacotes extras.
      */
-    public final MDicionario loadDicionaryFor(String typeName) {
+    @Override
+    public final Optional<MDicionario> loadDicionaryForType(String typeName) {
         MDicionario novo;
         if (parent == null) {
             novo = MDicionario.create();
         } else {
-            novo = parent.loadDicionaryFor(typeName);
+            novo = parent.loadDicionaryForType(typeName).get();
         }
         configDicionary(novo, typeName);
-        return novo;
+        return Optional.of(novo);
 
     }
 
@@ -44,10 +47,5 @@ public abstract class MDicionarioLoader {
      * questão.
      */
     protected abstract void configDicionary(MDicionario newDicionary, String taregetTypeName);
-
-    public final MTipo<?> loadType(String typeName) {
-        MDicionario dicionary = loadDicionaryFor(typeName);
-        return dicionary.getTipo(typeName);
-    }
 
 }

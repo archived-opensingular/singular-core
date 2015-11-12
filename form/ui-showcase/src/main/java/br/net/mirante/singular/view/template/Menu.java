@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
+@SuppressWarnings("serial")
 public class Menu extends Panel {
 
     @Inject
@@ -25,5 +26,8 @@ public class Menu extends Panel {
         queue(new WebMarkupContainer("crud")
                 .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
                         .concat("form/crud"))));
+        queue(new WebMarkupContainer("showcase")
+                .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
+                        .concat("showcase"))));
     }
 }

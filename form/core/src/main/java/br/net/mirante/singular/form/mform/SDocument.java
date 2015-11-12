@@ -29,7 +29,34 @@ public class SDocument implements Serializable {
 
     private Map<String, ServiceRef<?>> services;
 
+    private int lastId = 0;
+
     SDocument() {
+    }
+
+    /**
+     * Contador interno para IDs de instancia. É preservado entre peristência
+     * para garantir que um ID nunca seja reutilziado dentro de um mesmo
+     * documento.
+     */
+    public final int getLastId() {
+        return lastId;
+    }
+
+    /**
+     * Apenas para uso interno de soluções de persistência de documentos. Não
+     * usar sem ser para esse fim.
+     */
+    public final void setLastId(int value) {
+        lastId = value;
+    }
+
+    /** Retorna null se estiver no modo de restore da persistencia. */
+    final Integer nextId() {
+        if (lastId == -1) {
+            return null;
+        }
+        return ++lastId;
     }
 
     public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {

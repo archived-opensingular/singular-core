@@ -88,8 +88,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     void commitTransaction();
 
     // Consultas
-    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable Date minDataInicio,
-            @Nullable Date maxDataInicio, @Nullable Collection<? extends TASK_DEF> states);
+    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable Date beginDate,
+            @Nullable Date endDate, @Nullable Collection<? extends TASK_DEF> states);
 
     List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable MUser creatingUser,
             @Nullable Boolean active);

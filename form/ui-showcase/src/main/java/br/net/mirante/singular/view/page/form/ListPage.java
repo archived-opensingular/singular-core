@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view.page.form;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import br.net.mirante.singular.view.template.Content;
@@ -11,5 +13,11 @@ public class ListPage extends Template {
 
     protected Content getContent(String id) {
         return new ListContent(id);
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(OnDomReadyHeaderItem.forScript("$('#_menuItemHome').addClass('active');"));
     }
 }
