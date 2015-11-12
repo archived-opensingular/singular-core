@@ -87,7 +87,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         queue(setUpInsertButton());
         listTable = setupDataTable();
         queue(listTable);
-        queue(setupInputModal());
+        add(setupInputModal());
         deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 dao.remove(currentModel);
@@ -219,15 +219,15 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.setSize(BSModalBorder.Size.FULL);
         inputModal.setTitleText(getMessage("label.form.title"));
 
-        inputModal.queue(inputForm
-                .queue(new FencedFeedbackPanel("feedback", inputForm)
+        inputModal.add(inputForm
+                .add(new FencedFeedbackPanel("feedback", inputForm)
                         .add(new Behavior() {
                             @Override
                             public void onConfigure(Component component) {
                                 component.setVisible(((FencedFeedbackPanel) component).anyMessage());
                             }
                         }))
-                .queue(new AjaxButton("save-btn") {
+                .add(new AjaxButton("save-btn") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         StringWriter buffer = new StringWriter();
