@@ -185,8 +185,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
-	MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
-        currentInstance = new MInstanceRootModel<MIComposto>(tipo.novaInstancia()) ;
+        MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
+        currentInstance = new MInstanceRootModel<>(tipo.novaInstancia());
         populateInstance(tipo);
 
     }
@@ -197,7 +197,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         try {
             MElement xml = MParser.parse(currentModel.getXml());
             MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
-            currentInstance = new MInstanceRootModel<MIComposto>(instance) ;
+            currentInstance = new MInstanceRootModel<>(instance);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -58,14 +58,12 @@ public class MformPersistenciaXML {
     }
 
     private static void fromXML(MInstancia instancia, MElement xml) {
+        if (xml == null) return; // Não precisa fazer nada
         lerAtributos(instancia, xml);
-        if (xml == null) {
-            // Não precisa fazer nada
-        } else if (instancia instanceof MISimples) {
+        if (instancia instanceof MISimples) {
             MISimples<?> instanciaS = (MISimples<?>) instancia;
             MTipoSimples<?, ?> tipos = instanciaS.getMTipo();
             instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
-
         } else if (instancia instanceof MIComposto) {
             MIComposto instc = (MIComposto) instancia;
             for (MTipo<?> campo : instc.getMTipo().getFields()) {
@@ -81,7 +79,6 @@ public class MformPersistenciaXML {
                 MInstancia filho = lista.addNovo();
                 fromXML(filho, xmlFilho);
             }
-
         } else {
             throw new UnsupportedOperationException(instancia.getClass().getName());
         }
