@@ -10,9 +10,8 @@ public class CaseInputCoreAttachmentCode extends CaseCode {
 
     @Override
     public MTipo<?> createForm(PacoteBuilder pb) {
-	MTipoComposto<?> tipoMyForm = pb.createTipoComposto("myForm");
-	tipoMyForm.addCampo("anexo", MTipoAttachment.class);
-	return tipoMyForm;
+        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("myForm");
+        tipoMyForm.addCampo("anexo", MTipoAttachment.class);
+        return tipoMyForm;
     }
-
 }

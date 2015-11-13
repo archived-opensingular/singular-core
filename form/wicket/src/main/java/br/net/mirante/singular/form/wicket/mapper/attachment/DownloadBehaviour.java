@@ -26,48 +26,47 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
     transient private MInstancia instance;
 
     public DownloadBehaviour(MInstancia instance) {
-	this.instance = instance;
+        this.instance = instance;
     }
     
     public void setWebWrapper(WebWrapper w) {
-	this.w = w;
+        this.w = w;
     }
     
     @Override
     public void bind(Component component) {
-	this.component = component;
+        this.component = component;
     }
 
     @Override
     public void onResourceRequested() {
-	try {
-	    MIAttachment attachment = (MIAttachment) instance;
-	    IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler();
+        try {
+            MIAttachment attachment = (MIAttachment) instance;
+            IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler();
 
-	    ServletWebRequest request = w.request();
-	    StringValue id = request.getRequestParameters().getParameterValue("fileId");
-	    StringValue name = request.getRequestParameters().getParameterValue("fileName");
-	    String fileId;
-	    String fileName;
-	    if(id.isEmpty() || name.isEmpty()){
-        	fileId = attachment.getFileId();
-        	fileName = attachment.getFileName();
-	    }else{
-		fileId = id.toString();
-		fileName = name.toString();
-	    }
-	    IAttachmentRef data = handler.getAttachment(fileId);
-	    WebResponse response = (WebResponse) w.response();
-	    response.addHeader("Content-Type", "application/octet-stream");
-	    response.addHeader("Content-disposition", "attachment; filename="+ fileName);
-	    response.getOutputStream().write(data.getContentAsByteArray());
-	} catch (IOException e) {
-	    throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-	}
-
+            ServletWebRequest request = w.request();
+            StringValue id = request.getRequestParameters().getParameterValue("fileId");
+            StringValue name = request.getRequestParameters().getParameterValue("fileName");
+            String fileId;
+            String fileName;
+            if(id.isEmpty() || name.isEmpty()){
+                fileId = attachment.getFileId();
+                fileName = attachment.getFileName();
+            }else{
+                fileId = id.toString();
+                fileName = name.toString();
+            }
+            IAttachmentRef data = handler.getAttachment(fileId);
+            WebResponse response = (WebResponse) w.response();
+            response.addHeader("Content-Type", "application/octet-stream");
+            response.addHeader("Content-disposition", "attachment; filename="+ fileName);
+            response.getOutputStream().write(data.getContentAsByteArray());
+        } catch (IOException e) {
+            throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
     
     public String getUrl() {
-	return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
+        return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
     }
 }

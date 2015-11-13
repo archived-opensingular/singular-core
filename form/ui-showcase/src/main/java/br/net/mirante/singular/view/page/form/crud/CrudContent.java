@@ -230,66 +230,65 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                 .add(new SaveButton("save-btn"))
                 .add(new AjaxButton("cancel-btn"){
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                	inputModal.hide(target);
+                        inputModal.hide(target);
                     }
                 })
                 
-        )
-    	;
+        );
 
         return inputModal;
     }
     
     private final class SaveButton extends AjaxButton {
-	private SaveButton(String id) {
-	    super(id);
-	}
+        private SaveButton(String id) {
+            super(id);
+        }
 
-	@Override
-	protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-	    MInstancia trueInstance = currentInstance.getObject();
-	    MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+        @Override
+        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            MInstancia trueInstance = currentInstance.getObject();
+            MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
 
-	    try {
-		addValidationErrors(target, form, trueInstance, rootXml);
-	    } catch (Exception e) {
-		target.add(form);
-		return;
-	    }
-	    currentModel.setXml(printXml(rootXml));
-	    dao.save(currentModel);
-	    updateListTableFromModal(target);
-	    inputModal.hide(target);
-	}
+            try {
+                addValidationErrors(target, form, trueInstance, rootXml);
+            } catch (Exception e) {
+                target.add(form);
+                return;
+            }
+            currentModel.setXml(printXml(rootXml));
+            dao.save(currentModel);
+            updateListTableFromModal(target);
+            inputModal.hide(target);
+        }
 
-	private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-		MElement rootXml) throws Exception {
-	    runDefaultValidators(form, trueInstance);
-	    validateEmptyForm(form, rootXml);
-	}
+        private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+                MElement rootXml) throws Exception {
+            runDefaultValidators(form, trueInstance);
+            validateEmptyForm(form, rootXml);
+        }
 
-	private void validateEmptyForm(Form<?> form, MElement rootXml) {
-	    if (rootXml == null) {
-		form.error(getMessage("form.message.empty").getString());
-		throw new RuntimeException("Has empty form");
-	    }
-	}
+        private void validateEmptyForm(Form<?> form, MElement rootXml) {
+            if (rootXml == null) {
+                form.error(getMessage("form.message.empty").getString());
+                throw new RuntimeException("Has empty form");
+            }
+        }
 
-	private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
-	    InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-	    InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+        private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
+            InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+            InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
 
-	    if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-		throw new RuntimeException("Has form errors");
-	    }
-	}
+            if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+                throw new RuntimeException("Has form errors");
+            }
+        }
 
-	private String printXml(MElement rootXml) {
-	    StringWriter buffer = new StringWriter();
-	    rootXml.printTabulado(new PrintWriter(buffer));
-	    String xml = buffer.toString();
-	    return xml;
-	}
+        private String printXml(MElement rootXml) {
+            StringWriter buffer = new StringWriter();
+            rootXml.printTabulado(new PrintWriter(buffer));
+            String xml = buffer.toString();
+            return xml;
+        }
     }
 
     private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
