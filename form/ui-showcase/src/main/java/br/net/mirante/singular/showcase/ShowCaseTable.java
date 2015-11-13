@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import com.google.common.base.Throwables;
 
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
 
@@ -21,7 +22,9 @@ public class ShowCaseTable {
         // @formatter:off
         group("Input")
             .addCase(CaseInputCoreDate.class)
-            .addCase(CaseInputCoreInteger.class);
+            .addCase(CaseInputCoreInteger.class)
+            .addCase(CaseInputCoreAttachment.class)
+        ;
         //@formatter:on
     }
 

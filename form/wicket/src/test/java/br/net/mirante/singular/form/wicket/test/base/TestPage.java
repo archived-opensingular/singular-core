@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.wicket.test.base;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -10,9 +10,30 @@ import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
+/**
+ * This is an example page to you to use in your form tests.
+ * You can create your own {@link MDicionario} with its packages and types and
+ * 	by using the {@link TestPage#setNewInstanceOfType(String)} you are able
+ * 	to inform which type will be used in your tests. The page will render a 
+ * 	component with id `test-form:generated-content` containing your form 
+ * 	and its fields.
+ * 
+ * Usage:
+ * <pre>
+ * 	driver = new WicketTester(new TestApp());
+	page = new TestPage(null);
+	page.build();
+	driver.startPage(page);
+ * </pre>
+ * 
+ * @author Fabricio Buzeto
+ *
+ */
 @SuppressWarnings("serial")
 public class TestPage extends WebPage {
     
@@ -45,11 +66,7 @@ public class TestPage extends WebPage {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private MInstanceRootModel newModelFromInstance(MInstancia instance) {
-	return new MInstanceRootModel(instance) /*{
-		protected MTipo getTipoRaiz() {
-		    return instance.getMTipo();
-		}
-	    }*/;
+	return new MInstanceRootModel(instance);
     }
     
     private AjaxButton createSaveButton() {
