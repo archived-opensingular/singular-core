@@ -226,14 +226,14 @@ public abstract class TestCasePersistenceHandlerBase {
         assertConteudo(handler2, handler2.getAttachment(hashs[1]), conteudos[1], hashs[1], 2);
     }
 
-    @Test
+    @Test @Ignore("To be implemented")
     public void testLeituraComHashViolado() {
-        fail("impelmentar");
+        fail("implementar");
     }
 
-    @Test
+    @Test  @Ignore("To be implemented")
     public void testCompactacaoConteudoInterno() {
-        fail("impelmentar");
+        fail("implementar");
     }
 
     @Test
