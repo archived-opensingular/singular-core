@@ -4,7 +4,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
-import br.net.mirante.singular.dao.StatusDTO;
+import br.net.mirante.singular.dto.StatusDTO;
 
 public interface PesquisaService {
 

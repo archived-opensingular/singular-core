@@ -9,12 +9,12 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
-import br.net.mirante.singular.dao.DefinitionDTO;
-import br.net.mirante.singular.dao.FeedDTO;
-import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.dao.MenuItemDTO;
-import br.net.mirante.singular.dao.MetaDataDTO;
-import br.net.mirante.singular.dao.StatusDTO;
+import br.net.mirante.singular.dto.DefinitionDTO;
+import br.net.mirante.singular.dto.FeedDTO;
+import br.net.mirante.singular.dto.InstanceDTO;
+import br.net.mirante.singular.dto.MenuItemDTO;
+import br.net.mirante.singular.dto.MetaDataDTO;
+import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.service.IUIAdminService;
 
 @Service("uiAdminFacade")
@@ -138,6 +138,11 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
         return menuService.retrieveAllCategories();
     }
 
+    @Override
+    public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
+        return menuService.retrieveAllCategoriesWithAcces(userId);
+    }
+    
     @Override
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
         return menuService.retrieveCategoryDefinitionIdsByCode(code);

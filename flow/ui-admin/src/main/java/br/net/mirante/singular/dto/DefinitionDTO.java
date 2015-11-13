@@ -1,4 +1,4 @@
-package br.net.mirante.singular.dao;
+package br.net.mirante.singular.dto;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.util.FormatUtil;
@@ -14,6 +14,9 @@ public class DefinitionDTO implements IDefinitionDTO {
     private Long throughput;
     private Long version;
 
+    public DefinitionDTO() {
+    }
+    
     public DefinitionDTO(Long cod, String nome, String sigla, String categoria,
             Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;

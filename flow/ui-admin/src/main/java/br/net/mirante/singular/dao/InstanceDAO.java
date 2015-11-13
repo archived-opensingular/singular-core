@@ -12,12 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.FloatType;
 import org.hibernate.type.IntegerType;
@@ -26,10 +22,11 @@ import org.hibernate.type.StringType;
 import org.hibernate.type.TimestampType;
 import org.springframework.stereotype.Repository;
 
+import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
-public class InstanceDAO {
+public class InstanceDAO extends BaseDAO{
 
     public static final int MAX_FEED_SIZE = 30;
 
@@ -51,13 +48,6 @@ public class InstanceDAO {
         public String toString() {
             return code;
         }
-    }
-
-    @Inject
-    private SessionFactory sessionFactory;
-
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
     }
 
     @SuppressWarnings("unchecked")

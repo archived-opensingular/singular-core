@@ -14,8 +14,8 @@ import javax.transaction.Transactional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import br.net.mirante.singular.dao.FeedDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
+import br.net.mirante.singular.dto.FeedDTO;
 
 @Singleton
 @Service("feedService")

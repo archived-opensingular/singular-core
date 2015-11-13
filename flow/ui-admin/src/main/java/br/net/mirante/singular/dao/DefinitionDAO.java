@@ -2,21 +2,19 @@ package br.net.mirante.singular.dao;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
+import br.net.mirante.singular.dto.DefinitionDTO;
+import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 
 @Repository
-public class DefinitionDAO {
+public class DefinitionDAO extends BaseDAO{
 
     private enum Columns {
         cod("CODIGO"),
@@ -39,13 +37,6 @@ public class DefinitionDAO {
         }
     }
 
-    @Inject
-    private SessionFactory sessionFactory;
-
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
     public Object[] retrieveById(Long id) {
         String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
@@ -57,6 +48,20 @@ public class DefinitionDAO {
                 .setParameter("id", id);
 
         return (Object[]) query.uniqueResult();
+    }
+
+    public DefinitionDTO retrieveByKey(String key) {
+        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla"
+            + " FROM TB_DEFINICAO_PROCESSO DEF"
+            + " WHERE DEF.SG_PROCESSO = :key";
+        Query query = getSession().createSQLQuery(sql)
+            .addScalar("cod", LongType.INSTANCE)
+            .addScalar("nome", StringType.INSTANCE)
+            .addScalar("sigla", StringType.INSTANCE)
+            .setParameter("key", key)
+            .setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
+        
+        return (DefinitionDTO) query.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")

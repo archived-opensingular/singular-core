@@ -1,4 +1,4 @@
-package br.net.mirante.singular.dao;
+package br.net.mirante.singular.dto;
 
 import java.math.BigDecimal;
 

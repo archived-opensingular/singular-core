@@ -2,9 +2,9 @@ package br.net.mirante.singular.service;
 
 import java.util.List;
 
-import br.net.mirante.singular.dao.DefinitionDTO;
-import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.dto.DefinitionDTO;
+import br.net.mirante.singular.dto.InstanceDTO;
+import br.net.mirante.singular.dto.MetaDataDTO;
 
 public interface ProcessDefinitionService {
 

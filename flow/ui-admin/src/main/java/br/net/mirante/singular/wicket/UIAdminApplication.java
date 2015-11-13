@@ -3,7 +3,6 @@ package br.net.mirante.singular.wicket;
 import java.util.Locale;
 
 import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
@@ -40,7 +39,7 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
     }
 
     @Override
-    public Session newSession(Request request, Response response) {
+    public UIAdminSession newSession(Request request, Response response) {
         return new UIAdminSession(request, response);
     }
 

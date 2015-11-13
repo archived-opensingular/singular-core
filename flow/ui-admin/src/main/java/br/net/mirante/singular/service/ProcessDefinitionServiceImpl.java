@@ -14,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.dao.DefinitionDAO;
-import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
-import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.dto.DefinitionDTO;
+import br.net.mirante.singular.dto.InstanceDTO;
+import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
@@ -31,7 +31,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     @Inject
     private InstanceDAO instanceDAO;
 
-    @Value("#{admin['retrieve.process.diagram.restful.url']}")
+    @Value("#{singularAdmin['retrieve.process.diagram.restful.url']}")
     private String retrieveProcessDiagramRestURL;
 
     @Override

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dao.PesquisaDAO;
-import br.net.mirante.singular.dao.StatusDTO;
+import br.net.mirante.singular.dto.StatusDTO;
 
 @Service("pesquisaService")
 @Transactional(readOnly = true)

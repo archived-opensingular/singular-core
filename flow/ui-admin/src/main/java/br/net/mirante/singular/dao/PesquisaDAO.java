@@ -25,7 +25,7 @@ import br.net.mirante.singular.flow.core.TaskType;
 
 @Repository
 @SuppressWarnings("unchecked")
-public class PesquisaDAO {
+public class PesquisaDAO extends BaseDAO{
 
     private static final int MAX_MAP_SIZE = 7;
 

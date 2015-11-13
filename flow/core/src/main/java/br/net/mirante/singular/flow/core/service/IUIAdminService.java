@@ -58,5 +58,7 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<MENU> retrieveAllCategories();
 
+    List<MENU> retrieveAllCategoriesWithAcces(String userId);
+    
     Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
 }

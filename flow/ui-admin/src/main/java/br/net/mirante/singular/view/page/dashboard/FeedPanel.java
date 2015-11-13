@@ -15,7 +15,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 
-import br.net.mirante.singular.dao.FeedDTO;
+import br.net.mirante.singular.dto.FeedDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
 
