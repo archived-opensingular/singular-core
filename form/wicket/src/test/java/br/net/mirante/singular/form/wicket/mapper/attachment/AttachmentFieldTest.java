@@ -81,8 +81,6 @@ public class AttachmentFieldTest {
 	Component attachmentComponent = page.get(formField(form, "_attachment_fileField"));
 	List<UploadBehavior> behaviours = attachmentComponent.getBehaviors(UploadBehavior.class);
 	assertThat(behaviours).hasSize(1);
-	//TODO: test the behaviour?
-	//TODO: can we test the url?
     }
     
     private Object findValueInList(List<MISimples> list, String propName){
