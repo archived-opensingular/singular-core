@@ -27,10 +27,8 @@ import org.apache.wicket.model.ResourceModel;
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -56,11 +54,9 @@ import br.net.mirante.singular.view.template.Content;
 @SuppressWarnings("serial")
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
-    private static final MDicionario dicionario = TemplateRepository.dicionario();
-
     private BSDataTable<ExampleDataDTO, String> listTable;
     private List<ExampleDataDTO> dataList = new LinkedList<>();
-    transient private MTipoComposto<?> selectedTemplate;
+    private FormVO selectedTemplate;
 
     private final BSModalBorder inputModal = new BSModalBorder("inputModal"),
             deleteModal = new BSModalBorder("deleteModal");
@@ -71,13 +67,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     @Inject
     ExampleDataDAO dao;
 
-    IModel<MIComposto> currentInstance;
+    IModel<MInstancia> currentInstance;
     ExampleDataDTO currentModel;
 
     public CrudContent(String id) {
         super(id, false, true);
     }
 
+    @Override
     protected void onInitialize() {
         super.onInitialize();
         queue(new BSFeedbackPanel("feedback"));
@@ -89,6 +86,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         queue(listTable);
         add(setupInputModal());
         deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
+            @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 dao.remove(currentModel);
                 currentModel = null;
@@ -101,8 +99,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.formTemplates().stream()
-                .map(t -> new SelectOption(t.getNomeSimples(), new FormVO(t.getNomeSimples(), t)))
+        List<SelectOption> options = TemplateRepository.get().getEntries().stream()
+                .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
                 .collect(Collectors.toList());
 
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
@@ -116,7 +114,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             @Override
             protected void onSelectionChanged(SelectOption newSelection) {
                 FormVO value = (FormVO) newSelection.getValue();
-                selectedTemplate = value.getValue();
+                selectedTemplate = value;
                 updateDataList();
             }
 
@@ -124,18 +122,20 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private void updateDataList() {
-        dataList = dao.list(selectedTemplate.getNome());
+        dataList = dao.list(selectedTemplate.getTypeName());
     }
 
     private MarkupContainer setUpInsertButton() {
         return new Form<>("form").add(new AjaxButton("insert") {
+            @Override
             @SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
-                model.setType(selectedTemplate.getNome());
+                model.setType(selectedTemplate.getTypeName());
                 openInputModal(target, model);
             }
 
+            @Override
             public boolean isVisible() {
                 return selectedTemplate != null;
             }
@@ -164,10 +164,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
         return new BaseDataProvider<ExampleDataDTO, String>() {
 
+            @Override
             public long size() {
                 return dataList.size();
             }
 
+            @Override
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
                 return dataList.iterator();
@@ -177,7 +179,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     private void openInputModal(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
         currentModel = model.getObject();
-        createInstance(selectedTemplate.getNome());
+        createInstance(selectedTemplate.getTypeName());
         updateContainer();
         target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
@@ -185,19 +187,19 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
 
     @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
-	MTipo<MIComposto> tipo = (MTipo<MIComposto>) dicionario.getTipo(nomeDoTipo);
-        currentInstance = new MInstanceRootModel<MIComposto>(tipo.novaInstancia()) ;
+        MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
+        currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
         populateInstance(tipo);
 
     }
 
-    private void populateInstance(final MTipo<MIComposto> tipo) {
+    private void populateInstance(final MTipo<?> tipo) {
         if (currentModel.getXml() == null)
             return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
-            MIComposto instance = MformPersistenciaXML.fromXML(tipo, xml);
-            currentInstance = new MInstanceRootModel<MIComposto>(instance) ;
+            MInstancia instance = MformPersistenciaXML.fromXML(tipo, xml);
+            currentInstance = new MInstanceRootModel<MInstancia>(instance);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -231,7 +233,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         StringWriter buffer = new StringWriter();
-                        MIComposto trueInstance = currentInstance.getObject();
+                MInstancia trueInstance = currentInstance.getObject();
 
                         InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
                         InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
@@ -263,6 +265,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         target.add(listTable);
     }
 
+    @Override
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         return new Fragment(id, "breadcrumbForm", this);
     }
