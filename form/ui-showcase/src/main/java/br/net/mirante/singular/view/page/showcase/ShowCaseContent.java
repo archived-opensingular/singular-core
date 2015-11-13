@@ -26,7 +26,7 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
         return (WebMarkupContainer) new Fragment(id, "breadcrumbShowCase", this)
                 .add(new WebMarkupContainer("breadcrumbShowCaseLink")
                         .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
-                                .concat("showcase"))));
+                                .concat("showcase/menu"))));
     }
 
     @Override

@@ -1,62 +1,90 @@
 package br.net.mirante.singular.dao.form;
 
-import java.lang.reflect.Modifier;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import org.reflections.Reflections;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.showcase.CaseBase;
+import br.net.mirante.singular.showcase.ShowCaseTable;
+import br.net.mirante.singular.showcase.ShowCaseTable.ShowCaseGroup;
+import br.net.mirante.singular.showcase.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.view.page.form.examples.MPacoteCurriculo;
 
-@SuppressWarnings({"rawtypes", "serial"})
-public class TemplateRepository {
+public class TemplateRepository extends MDicionarioResolver {
 
-    private static final MDicionario dicionario = MDicionario.create();
-    private static final LinkedList<MTipoComposto> formTemplates;
+    private static final ShowCaseTable showCaseTable = new ShowCaseTable();
+    private static final TemplateRepository templates = new TemplateRepository();
+
+    private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     static {
-        dicionario.carregarPacote(MPacoteCurriculo.class);
-        dicionario.carregarPacote(ExamplePackage.class);
-        //loadAllPackages(dicionario);
-        formTemplates = new LinkedList<MTipoComposto>() {{
-            add((MTipoComposto) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO));
-            add((MTipoComposto) dicionario.getTipo(ExamplePackage.Types.ORDER.name));
-        }};
-    }
+        templates.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
+        templates.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
 
-    @SuppressWarnings("unused")
-    private static void loadAllPackages(MDicionario dicionario) {
-        Reflections reflections = new Reflections("br");
-        Set<Class<? extends MPacote>> subTypes = reflections.getSubTypesOf(MPacote.class);
-        subTypes.stream()
-                .filter(new Predicate<Class<? extends MPacote>>() {
-                    public boolean test(Class<? extends MPacote> mClass) {
-                        int modifiers = mClass.getModifiers();
-                        return !Modifier.isAbstract(modifiers);
+        for (ShowCaseGroup group : showCaseTable.getGroups()) {
+            for (ShowCaseItem item : group.getItens()) {
+                String itemName = group.getGroupName() + " - " + item.getComponentName();
+                for (CaseBase c : item.getCases()) {
+                    if (c.getSubCaseName() == null) {
+                        templates.add(itemName, c.getCaseType());
+                    } else {
+                        templates.add(itemName + " - " + c.getSubCaseName(), c.getCaseType());
                     }
-                })
-                .forEach(mClass -> {
-                            try {
-                                dicionario.carregarPacote(mClass);
-                            } catch (Exception e) {
-                                //throw new RuntimeException(e);
-                            }
-                        }
-                );
+                }
+            }
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<MTipoComposto<?>> formTemplates() {
-        return (List<MTipoComposto<?>>) formTemplates.clone();
+    public static TemplateRepository get() {
+        return templates;
     }
 
-    public static MDicionario dicionario() {
-        return dicionario;
+    private void add(Class<? extends MPacote> packageClass, String typeName) {
+        MDicionario d = MDicionario.create();
+        d.carregarPacote(packageClass);
+        add(d.getTipo(typeName));
+    }
+
+    public void add(MTipo<?> type) {
+        add(type.getNomeSimples(), type);
+    }
+
+    public void add(String displayName, MTipo<?> type) {
+        entries.put(type.getNome(), new TemplateEntry(displayName, type));
+    }
+
+    @Override
+    public Optional<MDicionario> loadDicionaryForType(String typeName) {
+        return Optional.ofNullable(entries.get(typeName)).map(e -> e.getType().getDicionario());
+    }
+
+    public Collection<TemplateEntry> getEntries() {
+        return entries.values();
+    }
+
+    public static class TemplateEntry {
+
+        private final String displayName;
+        private final MTipo<?> type;
+
+        public TemplateEntry(String displayName, MTipo<?> type) {
+            this.displayName = displayName;
+            this.type = type;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public MTipo<?> getType() {
+            return type;
+        }
+
     }
 }

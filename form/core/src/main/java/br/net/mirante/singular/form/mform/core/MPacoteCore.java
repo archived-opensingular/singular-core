@@ -73,8 +73,6 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
-
-        pb.debug();
     }
 
     public static Function<MAtributoEnabled, AtrCore> aspect() {
