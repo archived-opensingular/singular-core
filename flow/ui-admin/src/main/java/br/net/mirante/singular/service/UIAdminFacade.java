@@ -3,6 +3,7 @@ package br.net.mirante.singular.service;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -69,13 +70,13 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
-        return pesquisaService.retrieveMeanTimeByProcess(period, processCode);
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveMeanTimeByProcess(period, processCode, processCodeWithAccess);
     }
 
     @Override
-    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode) {
-        return pesquisaService.retrieveNewInstancesQuantityLastYear(processCode);
+    public List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveNewInstancesQuantityLastYear(processCode, processCodeWithAccess);
     }
 
     @Override
@@ -94,28 +95,28 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public StatusDTO retrieveActiveInstanceStatus(String processCode) {
-        return pesquisaService.retrieveActiveInstanceStatus(processCode);
+    public StatusDTO retrieveActiveInstanceStatus(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveActiveInstanceStatus(processCode, processCodeWithAccess);
     }
 
     @Override
-    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
-        return pesquisaService.retrieveMeanTimeActiveInstances(processCode);
+    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveMeanTimeActiveInstances(processCode, processCodeWithAccess);
     }
 
     @Override
-    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
-        return pesquisaService.retrieveAverageTimesActiveInstances(processCode);
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveAverageTimesActiveInstances(processCode, processCodeWithAccess);
     }
 
     @Override
-    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
-        return pesquisaService.retrieveMeanTimeFinishedInstances(processCode);
+    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveMeanTimeFinishedInstances(processCode, processCodeWithAccess);
     }
 
     @Override
-    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode) {
-        return pesquisaService.retrieveCounterActiveInstances(processCode);
+    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return pesquisaService.retrieveCounterActiveInstances(processCode, processCodeWithAccess);
     }
 
     @Override
@@ -129,8 +130,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<FeedDTO> retrieveAllFeed(String processCode) {
-        return feedService.retrieveFeed(processCode);
+    public List<FeedDTO> retrieveAllFeed(String processCode, Set<String> processCodeWithAccess) {
+        return feedService.retrieveFeed(processCode, processCodeWithAccess);
     }
 
     @Override

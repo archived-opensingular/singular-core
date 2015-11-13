@@ -31,24 +31,24 @@ public class DashboardRow extends Panel {
         columns.add(column);
         return column;
     }
-
-    private String getSmallColumnClass() {
+    
+    public int getColumnsSize() {
         int count = 0;
         for (Component component : columns) {
             if (component.isVisible()) {
                 count++;
             }
         }
-        return count > 1 ? "col-lg-"+(12 / count)+" col-md-" + (12 / count) +" col-sm-"+(12 / count * 2) + " col-sm-12" : " col-xs-12";
+        return count;
+    }
+
+    private String getSmallColumnClass() {
+        int count = getColumnsSize();
+        return count > 1 ? "col-lg-"+(12 / count)+" col-md-" + (12 / count) +" col-sm-"+(12 / count * 2) + " col-xs-12" : " col-xs-12";
     }
 
     private String getMediumColumnClass() {
-        int count = 0;
-        for (Component component : columns) {
-            if (component.isVisible()) {
-                count++;
-            }
-        }
+        int count = getColumnsSize();
         return count > 1 ? "col-md-" + (12 / count) + " col-sm-12" : "col-md-12";
     }
 

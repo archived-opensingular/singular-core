@@ -5,6 +5,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -30,9 +31,9 @@ public class FeedServiceImpl implements FeedService {
     @Override
     @Transactional
     @Cacheable(value = "retrieveFeed", cacheManager = "cacheManager")
-    public List<FeedDTO> retrieveFeed(String processCode) {
+    public List<FeedDTO> retrieveFeed(String processCode, Set<String> processCodeWithAccess) {
         List<FeedDTO> result = new ArrayList<>();
-        List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1), processCode);
+        List<Map<String, String>> medias = pesquisaService.retrieveMeanTimeByProcess(Period.ofYears(-1), processCode, processCodeWithAccess);
         for (Map<String, String> mediaPorProcesso : medias) {
             String sigla = mediaPorProcesso.get("SIGLA");
             BigDecimal media = new BigDecimal(mediaPorProcesso.get("MEAN"));

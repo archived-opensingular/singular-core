@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.Query;
@@ -95,9 +96,9 @@ public class InstanceDAO extends BaseDAO{
                 .uniqueResult()).intValue();
     }
 
-    public List<Map<String, String>> retrieveTransactionQuantityLastYear(String processCode) {
-        List<Map<String, String>> newTransactions = retrieveNewQuantityLastYear(processCode);
-        List<Map<String, String>> finishedTransations = retrieveFinishedQuantityLastYear(processCode);
+    public List<Map<String, String>> retrieveTransactionQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+        List<Map<String, String>> newTransactions = retrieveNewQuantityLastYear(processCode, processCodeWithAccess);
+        List<Map<String, String>> finishedTransations = retrieveFinishedQuantityLastYear(processCode, processCodeWithAccess);
         List<Map<String, String>> transactions = newTransactions.stream().collect(Collectors.toList());
         for (Map<String, String> map : finishedTransations) {
             Map<String, String> m = retrieveResultMap(map, transactions);
@@ -120,7 +121,7 @@ public class InstanceDAO extends BaseDAO{
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, String>> retrieveNewQuantityLastYear(String processCode) {
+    private List<Map<String, String>> retrieveNewQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
         String sql = "SET LANGUAGE Portuguese;"
                 + "SELECT RIGHT('00' + CAST(MONTH(DT_INICIO) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS POS,"
                 + " UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
@@ -129,6 +130,7 @@ public class InstanceDAO extends BaseDAO{
                 + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_INICIO >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
+                + " AND SG_PROCESSO in(:processCodeWithAccess)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
                 + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
@@ -140,11 +142,13 @@ public class InstanceDAO extends BaseDAO{
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }
+        query.setParameterList("processCodeWithAccess", processCodeWithAccess);
+        
         return (List<Map<String, String>>) query.list();
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, String>> retrieveFinishedQuantityLastYear(String processCode) {
+    private List<Map<String, String>> retrieveFinishedQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
         String sql = "SET LANGUAGE Portuguese;"
                 + "SELECT RIGHT('00' + CAST(MONTH(DT_FIM) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS POS,"
                 + " UPPER(SUBSTRING(DATENAME(MONTH, DT_FIM), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS MES,"
@@ -153,6 +157,7 @@ public class InstanceDAO extends BaseDAO{
                 + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_FIM >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
+                + " AND SG_PROCESSO in(:processCodeWithAccess)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
                 + " GROUP BY MONTH(DT_FIM), YEAR(DT_FIM), DATENAME(MONTH, DT_FIM), DATENAME(YEAR, DT_FIM)"
                 + " ORDER BY YEAR(DT_FIM), MONTH(DT_FIM)";
@@ -164,6 +169,7 @@ public class InstanceDAO extends BaseDAO{
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }
+        query.setParameterList("processCodeWithAccess", processCodeWithAccess);
         return (List<Map<String, String>>) query.list();
     }
 
@@ -175,6 +181,7 @@ public class InstanceDAO extends BaseDAO{
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " LEFT JOIN TB_VERSAO_TAREFA SIT ON SIT.CO_VERSAO_TAREFA = DEM.cod_situacao"
                 + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEF.SG_PROCESSO = :processCod"
+                + " AND DEF.SG_PROCESSO = in(:processCodeWithAccess)"
                 + " AND SIT.CO_TIPO_TAREFA = " + TaskType.End.ordinal()
                 + " GROUP BY SIT.NO_TAREFA";
         Query query = getSession().createSQLQuery(sql)
@@ -373,13 +380,13 @@ public class InstanceDAO extends BaseDAO{
         }
     }
 
-    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode, boolean count) {
-        return retrieveMeanTimeInstances(sql, processCode, count, false);
+    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode, boolean count, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(sql, processCode, count, false, processCodeWithAccess);
     }
 
     @SuppressWarnings("unchecked")
     private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode,
-            boolean count, boolean move) {
+            boolean count, boolean move, Set<String> processCodeWithAccess) {
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("POS", IntegerType.INSTANCE)
                 .addScalar("MES", StringType.INSTANCE)
@@ -394,19 +401,19 @@ public class InstanceDAO extends BaseDAO{
         return (List<Map<String, String>>) query.list();
     }
 
-    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, processCode != null), processCode, false);
+    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(true, processCode != null), processCode, false, processCodeWithAccess);
     }
 
-    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, false, true, true), processCode, false, true);
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(true, false, true, true), processCode, false, true, processCodeWithAccess);
     }
 
-    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(false, processCode != null), processCode, false);
+    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(false, processCode != null), processCode, false, processCodeWithAccess);
     }
 
-    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, true, processCode != null), processCode, true);
+    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(mountDateDistSQL(true, true, processCode != null), processCode, true, processCodeWithAccess);
     }
 }

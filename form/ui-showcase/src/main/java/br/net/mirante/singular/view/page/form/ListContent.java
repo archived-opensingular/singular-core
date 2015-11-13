@@ -128,7 +128,6 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
         buildContainer(form.getType());
     }
 
-    @SuppressWarnings("unchecked")
     private void buildContainer(MTipo<?> formType) {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
         IModel<MInstancia> mInstance = new MInstanceRootModel<MInstancia>(formType.novaInstancia());

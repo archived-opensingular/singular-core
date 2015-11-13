@@ -53,7 +53,6 @@ import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
 public class CrudContent extends Content implements SingularWicketContainer<CrudContent, Void> {
-
     private BSDataTable<ExampleDataDTO, String> listTable;
     private List<ExampleDataDTO> dataList = new LinkedList<>();
     private FormVO selectedTemplate;
@@ -185,7 +184,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.show(target);
     }
 
-    @SuppressWarnings("unchecked")
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -229,30 +227,69 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                                 component.setVisible(((FencedFeedbackPanel) component).anyMessage());
                             }
                         }))
-                .add(new AjaxButton("save-btn") {
-                    @Override
+                .add(new SaveButton("save-btn"))
+                .add(new AjaxButton("cancel-btn"){
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        StringWriter buffer = new StringWriter();
-                MInstancia trueInstance = currentInstance.getObject();
-
-                        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-                        InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
-
-                        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-                            target.add(form);
-                            return;
-                        }
-
-                        MformPersistenciaXML.toXML(trueInstance).printTabulado(
-                                new PrintWriter(buffer));
-                        currentModel.setXml(buffer.toString());
-                        dao.save(currentModel);
-                        updateListTableFromModal(target);
-                        inputModal.hide(target);
+                	inputModal.hide(target);
                     }
-                }));
+                })
+                
+        )
+    	;
 
         return inputModal;
+    }
+    
+    private final class SaveButton extends AjaxButton {
+	private SaveButton(String id) {
+	    super(id);
+	}
+
+	@Override
+	protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+	    MInstancia trueInstance = currentInstance.getObject();
+	    MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+
+	    try {
+		addValidationErrors(target, form, trueInstance, rootXml);
+	    } catch (Exception e) {
+		target.add(form);
+		return;
+	    }
+	    currentModel.setXml(printXml(rootXml));
+	    dao.save(currentModel);
+	    updateListTableFromModal(target);
+	    inputModal.hide(target);
+	}
+
+	private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+		MElement rootXml) throws Exception {
+	    runDefaultValidators(form, trueInstance);
+	    validateEmptyForm(form, rootXml);
+	}
+
+	private void validateEmptyForm(Form<?> form, MElement rootXml) {
+	    if (rootXml == null) {
+		form.error(getMessage("form.message.empty").getString());
+		throw new RuntimeException("Has empty form");
+	    }
+	}
+
+	private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
+	    InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+	    InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+
+	    if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+		throw new RuntimeException("Has form errors");
+	    }
+	}
+
+	private String printXml(MElement rootXml) {
+	    StringWriter buffer = new StringWriter();
+	    rootXml.printTabulado(new PrintWriter(buffer));
+	    String xml = buffer.toString();
+	    return xml;
+	}
     }
 
     private void deleteSelected(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {

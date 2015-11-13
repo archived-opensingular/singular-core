@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.wicket.UIAdminSession;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -66,6 +67,10 @@ public abstract class Content extends Panel {
         }
     }
 
+    protected String getUserId() {
+        return UIAdminSession.get().getUserId();
+    }
+    
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         return new WebMarkupContainer(id);
     }

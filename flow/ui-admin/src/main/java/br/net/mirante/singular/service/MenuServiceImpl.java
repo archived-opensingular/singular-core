@@ -3,7 +3,6 @@ package br.net.mirante.singular.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.CategoryMenuDAO;
 import br.net.mirante.singular.dao.GroupDAO;
-import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.dto.GroupDTO;
 import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
@@ -53,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
         Set<Long> definitions = new HashSet<>();
         for (GroupDTO groupDTO : groupDAO.retrieveAll()) {
-            definitions.addAll(authorizationFacade.listProcessDefinitionsWithAccess(groupDTO, userId, AccessLevel.LIST).stream().map(DefinitionDTO::getCod).collect(Collectors.toList()));
+            definitions.addAll(authorizationFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
         }
         List<MenuItemDTO> allCategories = retrieveAllCategories();
         allCategories.forEach(category ->{

@@ -37,27 +37,30 @@ public class DefinitionDAO extends BaseDAO{
         }
     }
 
-    public Object[] retrieveById(Long id) {
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA"
+    public DefinitionDTO retrieveById(Long id) {
+        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla, DEF.CO_GRUPO_PROCESSO AS codGrupo"
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
                 + " WHERE DEF.CO_DEFINICAO_PROCESSO = :id";
         Query query = getSession().createSQLQuery(sql)
-                .addScalar("CODIGO", LongType.INSTANCE)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("SIGLA", StringType.INSTANCE)
-                .setParameter("id", id);
+            .addScalar("cod", LongType.INSTANCE)
+            .addScalar("nome", StringType.INSTANCE)
+            .addScalar("sigla", StringType.INSTANCE)
+            .addScalar("codGrupo", StringType.INSTANCE)
+            .setParameter("id", id)
+            .setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
 
-        return (Object[]) query.uniqueResult();
+        return (DefinitionDTO) query.uniqueResult();
     }
 
     public DefinitionDTO retrieveByKey(String key) {
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla"
+        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla, DEF.CO_GRUPO_PROCESSO AS codGrupo"
             + " FROM TB_DEFINICAO_PROCESSO DEF"
             + " WHERE DEF.SG_PROCESSO = :key";
         Query query = getSession().createSQLQuery(sql)
             .addScalar("cod", LongType.INSTANCE)
             .addScalar("nome", StringType.INSTANCE)
             .addScalar("sigla", StringType.INSTANCE)
+            .addScalar("codGrupo", StringType.INSTANCE)
             .setParameter("key", key)
             .setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
         
@@ -72,8 +75,8 @@ public class DefinitionDAO extends BaseDAO{
             orderByStatement.append(asc ? "ASC" : "DESC");
         }
 
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
-                + "          CAT.NO_CATEGORIA AS CATEGORIA, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
+        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA, "
+                + "          CAT.NO_CATEGORIA AS CATEGORIA,DEF.CO_GRUPO_PROCESSO, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
                 + "          AVG(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM)) AS TEMPO,"
                 + "          (SELECT AVG(SUBDEM.THRO) FROM ("
                 + "             SELECT CO_DEFINICAO_PROCESSO AS COD, MONTH(DT_FIM) AS MES,"
@@ -88,13 +91,14 @@ public class DefinitionDAO extends BaseDAO{
                 + "     INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
                 + "     LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + "   WHERE INS.DT_FIM IS NULL"
-                + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA "
+                + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA,DEF.CO_GRUPO_PROCESSO "
                 + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("CODIGO", LongType.INSTANCE)
                 .addScalar("NOME", StringType.INSTANCE)
                 .addScalar("SIGLA", StringType.INSTANCE)
                 .addScalar("CATEGORIA", StringType.INSTANCE)
+                .addScalar("CO_GRUPO_PROCESSO", LongType.INSTANCE)
                 .addScalar("QUANTIDADE", LongType.INSTANCE)
                 .addScalar("TEMPO", LongType.INSTANCE)
                 .addScalar("THROU", LongType.INSTANCE);

@@ -37,8 +37,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     @Override
     @Transactional
     public DefinitionDTO retrieveById(Long id) {
-        Object[] result = definitionDAO.retrieveById(id);
-        return new DefinitionDTO((Long) result[0], (String) result[1], (String) result[2], null, null, null, null);
+        return definitionDAO.retrieveById(id);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
                 .map(o -> new DefinitionDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3],
-                        (Long) o[4], (Long) o[5], (Long) o[6]))
+                    (Long) o[4],(Long) o[5], (Long) o[6], (Long) o[7]))
                 .collect(Collectors.toList());
     }
 

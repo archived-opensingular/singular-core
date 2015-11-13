@@ -7,6 +7,7 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -36,7 +37,7 @@ public class PesquisaDAO extends BaseDAO{
         return sessionFactory.getCurrentSession();
     }
 
-    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode) {
+    public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
         String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
                 + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
                 + " FROM TB_INSTANCIA_PROCESSO INS"
@@ -45,6 +46,7 @@ public class PesquisaDAO extends BaseDAO{
                 + " WHERE INS.DT_FIM IS NOT NULL"
                 + (period != null ? " AND INS.DT_INICIO >= :startPeriod AND INS.DT_FIM <= :endPeriod" : "")
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "")
+                + " AND DEF.SG_PROCESSO in(:processCodeWithAccess)"
                 + " GROUP BY DEF.SG_PROCESSO, DEF.NO_PROCESSO ORDER BY MEAN DESC";
 
         Query query = getSession().createSQLQuery(sql)
@@ -61,6 +63,7 @@ public class PesquisaDAO extends BaseDAO{
         if (processCode != null) {
             query.setParameter("processCode", processCode);
         }
+        query.setParameterList("processCodeWithAccess", processCodeWithAccess);
 
         query.setMaxResults(15);
 
