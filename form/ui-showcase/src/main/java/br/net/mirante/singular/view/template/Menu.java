@@ -28,6 +28,6 @@ public class Menu extends Panel {
                         .concat("form/crud"))));
         queue(new WebMarkupContainer("showcase")
                 .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
-                        .concat("showcase"))));
+                        .concat("showcase/menu"))));
     }
 }

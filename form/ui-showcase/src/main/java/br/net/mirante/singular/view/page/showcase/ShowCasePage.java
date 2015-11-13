@@ -7,7 +7,7 @@ import org.wicketstuff.annotation.mount.MountPath;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
-@MountPath("showcase")
+@MountPath("showcase/menu")
 @SuppressWarnings("serial")
 public class ShowCasePage extends Template {
 

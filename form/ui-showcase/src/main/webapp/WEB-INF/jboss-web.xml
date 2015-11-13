@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+    <context-root>/showcase</context-root>
+    <session-config>
+        <cookie-config>
+            <path>/showcase</path>
+        </cookie-config>
+    </session-config>
+</jboss-web>
