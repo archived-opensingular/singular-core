@@ -1,9 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
@@ -48,14 +52,14 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 class AttachmentContainer extends BSContainer {
     public static String PARAM_NAME = "FILE-UPLOAD";
     private UploadBehavior uploader;
+    private DownloadBehaviour downloader;
     private FormComponent fileField, nameField, hashField, sizeField, idField;
 
     public AttachmentContainer(IModel<? extends MInstancia> model) {
         super("_attachment_" + model.getObject().getNome());
-        MInstancia instance = model.getObject();
         setupFields(model);
-        this.add(this.uploader = new UploadBehavior(instance));
-
+        this.add(this.uploader = new UploadBehavior(model.getObject()));
+        this.add(this.downloader = new DownloadBehaviour(model.getObject()));
         setup(field(), model);
     }
 
@@ -63,9 +67,7 @@ class AttachmentContainer extends BSContainer {
     protected FormComponent setupFields(IModel<? extends MInstancia> model) {
 	String name = model.getObject().getNome();
 	fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
-	    public Object getObject() {
-		return null;
-	    }
+	    public Object getObject() {return null;}
 
 	    public void setObject(Object object) {}
 
@@ -97,8 +99,10 @@ class AttachmentContainer extends BSContainer {
 		appendInputButton(field));
 	appendTag("div", true, "class='progress' id='progress_" + fieldId + "'", 
 		createProgressBar(field));
+	
 	appendTag("div", true, "class='files' id='files_" + fieldId + "'", 
-		new Label("_", new PropertyModel(model, "fileName")));
+		createDownloadLink(model));
+	
 	appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", 
 		nameField);
 	appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", 
@@ -141,7 +145,7 @@ class AttachmentContainer extends BSContainer {
 			    	+ "    done: function (e, data) {  "
 			    	+ "        console.log(e,data);    "
 			    	+ "        $.each(data.result.files, function (index, file) {  "
-			    	+ "            $('<p/>').text(file.name).appendTo('#files_"+ fieldId+"'); "
+			    	+ "            $('<p/>').append($('<a />').attr('href','"+downloader.getUrl()+"&fileId='+file.fileId+'&fileName='+file.name).text(file.name)).appendTo('#files_"+ fieldId+"'); "
 			    	+ "            $('#" + nameField.getMarkupId()+ "').val(file.name);"
 			    	+ "            $('#" + idField.getMarkupId()+ "').val(file.fileId);"
 			    	+ "            $('#" + hashField.getMarkupId()+ "').val(file.hashSHA1);"
@@ -161,14 +165,38 @@ class AttachmentContainer extends BSContainer {
 		scriptContainer.setRenderBodyOnly(true);
 	}
 
-	private BSContainer createProgressBar(FormComponent field) {
-	    BSContainer progressContainer = new BSContainer<>("_progress_" + field.getId());
-	    progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'",emptyLabel());
-	    return progressContainer;
+    private BSContainer createProgressBar(FormComponent field) {
+	BSContainer progressContainer = new BSContainer<>("_progress_" + field.getId());
+	progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'", emptyLabel());
+	return progressContainer;
+    }
+
+    private final class DownloadLink extends AjaxFallbackLink<Object> {
+	private DownloadLink(String id, IModel<Object> model) {
+	    super(id, model);
+	    setBody(model);
 	}
 
-	private Label emptyLabel() {
-	    return new Label("_", Model.of(""));
+	protected CharSequence getURL() {
+	    return downloader.getUrl();
 	}
+
+	public void onClick(AjaxRequestTarget target) {}
+    }
+    
+    @SuppressWarnings("unchecked")
+    private WebMarkupContainer createDownloadLink(IModel<? extends MInstancia> model) {
+	Link<Object> link = new DownloadLink("_", new PropertyModel(model, "fileName"));
+//	link.setBody(new PropertyModel(model, "fileName"));
+	
+	BSContainer wrapper = new BSContainer<>("_");
+	wrapper.appendTag("a", true, "", link);
+	return wrapper;
+    }
+
+    private Label emptyLabel() {
+	return new Label("_", Model.of(""));
+    }
 	
 }
+
