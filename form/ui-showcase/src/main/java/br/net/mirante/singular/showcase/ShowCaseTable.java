@@ -12,6 +12,8 @@ import com.google.common.base.Throwables;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCombo;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectPickList;
 
 public class ShowCaseTable {
 
@@ -23,6 +25,8 @@ public class ShowCaseTable {
         group("Input")
             .addCase(CaseInputCoreDate.class)
             .addCase(CaseInputCoreInteger.class)
+            .addCase(CaseInputCoreMultiSelectCombo.class)
+            .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreAttachment.class)
         ;
         //@formatter:on
