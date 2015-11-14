@@ -8,6 +8,15 @@ public class MPacote extends MEscopoBase {
 
     private MDicionario dicionario;
 
+    protected MPacote() {
+        this.nome = getClass().getName();
+        MFormUtil.checkNomePacoteValido(nome);
+        if (getClass() == MPacote.class) {
+            throw new SingularFormException("Deve ser utilizado o construtor " + MPacote.class.getSimpleName() + "(String) ou "
+                    + MPacote.class.getSimpleName() + " deve ser derivado");
+        }
+    }
+
     protected MPacote(String nome) {
         MFormUtil.checkNomePacoteValido(nome);
         this.nome = nome;

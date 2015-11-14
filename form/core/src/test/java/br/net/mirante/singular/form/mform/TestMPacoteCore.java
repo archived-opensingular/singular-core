@@ -179,9 +179,9 @@ public class TestMPacoteCore extends TestCaseForm {
         MTipoString tipoX = pb.createTipo("XXXXX", MTipoString.class);
         MAtributo atributo = pb.createTipoAtributo(tipoX, "atTeste", MTipoString.class);
 
-        assertNull(pb.getPacote().getTipoLocalOpcional("YYYYYYY"));
+        assertNull(pb.getPacote().getTipoLocalOpcional("YYYYYYY").orElse(null));
 
-        assertNull(pb.getPacote().getTipoLocalOpcional("atTeste"));
+        assertNull(pb.getPacote().getTipoLocalOpcional("atTeste").orElse(null));
         assertNotNull(pb.getPacote().getTipoLocal("XXXXX"));
         assertNotNull(tipoX.getTipoLocal("atTeste"));
 

@@ -147,8 +147,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new RuntimeException(
-                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -194,7 +194,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -388,7 +388,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             entry.getKey().validate((IValueValidatable) validatable);
         }
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validateInstance(IInstanceValidatable<?> validatable) {
         if (!instanceValidators.isEmpty())
@@ -430,7 +430,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -472,7 +472,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (superTipo != null && (at == null || !at.isSelfReference())) {
             System.out.print(" extend " + suprimirPacote(superTipo.getNome()));
             if (this instanceof MTipoLista) {
-                MTipoLista lista = (MTipoLista) this;
+                MTipoLista<?, ?> lista = (MTipoLista<?, ?>) this;
                 if (lista.getTipoElementos() != null) {
                     System.out.append(" of ").append(suprimirPacote(lista.getTipoElementos().getNome()));
                 }
@@ -488,7 +488,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         atributosDefinidos
             .getAtributos()
             .stream()
-            .filter(att -> getTipoLocalOpcional(att.getNomeSimples()) == null)
+            .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
             .forEach(
                 att -> pad(System.out, nivel + 1).println(
                     "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
