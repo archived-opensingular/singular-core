@@ -22,6 +22,9 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private Integer id;
 
+    /** Mapa de bits de flags. Veja {@link FlagsInstancia} */
+    private int flags;
+
     public MTipo<?> getMTipo() {
         return mTipo;
     }
@@ -305,5 +308,54 @@ public abstract class MInstancia implements MAtributoEnabled {
     protected final String errorMsg(String msgToBeAppended) {
         return "'" + getPathFull() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
             + msgToBeAppended;
+    }
+
+    /**
+     * Signals this Component that it is removed from the Component hierarchy.
+     */
+    final void internalOnRemove() {
+        setFlag(FlagsInstancia.RemovendoInstancia, true);
+        onRemove();
+        if (getFlag(FlagsInstancia.RemovendoInstancia)) {
+            throw new SingularFormException(MInstancia.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+        }
+        removeChildren();
+    }
+
+    /**
+     * Sinaliza essa instancia para remover da hierarquia todos os seus filhos.
+     */
+    void removeChildren() {
+        if (this instanceof ICompositeInstance) {
+            for (MInstancia child : ((ICompositeInstance) this).getChildren()) {
+                child.internalOnRemove();
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Chamado para notificar que a instancia está sendo removida da hierarquia.
+     * </p>
+     * <p>
+     * Métodos derivados devem chamar a implementação super, o lugar mais lógico
+     * para fazer essa chamada é na última linha do método que sobreescreve.
+     * </p>
+     */
+    protected void onRemove() {
+        setFlag(FlagsInstancia.RemovendoInstancia, false);
+    }
+
+    final void setFlag(FlagsInstancia flag, boolean value) {
+        if (value) {
+            flags |= flag.bit();
+        } else {
+            flags &= ~flag.bit();
+        }
+    }
+
+    final boolean getFlag(FlagsInstancia flag) {
+        return (flags & flag.bit()) != 0;
     }
 }
