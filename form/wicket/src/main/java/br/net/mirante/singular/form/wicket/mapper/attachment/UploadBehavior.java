@@ -25,6 +25,15 @@ import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
+/**
+ * Class responsible for handling the temporary upload of files inside the
+ *      {@link AttachmentContainer}. It's worth noting that this class will
+ *      only use the temporary (deafult), handler. Which leaves the definitive
+ *      task into the hands of the developer user.
+ * 
+ * @author Fabricio Buzeto
+ *
+ */
 @SuppressWarnings("serial")
 class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper(); 
@@ -125,28 +134,5 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     public String getUrl() {
 		return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
-    }
-}
-
-// TODO: I believe a wrapper would be useful for this task in the future
-class WebWrapper {
-    private Response _response;
-
-    public void setResponse(Response _response) {
-		this._response = _response;
-    }
-
-    public Response response() {
-		return _response != null ? _response : RequestCycle.get().getResponse();
-    }
-
-    private ServletWebRequest _request;
-
-    public void setRequest(ServletWebRequest _request) {
-		this._request = _request;
-    }
-
-    public ServletWebRequest request() {
-		return _request != null ? _request : (ServletWebRequest) RequestCycle.get().getRequest();
     }
 }

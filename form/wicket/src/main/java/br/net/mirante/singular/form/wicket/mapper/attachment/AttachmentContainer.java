@@ -187,7 +187,6 @@ class AttachmentContainer extends BSContainer {
     @SuppressWarnings("unchecked")
     private WebMarkupContainer createDownloadLink(IModel<? extends MInstancia> model) {
 	Link<Object> link = new DownloadLink("_", new PropertyModel(model, "fileName"));
-//	link.setBody(new PropertyModel(model, "fileName"));
 	
 	BSContainer wrapper = new BSContainer<>("_");
 	wrapper.appendTag("a", true, "", link);
