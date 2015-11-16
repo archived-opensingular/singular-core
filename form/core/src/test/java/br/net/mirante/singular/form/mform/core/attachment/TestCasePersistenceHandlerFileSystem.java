@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 
     

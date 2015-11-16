@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -8,6 +8,8 @@ import java.util.zip.InflaterInputStream;
 import com.google.common.io.CountingInputStream;
 
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
 @SuppressWarnings("serial")

@@ -1,13 +1,11 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +19,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CountingInputStream;
 
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
 /**
@@ -139,34 +138,4 @@ public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHa
 	}
     }
 
-}
-
-@SuppressWarnings("serial")
-class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
-
-    private String hashSHA1, path;
-    private Integer size;
-    
-    public FileSystemAttachmentRef(String hashSHA1, String path, Integer size) {
-	this.hashSHA1 = hashSHA1;
-	this.path = path;
-	this.size = size;
-    }
-    public String getHashSHA1() {
-        return hashSHA1;
-    }
-    public String getPath() {
-        return path;
-    }
-    public Integer getSize() {
-        return size;
-    }
-    @Override
-    public InputStream getContent() {
-	try {
-	    return new InflaterInputStream(new FileInputStream(path));
-	} catch (FileNotFoundException e) {
-	    throw Throwables.propagate(e);
-	}
-    }
 }

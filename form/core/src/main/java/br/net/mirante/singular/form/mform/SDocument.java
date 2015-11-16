@@ -9,7 +9,7 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 
 /**
  * <p>
