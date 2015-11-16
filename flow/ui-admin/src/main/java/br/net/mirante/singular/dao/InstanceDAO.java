@@ -181,7 +181,6 @@ public class InstanceDAO extends BaseDAO{
                 + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " LEFT JOIN TB_VERSAO_TAREFA SIT ON SIT.CO_VERSAO_TAREFA = DEM.cod_situacao"
                 + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEF.SG_PROCESSO = :processCod"
-                + " AND DEF.SG_PROCESSO = in(:processCodeWithAccess)"
                 + " AND SIT.CO_TIPO_TAREFA = " + TaskType.End.ordinal()
                 + " GROUP BY SIT.NO_TAREFA";
         Query query = getSession().createSQLQuery(sql)
