@@ -10,18 +10,18 @@ import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAtt
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 
-    
-    @Rule public TemporaryFolder rootTmp = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder rootTmp = new TemporaryFolder();
     private File tmpFolder;
-    
-    @Before public void createFolders() throws Exception{
-	tmpFolder = rootTmp.newFolder("tempSingular"+Math.random());
+
+    @Before
+    public void createFolders() throws Exception {
+        tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
     }
-    
-    
+
     @Override
     protected IAttachmentPersistenceHandler setupHandler() {
-	return new FileSystemAttachmentHandler(tmpFolder);
+        return new FileSystemAttachmentHandler(tmpFolder);
     }
 
 }
