@@ -9,8 +9,13 @@ import java.util.TreeMap;
 
 import com.google.common.base.Throwables;
 
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCheckbox;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCombo;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectPickList;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectComboRadio;
 
 public class ShowCaseTable {
 
@@ -21,7 +26,13 @@ public class ShowCaseTable {
         // @formatter:off
         group("Input")
             .addCase(CaseInputCoreDate.class)
-            .addCase(CaseInputCoreInteger.class);
+            .addCase(CaseInputCoreInteger.class)
+            .addCase(CaseInputCoreSelectComboRadio.class)
+            .addCase(CaseInputCoreMultiSelectCombo.class)
+            .addCase(CaseInputCoreMultiSelectCheckbox.class)
+            .addCase(CaseInputCoreMultiSelectPickList.class)
+            .addCase(CaseInputCoreAttachment.class)
+        ;
         //@formatter:on
     }
 

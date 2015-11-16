@@ -1,26 +1,20 @@
 package br.net.mirante.singular.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CategoryMenuDAO {
+import br.net.mirante.singular.dto.MenuItemDTO;
 
-    @Inject
-    private SessionFactory sessionFactory;
+@Repository
+public class CategoryMenuDAO extends BaseDAO{
 
     private enum ResultColumn {
         definitionId(0, "COD"),
@@ -47,20 +41,13 @@ public class CategoryMenuDAO {
         }
     }
 
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
     public List<MenuItemDTO> retrieveAll() {
-        List<MenuItemDTO> categories = new ArrayList<>();
         Map<Long, MenuItemDTO> categoriesMap = mountCategories(retrieveCategories());
-        categories.addAll(categoriesMap.entrySet().stream()
+        return categoriesMap.entrySet().stream()
                 .map(Map.Entry::getValue)
-                .collect(Collectors.toList()));
-        return categories;
+                .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
     private Map<Long, MenuItemDTO> mountCategories(List<Object[]> rawCategoies) {
         Map<Long, MenuItemDTO> categories = new HashMap<>();
         for (Object[] category : rawCategoies) {

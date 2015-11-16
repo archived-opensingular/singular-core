@@ -4,11 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.base.Throwables;
-
 import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SingularFormException;
 
 /**
  * Representa um exemplo de um componente ou solução junto com os respectivo
@@ -49,29 +48,26 @@ public class CaseBase {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends CaseCode> getMainClass() {
-        String target = getClass().getName() + "Code";
+    private Class<? extends MPacote> getPackage() {
+        String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);
-            if (!CaseCode.class.isAssignableFrom(c)) {
-                throw new RuntimeException(target + " não extende " + CaseCode.class.getName());
+            if (!MPacote.class.isAssignableFrom(c)) {
+                throw new RuntimeException(target + " não extende " + MPacote.class.getName());
             }
-            return (Class<? extends CaseCode>) c;
+            return (Class<? extends MPacote>) c;
         } catch (ClassNotFoundException e) {
-            throw Throwables.propagate(e);
+            throw new SingularFormException("É esperado uma classe com o nome " + target + " como complemento de " + getClass().getName(),
+                    e);
         }
     }
 
     public MTipo<?> getCaseType() {
         MDicionario dicionario = MDicionario.create();
+        MPacote p = dicionario.carregarPacote(getPackage());
 
-        PacoteBuilder pb = dicionario.criarNovoPacote(getClass().getName());
-
-        try {
-            return getMainClass().newInstance().createForm(pb);
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw Throwables.propagate(e);
-        }
+        return p.getTipoLocalOpcional("testForm")
+                .orElseThrow(() -> new SingularFormException("O pacote " + p.getNome() + " não define o tipo para exibição 'testForm'"));
     }
 
     public Optional<ResourceRef> getDescriptionResourceName() {
@@ -79,7 +75,7 @@ public class CaseBase {
     }
 
     public Optional<ResourceRef> getMainSourceResourceName() {
-        return ResourceRef.forSource(getMainClass());
+        return ResourceRef.forSource(getPackage());
     }
 
     public List<ResourceRef> getAditionalSources() {

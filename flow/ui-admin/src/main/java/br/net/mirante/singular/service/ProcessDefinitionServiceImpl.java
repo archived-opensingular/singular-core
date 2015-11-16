@@ -14,10 +14,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.dao.DefinitionDAO;
-import br.net.mirante.singular.dao.DefinitionDTO;
 import br.net.mirante.singular.dao.InstanceDAO;
-import br.net.mirante.singular.dao.InstanceDTO;
-import br.net.mirante.singular.dao.MetaDataDTO;
+import br.net.mirante.singular.dto.DefinitionDTO;
+import br.net.mirante.singular.dto.InstanceDTO;
+import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
@@ -31,14 +31,13 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     @Inject
     private InstanceDAO instanceDAO;
 
-    @Value("#{admin['retrieve.process.diagram.restful.url']}")
+    @Value("#{singularAdmin['retrieve.process.diagram.restful.url']}")
     private String retrieveProcessDiagramRestURL;
 
     @Override
     @Transactional
     public DefinitionDTO retrieveById(Long id) {
-        Object[] result = definitionDAO.retrieveById(id);
-        return new DefinitionDTO((Long) result[0], (String) result[1], (String) result[2], null, null, null, null);
+        return definitionDAO.retrieveById(id);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
         return results.stream()
                 .map(o -> new DefinitionDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3],
-                        (Long) o[4], (Long) o[5], (Long) o[6]))
+                    (Long) o[4],(Long) o[5], (Long) o[6], (Long) o[7]))
                 .collect(Collectors.toList());
     }
 

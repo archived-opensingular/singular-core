@@ -1,7 +1,11 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -11,20 +15,19 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.model.StringResourceModel;
 
+import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
+import br.net.mirante.singular.service.FlowAuthorizationFacade;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
@@ -35,8 +38,13 @@ public class DashboardContent extends Content {
     @Inject
     private UIAdminFacade uiAdminFacade;
 
+    @Inject
+    private FlowAuthorizationFacade authorizationFacade;
+
     private String processDefinitionCode;
 
+    private RepeatingView rows;
+    
     public DashboardContent(String id, String processDefinitionCode) {
         super(id, false, false, processDefinitionCode != null, false);
         this.processDefinitionCode = processDefinitionCode;
@@ -60,7 +68,7 @@ public class DashboardContent extends Content {
     protected WebMarkupContainer getInfoLink(String id) {
         WebMarkupContainer infoLink = new WebMarkupContainer(id);
         infoLink.add($b.attr("data-original-title",
-                new StringResourceModel("label.content.info.title", this).getString()));
+                getString("label.content.info.title")));
         infoLink.add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process")
                 .concat("?").concat(ProcessosPage.PROCESS_DEFINITION_ID_PARAM)
                 .concat("=").concat(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode))));
@@ -84,129 +92,137 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        addStatusesPanel();
-        addWelcomeChart();
-        addDefaultCharts();
-        addSpecificCharts();
-        add(new FeedPanel("feed", processDefinitionCode));
+        add(rows = new RepeatingView("rows"));
+        if(processDefinitionCode == null || authorizationFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)){
+            Set<String> processCodeWithAccess = authorizationFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
+            if(!processCodeWithAccess.isEmpty()){
+                addStatusesPanel(processCodeWithAccess);
+                addWelcomeChart(processCodeWithAccess);
+                addDefaultCharts(processCodeWithAccess);
+                
+                addSpecificCharts(processCodeWithAccess);
+            }
+        } else {
+            error(getString("error.user.without.access.to.process"));
+        }
     }
 
-    private void addDefaultCharts() {
-        add(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
-                "label.chart.new.instance.quantity.subtitle", new ImmutablePair<>("QTD_NEW",
-                new StringResourceModel("label.chart.new.instance.quantity.new", this).getString()),
-                "MES", "smoothedLine") {
+    protected DashboardRow addDashboardRow(){
+        DashboardRow dashboardRow = new DashboardRow(rows.newChildId());
+        rows.add(dashboardRow);
+        return dashboardRow;
+    }
+    
+    protected DashboardRow getLastRow(){
+        return (DashboardRow) rows.get(String.valueOf(rows.size()-1));
+    }
+    
+    private void addDefaultCharts(Set<String> processCodeWithAccess) {
+        DashboardRow row = addDashboardRow();
+        row.addMediumColumn(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
+            "label.chart.new.instance.quantity.subtitle", ImmutablePair.of("QTD_NEW", getString("label.chart.new.instance.quantity.new")),
+            "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode);
+                return uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
             }
-        }.addGraph("QTD_CLS", new StringResourceModel("label.chart.new.instance.quantity.finished", this).getString())
-                .addLegend());
-        add(new SerialChartPanel("active-instances-quantity-chart", "label.chart.active.instance.quantity.title",
-                "label.chart.active.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
+        }.addGraph("QTD_CLS", getString("label.chart.new.instance.quantity.finished")).addLegend());
+        
+        row.addMediumColumn(new SerialChartPanel("active-instances-quantity-chart", "label.chart.active.instance.quantity.title",
+            "label.chart.active.instance.quantity.subtitle", "QUANTIDADE", "MES", "smoothedLine") {
             @Override
             protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return uiAdminFacade.retrieveCounterActiveInstances(processDefinitionCode);
-            }
-        });
-        add(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
-                "label.chart.status.hour.quantity.subtitle",
-                processDefinitionCode == null
-                        ? new StringResourceModel("label.chart.status.hour.quantity.default", this).getString() : null,
-                "QUANTIDADE", "SITUACAO", true, true) {
-            @Override
-            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return uiAdminFacade.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(),
-                        processDefinitionCode != null ? processDefinitionCode : "LiberarLancamentoAtv");
-            }
-        });
-        add(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
-                "label.chart.mean.time.task.subtitle", processDefinitionCode == null
-                        ? new StringResourceModel("label.chart.mean.time.task.default", this).getString() : null,
-                "MEAN", "NOME", true, false) {
-            @Override
-            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return uiAdminFacade.retrieveMeanTimeByTask(periodType.getPeriod(),
-                        processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
-            }
-        });
-        add(new SerialChartPanel("finished-instances-mean-time-chart",
-                "label.chart.finished.instances.mean.time.title",
-                "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine",
-                processDefinitionCode == null
-                        ? new StringResourceModel("label.chart.mean.time.task.default", this).getString() : null) {
-            @Override
-            protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                return uiAdminFacade.retrieveMeanTimeFinishedInstances(
-                        processDefinitionCode != null ? processDefinitionCode : "PrevisaoFluxoCaixa");
+                return uiAdminFacade.retrieveCounterActiveInstances(processDefinitionCode, processCodeWithAccess);
             }
         });
     }
 
-    private void addStatusesPanel() {
-        IStatusDTO statusDTO = uiAdminFacade.retrieveActiveInstanceStatus(processDefinitionCode);
-        add(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
+    private void addStatusesPanel(Set<String> processCodeWithAccess) {
+        IStatusDTO statusDTO = uiAdminFacade.retrieveActiveInstanceStatus(processDefinitionCode, processCodeWithAccess);
+        
+        DashboardRow row = addDashboardRow();
+        row.add($b.classAppender("margin-top-10"));
+        row.addSmallColumn(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
-        add(new StatusPanel("active-average-status-panel", "label.active.average.status",
-                statusDTO.getAverageTimeInDays()).setUnit(
-                new StringResourceModel("label.active.average.status.unit", this).getString())
+        row.addSmallColumn(new StatusPanel("active-average-status-panel", "label.active.average.status",
+                statusDTO.getAverageTimeInDays())
+                .setUnit(getString("label.active.average.status.unit"))
                 .setIcon(Icone.HOURGLASS).setColor(Color.PURPLE_PLUM));
-        add(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
+        row.addSmallColumn(new StatusPanel("opened-instances-status-panel", "label.opened.instances.status",
                 statusDTO.getOpenedInstancesLast30Days()));
-        add(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
+        row.addSmallColumn(new StatusPanel("finished-instances-status-panel", "label.finished.instances.status",
                 statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
     }
 
-    private void addWelcomeChart() {
-        WebMarkupContainer globalContainer = new WebMarkupContainer("welcomeChartGlobal");
-        WebMarkupContainer localContainer = new WebMarkupContainer("welcomeChartLocal");
+    private void addWelcomeChart(Set<String> processCodeWithAccess) {
         if (processDefinitionCode == null) {
-            globalContainer.add(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
+            addDashboardRow().addMediumColumn(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null);
+                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null, processCodeWithAccess);
                 }
             });
-            localContainer.add($b.visibleIf($m.ofValue(false)));
         } else {
-            localContainer.add(new SerialChartPanel("active-instances-mean-time-chart",
+            DashboardRow row = addDashboardRow();
+            row.addMediumColumn(new SerialChartPanel("active-instances-mean-time-chart",
                     "label.chart.active.instances.mean.time.title", "label.chart.active.instances.mean.time.subtitle",
                     "TEMPO", "MES", "smoothedLine") {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveMeanTimeActiveInstances(processDefinitionCode);
+                    return uiAdminFacade.retrieveMeanTimeActiveInstances(processDefinitionCode, processCodeWithAccess);
                 }
             });
-            localContainer.add(new PieChartPanel("task-count-chart", "label.chart.count.task.title",
+            row.addMediumColumn(new PieChartPanel("task-count-chart", "label.chart.count.task.title",
                     "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                     return uiAdminFacade.retrieveStatsByActiveTask(processDefinitionCode);
                 }
             });
-            globalContainer.add($b.visibleIf($m.ofValue(false)));
         }
-        add(globalContainer);
-        add(localContainer);
     }
 
-    private void addSpecificCharts() {
-        WebMarkupContainer tasksTimeChartContainer = new WebMarkupContainer("tasksTimeChartContainer");
+    private void addSpecificCharts(Set<String> processCodeWithAccess) {
         if (processDefinitionCode != null) {
-            tasksTimeChartContainer.add(new AreaChartPanel("active-instances-average-time-chart",
+            DashboardRow row = addDashboardRow();
+            row.addMediumColumn(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
+                "label.chart.mean.time.task.subtitle", null, "MEAN", "NOME", true, false) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return uiAdminFacade.retrieveMeanTimeByTask(periodType.getPeriod(), processDefinitionCode);
+                }
+            });
+            row.addMediumColumn(new FeedPanel("feed", processDefinitionCode, processCodeWithAccess));
+            row = addDashboardRow();
+            row.addMediumColumn(new SerialChartPanel("finished-instances-mean-time-chart",
+                "label.chart.finished.instances.mean.time.title",
+                "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine", null) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return uiAdminFacade.retrieveMeanTimeFinishedInstances(processDefinitionCode, processCodeWithAccess);
+                }
+            });
+            row.addMediumColumn(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
+                "label.chart.status.hour.quantity.subtitle", null, "QUANTIDADE", "SITUACAO", true, true) {
+                @Override
+                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+                    return uiAdminFacade.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(), processDefinitionCode);
+                }
+            });
+            row = addDashboardRow();
+            row.addMediumColumn(new AreaChartPanel("active-instances-average-time-chart",
                     "label.chart.active.instances.average.time.title",
                     "label.chart.active.instances.average.time.subtitle",
-                    new ImmutablePair<>("TEMPO",
-                            new StringResourceModel("label.chart.active.instances.average.time.3", this).getString()),
+                    ImmutablePair.of("TEMPO", getString("label.chart.active.instances.average.time.3")),
                     "DATA", false, true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveAverageTimesActiveInstances(processDefinitionCode);
+                    return uiAdminFacade.retrieveAverageTimesActiveInstances(processDefinitionCode, processCodeWithAccess);
                 }
-            }.addGraph("TEMPO2", new StringResourceModel("label.chart.active.instances.average.time.6", this)
-                    .getString()));
-            tasksTimeChartContainer.add(new PieChartPanel("active-task-mean-time-chart",
+            }.addGraph("TEMPO2", getString("label.chart.active.instances.average.time.6")));
+            
+            row.addMediumColumn(new PieChartPanel("active-task-mean-time-chart",
                     "label.chart.active.task.mean.time.title",
                     "label.chart.active.task.mean.time.subtitle", null, "TEMPO", "NOME", false, false) {
                 @Override
@@ -215,8 +231,7 @@ public class DashboardContent extends Content {
                 }
             });
         } else {
-            tasksTimeChartContainer.add($b.visibleIf($m.ofValue(false)));
+            addDashboardRow().addMediumColumn(new FeedPanel("feed", processDefinitionCode, processCodeWithAccess));
         }
-        add(tasksTimeChartContainer);
     }
 }

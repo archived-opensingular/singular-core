@@ -27,11 +27,16 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 class UploadBehavior extends Behavior implements IResourceListener {
+    transient protected WebWrapper w = new WebWrapper();
     private Component component;
     transient private MInstancia instance;
 
     public UploadBehavior(MInstancia instance) {
         this.instance = instance;
+    }
+
+    public void setWebWrapper(WebWrapper w) {
+        this.w = w;
     }
 
     @Override
@@ -42,31 +47,10 @@ class UploadBehavior extends Behavior implements IResourceListener {
     @Override
     public void onResourceRequested() {
         try {
-            handleRequest(request(), response());
+            handleRequest(w.request(), w.response());
         } catch (FileUploadException e) {
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    //TODO: I believe a wrapper would be useful for this task in the future
-    private Response _response;
-
-    public void set_response(Response _response) {
-        this._response = _response;
-    }
-
-    private Response response() {
-        return _response != null ? _response : RequestCycle.get().getResponse();
-    }
-
-    private ServletWebRequest _request;
-
-    public void set_request(ServletWebRequest _request) {
-        this._request = _request;
-    }
-
-    private ServletWebRequest request() {
-        return _request != null ? _request : (ServletWebRequest) RequestCycle.get().getRequest();
     }
 
     private void handleRequest(ServletWebRequest request, Response response) throws FileUploadException {
@@ -76,8 +60,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
     }
 
     private MultipartServletWebRequest extractMultipartRequest(ServletWebRequest request) throws FileUploadException {
-        MultipartServletWebRequest multipart = request.newMultipartWebRequest(Bytes.MAX,
-                component.getPage().getId());
+        MultipartServletWebRequest multipart = request.newMultipartWebRequest(Bytes.MAX, component.getPage().getId());
         multipart.parseFileParts();
         RequestCycle.get().setRequest(multipart);
         return multipart;
@@ -85,7 +68,8 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     private void validateFormType(ServletWebRequest request) {
         if (!request.getContainerRequest().getContentType().startsWith("multipart/form-data"))
-            throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_BAD_REQUEST, "Request is not Multipart as Expected");
+            throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_BAD_REQUEST,
+                    "Request is not Multipart as Expected");
     }
 
     private void handleFiles(MultipartServletWebRequest request, PrintWriter writer) {
@@ -107,7 +91,6 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     private void processFileItem(JSONArray fileGroup, FileItem item) throws Exception {
         if (!item.isFormField()) {
-            // writeFile(item); TODO:
             SDocument rootDocument = instance.getDocument();
             IAttachmentPersistenceHandler handler = rootDocument.getAttachmentPersistenceHandler();
             IAttachmentRef ref = handler.addAttachment(item.getInputStream());
@@ -142,5 +125,28 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     public String getUrl() {
         return component.urlFor(this, IResourceListener.INTERFACE, new PageParameters()).toString();
+    }
+}
+
+// TODO: I believe a wrapper would be useful for this task in the future
+class WebWrapper {
+    private Response _response;
+
+    public void setResponse(Response _response) {
+        this._response = _response;
+    }
+
+    public Response response() {
+        return _response != null ? _response : RequestCycle.get().getResponse();
+    }
+
+    private ServletWebRequest _request;
+
+    public void setRequest(ServletWebRequest _request) {
+        this._request = _request;
+    }
+
+    public ServletWebRequest request() {
+        return _request != null ? _request : (ServletWebRequest) RequestCycle.get().getRequest();
     }
 }

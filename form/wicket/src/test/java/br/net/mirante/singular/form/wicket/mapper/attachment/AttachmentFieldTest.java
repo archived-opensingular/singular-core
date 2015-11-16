@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,9 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.wicket.TestApp;
-import br.net.mirante.singular.form.wicket.TestPage;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 @SuppressWarnings("rawtypes")
 public class AttachmentFieldTest {
@@ -80,8 +81,6 @@ public class AttachmentFieldTest {
 	Component attachmentComponent = page.get(formField(form, "_attachment_fileField"));
 	List<UploadBehavior> behaviours = attachmentComponent.getBehaviors(UploadBehavior.class);
 	assertThat(behaviours).hasSize(1);
-	//TODO: test the behaviour?
-	//TODO: can we test the url?
     }
     
     private Object findValueInList(List<MISimples> list, String propName){
@@ -92,15 +91,21 @@ public class AttachmentFieldTest {
     }
 
     public Optional<String> findId(MarkupContainer container, String leafName) {
-	for (int i = 0; i < container.size(); i++) {
-	    Component c = container.get(i);
-	    if (c.getId().equals(leafName)) {
-		return Optional.of(leafName);
-	    } else if (c instanceof MarkupContainer) {
-		Optional<String> found = findId((MarkupContainer) c, leafName);
-		if (found.isPresent()) {
-		    return Optional.of(c.getId() + ":" + found.get());
-		}
+	Iterator<Component> it = container.iterator();
+	while(it.hasNext()){
+	    Optional<String> found = findInComponent(leafName, it.next());
+	    if(found.isPresent()){ return found; }
+	}
+	return Optional.empty();
+    }
+
+    private Optional<String> findInComponent(String leafName, Component c) {
+	if (c.getId().equals(leafName)) {
+	    return Optional.of(leafName);
+	} else if (c instanceof MarkupContainer) {
+	    Optional<String> found = findId((MarkupContainer) c, leafName);
+	    if (found.isPresent()) {
+		return Optional.of(c.getId() + ":" + found.get());
 	    }
 	}
 	return Optional.empty();
