@@ -21,11 +21,20 @@ public class CaseInputCoreMultiSelectPickListPackage extends MPacote {
                  .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
         MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub", tipoContato);
+/*
+        MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub","tipoContrato")
+                .withMultiSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+
+        MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub","tipoContrato")
+                .withMultiSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
 
-        //MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub", "tipoContato", MTipoString.class);
-        //infoPub.getTipoElemento().withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub", "tipoContato", MTipoString.class);
+        infoPub.getTipoElemento().withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
+        MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoSelecaoMultiplaOf("infoPub", "tipoContato", MTipoString.class);
+        infoPub.getTipoElemento().withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+*/
         infoPub
             .withView(MSelecaoMultiplaPorPicklistView::new)
             .as(AtrBasic::new).label("Informações Públicas");
