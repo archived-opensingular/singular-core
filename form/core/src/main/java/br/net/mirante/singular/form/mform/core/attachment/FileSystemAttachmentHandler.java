@@ -23,6 +23,28 @@ import com.google.common.io.CountingInputStream;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
+/**
+ * This handler persists uploaded files in the filesystem. You mus inform which
+ * 	folder should be used to store files into.
+ * 	This works great not only for temporary files but also for definitive 
+ *      files.
+ * 	It's worth noticing that files are stored with its content SHA-1 hash as
+ *      its name. Also, all files are stored ZIP compressed. 	
+ * 
+ * 	Usage is as follows:
+ * 
+ * <code>
+ * 	SDocument sdocument = instance.getDocument();
+ * 	sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
+ *	    public IAttachmentPersistenceHandler get() {
+ *	         return new FileSystemAttachmentHandler("/tmp");
+ *          } 
+ *      });
+ * </code>
+ * 
+ * @author Fabricio Buzeto
+ *
+ */
 @SuppressWarnings("serial")
 public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHandler {
 
