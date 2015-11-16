@@ -176,13 +176,13 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         subBloco.getField("subArquivo1", MIAttachment.class).setContent(conteudo1);
         subBloco.getField("subArquivo2", MIAttachment.class).setContent(conteudo2);
 
-        assertBinariosAssociadosDocument(anexos, 2);
+        assertBinariosAssociadosDocument(bloco, 2);
 
         bloco.setValor("subBloco.subArquivo2", null);
-        assertBinariosAssociadosDocument(anexos, 1);
+        assertBinariosAssociadosDocument(bloco, 1);
 
         bloco.setValor("subBloco", null);
-        assertBinariosAssociadosDocument(anexos, 0);
+        assertBinariosAssociadosDocument(bloco, 0);
 
         // Testa apenas com lista e subBloco interferido um no outro
         bloco = tipoBloco.novaInstancia();
@@ -205,7 +205,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertBinariosAssociadosDocument(anexos, 2);
 
         bloco.setValor("anexos", null); // conteudo2, conteudo3
-        assertBinariosAssociadosDocument(anexos, 1);
+        assertBinariosAssociadosDocument(anexos, 2);
 
     }
 

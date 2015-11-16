@@ -150,6 +150,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
+        E child = valores.get(index);
+        child.internalOnRemove();
         return valores.remove(index);
     }
 
