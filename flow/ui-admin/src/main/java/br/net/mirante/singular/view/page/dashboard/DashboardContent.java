@@ -120,7 +120,7 @@ public class DashboardContent extends Content {
     }
     
     private void addDefaultCharts(Set<String> processCodeWithAccess) {
-        DashboardRow row = null;
+        DashboardRow row;
         row = addDashboardRow();
         row.addMediumColumn(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
             "label.chart.new.instance.quantity.subtitle", ImmutablePair.of("QTD_NEW", getString("label.chart.new.instance.quantity.new")),
@@ -190,9 +190,7 @@ public class DashboardContent extends Content {
         if (processDefinitionCode != null) {
             DashboardRow row = getLastRow();
             row.addMediumColumn(new PieChartPanel("task-mean-time-chart", "label.chart.mean.time.task.title",
-                "label.chart.mean.time.task.subtitle", processDefinitionCode == null
-                ? getString("label.chart.mean.time.task.default") : null,
-                    "MEAN", "NOME", true, false) {
+                "label.chart.mean.time.task.subtitle", null, "MEAN", "NOME", true, false) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                     return uiAdminFacade.retrieveMeanTimeByTask(periodType.getPeriod(), processDefinitionCode);
@@ -201,17 +199,14 @@ public class DashboardContent extends Content {
             row = addDashboardRow();
             row.addMediumColumn(new SerialChartPanel("finished-instances-mean-time-chart",
                 "label.chart.finished.instances.mean.time.title",
-                "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine",
-                processDefinitionCode == null ? getString("label.chart.mean.time.task.default") : null) {
+                "label.chart.finished.instances.mean.time.subtitle", "TEMPO", "MES", "smoothedLine", null) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                     return uiAdminFacade.retrieveMeanTimeFinishedInstances(processDefinitionCode, processCodeWithAccess);
                 }
             });
             row.addMediumColumn(new PieChartPanel("status-hours-quantity-chart", "label.chart.status.hour.quantity.title",
-                "label.chart.status.hour.quantity.subtitle",
-                processDefinitionCode == null ? getString("label.chart.status.hour.quantity.default") : null,
-                    "QUANTIDADE", "SITUACAO", true, true) {
+                "label.chart.status.hour.quantity.subtitle", null, "QUANTIDADE", "SITUACAO", true, true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
                     return uiAdminFacade.retrieveEndStatusQuantityByPeriod(periodType.getPeriod(), processDefinitionCode);
