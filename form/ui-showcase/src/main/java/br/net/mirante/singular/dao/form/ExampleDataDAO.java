@@ -25,7 +25,7 @@ public class ExampleDataDAO {
     public void save(ExampleDataDTO o) {
         session().saveOrUpdate(o);
     }
-    
+
     @Transactional
     public void remove(ExampleDataDTO o) {
         session().delete(o);
