@@ -23,6 +23,7 @@ import br.net.mirante.singular.form.mform.core.attachment.InMemoryAttachmentPers
  *
  * @author Daniel C. Bordin
  */
+@SuppressWarnings("serial")
 public class SDocument implements Serializable {
 
     private MInstancia root;

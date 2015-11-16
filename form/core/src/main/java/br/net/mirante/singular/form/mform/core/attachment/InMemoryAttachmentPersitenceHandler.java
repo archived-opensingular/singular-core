@@ -26,6 +26,7 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
  *
  * @author Daniel C. Bordin
  */
+@SuppressWarnings("serial")
 public class InMemoryAttachmentPersitenceHandler extends AbstractAttachmentPersistenceHandler {
 
     private Map<String, InMemoryAttachmentRef> attachments;
