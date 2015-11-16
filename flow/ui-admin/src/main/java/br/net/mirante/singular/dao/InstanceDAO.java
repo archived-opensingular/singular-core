@@ -226,7 +226,7 @@ public class InstanceDAO extends BaseDAO{
                 + " FROM TB_INSTANCIA_PROCESSO INS"
                 + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
+                + " WHERE INS.DT_FIM IS NULL "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("processCode", StringType.INSTANCE)
@@ -247,7 +247,7 @@ public class InstanceDAO extends BaseDAO{
                 + " FROM TB_DEFINICAO_PROCESSO DEF"
                 + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_INICIO >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + " WHERE INS.DT_INICIO >= (GETDATE() - 30) "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("QUANTIDADE", LongType.INSTANCE);
@@ -263,7 +263,7 @@ public class InstanceDAO extends BaseDAO{
                 + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + "   LEFT JOIN TB_VERSAO_TAREFA TAR ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM >= (GETDATE() - 30) AND DEF.se_ativo = 1"
+                + " WHERE INS.DT_FIM >= (GETDATE() - 30) "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
                 .addScalar("QUANTIDADE", LongType.INSTANCE);

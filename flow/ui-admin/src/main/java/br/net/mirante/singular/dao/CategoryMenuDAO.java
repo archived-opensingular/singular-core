@@ -74,7 +74,7 @@ public class CategoryMenuDAO extends BaseDAO{
                 + " INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
                 + " INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
+                + " WHERE INS.DT_FIM IS NULL "
                 + " GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO,"
                 + " CAT.CO_CATEGORIA, CAT.NO_CATEGORIA";
         Query query = getSession().createSQLQuery(sql)
