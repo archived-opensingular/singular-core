@@ -63,9 +63,9 @@ public class InstanceDAO extends BaseDAO{
                 + " DATEDIFF(SECOND, DT_INICIO, GETDATE()) AS DELTA, DT_INICIO AS DIN,"
                 + " DATEDIFF(SECOND, data_situacao_atual, GETDATE()) AS DELTAS, data_situacao_atual AS DS,"
                 + " PES.nome_guerra AS USUARIO"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
+                + "  INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + "  INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = INS.cod_pessoa_alocada"
                 + " WHERE INS.DT_FIM IS NULL AND PRO.CO_DEFINICAO_PROCESSO = :id " + orderByStatement.toString();
         Query query = getSession().createSQLQuery(sql)
@@ -87,10 +87,10 @@ public class InstanceDAO extends BaseDAO{
     public int countAll(Long id) {
         return ((Number) getSession().createSQLQuery(
                 "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO)"
-                        + " FROM TB_INSTANCIA_PROCESSO INS"
-                        + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                        + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                        + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
+                        + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
+                        + "  INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                        + "  INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                        + "  LEFT JOIN "+DBSCHEMA+"TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
                         + " WHERE INS.DT_FIM IS NULL AND PRO.CO_DEFINICAO_PROCESSO = :id")
                 .setParameter("id", id)
                 .uniqueResult()).intValue();
@@ -126,9 +126,9 @@ public class InstanceDAO extends BaseDAO{
                 + "SELECT RIGHT('00' + CAST(MONTH(DT_INICIO) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS POS,"
                 + " UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
                 + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_NEW"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
+                + " LEFT JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_INICIO >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
                 + " AND SG_PROCESSO in(:processCodeWithAccess)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
@@ -153,9 +153,9 @@ public class InstanceDAO extends BaseDAO{
                 + "SELECT RIGHT('00' + CAST(MONTH(DT_FIM) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS POS,"
                 + " UPPER(SUBSTRING(DATENAME(MONTH, DT_FIM), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS MES,"
                 + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_CLS"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
+                + " LEFT JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE DT_FIM >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
                 + " AND SG_PROCESSO in(:processCodeWithAccess)"
                 + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
@@ -176,10 +176,10 @@ public class InstanceDAO extends BaseDAO{
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCod) {
         String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_INSTANCIA_PROCESSO DEM"
-                + " INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = DEM.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " LEFT JOIN TB_VERSAO_TAREFA SIT ON SIT.CO_VERSAO_TAREFA = DEM.cod_situacao"
+                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO DEM"
+                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = DEM.CO_VERSAO_PROCESSO"
+                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " LEFT JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA SIT ON SIT.CO_VERSAO_TAREFA = DEM.cod_situacao"
                 + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEF.SG_PROCESSO = :processCod"
                 + " AND SIT.CO_TIPO_TAREFA = " + TaskType.End.ordinal()
                 + " GROUP BY SIT.NO_TAREFA";
@@ -197,9 +197,9 @@ public class InstanceDAO extends BaseDAO{
     public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
         String sql = "SELECT INS.DS_INSTANCIA_PROCESSO AS DESCRICAO,"
                 + " ROUND(ISNULL(CAST(DATEDIFF(SECOND, INS.DT_INICIO, GETDATE()) AS FLOAT), 0) / (24 * 60 * 60), 2) AS DIAS"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "  INNER JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + "  INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "  INNER JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NULL AND DEF.SG_PROCESSO = :sigla"
                 + "  AND ROUND(ISNULL(CAST(DATEDIFF(SECOND, INS.DT_INICIO, GETDATE()) AS FLOAT), 0) / (24 * 60 * 60), 2) > :media";
         Query query = getSession().createSQLQuery(sql)
@@ -223,9 +223,9 @@ public class InstanceDAO extends BaseDAO{
         String sql = "SELECT '" + processCode + "' AS processCode,"
                 + " COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS amount,"
                 + " AVG(DATEDIFF(DAY, INS.DT_INICIO, GETDATE())) AS averageTimeInDays"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
+                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + "   INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
                 + " WHERE INS.DT_FIM IS NULL "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
@@ -244,9 +244,9 @@ public class InstanceDAO extends BaseDAO{
 
     public Integer countOpenedInstancesLast30Days(String processCode) {
         String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
                 + " WHERE INS.DT_INICIO >= (GETDATE() - 30) "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
@@ -259,10 +259,10 @@ public class InstanceDAO extends BaseDAO{
 
     public Integer countFinishedInstancesLast30Days(String processCode) {
         String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   LEFT JOIN TB_VERSAO_TAREFA TAR ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + "   LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + "   LEFT JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
                 + " WHERE INS.DT_FIM >= (GETDATE() - 30) "
                 + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
         Query query = getSession().createSQLQuery(sql)
@@ -277,18 +277,18 @@ public class InstanceDAO extends BaseDAO{
             "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
                     + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
                     + "%s%n"
-                    + "FROM TB_INSTANCIA_PROCESSO INS%n"
-                    + "  LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
-                    + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
+                    + "FROM %sTB_INSTANCIA_PROCESSO INS%n"
+                    + "  LEFT JOIN %sTB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
+                    + "  INNER JOIN %sTB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
                     + "WHERE DT_INICIO < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
                     + "      AND (DT_FIM > CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) OR DT_FIM IS NULL)%s";
     private static final String FINISHED_DATE_DIST_SQL =
             "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
                     + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
                     + "%s%n"
-                    + "FROM TB_INSTANCIA_PROCESSO INS%n"
-                    + "  LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
-                    + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
+                    + "FROM %sTB_INSTANCIA_PROCESSO INS%n"
+                    + "  LEFT JOIN %sTB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
+                    + "  INNER JOIN %sTB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
                     + "WHERE DT_FIM >= CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
                     + "      AND DT_FIM < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%s";
     private static final String PROCESS_CODE_FILTER_SQL = " AND SG_PROCESSO = :processCode";
@@ -356,6 +356,7 @@ public class InstanceDAO extends BaseDAO{
         if (active) {
             if (count) {
                 sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
+                        DBSCHEMA,DBSCHEMA,DBSCHEMA,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
                         (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
@@ -364,16 +365,19 @@ public class InstanceDAO extends BaseDAO{
                                 ? formatDateDistMoveSQL(month, year, yearPlus1, monthPlus1)
                                 : String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1)
                         ),
+                        DBSCHEMA,DBSCHEMA,DBSCHEMA,
                         yearPlus1, monthPlus1, yearPlus1, monthPlus1,
                         (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         } else {
             if (count) {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
+                        DBSCHEMA,DBSCHEMA,DBSCHEMA,
                         year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             } else {
                 sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month,
                         String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1),
+                        DBSCHEMA,DBSCHEMA,DBSCHEMA,
                         year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
             }
         }
