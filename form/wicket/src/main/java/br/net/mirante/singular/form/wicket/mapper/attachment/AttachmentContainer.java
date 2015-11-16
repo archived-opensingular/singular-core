@@ -65,64 +65,53 @@ class AttachmentContainer extends BSContainer {
 
     @SuppressWarnings("unchecked")
     protected FormComponent setupFields(IModel<? extends MInstancia> model) {
-	String name = model.getObject().getNome();
-	fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
-	    public Object getObject() {return null;}
+        String name = model.getObject().getNome();
+        fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
+            public Object getObject() {
+                return null;
+            }
 
-	    public void setObject(Object object) {}
+            public void setObject(Object object) {
+            }
 
-	    public void detach() {}
+            public void detach() {
+            }
 
-	    public MInstancia getMInstancia() {
-		return model.getObject().getMTipo().novaInstancia();
-	    }
-	});
-	nameField = new HiddenField("file_name_"+name, 
-			new PropertyModel<>(model, "fileName")); 
-	hashField = new HiddenField("file_hash_"+name, 
-		    	new PropertyModel<>(model, "fileHashSHA1")); 
-	sizeField = new HiddenField("file_size_"+name, 
-	    		new PropertyModel<>(model, "fileSize"));
-	idField = new HiddenField("file_id_"+name, 
-	    		new PropertyModel<>(model, "fileId"));
-	return field();
+            public MInstancia getMInstancia() {
+                return model.getObject().getMTipo().novaInstancia();
+            }
+        });
+        nameField = new HiddenField("file_name_" + name, new PropertyModel<>(model, "fileName"));
+        hashField = new HiddenField("file_hash_" + name, new PropertyModel<>(model, "fileHashSHA1"));
+        sizeField = new HiddenField("file_size_" + name, new PropertyModel<>(model, "fileSize"));
+        idField = new HiddenField("file_id_" + name, new PropertyModel<>(model, "fileId"));
+        return field();
     }
-    
-    protected FormComponent field(){
-	return fileField;
+
+    protected FormComponent field() {
+        return fileField;
     }
-    
+
     public void setup(FormComponent field, IModel<? extends MInstancia> model) {
-	String fieldId = field.getMarkupId();
+        String fieldId = field.getMarkupId();
 
-	appendTag("span", true, "class='btn btn-success fileinput-button'", 
-		appendInputButton(field));
-	appendTag("div", true, "class='progress' id='progress_" + fieldId + "'", 
-		createProgressBar(field));
-	
-	appendTag("div", true, "class='files' id='files_" + fieldId + "'", 
-		createDownloadLink(model));
-	
-	appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", 
-		nameField);
-	appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", 
-		hashField);
-	appendTag("input", true, "type='hidden' id='" + idField.getMarkupId() + "'", 
-		idField);
-	appendTag("input", true, "type='hidden' id='" + sizeField.getMarkupId() + "'", 
-		sizeField);
-	
-	
+        appendTag("span", true, "class='btn btn-success fileinput-button'", appendInputButton(field));
+        appendTag("div", true, "class='progress' id='progress_" + fieldId + "'", createProgressBar(field));
+
+        appendTag("div", true, "class='files' id='files_" + fieldId + "'", createDownloadLink(model));
+
+        appendTag("input", true, "type='hidden' id='" + nameField.getMarkupId() + "'", nameField);
+        appendTag("input", true, "type='hidden' id='" + hashField.getMarkupId() + "'", hashField);
+        appendTag("input", true, "type='hidden' id='" + idField.getMarkupId() + "'", idField);
+        appendTag("input", true, "type='hidden' id='" + sizeField.getMarkupId() + "'", sizeField);
+
     }
 
     private BSContainer appendInputButton(FormComponent field) {
-	BSContainer buttonContainer = new BSContainer<>("_bt_" + field.getId())
-		.appendTag("span", new Label("_", Model.of("Selecionar ...")))
-		.appendTag("input", true, 
-		"type='file' id='" + fileField.getMarkupId() + "'",fileField);
+        BSContainer buttonContainer = new BSContainer<>("_bt_" + field.getId()).appendTag("span", new Label("_", Model.of("Selecionar ..."))).appendTag("input", true, "type='file' id='" + fileField.getMarkupId() + "'", fileField);
 
-	appendScriptContainer(field.getMarkupId(), buttonContainer);
-	return buttonContainer;
+        appendScriptContainer(field.getMarkupId(), buttonContainer);
+        return buttonContainer;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -166,35 +155,36 @@ class AttachmentContainer extends BSContainer {
 	}
 
     private BSContainer createProgressBar(FormComponent field) {
-	BSContainer progressContainer = new BSContainer<>("_progress_" + field.getId());
-	progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'", emptyLabel());
-	return progressContainer;
+        BSContainer progressContainer = new BSContainer<>("_progress_" + field.getId());
+        progressContainer.appendTag("div", true, "class='progress-bar progress-bar-success'", emptyLabel());
+        return progressContainer;
     }
 
     private final class DownloadLink extends AjaxFallbackLink<Object> {
-	private DownloadLink(String id, IModel<Object> model) {
-	    super(id, model);
-	    setBody(model);
-	}
+        private DownloadLink(String id, IModel<Object> model) {
+            super(id, model);
+            setBody(model);
+        }
 
-	protected CharSequence getURL() {
-	    return downloader.getUrl();
-	}
+        protected CharSequence getURL() {
+            return downloader.getUrl();
+        }
 
-	public void onClick(AjaxRequestTarget target) {}
+        public void onClick(AjaxRequestTarget target) {
+        }
     }
-    
+
     @SuppressWarnings("unchecked")
     private WebMarkupContainer createDownloadLink(IModel<? extends MInstancia> model) {
-	Link<Object> link = new DownloadLink("_", new PropertyModel(model, "fileName"));
-	
-	BSContainer wrapper = new BSContainer<>("_");
-	wrapper.appendTag("a", true, "", link);
-	return wrapper;
+        Link<Object> link = new DownloadLink("_", new PropertyModel(model, "fileName"));
+
+        BSContainer wrapper = new BSContainer<>("_");
+        wrapper.appendTag("a", true, "", link);
+        return wrapper;
     }
 
     private Label emptyLabel() {
-	return new Label("_", Model.of(""));
+        return new Label("_", Model.of(""));
     }
 	
 }
