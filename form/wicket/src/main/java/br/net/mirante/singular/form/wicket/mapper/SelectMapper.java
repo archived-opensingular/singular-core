@@ -42,7 +42,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
             final List<String> opcoesValue) {
         final DropDownChoice<String> choices = (DropDownChoice<String>) retrieveChoices(model, opcoesValue);
-        formGroup.appendSelect(choices.setNullValid(true));
+        formGroup.appendSelect(choices.setNullValid(true), false, false);
         return choices;
     }
 }
