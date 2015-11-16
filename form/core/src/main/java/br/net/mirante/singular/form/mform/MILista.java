@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -149,6 +150,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
+        E child = valores.get(index);
+        child.internalOnRemove();
         return valores.remove(index);
     }
 
@@ -201,5 +204,38 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     public String toDebug() {
         return stream().map(i -> i.getDisplayString()).collect(Collectors.joining("; "));
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((tipoElementos == null) ? 0 : tipoElementos.hashCode());
+        for (E e : this)
+            result = prime * result + (e == null ? 0 : e.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MILista<?> other = (MILista<?>) obj;
+        if (size() != other.size()) {
+            return false;
+        } else if (!getMTipo().equals(other.getMTipo())) {
+            return false;
+        } else if (!Objects.equals(tipoElementos, other.tipoElementos))
+            return false;
+        for (int i = size() - 1; i != -1; i--) {
+            if (!Objects.equals(get(i), other.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

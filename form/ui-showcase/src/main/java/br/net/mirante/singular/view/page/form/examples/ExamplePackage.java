@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view.page.form.examples;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MPacote;
@@ -7,6 +9,7 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
@@ -31,18 +34,18 @@ public class ExamplePackage extends MPacote {
     }
 
     public MTipoComposto<? extends MIComposto> order;
-    public MTipoInteger orderNumber;
-    public MTipoComposto<?> buyer;
-    public MTipoNomePessoa buyerNome;
-    public MTipoCPF buyerCpf;
-    public MTipoTelefoneNacional buyerTelephone;
-    public MTipoAttachment buyerAvatar;
+    public MTipoInteger                        orderNumber;
+    public MTipoComposto<?>                    buyer;
+    public MTipoNomePessoa                     buyerNome;
+    public MTipoCPF                            buyerCpf;
+    public MTipoTelefoneNacional               buyerTelephone;
+    public MTipoAttachment                     buyerAvatar;
 
     public MTipoComposto<MIComposto> address;
-    public MTipoString addressStreet;
-    public MTipoString addressCity;
-    public MTipoString addressState;
-    public MTipoCEP addressZipcode;
+    public MTipoString               addressStreet;
+    public MTipoString               addressCity;
+    public MTipoString               addressState;
+    public MTipoCEP                  addressZipcode;
 
     public ExamplePackage() {
         super(PACKAGE);
@@ -70,6 +73,10 @@ public class ExamplePackage extends MPacote {
         this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
+
+        buyerCpf.as(MPacoteBasic.aspect())
+            .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
+            .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }
 
     private void buildAddressField() {
@@ -84,7 +91,7 @@ public class ExamplePackage extends MPacote {
     }
 
     private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,
-            Class<T> type) {
+        Class<T> type) {
         T campo = root.addCampo(name, type);
         campo.as(AtrBasic::new).label(label);
         return campo;

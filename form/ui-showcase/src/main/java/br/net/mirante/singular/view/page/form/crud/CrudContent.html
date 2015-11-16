@@ -1,4 +1,4 @@
-<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
     <div wicket:id="feedback"></div>
     <wicket:fragment wicket:id="breadcrumbForm">
@@ -45,6 +45,9 @@
             <div class="form-actions noborder">
                 <button type="submit" class="btn blue" wicket:id="save-btn">
                     <wicket:message key="label.button.save"/>
+                </button>
+                <button type="submit" class="btn red" wicket:id="cancel-btn">
+                    <wicket:message key="label.button.cancel"/>
                 </button>
             </div>
         </form>

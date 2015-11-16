@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Testes
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:4,0,135,2&cht=p&chl=failure%20%284%29|error%20%280%29|success%20%28135%29|skipped%20%282%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:1,3,142,4&cht=p&chl=failure%20%281%29|error%20%283%29|success%20%28142%29|skipped%20%284%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
@@ -18,4 +18,4 @@ Módulos JAVA do projeto SINGULAR.
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
-        * [Site do Projeto](http://10.0.10.1/docs/home)
+        * [Site do Projeto](http://10.0.0.142)
