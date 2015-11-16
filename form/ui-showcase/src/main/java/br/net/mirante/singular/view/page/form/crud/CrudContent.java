@@ -29,6 +29,9 @@ import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.core.attachment.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -184,9 +187,17 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.show(target);
     }
 
+    private static final ServiceRef<IAttachmentPersistenceHandler> persistanceRef = 
+	    new ServiceRef<IAttachmentPersistenceHandler>() {
+	public IAttachmentPersistenceHandler get() {
+	    return new FileSystemAttachmentHandler("/tmp");
+	}
+    };
+    
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
+	currentInstance.getObject().getDocument().setAttachmentPersistenceHandler(persistanceRef);
         populateInstance(tipo);
 
     }
@@ -198,6 +209,7 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             MElement xml = MParser.parse(currentModel.getXml());
             MInstancia instance = MformPersistenciaXML.fromXML(tipo, xml);
             currentInstance = new MInstanceRootModel<MInstancia>(instance);
+            currentInstance.getObject().getDocument().setAttachmentPersistenceHandler(persistanceRef);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

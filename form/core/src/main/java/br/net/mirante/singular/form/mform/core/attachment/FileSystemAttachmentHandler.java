@@ -28,6 +28,10 @@ public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHa
 
     private File folder;
 
+    public FileSystemAttachmentHandler(String folder) {
+	this(new File(folder));
+    }
+    
     public FileSystemAttachmentHandler(File folder) {
 	this.folder = folder;
     }
