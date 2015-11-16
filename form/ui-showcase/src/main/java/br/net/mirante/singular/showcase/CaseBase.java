@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.base.Throwables;
-
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -51,7 +49,7 @@ public class CaseBase {
 
     @SuppressWarnings("unchecked")
     private Class<? extends MPacote> getPackage() {
-        String target = getClass().getName() + "Code";
+        String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);
             if (!MPacote.class.isAssignableFrom(c)) {
@@ -59,7 +57,8 @@ public class CaseBase {
             }
             return (Class<? extends MPacote>) c;
         } catch (ClassNotFoundException e) {
-            throw Throwables.propagate(e);
+            throw new SingularFormException("É esperado uma classe com o nome " + target + " como complemento de " + getClass().getName(),
+                    e);
         }
     }
 

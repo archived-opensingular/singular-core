@@ -15,7 +15,7 @@ public class CaseInputCoreMultiSelectComboPackage extends MPacote {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("myForm");
+        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         MTipoString tipoContato = pb.createTipo("tipoContato", MTipoString.class)
                  .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
