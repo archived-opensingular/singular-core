@@ -1,28 +1,28 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.dao.form;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.io.ByteArrayInputStream;
 
 import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import br.net.mirante.singular.dao.form.ExampleFile;
-import br.net.mirante.singular.dao.form.FileDao;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class TestCaseDatabasePersistenceHandler {
 
     @Inject private FileDao dao;
-
     
     @Test public void createProperReference(){
-        ExampleFile f = new ExampleFile();
-        f.setId("abacate");
         byte[] content = "i".getBytes();
         IAttachmentRef ref = dao.addAttachment(new ByteArrayInputStream(content));
         assertThat(ref.getId())
@@ -34,8 +34,6 @@ public class TestCaseDatabasePersistenceHandler {
     }
     
     @Test public void worksWithByteArrayAlso(){
-        ExampleFile f = new ExampleFile();
-        f.setId("abacate");
         byte[] content = "np".getBytes();
         IAttachmentRef ref = dao.addAttachment(content);
         assertThat(ref.getId())
@@ -47,12 +45,26 @@ public class TestCaseDatabasePersistenceHandler {
     }
     
     @Test public void savesToDatabaseOnAdding(){
-        ExampleFile f = new ExampleFile();
-        f.setId("abacate");
         byte[] content = "1234".getBytes();
         IAttachmentRef ref = dao.addAttachment(new ByteArrayInputStream(content));
         assertThat(dao.find(ref.getId())).isNotNull()
             .isEqualsToByComparingFields((ExampleFile) ref);
     }
 
+    
+    @Test public void listsAllStoredFiles(){
+        IAttachmentRef  ref1 = dao.addAttachment("i".getBytes()),
+                        ref2 = dao.addAttachment("1234".getBytes());
+        assertThat(dao.getAttachments())
+            .containsOnly((ExampleFile)ref1, (ExampleFile)ref2);
+    }
+    
+    @Test public void retrieveSpecificFile(){
+        dao.addAttachment("i".getBytes());
+        IAttachmentRef ref2 = dao.addAttachment("1234".getBytes());
+        dao.addAttachment("123456".getBytes());
+        
+        assertThat(dao.getAttachment(ref2.getId()))
+            .isEqualTo((ExampleFile)ref2);
+    }
 }

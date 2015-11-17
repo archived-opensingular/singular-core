@@ -60,4 +60,32 @@ public class ExampleFile implements IAttachmentRef{
     public InputStream getContent() {
         return new ByteArrayInputStream(rawContent);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((hashSha1 == null) ? 0 : hashSha1.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + size;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)    return true;
+        if (obj == null)    return false;
+        if (getClass() != obj.getClass())   return false;
+        ExampleFile other = (ExampleFile) obj;
+        if (hashSha1 == null) {
+            if (other.hashSha1 != null) return false;
+        } else if (!hashSha1.equals(other.hashSha1))    return false;
+        if (id == null) {
+            if (other.id != null)   return false;
+        } else if (!id.equals(other.id))    return false;
+        if (size != other.size) return false;
+        return true;
+    }
+    
+    
 }

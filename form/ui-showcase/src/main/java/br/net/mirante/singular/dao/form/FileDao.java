@@ -2,7 +2,6 @@ package br.net.mirante.singular.dao.form;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,8 +40,8 @@ public class FileDao implements IAttachmentPersistenceHandler {
         session().delete(o);
     }
 
-    @Transactional @SuppressWarnings("unchecked")
-    public List<ExampleDataDTO> list() {
+    @Transactional @SuppressWarnings("unchecked") 
+    public List<ExampleFile> list() {
         Criteria crit = session().createCriteria(ExampleFile.class);
         return crit.list();
     }
@@ -77,16 +76,14 @@ public class FileDao implements IAttachmentPersistenceHandler {
         return file;
     }
     
-    @Override
-    public Collection<? extends IAttachmentRef> getAttachments() {
-        // TODO Auto-generated method stub
-        return null;
+    @Override @Transactional
+    public List<ExampleFile> getAttachments() {
+        return list();
     }
 
-    @Override
+    @Override @Transactional
     public IAttachmentRef getAttachment(String hashId) {
-        // TODO Auto-generated method stub
-        return null;
+        return find(hashId);
     }
 
     @Override
