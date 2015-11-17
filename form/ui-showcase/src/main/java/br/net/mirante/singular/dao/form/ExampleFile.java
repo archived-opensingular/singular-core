@@ -18,6 +18,10 @@ public class ExampleFile implements IAttachmentRef{
     private String hashSha1;
     @Lob private byte[] rawContent;
     private int size;
+    
+    public ExampleFile() {}
+    
+    public ExampleFile(String id) { this.id = id;   }
 
     public String getId() {
         return id;

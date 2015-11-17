@@ -86,10 +86,10 @@ public class FileDao implements IAttachmentPersistenceHandler {
         return find(hashId);
     }
 
-    @Override
+    @Override @Transactional
     public void deleteAttachment(String hashId) {
-        // TODO Auto-generated method stub
-
+        ExampleFile toRemove = new ExampleFile(hashId);
+        remove(toRemove);
     }
 
 }

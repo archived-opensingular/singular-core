@@ -67,4 +67,14 @@ public class TestCaseDatabasePersistenceHandler {
         assertThat(dao.getAttachment(ref2.getId()))
             .isEqualTo((ExampleFile)ref2);
     }
+    
+    @Test public void deleteSpecificFile(){
+        dao.addAttachment("i".getBytes());
+        IAttachmentRef ref2 = dao.addAttachment("1234".getBytes());
+        dao.addAttachment("123456".getBytes());
+        
+        dao.deleteAttachment(ref2.getId());
+        assertThat(dao.getAttachments()).hasSize(2)
+            .doesNotContain((ExampleFile)ref2);
+    }
 }
