@@ -18,31 +18,33 @@ import br.net.mirante.singular.view.page.form.examples.MPacoteCurriculo;
 
 public class TemplateRepository extends MDicionarioResolver {
 
-    private static final ShowCaseTable showCaseTable = new ShowCaseTable();
-    private static final TemplateRepository templates = new TemplateRepository();
-
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     static {
-        templates.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
-        templates.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
+    }
 
-        for (ShowCaseGroup group : showCaseTable.getGroups()) {
+    public static TemplateRepository get() {
+        return novoTemplate();
+    }
+
+    private static TemplateRepository novoTemplate() {
+        TemplateRepository novo = new TemplateRepository();
+        novo.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
+        novo.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
+
+        for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
                 String itemName = group.getGroupName() + " - " + item.getComponentName();
                 for (CaseBase c : item.getCases()) {
                     if (c.getSubCaseName() == null) {
-                        templates.add(itemName, c.getCaseType());
+                        novo.add(itemName, c.getCaseType());
                     } else {
-                        templates.add(itemName + " - " + c.getSubCaseName(), c.getCaseType());
+                        novo.add(itemName + " - " + c.getSubCaseName(), c.getCaseType());
                     }
                 }
             }
         }
-    }
-
-    public static TemplateRepository get() {
-        return templates;
+        return novo;
     }
 
     private void add(Class<? extends MPacote> packageClass, String typeName) {

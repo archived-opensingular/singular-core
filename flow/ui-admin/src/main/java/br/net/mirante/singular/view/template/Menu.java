@@ -11,11 +11,12 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 
-import br.net.mirante.singular.dao.MenuItemDTO;
+import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
+import br.net.mirante.singular.wicket.UIAdminSession;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 public class Menu extends Panel {
@@ -43,7 +44,7 @@ public class Menu extends Panel {
     }
 
     private RepeatingView createCategoriesMenu() {
-        final List<MenuItemDTO> categories = uiAdminFacade.retrieveAllCategories();
+        final List<MenuItemDTO> categories = uiAdminFacade.retrieveAllCategoriesWithAcces(UIAdminSession.get().getUserId());
         final RepeatingView categoriesMenu = new RepeatingView("categories");
         for (IMenuItemDTO item : categories) {
             final WebMarkupContainer categoryMenu = new WebMarkupContainer(categoriesMenu.newChildId());

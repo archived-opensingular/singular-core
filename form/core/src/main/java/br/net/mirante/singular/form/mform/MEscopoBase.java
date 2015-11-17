@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform;
 import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
@@ -11,41 +12,42 @@ public abstract class MEscopoBase implements MEscopo {
     private Map<String, MTipo<?>> tiposLocais;
 
     @Override
-    public MTipo<?> getTipoLocalOpcional(String path) {
-        if (tiposLocais == null) {
-            return null;
-        }
-        int pos = path.indexOf('.');
-        if (pos != -1) {
-            MTipo<?> tipo = tiposLocais.get(path.substring(0, pos));
-            if (tipo == null) {
-                return null;
-            }
-            return tipo.getTipoLocalOpcional(path.substring(pos + 1));
-        }
-        return tiposLocais.get(path);
+    public Optional<MTipo<?>> getTipoLocalOpcional(String path) {
+        return getTipoLocalOpcional(new LeitorPath(path));
     }
+
+    final Optional<MTipo<?>> getTipoLocalOpcional(LeitorPath leitor) {
+        if (tiposLocais == null) {
+            return Optional.empty();
+        }
+        MTipo<?> tipo = tiposLocais.get(leitor.getTrecho());
+        if (tipo == null) {
+            return Optional.empty();
+        } else if (leitor.isUltimo()) {
+            return Optional.of(tipo);
+        }
+        return tipo.getTipoLocalOpcional(leitor.proximo());
+    }
+
 
     @Override
     public MTipo<?> getTipoLocal(String path) {
+        // Não utiliza getTipoLocalOpcional, pois da forma abaixo é possível
+        // apontar precisamente onde deu erro no path passado.
         return getTipoLocal(new LeitorPath(path));
     }
 
-    public MTipo<?> getTipoLocal(LeitorPath leitor) {
-        MTipo<?> tipo = getTipoLocalLocal(leitor.getTrecho());
-        if (tipo == null) {
-            throw new RuntimeException(leitor.getTextoErro(this, "Não existe o tipo"));
-        } else if (leitor.isUltimo()) {
-            return tipo;
+    final MTipo<?> getTipoLocal(LeitorPath leitor) {
+        if (tiposLocais != null) {
+            MTipo<?> tipo = tiposLocais.get(leitor.getTrecho());
+            if (tipo != null) {
+                if (leitor.isUltimo()) {
+                    return tipo;
+                }
+                return tipo.getTipoLocal(leitor.proximo());
+            }
         }
-        return tipo.getTipoLocal(leitor.proximo());
-    }
-
-    private MTipo<?> getTipoLocalLocal(String nomeSimples) {
-        if (tiposLocais == null) {
-            return null;
-        }
-        return tiposLocais.get(nomeSimples);
+        throw new SingularFormException(leitor.getTextoErro(this, "Não existe o tipo"));
     }
 
     final <T extends MTipo<?>> T registrarTipo(T novo, Class<T> classeDeRegistro) {

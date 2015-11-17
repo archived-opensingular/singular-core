@@ -1,4 +1,4 @@
-package br.net.mirante.singular.dao;
+package br.net.mirante.singular.dto;
 
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.util.FormatUtil;
@@ -9,13 +9,17 @@ public class DefinitionDTO implements IDefinitionDTO {
     private String nome;
     private String sigla;
     private String categoria;
+    private String codGrupo;
     private Long quantidade;
     private Long tempoMedio;
     private Long throughput;
     private Long version;
 
+    public DefinitionDTO() {
+    }
+    
     public DefinitionDTO(Long cod, String nome, String sigla, String categoria,
-            Long quantidade, Long tempoMedio, Long throughput) {
+        Long codGrupo, Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;
         this.nome = nome;
         this.sigla = sigla;
@@ -24,6 +28,14 @@ public class DefinitionDTO implements IDefinitionDTO {
         this.tempoMedio = tempoMedio;
         this.throughput = throughput;
         this.version = 1L;
+    }
+
+    public String getCodGrupo() {
+        return codGrupo;
+    }
+
+    public void setCodGrupo(String codGrupo) {
+        this.codGrupo = codGrupo;
     }
 
     @Override

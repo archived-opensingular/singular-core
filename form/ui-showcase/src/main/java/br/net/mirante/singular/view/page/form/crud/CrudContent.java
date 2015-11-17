@@ -99,12 +99,15 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         queue(deleteModal);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.get().getEntries().stream().map(t -> new SelectOption(t.getDisplayName(), new FormVO(t))).collect(Collectors.toList());
+        List<SelectOption> options = TemplateRepository.get().getEntries().stream()
+                .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
+                .collect(Collectors.toList());
 
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
-        return new DropDownChoice<SelectOption>("options", new SelectOption(null, null), options, choiceRenderer) {
+        return new DropDownChoice<SelectOption>("options",
+                new SelectOption(null, null), options, choiceRenderer) {
             @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
@@ -143,10 +146,21 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     }
 
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
-        return new BSDataTableBuilder<>(createDataProvider()).appendPropertyColumn(getMessage("label.table.column.key"), "key", ExampleDataDTO::getKey).appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue("")).appendAction(getMessage("label.table.column.edit"), Icone.PENCIL_SQUARE, this::openInputModal)).appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue("")).appendAction(getMessage("label.table.column.delete"), Icone.MINUS, this::deleteSelected)).setRowsPerPage(Long.MAX_VALUE) // TODO:
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         // proper
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         // pagination
-        .build("data-list");
+        return new BSDataTableBuilder<>(createDataProvider())
+                .appendPropertyColumn(getMessage("label.table.column.key"),
+                        "key", ExampleDataDTO::getKey)
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.edit"),
+                                Icone.PENCIL_SQUARE, this::openInputModal
+                        )
+                )
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>(WicketUtils.$m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.delete"),
+                                Icone.MINUS, this::deleteSelected
+                        )
+                )
+                .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
+                .build("data-list");
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
@@ -158,7 +172,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public Iterator<? extends ExampleDataDTO> iterator(int first, int count, String sortProperty, boolean ascending) {
+            public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
+                    String sortProperty, boolean ascending) {
                 return dataList.iterator();
             }
         };
@@ -215,22 +230,26 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         inputModal.setSize(BSModalBorder.Size.FULL);
         inputModal.setTitleText(getMessage("label.form.title"));
 
-        inputModal.add(inputForm.add(new FencedFeedbackPanel("feedback", inputForm).add(new Behavior() {
-            @Override
-            public void onConfigure(Component component) {
-                component.setVisible(((FencedFeedbackPanel) component).anyMessage());
-            }
-        })).add(new SaveButton("save-btn")).add(new AjaxButton("cancel-btn") {
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                inputModal.hide(target);
-            }
-        })
-
+        inputModal.add(inputForm
+                .add(new FencedFeedbackPanel("feedback", inputForm)
+                        .add(new Behavior() {
+                            @Override
+                            public void onConfigure(Component component) {
+                                component.setVisible(((FencedFeedbackPanel) component).anyMessage());
+                            }
+                        }))
+                .add(new SaveButton("save-btn"))
+                .add(new AjaxButton("cancel-btn"){
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        inputModal.hide(target);
+                    }
+                })
+                
         );
 
         return inputModal;
     }
-
+    
     private final class SaveButton extends AjaxButton {
         private SaveButton(String id) {
             super(id);
@@ -253,7 +272,8 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
             inputModal.hide(target);
         }
 
-        private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance, MElement rootXml) throws Exception {
+        private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+                MElement rootXml) throws Exception {
             runDefaultValidators(form, trueInstance);
             validateEmptyForm(form, rootXml);
         }

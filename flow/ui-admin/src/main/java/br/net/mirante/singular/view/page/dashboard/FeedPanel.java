@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -15,7 +16,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.util.ListModel;
 
-import br.net.mirante.singular.dao.FeedDTO;
+import br.net.mirante.singular.dto.FeedDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
 
@@ -30,10 +31,13 @@ public class FeedPanel extends Panel {
     private String processCode;
 
     private ListModel<FeedDTO> feeds = new ListModel<>();
+    
+    private Set<String> processCodeWithAccess;
 
-    public FeedPanel(String id, String processCode) {
+    public FeedPanel(String id, String processCode, Set<String> processCodeWithAccess) {
         super(id);
         this.processCode = processCode;
+        this.processCodeWithAccess = processCodeWithAccess;
     }
 
     private class FeedItem {
@@ -49,7 +53,7 @@ public class FeedPanel extends Panel {
     }
 
     private void initFeeds() {
-        feeds.setObject(uiAdminFacade.retrieveAllFeed(processCode));
+        feeds.setObject(uiAdminFacade.retrieveAllFeed(processCode, processCodeWithAccess));
         queue(new WebMarkupContainer("instancesContent").add(new RefreshingView<IFeedDTO>("atividades", feeds) {
             @Override
             protected Iterator<IModel<IFeedDTO>> getItemModels() {

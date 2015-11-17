@@ -109,7 +109,11 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         }
         if (leitorPath.isUltimo()) {
             if (valor == null) {
-                fields.remove(fieldIndex);
+                MInstancia child = fields.getByIndex(fieldIndex);
+                if (child != null) {
+                    child.internalOnRemove();
+                    fields.remove(fieldIndex);
+                }
             } else {
                 instancia.setValor(valor);
             }

@@ -31,7 +31,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertTipo(tipoEndereco.getTipoLocal("classificacao"), "classificacao", MTipoComposto.class);
         assertTipo(tipoEndereco.getTipoLocal("classificacao.prioridade"), "prioridade", MTipoInteger.class);
 
-        assertNull(tipoEndereco.getTipoLocalOpcional("classificacao.prioridade.x.y"));
+        assertNull(tipoEndereco.getTipoLocalOpcional("classificacao.prioridade.x.y").orElse(null));
         assertException(() -> tipoEndereco.getTipoLocal("classificacao.prioridade.x.y"), "Não existe o tipo");
 
         MIComposto endereco = tipoEndereco.novaInstancia();

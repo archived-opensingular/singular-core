@@ -2,41 +2,19 @@ package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
-import org.apache.wicket.IResourceListener;
-import org.apache.wicket.ajax.json.JSONArray;
-import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.Response;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.crypt.Base64;
-import org.apache.wicket.util.lang.Bytes;
 
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -123,7 +101,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
         return super.appendTag("select", true, (bootstrap
-                ? "class='bs-select form-control' data-width='80%' title='Selecione...'" : "class='form-control'")
+                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title")
+                + "'" : "class='form-control'")
                 + (multiple ? "multiple" : ""), select);
     }
 
