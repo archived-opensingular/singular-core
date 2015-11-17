@@ -29,8 +29,21 @@ public class TestCaseDatabasePersistenceHandler {
             .isEqualTo("042dc4512fa3d391c5170cf3aa61e6a638f84342");
         assertThat(ref.getHashSHA1())
             .isEqualTo("042dc4512fa3d391c5170cf3aa61e6a638f84342");
-        assertThat(ref.getContentAsByteArray()) .isEqualTo(content);
-        assertThat(ref.getSize()) .isEqualTo(1);
+        assertThat(ref.getContentAsByteArray()).isEqualTo(content);
+        assertThat(ref.getSize()).isEqualTo(1);
+    }
+    
+    @Test public void worksWithByteArrayAlso(){
+        ExampleFile f = new ExampleFile();
+        f.setId("abacate");
+        byte[] content = "np".getBytes();
+        IAttachmentRef ref = dao.addAttachment(content);
+        assertThat(ref.getId())
+            .isEqualTo("003fffd5649fc27c0fc0d15a402a4fe5b0444ce7");
+        assertThat(ref.getHashSHA1())
+            .isEqualTo("003fffd5649fc27c0fc0d15a402a4fe5b0444ce7");
+        assertThat(ref.getContentAsByteArray()).isEqualTo(content);
+        assertThat(ref.getSize()).isEqualTo(2);
     }
     
     @Test public void savesToDatabaseOnAdding(){
@@ -38,8 +51,8 @@ public class TestCaseDatabasePersistenceHandler {
         f.setId("abacate");
         byte[] content = "1234".getBytes();
         IAttachmentRef ref = dao.addAttachment(new ByteArrayInputStream(content));
-        assertThat(dao.find(ref.getId())).isNotNull();
-//            .isEqualsToByComparingFields(ref);
+        assertThat(dao.find(ref.getId())).isNotNull()
+            .isEqualsToByComparingFields((ExampleFile) ref);
     }
 
 }

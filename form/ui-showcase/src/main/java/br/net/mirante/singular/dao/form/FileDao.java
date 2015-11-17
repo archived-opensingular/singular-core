@@ -1,5 +1,6 @@
 package br.net.mirante.singular.dao.form;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -40,8 +41,7 @@ public class FileDao implements IAttachmentPersistenceHandler {
         session().delete(o);
     }
 
-    @Transactional
-    @SuppressWarnings("unchecked")
+    @Transactional @SuppressWarnings("unchecked")
     public List<ExampleDataDTO> list() {
         Criteria crit = session().createCriteria(ExampleFile.class);
         return crit.list();
@@ -52,14 +52,12 @@ public class FileDao implements IAttachmentPersistenceHandler {
         return (ExampleFile) session().get(ExampleFile.class, id);
     }
     
-    @Override
+    @Override @Transactional
     public IAttachmentRef addAttachment(byte[] content) {
-        // TODO Auto-generated method stub
-        return null;
+        return addAttachment(new ByteArrayInputStream(content));
     }
 
-    @Override
-    @Transactional
+    @Override @Transactional
     public IAttachmentRef addAttachment(InputStream in) {
         try {
             byte[] byteArray = ByteStreams.toByteArray(in);
@@ -98,32 +96,3 @@ public class FileDao implements IAttachmentPersistenceHandler {
     }
 
 }
-
-/*class DatabaseAttachmentRef implements IAttachmentRef {
-    
-    private byte[] content;
-    private String hashSHA1, id;
-    private Integer size;
-    
-    public DatabaseAttachmentRef(String id, String hashSHA1, byte[] content, Integer size) {
-        this.id = id;
-        this.hashSHA1 = hashSHA1;
-        this.content = content;
-        this.size = size;
-    }
-    public InputStream getContent() {
-        return new ByteArrayInputStream(content);
-    }
-    public String getId() {
-        return id;
-    }
-    public String getHashSHA1() {
-        return hashSHA1;
-    }
-    public Integer getSize() {
-        return size;
-    }
-    
-    
-}
-*/
