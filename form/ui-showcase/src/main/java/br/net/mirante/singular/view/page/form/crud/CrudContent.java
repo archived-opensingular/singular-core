@@ -26,12 +26,12 @@ import org.apache.wicket.model.ResourceModel;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -66,8 +66,14 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
     private Form<?> inputForm = new Form<>("save-form"),
         deleteForm = new Form<>("delete-form");
 
-    @Inject
-    ExampleDataDAO dao;
+    @Inject ExampleDataDAO dao;
+    @Inject FileDao filePersistence;
+    
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        public IAttachmentPersistenceHandler get() {
+            return filePersistence;
+        }
+    };
 
     IModel<MInstancia> currentInstance;
     ExampleDataDTO currentModel;
@@ -186,12 +192,6 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
         target.appendJavaScript("Metronic.init();Page.init();");
         inputModal.show(target);
     }
-
-    private static final ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return new FileSystemAttachmentHandler("/tmp");
-        }
-    };
 
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
