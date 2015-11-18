@@ -96,6 +96,52 @@ public abstract class MInstances {
     }
 
     /**
+     * Busca por um ancestral de <code>node</code> cujo tipo é um ancestral comum do tipo de <code>node</code>
+     * e <code>targetType</code>.
+     * @param node instância inicial da busca
+     * @param targetType tipo de outro campo
+     * @return Optional da instância do ancestral comum
+     */
+    @SuppressWarnings("unchecked")
+    public static <CA extends MInstancia & ICompositeInstance> Optional<CA> findCommonAncestor(MInstancia node, MTipo<?> targetType) {
+        for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
+            for (MInstancia ancestor = node.getPai(); ancestor != null; ancestor = ancestor.getPai()) {
+                if (ancestor.getMTipo() == type) {
+                    return Optional.of((CA) ancestor);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * Busca por o no mais próximo de <code>node</code> na hierarquia de instâncias, cujo tipo é igual a <code>targetType</code>.
+     * @param node instância inicial da busca
+     * @param targetType tipo do campo a ser procurado
+     * @return Optional da instância do targetType encontrado
+     */
+    public static <A extends MInstancia> Optional<A> findNearest(MInstancia node, MTipo<A> targetType) {
+        return MInstances.findCommonAncestor(node, targetType)
+            .flatMap(ancestor -> ancestor.findDescendant(targetType))
+            .map(targetNode -> (A) targetNode);
+    }
+
+    /**
+     * Lista os ancestrais de <code>node</code>.
+     * @param node instância inicial da busca
+     * @return Lista das instâncias de ancestrais do tipo especificado
+     */
+    public static List<MInstancia> listAscendants(MInstancia instance, MTipo<?> limitInclusive) {
+        List<MInstancia> list = new ArrayList<>();
+        MInstancia node = instance.getPai();
+        while (node != null && node.getMTipo() != limitInclusive) {
+            list.add(node);
+            node = node.getPai();
+        }
+        return list;
+    }
+
+    /**
      * Busca pelo primeiro descendente de <code>node</code> do tipo especificado.
      * @param node instância inicial da busca
      * @param descendantType tipo do descendente

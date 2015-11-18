@@ -231,6 +231,9 @@ public abstract class MInstancia implements MAtributoEnabled {
     public <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MTipo<A> ancestorType) {
         return MInstances.findAncestor(this, ancestorType);
     }
+    public <A extends MInstancia> Optional<A> findNearest(MTipo<A> targetType) {
+        return MInstances.findNearest(this, targetType);
+    }
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
@@ -238,7 +241,7 @@ public abstract class MInstancia implements MAtributoEnabled {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -318,7 +321,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         onRemove();
         if (getFlag(FlagsInstancia.RemovendoInstancia)) {
             throw new SingularFormException(MInstancia.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
         removeChildren();
     }
