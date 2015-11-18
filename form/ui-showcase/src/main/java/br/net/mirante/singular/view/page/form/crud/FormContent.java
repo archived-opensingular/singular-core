@@ -13,6 +13,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
@@ -104,38 +105,31 @@ public class FormContent extends Content
 
     @Override
     protected IModel<?> getContentTitlelModel() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ResourceModel("label.content.title");
     }
 
     @Override
     protected IModel<?> getContentSubtitlelModel() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ResourceModel("label.content.title");
     }
     
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        // queue(new BSFeedbackPanel("feedback"));
         queue(inputForm
-                .add(new FencedFeedbackPanel("feedback", inputForm)
-                            .add(new Behavior() {
+            .add(createFeedbackPanel())
+            .add(new SaveButton("save-btn"))
+            .add(createCancelButton())
+        );
+    }
+
+    private Component createFeedbackPanel() {
+        return new FencedFeedbackPanel("feedback", inputForm).add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
                 component.setVisible(((FencedFeedbackPanel) component).anyMessage());
             }
-                      }
-                            )
-                )
-                .add(new SaveButton("save-btn"))
-                .add(new AjaxButton("cancel-btn") {
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                setResponsePage(CrudPage.class, 
-                    new PageParameters().add(CrudPage.TYPE_NAME, currentModel.getType()));
-            }
-                })
-       );
+        });
     }
     
     private final class SaveButton extends AjaxButton {
@@ -156,8 +150,6 @@ public class FormContent extends Content
             }
             currentModel.setXml(printXml(rootXml));
             dao.save(currentModel);
-//            updateListTableFromModal(target);
-//            inputModal.hide(target);
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
@@ -185,9 +177,18 @@ public class FormContent extends Content
         private String printXml(MElement rootXml) {
             StringWriter buffer = new StringWriter();
             rootXml.printTabulado(new PrintWriter(buffer));
-            String xml = buffer.toString();
-            return xml;
+            return buffer.toString();
         }
+    }
+    
+    private AjaxButton createCancelButton() {
+        return new AjaxButton("cancel-btn") {
+        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+            PageParameters params = new PageParameters()
+                            .add(CrudPage.TYPE_NAME, currentModel.getType());
+            setResponsePage(CrudPage.class, params);
+        }
+      };
     }
     
 }

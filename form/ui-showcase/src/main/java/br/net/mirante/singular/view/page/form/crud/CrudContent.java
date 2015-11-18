@@ -25,7 +25,6 @@ import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.dao.form.TemplateRepository.TemplateEntry;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -55,9 +54,12 @@ public class CrudContent extends Content
 
     public CrudContent(String id, StringValue pType) {
         super(id, false, true);
+        setActiveTemplate(pType);
+    }
+
+    private void setActiveTemplate(StringValue pType) {
         if(!pType.isEmpty()){
             String strType = pType.toString();
-//            MTipo<?> type = TemplateRepository.get().loadType(strType);
             TemplateEntry t = TemplateRepository.get().findEntryByType(strType);
             selectedTemplate = new FormVO(t);
         }else{
@@ -119,11 +121,7 @@ public class CrudContent extends Content
     private MarkupContainer setUpInsertButton() {
         return new Form<>("form").add(new AjaxButton("insert") {
             @Override
-            @SuppressWarnings("unchecked")
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-//                ExampleDataDTO model = new ExampleDataDTO(UUID.randomUUID().toString());
-//                model.setType(selectedTemplate.getTypeName());
-//                openInputModal(target, model);
                 setResponsePage(FormPage.class,
                     new PageParameters().add(
                         FormPage.TYPE_NAME, selectedTemplate.getTypeName()));
