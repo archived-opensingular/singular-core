@@ -11,7 +11,7 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("form/crud")
 @SuppressWarnings("serial")
 public class CrudPage extends Template {
-    protected static final String TYPE_NAME = "type";
+    public static final String TYPE_NAME = "type";
     @Override
     protected Content getContent(String id) {
         StringValue type = getPageParameters().get(TYPE_NAME);

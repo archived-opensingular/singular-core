@@ -122,9 +122,9 @@ public class CrudContent extends Content
         return new Form<>("form").add(new AjaxButton("insert") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                setResponsePage(FormPage.class,
-                    new PageParameters().add(
-                        FormPage.TYPE_NAME, selectedTemplate.getTypeName()));
+                PageParameters params = new PageParameters().add(
+                    FormPage.TYPE_NAME, selectedTemplate.getTypeName());
+                setResponsePage(FormPage.class,params);
             }
 
             @Override
