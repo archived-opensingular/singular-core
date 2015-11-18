@@ -31,11 +31,18 @@ public class ExampleDataDAO {
         session().delete(o);
     }
 
-    @SuppressWarnings("unchecked")
-    @Transactional
+    @Transactional @SuppressWarnings("unchecked")
     public List<ExampleDataDTO> list(String type) {
         Criteria crit = session().createCriteria(ExampleDataDTO.class);
         crit.add(Restrictions.eq("type", type));
         return crit.list();
+    }
+
+    @Transactional
+    public ExampleDataDTO find(String key, String  type) {
+        Criteria crit = session().createCriteria(ExampleDataDTO.class);
+        crit.add(Restrictions.eq("type", type));
+        crit.add(Restrictions.eq("key", key));
+        return (ExampleDataDTO) crit.uniqueResult();
     }
 }

@@ -1,0 +1,20 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:extend>
+    <div class="portlet light">
+      <div class="portlet-body form">
+		    <form wicket:id="save-form">
+		        <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
+		        <div class="form-body" wicket:id="generated"></div>
+		        <div class="form-actions noborder">
+		            <button type="submit" class="btn blue" wicket:id="save-btn">
+		                <wicket:message key="label.button.save"/>
+		            </button>
+		            <button type="submit" class="btn red" wicket:id="cancel-btn">
+		                <wicket:message key="label.button.cancel"/>
+		            </button>
+		        </div>
+		    </form>
+      </div>
+    </div>
+</wicket:extend>
+</html>

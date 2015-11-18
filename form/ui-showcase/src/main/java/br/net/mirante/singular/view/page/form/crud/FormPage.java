@@ -8,14 +8,17 @@ import org.wicketstuff.annotation.mount.MountPath;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
-@MountPath("form/crud")
+@MountPath("form/edit")
 @SuppressWarnings("serial")
-public class CrudPage extends Template {
-    protected static final String TYPE_NAME = "type";
+public class FormPage extends Template {
+    protected static final String TYPE_NAME = "type",
+                                  MODEL_KEY = "key";
+
     @Override
     protected Content getContent(String id) {
-        StringValue type = getPageParameters().get(TYPE_NAME);
-        return new CrudContent(id, type);
+        StringValue type = getPageParameters().get(TYPE_NAME),
+                    key = getPageParameters().get(MODEL_KEY);
+        return new FormContent(id,type, key);
     }
 
     @Override
