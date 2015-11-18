@@ -29,5 +29,8 @@ public class Menu extends Panel {
         queue(new WebMarkupContainer("showcase")
                 .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
                         .concat("showcase/menu"))));
+        queue(new WebMarkupContainer("peticionamento")
+                .add(WicketUtils.$b.attr("href", uiAdminWicketFilterContext.getRelativeContext()
+                        .concat("peticao/listar"))));
     }
 }
