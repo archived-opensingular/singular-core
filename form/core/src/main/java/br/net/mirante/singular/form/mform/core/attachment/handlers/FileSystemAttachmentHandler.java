@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.io.HashUtil;
@@ -38,6 +39,7 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
 public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandler {
 
     private File folder;
+    private IdGenerator generator = new IdGenerator();
 
     public FileSystemAttachmentHandler(String folder) {
         this(new File(folder));
@@ -47,6 +49,10 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         this.folder = folder;
     }
 
+    public void setGenerator(IdGenerator generator) {
+        this.generator = generator;
+    }
+    
     @Override
     public Collection<? extends IAttachmentRef> getAttachments() {
         LinkedList<IAttachmentRef> result = new LinkedList<>();
@@ -77,7 +83,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
         FileInputStream in = new FileInputStream(file);
-        return new FileSystemAttachmentRef(toSha1HexString(in), file.getAbsolutePath(), (int) file.length());
+        return new FileSystemAttachmentRef(file.getName(), toSha1HexString(in), 
+            file.getAbsolutePath(), (int) file.length());
     }
 
     private String toSha1HexString(InputStream inflated) throws NoSuchAlgorithmException, IOException {
@@ -105,11 +112,12 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     public IAttachmentRef addAttachment(byte[] content) {
         try {
             String sha1 = HashUtil.toSHA1Base16(content);
-            File dest = new File(folder, sha1);
+            String id = generator.generate(content);
+            File dest = new File(folder, id);
             FileOutputStream out = new FileOutputStream(dest);
             out.write(content);
             out.close();
-            return new FileSystemAttachmentRef(sha1, dest.getAbsolutePath(), 
+            return new FileSystemAttachmentRef(id, sha1, dest.getAbsolutePath(), 
                 content.length);
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -121,7 +129,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         try {
             return addAttachment(ByteStreams.toByteArray(in));
         } catch (IOException e) {
-            throw Throwables.propagate(e);
+            throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
 }

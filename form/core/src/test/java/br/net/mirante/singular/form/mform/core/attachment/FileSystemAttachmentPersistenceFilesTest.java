@@ -2,11 +2,11 @@ package br.net.mirante.singular.form.mform.core.attachment;
 
 import java.io.File;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
 
 public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPersistenceFilesTest {
 
@@ -22,10 +22,28 @@ public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPers
         tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
     }
 
-    @Override
+    static int countGenerations = 0;
+    
+    
+    @Override @SuppressWarnings("serial")
     protected IAttachmentPersistenceHandler createHandler() throws Exception{
         createFolders();
-        return new FileSystemAttachmentHandler(tmpFolder);
+        FileSystemAttachmentHandler handler = new FileSystemAttachmentHandler(tmpFolder);
+        handler.setGenerator(new IdGenerator(){
+            @Override
+            public String generate(byte[] content) {
+                countGenerations ++;
+                return "generate_"+countGenerations;
+            }
+        });
+        return handler;
     }
 
+    @Override
+    protected String defineId(IAttachmentRef ref) {
+        return "generate_"+countGenerations;
+    }
+
+    
+    
 }

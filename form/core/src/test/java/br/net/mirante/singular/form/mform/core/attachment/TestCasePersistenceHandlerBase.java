@@ -28,16 +28,10 @@ public abstract class TestCasePersistenceHandlerBase {
 
     private IAttachmentPersistenceHandler persistenHandler;
 
-    //@formatter:off
-    private final byte[][] conteudos = new byte[][] {
-            "i".getBytes(), 
-            "np".getBytes(),
-            "1234".getBytes()};
-    private final String[] hashs = new String[] {
-            "042dc4512fa3d391c5170cf3aa61e6a638f84342",
-            "003fffd5649fc27c0fc0d15a402a4fe5b0444ce7",
-            "7110eda4d09e062aa5e4a390b0a572ac0d2c0220"};
-    //@formatter:on
+    // @formatter:off
+    private final byte[][] conteudos = new byte[][] { "i".getBytes(), "np".getBytes(), "1234".getBytes() };
+    private final String[] hashs = new String[] { "042dc4512fa3d391c5170cf3aa61e6a638f84342", "003fffd5649fc27c0fc0d15a402a4fe5b0444ce7", "7110eda4d09e062aa5e4a390b0a572ac0d2c0220" };
+    // @formatter:on
 
     protected final IAttachmentPersistenceHandler getHandler() {
         if (persistenHandler == null) {
@@ -48,18 +42,14 @@ public abstract class TestCasePersistenceHandlerBase {
 
     /** Se chamado mais de uma vez, deve retornar contextos diferente. */
     protected abstract IAttachmentPersistenceHandler setupHandler();
+    protected abstract String defineId(IAttachmentRef ref);
 
     @After
     public void limpeza() {
         persistenHandler = null;
     }
 
-    private void assertConteudo(IAttachmentRef ref, byte[] conteudoEsperado, String hashEsperado, int sizeEsperado) throws IOException {
-        assertConteudo(getHandler(), ref, conteudoEsperado, hashEsperado, sizeEsperado);
-    }
-
-    private static void assertConteudo(IAttachmentPersistenceHandler handler, IAttachmentRef ref, byte[] conteudoEsperado,
-            String hashEsperado, int sizeEsperado) throws IOException {
+    private static void assertConteudo(IAttachmentPersistenceHandler handler, IAttachmentRef ref, byte[] conteudoEsperado, String hashEsperado, int sizeEsperado) throws IOException {
         assertEquals(hashEsperado, ref.getHashSHA1());
         assertEquals(hashEsperado, ref.getId());
         assertEquals(sizeEsperado, handler.getAttachments().size());
@@ -69,13 +59,14 @@ public abstract class TestCasePersistenceHandlerBase {
 
     @Test
     public void testSerializacao() throws IOException, ClassNotFoundException {
+        IAttachmentRef[] refs = new IAttachmentRef[conteudos.length];
         for (int i = 0; i < conteudos.length; i++) {
-            getHandler().addAttachment(conteudos[i]);
+            refs[i] = getHandler().addAttachment(conteudos[i]);
         }
         IAttachmentPersistenceHandler handler2 = deserialize(serialize(getHandler()));
 
         for (int i = 0; i < conteudos.length; i++) {
-            IAttachmentRef ref = handler2.getAttachment(hashs[i]);
+            IAttachmentRef ref = handler2.getAttachment(defineId(refs[i]));
             assertThat(ref).isNotNull();
             assertThat(ref.getContentAsByteArray()).isEqualTo(conteudos[i]);
             assertThat(ref.getHashSHA1()).isEqualTo(hashs[i]);
@@ -90,7 +81,7 @@ public abstract class TestCasePersistenceHandlerBase {
 
         return outB.toByteArray();
     }
-    
+
     private IAttachmentPersistenceHandler deserialize(byte[] serialized) throws IOException, ClassNotFoundException {
         ObjectInputStream inO = new ObjectInputStream(new ByteArrayInputStream(serialized));
         return (IAttachmentPersistenceHandler) inO.readObject();
@@ -112,15 +103,15 @@ public abstract class TestCasePersistenceHandlerBase {
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 2);
 
         handler2.deleteAttachment(ref21.getHashSHA1());
-        assertNull(handler2.getAttachment(hashs[1]));
+        assertNull(handler2.getAttachment(defineId(ref11)));
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 1);
         assertConteudo(handler1, ref11, conteudos[1], hashs[1], 3);
-        assertConteudo(handler1, handler1.getAttachment(ref11.getHashSHA1()), conteudos[1], hashs[1], 3);
+        assertConteudo(handler1, handler1.getAttachment(defineId(ref11)), conteudos[1], hashs[1], 3);
 
         handler1.deleteAttachment(ref12.getHashSHA1());
-        assertNull(handler1.getAttachment(hashs[2]));
+        assertNull(handler1.getAttachment(defineId(ref12)));
         assertConteudo(handler2, ref22, conteudos[2], hashs[2], 1);
-        assertConteudo(handler2, handler2.getAttachment(ref22.getHashSHA1()), conteudos[2], hashs[2], 1);
+        assertConteudo(handler2, handler2.getAttachment(defineId(ref22)), conteudos[2], hashs[2], 1);
     }
 
     @Test
@@ -155,12 +146,14 @@ public abstract class TestCasePersistenceHandlerBase {
         assertConteudo(handler2, handler2.getAttachment(hashs[1]), conteudos[1], hashs[1], 2);
     }
 
-    @Test @Ignore("To be implemented")
+    @Test
+    @Ignore("To be implemented")
     public void testLeituraComHashViolado() {
         fail("implementar");
     }
 
-    @Test  @Ignore("To be implemented")
+    @Test
+    @Ignore("To be implemented")
     public void testCompactacaoConteudoInterno() {
         fail("implementar");
     }
@@ -175,4 +168,5 @@ public abstract class TestCasePersistenceHandlerBase {
         }
         assertEquals(0, getHandler().getAttachments().size());
     }
+
 }

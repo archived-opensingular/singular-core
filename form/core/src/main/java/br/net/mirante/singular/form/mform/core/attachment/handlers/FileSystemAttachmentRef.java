@@ -12,15 +12,20 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 @SuppressWarnings("serial")
 public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
 
-    private String hashSHA1, path;
+    private String id, hashSHA1, path;
     private Integer size;
 
-    public FileSystemAttachmentRef(String hashSHA1, String path, Integer size) {
+    public FileSystemAttachmentRef(String id, String hashSHA1, String path, Integer size) {
+        this.id = id;
         this.hashSHA1 = hashSHA1;
         this.path = path;
         this.size = size;
     }
 
+    public String getId() {
+        return id;
+    }
+    
     public String getHashSHA1() {
         return hashSHA1;
     }

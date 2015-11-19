@@ -19,8 +19,8 @@ import com.google.common.io.ByteStreams;
 abstract public class BaseAttachmentPersistenceFilesTest {
     protected IAttachmentPersistenceHandler persistenHandler;
     
-    private byte[] content;
-    private String hash;
+    protected byte[] content;
+    protected String hash;
 
     public BaseAttachmentPersistenceFilesTest(byte[] content, String hash) {
         this.content = content;
@@ -32,7 +32,8 @@ abstract public class BaseAttachmentPersistenceFilesTest {
     }
     
     protected abstract IAttachmentPersistenceHandler createHandler() throws Exception;
-
+    protected abstract String defineId(IAttachmentRef ref);
+    
     @Parameters(name = "{index}: ({1})")
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][] { 
@@ -65,7 +66,7 @@ abstract public class BaseAttachmentPersistenceFilesTest {
 
     private void assertReference(IAttachmentRef ref) throws IOException {
         assertEquals(hash, ref.getHashSHA1());
-        assertEquals(hash, ref.getId());
+        assertEquals(defineId(ref), ref.getId());
         assertEquals((int)content.length, (int)ref.getSize());
         assertTrue(Arrays.equals(content, ref.getContentAsByteArray()));
         assertTrue(Arrays.equals(content, ByteStreams.toByteArray(ref.getContent())));
