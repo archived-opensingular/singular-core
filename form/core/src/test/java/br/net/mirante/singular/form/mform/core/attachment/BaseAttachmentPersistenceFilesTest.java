@@ -27,11 +27,11 @@ abstract public class BaseAttachmentPersistenceFilesTest {
         this.hash = hash;
     }
     
-    @Before public void setHandler(){
+    @Before public void setHandler() throws Exception{
         persistenHandler = createHandler();
     }
     
-    protected abstract IAttachmentPersistenceHandler createHandler();
+    protected abstract IAttachmentPersistenceHandler createHandler() throws Exception;
 
     @Parameters(name = "{index}: ({1})")
     public static Iterable<Object[]> data1() {

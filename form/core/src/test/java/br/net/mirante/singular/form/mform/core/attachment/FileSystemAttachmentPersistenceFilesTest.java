@@ -18,13 +18,13 @@ public class FileSystemAttachmentPersistenceFilesTest extends BaseAttachmentPers
     public TemporaryFolder rootTmp = new TemporaryFolder();
     private File tmpFolder;
 
-    @Before
     public void createFolders() throws Exception {
         tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
     }
 
     @Override
-    protected IAttachmentPersistenceHandler createHandler() {
+    protected IAttachmentPersistenceHandler createHandler() throws Exception{
+        createFolders();
         return new FileSystemAttachmentHandler(tmpFolder);
     }
 
