@@ -90,8 +90,7 @@ public class FileDao implements IAttachmentPersistenceHandler {
 
     @Override @Transactional
     public void deleteAttachment(String hashId) {
-        ExampleFile toRemove = new ExampleFile(hashId);
-        remove(toRemove);
+        remove(new ExampleFile(hashId));
     }
 
 }
