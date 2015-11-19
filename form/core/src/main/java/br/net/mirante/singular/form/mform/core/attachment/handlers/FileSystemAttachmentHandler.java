@@ -28,10 +28,10 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
  * temporary files but also for definitive files. It's worth noticing that files
  * are stored with its content SHA-1 hash as its name. Also, all files are
  * stored ZIP compressed. Usage is as follows: <code>
- * 	SDocument sdocument = instance.getDocument();
- * 	sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
- *	    public IAttachmentPersistenceHandler get() {
- *	         return new FileSystemAttachmentHandler("/tmp");
+ *     SDocument sdocument = instance.getDocument();
+ *     sdocument.setAttachmentPersistenceHandler(new ServiceRef<IAttachmentPersistenceHandler>() {
+ *        public IAttachmentPersistenceHandler get() {
+ *             return new FileSystemAttachmentHandler("/tmp");
  *          } 
  *      });
  * </code>
@@ -54,7 +54,11 @@ public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHa
     @Override
     public Collection<? extends IAttachmentRef> getAttachments() {
         LinkedList<IAttachmentRef> result = new LinkedList<>();
-        for (File f : folder.listFiles()) {
+        File[] files = folder.listFiles();
+        if (files == null) {
+            return result;
+        }
+        for (File f : files) {
             if (f.isFile() && f.exists()) {
                 try {
                     result.add(toRef(f));
@@ -88,14 +92,11 @@ public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHa
     }
 
     private static String byteArray2Hex(final byte[] hash) {
-        Formatter formatter = new Formatter();
-        try {
+        try (Formatter formatter = new Formatter()) {
             for (byte b : hash) {
                 formatter.format("%02x", b);
             }
             return formatter.toString();
-        } finally {
-            formatter.close();
         }
     }
 
@@ -125,5 +126,4 @@ public class FileSystemAttachmentHandler extends AbstractAttachmentPersistenceHa
             throw new SingularFormException("Erro lendo origem de dados", e);
         }
     }
-
 }
