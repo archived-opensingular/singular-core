@@ -9,7 +9,6 @@ import org.junit.rules.TemporaryFolder;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
 

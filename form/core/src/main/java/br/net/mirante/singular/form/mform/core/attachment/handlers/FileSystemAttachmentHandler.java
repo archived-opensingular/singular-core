@@ -75,10 +75,18 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
     @Override
     public IAttachmentRef getAttachment(String hashId) {
         try {
-            return toRef(new File(folder, hashId));
+            File file = fileFromId(hashId);
+            if(file.exists()){
+                return toRef(file);
+            }
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+        return null;
+    }
+
+    private File fileFromId(String hashId) {
+        return new File(folder, hashId);
     }
 
     private FileSystemAttachmentRef toRef(File file) throws Exception {
@@ -104,8 +112,8 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     @Override
     public void deleteAttachment(String hashId) {
-        // TODO Auto-generated method stub
-
+        File file = fileFromId(hashId);
+        file.delete();
     }
 
     @Override
@@ -113,7 +121,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
         try {
             String sha1 = HashUtil.toSHA1Base16(content);
             String id = generator.generate(content);
-            File dest = new File(folder, id);
+            File dest = fileFromId(id);
             FileOutputStream out = new FileOutputStream(dest);
             out.write(content);
             out.close();

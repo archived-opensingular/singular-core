@@ -17,6 +17,7 @@ import com.google.common.io.ByteStreams;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
 @Repository
@@ -24,6 +25,7 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
 public class FileDao implements IAttachmentPersistenceHandler {
 
     @Inject private SessionFactory sessionFactory;
+    private IdGenerator genereator = new IdGenerator();
 
     private Session session() {
         return sessionFactory.getCurrentSession();
@@ -69,7 +71,7 @@ public class FileDao implements IAttachmentPersistenceHandler {
 
     private ExampleFile createFile(byte[] byteArray, String sha1) {
         ExampleFile file = new ExampleFile();
-        file.setId(sha1);
+        file.setId(genereator.generate(byteArray));
         file.setHashSha1(sha1);
         file.setRawContent(byteArray);
         file.setSize(byteArray.length);

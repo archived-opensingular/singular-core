@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Collection;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -167,6 +168,24 @@ public abstract class TestCasePersistenceHandlerBase {
             Assert.assertTrue(e.getMessage().contains("Erro lendo origem de dados"));
         }
         assertEquals(0, getHandler().getAttachments().size());
+    }
+    
+    @Test public void deletedFileIsNoLongerAvailable(){
+        IAttachmentRef ref = getHandler().addAttachment(new byte[]{1,2});
+        getHandler().deleteAttachment(ref.getId());
+        assertThat(getHandler().getAttachment(ref.getId())).isNull();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void deleteOnlyTheDesiredFile(){
+        getHandler().addAttachment(new byte[]{1,2,3});
+        IAttachmentRef ref = getHandler().addAttachment(new byte[]{1,2});
+        getHandler().addAttachment(new byte[]{1,2,4,5});
+        
+        getHandler().deleteAttachment(ref.getId());
+        
+        assertThat((Collection<IAttachmentRef>)getHandler().getAttachments()).hasSize(2)
+            .doesNotContain(ref);
     }
 
 }
