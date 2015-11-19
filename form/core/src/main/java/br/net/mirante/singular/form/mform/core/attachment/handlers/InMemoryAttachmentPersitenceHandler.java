@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CountingInputStream;
 
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
 /**
@@ -26,6 +27,7 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
  *
  * @author Daniel C. Bordin
  */
+@SuppressWarnings("serial")
 public class InMemoryAttachmentPersitenceHandler extends AbstractAttachmentPersistenceHandler {
 
     private Map<String, InMemoryAttachmentRef> attachments;

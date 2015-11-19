@@ -36,6 +36,7 @@ public enum Icone {
     PIN /*              */("icon-pin"),
     PIE /*              */("icon-pie-chart"),
     PLUS /*             */("fa fa-plus"),
+    ROCKET /*           */("icon-rocket"),
     REDO /*             */("icon-action-redo"),
     SHARE_ALT /*        */("fa fa-share-alt"),
     SHARE_SQUARE /*     */("fa fa-share-square-o"),

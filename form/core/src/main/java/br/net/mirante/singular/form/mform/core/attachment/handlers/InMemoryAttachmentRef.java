@@ -1,7 +1,9 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
 import java.io.InputStream;
 import java.io.Serializable;
+
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 
 @SuppressWarnings("serial")
 public class InMemoryAttachmentRef implements IAttachmentRef, Serializable {

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core.attachment;
+package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

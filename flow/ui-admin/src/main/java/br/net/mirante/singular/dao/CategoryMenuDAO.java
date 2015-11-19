@@ -70,11 +70,11 @@ public class CategoryMenuDAO extends BaseDAO{
     private List<Object[]> retrieveCategories() {
         String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS COD, DEF.NO_PROCESSO AS NOD, DEF.SG_PROCESSO AS SGD,"
                 + " CAT.CO_CATEGORIA AS COC, CAT.NO_CATEGORIA AS NOC, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QTD"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + " INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
-                + " INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + " INNER JOIN "+DBSCHEMA+"TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " WHERE INS.DT_FIM IS NULL "
                 + " GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO,"
                 + " CAT.CO_CATEGORIA, CAT.NO_CATEGORIA";
         Query query = getSession().createSQLQuery(sql)
@@ -90,8 +90,8 @@ public class CategoryMenuDAO extends BaseDAO{
 
     public Object[] retrieveCategoryDefinitionIdsByCode(String processCode) {
         String sql = "SELECT CAT.CO_CATEGORIA AS COC, DEF.CO_DEFINICAO_PROCESSO AS COD"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "  INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + "  INNER JOIN "+DBSCHEMA+"TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
                 + " WHERE DEF.SG_PROCESSO = :processCode";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar(ResultColumn.categoryId.getAlias(), LongType.INSTANCE)
