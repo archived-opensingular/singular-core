@@ -129,7 +129,7 @@ public class CrudContent extends Content
 
             @Override
             public boolean isVisible() {
-                return selectedTemplate != null;
+                return selectedTemplate != null && selectedTemplate.getKey() != null;
             }
 
         });

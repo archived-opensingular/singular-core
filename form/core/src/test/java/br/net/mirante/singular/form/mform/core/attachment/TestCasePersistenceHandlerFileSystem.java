@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import com.google.common.base.Throwables;
+
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 
 public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHandlerBase {
@@ -19,9 +21,20 @@ public class TestCasePersistenceHandlerFileSystem extends TestCasePersistenceHan
         tmpFolder = rootTmp.newFolder("tempSingular" + Math.random());
     }
 
+    
     @Override
     protected IAttachmentPersistenceHandler setupHandler() {
+        try {
+            createFolders();
+        } catch (Exception e) {
+            Throwables.propagate(e);
+        }
         return new FileSystemAttachmentHandler(tmpFolder);
+    }
+    
+    @Override
+    protected String defineId(IAttachmentRef ref) {
+        return ref.getId();
     }
 
 }
