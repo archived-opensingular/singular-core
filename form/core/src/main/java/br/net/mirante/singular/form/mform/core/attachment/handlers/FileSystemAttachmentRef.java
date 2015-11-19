@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.zip.InflaterInputStream;
 
 import com.google.common.base.Throwables;
 
@@ -37,7 +36,7 @@ public class FileSystemAttachmentRef implements IAttachmentRef, Serializable {
     @Override
     public InputStream getContent() {
         try {
-            return new InflaterInputStream(new FileInputStream(path));
+            return new FileInputStream(path);
         } catch (FileNotFoundException e) {
             throw Throwables.propagate(e);
         }
