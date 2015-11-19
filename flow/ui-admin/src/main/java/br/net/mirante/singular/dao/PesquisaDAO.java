@@ -10,11 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.FloatType;
 import org.hibernate.type.IntegerType;
@@ -29,13 +25,6 @@ import br.net.mirante.singular.flow.core.TaskType;
 public class PesquisaDAO extends BaseDAO{
 
     private static final int MAX_MAP_SIZE = 7;
-
-    @Inject
-    private SessionFactory sessionFactory;
-
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
         String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
