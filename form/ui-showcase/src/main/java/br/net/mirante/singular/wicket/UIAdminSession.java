@@ -22,10 +22,7 @@ public class UIAdminSession extends AuthenticatedWebSession {
         this.logout = request.getRequestParameters().getParameterValue("logout").toString(null);
         this.roles = new Roles();
         this.roles.add(Roles.USER);
-
-        if (RuntimeConfigurationType.DEVELOPMENT.equals(ShowcaseApplication.get().getConfigurationType())) {
-            this.roles.add(Roles.ADMIN);
-        }
+        this.roles.add(Roles.ADMIN);
     }
 
     public static UIAdminSession get() {
