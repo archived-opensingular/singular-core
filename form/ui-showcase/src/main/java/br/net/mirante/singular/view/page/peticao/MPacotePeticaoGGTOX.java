@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectVi
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 
 public class MPacotePeticaoGGTOX extends MPacote {
 
@@ -47,26 +48,26 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .enabled(false);
         */
 
-        addTipoDocumento(peticionamento);
-        addDadosRequerente(peticionamento);
-        addDadosResponsavel(peticionamento);
+        addTipoDocumento(pb, peticionamento);
+        addDadosRequerente(pb, peticionamento);
+        addDadosResponsavel(pb, peticionamento);
         addComponentes(pb, peticionamento);
-        addTestes(peticionamento);
-        addValidacaoResponsavel(peticionamento);
-        addResponsavelTransacao(peticionamento);
-        addImpressaoPeticao(peticionamento);
+        addTestes(pb, peticionamento);
+        addValidacaoResponsavel(pb, peticionamento);
+        addResponsavelTransacao(pb, peticionamento);
+        addImpressaoPeticao(pb, peticionamento);
 
     }
 
-    private void addTipoDocumento(MTipoComposto<?> peticionamento) {
+    private void addTipoDocumento(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
         //TODO adicionar variavel como texto na tela
     }
 
-    private void addDadosRequerente(MTipoComposto<?> peticionamento) {
+    private void addDadosRequerente(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
 
     }
 
-    private void addDadosResponsavel(MTipoComposto<?> peticionamento) {
+    private void addDadosResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
         MTipoComposto<MIComposto> dadosResponsavel = peticionamento.addCampoComposto("dadosResponsavel");
 
         dadosResponsavel.as(AtrBasic::new).label("Dados do Responsável");
@@ -180,7 +181,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         //TODO Fabricante deve ser uma pesquisa
         MTipoComposto<MIComposto> fabricante = fabricantes.getTipoElementos();
-        fabricante.addCampoString("cnpj").as(AtrBasic::new).label("CNPJ");
+        //TODO como usar o tipo cnpj
+        fabricante.addCampo("cnpj", MTipoCNPJ.class).as(AtrBasic::new).label("CNPJ");
         fabricante.addCampoString("razaoSocial").as(AtrBasic::new).label("Razão social");
         fabricante.addCampoString("cidade").as(AtrBasic::new).label("Cidade");
         fabricante.addCampoString("pais").as(AtrBasic::new).label("País");
@@ -193,65 +195,208 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .withView(MPanelListaView::new)
                 .as(AtrBasic::new).label("Nome comercial").tamanhoInicial(1);
 
-//        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> embalagens = peticionamento.addCampoListaOfComposto("embalagens", "embalagem");
-//        MTipoComposto<MIComposto> embalagem = embalagens.getTipoElementos();
-//
-//        //TODO converter sim nao para true false
-//        embalagem.addCampoString("produtoExterior", true)
-//                .withSelectionOf("Sim", "Não")
-//                .withView(MSelecaoPorRadioView::new)
-//                .as(AtrBasic::new).label("Produto formulado no exterior?");
-//
-//        embalagem.addCampoString("tipo", true)
-//                .withSelectionOf(getTiposEmbalagem())
-//                .withView(MSelecaoPorSelectView::new)
-//                .as(AtrBasic::new).label("Tipo");
-//
-//        embalagem.addCampoString("material", true)
-//                .withSelectionOf(getMateriais())
-//                .withView(MSelecaoPorSelectView::new)
-//                .as(AtrBasic::new).label("Material");
-//
-//        embalagem.addCampoInteger("capacidade", true)
-//                .as(AtrBasic::new).label("Capacidade")
-//                .tamanhoMaximo(15);
-//
-//        embalagem.addCampoString("unidadeMedida", true)
-//                .withSelectionOf(getUnidadesMedida())
-//                .withView(MSelecaoPorSelectView::new)
-//                .as(AtrBasic::new).label("Unidade medida");
-//
-//        embalagens
-//                .withView(MPanelListaView::new)
-//                .as(AtrBasic::new).label("Embalagem").tamanhoInicial(1);
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> embalagens = peticionamento.addCampoListaOfComposto("embalagens", "embalagem");
+        MTipoComposto<MIComposto> embalagem = embalagens.getTipoElementos();
+
+        //TODO converter sim nao para true false
+        embalagem.addCampoString("produtoExterior", true)
+                .withSelectionOf("Sim", "Não")
+                .withView(MSelecaoPorRadioView::new)
+                .as(AtrBasic::new).label("Produto formulado no exterior?");
+
+        embalagem.addCampoString("tipo", true)
+                .withSelectionOf(getTiposEmbalagem())
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Tipo");
+
+        embalagem.addCampoString("material", true)
+                .withSelectionOf(getMateriais())
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Material");
+
+        embalagem.addCampoInteger("capacidade", true)
+                .as(AtrBasic::new).label("Capacidade")
+                .tamanhoMaximo(15);
+
+        //TODO caso o array tenha uma string vazia, ocorre um NPE
+        embalagem.addCampoString("unidadeMedida", true)
+                .withSelectionOf(getUnidadesMedida())
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Unidade medida");
+
+        embalagens
+                .withView(MPanelListaView::new)
+                .as(AtrBasic::new).label("Embalagem").tamanhoInicial(1);
     }
 
-//    private String[] getTiposEmbalagem() {
-//        return Arrays.stream(TipoEmbalagem.values())
-//                .map(TipoEmbalagem::getDescricao)
-//                .toArray(size -> new String[size]);
-//    }
+    private String[] getTiposEmbalagem() {
+        return new String[]{
+                "Balde",
+                "Barrica" ,
+                "Bombona",
+                "Caixa" ,
+                "Carro tanque" ,
+                "Cilindro",
+                "Container" ,
+                "Frasco" ,
+                "Galão" ,
+                "Garrafa" ,
+                "Lata" ,
+                "Saco" ,
+                "Tambor"
+        };
+
+    }
 
     private String[] getMateriais() {
-        return new String[]{""};
+        return new String[]{
+                "Papel",
+                "Alumínio",
+                "Ferro",
+                "Madeira"
+        };
     }
 
     private String[] getUnidadesMedida() {
-        return new String[]{""};
+        return new String[]{"cm"};
     }
 
-    private void addTestes(MTipoComposto<?> peticionamento) {
+    private void addTestes(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+        //TODO deve ser encontrado uma maneira de vincular o teste ao componente
+        addTesteCaracteristicasFisicoQuimicas(pb, peticionamento);
+        addTesteIrritacaoOcular(pb, peticionamento);
+        addTesteTeratogenicidade(pb, peticionamento);
+        addTesteNeurotoxicidade(pb, peticionamento);
+    }
+
+    private void addTesteCaracteristicasFisicoQuimicas(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+        MTipoComposto<MIComposto> teste = peticionamento.addCampoComposto("caracteristicasFisicoQuimicas");
+
+        teste.as(AtrBasic::new).label("Características fisíco-químicas");
+
+        teste.addCampoString("estadoFisico", true)
+                .withSelectionOf("Líquido", "Sólido", "Gasoso")
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Estado físico");
+
+        teste.addCampoString("aspecto", true)
+                .as(AtrBasic::new).label("Aspecto")
+                .tamanhoMaximo(50);
+
+        teste.addCampoString("cor", true)
+                .as(AtrBasic::new).label("Cor")
+                .tamanhoMaximo(40);
+
+        teste.addCampoString("odor")
+                .as(AtrBasic::new).label("Odor")
+                .tamanhoMaximo(40);
+
+        teste.addCampoString("pontoFusao")
+                .as(AtrBasic::new).label("Ponto de fusão (ºC)");
+
+        MTipoComposto<MIComposto> faixaFusao = teste.addCampoComposto("faixaFusao");
+
+        //TODO cade as mascaras para campos decimais
+        faixaFusao.as(AtrBasic::new).label("Faixa de fusão (ºC)");
+
+        //TODO o campo faixa de fusao precisa de um tipo intervalo
+        // Exemplo: Faixa De 10 a 20
+        faixaFusao.addCampoString("faixaFusaoDe")
+                .as(AtrBasic::new).label("De");
+
+        faixaFusao.addCampoString("faixaFusaoA")
+                .as(AtrBasic::new).label("A");
+
+
+        teste.addCampoString("pontoEbulicao")
+                .as(AtrBasic::new).label("Ponto de ebulição (ºC)");
+
+        MTipoComposto<MIComposto> faixaEbulicao = teste.addCampoComposto("faixaEbulicao");
+
+        faixaEbulicao.as(AtrBasic::new).label("Faixa de ebulição (ºC)");
+
+        faixaEbulicao.addCampoString("faixaEbulicaoDe")
+                .as(AtrBasic::new).label("De");
+
+        faixaEbulicao.addCampoString("faixaEbulicaoA")
+                .as(AtrBasic::new).label("A");
+
+        teste.addCampoString("pressaoVapor")
+                .as(AtrBasic::new).label("Pressão do vapor (mmHg/Pa/mPa)");
+
+        teste.addCampoString("tipoPressaoVapor")
+                .withSelectionOf("mmHg", "Pa", "mPa")
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Tipo de Pressão do vapor");
+
+        teste.addCampoString("solubilidadeAgua")
+                .as(AtrBasic::new).label("Solubilidade em água (mg/L a 20 ou 25 ºC)");
+
+        teste.addCampoString("solubilidadeOutrosSolventes")
+                .as(AtrBasic::new).label("Solubilidade em outros solventes (mg/L a 20 ou 25 ºC)");
+
+        teste.addCampoString("hidrolise")
+                .as(AtrBasic::new).label("Hidrólise");
+
+        teste.addCampoString("estabilidade")
+                .as(AtrBasic::new).label("Estabilidade às temperaturas normal e elevada");
+
+        teste.addCampoString("pontoFulgor")
+                .as(AtrBasic::new).label("Ponto de fulgor (ºC)");
+
+        teste.addCampoString("constanteDissociacao")
+                .as(AtrBasic::new).label("Constante de dissociação");
+
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> phs = teste.addCampoListaOfComposto("phs", "ph");
+        MTipoComposto<MIComposto> ph = phs.getTipoElementos();
+
+        ph.addCampoInteger("valorPh", true)
+                .as(AtrBasic::new).label("pH")
+                .tamanhoMaximo(7);
+
+        ph.addCampoInteger("solucao", true)
+                .as(AtrBasic::new).label("Solução (%)")
+                .tamanhoMaximo(7);
+
+        ph.addCampoString("temperatura", true)
+                .as(AtrBasic::new).label("Temperatura (ºC)")
+                .tamanhoMaximo(8);
+
+        phs
+                .withView(MPanelListaView::new)
+                .as(AtrBasic::new).label("Embalagem").tamanhoInicial(1);
+
+        teste.addCampoString("coeficienteParticao")
+                .as(AtrBasic::new).label("Coeficiente de partição octanol/Água a 20-25 ºC");
+
+        teste.addCampoInteger("densidade")
+                .as(AtrBasic::new).label("Densidade (g/cm³ a 20ºC)");
+
+        teste.addCampoString("observacoes")
+                .as(AtrBasic::new).label("Observações")
+                .multiLinha(true);
+    }
+
+    private void addTesteIrritacaoOcular(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
 
     }
 
-    private void addValidacaoResponsavel(MTipoComposto<?> peticionamento) {
+    private void addTesteTeratogenicidade(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
 
     }
 
-    private void addResponsavelTransacao(MTipoComposto<?> peticionamento) {
+    private void addTesteNeurotoxicidade(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+
     }
 
-    private void addImpressaoPeticao(MTipoComposto<?> peticionamento) {
+    private void addValidacaoResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+
+    }
+
+    private void addResponsavelTransacao(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+    }
+
+    private void addImpressaoPeticao(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
     }
 
 
