@@ -363,7 +363,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     public MView getView() {
-        return (this.view != null) ? this.view : MView.DEFAULT;
+        return this.view;
     }
 
     public MTipo<I> addValidacao(IValueValidator<?> validador) {

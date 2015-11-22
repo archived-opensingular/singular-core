@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -60,10 +59,6 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (id == null && document != null) {
             id = document.nextId();
         }
-    }
-
-    public MView getView() {
-        return getMTipo().getView();
     }
 
     @Override
@@ -241,7 +236,7 @@ public abstract class MInstancia implements MAtributoEnabled {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
-            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -321,7 +316,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         onRemove();
         if (getFlag(FlagsInstancia.RemovendoInstancia)) {
             throw new SingularFormException(MInstancia.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
         removeChildren();
     }
