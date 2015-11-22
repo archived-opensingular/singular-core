@@ -40,11 +40,16 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         return providerOpcoes;
     }
 
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(Collection<TIPO_NATIVO> options) {
+        providerOpcoes = new MProviderOpcoesFixoSimples(this, options);
+        return this;
+    }
+
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
         providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
         return this;
     }
-    
+
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());
     }
