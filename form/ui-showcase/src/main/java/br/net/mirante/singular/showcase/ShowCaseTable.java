@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectSearch;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
@@ -28,6 +29,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectCombo.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreAttachment.class)
+            .addCase(CaseInputCoreSelectSearch.class)
         ;
         //@formatter:on
     }

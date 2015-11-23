@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket;
 
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.wicket.mapper.SelectModalBuscaMapper;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -43,6 +45,7 @@ public class UIBuilderWicket {
         MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MView.class, /*                          */StringMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MSelecaoPorRadioView.class, /*           */RadioMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MSelecaoPorSelectView.class, /*          */SelectMapper::new);
+        MAPPER_REGISTRY.registerMapper(MTipoString.class, /*  */MSelecaoPorModalBuscaView.class, /*          */SelectModalBuscaMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MSelecaoMultiplaPorSelectView.class, /*  */MultipleSelectMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoLista.class, /*   */MSelecaoMultiplaPorPicklistView.class, /**/PicklistMapper::new);
         MAPPER_REGISTRY.registerMapper(MTipoData.class, /*    */MView.class, /*                          */DateMapper::new);

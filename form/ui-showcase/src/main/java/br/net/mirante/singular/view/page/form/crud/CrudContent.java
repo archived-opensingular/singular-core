@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -228,12 +229,12 @@ public class CrudContent extends Content implements SingularWicketContainer<Crud
                             }
                         }))
                 .add(new SaveButton("save-btn"))
-                .add(new AjaxButton("cancel-btn"){
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                .add(new AjaxLink("cancel-btn"){
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
                         inputModal.hide(target);
                     }
                 })
-                
         );
 
         return inputModal;
