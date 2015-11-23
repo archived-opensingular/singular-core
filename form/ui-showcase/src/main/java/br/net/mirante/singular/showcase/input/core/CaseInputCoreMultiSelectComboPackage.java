@@ -20,9 +20,9 @@ public class CaseInputCoreMultiSelectComboPackage extends MPacote {
         MTipoString tipoContato = pb.createTipo("tipoContato", MTipoString.class)
                  .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
-        MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("infoPub", tipoContato);
+        MTipoLista<MTipoString, MIString> infoPub1 = tipoMyForm.addCampoListaOf("infoPub1", tipoContato);
 
-        infoPub
+        infoPub1
             .withView(MSelecaoMultiplaPorSelectView::new)
             .as(AtrBasic::new).label("Informações Públicas");
     }

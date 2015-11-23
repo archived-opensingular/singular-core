@@ -3,7 +3,6 @@ package br.net.mirante.singular.wicket;
 import java.util.Locale;
 
 import org.apache.wicket.RuntimeConfigurationType;
-import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
@@ -18,6 +17,8 @@ import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 
 public class UIAdminApplication extends AuthenticatedWebApplication {
 
+    private static String appName;
+    
     @Override
     public Class<? extends WebPage> getHomePage() {
         return DashboardPage.class;
@@ -37,10 +38,12 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
+        
+        appName = getName();
     }
 
     @Override
-    public Session newSession(Request request, Response response) {
+    public UIAdminSession newSession(Request request, Response response) {
         return new UIAdminSession(request, response);
     }
 
@@ -64,6 +67,6 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
     }
 
     public static UIAdminApplication get() {
-        return (UIAdminApplication) WebApplication.get();
+        return (UIAdminApplication) WebApplication.get(appName);
     }
 }

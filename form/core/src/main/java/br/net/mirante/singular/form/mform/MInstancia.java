@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -60,10 +59,6 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (id == null && document != null) {
             id = document.nextId();
         }
-    }
-
-    public MView getView() {
-        return getMTipo().getView();
     }
 
     @Override
@@ -230,6 +225,9 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
     public <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MTipo<A> ancestorType) {
         return MInstances.findAncestor(this, ancestorType);
+    }
+    public <A extends MInstancia> Optional<A> findNearest(MTipo<A> targetType) {
+        return MInstances.findNearest(this, targetType);
     }
 
     @SuppressWarnings("unchecked")

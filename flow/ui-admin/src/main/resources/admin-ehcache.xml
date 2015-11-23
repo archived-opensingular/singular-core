@@ -11,12 +11,48 @@
                   transactionalMode="off"
                   memoryStoreEvictionPolicy="LFU"/>
 
+    <cache name="listProcessDefinitionKeysWithAccess" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="listProcessDefinitionsWithAccess" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
     <cache name="retrieveAllCategoriesMenu" eternal="false"
-           maxEntriesLocalHeap="10000"
-           timeToIdleSeconds="300"
-           timeToLiveSeconds="600"
-           transactionalMode="off"
-           memoryStoreEvictionPolicy="LFU">
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveAllCategoriesWithAccessMenu" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+    
+    <cache name="hasAccessToProcessDefinition" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
         <persistence strategy="none" synchronousWrites="false"/>
     </cache>
 

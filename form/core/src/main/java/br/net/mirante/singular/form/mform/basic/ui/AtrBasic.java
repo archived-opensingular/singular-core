@@ -1,10 +1,12 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+import br.net.mirante.singular.form.mform.function.IBehavior;
 
 public class AtrBasic extends MTranslatorParaAtributo {
 
@@ -60,7 +62,27 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION, valor);
         return this;
     }
-    
+
+    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
+        IBehavior<MInstancia> existingBehavior = getOnChange();
+        IBehavior<MInstancia> newBehavior = behaviorFunction.apply(IBehavior.noopIfNull(existingBehavior));
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR, newBehavior);
+        return this;
+    }
+
+    public AtrBasic onChange(IBehavior<MInstancia> behavior) {
+        onChange(old -> old.andThen(behavior));
+        return this;
+    }
+
+    public boolean hasOnChange() {
+        return getOnChange() != null;
+    }
+    @SuppressWarnings("unchecked")
+    public IBehavior<MInstancia> getOnChange() {
+        return (IBehavior<MInstancia>) getAlvo().getValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR.getNomeCompleto());
+    }
+
     public AtrBasic multiLinha(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
         return this;

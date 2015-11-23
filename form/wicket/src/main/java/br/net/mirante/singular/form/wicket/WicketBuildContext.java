@@ -5,22 +5,40 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.MetaDataKey;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.markup.html.form.AbstractChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.function.IBehavior;
+import br.net.mirante.singular.form.mform.function.IBehaviorContext;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.form.wicket.validation.MInstanciaValueValidator;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class WicketBuildContext implements Serializable {
+
+    private static final MetaDataKey<Integer>  KEY_INSTANCE_ID        = new MetaDataKey<Integer>() {};
+    public static final MetaDataKey<Component> KEY_INSTANCE_CONTAINER = new MetaDataKey<Component>() {};
 
     private final WicketBuildContext                parent;
     private final BSContainer<?>                    container;
@@ -65,6 +83,37 @@ public class WicketBuildContext implements Serializable {
         formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
         formComponent.add(new MInstanciaValueValidator<>());
         formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
+        formComponent.setMetaData(KEY_INSTANCE_CONTAINER, getContainer());
+
+        IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
+        MTipo<?> tipo = model.getMInstancia().getMTipo();
+
+        if (tipo.as(MPacoteBasic.aspect()).hasOnChange()) {
+            if (formComponent instanceof TextField<?> ||
+                formComponent instanceof AbstractChoice<?, ?>) {
+                formComponent.add(new AjaxFormComponentUpdatingBehavior("change") {
+                    @Override
+                    protected void onUpdate(AjaxRequestTarget target) {
+                        IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) this.getComponent().getDefaultModel();
+                        MInstancia instance = model.getMInstancia();
+                        IBehavior<MInstancia> onChange = instance.as(MPacoteBasic.aspect()).getOnChange();
+                        if (onChange != null) {
+                            onChange.on(new IBehaviorContext() {
+                                @Override
+                                public IBehaviorContext update(MTipo<?>... fields) {
+                                    for (MTipo<?> field : fields)
+                                        target.add(instance.findNearest(field)
+                                            .flatMap(target -> WicketFormUtils.findChildByInstance(formComponent.getPage(), target))
+                                            .map(target -> Optional.ofNullable(target.getMetaData(KEY_INSTANCE_CONTAINER)).orElse(target))
+                                            .get());
+                                    return this;
+                                }
+                            }, model.getMInstancia());
+                        }
+                    }
+                });
+            }
+        }
         return formComponent;
     }
 
@@ -97,5 +146,21 @@ public class WicketBuildContext implements Serializable {
                 return Strings.join(" > ", labels);
         }
         return "[" + formComponent.getId() + "]";
+    }
+    public void setContainerInstance(MInstancia instancia) {
+        getContainer().setMetaData(KEY_INSTANCE_ID, instancia.getId());
+    }
+    public boolean isContainerForInstance(MInstancia instance) {
+        return Objects.equals(instance.getId(), getContainer().getMetaData(KEY_INSTANCE_ID));
+    }
+    public Optional<MInstancia> findContainerInstance(SDocument document) {
+        return ((MIComposto) document.getRoot()).streamDescendants(true)
+            .filter(it -> Objects.equals(it.getId(), getContainer().getMetaData(KEY_INSTANCE_ID)))
+            .findFirst();
+    }
+    public Optional<MarkupContainer> findContainerForInstance(Component start, MInstancia instance) {
+        return WicketFormUtils.streamAscendants(start)
+            .filter(it -> Objects.equals(instance.getId(), it.getMetaData(KEY_INSTANCE_ID)))
+            .findFirst();
     }
 }

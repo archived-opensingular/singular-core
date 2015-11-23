@@ -69,6 +69,15 @@ public class TemplateRepository extends MDicionarioResolver {
     public Collection<TemplateEntry> getEntries() {
         return entries.values();
     }
+    
+    public TemplateEntry findEntryByType(String type) {
+        for(TemplateEntry t : entries.values()){
+            if(t.getType().getNome().equals(type)){
+                return t;
+            }
+        }
+        return null;
+    }
 
     public static class TemplateEntry {
 

@@ -1,26 +1,20 @@
 package br.net.mirante.singular.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CategoryMenuDAO {
+import br.net.mirante.singular.dto.MenuItemDTO;
 
-    @Inject
-    private SessionFactory sessionFactory;
+@Repository
+public class CategoryMenuDAO extends BaseDAO{
 
     private enum ResultColumn {
         definitionId(0, "COD"),
@@ -47,20 +41,13 @@ public class CategoryMenuDAO {
         }
     }
 
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
     public List<MenuItemDTO> retrieveAll() {
-        List<MenuItemDTO> categories = new ArrayList<>();
         Map<Long, MenuItemDTO> categoriesMap = mountCategories(retrieveCategories());
-        categories.addAll(categoriesMap.entrySet().stream()
+        return categoriesMap.entrySet().stream()
                 .map(Map.Entry::getValue)
-                .collect(Collectors.toList()));
-        return categories;
+                .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
     private Map<Long, MenuItemDTO> mountCategories(List<Object[]> rawCategoies) {
         Map<Long, MenuItemDTO> categories = new HashMap<>();
         for (Object[] category : rawCategoies) {
@@ -83,11 +70,11 @@ public class CategoryMenuDAO {
     private List<Object[]> retrieveCategories() {
         String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS COD, DEF.NO_PROCESSO AS NOD, DEF.SG_PROCESSO AS SGD,"
                 + " CAT.CO_CATEGORIA AS COC, CAT.NO_CATEGORIA AS NOC, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QTD"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + " INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
-                + " INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + " INNER JOIN "+DBSCHEMA+"TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
+                + " LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
+                + " WHERE INS.DT_FIM IS NULL "
                 + " GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO,"
                 + " CAT.CO_CATEGORIA, CAT.NO_CATEGORIA";
         Query query = getSession().createSQLQuery(sql)
@@ -103,8 +90,8 @@ public class CategoryMenuDAO {
 
     public Object[] retrieveCategoryDefinitionIdsByCode(String processCode) {
         String sql = "SELECT CAT.CO_CATEGORIA AS COC, DEF.CO_DEFINICAO_PROCESSO AS COD"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "  INNER JOIN TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
+                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
+                + "  INNER JOIN "+DBSCHEMA+"TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
                 + " WHERE DEF.SG_PROCESSO = :processCode";
         Query query = getSession().createSQLQuery(sql)
                 .addScalar(ResultColumn.categoryId.getAlias(), LongType.INSTANCE)

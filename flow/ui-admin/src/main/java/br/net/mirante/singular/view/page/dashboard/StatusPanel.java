@@ -71,15 +71,15 @@ public class StatusPanel extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         add(new Label("label", new ResourceModel(labelKey)));
-        add(new Label("value", $m.property(this, "valueWithUnit")).add($b.attr("class", color.getFontCssClass())));
-        add(new WebMarkupContainer("icon").add($b.attr("class", icon.getCssClass())));
+        add(new Label("value", $m.property(this, "valueWithUnit")).add($b.classAppender(color.getFontCssClass())));
+        add(new WebMarkupContainer("icon").add($b.classAppender(icon.getCssClass())));
         WebMarkupContainer progress = new WebMarkupContainer("progress");
         if (!withProgress) {
-            add($b.attr("class", "without-progress-bar"));
-            progress.add($b.attrAppender("class", "hide", " "));
+            progress.add($b.classAppender("without-progress-bar"));
+            progress.add($b.classAppender("hide"));
         }
         WebMarkupContainer progressBar = new WebMarkupContainer("progressCSSValue");
-        progressBar.add($b.attrAppender("class", color.getCssClass(), " "));
+        progressBar.add($b.classAppender(color.getCssClass()));
         progressBar.add($b.attr("style", String.format("width: %d%%;", progressValue)));
         progressBar.add(new Label("progressLabelValue", $m.ofValue(String.format("%d%%", progressValue))));
         progress.add(progressBar);

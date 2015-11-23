@@ -11,7 +11,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.function.IComportamento;
+import br.net.mirante.singular.form.mform.function.IBehavior;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.IValueValidatable;
@@ -285,7 +285,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new NotImplementedException("TODO implementar");
     }
 
-    public MTipo<I> withCode(String pathCampo, IComportamento<I> comportamento) {
+    public MTipo<I> withCode(String pathCampo, IBehavior<I> comportamento) {
         // TODO implementar
         throw new NotImplementedException("TODO implementar");
     }
@@ -325,19 +325,19 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
     }
 
-    public MTipo<I> withOnChange(IComportamento<I> comportamento) {
-        return withCode("onChange", comportamento);
-    }
-
-    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
-    }
-
-    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
-    }
+//    public MTipo<I> withOnChange(IBehavior<I> behavior) {
+//        return as
+//    }
+//
+//    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
+//        // TODO implementar
+//        throw new NotImplementedException("TODO implementar");
+//    }
+//
+//    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
+//        // TODO implementar
+//        throw new NotImplementedException("TODO implementar");
+//    }
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
@@ -363,7 +363,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     public MView getView() {
-        return (this.view != null) ? this.view : MView.DEFAULT;
+        return this.view;
     }
 
     public MTipo<I> addValidacao(IValueValidator<?> validador) {

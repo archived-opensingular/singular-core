@@ -10,13 +10,13 @@ import br.net.mirante.singular.form.mform.MTipo;
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {
     private String key;
-    private final String typeName;
+    private String typeName;
     private transient MTipo<?> value;
 
     public FormVO(String key, MTipo<?> value) {
         this.key = key;
         this.value = value;
-        this.typeName = value.getNome();
+        if(value != null) this.typeName = value.getNome();
     }
 
     public FormVO(TemplateEntry t) {
@@ -56,4 +56,30 @@ public class FormVO implements Serializable, IModel<String> {
     public void setObject(String o) {
         setKey(o);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + ((typeName == null) ? 0 : typeName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)    return true;
+        if (obj == null)    return false;
+        if (getClass() != obj.getClass())   return false;
+        FormVO other = (FormVO) obj;
+        if (key == null) {
+            if (other.key != null)  return false;
+        } else if (!key.equals(other.key))  return false;
+        if (typeName == null) {
+            if (other.typeName != null) return false;
+        } else if (!typeName.equals(other.typeName))    return false;
+        return true;
+    }
+    
+    
 }

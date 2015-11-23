@@ -13,8 +13,13 @@ import com.google.common.base.Throwables;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCheckbox;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCombo;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectDefault;
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectPickList;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectComboRadio;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectDefault;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectOtherTypes;
 
 public class ShowCaseTable {
 
@@ -26,8 +31,13 @@ public class ShowCaseTable {
         group("Input")
             .addCase(CaseInputCoreDate.class)
             .addCase(CaseInputCoreInteger.class)
+            .addCase(CaseInputCoreSelectComboRadio.class)
+            .addCase(CaseInputCoreSelectDefault.class)
+            .addCase(CaseInputCoreSelectOtherTypes.class)
             .addCase(CaseInputCoreMultiSelectCombo.class)
+            .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
+            .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreAttachment.class)
             .addCase(CaseInputCoreSelectSearch.class)
         ;

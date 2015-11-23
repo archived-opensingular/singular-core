@@ -32,7 +32,10 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         FormComponent<?> formComponent = (FormComponent<?>) component;
         formComponent.setRequired(isInstanceRequired(component));
         formComponent.setEnabled(isInstanceEnabled(component));
-        formComponent.setVisible(isInstanceVisible(component));
+        //        Optional.ofNullable(formComponent.getMetaData(WicketBuildContext.KEY_INSTANCE_CONTAINER))
+        //            .orElse(formComponent)
+        //            .setVisible(isInstanceVisible(formComponent));
+        formComponent.setVisible(isInstanceVisible(formComponent));
     }
 
     public void renderHead(Component component, IHeaderResponse response) {
@@ -65,7 +68,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean isInstanceRequired(Component component) {
+    protected static boolean isInstanceRequired(Component component) {
         MInstancia instance = getInstanceFromModel(component);
         Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION.getNomeCompleto());
         if (predicate != null)
@@ -73,7 +76,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         return !Boolean.FALSE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
     }
 
-    protected boolean isInstanceEnabled(Component component) {
+    protected static boolean isInstanceEnabled(Component component) {
         MInstancia instance = getInstanceFromModel(component);
         Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION.getNomeCompleto());
         if (predicate != null)
@@ -81,12 +84,8 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         return !Boolean.FALSE.equals(instance.getValorAtributo(MPacoteBasic.ATR_ENABLED));
     }
 
-    protected boolean isInstanceVisible(Component component) {
+    protected static boolean isInstanceVisible(Component component) {
         MInstancia instance = getInstanceFromModel(component);
-        if ("CPF".equals(instance.getMTipo().getNomeSimples())) {
-            System.out.println(instance);
-        }
-
         Predicate<MInstancia> predicate = (Predicate<MInstancia>) instance.getMTipo().getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION.getNomeCompleto());
         if (predicate != null)
             return predicate.test(instance);

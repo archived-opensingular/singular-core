@@ -74,13 +74,16 @@ public class ExamplePackage extends MPacote {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
+        this.buyerNome.as(MPacoteBasic.aspect())
+            .onChange((ctx, i) -> ctx.update(buyerCpf));
+
         buyerCpf.as(MPacoteBasic.aspect())
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
             .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }
 
     private void buildAddressField() {
-        this.address = order.addCampoComposto("Addresss");
+        this.address = order.addCampoComposto("Address");
         this.address.as(AtrBasic::new).label("Endereço");
         this.addressStreet = addField(address, "street", "Logradouro", MTipoString.class);
         this.addressCity = addField(address, "city", "Cidade", MTipoString.class);
