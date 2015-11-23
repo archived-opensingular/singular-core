@@ -29,6 +29,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.markup.html.basic.Label;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -53,15 +54,14 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model) {
         MInstanciaValorModel valueModel = new MInstanciaValorModel<>(model);
         BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGrupo");
-        TextField t = new TextField<String>(model.getObject().getNome() + "selection", valueModel);
-        t.add($b.attr("readonly", "readonly"));
+        Label t = new Label(model.getObject().getNome() + "selection", valueModel);
 
-        panel.appendTag("input", true, "class=\"form-control\"", t);
+        panel.appendTag("span", true, "class=\"form-control\"", t);
 
         Model<Filtro> f = Model.of(new Filtro());
         panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(model.getObject().getNome() + "modal", t, model, valueModel, f));
 
-        /* input-group-sm precisa ser adicionado aqui po que o form-group atual adiciona o form-group-sm */
+        /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", panel);
 
         return t;
@@ -125,7 +125,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
         Component table = buildResultTable(id + "resultTable", valueInput, model, filterModel, modal);
 
-        buildSearchField(id + "searchField", filterModel, grid, table);
+        buildSearchField(id + "searchField", filterModel, grid, table, modal.getForm());
 
         grid.appendTag("table", true, "", table);
 
@@ -149,10 +149,11 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                 component.setVisible(((BSDataTable) component).getDataProvider().size() > 0);
             }
         });
+        table.setVisible(false);
         return table;
     }
 
-    public void buildSearchField(String id, IModel<?> filterModel, BSGrid grid, Component table) {
+    public void buildSearchField(String id, IModel<?> filterModel, BSGrid grid, Component table, Form<?> form) {
         BSControls formGroup = grid.newFormGroup();
 
         BSContainer inputGroup = new BSContainer(id + "inputGrup");
@@ -163,7 +164,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
         inputGroup.appendTag("span", true, "class=\"input-group-btn\"", inputGroupButton);
-        inputGroupButton.appendTag("a", true, "class=\"btn btn-default\"", new AjaxButton("link") {
+        inputGroupButton.appendTag("a", true, "class=\"btn btn-default\"", new AjaxButton("link", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
