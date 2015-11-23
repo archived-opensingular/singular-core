@@ -2,7 +2,9 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MProviderOpcoes;
+import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -16,6 +18,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
@@ -29,7 +32,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.markup.html.basic.Label;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -40,9 +42,10 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 @SuppressWarnings("serial")
 public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
+
     @Override
-    public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
-        return formGroupAppender(formGroup, model);
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+        return formGroupAppender(formGroup, bodyContainer, model);
     }
 
     public MProviderOpcoes getProvider(IModel<? extends MInstancia> model) {
@@ -51,15 +54,17 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
 
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model) {
+    protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer, IModel<? extends MInstancia> model) {
         MInstanciaValorModel valueModel = new MInstanciaValorModel<>(model);
         BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGrupo");
-        Label t = new Label(model.getObject().getNome() + "selection", valueModel);
+        TextField<String> t = new TextField<>(model.getObject().getNome() + "selection", valueModel);
+        t.setEnabled(false);
+        t.add($b.attr("readonly", "readonly"));
 
-        panel.appendTag("span", true, "class=\"form-control\"", t);
+        panel.appendTag("input", true, "class=\"form-control\"", t);
 
         Model<Filtro> f = Model.of(new Filtro());
-        panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(model.getObject().getNome() + "modal", t, model, valueModel, f));
+        panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(model.getObject().getNome() + "modal", t, modalContainer, model, valueModel, f));
 
         /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", panel);
@@ -68,11 +73,11 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
 
-    protected Panel buildSearchButton(String id, Component valueInput, IModel<? extends MInstancia> model, MInstanciaValorModel valueModel, IModel<Filtro> filterModel) {
+    protected Panel buildSearchButton(String id, Component valueInput, BSContainer modalContainer, IModel<? extends MInstancia> model, MInstanciaValorModel valueModel, IModel<Filtro> filterModel) {
         BSContainer panel = new BSContainer(id);
 
 
-        final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, model, filterModel);
+        final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, modalContainer, model, filterModel);
 
         panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
             @Override
@@ -89,34 +94,15 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             }
         });
 
-        panel.appendTag("div", true, "", searchModal);
-
+        modalContainer.appendTag("div", true, "", searchModal);
 
         return panel;
     }
 
-    public BSModalWindow buildModal(String id, Component valueInput, IModel<? extends MInstancia> model, IModel<Filtro> filterModel) {
+    public BSModalWindow buildModal(String id, Component valueInput, BSContainer modalContainer, IModel<? extends MInstancia> model, IModel<Filtro> filterModel) {
         BSModalWindow searchModal = new BSModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
         searchModal.setBody(buildConteudoModal(id, valueInput, model, filterModel, searchModal));
-
-        /*
-        * Remove a modal de onde ela foi incluída e a adiciona como filha de body
-        * Esse script impede que a modal funcione incorretamente por estar aninhada dentro da tag de outra modal
-        * */
-        searchModal.add(new Behavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                response.render(OnDomReadyHeaderItem.forScript(
-                        "(function(){\n" +
-                                " var modal = " + JQuery.$(component).append(".detach();").toString() + "\n" +
-                                " $('body').append(modal);\n" +
-                                " })();"
-                ));
-                super.renderHead(component, response);
-            }
-        });
-
         return searchModal;
     }
 
@@ -164,7 +150,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
         inputGroup.appendTag("span", true, "class=\"input-group-btn\"", inputGroupButton);
-        inputGroupButton.appendTag("a", true, "class=\"btn btn-default\"", new AjaxButton("link", form) {
+        inputGroupButton.appendTag("a", true, "class=\"btn btn-default\"", new AjaxSubmitLink("link", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {

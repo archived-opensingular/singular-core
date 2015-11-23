@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.CrudPage;
@@ -60,8 +61,14 @@ public class PeticaoContent extends Content
     }
 
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
+    }
+
+    private BSContainer buildBodyContainer(){
+        BSContainer bodyContainer = new BSContainer("body-container");
+        add(bodyContainer);
+        return bodyContainer;
     }
 
     @Override
