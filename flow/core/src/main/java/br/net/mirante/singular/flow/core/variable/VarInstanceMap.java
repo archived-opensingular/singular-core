@@ -1,15 +1,13 @@
 package br.net.mirante.singular.flow.core.variable;
 
-import br.net.mirante.singular.flow.core.SingularFlowException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Stream;
+
+import br.net.mirante.singular.flow.core.SingularFlowException;
 
 public interface VarInstanceMap<K extends VarInstance> extends VarServiceEnabled, Serializable, Iterable<K> {
 
