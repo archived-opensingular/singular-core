@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -34,6 +35,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
@@ -70,6 +72,9 @@ public class FormContent extends Content
         }else{
             currentModel = dao.find(key.toString(),typeName);
         }
+        currentModel.setType(typeName);
+        createInstance(typeName);
+        updateContainer();
     }
     
     private void createInstance(String nomeDoTipo) {
@@ -103,8 +108,14 @@ public class FormContent extends Content
     }
     
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
+    }
+
+    private BSContainer buildBodyContainer(){
+        BSContainer bodyContainer = new BSContainer("body-container");
+        add(bodyContainer);
+        return bodyContainer;
     }
 
     @Override
@@ -154,7 +165,7 @@ public class FormContent extends Content
             }
             currentModel.setXml(printXml(rootXml));
             dao.save(currentModel);
-            returnToCrudList();
+            backToCrudPage();
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
@@ -185,20 +196,21 @@ public class FormContent extends Content
             return buffer.toString();
         }
     }
-    
-    private AjaxButton createCancelButton() {
-        return new AjaxButton("cancel-btn") {
-        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-            returnToCrudList();
-        }
 
-      };
+    private AjaxLink createCancelButton() {
+        return new AjaxLink("cancel-btn") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                backToCrudPage();
+            }
+        };
     }
-    
-    private void returnToCrudList() {
+
+    private void backToCrudPage(){
         PageParameters params = new PageParameters()
-            .add(CrudPage.TYPE_NAME, currentModel.getType());
+                .add(CrudPage.TYPE_NAME, currentModel.getType());
         setResponsePage(CrudPage.class, params);
     }
-    
+
 }
