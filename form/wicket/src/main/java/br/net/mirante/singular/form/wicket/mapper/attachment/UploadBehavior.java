@@ -20,10 +20,10 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 
 /**
  * Class responsible for handling the temporary upload of files inside the
@@ -37,10 +37,11 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private MInstancia instance;
+    transient private MIAttachment instance;
 
-    public UploadBehavior(MInstancia instance) {
+    public UploadBehavior(MIAttachment instance) {
         this.instance = instance;
+        instance.setOriginalFileId(instance.getFileId());
     }
 
     public void setWebWrapper(WebWrapper w) {
@@ -103,6 +104,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
             IAttachmentPersistenceHandler handler = rootDocument.getAttachmentPersistenceHandler();
             IAttachmentRef ref = handler.addAttachment(item.getInputStream());
             fileGroup.put(createJsonFile(item, ref));
+            instance.addTemporaryFileId(ref.getId());
         }
     }
 

@@ -44,7 +44,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         MDicionario dicionario = MDicionario.create();
         dicionario.carregarPacote(TestPacoteAA.class);
 
-        dicionario.debug();
+//        dicionario.debug();
         // Teste no tipo
         assertLeituraAtributo(dicionario.getTipo(MTipoInteger.class), 15, 15);
         assertLeituraAtributo(dicionario.getTipo(MTipoString.class), 17, 17);

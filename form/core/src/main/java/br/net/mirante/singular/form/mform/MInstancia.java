@@ -361,4 +361,5 @@ public abstract class MInstancia implements MAtributoEnabled {
     final boolean getFlag(FlagsInstancia flag) {
         return (flags & flag.bit()) != 0;
     }
+
 }

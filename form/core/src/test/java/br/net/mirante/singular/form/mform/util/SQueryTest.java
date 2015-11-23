@@ -35,7 +35,7 @@ public class SQueryTest {
 
         System.out.println($(contato).find(pacote.telefones).children().val());
 
-        contato.debug();
+//        contato.debug();
     }
 
     @Test

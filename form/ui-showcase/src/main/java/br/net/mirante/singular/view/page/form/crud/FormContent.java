@@ -58,14 +58,18 @@ public class FormContent extends Content
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
         String typeName = type.toString();
+        loadOrCreateModel(key, typeName);
+        currentModel.setType(typeName);
+        createInstance(typeName);
+        updateContainer();
+    }
+
+    private void loadOrCreateModel(StringValue key, String typeName) {
         if(key.isEmpty()){
             currentModel = new ExampleDataDTO(UUID.randomUUID().toString());
         }else{
             currentModel = dao.find(key.toString(),typeName);
         }
-        currentModel.setType(typeName);
-        createInstance(typeName);
-        updateContainer();
     }
     
     private void createInstance(String nomeDoTipo) {
@@ -150,6 +154,7 @@ public class FormContent extends Content
             }
             currentModel.setXml(printXml(rootXml));
             dao.save(currentModel);
+            returnToCrudList();
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
@@ -184,11 +189,16 @@ public class FormContent extends Content
     private AjaxButton createCancelButton() {
         return new AjaxButton("cancel-btn") {
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-            PageParameters params = new PageParameters()
-                            .add(CrudPage.TYPE_NAME, currentModel.getType());
-            setResponsePage(CrudPage.class, params);
+            returnToCrudList();
         }
+
       };
+    }
+    
+    private void returnToCrudList() {
+        PageParameters params = new PageParameters()
+            .add(CrudPage.TYPE_NAME, currentModel.getType());
+        setResponsePage(CrudPage.class, params);
     }
     
 }
