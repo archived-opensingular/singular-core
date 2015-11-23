@@ -1,4 +1,4 @@
-package br.net.mirante.singular.dto;
+package br.net.mirante.singular.flow.core.dto;
 
 import java.io.Serializable;
 

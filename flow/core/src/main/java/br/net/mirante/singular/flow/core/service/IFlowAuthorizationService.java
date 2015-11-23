@@ -1,9 +1,11 @@
 package br.net.mirante.singular.flow.core.service;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 
 public interface IFlowAuthorizationService {
@@ -17,4 +19,8 @@ public interface IFlowAuthorizationService {
     boolean hasAccessToProcessDefinition(@NotNull String processDefinitionKey, @NotNull String userCod, @NotNull AccessLevel accessLevel);
 
     boolean hasAccessToProcessInstance(@NotNull String processInstanceFullId, @NotNull String userCod, @NotNull AccessLevel accessLevel);
+    
+    static String generateGroupToken(String groupCod){
+        return SingularUtil.toSHA1(groupCod+LocalDate.now().toEpochDay());
+    }
 }

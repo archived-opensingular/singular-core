@@ -1,23 +1,24 @@
 package br.net.mirante.singular.service;
 
+import static br.net.mirante.singular.flow.core.service.IFlowAuthorizationService.generateGroupToken;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.web.client.RestTemplate;
 
-import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.service.IFlowAuthorizationService;
 
-public class FlowAuthorizationSpringRest implements IFlowAuthorizationService{
+class FlowAuthorizationSpringRest implements IFlowAuthorizationService{
 
     private final String groupToken;
     private final String connectionURL;
 
-    public FlowAuthorizationSpringRest(String groupKey, String connectionURL) {
+    FlowAuthorizationSpringRest(String groupKey, String connectionURL) {
         super();
-        this.groupToken = SingularUtil.toSHA1(groupKey);
+        this.groupToken = generateGroupToken(groupKey);
         this.connectionURL = connectionURL;
     }
 
@@ -46,4 +47,5 @@ public class FlowAuthorizationSpringRest implements IFlowAuthorizationService{
     public String getConnectionURL(String path, String...params) {
         return connectionURL + path + "?groupToken="+groupToken + Arrays.stream(params).map(param -> "&"+param+"={"+param+"}").collect(Collectors.joining());
     }
+    
 }
