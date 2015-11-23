@@ -9,12 +9,14 @@ import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
 
+import java.util.Optional;
+
 public class WicketEventUtils {
 
     private WicketEventUtils() {}
 
     public static void addErrorMessage(Component component, String messageKey, IModel<?> messageModel) {
-        component.error(new StringResourceModel(messageKey, messageModel).getString());
+        component.error(new StringResourceModel(Optional.of(messageKey).orElse(""), messageModel).getString());
     }
 
     public static void sendAjaxErrorEvent(Component component, AjaxRequestTarget target) {

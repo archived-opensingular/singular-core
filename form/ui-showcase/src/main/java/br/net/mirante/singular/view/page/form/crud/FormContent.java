@@ -1,22 +1,5 @@
 package br.net.mirante.singular.view.page.form.crud;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -34,12 +17,29 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+
+import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.UUID;
 
 @SuppressWarnings("serial")
-public class FormContent extends Content 
+public class FormContent extends Content
                         implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
@@ -48,13 +48,13 @@ public class FormContent extends Content
     private Form<?> inputForm = new Form<>("save-form");
     private IModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
-    
+
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
             return filePersistence;
         }
     };
-    
+
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
         String typeName = type.toString();
@@ -67,7 +67,7 @@ public class FormContent extends Content
         createInstance(typeName);
         updateContainer();
     }
-    
+
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -90,17 +90,23 @@ public class FormContent extends Content
             throw new RuntimeException(e);
         }
     }
-    
+
     private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
         buildContainer();
     }
-    
+
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
+    }
+
+    private BSContainer buildBodyContainer(){
+        BSContainer bodyContainer = new BSContainer("body-container");
+        add(bodyContainer);
+        return bodyContainer;
     }
 
     @Override
@@ -112,7 +118,7 @@ public class FormContent extends Content
     protected IModel<?> getContentSubtitlelModel() {
         return new ResourceModel("label.content.title");
     }
-    
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -131,7 +137,7 @@ public class FormContent extends Content
             }
         });
     }
-    
+
     private final class SaveButton extends AjaxButton {
         private SaveButton(String id) {
             super(id);
@@ -150,6 +156,7 @@ public class FormContent extends Content
             }
             currentModel.setXml(printXml(rootXml));
             dao.save(currentModel);
+            backToCrudPage();
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
@@ -180,15 +187,21 @@ public class FormContent extends Content
             return buffer.toString();
         }
     }
-    
-    private AjaxButton createCancelButton() {
-        return new AjaxButton("cancel-btn") {
-        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-            PageParameters params = new PageParameters()
-                            .add(CrudPage.TYPE_NAME, currentModel.getType());
-            setResponsePage(CrudPage.class, params);
-        }
-      };
+
+    private AjaxLink createCancelButton() {
+        return new AjaxLink("cancel-btn") {
+
+            @Override
+            public void onClick(AjaxRequestTarget target) {
+                backToCrudPage();
+            }
+        };
     }
-    
+
+    private void backToCrudPage(){
+        PageParameters params = new PageParameters()
+                .add(CrudPage.TYPE_NAME, currentModel.getType());
+        setResponsePage(CrudPage.class, params);
+    }
+
 }
