@@ -41,7 +41,6 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     public UploadBehavior(MIAttachment instance) {
         this.instance = instance;
-        instance.setOriginalFileId(instance.getFileId());
     }
 
     public void setWebWrapper(WebWrapper w) {

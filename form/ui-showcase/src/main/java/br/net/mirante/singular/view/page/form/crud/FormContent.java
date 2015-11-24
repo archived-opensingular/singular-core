@@ -3,6 +3,8 @@ package br.net.mirante.singular.view.page.form.crud;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -20,12 +22,13 @@ import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -45,15 +48,23 @@ public class FormContent extends Content
                         implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
-    @Inject FileDao filePersistence;
+//    @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
     private IModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        public IAttachmentPersistenceHandler get() {
+//            return filePersistence;
+            return new FileSystemAttachmentHandler("/tmp/mirtst");
+        }
+    };
+    
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
-            return filePersistence;
+//            return filePersistence;
+            return new FileSystemAttachmentHandler("/tmp/mirpst");
         }
     };
     
@@ -62,8 +73,6 @@ public class FormContent extends Content
         String typeName = type.toString();
         loadOrCreateModel(key, typeName);
         currentModel.setType(typeName);
-        createInstance(typeName);
-        updateContainer();
     }
 
     private void loadOrCreateModel(StringValue key, String typeName) {
@@ -80,10 +89,14 @@ public class FormContent extends Content
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
-        currentInstance.getObject().getDocument()
-            .setAttachmentPersistenceHandler(persistanceRef);
+        bindDefaultServices(currentInstance.getObject().getDocument());
         populateInstance(tipo);
 
+    }
+
+    private void bindDefaultServices(SDocument document) {
+        document.setAttachmentPersistenceHandler(temporaryRef);
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
     }
 
     private void populateInstance(final MTipo<?> tipo) {
@@ -93,9 +106,9 @@ public class FormContent extends Content
             MElement xml = MParser.parse(currentModel.getXml());
             MInstancia instance = MformPersistenciaXML.fromXML(tipo, xml);
             currentInstance = new MInstanceRootModel<MInstancia>(instance);
-            currentInstance.getObject().getDocument()
-                .setAttachmentPersistenceHandler(persistanceRef);
+            bindDefaultServices(currentInstance.getObject().getDocument());
         } catch (Exception e) {
+            Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
             throw new RuntimeException(e);
         }
     }
@@ -156,14 +169,17 @@ public class FormContent extends Content
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
             MInstancia trueInstance = currentInstance.getObject();
+            trueInstance.getDocument().persistFiles(); //TODO: review this order
             MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
 
             try {
                 addValidationErrors(target, form, trueInstance, rootXml);
             } catch (Exception e) {
                 target.add(form);
+                Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
                 return;
             }
+            
             currentModel.setXml(printXml(rootXml));
             dao.save(currentModel);
             backToCrudPage();

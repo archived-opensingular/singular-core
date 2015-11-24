@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
 import static org.fest.assertions.api.Assertions.anyOf;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -61,9 +62,26 @@ public class TestSDocumentServices {
         
         when(tempHandler.getAttachment("abacate"))
             .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(content))
+            .thenReturn(attachmentRef("abacate", content));
         
         document.persistFiles();
         verify(persistentHandler).addAttachment(content);
+    }
+    
+    @Test public void armazenaOValorDoNovoId(){
+        fileFieldInstance.setFileId("abacate");
+        
+        byte[] content = new byte[]{0};
+        
+        when(tempHandler.getAttachment("abacate"))
+            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(content))
+            .thenReturn(attachmentRef("avocado", content));
+        
+        document.persistFiles();
+        assertThat(fileFieldInstance.getFileId()).isEqualTo("avocado");
+        assertThat(fileFieldInstance.getOriginalFileId()).isEqualTo("avocado");
     }
     
     @Test public void deveApagarOTemporarioAposInserirNoPersistente(){
@@ -72,6 +90,8 @@ public class TestSDocumentServices {
         byte[] content = new byte[]{0};
         
         when(tempHandler.getAttachment("abacate"))
+            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(content))
             .thenReturn(attachmentRef("abacate", content));
         
         document.persistFiles();
@@ -86,6 +106,8 @@ public class TestSDocumentServices {
         byte[] content = new byte[]{0};
         
         when(tempHandler.getAttachment("abacate"))
+            .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(content))
             .thenReturn(attachmentRef("abacate", content));
         
         document.persistFiles();
@@ -102,6 +124,8 @@ public class TestSDocumentServices {
         
         when(tempHandler.getAttachment("abacate"))
             .thenReturn(attachmentRef("abacate", content));
+        when(persistentHandler.addAttachment(content))
+            .thenReturn(attachmentRef("abacate", content));
         
         document.persistFiles();
         verify(persistentHandler).deleteAttachment("avocado");
@@ -111,10 +135,14 @@ public class TestSDocumentServices {
         fileFieldInstance.setFileId("abacate");
         fileFieldInstance.setOriginalFileId("abacate");
         
-        byte[] content = new byte[]{0};
-        
-        when(tempHandler.getAttachment("abacate"))
-            .thenReturn(attachmentRef("abacate", content));
+        document.persistFiles();
+        verify(persistentHandler, never()).deleteAttachment(Matchers.any());
+        verify(tempHandler, never()).deleteAttachment(Matchers.any());
+    }
+    
+    @Test public void naoFalhaCasoNaoTenhaNadaTemporario(){
+        fileFieldInstance.setFileId("abacate");
+        fileFieldInstance.setOriginalFileId(null);
         
         document.persistFiles();
         verify(persistentHandler, never()).deleteAttachment(Matchers.any());

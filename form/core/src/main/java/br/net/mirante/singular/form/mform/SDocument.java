@@ -27,6 +27,8 @@ import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttac
  */
 @SuppressWarnings("serial")
 public class SDocument implements Serializable {
+    
+    public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
 
@@ -206,17 +208,20 @@ class AttachmentPersistenceHelper {
     }
 
     private void handleAttachment(MIAttachment attachment) {
-        IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
-        persistent.addAttachment(fileRef.getContentAsByteArray());
-        moveFromTemporaryToPersistentIfNeeded(attachment, fileRef);
+        moveFromTemporaryToPersistentIfNeeded(attachment);
         removeDeadTemporaryFiles(attachment);
     }
 
-    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment, 
-        IAttachmentRef fileRef) {
+    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
         if (!attachment.getFileId().equals(attachment.getOriginalFileId())) {
-            temporary.deleteAttachment(fileRef.getId());
-            persistent.deleteAttachment(attachment.getOriginalFileId());
+            IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
+            if(fileRef != null){
+                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray()); 
+                temporary.deleteAttachment(fileRef.getId());
+                persistent.deleteAttachment(attachment.getOriginalFileId());
+                attachment.setFileId(newRef.getId());
+                attachment.setOriginalFileId(newRef.getId()); 
+            }
         }
     }
 

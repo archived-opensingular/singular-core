@@ -12,7 +12,6 @@ public class MIAttachment extends MIComposto {
     /**
      * Used to store the original ID when the Attachment Component was loaded.
      */
-    private String originalFileId;
     
     /**
      * Used to store all temporary file ids related to this Attachment Component.
@@ -56,6 +55,7 @@ public class MIAttachment extends MIComposto {
         setValor(MTipoAttachment.FIELD_HASH_SHA1, null);
         setValor(MTipoAttachment.FIELD_SIZE, null);
         setValor(MTipoAttachment.FIELD_NAME, null);
+        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, null);
     }
 
     @Override
@@ -87,6 +87,10 @@ public class MIAttachment extends MIComposto {
     public void setFileId(String id) {
         setValor(MTipoAttachment.FIELD_FILE_ID, id);
     }
+    
+    public void setOriginalFileId(String id) {
+        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, id);
+    }
 
     public void setFileSize(Integer size) {
         setValor(MTipoAttachment.FIELD_SIZE, size);
@@ -111,6 +115,10 @@ public class MIAttachment extends MIComposto {
         }
         return id;
     }
+    
+    public String getOriginalFileId() {
+        return getValorString(MTipoAttachment.FIELD_ORIGINAL_ID);
+    }
 
     public String getFileHashSHA1() {
         return getValorString(MTipoAttachment.FIELD_HASH_SHA1);
@@ -130,13 +138,13 @@ public class MIAttachment extends MIComposto {
      * @return Original File Id when the instance is being handled on screen
      *  and its value can be changed. 
      */
-    public String getOriginalFileId() {
-        return originalFileId;
-    }
-    
-    public void setOriginalFileId(String o){
-        this.originalFileId = o;
-    }
+//    public String getOriginalFileId() {
+//        return originalFileId;
+//    }
+//    
+//    public void setOriginalFileId(String o){
+//        this.originalFileId = o;
+//    }
 
     /**
      * @return Collection of temporary ids used while this instance was on 

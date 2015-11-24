@@ -108,14 +108,6 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
         assertThat(result).isEqualsToByComparingFields(answer);
     }
     
-    @Test public void storesInstanceDataIfExists() throws Exception {
-        MIAttachment instance = (MIAttachment) setupInstance();
-        instance.setFileId("abacate0xcafe");
-        assertThat(instance.getOriginalFileId()).isNull();
-        setupDriver(instance);
-        assertThat(instance.getOriginalFileId()).isEqualTo("abacate0xcafe");
-    }
-    
     @Test public void afterEachUploadStoresAllTemporaryIds() throws Exception {
         MIAttachment instance = (MIAttachment) setupInstance();
         assertThat(instance.getTemporaryFileIds()).isEmpty();

@@ -63,7 +63,7 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
     }
 
     private void writeFileFromPersistent(MIAttachment attachment, SDocument document) throws IOException {
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler handler = document.lookupLocalService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         IAttachmentRef data = handler.getAttachment(attachment.getFileId());
         writeFileToResponse(attachment.getFileName(), data, w.response());
     }
