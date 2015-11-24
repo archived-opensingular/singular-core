@@ -9,6 +9,8 @@ import java.util.Objects;
 import com.google.common.collect.ImmutableMap;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 
 /**
@@ -170,4 +172,69 @@ public class SDocument implements Serializable {
         services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
     }
 
+    public void persistFiles() {
+        IAttachmentPersistenceHandler persistent = lookupLocalService(
+                        "filePersistence", IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
+        new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
+    }
+
+}
+
+/**
+ * Responsible for moving files from temporary state to persistent.
+ * 
+ * @author Fabricio Buzeto
+ *
+ */
+class AttachmentPersistenceHelper {
+    
+    private IAttachmentPersistenceHandler temporary, persistent;
+    
+    public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
+            IAttachmentPersistenceHandler persistent) {
+        this.temporary = temporary;
+        this.persistent = persistent;
+    }
+    
+    public void doPersistence(MInstancia element) {
+        if (element instanceof MIAttachment) {
+            handleAttachment((MIAttachment) element);
+        } else if (element instanceof ICompositeInstance) {
+            visitChildrenIfAny((ICompositeInstance) element);
+        }
+    }
+
+    private void handleAttachment(MIAttachment attachment) {
+        IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
+        persistent.addAttachment(fileRef.getContentAsByteArray());
+        moveFromTemporaryToPersistentIfNeeded(attachment, fileRef);
+        removeDeadTemporaryFiles(attachment);
+    }
+
+    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment, 
+        IAttachmentRef fileRef) {
+        if (!attachment.getFileId().equals(attachment.getOriginalFileId())) {
+            temporary.deleteAttachment(fileRef.getId());
+            persistent.deleteAttachment(attachment.getOriginalFileId());
+        }
+    }
+
+    private void removeDeadTemporaryFiles(MIAttachment attachment) {
+        for (String temp : attachment.getTemporaryFileIds()) {
+            temporary.deleteAttachment(temp);
+        }
+    }
+
+    private void visitChildrenIfAny(ICompositeInstance composite) {
+        if (!composite.getAllChildren().isEmpty()) {
+            visitAllChildren(composite);
+        }
+    }
+
+    private void visitAllChildren(ICompositeInstance composite) {
+        for (MInstancia child : composite.getAllChildren()) {
+            doPersistence(child);
+        }
+    }
 }

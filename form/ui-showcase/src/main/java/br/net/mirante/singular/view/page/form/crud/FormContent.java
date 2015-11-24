@@ -112,6 +112,7 @@ public class FormContent extends Content
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
     }
 
+    @SuppressWarnings("rawtypes")
     private BSContainer buildBodyContainer(){
         BSContainer bodyContainer = new BSContainer("body-container");
         add(bodyContainer);
@@ -197,7 +198,8 @@ public class FormContent extends Content
         }
     }
 
-    private AjaxLink createCancelButton() {
+    @SuppressWarnings("rawtypes")
+    private AjaxLink<?> createCancelButton() {
         return new AjaxLink("cancel-btn") {
 
             @Override
