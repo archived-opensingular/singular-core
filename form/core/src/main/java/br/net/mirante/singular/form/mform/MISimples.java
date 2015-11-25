@@ -1,11 +1,12 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Objects;
+
 public class MISimples<TIPO_NATIVO> extends MInstancia {
 
     private TIPO_NATIVO valor;
 
-    protected MISimples() {
-    }
+    protected MISimples() {}
 
     @Override
     public TIPO_NATIVO getValor() {
@@ -31,45 +32,51 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
 
     /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
-        return valor == null;
+        return getValor() == null;
     }
 
     @Override
     public boolean isEmptyOfData() {
-        return valor == null;
+        return getValor() == null;
     }
 
     @Override
     public final void setValor(Object valor) {
-        this.valor = onSetValor(getMTipo().converter(valor));
+        TIPO_NATIVO oldValue = this.getValor();
+        TIPO_NATIVO newValue = getMTipo().converter(valor);
+        this.valor = onSetValor(oldValue, newValue);
+        if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
+            getDocument().onInstanceValueChanged(this, oldValue, newValue);
+        }
     }
 
-    protected TIPO_NATIVO onSetValor(TIPO_NATIVO valor) {
-        return valor;
+    protected TIPO_NATIVO onSetValor(TIPO_NATIVO oldValue, TIPO_NATIVO newValue) {
+        return newValue;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public MTipoSimples<?, TIPO_NATIVO> getMTipo() {
         return (MTipoSimples<?, TIPO_NATIVO>) super.getMTipo();
     }
 
     @Override
     public String getDisplayString() {
-        return getMTipo().toStringDisplay(valor);
+        return getMTipo().toStringDisplay(getValor());
     }
 
     public String toStringPersistencia() {
-        if (valor == null) {
+        if (getValor() == null) {
             return null;
         }
-        return getMTipo().toStringPersistencia(valor);
+        return getMTipo().toStringPersistencia(getValor());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((valor == null) ? 0 : valor.hashCode());
+        result = prime * result + ((getValor() == null) ? 0 : getValor().hashCode());
         return result;
     }
 
@@ -85,10 +92,10 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
         if (getMTipo().equals(other.getMTipo())) {
             return false;
         }
-        if (valor == null) {
-            if (other.valor != null)
+        if (getValor() == null) {
+            if (other.getValor() != null)
                 return false;
-        } else if (!valor.equals(other.valor))
+        } else if (!getValor().equals(other.getValor()))
             return false;
         return true;
     }
