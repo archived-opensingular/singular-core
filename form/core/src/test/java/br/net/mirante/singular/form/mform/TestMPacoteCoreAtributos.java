@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteB;
+import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
+import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
 import br.net.mirante.singular.form.mform.core.MIInteger;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -44,7 +46,6 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         MDicionario dicionario = MDicionario.create();
         dicionario.carregarPacote(TestPacoteAA.class);
 
-        dicionario.debug();
         // Teste no tipo
         assertLeituraAtributo(dicionario.getTipo(MTipoInteger.class), 15, 15);
         assertLeituraAtributo(dicionario.getTipo(MTipoString.class), 17, 17);
@@ -163,6 +164,106 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("teste.pacoteB.yy", tipoAtributo.getNome());
         assertEquals("teste.pacoteB", tipoAtributo.getPacote().getNome());
         assertEquals("teste.pacoteB", tipoAtributo.getEscopoPai().getNome());
+    }
+
+    public void testCriacaoAtributoDentroDaClasseDoTipo() {
+        // Também testa se dá problema um tipo extendendo outro e ambos com
+        // onCargaTipo()
+
+        MDicionario dicionario = MDicionario.create();
+        dicionario.carregarPacote(TestPacoteCAI.class);
+
+        TipoComAtributoInterno1 tipo1 = dicionario.getTipo(TipoComAtributoInterno1.class);
+        TipoComAtributoInterno2 tipo2 = dicionario.getTipo(TipoComAtributoInterno2.class);
+
+        assertNull(tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertNull(tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
+        assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+
+        tipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "A1");
+        tipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "A3");
+
+        assertEquals("A1", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+
+        tipo2.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "B1");
+        tipo2.setValorAtributo(TestPacoteCAI.ATR_REF_ID2, "B2");
+        tipo2.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "B3");
+
+        assertEquals("A1", tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("B1", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("B2", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("B3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+
+        MIComposto instancia1 = dicionario.novaInstancia(TipoComAtributoInterno1.class);
+        MIComposto instancia2 = dicionario.novaInstancia(TipoComAtributoInterno2.class);
+
+        assertEquals("A1", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("B1", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("B2", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("B3", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+
+        instancia1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "AI1");
+        instancia1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "AI3");
+        instancia2.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "BI1");
+        instancia2.setValorAtributo(TestPacoteCAI.ATR_REF_ID2, "BI2");
+        instancia2.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "BI3");
+
+        assertEquals("AI1", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("AI3", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("BI1", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("BI2", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("BI3", instancia2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+
+        assertEquals("A1", tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertEquals("B1", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("B2", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
+        assertEquals("B3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+    }
+
+    public static final class TestPacoteCAI extends MPacote {
+
+        static final AtrRef<MTipoString, MIString, String> ATR_REF_ID1 = new AtrRef<>(TestPacoteCAI.class, "refId1", MTipoString.class,
+                MIString.class, String.class);
+
+        static final AtrRef<MTipoString, MIString, String> ATR_REF_ID2 = new AtrRef<>(TestPacoteCAI.class, "refId2", MTipoString.class,
+                MIString.class, String.class);
+
+        static final AtrRef<MTipoString, MIString, String> ATR_REF_ID3 = new AtrRef<>(TestPacoteCAI.class, "refId3", MTipoString.class,
+                MIString.class, String.class);
+
+        @Override
+        protected void carregarDefinicoes(PacoteBuilder pb) {
+            pb.createTipo(TipoComAtributoInterno1.class);
+            pb.createTipo(TipoComAtributoInterno2.class);
+            pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID1);
+            pb.createTipoAtributo(TipoComAtributoInterno2.class, ATR_REF_ID2);
+
+        }
+
+        @MInfoTipo(nome = "TipoCAI1", pacote = TestPacoteCAI.class)
+        public static class TipoComAtributoInterno1 extends MTipoComposto<MIComposto> {
+
+            @Override
+            protected void onCargaTipo(TipoBuilder tb) {
+                tb.createTipoAtributo(ATR_REF_ID3);
+                addCampoString("nome");
+            }
+        }
+
+        @MInfoTipo(nome = "TipoCAI2", pacote = TestPacoteCAI.class)
+        public static class TipoComAtributoInterno2 extends TipoComAtributoInterno1 {
+
+            @Override
+            protected void onCargaTipo(TipoBuilder tb) {
+                addCampoString("endereco");
+            }
+        }
     }
 
     public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {

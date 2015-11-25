@@ -81,7 +81,6 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     protected void onCargaTipo(TipoBuilder tb) {
-        tb.chamouSuper = true;
     }
 
     final MInfoTipo getAnotacaoMFormTipo() {

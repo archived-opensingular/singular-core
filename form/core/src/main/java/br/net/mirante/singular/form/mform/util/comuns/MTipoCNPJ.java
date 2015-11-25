@@ -10,7 +10,6 @@ public class MTipoCNPJ extends MTipoString {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
-        super.onCargaTipo(tb);
         as(AtrBasic.class).label("CNPJ").basicMask("CNPJ");
     }
 }
