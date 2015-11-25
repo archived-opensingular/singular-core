@@ -1,23 +1,12 @@
 package br.net.mirante.singular.form.mform.core.attachment;
 
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 
 public class MIAttachment extends MIComposto {
 
-    /**
-     * Used to store the original ID when the Attachment Component was loaded.
-     */
-    
-    /**
-     * Used to store all temporary file ids related to this Attachment Component.
-     */
-    private Collection<String> temporaryFileIds = new HashSet<>();
-    
     private IAttachmentPersistenceHandler getAttachmentHandler() {
         return getDocument().getAttachmentPersistenceHandler();
     }
@@ -133,29 +122,4 @@ public class MIAttachment extends MIComposto {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
     }
-
-    /**
-     * @return Original File Id when the instance is being handled on screen
-     *  and its value can be changed. 
-     */
-//    public String getOriginalFileId() {
-//        return originalFileId;
-//    }
-//    
-//    public void setOriginalFileId(String o){
-//        this.originalFileId = o;
-//    }
-
-    /**
-     * @return Collection of temporary ids used while this instance was on 
-     *  screen.
-     */
-    public Collection<String> getTemporaryFileIds() {
-        return temporaryFileIds;
-    }
-
-    public void addTemporaryFileId(String id) {
-        temporaryFileIds.add(id);
-    }
-    
 }

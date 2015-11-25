@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import static org.fest.assertions.api.Assertions.anyOf;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -9,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.math.MathContext;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -96,24 +94,6 @@ public class TestSDocumentServices {
         
         document.persistFiles();
         verify(tempHandler).deleteAttachment("abacate");
-    }
-    
-    @Test public void deveApagarTodosOsTemporarios(){
-        fileFieldInstance.setFileId("abacate");
-        fileFieldInstance.addTemporaryFileId("temp1");
-        fileFieldInstance.addTemporaryFileId("temp2");
-        
-        byte[] content = new byte[]{0};
-        
-        when(tempHandler.getAttachment("abacate"))
-            .thenReturn(attachmentRef("abacate", content));
-        when(persistentHandler.addAttachment(content))
-            .thenReturn(attachmentRef("abacate", content));
-        
-        document.persistFiles();
-        verify(tempHandler).deleteAttachment("abacate");
-        verify(tempHandler).deleteAttachment("temp1");
-        verify(tempHandler).deleteAttachment("temp2");
     }
     
     @Test public void deveApagarOPersistenteSeEsteSeAlterou(){

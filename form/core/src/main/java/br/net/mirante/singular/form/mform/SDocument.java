@@ -174,9 +174,14 @@ public class SDocument implements Serializable {
         services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
     }
 
+    //TODO: Review how this method works. It'd be better if the developer did 
+    //  not had to remember to call this before saving in the database.
+    //  Maybe if the document worked as an Active Record, we'd be able to
+    //  intercept the persist call and do this job before the model
+    //  would be persisted.
     public void persistFiles() {
         IAttachmentPersistenceHandler persistent = lookupLocalService(
-                        "filePersistence", IAttachmentPersistenceHandler.class);
+            SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
@@ -226,9 +231,9 @@ class AttachmentPersistenceHelper {
     }
 
     private void removeDeadTemporaryFiles(MIAttachment attachment) {
-        for (String temp : attachment.getTemporaryFileIds()) {
-            temporary.deleteAttachment(temp);
-        }
+//        for (String temp : attachment.getTemporaryFileIds()) {
+//            temporary.deleteAttachment(temp);
+//        }
     }
 
     private void visitChildrenIfAny(ICompositeInstance composite) {
