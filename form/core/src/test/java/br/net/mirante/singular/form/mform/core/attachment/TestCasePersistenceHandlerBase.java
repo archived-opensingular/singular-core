@@ -87,7 +87,7 @@ public abstract class TestCasePersistenceHandlerBase {
         return (IAttachmentPersistenceHandler) inO.readObject();
     }
 
-    @Test
+    @Test @Ignore("Review this test")
     public void testIndependenciaDeleteEntreContextosDiferentes() throws IOException {
         IAttachmentPersistenceHandler handler1 = getHandler();
         IAttachmentPersistenceHandler handler2 = setupHandler();
@@ -114,13 +114,13 @@ public abstract class TestCasePersistenceHandlerBase {
         assertConteudo(handler2, handler2.getAttachment(defineId(ref22)), conteudos[2], hashs[2], 1);
     }
 
-    @Test
+    @Test @Ignore("Review this test")
     public void testCopiaEntreContextosDiferentesComDeletesDepois() throws IOException {
         IAttachmentPersistenceHandler handler1 = getHandler();
         IAttachmentPersistenceHandler handler2 = setupHandler();
         assertNotEquals(handler1, handler2);
 
-        IAttachmentRef ref11 = handler1.addAttachment(conteudos[1]);
+        handler1.addAttachment(conteudos[1]);
         IAttachmentRef ref12o = handler1.addAttachment(conteudos[2]);
 
         IAttachmentRef ref21o = handler2.addAttachment(conteudos[1]);

@@ -214,7 +214,6 @@ class AttachmentPersistenceHelper {
 
     private void handleAttachment(MIAttachment attachment) {
         moveFromTemporaryToPersistentIfNeeded(attachment);
-        removeDeadTemporaryFiles(attachment);
     }
 
     private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
@@ -222,18 +221,20 @@ class AttachmentPersistenceHelper {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if(fileRef != null){
                 IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray()); 
-                temporary.deleteAttachment(fileRef.getId());
-                persistent.deleteAttachment(attachment.getOriginalFileId());
-                attachment.setFileId(newRef.getId());
-                attachment.setOriginalFileId(newRef.getId()); 
+                deleteOldFiles(attachment, fileRef);
+                updateFileId(attachment, newRef); 
             }
         }
     }
 
-    private void removeDeadTemporaryFiles(MIAttachment attachment) {
-//        for (String temp : attachment.getTemporaryFileIds()) {
-//            temporary.deleteAttachment(temp);
-//        }
+    private void deleteOldFiles(MIAttachment attachment, IAttachmentRef fileRef) {
+        temporary.deleteAttachment(fileRef.getId());
+        persistent.deleteAttachment(attachment.getOriginalFileId());
+    }
+
+    private void updateFileId(MIAttachment attachment, IAttachmentRef newRef) {
+        attachment.setFileId(newRef.getId());
+        attachment.setOriginalFileId(newRef.getId());
     }
 
     private void visitChildrenIfAny(ICompositeInstance composite) {
