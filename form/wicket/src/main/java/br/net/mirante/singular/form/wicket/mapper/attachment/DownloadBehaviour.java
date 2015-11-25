@@ -1,8 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletResponse;
 

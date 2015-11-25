@@ -12,7 +12,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     private String tagName;

@@ -73,7 +73,7 @@ public class ExamplePackage extends MPacote {
         this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
-
+        
         this.buyerNome.as(MPacoteBasic.aspect())
             .onChange((ctx, i) -> ctx.update(buyerCpf));
 

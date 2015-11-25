@@ -141,7 +141,7 @@ class AttachmentContainer extends BSContainer {
                             + "        $('#progress_"+ fieldId+" .progress-bar').css('width','0%')"
                             + "    },"
                             + "    done: function (e, data) {  "
-                            + "        console.log(e,data);    "
+//                            + "        console.log(e,data);    "
                             + "        $.each(data.result.files, function (index, file) {  "
                             + "            $('<p/>').append($('<a />').attr('href','"+downloader.getUrl()+"&fileId='+file.fileId+'&fileName='+file.name).text(file.name)).appendTo('#files_"+ fieldId+"'); "
                             + "            $('#" + nameField.getMarkupId()+ "').val(file.name);"
