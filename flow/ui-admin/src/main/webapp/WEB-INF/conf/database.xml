@@ -20,7 +20,13 @@
         <property name="dataSource" ref="dataSourceSingular"/>
         <!-- Incluir o pacote quando tiver um -->
         <!--<property name="packagesToScan" value="br.com.montrealonline.persistence.entidade" />-->
-
+        <!--  
+		<property name="annotatedClasses">
+			<list>
+				<value></value>
+			</list>
+		</property>
+		-->
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.SQLServer2005Dialect</prop>

@@ -22,7 +22,6 @@ import javax.swing.WindowConstants;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 import br.net.mirante.singular.flow.core.renderer.IFlowRenderer;
-import br.net.mirante.singular.flow.core.renderer.YFilesFlowRenderer;
 
 public class MBPMUtil {
 
@@ -200,7 +199,7 @@ public class MBPMUtil {
      *            a definição do processo especificado.
      */
     public static void showSwingDiagram(Class<? extends ProcessDefinition<?>> definitionClass) {
-        showSwingDiagram(definitionClass, YFilesFlowRenderer.getInstance());
+        showSwingDiagram(definitionClass, Flow.getConfigBean().getFlowRenderer());
     }
 
     /**

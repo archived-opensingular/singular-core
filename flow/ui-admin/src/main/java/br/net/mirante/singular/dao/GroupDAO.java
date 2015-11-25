@@ -7,7 +7,7 @@ import org.hibernate.transform.Transformers;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-import br.net.mirante.singular.dto.GroupDTO;
+import br.net.mirante.singular.flow.core.dto.GroupDTO;
 
 @Repository
 public class GroupDAO extends BaseDAO {
