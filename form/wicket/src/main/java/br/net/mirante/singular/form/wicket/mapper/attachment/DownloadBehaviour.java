@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -81,7 +83,7 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
 
     private void setHeader(String fileName, WebResponse response) {
         response.addHeader("Content-Type", "application/octet-stream");
-        response.addHeader("Content-disposition", "attachment; filename=" + fileName);
+        response.addHeader("Content-disposition", "attachment; filename=\"" + fileName+"\"");
     }
 
     public String getUrl() {
