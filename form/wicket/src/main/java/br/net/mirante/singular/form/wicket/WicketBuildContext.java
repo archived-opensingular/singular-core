@@ -35,6 +35,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
+@SuppressWarnings({"serial","rawtypes"})
 public class WicketBuildContext implements Serializable {
 
     private static final MetaDataKey<Integer>  KEY_INSTANCE_ID        = new MetaDataKey<Integer>() {};

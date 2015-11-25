@@ -43,7 +43,7 @@ public class TestMInstance {
         pedido.setValor("itens[0].urgente", true);
         assertId(pedido.getCampo("itens[0].urgente"), 12, 12);
 
-        pedido.debug();
+//        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
         MIComposto pedido2 = MformPersistenciaXML.fromXML(tipoPedido, xml);

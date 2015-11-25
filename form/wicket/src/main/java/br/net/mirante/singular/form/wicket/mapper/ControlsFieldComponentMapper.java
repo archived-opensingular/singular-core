@@ -1,8 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -20,6 +19,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
@@ -42,6 +42,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      * @return
      *   Retorna o componente  já adicionado ao formGroup
      */
+    @SuppressWarnings("rawtypes")
     Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
     @Override

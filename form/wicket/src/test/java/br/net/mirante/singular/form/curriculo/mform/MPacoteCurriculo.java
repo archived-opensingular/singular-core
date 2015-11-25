@@ -191,7 +191,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Informações adicionais").multiLinha(true);
         }
 
-        pb.debug();
+//        pb.debug();
 
         // Formatação
         // ---------------------------------------------------------------------------------------------

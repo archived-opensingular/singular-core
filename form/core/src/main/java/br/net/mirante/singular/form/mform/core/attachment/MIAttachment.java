@@ -15,6 +15,7 @@ public class MIAttachment extends MIComposto {
         return AttachmentDocumentService.lookup(this);
     }
 
+    //TODO: usar isso pra ver se podemos deletar
     public void setContent(InputStream in) {
         setContent(getAttachmentService().addContent(getFileId(), in));
     }
@@ -43,6 +44,7 @@ public class MIAttachment extends MIComposto {
         setValor(MTipoAttachment.FIELD_HASH_SHA1, null);
         setValor(MTipoAttachment.FIELD_SIZE, null);
         setValor(MTipoAttachment.FIELD_NAME, null);
+        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, null);
     }
 
     @Override
@@ -68,11 +70,15 @@ public class MIAttachment extends MIComposto {
     }
 
     public void setFileHashSHA1(String hash) {
-    setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
+        setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
     }
 
     public void setFileId(String id) {
-    setValor(MTipoAttachment.FIELD_FILE_ID, id);
+        setValor(MTipoAttachment.FIELD_FILE_ID, id);
+    }
+    
+    public void setOriginalFileId(String id) {
+        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, id);
     }
 
     public void setFileSize(Integer size) {
@@ -98,6 +104,10 @@ public class MIAttachment extends MIComposto {
         }
         return id;
     }
+    
+    public String getOriginalFileId() {
+        return getValorString(MTipoAttachment.FIELD_ORIGINAL_ID);
+    }
 
     public String getFileHashSHA1() {
         return getValorString(MTipoAttachment.FIELD_HASH_SHA1);
@@ -112,5 +122,4 @@ public class MIAttachment extends MIComposto {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
     }
-
 }

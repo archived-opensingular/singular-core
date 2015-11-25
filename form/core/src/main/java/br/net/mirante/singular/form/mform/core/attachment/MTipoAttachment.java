@@ -12,6 +12,7 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
     static final String FIELD_FILE_ID = "fileId";
     static final String FIELD_SIZE = "size";
     static final String FIELD_HASH_SHA1 = "hashSHA1";
+    static final String FIELD_ORIGINAL_ID = "originalId";
 
     public MTipoAttachment() {
         super(MIAttachment.class);
@@ -21,6 +22,7 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
         addCampoString(FIELD_FILE_ID);
+        addCampoString(FIELD_ORIGINAL_ID);
         addCampoString(FIELD_NAME, true);
         addCampoString(FIELD_HASH_SHA1);
         addCampoInteger(FIELD_SIZE);

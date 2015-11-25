@@ -106,6 +106,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -113,6 +114,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().converter(getValorWithDefault(), classeDestino);
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValor(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -356,4 +358,5 @@ public abstract class MInstancia implements MAtributoEnabled {
     final boolean getFlag(FlagsInstancia flag) {
         return (flags & flag.bit()) != 0;
     }
+
 }
