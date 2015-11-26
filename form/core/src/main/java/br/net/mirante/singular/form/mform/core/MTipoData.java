@@ -15,8 +15,4 @@ public class MTipoData extends MTipoSimples<MIData, Date> {
     protected MTipoData(Class<? extends MIData> classeInstancia) {
         super(classeInstancia, Date.class);
     }
-
-//    public static ValidadorDataBuilder validadorBuilder() {
-//        return new ValidadorDataBuilder();
-//    }
 }
