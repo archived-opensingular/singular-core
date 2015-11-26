@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
 
 public class TestSDocumentEvents extends TestCaseForm {
@@ -32,7 +33,7 @@ public class TestSDocumentEvents extends TestCaseForm {
     }
 
     public void testValueChanges() {
-        doc.addInstanceListener(globalCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, globalCollector);
 
         root.setValor("ABC");
         assertEventsCount(1, globalCollector);
@@ -45,7 +46,7 @@ public class TestSDocumentEvents extends TestCaseForm {
     }
 
     public void testAttributeChanges() {
-        doc.addInstanceListener(attributeCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
 
         root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
         assertEventsCount(1, attributeCollector);
@@ -58,9 +59,9 @@ public class TestSDocumentEvents extends TestCaseForm {
     }
 
     public void testValueAndAttributeChanges() {
-        doc.addInstanceListener(globalCollector);
-        doc.addInstanceListener(attributeCollector);
-        doc.addInstanceListener(valueCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.values(), globalCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, valueCollector);
 
         root.setValor("ABC");
         assertEventsCount(1, globalCollector);

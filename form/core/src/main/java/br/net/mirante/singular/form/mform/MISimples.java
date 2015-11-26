@@ -47,9 +47,9 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
         this.valor = onSetValor(oldValue, newValue);
         if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
-                getDocument().onInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
+                getDocument().getInstanceListeners().fireInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
             } else {
-                getDocument().onInstanceValueChanged(this, oldValue, newValue);
+                getDocument().getInstanceListeners().fireInstanceValueChanged(this, oldValue, newValue);
             }
         }
     }

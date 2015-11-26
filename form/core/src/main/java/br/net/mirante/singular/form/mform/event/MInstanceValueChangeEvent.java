@@ -22,6 +22,6 @@ public class MInstanceValueChangeEvent extends MInstanceEvent {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ": " + getInstance() + ", " + getOldValue() + " => " + getNewValue();
+        return super.toString() + " = " + getOldValue() + " => " + getNewValue();
     }
 }

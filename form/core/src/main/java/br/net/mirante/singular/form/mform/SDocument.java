@@ -1,9 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -16,10 +14,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
-import br.net.mirante.singular.form.mform.event.MInstanceEvent;
-import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 
 /**
  * <p>
@@ -35,7 +30,7 @@ import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
  */
 @SuppressWarnings("serial")
 public class SDocument {
-    
+
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
@@ -44,7 +39,7 @@ public class SDocument {
 
     private int lastId = 0;
 
-    private List<IMInstanceListener> instanceListeners;
+    private MInstanceListeners instanceListeners;
 
     SDocument() {}
 
@@ -142,9 +137,9 @@ public class SDocument {
                 Object value = ref.get();
                 if (value == null) {
                     services.remove(name);
-                } else if(! targetClass.isInstance(value)) {
+                } else if (!targetClass.isInstance(value)) {
                     throw new SingularFormException("Para o serviço '" + name + "' foi encontrado um valor da classe "
-                            + value.getClass().getName() + " em vez da classe esperada " + targetClass.getName());
+                        + value.getClass().getName() + " em vez da classe esperada " + targetClass.getName());
                 } else {
                     return targetClass.cast(value);
                 }
@@ -183,30 +178,9 @@ public class SDocument {
         services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
     }
 
-    public void addInstanceListener(IMInstanceListener listener) {
-        getInstanceListeners().add(listener);
-    }
-    public void removeInstanceListener(IMInstanceListener listener) {
-        getInstanceListeners().remove(listener);
-    }
-    public void onInstanceValueChanged(MInstancia instance, Object oldValue, Object newValue) {
-        if (instanceListeners != null)
-            fireInstanceEvent(new MInstanceValueChangeEvent(instance, oldValue, newValue));
-    }
-    public void onInstanceAttributeChanged(MInstancia instance, MInstancia attributeInstance, Object oldValue, Object valor) {
-        if (instanceListeners != null)
-            fireInstanceEvent(new MInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
-    }
-
-    protected void fireInstanceEvent(MInstanceEvent evt) {
-        for (int i = 0; i < instanceListeners.size(); i++) {
-            IMInstanceListener listener = instanceListeners.get(i);
-            listener.onInstanceEvent(evt);
-        }
-    }
-    private List<IMInstanceListener> getInstanceListeners() {
+    public MInstanceListeners getInstanceListeners() {
         if (this.instanceListeners == null)
-            this.instanceListeners = new ArrayList<>(1);
+            this.instanceListeners = new MInstanceListeners();
         return this.instanceListeners;
     }
 
@@ -247,15 +221,15 @@ public class SDocument {
  *
  */
 class AttachmentPersistenceHelper {
-    
+
     private IAttachmentPersistenceHandler temporary, persistent;
-    
+
     public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
-            IAttachmentPersistenceHandler persistent) {
+        IAttachmentPersistenceHandler persistent) {
         this.temporary = temporary;
         this.persistent = persistent;
     }
-    
+
     public void doPersistence(MInstancia element) {
         if (element instanceof MIAttachment) {
             handleAttachment((MIAttachment) element);
@@ -271,10 +245,10 @@ class AttachmentPersistenceHelper {
     private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
-            if(fileRef != null){
-                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray()); 
+            if (fileRef != null) {
+                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray());
                 deleteOldFiles(attachment, fileRef);
-                updateFileId(attachment, newRef); 
+                updateFileId(attachment, newRef);
             }
         }
     }

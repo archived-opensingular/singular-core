@@ -12,6 +12,8 @@ import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.MInstanceEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceEventType;
+import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
@@ -66,23 +68,30 @@ public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstancia
     public I getObject() {
         if (this.object != null && this.instanceListener == null) {
             this.instanceListener = new IMInstanceListener.EventCollector();
-            this.object.getDocument().addInstanceListener(this.instanceListener);
+            MInstanceListeners listeners = this.object.getDocument().getInstanceListeners();
+            listeners.add(MInstanceEventType.VALUE_CHANGED, this.instanceListener);
+            listeners.add(MInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
+            listeners.add(MInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
         }
         return this.object;
     }
 
     @Override
     public void setObject(I object) {
-        if (this.object != null && this.instanceListener != null) {
-            this.object.getDocument().removeInstanceListener(this.instanceListener);
-        }
-        this.instanceListener = null;
+        detachListener();
         this.object = object;
     }
 
     @Override
     public void detach() {
         super.detach();
+        detachListener();
+    }
+
+    protected void detachListener() {
+        if (this.object != null && this.instanceListener != null) {
+            this.object.getDocument().getInstanceListeners().remove(MInstanceEventType.values(), this.instanceListener);
+        }
         this.instanceListener = null;
     }
 

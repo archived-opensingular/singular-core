@@ -4,18 +4,18 @@ import br.net.mirante.singular.form.mform.MInstancia;
 
 public abstract class MInstanceEvent {
 
-    private final MInstancia instance;
+    private final MInstancia source;
 
-    protected MInstanceEvent(MInstancia instance) {
-        this.instance = instance;
+    protected MInstanceEvent(MInstancia source) {
+        this.source = source;
     }
 
-    public MInstancia getInstance() {
-        return instance;
+    public MInstancia getSource() {
+        return source;
     }
 
     @Override
     public String toString() {
-        return "MInstanceEvent: " + getInstance();
+        return getClass().getSimpleName() + ": " + getSource();
     }
 }
