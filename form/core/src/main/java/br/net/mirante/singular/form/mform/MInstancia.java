@@ -66,8 +66,26 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getDicionario();
     }
 
+    /**
+     * Indica se a instância constitui um dado do documento ou se se é um
+     * atributo de uma instância ou tipo. Também retorna true se a instância for
+     * um campo ou item de lista de uma instanância pai que é um atributo. Ou
+     * seja, todos os subcampos de um instancia onde isAtribute == true,
+     * retornam true.
+     */
+    public boolean isAttribute() {
+        return getFlag(FlagsInstancia.IsAtributo);
+    }
+
+    final void setAsAttribute() {
+        setFlag(FlagsInstancia.IsAtributo, true);
+    }
+
     final void setPai(MInstancia pai) {
         this.pai = pai;
+        if (pai.isAttribute()) {
+            setAsAttribute();
+        }
     }
 
     final void setTipo(MTipo<?> tipo) {
@@ -172,15 +190,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     @Override
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        setValorAtributo(atr.getNomeCompleto(), subPath, valor);
-    }
-
-    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, V valor) {
-        setValorAtributo(nomeCompletoAtributo, null, valor);
-    }
-
-    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, String subPath, V valor) {
+    public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor) {
         MInstancia instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
@@ -190,6 +200,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (instanciaAtr == null) {
             MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
+            instanciaAtr.setAsAttribute();
             atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {

@@ -8,7 +8,7 @@ package br.net.mirante.singular.form.mform;
  */
 public enum FlagsInstancia {
 
-    RemovendoInstancia;
+    RemovendoInstancia, IsAtributo;
 
     private int bit;
 

@@ -219,7 +219,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return classeInstancia.cast(instancia);
     }
 
-    private MInstancia getInstanciaAtributoInterno(String nomeCompleto) {
+    final MInstancia getInstanciaAtributoInterno(String nomeCompleto) {
         for (MTipo<?> atual = this; atual != null; atual = atual.superTipo) {
             MInstancia instancia = atual.atributosResolvidos.get(nomeCompleto);
             if (instancia != null) {
@@ -229,18 +229,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return null;
     }
 
-    public <V extends Object> void setValorAtributo(String nomeAtributo, Object valor) {
-        atributosResolvidos.set(mapearNome(nomeAtributo), valor);
-    }
-
-    public <V extends Object> void setValorAtributo(MAtributo defAtributo, Object valor) {
-        atributosResolvidos.set(defAtributo.getNome(), valor);
-    }
-
     @Override
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().carregarPacote(atr.getClassePacote());
-        MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
+    public void setValorAtributo(String nomeAtributo, String subPath, Object valor) {
+        MInstancia instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
         if (subPath != null) {
             instancia.setValor(new LeitorPath(subPath), valor);
         } else {

@@ -266,6 +266,49 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
     }
 
+    public void testIsAttributeETestAtributoComposto() {
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
+
+        MTipoComposto<?> tipoPosicao = pb1.createTipoComposto("posicao");
+        tipoPosicao.addCampoString("cor");
+        tipoPosicao.addCampoInteger("linha");
+
+        MTipo<?> tipo = pb1.createTipo("X", MTipoString.class);
+        MAtributo at1 = pb1.createTipoAtributo(tipo, "a", MTipoString.class);
+        MAtributo at2 = pb1.createTipoAtributo(tipo, "b", tipoPosicao);
+
+        tipo.setValorAtributo("a", "a1");
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at1.getNome()));
+
+        tipo.setValorAtributo("b", "cor", "b1");
+        tipo.setValorAtributo("b", "linha", 1);
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()));
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"));
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"));
+
+        MIString instancia = (MIString) tipo.novaInstancia();
+        assertEquals(false, instancia.isAttribute());
+        assertEquals(0, instancia.getAtributos().size());
+
+        instancia.setValorAtributo(at1.getNome(), "a2");
+        instancia.setValorAtributo(at2.getNome(), "cor", "b2");
+        instancia.setValorAtributo(at2.getNome(), "linha", 2);
+
+        assertEquals(2, instancia.getAtributos().size());
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()));
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"));
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"));
+        instancia.getAtributos().values().stream().forEach(a -> assertIsAtributo(a));
+    }
+
+    private static void assertIsAtributo(MInstancia instancia) {
+        assertTrue(instancia.isAttribute());
+        if (instancia instanceof ICompositeInstance) {
+            ((ICompositeInstance) instancia).stream().forEach(i -> assertIsAtributo(i));
+        }
+    }
+
     public void testTipoCompostoTestarValorInicialEValorDefaultIfNull() {
         testInicialEDefault(MTipoInteger.class, 10, 11);
         testInicialEDefault(MTipoString.class, "A", "B");

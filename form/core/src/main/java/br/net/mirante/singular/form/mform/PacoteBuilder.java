@@ -114,8 +114,11 @@ public class PacoteBuilder {
     }
 
     public <T extends MTipo<?>> MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, Class<T> classeTipoAtributo) {
-        T tipoAtributo = (T) dicionario.getTipo((Class) classeTipoAtributo);
+        MTipo<?> tipoAtributo = dicionario.getTipo(classeTipoAtributo);
+        return createTipoAtributo(tipoAlvo, nomeSimplesAtributo, tipoAtributo);
+    }
 
+    public MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, MTipo<?> tipoAtributo) {
         if (tipoAlvo.getPacote() == pacote) {
             return createAtributoInterno(tipoAlvo, nomeSimplesAtributo, false, tipoAtributo);
         } else {
@@ -160,7 +163,7 @@ public class PacoteBuilder {
         return createTipoAtributo(atr, dicionario.getTipo(atr.getClasseTipo()));
     }
 
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
+    private <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
         resolverBind(pacote, null, atr, tipoAtributo);
         dicionario.getTiposInterno().vericaNaoDeveEstarPresente(atr.getNomeCompleto());
 

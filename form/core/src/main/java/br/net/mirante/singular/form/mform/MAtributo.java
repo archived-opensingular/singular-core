@@ -22,10 +22,14 @@ public class MAtributo extends MTipo<MInstancia> {
     }
 
     final MInstancia novaInstanciaPara(MTipo<?> dono) {
+        MInstancia instance;
         if (selfReference) {
-            return dono.newInstance(getDicionario().getInternalDicionaryDocument());
+            instance = dono.newInstance(getDicionario().getInternalDicionaryDocument());
+        } else {
+            instance = super.newInstance(getDicionario().getInternalDicionaryDocument());
         }
-        return super.newInstance(getDicionario().getInternalDicionaryDocument());
+        instance.setAsAttribute();
+        return instance;
     }
 
     public MTipo<?> getTipoDono() {
