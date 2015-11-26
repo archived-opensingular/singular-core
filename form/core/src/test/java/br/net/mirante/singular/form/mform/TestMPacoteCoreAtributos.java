@@ -279,13 +279,13 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         MAtributo at2 = pb1.createTipoAtributo(tipo, "b", tipoPosicao);
 
         tipo.setValorAtributo("a", "a1");
-        assertIsAtributo(tipo.getInstanciaAtributoInterno(at1.getNome()));
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at1.getNome()), null);
 
         tipo.setValorAtributo("b", "cor", "b1");
         tipo.setValorAtributo("b", "linha", 1);
-        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()));
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"));
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"));
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()), null);
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"), null);
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"), null);
 
         MIString instancia = (MIString) tipo.novaInstancia();
         assertEquals(false, instancia.isAttribute());
@@ -296,16 +296,18 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         instancia.setValorAtributo(at2.getNome(), "linha", 2);
 
         assertEquals(2, instancia.getAtributos().size());
-        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()));
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"));
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"));
-        instancia.getAtributos().values().stream().forEach(a -> assertIsAtributo(a));
+        assertIsAtributo(instancia.getAtributos().get(at1.getNome()), instancia);
+        assertIsAtributo(instancia.getAtributos().get(at2.getNome()), instancia);
+        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getNome())).getCampo("cor"), instancia);
+        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getNome())).getCampo("linha"), instancia);
+        instancia.getAtributos().values().stream().forEach(a -> assertIsAtributo(a, instancia));
     }
 
-    private static void assertIsAtributo(MInstancia instancia) {
+    private static void assertIsAtributo(MInstancia instancia, MInstancia expectedOwner) {
         assertTrue(instancia.isAttribute());
+        assertTrue(expectedOwner == instancia.getAttributeOwner());
         if (instancia instanceof ICompositeInstance) {
-            ((ICompositeInstance) instancia).stream().forEach(i -> assertIsAtributo(i));
+            ((ICompositeInstance) instancia).stream().forEach(i -> assertIsAtributo(i, expectedOwner));
         }
     }
 

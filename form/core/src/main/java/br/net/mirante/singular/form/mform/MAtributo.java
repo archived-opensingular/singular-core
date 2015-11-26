@@ -28,7 +28,7 @@ public class MAtributo extends MTipo<MInstancia> {
         } else {
             instance = super.newInstance(getDicionario().getInternalDicionaryDocument());
         }
-        instance.setAsAttribute();
+        instance.setAsAttribute(null);
         return instance;
     }
 

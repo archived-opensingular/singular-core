@@ -13,6 +13,8 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private MInstancia pai;
 
+    private MInstancia attributeOwner;
+
     private MTipo<?> mTipo;
 
     private Map<String, MInstancia> atributos;
@@ -77,14 +79,25 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getFlag(FlagsInstancia.IsAtributo);
     }
 
-    final void setAsAttribute() {
+    final void setAsAttribute(MInstancia attributeOwner) {
         setFlag(FlagsInstancia.IsAtributo, true);
+        this.attributeOwner = attributeOwner;
+    }
+
+    /**
+     * Se a instância for um atributo ou sub campo de uma atributo, retorna a
+     * instancia ao qual pertence o atributo. Retorna null, se a instancia não
+     * for um atributo ou se atributo pertencer a um tipo em vez de uma
+     * instância.
+     */
+    public MInstancia getAttributeOwner() {
+        return attributeOwner;
     }
 
     final void setPai(MInstancia pai) {
         this.pai = pai;
         if (pai.isAttribute()) {
-            setAsAttribute();
+            setAsAttribute(pai.getAttributeOwner());
         }
     }
 
@@ -200,7 +213,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (instanciaAtr == null) {
             MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
-            instanciaAtr.setAsAttribute();
+            instanciaAtr.setAsAttribute(this);
             atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
