@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform.core.attachment;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
@@ -21,8 +22,10 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
+        
+        tb.createTipoAtributo(FIELD_ORIGINAL_ID, MTipoSimples.class);
         addCampoString(FIELD_FILE_ID);
-        addCampoString(FIELD_ORIGINAL_ID);
+//        addCampoString(FIELD_ORIGINAL_ID);
         addCampoString(FIELD_NAME, true);
         addCampoString(FIELD_HASH_SHA1);
         addCampoInteger(FIELD_SIZE);

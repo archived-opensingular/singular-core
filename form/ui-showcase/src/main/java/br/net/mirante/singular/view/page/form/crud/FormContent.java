@@ -38,6 +38,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
@@ -161,13 +162,13 @@ public class FormContent extends Content
         });
     }
     
-    private final class SaveButton extends AjaxButton {
+    private final class SaveButton extends ActionAjaxButton {
         private SaveButton(String id) {
             super(id);
         }
 
         @Override
-        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+        protected void onAction(AjaxRequestTarget target, Form<?> form) {
             MInstancia trueInstance = currentInstance.getObject();
             trueInstance.getDocument().persistFiles(); //TODO: review this order
             MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
@@ -184,6 +185,7 @@ public class FormContent extends Content
             dao.save(currentModel);
             backToCrudPage();
         }
+        
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
                 MElement rootXml) throws Exception {

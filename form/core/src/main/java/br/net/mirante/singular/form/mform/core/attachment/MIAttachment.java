@@ -15,7 +15,6 @@ public class MIAttachment extends MIComposto {
         return AttachmentDocumentService.lookup(this);
     }
 
-    //TODO: usar isso pra ver se podemos deletar
     public void setContent(InputStream in) {
         setContent(getAttachmentService().addContent(getFileId(), in));
     }
@@ -78,7 +77,8 @@ public class MIAttachment extends MIComposto {
     }
     
     public void setOriginalFileId(String id) {
-        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, id);
+//        setValor(MTipoAttachment.FIELD_ORIGINAL_ID, id);
+        setValorAtributo(MTipoAttachment.FIELD_ORIGINAL_ID, id);
     }
 
     public void setFileSize(Integer size) {
@@ -106,7 +106,8 @@ public class MIAttachment extends MIComposto {
     }
     
     public String getOriginalFileId() {
-        return getValorString(MTipoAttachment.FIELD_ORIGINAL_ID);
+//        return getValorString(MTipoAttachment.FIELD_ORIGINAL_ID);
+        return (String) getValorAtributo(MTipoAttachment.FIELD_ORIGINAL_ID);
     }
 
     public String getFileHashSHA1() {
