@@ -17,11 +17,11 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
 
     public static final Long DEFAULT_ROWS_PER_PAGE = 10L;
 
-    private boolean          stripedRows           = true;
-    private boolean          hoverRows             = true;
-    private boolean          borderedTable         = true;
-    private boolean          advanceTable          = false;
-    private boolean          condensedTable        = false;
+    private boolean stripedRows    = true;
+    private boolean hoverRows      = true;
+    private boolean borderedTable  = true;
+    private boolean advanceTable   = false;
+    private boolean condensedTable = false;
 
     public BSDataTable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
         super(id, ensureSerializable(columns), dataProvider, DEFAULT_ROWS_PER_PAGE);
@@ -78,6 +78,21 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
         if (isCondensedTable())
             sbClass.append(" table-condensed");
         tag.put("class", sbClass.toString().trim());
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        getCaption().setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
+    }
+    
+    @Override
+    protected void onConfigure() {
+        super.onConfigure();
+        boolean renderCaption = !getCaption().getRenderBodyOnly();
+        getCaption()
+            .setOutputMarkupId(renderCaption)
+            .setOutputMarkupPlaceholderTag(renderCaption);
     }
 
     public boolean isStripedRows() {

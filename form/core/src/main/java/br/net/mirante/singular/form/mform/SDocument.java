@@ -1,17 +1,25 @@
 package br.net.mirante.singular.form.mform;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableMap;
 
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
 
 /**
  * <p>
@@ -26,7 +34,7 @@ import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttac
  * @author Daniel C. Bordin
  */
 @SuppressWarnings("serial")
-public class SDocument implements Serializable {
+public class SDocument {
     
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
@@ -36,8 +44,9 @@ public class SDocument implements Serializable {
 
     private int lastId = 0;
 
-    SDocument() {
-    }
+    private List<IMInstanceListener> instanceListeners;
+
+    SDocument() {}
 
     /**
      * Contador interno para IDs de instancia. É preservado entre peristência
@@ -174,6 +183,49 @@ public class SDocument implements Serializable {
         services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
     }
 
+    public void addInstanceListener(IMInstanceListener listener) {
+        getInstanceListeners().add(listener);
+    }
+    public void removeInstanceListener(IMInstanceListener listener) {
+        getInstanceListeners().remove(listener);
+    }
+    public void onInstanceValueChanged(MInstancia instance, Object oldValue, Object newValue) {
+        if (instanceListeners != null)
+            fireInstanceEvent(new MInstanceValueChangeEvent(instance, oldValue, newValue));
+    }
+    public void onInstanceAttributeChanged(MInstancia instance, MInstancia attributeInstance, Object oldValue, Object valor) {
+        if (instanceListeners != null)
+            fireInstanceEvent(new MInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
+    }
+
+    protected void fireInstanceEvent(MInstanceEvent evt) {
+        for (int i = 0; i < instanceListeners.size(); i++) {
+            IMInstanceListener listener = instanceListeners.get(i);
+            listener.onInstanceEvent(evt);
+        }
+    }
+    private List<IMInstanceListener> getInstanceListeners() {
+        if (this.instanceListeners == null)
+            this.instanceListeners = new ArrayList<>(1);
+        return this.instanceListeners;
+    }
+
+    public void updateAttributes() {
+        MInstances.visitAll(getRoot(), true, instance -> {
+            Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+            if (requiredFunc != null)
+                instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
+
+            Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
+            if (enabledFunc != null)
+                instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
+
+            Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
+            if (visibleFunc != null)
+                instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
+        });
+    }
+
     //TODO: Review how this method works. It'd be better if the developer did 
     //  not had to remember to call this before saving in the database.
     //  Maybe if the document worked as an Active Record, we'd be able to
@@ -217,7 +269,7 @@ class AttachmentPersistenceHelper {
     }
 
     private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
-        if (!attachment.getFileId().equals(attachment.getOriginalFileId())) {
+        if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if(fileRef != null){
                 IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray()); 
