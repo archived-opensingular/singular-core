@@ -96,6 +96,12 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         instancia.setPai(this);
     }
 
+    public void clear() {
+        if (valores != null) {
+            valores.clear();
+        }
+    }
+
     public MInstancia get(int index) {
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
