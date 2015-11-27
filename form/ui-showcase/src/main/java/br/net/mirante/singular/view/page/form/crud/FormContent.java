@@ -44,7 +44,7 @@ import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
-public class FormContent extends Content 
+public class FormContent extends Content
                         implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
@@ -53,21 +53,21 @@ public class FormContent extends Content
     private Form<?> inputForm = new Form<>("save-form");
     private IModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
-    
+
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
 //            return filePersistence;
             return new FileSystemAttachmentHandler("/tmp/mirtst");
         }
     };
-    
+
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
 //            return filePersistence;
             return new FileSystemAttachmentHandler("/tmp/mirpst");
         }
     };
-    
+
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
         String typeName = type.toString();
@@ -85,7 +85,7 @@ public class FormContent extends Content
         createInstance(typeName);
         updateContainer();
     }
-    
+
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -112,14 +112,14 @@ public class FormContent extends Content
             throw new RuntimeException(e);
         }
     }
-    
+
     private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
         buildContainer();
     }
-    
+
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
@@ -141,14 +141,16 @@ public class FormContent extends Content
     protected IModel<?> getContentSubtitlelModel() {
         return new ResourceModel("label.content.title");
     }
-    
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
         queue(inputForm
-            .add(createFeedbackPanel())
-            .add(new SaveButton("save-btn"))
-            .add(createCancelButton())
+                .add(createFeedbackPanel())
+                .add(createSaveButton("save-btn", true))
+                .add(createSaveButton("save-whitout-validate-btn", false))
+                .add(createValidateButton())
+                .add(createCancelButton())
         );
     }
 
@@ -160,75 +162,95 @@ public class FormContent extends Content
             }
         });
     }
-    
-    private final class SaveButton extends AjaxButton {
-        private SaveButton(String id) {
-            super(id);
-        }
 
-        @Override
-        protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-            MInstancia trueInstance = currentInstance.getObject();
-            trueInstance.getDocument().persistFiles(); //TODO: review this order
-            MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+    private AjaxButton createSaveButton(String wicketId, boolean validate) {
+        return new AjaxButton(wicketId) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 
-            try {
-                addValidationErrors(target, form, trueInstance, rootXml);
-            } catch (Exception e) {
-                target.add(form);
-                Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
-                return;
+                MInstancia trueInstance = currentInstance.getObject();
+                trueInstance.getDocument().persistFiles(); //TODO: review this order
+                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+
+                if (validate) {
+                    try {
+                        addValidationErrors(target, form, trueInstance, rootXml);
+                    } catch (Exception e) {
+                        target.add(form);
+                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+                        return;
+                    }
+                }
+
+                currentModel.setXml(printXml(rootXml));
+                dao.save(currentModel);
+                backToCrudPage(this);
             }
-            
-            currentModel.setXml(printXml(rootXml));
-            dao.save(currentModel);
-            backToCrudPage();
+        };
+    }
+
+    private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+                                     MElement rootXml) throws Exception {
+        runDefaultValidators(form, trueInstance);
+        validateEmptyForm(form, rootXml);
+    }
+
+    private void validateEmptyForm(Form<?> form, MElement rootXml) {
+        if (rootXml == null) {
+            form.error(getMessage("form.message.empty").getString());
+            throw new RuntimeException("Has empty form");
         }
+    }
 
-        private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-                MElement rootXml) throws Exception {
-            runDefaultValidators(form, trueInstance);
-            validateEmptyForm(form, rootXml);
+    private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
+        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+        InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+
+        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+            throw new RuntimeException("Has form errors");
         }
+    }
 
-        private void validateEmptyForm(Form<?> form, MElement rootXml) {
-            if (rootXml == null) {
-                form.error(getMessage("form.message.empty").getString());
-                throw new RuntimeException("Has empty form");
-            }
-        }
-
-        private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
-            InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-            InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
-
-            if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-                throw new RuntimeException("Has form errors");
-            }
-        }
-
-        private String printXml(MElement rootXml) {
+    private String printXml(MElement rootXml) {
+        if(rootXml != null) {
             StringWriter buffer = new StringWriter();
             rootXml.printTabulado(new PrintWriter(buffer));
             return buffer.toString();
         }
+        return null;
     }
 
     @SuppressWarnings("rawtypes")
     private AjaxLink<?> createCancelButton() {
         return new AjaxLink("cancel-btn") {
-
             @Override
             public void onClick(AjaxRequestTarget target) {
-                backToCrudPage();
+                backToCrudPage(this);
             }
         };
     }
 
-    private void backToCrudPage(){
+    private void backToCrudPage(Component componentContext){
         PageParameters params = new PageParameters()
                 .add(CrudPage.TYPE_NAME, currentModel.getType());
-        setResponsePage(CrudPage.class, params);
+        componentContext.setResponsePage(CrudPage.class, params);
+    }
+
+    private AjaxButton createValidateButton() {
+        return new AjaxButton("validate-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                MInstancia trueInstance = currentInstance.getObject();
+                trueInstance.getDocument().persistFiles(); //TODO: review this order
+                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                try {
+                    addValidationErrors(target, form, trueInstance, rootXml);
+                } catch (Exception e) {
+                    target.add(form);
+                    Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+                }
+            }
+        };
     }
 
 }
