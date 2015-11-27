@@ -198,6 +198,7 @@ public class FormContent extends Content
                 }
 
                 private void checkAndUpdateValidity(final AjaxRequestTarget target, FormComponent component) {
+                    System.out.println(component.getFeedbackMessages()); 
                     if (component.isValid()) markValid(target, component);
                     else markInvalid(target, component);
                 }
