@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteB;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno1;
 import br.net.mirante.singular.form.mform.TestMPacoteCoreAtributos.TestPacoteCAI.TipoComAtributoInterno2;
@@ -243,10 +245,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         
     }
     
-    public void testCriacaoAtributoDentroDaClasseDoTipoXXX() {
-        // Também testa se dá problema um tipo extendendo outro e ambos com
-        // onCargaTipo()
-
+    public void testAtribuicaoDeValoresDeAtributosPorString() {
         MDicionario dicionario = MDicionario.create();
         TestPacoteCAI pkg = dicionario.carregarPacote(TestPacoteCAI.class);
 
@@ -254,19 +253,16 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         
         MInstancia instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
         
-//        assertNull(instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
-//        assertNull(instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
-        
-//        instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1,"what");
         instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3,"what");
         
         System.out.println(pkg.fieldOfTipoComAtributoInterno1.getNome());
         System.out.println(pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome());
         
-        instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_KEY_ID4);
-        instanceOfFieldOfTipo1.setValorAtributo(
-            pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome()+"."+
-        TestPacoteCAI.ATR_KEY_ID4,"what");
+        
+        String basePath = pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome()+".";
+        instanceOfFieldOfTipo1.setValorAtributo(basePath+TestPacoteCAI.ATR_KEY_ID4,"what");
+        assertThat(instanceOfFieldOfTipo1.getValorAtributo(basePath+TestPacoteCAI.ATR_KEY_ID4))
+            .isEqualTo("what");
         
     }
 
