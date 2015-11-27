@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.4.8</version>
+        <version>0.4.9</version>
     </parent>
 
     <artifactId>flow-rest-client</artifactId>
@@ -19,7 +19,7 @@
     	<dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.4.8</version>
+            <version>0.4.9</version>
         </dependency>
     	
     	<dependency>
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.4.8</version>
+            <version>0.4.9</version>
         </dependency>
     </dependencies>
 
