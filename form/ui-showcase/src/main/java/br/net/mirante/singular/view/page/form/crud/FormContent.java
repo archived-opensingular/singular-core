@@ -15,20 +15,24 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -48,7 +52,7 @@ public class FormContent extends Content
                         implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
-//    @Inject FileDao filePersistence;
+    @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
     private IModel<MInstancia> currentInstance;
@@ -56,15 +60,13 @@ public class FormContent extends Content
     
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
-//            return filePersistence;
-            return new FileSystemAttachmentHandler("/tmp/mirtst");
+            return new InMemoryAttachmentPersitenceHandler();
         }
     };
     
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
-//            return filePersistence;
-            return new FileSystemAttachmentHandler("/tmp/mirpst");
+            return filePersistence;
         }
     };
     
@@ -185,6 +187,23 @@ public class FormContent extends Content
             backToCrudPage();
         }
 
+        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        protected void onError(final AjaxRequestTarget target, Form<?> form) {
+            form.visitFormComponents(new IVisitor() {
+                public void component(Object object, IVisit visit) {
+                    FormComponent component = (FormComponent) object;
+                   System.out.println(component + " : "+ component.isValid());
+                   if(!component.isValid()){
+                       target.add(component);
+                       target.appendJavaScript("console.log($('#" + component.getParent().getMarkupIdFromMarkup() + "'));");
+                       target.appendJavaScript("$('#" + component.getParent().getMarkupIdFromMarkup() + "').addClass('has-error');");
+                   }
+                }
+                    }
+            );
+        }
+        
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
                 MElement rootXml) throws Exception {
             runDefaultValidators(form, trueInstance);
