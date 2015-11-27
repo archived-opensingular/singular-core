@@ -190,20 +190,30 @@ public class FormContent extends Content
         @Override
         @SuppressWarnings({ "rawtypes", "unchecked" })
         protected void onError(final AjaxRequestTarget target, Form<?> form) {
+            target.add(form);
             form.visitFormComponents(new IVisitor() {
                 public void component(Object object, IVisit visit) {
                     FormComponent component = (FormComponent) object;
-                   System.out.println(component + " : "+ component.isValid());
-                   if(!component.isValid()){
-                       target.add(component);
-                       target.appendJavaScript("console.log($('#" + component.getParent().getMarkupIdFromMarkup() + "'));");
-                       target.appendJavaScript("$('#" + component.getParent().getMarkupIdFromMarkup() + "').addClass('has-error');");
-                   }
+                    checkAndUpdateValidity(target, component);
                 }
-                    }
-            );
+
+                private void checkAndUpdateValidity(final AjaxRequestTarget target, FormComponent component) {
+                    if (component.isValid()) markValid(target, component);
+                    else markInvalid(target, component);
+                }
+
+                private void markInvalid(final AjaxRequestTarget target, FormComponent component) {
+                    target.appendJavaScript("console.log($('#" + component.getMarkupId() + "'));");
+                    target.appendJavaScript("$('#" + component.getMarkupId() + "').parent().addClass('has-error');");
+                }
+
+                private void markValid(final AjaxRequestTarget target, FormComponent component) {
+                    target.appendJavaScript("$('#" + component.getMarkupId() + "').parent().removeClass('has-error');");
+                }
+
+            });
         }
-        
+
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
                 MElement rootXml) throws Exception {
             runDefaultValidators(form, trueInstance);
