@@ -171,22 +171,30 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         // onCargaTipo()
 
         MDicionario dicionario = MDicionario.create();
-        dicionario.carregarPacote(TestPacoteCAI.class);
+        TestPacoteCAI pkg = dicionario.carregarPacote(TestPacoteCAI.class);
 
         TipoComAtributoInterno1 tipo1 = dicionario.getTipo(TipoComAtributoInterno1.class);
         TipoComAtributoInterno2 tipo2 = dicionario.getTipo(TipoComAtributoInterno2.class);
+        TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
 
         assertNull(tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertNull(tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
         assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
         assertNull(tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        assertNull(fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
 
         tipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "A1");
         tipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "A3");
 
         assertEquals("A1", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("A3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        
+        fieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "A1");
+        fieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3, "A3");
+
+        assertEquals("A1", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
 
         tipo2.setValorAtributo(TestPacoteCAI.ATR_REF_ID1, "B1");
         tipo2.setValorAtributo(TestPacoteCAI.ATR_REF_ID2, "B2");
@@ -224,6 +232,42 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("B1", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("B2", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
         assertEquals("B3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        
+        assertEquals("A1", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        
+        MInstancia instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
+        
+        assertEquals("A1", instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+        assertEquals("A3", instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        
+    }
+    
+    public void testCriacaoAtributoDentroDaClasseDoTipoXXX() {
+        // Também testa se dá problema um tipo extendendo outro e ambos com
+        // onCargaTipo()
+
+        MDicionario dicionario = MDicionario.create();
+        TestPacoteCAI pkg = dicionario.carregarPacote(TestPacoteCAI.class);
+
+        TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
+        
+        MInstancia instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
+        
+//        assertNull(instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
+//        assertNull(instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
+        
+//        instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID1,"what");
+        instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3,"what");
+        
+        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getNome());
+        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome());
+        
+        instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_KEY_ID4);
+        instanceOfFieldOfTipo1.setValorAtributo(
+            pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome()+"."+
+        TestPacoteCAI.ATR_KEY_ID4,"what");
+        
     }
 
     public static final class TestPacoteCAI extends MPacote {
@@ -236,6 +280,9 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
         static final AtrRef<MTipoString, MIString, String> ATR_REF_ID3 = new AtrRef<>(TestPacoteCAI.class, "refId3", MTipoString.class,
                 MIString.class, String.class);
+        static final String ATR_KEY_ID4 = "refId4";
+
+        TipoComAtributoInterno1 fieldOfTipoComAtributoInterno1;
 
         @Override
         protected void carregarDefinicoes(PacoteBuilder pb) {
@@ -243,6 +290,8 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
             pb.createTipo(TipoComAtributoInterno2.class);
             pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID1);
             pb.createTipoAtributo(TipoComAtributoInterno2.class, ATR_REF_ID2);
+            MTipoComposto<? extends MIComposto> grouper = pb.createTipoComposto("Grouper");
+            fieldOfTipoComAtributoInterno1 = grouper.addCampo("TipoComAtributoInterno1", TipoComAtributoInterno1.class);
 
         }
 
@@ -252,6 +301,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
                 tb.createTipoAtributo(ATR_REF_ID3);
+                tb.createTipoAtributo(ATR_KEY_ID4, MTipoString.class);
                 addCampoString("nome");
             }
         }
