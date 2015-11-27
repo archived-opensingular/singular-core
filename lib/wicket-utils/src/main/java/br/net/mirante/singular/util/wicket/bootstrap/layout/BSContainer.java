@@ -12,7 +12,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     private String tagName;
@@ -107,13 +107,13 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
                         + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
                 .add(component)
-                .setRenderBodyOnly(true);
+                .setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return component;
     }
 
     public TemplatePanel newTemplateTag(IFunction<TemplatePanel, String> markupFunc) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, markupFunc));
-        container.setRenderBodyOnly(true);
+        container.setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return container;
     }
 

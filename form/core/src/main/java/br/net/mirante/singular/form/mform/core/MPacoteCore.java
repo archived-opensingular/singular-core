@@ -69,8 +69,8 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoString.class, ATR_TRIM).withDefaultValueIfNull(true);
         pb.createTipoAtributo(MTipoString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
 
-        pb.createTipo(MTipoFormula.class);
-        pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
+//        pb.createTipo(MTipoFormula.class);
+//        pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
     }

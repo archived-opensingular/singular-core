@@ -51,7 +51,7 @@ public class TestMFormUtil extends TestCaseForm {
         MTipoLista<MTipoComposto<MIComposto>, MIComposto> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
         MTipoInteger tipoQtd = listaSubBloco2.getTipoElementos().addCampoInteger("qtd");
 
-        tipoBloco.debug();
+//        tipoBloco.debug();
 
         assertTipoResultante(tipoBloco, "integer1", integer1);
         assertTipoResultante(tipoBloco, "integer1", dicionario.getTipo("teste.bloco.integer1"));

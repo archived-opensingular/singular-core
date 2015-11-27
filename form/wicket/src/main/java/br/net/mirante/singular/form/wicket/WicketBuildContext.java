@@ -35,6 +35,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
+@SuppressWarnings({"serial","rawtypes"})
 public class WicketBuildContext implements Serializable {
 
     private static final MetaDataKey<Integer>  KEY_INSTANCE_ID        = new MetaDataKey<Integer>() {};
@@ -44,20 +45,28 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer<?>                    container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean                           hintsInherited;
+    private final  BSContainer                      bodyContainer;
 
-    public WicketBuildContext(BSCol container) {
-        this(null, container, false);
+    public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
+        this(null, container, bodyContainer, false);
     }
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, boolean hintsInherited) {
+
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container,  BSContainer bodyContainer, boolean hintsInherited) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
+        this.bodyContainer = bodyContainer;
     }
     public WicketBuildContext getParent() {
         return parent;
     }
+
     public BSContainer<?> getContainer() {
         return container;
+    }
+
+    public BSContainer<?> getBodyContainer() {
+        return bodyContainer;
     }
 
     public <T extends Serializable> WicketBuildContext setHint(HintKey<T> key, T value) {
@@ -76,7 +85,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
-        return new WicketBuildContext(this, childContainer, hintsInherited);
+        return new WicketBuildContext(this, childContainer, bodyContainer, hintsInherited);
     }
 
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {

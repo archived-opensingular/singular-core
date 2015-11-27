@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dao.CategoryMenuDAO;
 import br.net.mirante.singular.dao.GroupDAO;
-import br.net.mirante.singular.dto.GroupDTO;
 import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
+import br.net.mirante.singular.flow.core.dto.GroupDTO;
 
 @Service("menuService")
 public class MenuServiceImpl implements MenuService {

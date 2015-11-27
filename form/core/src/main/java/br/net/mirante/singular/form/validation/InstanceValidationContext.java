@@ -27,7 +27,7 @@ public class InstanceValidationContext {
     }
 
     public void validate() {
-        MInstances.visitAllChildren(instance, true, inst -> {
+        MInstances.visitAllChildrenIncludingEmpty(instance, inst -> {
             inst.getMTipo().validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
         });
     }

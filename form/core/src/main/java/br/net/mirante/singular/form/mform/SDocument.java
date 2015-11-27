@@ -1,15 +1,20 @@
 package br.net.mirante.singular.form.mform;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.common.collect.ImmutableMap;
 
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 
 /**
  * <p>
@@ -24,7 +29,9 @@ import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttac
  * @author Daniel C. Bordin
  */
 @SuppressWarnings("serial")
-public class SDocument implements Serializable {
+public class SDocument {
+
+    public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
 
@@ -32,8 +39,9 @@ public class SDocument implements Serializable {
 
     private int lastId = 0;
 
-    SDocument() {
-    }
+    private MInstanceListeners instanceListeners;
+
+    SDocument() {}
 
     /**
      * Contador interno para IDs de instancia. É preservado entre peristência
@@ -129,9 +137,9 @@ public class SDocument implements Serializable {
                 Object value = ref.get();
                 if (value == null) {
                     services.remove(name);
-                } else if(! targetClass.isInstance(value)) {
+                } else if (!targetClass.isInstance(value)) {
                     throw new SingularFormException("Para o serviço '" + name + "' foi encontrado um valor da classe "
-                            + value.getClass().getName() + " em vez da classe esperada " + targetClass.getName());
+                        + value.getClass().getName() + " em vez da classe esperada " + targetClass.getName());
                 } else {
                     return targetClass.cast(value);
                 }
@@ -170,4 +178,100 @@ public class SDocument implements Serializable {
         services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
     }
 
+    public MInstanceListeners getInstanceListeners() {
+        if (this.instanceListeners == null)
+            this.instanceListeners = new MInstanceListeners();
+        return this.instanceListeners;
+    }
+
+    public void updateAttributes() {
+        MInstances.visitAll(getRoot(), true, instance -> {
+            Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+            if (requiredFunc != null)
+                instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
+
+            Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
+            if (enabledFunc != null)
+                instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
+
+            Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
+            if (visibleFunc != null)
+                instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
+        });
+    }
+
+    //TODO: Review how this method works. It'd be better if the developer did 
+    //  not had to remember to call this before saving in the database.
+    //  Maybe if the document worked as an Active Record, we'd be able to
+    //  intercept the persist call and do this job before the model
+    //  would be persisted.
+    public void persistFiles() {
+        IAttachmentPersistenceHandler persistent = lookupLocalService(
+            SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
+        new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
+    }
+
+}
+
+/**
+ * Responsible for moving files from temporary state to persistent.
+ * 
+ * @author Fabricio Buzeto
+ *
+ */
+class AttachmentPersistenceHelper {
+
+    private IAttachmentPersistenceHandler temporary, persistent;
+
+    public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
+        IAttachmentPersistenceHandler persistent) {
+        this.temporary = temporary;
+        this.persistent = persistent;
+    }
+
+    public void doPersistence(MInstancia element) {
+        if (element instanceof MIAttachment) {
+            handleAttachment((MIAttachment) element);
+        } else if (element instanceof ICompositeInstance) {
+            visitChildrenIfAny((ICompositeInstance) element);
+        }
+    }
+
+    private void handleAttachment(MIAttachment attachment) {
+        moveFromTemporaryToPersistentIfNeeded(attachment);
+    }
+
+    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
+        if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
+            IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
+            if (fileRef != null) {
+                IAttachmentRef newRef = persistent.addAttachment(fileRef.getContentAsByteArray());
+                deleteOldFiles(attachment, fileRef);
+                updateFileId(attachment, newRef);
+            }
+        }
+    }
+
+    private void deleteOldFiles(MIAttachment attachment, IAttachmentRef fileRef) {
+        temporary.deleteAttachment(fileRef.getId());
+        persistent.deleteAttachment(attachment.getOriginalFileId());
+    }
+
+    private void updateFileId(MIAttachment attachment, IAttachmentRef newRef) {
+        attachment.setFileId(newRef.getId());
+        attachment.setOriginalFileId(newRef.getId());
+    }
+
+    private void visitChildrenIfAny(ICompositeInstance composite) {
+        if (!composite.getAllChildren().isEmpty()) {
+            visitAllChildren(composite);
+        }
+    }
+
+    private void visitAllChildren(ICompositeInstance composite) {
+        for (MInstancia child : composite.getAllChildren()) {
+            doPersistence(child);
+        }
+    }
 }

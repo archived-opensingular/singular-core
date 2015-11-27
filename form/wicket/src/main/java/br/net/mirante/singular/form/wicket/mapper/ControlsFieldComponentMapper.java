@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
@@ -19,6 +19,7 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 
@@ -26,7 +27,23 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
     HintKey<Boolean> NO_DECORATION = () -> false;
 
-    Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
+    /**
+     *
+     * @param view
+     *  Instancia da MView utilizada para configurar o componente
+     * @param bodyContainer
+     *  Container não aninhado no formulário, utilizado para adicionar modais por exemplo
+     * @param formGroup
+     *  Container onde dever adicionado o input
+     * @param model
+     *  Model da MInstancia
+     * @param labelModel
+     *  Model contendo o label do componente
+     * @return
+     *   Retorna o componente  já adicionado ao formGroup
+     */
+    @SuppressWarnings("rawtypes")
+    Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
     @Override
     default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
@@ -48,7 +65,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        final Component input = appendInput(controls, model, labelModel);
+        final Component input = appendInput(view, ctx.getBodyContainer(), controls, model, labelModel);
         controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());

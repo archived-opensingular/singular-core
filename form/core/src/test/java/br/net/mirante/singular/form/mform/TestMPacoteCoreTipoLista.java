@@ -149,7 +149,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         public static final class TestTipoListaComCargaInterna extends MTipoLista<MTipoString, MIString> {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
-                super.onCargaTipo(tb);
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
             }

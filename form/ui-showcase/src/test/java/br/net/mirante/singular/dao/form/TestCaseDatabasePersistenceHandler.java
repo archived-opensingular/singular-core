@@ -25,8 +25,7 @@ public class TestCaseDatabasePersistenceHandler {
     @Test public void createProperReference(){
         byte[] content = "i".getBytes();
         IAttachmentRef ref = dao.addAttachment(new ByteArrayInputStream(content));
-        assertThat(ref.getId())
-            .isEqualTo("042dc4512fa3d391c5170cf3aa61e6a638f84342");
+        assertThat(ref.getId()).isNotEmpty();
         assertThat(ref.getHashSHA1())
             .isEqualTo("042dc4512fa3d391c5170cf3aa61e6a638f84342");
         assertThat(ref.getContentAsByteArray()).isEqualTo(content);
@@ -36,8 +35,7 @@ public class TestCaseDatabasePersistenceHandler {
     @Test public void worksWithByteArrayAlso(){
         byte[] content = "np".getBytes();
         IAttachmentRef ref = dao.addAttachment(content);
-        assertThat(ref.getId())
-            .isEqualTo("003fffd5649fc27c0fc0d15a402a4fe5b0444ce7");
+        assertThat(ref.getId()).isNotEmpty();
         assertThat(ref.getHashSHA1())
             .isEqualTo("003fffd5649fc27c0fc0d15a402a4fe5b0444ce7");
         assertThat(ref.getContentAsByteArray()).isEqualTo(content);

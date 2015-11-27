@@ -9,4 +9,9 @@ public class TestCasePersistenceHandlerInMemory extends TestCasePersistenceHandl
         return new InMemoryAttachmentPersitenceHandler();
     }
 
+    @Override
+    protected String defineId(IAttachmentRef ref) {
+        return ref.getHashSHA1();
+    }
+
 }

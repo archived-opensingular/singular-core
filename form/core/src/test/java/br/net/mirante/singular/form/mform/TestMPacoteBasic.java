@@ -12,7 +12,7 @@ public class TestMPacoteBasic extends TestCase {
         MDicionario dicionario = MDicionario.create();
         dicionario.carregarPacote(MPacoteBasic.class);
 
-        dicionario.debug();
+//        dicionario.debug();
 
         MTipoInteger mtInt = dicionario.getTipo(MTipoInteger.class);
         Assert.assertEquals(Integer.valueOf(1), mtInt.converter("1"));
