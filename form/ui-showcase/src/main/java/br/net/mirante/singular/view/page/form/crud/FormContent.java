@@ -170,7 +170,7 @@ public class FormContent extends Content
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             MInstancia trueInstance = currentInstance.getObject();
-            trueInstance.getDocument().persistFiles(); //TODO: review this order
+            trueInstance.getDocument().persistFiles(); 
             MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
 
             try {

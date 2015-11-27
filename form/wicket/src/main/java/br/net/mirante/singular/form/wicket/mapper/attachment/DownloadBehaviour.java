@@ -20,7 +20,6 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 
-//TODO: Test when we have a persistent and a temporary one
 @SuppressWarnings("serial")
 public class DownloadBehaviour extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();

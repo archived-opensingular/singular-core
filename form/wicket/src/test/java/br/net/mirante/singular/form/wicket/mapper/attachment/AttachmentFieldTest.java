@@ -29,8 +29,6 @@ public class AttachmentFieldTest {
     private TestPage page;
     private FormTester form;
 
-    //TODO: Document the classes for testing and for upload
-    
     @BeforeClass
     public static void createDicionario() {
 	dicionario = MDicionario.create();
