@@ -22,13 +22,14 @@ import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -44,30 +45,28 @@ import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
-public class FormContent extends Content
+public class FormContent extends Content 
                         implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
-//    @Inject FileDao filePersistence;
+    @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
     private IModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
-
+    
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
-//            return filePersistence;
-            return new FileSystemAttachmentHandler("/tmp/mirtst");
+            return new InMemoryAttachmentPersitenceHandler();
         }
     };
-
+    
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
-//            return filePersistence;
-            return new FileSystemAttachmentHandler("/tmp/mirpst");
+            return filePersistence;
         }
     };
-
+    
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
         String typeName = type.toString();
@@ -85,7 +84,7 @@ public class FormContent extends Content
         createInstance(typeName);
         updateContainer();
     }
-
+    
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -112,14 +111,14 @@ public class FormContent extends Content
             throw new RuntimeException(e);
         }
     }
-
+    
     private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
         buildContainer();
     }
-
+    
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.buildForEdit(ctx, currentInstance);
@@ -141,7 +140,7 @@ public class FormContent extends Content
     protected IModel<?> getContentSubtitlelModel() {
         return new ResourceModel("label.content.title");
     }
-
+    
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -162,6 +161,7 @@ public class FormContent extends Content
             }
         });
     }
+    
 
     private AjaxButton createSaveButton(String wicketId, boolean validate) {
         return new AjaxButton(wicketId) {
@@ -223,6 +223,7 @@ public class FormContent extends Content
     @SuppressWarnings("rawtypes")
     private AjaxLink<?> createCancelButton() {
         return new AjaxLink("cancel-btn") {
+
             @Override
             public void onClick(AjaxRequestTarget target) {
                 backToCrudPage(this);
@@ -252,5 +253,4 @@ public class FormContent extends Content
             }
         };
     }
-
 }

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectSearch;
+import br.net.mirante.singular.showcase.input.core.CaseInputCoreYearMonth;
+
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
@@ -30,6 +32,7 @@ public class ShowCaseTable {
         // @formatter:off
         group("Input")
             .addCase(CaseInputCoreDate.class)
+            .addCase(CaseInputCoreYearMonth.class)
             .addCase(CaseInputCoreInteger.class)
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
