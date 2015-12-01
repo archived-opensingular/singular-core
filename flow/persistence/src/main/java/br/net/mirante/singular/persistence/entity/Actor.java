@@ -1,21 +1,19 @@
 package br.net.mirante.singular.persistence.entity;
 
-import br.net.mirante.singular.flow.core.MUser;
-import br.net.mirante.singular.persistence.util.Constants;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import br.net.mirante.singular.flow.core.MUser;
+import br.net.mirante.singular.persistence.util.Constants;
 
 /**
  * The persistent class for the TB_ATOR database table.
  */
 @Entity
 @Table(name = "VW_ATOR", schema = Constants.SCHEMA)
-public class Actor extends BaseEntity implements MUser {
+public class Actor extends BaseEntity<Integer> implements MUser {
 
     /* nao deve ter generator, deve ser uma view*/
     @Id
@@ -80,22 +78,4 @@ public class Actor extends BaseEntity implements MUser {
         this.cod = cod;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Actor)) {
-            return false;
-        }
-        if (this.getCod() != null && ((Actor) obj).getCod() != null) {
-            return super.equals(obj);
-        }
-        return new EqualsBuilder().append(this.getCodUsuario(), ((Actor) obj).getCodUsuario()).build();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.getCodUsuario()).build();
-    }
 }

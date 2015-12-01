@@ -8,13 +8,13 @@ import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 public class MenuItemDTO implements IMenuItemDTO {
     private static final long serialVersionUID = 25234058060013546L;
 
-    private Long id;
+    private Integer id;
     private String name;
     private String code;
     private Integer counter;
     private List<IMenuItemDTO> itens;
 
-    public MenuItemDTO(Long id, String name, String code, Integer counter) {
+    public MenuItemDTO(Integer id, String name, String code, Integer counter) {
         this.id = id;
         this.name = name;
         this.code = code;
@@ -23,7 +23,7 @@ public class MenuItemDTO implements IMenuItemDTO {
     }
 
     @Override
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

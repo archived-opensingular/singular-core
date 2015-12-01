@@ -42,7 +42,7 @@ public class MenuServiceImpl implements MenuService {
     @Cacheable(value = "retrieveCategoryDefinitionIdsByCodeMenu", key = "#code", cacheManager = "cacheManager")
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
         Object[] result = categoryMenuDAO.retrieveCategoryDefinitionIdsByCode(code);
-        return new ImmutablePair<>((Long) result[0], (Long) result[1]);
+        return new ImmutablePair<>(((Integer) result[0]).longValue(), ((Integer) result[1]).longValue());
     }
     
     @Override
@@ -55,7 +55,7 @@ public class MenuServiceImpl implements MenuService {
         }
         List<MenuItemDTO> allCategories = retrieveAllCategories();
         allCategories.forEach(category ->{
-            category.getItens().removeIf(def -> !definitions.contains(def.getId()));
+            category.getItens().removeIf(def -> !definitions.contains(Long.valueOf(def.getId())));
         });
         allCategories.removeIf(category -> category.getItens().isEmpty());
         return allCategories;
