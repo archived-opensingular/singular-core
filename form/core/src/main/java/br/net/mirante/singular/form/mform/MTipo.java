@@ -371,7 +371,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void validateInstance(IInstanceValidatable<?> validatable) {
-        Boolean required = validatable.getInstance().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
+        MInstancia instance = validatable.getInstance();
+        Boolean required = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
         if (Boolean.TRUE.equals(required) && validatable.getInstance().getValor() == null) {
             validatable.error(new ValidationError(validatable.getInstance(), ValidationErrorLevel.ERROR, "Obrigatório"));
             return;
