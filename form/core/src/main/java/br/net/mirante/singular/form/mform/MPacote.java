@@ -2,6 +2,8 @@ package br.net.mirante.singular.form.mform;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.IOException;
+
 public class MPacote extends MEscopoBase {
 
     private final String nome;
@@ -41,9 +43,13 @@ public class MPacote extends MEscopoBase {
     }
 
     @Override
-    protected void debug(int nivel) {
-        pad(System.out, nivel).println(getNome());
-        super.debug(nivel + 1);
+    protected void debug(Appendable appendable, int nivel) {
+        try {
+            pad(appendable, nivel).append(getNome()).append("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        super.debug(appendable, nivel + 1);
     }
 
     protected static boolean isNull(MISimples<?> campo) {
