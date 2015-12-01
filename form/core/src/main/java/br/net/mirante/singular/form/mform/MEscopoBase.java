@@ -1,15 +1,19 @@
 package br.net.mirante.singular.form.mform;
 
-import java.io.PrintStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
 
 public abstract class MEscopoBase implements MEscopo {
 
     private Map<String, MTipo<?>> tiposLocais;
+
+    private static final Logger LOGGER = Logger.getLogger(MEscopoBase.class.getName());
 
     @Override
     public Optional<MTipo<?>> getTipoLocalOpcional(String path) {
@@ -110,17 +114,29 @@ public abstract class MEscopoBase implements MEscopo {
         debug(0);
     }
 
-    protected void debug(int nivel) {
+    public void debug(int nivel) {
+        debug(System.out, nivel);
+    }
+
+    public final void debug(Appendable appendable) {
+        debug(appendable, 0);
+    }
+
+    protected void debug(Appendable appendable, int nivel) {
         if (tiposLocais != null) {
-            tiposLocais.values().stream().filter(t -> t instanceof MAtributo).forEach(t -> t.debug(nivel));
-            tiposLocais.values().stream().filter(t -> !(t instanceof MAtributo)).forEach(t -> t.debug(nivel));
+            tiposLocais.values().stream().filter(t -> t instanceof MAtributo).forEach(t -> t.debug(appendable, nivel));
+            tiposLocais.values().stream().filter(t -> !(t instanceof MAtributo)).forEach(t -> t.debug(appendable, nivel));
         }
     }
 
-    protected static PrintStream pad(PrintStream out, int nivel) {
-        for (int i = nivel * 3; i > 0; i--) {
-            out.print(' ');
+    protected static Appendable pad(Appendable appendable, int nivel) {
+        try {
+            for (int i = nivel * 3; i > 0; i--) {
+                appendable.append(' ');
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
-        return out;
+        return appendable;
     }
 }
