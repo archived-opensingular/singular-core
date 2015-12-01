@@ -3,24 +3,28 @@ package br.net.mirante.singular.form.mform;
 import java.util.Arrays;
 import java.util.Collection;
 
-class MProviderOpcoesFixoSimples implements MProviderOpcoes {
+class FixedOptionsSimpleMProvider implements MProviderOpcoes {
 
     private final MILista<? extends MInstancia> opcoes;
 
-    public MProviderOpcoesFixoSimples(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
+    public FixedOptionsSimpleMProvider(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
         if (lista.isEmpty()) {
-            throw new RuntimeException("Não é aceito uma lista de opções tamanho zero");
+            throwEmpryListError();
         }
         this.opcoes = tipoOpcoes.novaLista();
         lista.forEach(o -> opcoes.addValor(o));
     }
 
-    public MProviderOpcoesFixoSimples(MTipoSimples<?, ?> tipoOpcoes, Object[] lista) {
+    public FixedOptionsSimpleMProvider(MTipoSimples<?, ?> tipoOpcoes, Object[] lista) {
         if (lista.length == 0) {
-            throw new RuntimeException("Não é aceito uma lista de opções tamanho zero");
+            throwEmpryListError();
         }
         this.opcoes = tipoOpcoes.novaLista();
         Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
+    }
+
+    private void throwEmpryListError() {
+        throw new RuntimeException("Empty list is not valid as options.");
     }
 
     @Override

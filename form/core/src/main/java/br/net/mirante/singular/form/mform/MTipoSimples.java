@@ -31,22 +31,24 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
     }
 
     public MProviderOpcoes selectionOf(Collection<TIPO_NATIVO> opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
+        providerOpcoes = new FixedOptionsSimpleMProvider(this, opcoes);
         return providerOpcoes;
     }
 
+    @SuppressWarnings("unchecked")
     public MProviderOpcoes selectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
+        providerOpcoes = new FixedOptionsSimpleMProvider(this, opcoes);
         return providerOpcoes;
     }
 
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(Collection<TIPO_NATIVO> options) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, options);
+        providerOpcoes = new FixedOptionsSimpleMProvider(this, options);
         return this;
     }
 
+    @SuppressWarnings("unchecked")
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
+        providerOpcoes = new FixedOptionsSimpleMProvider(this, opcoes);
         return this;
     }
 
