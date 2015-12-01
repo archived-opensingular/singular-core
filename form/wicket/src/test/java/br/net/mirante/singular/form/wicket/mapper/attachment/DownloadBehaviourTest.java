@@ -107,7 +107,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         b.onResourceRequested();
         
         verify(response).addHeader("Content-Type", "application/octet-stream");
-        verify(response).addHeader("Content-disposition", "attachment; filename=abacate.txt");
+        verify(response).addHeader("Content-disposition", "attachment; filename=\"abacate.txt\"");
     }
     
     @Test public void respondsWithTheFileContentFromTheInstance(){
@@ -128,7 +128,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         
         b.onResourceRequested();
         
-        verify(response).addHeader("Content-disposition", "attachment; filename=anything.i.want");
+        verify(response).addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
         ByteArrayOutputStream baos = (ByteArrayOutputStream) response.getOutputStream();
         assertThat(baos.toByteArray()).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
