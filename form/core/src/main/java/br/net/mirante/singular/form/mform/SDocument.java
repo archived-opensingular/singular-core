@@ -28,7 +28,6 @@ import br.net.mirante.singular.form.mform.event.MInstanceListeners;
  *
  * @author Daniel C. Bordin
  */
-@SuppressWarnings("serial")
 public class SDocument {
 
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";

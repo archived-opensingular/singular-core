@@ -13,14 +13,21 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SDocument;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public class MTipoStringSelectionFieldTest {
+public class MTipoStringSelectionFromProviderFieldTest {
     private static MDicionario dicionario;
     private PacoteBuilder localPackage;
     private MTipoString selectType;
@@ -28,6 +35,7 @@ public class MTipoStringSelectionFieldTest {
     private WicketTester driver;
     private TestPage page;
     private FormTester form;
+    private List<String> referenceOptions;
 
     @BeforeClass
     public static void createDicionario() {
@@ -41,10 +49,43 @@ public class MTipoStringSelectionFieldTest {
         localPackage = dicionario.criarNovoPacote("test");
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
         selectType = group.addCampoString("favoriteFruit");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        selectType.withSelectionFromProvider("fruitProvider");
         page.setNewInstanceOfType(group.getNome());
+        referenceOptions = Lists.newArrayList(
+            "strawberry","apple","orange","banana","avocado","grapes");
+        MOptionsProvider provider = createProviderWithOptions(referenceOptions);
+        SDocument document = page.getCurrentInstance().getDocument();
+        document.bindLocalService("fruitProvider",ref(provider));
         page.build();
         driver.startPage(page);
+    }
+
+    private ServiceRef<MOptionsProvider> ref(MOptionsProvider provider) {
+        return new ServiceRef<MOptionsProvider>() {
+
+        public MOptionsProvider get() {
+            return provider;
+        }
+
+        
+      };
+    }
+    
+    private MOptionsProvider createProviderWithOptions(final List<String> options) {
+        return new MOptionsProvider() {
+            public String toDebug() {
+                return "debug this";
+            }
+            
+            public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+                MTipoString s = dicionario.getTipo(MTipoString.class);
+                MILista<?> r = s.novaLista();
+                for(String o : options){
+                    r.addValor(o);
+                }
+                return r;
+            }
+        };
     }
     
     @Before public void setupFormAssessor() {
@@ -58,12 +99,10 @@ public class MTipoStringSelectionFieldTest {
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices())
-            .containsExactly("strawberry","apple","orange","banana");
+        assertThat(choices.getChoices()).containsExactly(referenceOptions.toArray());
     }
     
     private String formField(FormTester form, String leafName) {
         return "test-form:" + findId(form.getForm(), leafName).get();
     }
-    
 }

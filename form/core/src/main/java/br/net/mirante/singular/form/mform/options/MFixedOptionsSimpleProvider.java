@@ -1,13 +1,17 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.options;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-class FixedOptionsSimpleMProvider implements MProviderOpcoes {
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipoSimples;
+
+public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private final MILista<? extends MInstancia> opcoes;
 
-    public FixedOptionsSimpleMProvider(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
+    public MFixedOptionsSimpleProvider(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
         if (lista.isEmpty()) {
             throwEmpryListError();
         }
@@ -15,7 +19,7 @@ class FixedOptionsSimpleMProvider implements MProviderOpcoes {
         lista.forEach(o -> opcoes.addValor(o));
     }
 
-    public FixedOptionsSimpleMProvider(MTipoSimples<?, ?> tipoOpcoes, Object[] lista) {
+    public MFixedOptionsSimpleProvider(MTipoSimples<?, ?> tipoOpcoes, Object[] lista) {
         if (lista.length == 0) {
             throwEmpryListError();
         }
@@ -28,7 +32,7 @@ class FixedOptionsSimpleMProvider implements MProviderOpcoes {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes() {
+    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
         return opcoes;
     }
 
