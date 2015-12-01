@@ -72,6 +72,7 @@ public class InMemoryAttachmentPersitenceHandler extends AbstractAttachmentPersi
 
     @Override
     public void deleteAttachment(String hashId) {
+        if(hashId == null) return ; 
         attachments.remove(hashId);
     }
 }
