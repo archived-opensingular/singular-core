@@ -30,12 +30,19 @@
     <div wicket:id="deleteModal" class="portlet-body form">
         <form wicket:id="delete-form">
             <div class="form-actions noborder">
-                <p><wicket:message key="label.delete.message"/></p>
+                <p>
+                    <wicket:message key="label.delete.message"/>
+                </p>
                 <button type="submit" class="btn blue" wicket:id="delete-btn">
                     <wicket:message key="label.button.delete"/>
                 </button>
             </div>
         </form>
+    </div>
+
+    <div wicket:id="viewXmlModal" class="portlet-body form">
+        <pre wicket:id="xmlCode"></pre>
+        <pre wicket:id="definicao"></pre>
     </div>
 </wicket:extend>
 </html>
