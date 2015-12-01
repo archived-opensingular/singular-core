@@ -27,6 +27,6 @@ public class MICode<T> extends MInstancia {
 
     @Override
     public String getDisplayString() {
-        return getMTipo().getNome();
+        return getMTipo().getNomeSimples();
     }
 }
