@@ -60,8 +60,10 @@ public class ExamplePackage extends MPacote {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
-        this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
-
+        this.orderNumber = addField(order, 
+                "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.orderNumber.withObrigatorio(true);
+        
         buildBuyerField();
         buildAddressField();
     }

@@ -101,7 +101,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         testCaminho(pedidos.getCampo("[0].qtd"), null, "[0].qtd");
     }
 
-    @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");

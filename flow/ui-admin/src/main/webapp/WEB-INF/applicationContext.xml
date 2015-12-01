@@ -25,12 +25,12 @@
         </security:authentication-provider>
     </security:authentication-manager>
     
-    <security:http auto-config="false">
+    <security:http auto-config="false" create-session="never">
 	    <security:csrf disabled="true"/>
         <security:intercept-url pattern="/resources/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')"/>
         <security:http-basic />
     	<security:logout logout-url="/logout"/>
     </security:http>
-	
+    
 </beans>
