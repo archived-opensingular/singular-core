@@ -38,7 +38,7 @@ import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.validation.InstanceValidationUtils;
+import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
@@ -52,7 +52,7 @@ public class FormContent extends Content
     @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
-    private IModel<MInstancia> currentInstance;
+    private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
@@ -204,7 +204,8 @@ public class FormContent extends Content
 
     private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
         InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+        validationContext.validateAll();
+        WicketFormUtils.associateErrorsToComponents(validationContext, form);
 
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
             throw new RuntimeException("Has form errors");

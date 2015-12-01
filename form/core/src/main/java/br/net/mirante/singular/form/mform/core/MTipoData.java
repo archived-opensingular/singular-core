@@ -25,10 +25,6 @@ public class MTipoData extends MTipoSimples<MIData, Date> {
         super(classeInstancia, Date.class);
     }
 
-    public static ValidadorDataBuilder validadorBuilder() {
-        return new ValidadorDataBuilder();
-    }
-
     public Date fromString(String valor) {
         try {
             return (new SimpleDateFormat(MTipoData.FORMAT)).parse(valor);
