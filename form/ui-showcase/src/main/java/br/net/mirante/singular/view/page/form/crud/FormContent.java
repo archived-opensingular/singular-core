@@ -2,8 +2,7 @@ package br.net.mirante.singular.view.page.form.crud;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,23 +20,20 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+
+import com.google.common.collect.Maps;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.dao.form.ExampleFile;
-import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
@@ -50,52 +46,37 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
+import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content 
-                        implements SingularWicketContainer<CrudContent, Void> {
+                        implements SingularWicketContainer<CrudContent, Void>{
 
     @Inject ExampleDataDAO dao;
-    @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
-    private IModel<MInstancia> currentInstance;
+    IModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return new InMemoryAttachmentPersitenceHandler();
-        }
-    };
+//    @Inject FileDao filePersistence;
     
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
+//    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+//        public IAttachmentPersistenceHandler get() {
+//            return new InMemoryAttachmentPersitenceHandler();
+//        }
+//    };
+//    
+//    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+//        public IAttachmentPersistenceHandler get() {
+//            return filePersistence;
+//        }
+//    };
     
-    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
-        public MOptionsProvider get() {
-            return new MOptionsProvider(){
-
-                @Override
-                public String toDebug() {
-                    return null;
-                }
-
-                @Override
-                public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
-                    List<ExampleFile> files = filePersistence.list();
-                    TemplateRepository repo = TemplateRepository.get();
-                    MTipo<?> type = currentInstance.getObject().getMTipo();
-                    Optional<MDicionario> dict = repo.loadDicionaryForType(type.getNome());
-                    MTipoString tipoString = dict.get().getTipo(MTipoString.class);
-                    MILista<?> list = tipoString.novaLista();
-                    files.forEach((f) -> list.addValor(f.getId()));
-                    return list;
-                }};
-        }
-    };
+//    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
+//        public MOptionsProvider get() {
+//            return new MFileIdsOptionsProvider(filePersistence);
+//        }
+//    };
     
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
@@ -120,13 +101,13 @@ public class FormContent extends Content
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
         bindDefaultServices(currentInstance.getObject().getDocument());
         populateInstance(tipo);
-
     }
 
     private void bindDefaultServices(SDocument document) {
-        document.setAttachmentPersistenceHandler(temporaryRef);
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
-        document.bindLocalService("filesChoiceProvider", choiceRef);
+//        document.setAttachmentPersistenceHandler(temporaryRef);
+//        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
+//        document.bindLocalService("filesChoiceProvider", choiceRef);
+        document.setServiceRegistry(createSpringRegistry());
     }
 
     private void populateInstance(final MTipo<?> tipo) {
@@ -284,4 +265,43 @@ public class FormContent extends Content
             }
         };
     }
+
+    public ServiceRegistry createSpringRegistry() throws BeansException {
+        ShowcaseApplication app = (ShowcaseApplication) getApplication();
+        ApplicationContext applicationContext = app.getApplicationContext();
+        return new ServiceRegistry() {
+            
+            @Override
+            public Map<String, ServiceRef<?>> services() {
+                return Maps.newHashMap();
+            }
+            
+            @Override
+            public <T> T lookupLocalService(String name, Class<T> targetClass) {
+                return applicationContext.getBean(name, targetClass);
+            }
+            
+            @Override
+            public <T> T lookupLocalService(Class<T> targetClass, String subName) {
+                return null;
+            }
+            
+            @Override
+            public void bindLocalService(String serviceName, ServiceRef<?> provider) {
+                
+            }
+            
+            @Override
+            public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
+//                applicationContext.getAutowireCapableBeanFactory()
+            }
+            
+            @Override
+            public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
+                
+            }
+        };
+//        applicationContext.get
+    }
+
 }

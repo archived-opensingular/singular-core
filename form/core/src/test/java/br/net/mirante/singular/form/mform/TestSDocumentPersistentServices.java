@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 public class TestSDocumentPersistentServices {
     

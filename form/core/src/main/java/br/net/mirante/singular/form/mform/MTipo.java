@@ -14,6 +14,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;

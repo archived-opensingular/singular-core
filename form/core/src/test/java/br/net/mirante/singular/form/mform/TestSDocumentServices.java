@@ -5,9 +5,9 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 public class TestSDocumentServices {
     private MTipoComposto<?> groupingType;

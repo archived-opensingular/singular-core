@@ -9,15 +9,15 @@ import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 /**
  * <p>
  * Classe de suporte a serialização e deserialização de
- * {@link br.net.mirante.singular.form.mform.SDocument} e
+ * {@link br.net.mirante.singular.form.mform.document.SDocument} e
  * {@link br.net.mirante.singular.form.mform.MInstancia}.
  * </p>
  * <p>

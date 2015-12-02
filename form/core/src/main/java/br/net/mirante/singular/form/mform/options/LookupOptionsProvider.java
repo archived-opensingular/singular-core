@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Class responsible for looking up for the desired providers from the current

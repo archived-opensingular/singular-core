@@ -7,9 +7,9 @@ import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Faz a gestão da referência a anexos mantidos por um documento. Se entender
