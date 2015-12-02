@@ -30,6 +30,8 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
                 itemDetailContainer.setVisible(true);
                 itemDetailContainer.addOrReplace(new ShowCaseItemDetailPanel("itemDetail", m));
                 target.add(itemDetailContainer);
+                //TODO componentes adicionados via ajax não são estilizados
+                target.appendJavaScript("Page.init();");
             }
         });
     }
