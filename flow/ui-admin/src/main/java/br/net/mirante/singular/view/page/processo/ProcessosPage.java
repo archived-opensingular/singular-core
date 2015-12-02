@@ -19,7 +19,7 @@ public class ProcessosPage extends Template {
         if (processDefinitionId.isNull()) {
             return new ProcessosContent(id, withSideBar());
         } else {
-            return new InstanciasContent(id, withSideBar(), processDefinitionId.toLong());
+            return new InstanciasContent(id, withSideBar(), processDefinitionId.toInteger());
         }
     }
 

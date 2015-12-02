@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface IMetaDataDTO extends Serializable {
-    Long getId();
+    Integer getId();
 
-    void setId(Long id);
+    void setId(Integer id);
 
     String getTask();
 

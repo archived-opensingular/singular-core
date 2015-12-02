@@ -13,4 +13,6 @@ public interface IEntityTaskType {
     boolean isWait();
 
     String getAbbreviation();
+
+    String getDescription();
 }

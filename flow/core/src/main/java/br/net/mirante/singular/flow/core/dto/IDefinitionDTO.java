@@ -3,9 +3,9 @@ package br.net.mirante.singular.flow.core.dto;
 import java.io.Serializable;
 
 public interface IDefinitionDTO extends Serializable {
-    Long getCod();
+    Integer getCod();
 
-    void setCod(Long cod);
+    void setCod(Integer cod);
 
     String getNome();
 

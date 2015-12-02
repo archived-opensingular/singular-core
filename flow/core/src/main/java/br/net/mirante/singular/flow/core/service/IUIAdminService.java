@@ -17,19 +17,19 @@ import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
         METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO, MENU extends IMenuItemDTO> {
 
-    DEFINITION retrieveDefinitionById(Long id);
+    DEFINITION retrieveDefinitionById(Integer processDefinitionCod);
 
     List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc);
 
     int countAllDefinition();
 
-    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Long id);
+    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod);
 
-    int countAllInstance(Long id);
+    int countAllInstance(Integer processDefinitionCod);
 
     byte[] retrieveProcessDiagram(String sigla);
 
-    List<METADATA> retrieveMetaData(Long id);
+    List<METADATA> retrieveMetaData(Integer processDefinitionCod);
 
     List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess);
 

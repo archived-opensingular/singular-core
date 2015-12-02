@@ -3,6 +3,7 @@ package br.net.mirante.singular.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.net.mirante.singular.flow.core.IEntityTaskType;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IParameterDTO;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
@@ -10,19 +11,19 @@ import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 public class MetaDataDTO implements IMetaDataDTO {
     private static final long serialVersionUID = -6631180471711181801L;
 
-    private Long id;
+    private Integer id;
     private String task;
     private String type;
     private String executor;
     private List<ITransactionDTO> transactions;
 
     @Override
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -44,6 +45,10 @@ public class MetaDataDTO implements IMetaDataDTO {
     @Override
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setEnumType(IEntityTaskType type) {
+        this.type = type.getDescription();
     }
 
     @Override

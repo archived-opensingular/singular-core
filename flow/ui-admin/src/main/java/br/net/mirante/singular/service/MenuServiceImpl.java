@@ -49,13 +49,13 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     @Cacheable(value = "retrieveAllCategoriesWithAccessMenu", key = "#userId", cacheManager = "cacheManager")
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
-        Set<Long> definitions = new HashSet<>();
+        Set<Integer> definitions = new HashSet<>();
         for (GroupDTO groupDTO : groupDAO.retrieveAll()) {
             definitions.addAll(authorizationFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
         }
         List<MenuItemDTO> allCategories = retrieveAllCategories();
         allCategories.forEach(category ->{
-            category.getItens().removeIf(def -> !definitions.contains(Long.valueOf(def.getId())));
+            category.getItens().removeIf(def -> !definitions.contains(def.getId()));
         });
         allCategories.removeIf(category -> category.getItens().isEmpty());
         return allCategories;
