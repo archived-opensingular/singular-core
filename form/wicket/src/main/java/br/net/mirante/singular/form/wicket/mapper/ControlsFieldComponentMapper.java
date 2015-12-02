@@ -65,7 +65,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        final Component input = appendInput(view, ctx.getBodyContainer(), controls, model, labelModel);
+        final Component input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());
