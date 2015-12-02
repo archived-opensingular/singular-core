@@ -59,6 +59,11 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         providerOpcoes = new LookupOptionsProvider(providerName);
         return this;
     }
+    
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
+        providerOpcoes = new LookupOptionsProvider(providerClass);
+        return this;
+    }
 
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());
