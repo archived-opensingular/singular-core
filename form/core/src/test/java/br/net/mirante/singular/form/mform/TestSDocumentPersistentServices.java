@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 
-public class TestSDocumentServices {
+public class TestSDocumentPersistentServices {
     
     private MTipoComposto<?> groupingType;
     private MIAttachment fileFieldInstance;

@@ -55,11 +55,26 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         return this;
     }
     
+    /**
+     * Registers the name of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * 
+     * @param providerName : Name of the {@link MOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
     public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(final String providerName) {
         providerOpcoes = new LookupOptionsProvider(providerName);
         return this;
     }
     
+    /**
+     * Registers the class of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * @param providerClass : Class of the {@link MOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
     public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
         providerOpcoes = new LookupOptionsProvider(providerClass);
         return this;
