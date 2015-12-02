@@ -26,7 +26,6 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.property.MetaDataRef;
 import y.base.Edge;
 import y.base.Node;
 import y.base.NodeCursor;
@@ -50,8 +49,6 @@ import y.view.tabular.TableGroupNodeRealizer;
  * https://www.yworks.com/en/products_yfiles_about.html
  */
 public class YFilesFlowRenderer extends LayoutModule implements IFlowRenderer {
-
-    public static final MetaDataRef<Boolean> SEND_EMAIL = new MetaDataRef<>("SEND_EMAIL", Boolean.class);
 
     private static final String MINIMUM_NODE_DISTANCE = "Minimum Node Distance";
     private static final String MINIMUM_EDGE_DISTANCE = "Minimum Edge Distance";

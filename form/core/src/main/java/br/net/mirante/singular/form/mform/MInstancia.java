@@ -13,6 +13,8 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private MInstancia pai;
 
+    private MInstancia attributeOwner;
+
     private MTipo<?> mTipo;
 
     private Map<String, MInstancia> atributos;
@@ -66,8 +68,37 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getDicionario();
     }
 
+    /**
+     * Indica se a instância constitui um dado do documento ou se se é um
+     * atributo de uma instância ou tipo. Também retorna true se a instância for
+     * um campo ou item de lista de uma instanância pai que é um atributo. Ou
+     * seja, todos os subcampos de um instancia onde isAtribute == true,
+     * retornam true.
+     */
+    public boolean isAttribute() {
+        return getFlag(FlagsInstancia.IsAtributo);
+    }
+
+    final void setAsAttribute(MInstancia attributeOwner) {
+        setFlag(FlagsInstancia.IsAtributo, true);
+        this.attributeOwner = attributeOwner;
+    }
+
+    /**
+     * Se a instância for um atributo ou sub campo de uma atributo, retorna a
+     * instancia ao qual pertence o atributo. Retorna null, se a instancia não
+     * for um atributo ou se atributo pertencer a um tipo em vez de uma
+     * instância.
+     */
+    public MInstancia getAttributeOwner() {
+        return attributeOwner;
+    }
+
     final void setPai(MInstancia pai) {
         this.pai = pai;
+        if (pai.isAttribute()) {
+            setAsAttribute(pai.getAttributeOwner());
+        }
     }
 
     final void setTipo(MTipo<?> tipo) {
@@ -106,6 +137,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -113,6 +145,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().converter(getValorWithDefault(), classeDestino);
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValor(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -170,15 +203,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     @Override
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        setValorAtributo(atr.getNomeCompleto(), subPath, valor);
-    }
-
-    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, V valor) {
-        setValorAtributo(nomeCompletoAtributo, null, valor);
-    }
-
-    public <V extends Object> void setValorAtributo(String nomeCompletoAtributo, String subPath, V valor) {
+    public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor) {
         MInstancia instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
@@ -188,6 +213,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         if (instanciaAtr == null) {
             MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
+            instanciaAtr.setAsAttribute(this);
             atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
@@ -356,4 +382,5 @@ public abstract class MInstancia implements MAtributoEnabled {
     final boolean getFlag(FlagsInstancia flag) {
         return (flags & flag.bit()) != 0;
     }
+
 }

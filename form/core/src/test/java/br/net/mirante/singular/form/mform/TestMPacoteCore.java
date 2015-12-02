@@ -232,7 +232,6 @@ public class TestMPacoteCore extends TestCaseForm {
         public static final class TestTipoComCargaInterna extends MTipoInteger {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
-                super.onCargaTipo(tb);
                 withObrigatorio(true);
                 withValorInicial(10);
                 withDefaultValueIfNull(11);

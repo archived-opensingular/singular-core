@@ -101,7 +101,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         testCaminho(pedidos.getCampo("[0].qtd"), null, "[0].qtd");
     }
 
-    @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
@@ -149,7 +148,6 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         public static final class TestTipoListaComCargaInterna extends MTipoLista<MTipoString, MIString> {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
-                super.onCargaTipo(tb);
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
             }

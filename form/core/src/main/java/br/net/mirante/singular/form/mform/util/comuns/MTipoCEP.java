@@ -10,7 +10,6 @@ public class MTipoCEP extends MTipoString {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
-        super.onCargaTipo(tb);
         as(AtrBasic.class).label("CEP").basicMask("CEP");
     }
 }

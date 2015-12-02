@@ -112,6 +112,7 @@ public class FileSystemAttachmentHandler implements IAttachmentPersistenceHandle
 
     @Override
     public void deleteAttachment(String hashId) {
+        if(hashId == null) return ; 
         File file = fileFromId(hashId);
         file.delete();
     }

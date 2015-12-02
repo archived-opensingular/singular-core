@@ -122,6 +122,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
     // Atalhos de conveniência
     // --------------------------------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     public MTipoComposto<MIComposto> addCampoComposto(String nomeCampo) {
         return addCampo(nomeCampo, MTipoComposto.class);
     }

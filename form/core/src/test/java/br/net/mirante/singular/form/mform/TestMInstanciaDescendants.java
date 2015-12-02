@@ -40,7 +40,7 @@ public class TestMInstanciaDescendants {
             Arrays.asList("8888-8888", "9999-8888", "9999-9999"),
             contato.listDescendantValues(pacote.telefones.getTipoElementos(), String.class));
 
-        contato.debug();
+//        contato.debug();
     }
 
     @Test

@@ -23,14 +23,29 @@ public abstract class MInstances {
 
     /**
      * Percorre todos as instâncias filha da instancia informada chamando o
-     * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
+     * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
      */
     public static void visitAllChildren(MInstancia parent, Consumer<MInstancia> consumer) {
+        visitAllChildren(parent, false, consumer);
+    }
+
+    /**
+     * Percorre todos as instâncias filha da instancia informada chamando o
+     * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
+     * profundidade. Não chama o consumidor para a instância raiz.
+     * @param childrenFirst se true o percorrimento é bottom-up
+     */
+    public static void visitAllChildren(MInstancia parent, boolean childrenFirst, Consumer<MInstancia> consumer) {
         if (parent instanceof ICompositeInstance) {
             for (MInstancia child : ((ICompositeInstance) parent).getChildren()) {
-                consumer.accept(child);
-                visitAllChildren(child, consumer);
+                if (childrenFirst) {
+                    visitAllChildren(child, childrenFirst, consumer);
+                    consumer.accept(child);
+                } else {
+                    consumer.accept(child);
+                    visitAllChildren(child, childrenFirst, consumer);
+                }
             }
         }
     }
@@ -40,16 +55,28 @@ public abstract class MInstances {
      * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
      * @param instance
-     * @param includeEmpty se deve visitar tambem campos vazios
      */
-    public static void visitAllChildren(MInstancia instance, boolean includeEmpty, Consumer<MInstancia> consumer) {
+    public static void visitAllChildrenIncludingEmpty(MInstancia instance, Consumer<MInstancia> consumer) {
+        visitAllChildrenIncludingEmpty(instance, false, consumer);
+    }
+
+    /**
+     * Percorre todos as instâncias filha da instancia informada chamando o
+     * consumidor, incundo os filhos dos filhos. Ou seja, faz um pecorrimento em
+     * profundidade. Não chama o consumidor para a instância raiz.
+     * @param instance
+     * @param childrenFirst se true o percorrimento é bottom-up
+     */
+    public static void visitAllChildrenIncludingEmpty(MInstancia instance, boolean childrenFirst, Consumer<MInstancia> consumer) {
         if (instance instanceof ICompositeInstance) {
-            Collection<? extends MInstancia> children = (includeEmpty)
-                ? ((ICompositeInstance) instance).getAllChildren()
-                : ((ICompositeInstance) instance).getChildren();
-            for (MInstancia child : children) {
-                consumer.accept(child);
-                visitAllChildren(child, includeEmpty, consumer);
+            for (MInstancia child : ((ICompositeInstance) instance).getAllChildren()) {
+                if (childrenFirst) {
+                    visitAllChildrenIncludingEmpty(child, childrenFirst, consumer);
+                    consumer.accept(child);
+                } else {
+                    consumer.accept(child);
+                    visitAllChildrenIncludingEmpty(child, childrenFirst, consumer);
+                }
             }
         }
     }
@@ -60,11 +87,22 @@ public abstract class MInstances {
      * faz um pecorrimento em profundidade.
      */
     public static void visitAll(MInstancia instance, Consumer<MInstancia> consumer) {
-        consumer.accept(instance);
-        if (instance instanceof ICompositeInstance) {
-            for (MInstancia child : ((ICompositeInstance) instance).getChildren()) {
-                visitAllChildren(child, consumer);
-            }
+        visitAll(instance, false, consumer);
+    }
+
+    /**
+     * Percorre a instância informada e todos as instâncias filha da instancia
+     * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
+     * faz um pecorrimento em profundidade.
+     * @param childrenFirst se true o percorrimento é bottom-up
+     */
+    public static void visitAll(MInstancia instance, boolean childrenFirst, Consumer<MInstancia> consumer) {
+        if (childrenFirst) {
+            visitAllChildren(instance, childrenFirst, consumer);
+            consumer.accept(instance);
+        } else {
+            consumer.accept(instance);
+            visitAllChildren(instance, childrenFirst, consumer);
         }
     }
 
@@ -232,10 +270,8 @@ public abstract class MInstances {
      */
     static Collection<MInstancia> children(MInstancia node) {
         List<MInstancia> result = new ArrayList<>();
-        if (node instanceof MIComposto) {
-            result.addAll(((MIComposto) node).getAllFields());
-        } else if (node instanceof MILista<?>) {
-            result.addAll(((MILista<?>) node).getChildren());
+        if (node instanceof ICompositeInstance) {
+            result.addAll(((ICompositeInstance) node).getAllChildren());
         }
         return result;
     }

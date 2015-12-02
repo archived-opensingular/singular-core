@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
@@ -60,8 +61,10 @@ public class ExamplePackage extends MPacote {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
-        this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
-
+        this.orderNumber = addField(order, 
+                "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.orderNumber.withObrigatorio(true);
+        
         buildBuyerField();
         buildAddressField();
     }
@@ -74,8 +77,8 @@ public class ExamplePackage extends MPacote {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
-        this.buyerNome.as(MPacoteBasic.aspect())
-            .onChange((ctx, i) -> ctx.update(buyerCpf));
+        this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
+        this.buyerNome.as(MPacoteBasic.aspect()).onChange((ctx, i) -> ctx.update(buyerCpf));
 
         buyerCpf.as(MPacoteBasic.aspect())
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
