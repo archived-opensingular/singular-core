@@ -2,7 +2,9 @@ package br.net.mirante.singular.showcase.input.core;
 
 import br.net.mirante.singular.showcase.CaseBase;
 
-public class CaseInputCoreDate extends CaseBase {
+import java.io.Serializable;
+
+public class CaseInputCoreDate extends CaseBase implements Serializable {
 
     public CaseInputCoreDate() {
         super("Date");
