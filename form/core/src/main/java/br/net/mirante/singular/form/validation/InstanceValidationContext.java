@@ -1,8 +1,11 @@
 package br.net.mirante.singular.form.validation;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -21,15 +24,21 @@ public class InstanceValidationContext {
     public List<IValidationError> getErrors() {
         return errors;
     }
-    public Map<MInstancia, List<IValidationError>> getErrorsByInstance() {
+    public Map<Integer, Set<IValidationError>> getErrorsByInstanceId() {
         return getErrors().stream()
-            .collect(Collectors.groupingBy(it -> it.getInstance()));
+            .collect(Collectors.groupingBy(
+                it -> it.getInstance().getId(),
+                LinkedHashMap::new,
+                Collectors.toCollection(LinkedHashSet::new)));
     }
 
-    public void validate() {
+    public void validateAll() {
         MInstances.visitAllChildrenIncludingEmpty(instance, inst -> {
             inst.getMTipo().validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
         });
+    }
+    public void validateSingle() {
+        instance.getMTipo().validateInstance(new InstanceValidatable<>(instance, e -> errors.add(e)));
     }
 
     private static class InstanceValidatable<I extends MInstancia> implements IInstanceValidatable<I> {
