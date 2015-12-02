@@ -1,16 +1,18 @@
 package br.net.mirante.singular.view.page.showcase;
 
-import javax.inject.Inject;
-
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.template.Content;
+import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
+import javax.inject.Inject;
+
+import static br.net.mirante.singular.showcase.ShowCaseTable.ShowCaseItem;
 
 public class ShowCaseContent extends Content implements SingularWicketContainer<ShowCaseContent, Void> {
 
@@ -19,6 +21,19 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
 
     public ShowCaseContent(String id) {
         super(id, false, true);
+        WebMarkupContainer itemDetailContainer = new WebMarkupContainer("itemDetailContainer");
+        itemDetailContainer.setVisible(false);
+        add(itemDetailContainer);
+        add(new ShowCaseMenuPanel("menuPanel") {
+            @Override
+            public void onMenuItemClick(AjaxRequestTarget target, IModel<ShowCaseItem> m) {
+                itemDetailContainer.setVisible(true);
+                itemDetailContainer.addOrReplace(new ShowCaseItemDetailPanel("itemDetail", m));
+                target.add(itemDetailContainer);
+                //TODO componentes adicionados via ajax não são estilizados
+                target.appendJavaScript("Page.init();");
+            }
+        });
     }
 
     @Override

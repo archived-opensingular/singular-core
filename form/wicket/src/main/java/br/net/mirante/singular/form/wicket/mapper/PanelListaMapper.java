@@ -40,7 +40,7 @@ public class PanelListaMapper extends AbstractListaMapper {
             + "        <div wicket:id='_r'></div>"
             + "      </li>"
             + "    </ul>"
-            + "    <div wicket:id='_f' class='panel-footer'></div>"
+            + "    <div wicket:id='_f' class='panel-footer text-right'></div>"
             + "  </div>"
             + "</form>");
         final Form<?> form = new Form<>("_f");
@@ -55,8 +55,6 @@ public class PanelListaMapper extends AbstractListaMapper {
 
         if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()) {
             AdicionarButton btn = appendAdicionarButton(listaModel, form, footer);
-            if (!((MPanelListaView) view).isPermiteInsercaoDeLinha())
-                btn.add($b.classAppender("pull-right"));
         } else {
             footer.setVisible(false);
         }

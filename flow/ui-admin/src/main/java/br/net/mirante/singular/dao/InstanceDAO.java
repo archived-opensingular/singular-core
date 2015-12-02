@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.FloatType;
 import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import br.net.mirante.singular.dto.InstanceDTO;
 import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 
 @Repository
 public class InstanceDAO extends BaseDAO{
@@ -123,7 +126,7 @@ public class InstanceDAO extends BaseDAO{
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveAllDelayedBySigla(String processCode, BigDecimal media) {
         Query hqlQuery = getSession().createQuery("select pi.description as DESCRICAO, "
-            + " ((cast(current_date() as double)) - (cast(pi.beginDate as double))) as DIAS from ProcessInstanceEntity pi "
+            + " trim(str((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as DIAS from ProcessInstanceEntity pi "
             + " where pi.endDate is null and pi.processVersion.processDefinition.key = :processCode "
             + " and ((cast(current_date() as double)) - (cast(pi.beginDate as double))) > :media "
             );
@@ -142,57 +145,43 @@ public class InstanceDAO extends BaseDAO{
     }
 
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
-        String sql = "SELECT '" + processCode + "' AS processCode,"
-                + " COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS amount,"
-                + " AVG(DATEDIFF(DAY, INS.DT_INICIO, GETDATE())) AS averageTimeInDays"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
-                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL "
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("processCode", StringType.INSTANCE)
-                .addScalar("amount", IntegerType.INSTANCE)
-                .addScalar("averageTimeInDays", IntegerType.INSTANCE);
+        Query hqlQuery = getSession().createQuery("select '"+processCode+"' as processCode, cast(count(pi) as integer) as amount, "
+            + " cast(avg((cast(current_date() as double)) - (cast(pi.beginDate as double))) as integer) as averageTimeInDays from ProcessInstanceEntity pi "
+            + " where pi.endDate is null  "
+            + (processCode != null ?" and pi.processVersion.processDefinition.key = :processCode": ""));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            hqlQuery.setParameter("processCode", processCode);
         }
-        query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
-        StatusDTO status = (StatusDTO) query.uniqueResult();
+        hqlQuery.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
+        StatusDTO status = (StatusDTO) hqlQuery.uniqueResult();
         status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
         status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
         return status;
     }
 
     public Integer countOpenedInstancesLast30Days(String processCode) {
-        String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_INICIO >= (GETDATE() - 30) "
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        Criteria criteria = getSession().createCriteria(ProcessInstanceEntity.class, "PI");
+        criteria.add(Restrictions.ge("PI.beginDate", LocalDate.now().minusDays(30).toDate()));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            criteria.createAlias("PI.processVersion", "PV");
+            criteria.createAlias("PV.processDefinition", "PD");
+            criteria.add(Restrictions.eq("PD.key", processCode));
         }
-        return ((Number) query.uniqueResult()).intValue();
+        criteria.setProjection(Projections.rowCount());
+        
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
     public Integer countFinishedInstancesLast30Days(String processCode) {
-        String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   LEFT JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM >= (GETDATE() - 30) "
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        Criteria criteria = getSession().createCriteria(ProcessInstanceEntity.class, "PI");
+        criteria.add(Restrictions.ge("PI.endDate", LocalDate.now().minusDays(30).toDate()));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            criteria.createAlias("PI.processVersion", "PV");
+            criteria.createAlias("PV.processDefinition", "PD");
+            criteria.add(Restrictions.eq("PD.key", processCode));
         }
-        return ((Number) query.uniqueResult()).intValue();
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
     private static final String ACTIVE_DATE_DIST_SQL =
@@ -233,14 +222,15 @@ public class InstanceDAO extends BaseDAO{
 
     private String mountDateDistSQL(boolean active, boolean count, boolean move, boolean processCodeFilter) {
         List<String> sqls = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
+        LocalDate calendar = LocalDate.now().plusMonths(1);
         for (int pos = 13; pos > 0; pos--) {
-            int monthPlus1 = calendar.get(Calendar.MONTH) + 1;
-            int yearPlus1 = calendar.get(Calendar.YEAR);
-            calendar.add(Calendar.MONTH, -1);
-            int month = calendar.get(Calendar.MONTH) + 1;
-            int year = calendar.get(Calendar.YEAR);
+            int monthPlus1 = calendar.getMonthOfYear();
+            int yearPlus1 = calendar.getYear();
+            
+            calendar = LocalDate.now().minusMonths(1);
+            
+            int month = calendar.getMonthOfYear();
+            int year = calendar.getYear();
             formatDateDistSQL(sqls, pos, month, year, monthPlus1, yearPlus1, active, count, move, processCodeFilter);
         }
         int pos = 13;
