@@ -6,7 +6,6 @@ import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -22,26 +21,17 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
 
     public ShowCaseContent(String id) {
         super(id, false, true);
-        add(buildShowCaseForm());
-    }
-
-    public Form buildShowCaseForm() {
-        Form form = new Form("showCaseForm");
-
-        WebMarkupContainer showCaseItemDetailContainer = new WebMarkupContainer("showCaseItemDetailContainer");
-        showCaseItemDetailContainer.setVisible(false);
-
-        form.add(showCaseItemDetailContainer);
-        form.add(new ShowCaseMenuPanel("showCaseMenu") {
+        WebMarkupContainer itemDetailContainer = new WebMarkupContainer("itemDetailContainer");
+        itemDetailContainer.setVisible(false);
+        add(itemDetailContainer);
+        add(new ShowCaseMenuPanel("menuPanel") {
             @Override
             public void onMenuItemClick(AjaxRequestTarget target, IModel<ShowCaseItem> m) {
-                showCaseItemDetailContainer.setVisible(true);
-                showCaseItemDetailContainer.addOrReplace(new ShowCaseItemDetailPanel("showCaseItemDetail", m));
-                target.add(showCaseItemDetailContainer);
+                itemDetailContainer.setVisible(true);
+                itemDetailContainer.addOrReplace(new ShowCaseItemDetailPanel("itemDetail", m));
+                target.add(itemDetailContainer);
             }
         });
-
-        return form;
     }
 
     @Override

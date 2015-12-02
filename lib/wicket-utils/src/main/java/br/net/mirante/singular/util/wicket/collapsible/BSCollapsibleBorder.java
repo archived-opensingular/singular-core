@@ -15,19 +15,18 @@ public class BSCollapsibleBorder extends Border {
     private Component parent;
     private boolean expandByDefault;
 
+
+    public BSCollapsibleBorder(String id, IModel<String> headerText, boolean expandByDefault) {
+        this(id, headerText, expandByDefault, null);
+    }
+
     public BSCollapsibleBorder(String id, IModel<String> headerText, boolean expandByDefault, Component parent) {
         super(id);
         this.parent = parent;
         this.expandByDefault = expandByDefault;
         addToBorder(buildAnchor(headerText));
         addToBorder(buildCollapisble());
-    }
-
-    public BSCollapsibleBorder(String id, IModel<String> headerText, boolean expandByDefault) {
-        super(id);
-        this.expandByDefault = expandByDefault;
-        addToBorder(buildAnchor(headerText));
-        addToBorder(buildCollapisble());
+        addCollapseLogic();
     }
 
     private Component buildCollapisble() {
@@ -39,12 +38,6 @@ public class BSCollapsibleBorder extends Border {
         anchor = new WebMarkupContainer("anchor");
         anchor.add(new Label("headerText", headerText));
         return anchor;
-    }
-
-    @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        addCollapseLogic();
     }
 
     private void addCollapseLogic() {

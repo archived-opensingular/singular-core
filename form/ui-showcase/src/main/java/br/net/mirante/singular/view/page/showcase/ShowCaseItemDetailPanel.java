@@ -34,7 +34,7 @@ public class ShowCaseItemDetailPanel extends Panel {
                 }
                 boolean isFirst = itemModel.getObject().getCases().indexOf(item.getModelObject()) == 0;
                 BSCollapsibleBorder border = new BSCollapsibleBorder("collapsible", $m.ofValue(name), isFirst, casesContainer);
-                border.add(new Label("htmlDescription", item.getModelObject().getDescriptionHtml().orElse("")));
+                border.add(new ItemCasePanel("itemCasePanel", item.getModelObject()));
 
                 item.add(border);
             }
