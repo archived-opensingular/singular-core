@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:panel>
+    <li wicket:id="menu-group">
+        <a href="javascript:;">
+            <i wicket:id="icon"></i>
+            <span wicket:id="title" class="title"></span>
+            <span wicket:id="arrow" class="arrow"></span>
+        </a>
+        <ul class="sub-menu" wicket:id="sub-menu" style="display: none;">
+            <wicket:fragment wicket:id="itens">
+                <wicket:fragment wicket:id="menu-item"></wicket:fragment>
+            </wicket:fragment>
+        </ul>
+    </li>
+</wicket:panel>
+</body>
+</html>

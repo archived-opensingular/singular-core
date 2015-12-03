@@ -30,6 +30,16 @@ public class ShowCaseTable {
         //@formatter:on
     }
 
+    public ShowCaseItem findCaseItemByComponentNameHash(Integer hash){
+        final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
+        getGroups().stream().forEach(i -> {
+            showCaseItem[0] = i.getItens()
+                    .stream().filter(f -> hash.equals(f.getComponentName().hashCode())).findFirst().get();
+        });
+
+        return showCaseItem[0];
+    }
+
     private ShowCaseGroup group(String groupName) {
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
