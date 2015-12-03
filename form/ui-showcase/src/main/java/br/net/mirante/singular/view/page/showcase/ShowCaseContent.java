@@ -20,7 +20,7 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
     private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     public ShowCaseContent(String id) {
-        super(id, false, true);
+        super(id, false, false);
         WebMarkupContainer itemDetailContainer = new WebMarkupContainer("itemDetailContainer");
         itemDetailContainer.setVisible(false);
         add(itemDetailContainer);
@@ -31,7 +31,7 @@ public class ShowCaseContent extends Content implements SingularWicketContainer<
                 itemDetailContainer.addOrReplace(new ShowCaseItemDetailPanel("itemDetail", m));
                 target.add(itemDetailContainer);
                 //TODO componentes adicionados via ajax não são estilizados
-                target.appendJavaScript("Page.init();");
+                target.appendJavaScript("Page.init();Metronic.init();");
             }
         });
     }
