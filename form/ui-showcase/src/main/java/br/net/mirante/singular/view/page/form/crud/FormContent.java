@@ -2,7 +2,6 @@ package br.net.mirante.singular.view.page.form.crud;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,10 +19,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-
-import com.google.common.collect.Maps;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
@@ -31,9 +26,7 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -46,8 +39,8 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content 
@@ -55,10 +48,12 @@ public class FormContent extends Content
 
     @Inject ExampleDataDAO dao;
     @Inject FileDao filePersistence;
+    @Inject SpringServiceRegistry serviceRegistry;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
+    
     
 //    @Inject FileDao filePersistence;
     
@@ -109,7 +104,8 @@ public class FormContent extends Content
 //        document.setAttachmentPersistenceHandler(temporaryRef);
 //        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
 //        document.bindLocalService("filesChoiceProvider", choiceRef);
-        document.setServiceRegistry(createSpringRegistry());
+//        document.setServiceRegistry(createSpringRegistry());
+        document.setServiceRegistry(serviceRegistry);
     }
 
     private void populateInstance(final MTipo<?> tipo) {
@@ -269,42 +265,8 @@ public class FormContent extends Content
         };
     }
 
-    public ServiceRegistry createSpringRegistry() throws BeansException {
-        ShowcaseApplication app = (ShowcaseApplication) getApplication();
-        ApplicationContext applicationContext = app.getApplicationContext();
-        return new ServiceRegistry() {
-            
-            @Override
-            public Map<String, ServiceRef<?>> services() {
-                return Maps.newHashMap();
-            }
-            
-            @Override
-            public <T> T lookupLocalService(String name, Class<T> targetClass) {
-                return applicationContext.getBean(name, targetClass);
-            }
-            
-            @Override
-            public <T> T lookupLocalService(Class<T> targetClass, String subName) {
-                return null;
-            }
-            
-            @Override
-            public void bindLocalService(String serviceName, ServiceRef<?> provider) {
-                
-            }
-            
-            @Override
-            public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
-//                applicationContext.getAutowireCapableBeanFactory()
-            }
-            
-            @Override
-            public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
-                
-            }
-        };
-//        applicationContext.get
-    }
-
+//    public ServiceRegistry createSpringRegistry() throws BeansException {
+//        ShowcaseApplication app = (ShowcaseApplication) getApplication();
+//        return new SpringServiceRegistry(app.getApplicationContext());
+//    }
 }
