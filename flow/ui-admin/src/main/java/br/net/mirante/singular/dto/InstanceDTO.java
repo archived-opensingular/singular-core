@@ -7,7 +7,7 @@ import br.net.mirante.singular.util.FormatUtil;
 
 public class InstanceDTO implements IInstanceDTO {
 
-    private Long cod;
+    private Integer cod;
     private String descricao;
     private Long delta;
     private Date dataInicial;
@@ -15,7 +15,10 @@ public class InstanceDTO implements IInstanceDTO {
     private Date dataAtividade;
     private String usuarioAlocado;
 
-    public InstanceDTO(Long cod, String descricao, Long delta, Date dataInicial,
+    public InstanceDTO() {
+    }
+    
+    public InstanceDTO(Integer cod, String descricao, Long delta, Date dataInicial,
             Long deltaAtividade, Date dataAtividade, String usuarioAlocado) {
         this.cod = cod;
         this.descricao = descricao;
@@ -27,12 +30,12 @@ public class InstanceDTO implements IInstanceDTO {
     }
 
     @Override
-    public Long getCod() {
+    public Integer getCod() {
         return cod;
     }
 
     @Override
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 

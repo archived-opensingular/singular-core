@@ -110,8 +110,13 @@ public class FeedPanel extends Panel {
     }
 
     private String getDesc(IFeedDTO feed) {
-        return "[" + feed.getNomeProcesso() + "] " + (feed.getDescricaoInstancia() != null
+        if(processCode == null){
+            return "[" + feed.getNomeProcesso() + "] " + (feed.getDescricaoInstancia() != null
                 ? feed.getDescricaoInstancia() : "N/A");
+        } else {
+            return (feed.getDescricaoInstancia() != null
+                ? feed.getDescricaoInstancia() : "N/A");
+        }
     }
 
     private String getTimeDesc(IFeedDTO feed) {

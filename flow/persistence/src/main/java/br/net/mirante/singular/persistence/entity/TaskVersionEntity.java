@@ -8,7 +8,6 @@ import org.hibernate.annotations.GenericGenerator;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.persistence.util.Constants;
 import br.net.mirante.singular.persistence.util.HybridIdentityOrSequenceGenerator;
-import org.hibernate.annotations.GenericGenerator;
 
 /**
  * The persistent class for the TB_VERSAO_TAREFA database table.
