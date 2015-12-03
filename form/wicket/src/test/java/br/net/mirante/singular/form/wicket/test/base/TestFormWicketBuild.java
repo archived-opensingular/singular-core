@@ -4,6 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainer
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -42,7 +43,9 @@ public class TestFormWicketBuild extends TestCase {
 
     public void testBasic() {
         BSGrid rootContainer = new BSGrid("teste");
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow());
+        TestPanel testPanel = buildTestPanel(rootContainer);
+
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
             @Override
             protected MTipoString load() {
@@ -57,16 +60,10 @@ public class TestFormWicketBuild extends TestCase {
         mCidade.getObject().setValor("Brasilia");
         UIBuilderWicket.buildForEdit(ctx, mCidade);
 
-        Form<Object> form = new Form<>("form");
-        tester.startComponentInPage(new FormPanel("panel", form) {
-            @Override
-            protected Component newFormBody(String id) {
-                return new BSContainer<>(id).appendTag("div", rootContainer);
-            }
-        });
+        tester.startComponentInPage(testPanel);
         assertEquals("Brasilia", mCidade.getObject().getValor());
 
-        FormTester formTester = tester.newFormTester("panel:form");
+        FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
 
@@ -75,7 +72,9 @@ public class TestFormWicketBuild extends TestCase {
 
     public void testCurriculo() {
         BSGrid rootContainer = new BSGrid("teste");
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow());
+        TestPanel testPanel = buildTestPanel(rootContainer);
+
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
             @Override
             @SuppressWarnings("unchecked")
@@ -88,15 +87,26 @@ public class TestFormWicketBuild extends TestCase {
         IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
         UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
-        Form<Object> form = new Form<>("form");
-        tester.startComponentInPage(new FormPanel("panel", form) {
-            @Override
-            protected Component newFormBody(String id) {
-                return new BSContainer<>(id).appendTag("div", rootContainer);
-            }
-        });
 
-        FormTester formTester = tester.newFormTester("panel:form");
+        tester.startComponentInPage(testPanel);
+        FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.submit();
+    }
+
+    private TestPanel buildTestPanel(BSGrid rootContainer){
+        Form<Object> form = new Form<>("form");
+
+        TestPanel testPanel = new TestPanel("body-child"){
+            @Override
+            public Component buildContainer(String id) {
+                return new FormPanel(id, form) {
+                    @Override
+                    protected Component newFormBody(String id) {
+                        return new BSContainer<>(id).appendTag("div", rootContainer);
+                    }
+                };
+            }
+        };
+        return testPanel;
     }
 }

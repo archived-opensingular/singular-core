@@ -16,8 +16,6 @@ public class MTipoFormula extends MTipoComposto<MIFormula> {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
-        super.onCargaTipo(tb);
-
         addCampoString(CAMPO_SCRIPT);
         MTipoString tipo = addCampoString(CAMPO_TIPO_SCRIPT);
         tipo.selectionOf(TipoScript.class);

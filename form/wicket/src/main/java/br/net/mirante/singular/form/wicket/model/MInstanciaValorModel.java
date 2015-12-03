@@ -37,6 +37,7 @@ public class MInstanciaValorModel<T>
     public void setObject(T object) {
         MInstancia target = getTarget();
         if (target instanceof MILista) {
+            ((MILista) target).clear();
             ((List) object).forEach(((MILista) target)::addValor);
         } else {
             target.setValor(object);

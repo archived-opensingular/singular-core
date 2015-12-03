@@ -12,7 +12,12 @@ public class IconeView extends WebMarkupContainer {
     }
     public IconeView(String id, IModel<Icone> model) {
         super(id, model);
-        add($b.classAppender($m.get(() -> getModelObject().getCssClass() + " fa-lg"), $m.isNullOrEmpty(getModel())));
+        add($b.classAppender($m.get(() -> {
+            if (getModelObject() != null) {
+                return getModelObject().getCssClass() + " fa-lg";
+            }
+            return false;
+        }), $m.isNullOrEmpty(getModel())));
     }
 
     public IconeView setIcone(Icone icone) {

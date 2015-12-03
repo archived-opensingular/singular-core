@@ -1,10 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -14,12 +17,13 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.function.IBehavior;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
-import br.net.mirante.singular.form.validation.IValueValidatable;
-import br.net.mirante.singular.form.validation.IValueValidator;
+import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
+
+    private static final Logger LOGGER = Logger.getLogger(MTipo.class.getName());
 
     private String nomeSimples;
 
@@ -33,7 +37,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
-    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
+    //    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
     private Map<IInstanceValidator<?>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
 
     /**
@@ -80,9 +84,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.superTipo = superTipo;
     }
 
-    protected void onCargaTipo(TipoBuilder tb) {
-        tb.chamouSuper = true;
-    }
+    protected void onCargaTipo(TipoBuilder tb) {}
 
     final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
@@ -147,8 +149,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new RuntimeException(
-                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -194,7 +196,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -220,7 +222,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return classeInstancia.cast(instancia);
     }
 
-    private MInstancia getInstanciaAtributoInterno(String nomeCompleto) {
+    final MInstancia getInstanciaAtributoInterno(String nomeCompleto) {
         for (MTipo<?> atual = this; atual != null; atual = atual.superTipo) {
             MInstancia instancia = atual.atributosResolvidos.get(nomeCompleto);
             if (instancia != null) {
@@ -230,18 +232,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return null;
     }
 
-    public <V extends Object> void setValorAtributo(String nomeAtributo, Object valor) {
-        atributosResolvidos.set(mapearNome(nomeAtributo), valor);
-    }
-
-    public <V extends Object> void setValorAtributo(MAtributo defAtributo, Object valor) {
-        atributosResolvidos.set(defAtributo.getNome(), valor);
-    }
-
     @Override
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().carregarPacote(atr.getClassePacote());
-        MInstancia instancia = atributosResolvidos.getCriando(atr.getNomeCompleto());
+    public void setValorAtributo(String nomeAtributo, String subPath, Object valor) {
+        MInstancia instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
         if (subPath != null) {
             instancia.setValor(new LeitorPath(subPath), valor);
         } else {
@@ -325,19 +318,19 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
     }
 
-//    public MTipo<I> withOnChange(IBehavior<I> behavior) {
-//        return as
-//    }
-//
-//    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
-//        // TODO implementar
-//        throw new NotImplementedException("TODO implementar");
-//    }
-//
-//    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
-//        // TODO implementar
-//        throw new NotImplementedException("TODO implementar");
-//    }
+    //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
+    //        return as
+    //    }
+    //
+    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao) {
+    //        // TODO implementar
+    //        throw new NotImplementedException("TODO implementar");
+    //    }
+    //
+    //    public <T> MTipo<I> withFunction(String pathCampo, Function<I, T> funcao, MISimples dependencias) {
+    //        // TODO implementar
+    //        throw new NotImplementedException("TODO implementar");
+    //    }
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
@@ -363,36 +356,27 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     public MView getView() {
-        return (this.view != null) ? this.view : MView.DEFAULT;
+        return this.view;
     }
 
-    public MTipo<I> addValidacao(IValueValidator<?> validador) {
-        return addValidacao(ValidationErrorLevel.ERROR, validador);
-    }
-    public MTipo<I> addValidacao(ValidationErrorLevel level, IValueValidator<?> validador) {
-        this.valueValidators.put(validador, level);
-        return this;
-    }
+
     public MTipo<I> addInstanceValidator(IInstanceValidator<I> validador) {
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
     }
+
     public MTipo<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<?> validador) {
         this.instanceValidators.put(validador, level);
         return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void validateValue(IValueValidatable<?> validatable) {
-        for (Map.Entry<IValueValidator<?>, ValidationErrorLevel> entry : this.valueValidators.entrySet()) {
-            validatable.setDefaultLevel(entry.getValue());
-            entry.getKey().validate((IValueValidatable) validatable);
-        }
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void validateInstance(IInstanceValidatable<?> validatable) {
-        if (!instanceValidators.isEmpty())
-            System.out.println(instanceValidators);
+        MInstancia instance = validatable.getInstance();
+        Boolean required = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
+        if (Boolean.TRUE.equals(required) && validatable.getInstance().getValor() == null) {
+            validatable.error(new ValidationError(validatable.getInstance(), ValidationErrorLevel.ERROR, "Obrigatório"));
+            return;
+        }
         for (Map.Entry<IInstanceValidator<?>, ValidationErrorLevel> entry : this.instanceValidators.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
             entry.getKey().validate((IInstanceValidatable) validatable);
@@ -414,7 +398,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return instance;
     }
 
-    /** Cria uma nova instância pertencente ao documento informado. */
+    /**
+     * Cria uma nova instância pertencente ao documento informado.
+     */
     I newInstance(SDocument owner) {
         return newInstance(this, owner);
     }
@@ -430,7 +416,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                	+ "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -450,60 +436,90 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @Override
     public void debug(int nivel) {
-        MAtributo at = this instanceof MAtributo ? (MAtributo) this : null;
-        pad(System.out, nivel).print(at == null ? "def " : "defAtt ");
-        System.out.append(getNomeSimples());
-        if (at != null) {
-            if (at.getTipoDono() != null && at.getTipoDono() != at.getEscopoPai()) {
-                System.out.append(" for ").append(suprimirPacote(at.getTipoDono().getNome()));
-            }
-        }
-        if (at == null) {
-            if (superTipo == null || superTipo.getClass() != getClass()) {
-                System.out.append(" (").append(getClass().getSimpleName());
-                if (classeInstancia != null && (superTipo == null || !classeInstancia.equals(superTipo.classeInstancia))) {
-                    System.out.print(":" + classeInstancia.getSimpleName());
-                }
-                System.out.print(")");
-            }
-        } else if (at.isSelfReference()) {
-            System.out.append(" (SELF)");
-        }
-        if (superTipo != null && (at == null || !at.isSelfReference())) {
-            System.out.print(" extend " + suprimirPacote(superTipo.getNome()));
-            if (this instanceof MTipoLista) {
-                MTipoLista<?, ?> lista = (MTipoLista<?, ?>) this;
-                if (lista.getTipoElementos() != null) {
-                    System.out.append(" of ").append(suprimirPacote(lista.getTipoElementos().getNome()));
-                }
-            }
-        }
-        debugAtributos(nivel);
-        System.out.println();
-
-        if (this instanceof MTipoSimples && ((MTipoSimples<?, ?>) this).getProviderOpcoes() != null) {
-            pad(System.out, nivel + 2).append("selection of ").println(((MTipoSimples<?, ?>) this).getProviderOpcoes().toDebug());
-        }
-
-        atributosDefinidos
-            .getAtributos()
-            .stream()
-            .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
-            .forEach(
-                att -> pad(System.out, nivel + 1).println(
-                    "att " + suprimirPacote(att.getNome()) + ":" + suprimirPacote(att.getSuperTipo().getNome())
-                        + (att.isSelfReference() ? " SELF" : "")));
-
-        super.debug(nivel + 1);
+        debug(System.out, nivel);
     }
 
-    private void debugAtributos(int nivel) {
-        Map<String, MInstancia> vals = atributosResolvidos.getAtributos();
-        if (vals.size() != 0) {
-            System.out.append(" {");
-            vals.entrySet().stream()
-                .forEach(e -> System.out.append(suprimirPacote(e.getKey(), true) + "=" + e.getValue().getDisplayString() + "; "));
-            System.out.append("}");
+    @Override
+    public void debug(Appendable appendable, int nivel) {
+        try {
+            MAtributo at = this instanceof MAtributo ? (MAtributo) this : null;
+            pad(appendable, nivel).append(at == null ? "def " : "defAtt ");
+            appendable.append(getNomeSimples());
+            if (at != null) {
+                if (at.getTipoDono() != null && at.getTipoDono() != at.getEscopoPai()) {
+                    appendable.append(" for ").append(suprimirPacote(at.getTipoDono().getNome()));
+                }
+            }
+            if (at == null) {
+                if (superTipo == null || superTipo.getClass() != getClass()) {
+                    appendable.append(" (").append(getClass().getSimpleName());
+                    if (classeInstancia != null && (superTipo == null || !classeInstancia.equals(superTipo.classeInstancia))) {
+                        appendable.append(":").append(classeInstancia.getSimpleName());
+                    }
+                    appendable.append(")");
+                }
+            } else if (at.isSelfReference()) {
+                appendable.append(" (SELF)");
+            }
+            if (superTipo != null && (at == null || !at.isSelfReference())) {
+                appendable.append(" extend ").append(suprimirPacote(superTipo.getNome()));
+                if (this instanceof MTipoLista) {
+                    MTipoLista<?, ?> lista = (MTipoLista<?, ?>) this;
+                    if (lista.getTipoElementos() != null) {
+                        appendable.append(" of ").append(suprimirPacote(lista.getTipoElementos().getNome()));
+                    }
+                }
+            }
+            debugAtributos(appendable, nivel);
+            appendable.append("\n");
+
+            if (this instanceof MTipoSimples && ((MTipoSimples<?, ?>) this).getProviderOpcoes() != null) {
+                pad(appendable, nivel + 2).append("selection of ").append(((MTipoSimples<?, ?>) this).getProviderOpcoes().toDebug()).append("\n");
+            }
+
+            atributosDefinidos
+                    .getAtributos()
+                    .stream()
+                    .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
+                    .forEach(att -> {
+                        try {
+                            pad(appendable, nivel + 1)
+                                    .append("att ")
+                                    .append("\n")
+                                    .append(suprimirPacote(att.getNome()))
+                                    .append(":")
+                                    .append(suprimirPacote(att.getSuperTipo().getNome()))
+                                    .append(att.isSelfReference() ? " SELF" : "");
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+                        }
+                    });
+
+            super.debug(appendable, nivel + 1);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }
+
+    private void debugAtributos(Appendable appendable, int nivel) {
+        try {
+            Map<String, MInstancia> vals = atributosResolvidos.getAtributos();
+            if (vals.size() != 0) {
+                appendable.append(" {");
+                vals.entrySet().stream().forEach(e -> {
+                    try {
+                        appendable.append(suprimirPacote(e.getKey(), true))
+                                .append("=")
+                                .append(e.getValue().getDisplayString())
+                                .append("; ");
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+                    }
+                });
+                appendable.append("}");
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

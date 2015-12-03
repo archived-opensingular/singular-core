@@ -299,7 +299,6 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         public static final class TestTipoCompostoComCargaInterna extends MTipoComposto<MIComposto> {
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
-                super.onCargaTipo(tb);
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
                 addCampoString("nome");

@@ -4,10 +4,16 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.MInstanceEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceEventType;
+import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
@@ -34,14 +40,16 @@ import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
  * @see {@link br.net.mirante.singular.form.mform.io.FormSerializationUtil}
  * @author Daniel C. Bordin
  */
-public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstanciaModel<I>implements Externalizable {
+public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstanciaModel<I>
+    implements Externalizable,
+    IMInstanceEventCollector<I> {
 
-    private transient I object;
+    private transient I                                 object;
+    private transient IMInstanceListener.EventCollector instanceListener;
 
     private MDicionarioResolverSerializable dicionarioResolverSerializable;
 
-    public MInstanceRootModel() {
-    }
+    public MInstanceRootModel() {}
 
     public MInstanceRootModel(MDicionarioResolverSerializable dicionarioResolverSerializable) {
         this.dicionarioResolverSerializable = dicionarioResolverSerializable;
@@ -58,12 +66,43 @@ public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstancia
 
     @Override
     public I getObject() {
+        if (this.object != null && this.instanceListener == null) {
+            this.instanceListener = new IMInstanceListener.EventCollector();
+            MInstanceListeners listeners = this.object.getDocument().getInstanceListeners();
+            listeners.add(MInstanceEventType.VALUE_CHANGED, this.instanceListener);
+            listeners.add(MInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
+            listeners.add(MInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
+        }
         return this.object;
     }
 
     @Override
     public void setObject(I object) {
+        detachListener();
         this.object = object;
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        detachListener();
+    }
+
+    protected void detachListener() {
+        if (this.object != null && this.instanceListener != null) {
+            this.object.getDocument().getInstanceListeners().remove(MInstanceEventType.values(), this.instanceListener);
+        }
+        this.instanceListener = null;
+    }
+
+    @Override
+    public List<MInstanceEvent> getInstanceEvents() {
+        return (instanceListener == null) ? Collections.emptyList() : instanceListener.getEvents();
+    }
+    @Override
+    public void clearInstanceEvents() {
+        if (instanceListener != null)
+            instanceListener.clear();
     }
 
     @Override

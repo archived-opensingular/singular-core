@@ -5,17 +5,16 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import br.net.mirante.singular.form.validation.IValueValidatable;
-import br.net.mirante.singular.form.validation.IValueValidator;
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.validation.IInstanceValidatable;
 
-public class MCNPJValidator implements IValueValidator<String> {
+public class MCNPJValidator extends AbstractValueValidator<MIString, String> {
 
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
 
     private List<String> invalidPatterns = Arrays.asList(
-            "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
-            "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999"
-    );
+        "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
+        "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
 
     private static final MCNPJValidator INSTANCE = new MCNPJValidator();
 
@@ -28,8 +27,7 @@ public class MCNPJValidator implements IValueValidator<String> {
     }
 
     @Override
-    public void validate(IValueValidatable<String> validatable) {
-        String value = validatable.getValue();
+    public void validate(IInstanceValidatable<MIString> validatable, String value) {
         if (!isValid(value)) {
             validatable.error("CNPJ inválido");
         }

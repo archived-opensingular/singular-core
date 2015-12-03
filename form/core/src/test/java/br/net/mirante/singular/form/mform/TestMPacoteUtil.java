@@ -10,6 +10,6 @@ public class TestMPacoteUtil extends TestCase {
         MDicionario dicionario = MDicionario.create();
         dicionario.carregarPacote(MPacoteUtil.class);
 
-        dicionario.debug();
+//        dicionario.debug();
     }
 }

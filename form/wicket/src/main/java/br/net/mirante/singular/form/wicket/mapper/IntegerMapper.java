@@ -3,6 +3,9 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.HashMap;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
@@ -20,7 +23,7 @@ public class IntegerMapper implements ControlsFieldComponentMapper {
     private static final int DEFAULT_SIZE = 9;
 
     @Override
-    public Component appendInput(BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         Optional<Integer> size = Optional.ofNullable(
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO));
         TextField<Integer> comp = new TextField<>(model.getObject().getNome(),

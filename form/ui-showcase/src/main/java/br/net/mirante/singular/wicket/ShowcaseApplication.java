@@ -2,10 +2,8 @@ package br.net.mirante.singular.wicket;
 
 import java.util.Locale;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
-import org.apache.wicket.application.IComponentInstantiationListener;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
@@ -43,7 +41,10 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
-        getComponentInstantiationListeners().add(c -> c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true));
+        getComponentInitializationListeners().add(c -> {
+            if (!c.getRenderBodyOnly())
+                c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
+        });
 
         if (ctx != null) {
             getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));

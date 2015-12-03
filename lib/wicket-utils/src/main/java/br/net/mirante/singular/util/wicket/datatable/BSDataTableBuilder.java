@@ -17,7 +17,6 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final List<? extends IColumn<T, S>> columns        = new ArrayList<>();
     private ISortableDataProvider<T, S>         dataProvider;
     private ISortableTreeProvider<T, S>         treeProvider;

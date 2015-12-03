@@ -177,7 +177,7 @@
         <project.scm.developerConnection>scm:git:http://10.0.0.22/r/MIRANTE/singular.git</project.scm.developerConnection>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <skipTests>true</skipTests>
+        <skipTests>false</skipTests>
 
         <wicket.version>7.1.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>

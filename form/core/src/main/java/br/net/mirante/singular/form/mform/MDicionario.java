@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
 public class MDicionario implements IContextoTipo {
@@ -11,6 +12,8 @@ public class MDicionario implements IContextoTipo {
     private MapaNomeClasseValor<MTipo<?>> tipos = new MapaNomeClasseValor<>(t -> t.getNome());
 
     private final SDocument internalDocument = new SDocument();
+
+    private ViewResolver viewResolver;
 
     private MDicionario() {
     }
@@ -25,6 +28,18 @@ public class MDicionario implements IContextoTipo {
 
     public Collection<MPacote> getPacotes() {
         return pacotes.getValores();
+    }
+
+    /**
+     * Retorna o registro e resolvedor (calculador) de views para as instâncias.
+     * Permite registra view e decidir qual a view mais pertinente para a
+     * instância alvo.
+     */
+    public ViewResolver getViewResolver() {
+        if (viewResolver == null) {
+            viewResolver = new ViewResolver();
+        }
+        return viewResolver;
     }
 
     public static MDicionario create() {

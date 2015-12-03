@@ -24,4 +24,9 @@ public class MICode<T> extends MInstancia {
     public boolean isEmptyOfData() {
         return code != null;
     }
+
+    @Override
+    public String getDisplayString() {
+        return getMTipo().getNomeSimples();
+    }
 }

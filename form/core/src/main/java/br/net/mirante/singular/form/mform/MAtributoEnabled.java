@@ -6,7 +6,20 @@ public interface MAtributoEnabled {
         setValorAtributo(atr, null, valor);
     }
 
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor);
+    public default <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
+        getDicionario().carregarPacote(atr.getClassePacote());
+        setValorAtributo(atr.getNomeCompleto(), subPath, valor);
+    }
+
+    public default <V extends Object> void setValorAtributo(MAtributo defAtributo, Object valor) {
+        setValorAtributo(defAtributo.getNome(), null, valor);
+    }
+
+    public default void setValorAtributo(String nomeAtributo, Object valor) {
+        setValorAtributo(nomeAtributo, null, valor);
+    }
+
+    public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor);
 
     public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino);
 

@@ -1,21 +1,10 @@
 package br.net.mirante.singular.showcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
+import br.net.mirante.singular.showcase.input.core.*;
 import com.google.common.base.Throwables;
 
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCheckbox;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCombo;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectPickList;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectComboRadio;
+import java.io.Serializable;
+import java.util.*;
 
 public class ShowCaseTable {
 
@@ -26,12 +15,17 @@ public class ShowCaseTable {
         // @formatter:off
         group("Input")
             .addCase(CaseInputCoreDate.class)
+            .addCase(CaseInputCoreYearMonth.class)
             .addCase(CaseInputCoreInteger.class)
             .addCase(CaseInputCoreSelectComboRadio.class)
+            .addCase(CaseInputCoreSelectDefault.class)
+            .addCase(CaseInputCoreSelectOtherTypes.class)
             .addCase(CaseInputCoreMultiSelectCombo.class)
             .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
+            .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreAttachment.class)
+            .addCase(CaseInputCoreSelectSearch.class)
         ;
         //@formatter:on
     }
@@ -49,7 +43,7 @@ public class ShowCaseTable {
         return groups.values();
     }
 
-    public static class ShowCaseGroup {
+    public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
 
@@ -86,7 +80,7 @@ public class ShowCaseTable {
         }
     }
 
-    public static class ShowCaseItem {
+    public static class ShowCaseItem implements Serializable {
 
         private final String componentName;
 
