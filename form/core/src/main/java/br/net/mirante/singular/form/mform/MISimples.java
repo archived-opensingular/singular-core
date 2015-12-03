@@ -46,7 +46,11 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
         TIPO_NATIVO newValue = getMTipo().converter(valor);
         this.valor = onSetValor(oldValue, newValue);
         if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
-            getDocument().onInstanceValueChanged(this, oldValue, newValue);
+            if (isAttribute()) {
+                getDocument().getInstanceListeners().fireInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
+            } else {
+                getDocument().getInstanceListeners().fireInstanceValueChanged(this, oldValue, newValue);
+            }
         }
     }
 
@@ -76,6 +80,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((getMTipo() == null) ? 0 : getMTipo().hashCode());
         result = prime * result + ((getValor() == null) ? 0 : getValor().hashCode());
         return result;
     }

@@ -1,5 +1,8 @@
 package br.net.mirante.singular.view.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -8,9 +11,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.authorization.Action;
-import org.apache.wicket.authroles.authorization.strategies.role.Roles;
-import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -22,10 +22,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
-@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
+//@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
 
     private List<String> initializerJavascripts = Collections.singletonList("$('.scroller').slimScroll({});");

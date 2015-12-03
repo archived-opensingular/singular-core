@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface IMenuItemDTO extends Serializable {
-    Long getId();
+    Integer getId();
 
     String getName();
 

@@ -35,8 +35,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     private MenuService menuService;
 
     @Override
-    public DefinitionDTO retrieveDefinitionById(Long id) {
-        return processDefinitionService.retrieveById(id);
+    public DefinitionDTO retrieveDefinitionById(Integer processDefinitionCod) {
+        return processDefinitionService.retrieveById(processDefinitionCod);
     }
 
     @Override
@@ -50,13 +50,13 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<InstanceDTO> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Long id) {
-        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc, id);
+    public List<InstanceDTO> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod) {
+        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc, processDefinitionCod);
     }
 
     @Override
-    public int countAllInstance(Long id) {
-        return processDefinitionService.countAll(id);
+    public int countAllInstance(Integer processDefinitionCod) {
+        return processDefinitionService.countAll(processDefinitionCod);
     }
 
     @Override
@@ -65,8 +65,8 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     }
 
     @Override
-    public List<MetaDataDTO> retrieveMetaData(Long id) {
-        return processDefinitionService.retrieveMetaData(id);
+    public List<MetaDataDTO> retrieveMetaData(Integer processDefinitionCod) {
+        return processDefinitionService.retrieveMetaData(processDefinitionCod);
     }
 
     @Override

@@ -64,8 +64,12 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         }
 
         controls.appendLabel(label);
-        controls.newHelpBlock(subtitle).add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        final Component input = appendInput(view, ctx.getBodyContainer(), controls, model, labelModel);
+        controls.newHelpBlock(subtitle)
+                .add($b.classAppender("hidden-xs"))
+                .add($b.classAppender("hidden-sm"))
+                .add($b.classAppender("hidden-md"))
+                .add(InvisibleIfNullOrEmptyBehavior.getInstance());
+        final Component input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());
@@ -77,8 +81,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 
-        if (input instanceof TextField<?>) {
-            input.add($b.attr("size", size, size.emptyModel().not()));
-        }
+//        if (input instanceof TextField<?>) {
+//            input.add($b.attr("size", size, size.emptyModel().not()));
+//        }
     }
 }

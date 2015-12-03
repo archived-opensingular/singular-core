@@ -58,20 +58,13 @@ public class ExampleDataDTO implements IModel {
     }
 
     @Override
-    public void detach() {
-        // TODO Auto-generated method stub
-
-    }
+    public void detach() {}
 
     @Override
     public Object getObject() {
-        // TODO Auto-generated method stub
         return this;
     }
 
     @Override
-    public void setObject(Object arg0) {
-        // TODO Auto-generated method stub
-
-    }
+    public void setObject(Object arg0) {}
 }

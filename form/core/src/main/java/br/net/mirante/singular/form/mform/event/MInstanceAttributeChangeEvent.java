@@ -27,6 +27,6 @@ public class MInstanceAttributeChangeEvent extends MInstanceEvent {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + getAttributeInstance() + ": " + getInstance() + ", " + getOldValue() + " => " + getNewValue();
+        return getClass().getSimpleName() + "[" + getAttributeInstance() + "]: " + getSource() + " = " + getOldValue() + " => " + getNewValue();
     }
 }

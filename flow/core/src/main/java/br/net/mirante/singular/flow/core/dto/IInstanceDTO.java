@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 public interface IInstanceDTO extends Serializable {
-    Long getCod();
+    Integer getCod();
 
-    void setCod(Long cod);
+    void setCod(Integer cod);
 
     String getDescricao();
 
@@ -39,4 +39,5 @@ public interface IInstanceDTO extends Serializable {
     String getUsuarioAlocado();
 
     void setUsuarioAlocado(String usuarioAlocado);
+
 }

@@ -42,7 +42,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
 
     private IDefinitionDTO processDefinition;
 
-    public InstanciasContent(String id, boolean withSideBar, Long processDefinitionId) {
+    public InstanciasContent(String id, boolean withSideBar, Integer processDefinitionId) {
         super(id, false, withSideBar, false, true);
         processDefinition = uiAdminFacade.retrieveDefinitionById(processDefinitionId);
     }

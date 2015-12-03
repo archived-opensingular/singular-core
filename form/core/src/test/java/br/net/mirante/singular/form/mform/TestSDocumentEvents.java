@@ -1,72 +1,90 @@
 package br.net.mirante.singular.form.mform;
 
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
+import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
 
-@Ignore
 public class TestSDocumentEvents extends TestCaseForm {
 
-    public void testEventListener() {
-        MDicionario dicionario = MDicionario.create();
-        MIString root = dicionario.novaInstancia(MTipoString.class);
-        SDocument doc = root.getDocument();
+    private MDicionario dicionario;
+    private MIString    root;
+    private SDocument   doc;
 
-        IMInstanceListener.EventCollector globalCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
-        IMInstanceListener.EventCollector collector1 = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
-        IMInstanceListener.EventCollector collector2 = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
+    private IMInstanceListener.EventCollector globalCollector;
+    private IMInstanceListener.EventCollector attributeCollector;
+    private IMInstanceListener.EventCollector valueCollector;
 
-        doc.addInstanceListener(globalCollector);
+    @Before
+    public void setUp() {
+        dicionario = MDicionario.create();
+        root = dicionario.novaInstancia(MTipoString.class);
+        doc = root.getDocument();
 
-        root.setValor("ABC");
-        Assert.assertEquals(1, globalCollector.getEvents().size());
-
-        doc.addInstanceListener(collector1);
-        root.setValor("ABC");
-        Assert.assertEquals(1, globalCollector.getEvents().size());
-        Assert.assertEquals(0, collector1.getEvents().size());
-
-        doc.addInstanceListener(collector2);
-
-        root.setValor("CCC");
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
-
-        Assert.assertEquals(2, globalCollector.getEvents().size());
-        Assert.assertEquals(1, collector1.getEvents().size());
-        Assert.assertEquals(1, collector2.getEvents().size());
+        globalCollector = new IMInstanceListener.EventCollector();
+        attributeCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceAttributeChangeEvent);
+        valueCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
     }
-    
-    public void testUpdateAttributes() {
-        MDicionario dicionario = MDicionario.create();
-        MIString root = dicionario.novaInstancia(MTipoString.class);
-        SDocument doc = root.getDocument();
-        
-        IMInstanceListener.EventCollector globalCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
-        IMInstanceListener.EventCollector collector1 = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
-        IMInstanceListener.EventCollector collector2 = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
-        
-        doc.addInstanceListener(globalCollector);
-        
+
+    public void testValueChanges() {
+        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, globalCollector);
+
         root.setValor("ABC");
-        Assert.assertEquals(1, globalCollector.getEvents().size());
-        
-        doc.addInstanceListener(collector1);
+        assertEventsCount(1, globalCollector);
+
         root.setValor("ABC");
-        Assert.assertEquals(1, globalCollector.getEvents().size());
-        Assert.assertEquals(0, collector1.getEvents().size());
-        
-        doc.addInstanceListener(collector2);
-        
+        assertEventsCount(1, globalCollector);
+
         root.setValor("CCC");
+        assertEventsCount(2, globalCollector);
+    }
+
+    public void testAttributeChanges() {
+        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
+
         root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
-        
-        Assert.assertEquals(2, globalCollector.getEvents().size());
-        Assert.assertEquals(1, collector1.getEvents().size());
-        Assert.assertEquals(1, collector2.getEvents().size());
+        assertEventsCount(1, attributeCollector);
+
+        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
+        assertEventsCount(1, attributeCollector);
+
+        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, false);
+        assertEventsCount(2, attributeCollector);
+    }
+
+    public void testValueAndAttributeChanges() {
+        doc.getInstanceListeners().add(MInstanceEventType.values(), globalCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
+        doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, valueCollector);
+
+        root.setValor("ABC");
+        assertEventsCount(1, globalCollector);
+        assertEventsCount(0, attributeCollector);
+        assertEventsCount(1, valueCollector);
+
+        root.setValor("CCC");
+        assertEventsCount(2, globalCollector);
+        assertEventsCount(0, attributeCollector);
+        assertEventsCount(2, valueCollector);
+
+        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
+        assertEventsCount(3, globalCollector);
+        assertEventsCount(1, attributeCollector);
+        assertEventsCount(2, valueCollector);
+
+        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, false);
+        assertEventsCount(4, globalCollector);
+        assertEventsCount(2, attributeCollector);
+        assertEventsCount(2, valueCollector);
+    }
+
+    private static void assertEventsCount(int expected, IMInstanceListener.EventCollector collector) {
+        Assert.assertEquals(expected, collector.getEvents().size());
     }
 }

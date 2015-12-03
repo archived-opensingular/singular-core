@@ -175,6 +175,10 @@ public abstract class TestCasePersistenceHandlerBase {
         assertThat(getHandler().getAttachment(ref.getId())).isNull();
     }
     
+    @Test public void doesNothingWhenYouTryToDeleteANullFile(){
+        getHandler().deleteAttachment(null);
+    }
+    
     @SuppressWarnings("unchecked")
     @Test public void deleteOnlyTheDesiredFile(){
         getHandler().addAttachment(new byte[]{1,2,3});
