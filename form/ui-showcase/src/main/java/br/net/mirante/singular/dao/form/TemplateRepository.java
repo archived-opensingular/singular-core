@@ -15,6 +15,7 @@ import br.net.mirante.singular.showcase.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.view.page.form.examples.MPacoteCurriculo;
+import br.net.mirante.singular.view.page.peticao.MPacotePeticaoGGTOX;
 
 public class TemplateRepository extends MDicionarioResolver {
 
@@ -31,6 +32,7 @@ public class TemplateRepository extends MDicionarioResolver {
         TemplateRepository novo = new TemplateRepository();
         novo.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
         novo.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
+        novo.add(MPacotePeticaoGGTOX.class, MPacotePeticaoGGTOX.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
