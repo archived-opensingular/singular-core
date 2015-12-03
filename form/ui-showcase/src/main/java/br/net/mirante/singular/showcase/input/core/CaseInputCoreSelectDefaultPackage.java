@@ -15,6 +15,12 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         addSelection(tipoMyForm, 3, true);
         addSelection(tipoMyForm, 3, false);
         addSelection(tipoMyForm, 10, false);
+        
+        MTipoString tipoSelection = tipoMyForm.addCampoString("opcoesDeArquivo");
+
+        tipoSelection.withSelectionFromProvider("filesChoiceProvider");
+
+        tipoSelection.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
     }
 
     private static void addSelection(MTipoComposto<?> tipoMyForm, int sizeOptions, boolean required) {

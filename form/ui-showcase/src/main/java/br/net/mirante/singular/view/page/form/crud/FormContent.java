@@ -26,10 +26,7 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.SDocument;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -42,6 +39,7 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
@@ -50,22 +48,32 @@ public class FormContent extends Content
 
     @Inject ExampleDataDAO dao;
     @Inject FileDao filePersistence;
+    @Inject SpringServiceRegistry serviceRegistry;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return new InMemoryAttachmentPersitenceHandler();
-        }
-    };
     
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
+//    @Inject FileDao filePersistence;
+    
+//    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+//        public IAttachmentPersistenceHandler get() {
+//            return new InMemoryAttachmentPersitenceHandler();
+//        }
+//    };
+//    
+//    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+//        public IAttachmentPersistenceHandler get() {
+//            return filePersistence;
+//        }
+//    };
+    
+//    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
+//        public MOptionsProvider get() {
+//            return new MFileIdsOptionsProvider(filePersistence);
+//        }
+//    };
     
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
@@ -90,12 +98,14 @@ public class FormContent extends Content
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
         bindDefaultServices(currentInstance.getObject().getDocument());
         populateInstance(tipo);
-
     }
 
     private void bindDefaultServices(SDocument document) {
-        document.setAttachmentPersistenceHandler(temporaryRef);
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
+//        document.setAttachmentPersistenceHandler(temporaryRef);
+//        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
+//        document.bindLocalService("filesChoiceProvider", choiceRef);
+//        document.setServiceRegistry(createSpringRegistry());
+        document.setServiceRegistry(serviceRegistry);
     }
 
     private void populateInstance(final MTipo<?> tipo) {
@@ -254,4 +264,9 @@ public class FormContent extends Content
             }
         };
     }
+
+//    public ServiceRegistry createSpringRegistry() throws BeansException {
+//        ShowcaseApplication app = (ShowcaseApplication) getApplication();
+//        return new SpringServiceRegistry(app.getApplicationContext());
+//    }
 }

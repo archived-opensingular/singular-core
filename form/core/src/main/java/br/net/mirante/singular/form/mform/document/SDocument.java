@@ -1,13 +1,14 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.document;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import com.google.common.collect.ImmutableMap;
-
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MInstances;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
@@ -28,20 +29,19 @@ import br.net.mirante.singular.form.mform.event.MInstanceListeners;
  *
  * @author Daniel C. Bordin
  */
-@SuppressWarnings("serial")
 public class SDocument {
 
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
 
-    private Map<String, ServiceRef<?>> services;
-
     private int lastId = 0;
 
     private MInstanceListeners instanceListeners;
+    
+    private ServiceRegistry registry = new DefaultServiceRegistry();
 
-    SDocument() {}
+    public SDocument() {}
 
     /**
      * Contador interno para IDs de instancia. É preservado entre peristência
@@ -61,7 +61,7 @@ public class SDocument {
     }
 
     /** Retorna null se estiver no modo de restore da persistencia. */
-    final Integer nextId() {
+    final public Integer nextId() {
         if (lastId == -1) {
             return null;
         }
@@ -91,15 +91,25 @@ public class SDocument {
         return root;
     }
 
-    final void setRoot(MInstancia root) {
+    public final void setRoot(MInstancia root) {
         if (this.root != null) {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
     }
 
+    /**
+     * Stablishes where to look for services. 
+     */
+    public void setServiceRegistry(ServiceRegistry registry) {
+        this.registry = registry;
+    }
+    
+    /**
+     * @see  ServiceRegistry#services()
+     */
     public Map<String, ServiceRef<?>> getLocalServices() {
-        return (services == null) ? Collections.emptyMap() : ImmutableMap.copyOf(services);
+        return registry.services();
     }
 
     /**
@@ -120,7 +130,7 @@ public class SDocument {
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
     public <T> T lookupLocalService(Class<T> targetClass, String subName) {
-        return lookupLocalService(toLookupName(targetClass, subName), targetClass);
+        return registry.lookupLocalService(targetClass, subName);
     }
 
     /**
@@ -131,21 +141,7 @@ public class SDocument {
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
     public <T> T lookupLocalService(String name, Class<T> targetClass) {
-        if (services != null) {
-            ServiceRef<?> ref = services.get(name);
-            if (ref != null) {
-                Object value = ref.get();
-                if (value == null) {
-                    services.remove(name);
-                } else if (!targetClass.isInstance(value)) {
-                    throw new SingularFormException("Para o serviço '" + name + "' foi encontrado um valor da classe "
-                        + value.getClass().getName() + " em vez da classe esperada " + targetClass.getName());
-                } else {
-                    return targetClass.cast(value);
-                }
-            }
-        }
-        return null;
+        return registry.lookupLocalService(name, targetClass);
     }
 
     /**
@@ -153,7 +149,7 @@ public class SDocument {
      * uma classe derivada da registerClass.
      */
     public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
-        bindLocalService(registerClass.getName(), provider);
+        registry.bindLocalService(registerClass, provider);
     }
 
     /**
@@ -161,21 +157,14 @@ public class SDocument {
      * provider pode ser uma classe derivada da registerClass.
      */
     public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
-        bindLocalService(toLookupName(registerClass, subName), provider);
-    }
-
-    private static <T> String toLookupName(Class<T> registerClass, String subName) {
-        return registerClass.getName() + ":" + Objects.requireNonNull(subName);
+        registry.bindLocalService(registerClass, subName, provider);
     }
 
     /**
      * Registar um serviço com o nome informado.
      */
     public void bindLocalService(String serviceName, ServiceRef<?> provider) {
-        if (services == null) {
-            services = new HashMap<>();
-        }
-        services.put(Objects.requireNonNull(serviceName), Objects.requireNonNull(provider));
+        registry.bindLocalService(serviceName, provider);
     }
 
     public MInstanceListeners getInstanceListeners() {

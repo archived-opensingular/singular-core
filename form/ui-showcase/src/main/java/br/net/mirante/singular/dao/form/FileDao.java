@@ -18,9 +18,10 @@ import com.google.common.io.ByteStreams;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.IdGenerator;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 
-@Repository
+@Repository(SDocument.FILE_PERSISTENCE_SERVICE)
 @SuppressWarnings("serial")
 public class FileDao implements IAttachmentPersistenceHandler {
 
