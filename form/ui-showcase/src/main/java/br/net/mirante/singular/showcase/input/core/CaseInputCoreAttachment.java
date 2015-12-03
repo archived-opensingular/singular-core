@@ -2,7 +2,9 @@ package br.net.mirante.singular.showcase.input.core;
 
 import br.net.mirante.singular.showcase.CaseBase;
 
-public class CaseInputCoreAttachment extends CaseBase {
+import java.io.Serializable;
+
+public class CaseInputCoreAttachment extends CaseBase implements Serializable {
 
     public CaseInputCoreAttachment() {
         super("Attachment");

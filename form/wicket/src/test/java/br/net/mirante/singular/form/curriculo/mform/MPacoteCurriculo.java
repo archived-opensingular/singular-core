@@ -55,7 +55,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
-                .addValidacao(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
+                .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")
@@ -71,7 +71,7 @@ public class MPacoteCurriculo extends MPacote {
             contatos
                 .as(AtrBasic::new).label("Contatos");
             email
-                .addValidacao(MEmailValidator.getInstance())
+                .addInstanceValidator(MEmailValidator.getInstance())
                 .as(AtrBasic::new).label("e-Mail")
                 .as(AtrWicket::new).larguraPref(6);
             telFixo
@@ -122,7 +122,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrWicket::new).larguraPref(3);
             academicoCNPJ
-                .addValidacao(MCNPJValidator.getInstance())
+                .addInstanceValidator(MCNPJValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             academicoCargaHoraria
                 .as(AtrBasic::new).label("Carga Horária (h)")

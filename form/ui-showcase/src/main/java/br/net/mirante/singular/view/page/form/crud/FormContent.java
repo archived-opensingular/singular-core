@@ -2,7 +2,6 @@ package br.net.mirante.singular.view.page.form.crud;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,19 +19,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-
-import com.google.common.collect.Maps;
 
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -46,16 +43,16 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.ShowcaseApplication;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content 
-                        implements SingularWicketContainer<CrudContent, Void>{
+                        implements SingularWicketContainer<CrudContent, Void> {
 
     @Inject ExampleDataDAO dao;
+    @Inject FileDao filePersistence;
     private BSGrid container = new BSGrid("generated");
     private Form<?> inputForm = new Form<>("save-form");
-    IModel<MInstancia> currentInstance;
+    private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     
 //    @Inject FileDao filePersistence;
@@ -216,7 +213,8 @@ public class FormContent extends Content
 
     private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
         InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        InstanceValidationUtils.associateErrorsToComponents(validationContext, form);
+        validationContext.validateAll();
+        WicketFormUtils.associateErrorsToComponents(validationContext, form);
 
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
             throw new RuntimeException("Has form errors");
