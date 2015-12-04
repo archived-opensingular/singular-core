@@ -6,19 +6,17 @@ import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.view.page.showcase.ShowCasePage;
-import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import javax.inject.Inject;
-
-@SuppressWarnings("serial")
 public class Menu extends Panel {
 
-    @Inject
-    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7622791136418841943L;
 
-    public Menu(String id) {
+	public Menu(String id) {
         super(id);
         add(buildMenu());
     }
@@ -36,7 +34,7 @@ public class Menu extends Panel {
                         .setResponsePageClass(ShowCasePage.class)
                         .setParameters(new PageParameters().add("ch", item.getComponentName().hashCode())));
             });
-            menu.addGroup(showCaseGroup);
+            menu.addItem(showCaseGroup);
         }));
 
         return menu;

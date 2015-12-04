@@ -7,19 +7,18 @@ import org.apache.wicket.markup.html.panel.Panel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static br.net.mirante.singular.util.wicket.menu.AbstractMenuItem.ATTR_ACTIVE_ITEM;
+
 public class MetronicMenu extends Panel {
 
     public List<AbstractMenuItem> itens = new ArrayList<>();
+    public String activeItemId;
 
     public MetronicMenu(String id) {
         super(id);
     }
 
-    public void addGroup(MetronicMenuGroup group) {
-        itens.add(group);
-    }
-
-    public void addItem(MetronicMenuItem item) {
+    public void addItem(AbstractMenuItem item) {
         itens.add(item);
     }
 
@@ -33,18 +32,27 @@ public class MetronicMenu extends Panel {
             }
         });
         mapMenuIds();
-        configureOpenedItem();
+        configureActiveItem();
     }
 
     private void mapMenuIds() {
-        itens.forEach(i -> i.mapMenuId(String.valueOf(itens.indexOf(i))));
+        itens.forEach(i -> i.mapItemId(String.valueOf(itens.indexOf(i))));
     }
 
-    private void configureOpenedItem() {
-        String openedItemId = (String) getSession().getAttribute("*_-!menu-id!-_*");
-        if (openedItemId != null) {
-            itens.forEach(i -> i.configureOpenedItem(openedItemId));
-            getSession().removeAttribute("*_-!menu-id!-_*");
+    private void configureActiveItem() {
+        activeItemId = (String) getSession().getAttribute(ATTR_ACTIVE_ITEM);
+        if (activeItemId != null) {
+            itens.forEach(i -> i.configureActiveItem(activeItemId));
+            getSession().removeAttribute(ATTR_ACTIVE_ITEM);
         }
     }
+
+    @Override
+    protected void onDetach() {
+        super.onDetach();
+        if(getSession().getAttribute(ATTR_ACTIVE_ITEM) == null){
+            getWebSession().setAttribute(ATTR_ACTIVE_ITEM, activeItemId);
+        }
+    }
+
 }

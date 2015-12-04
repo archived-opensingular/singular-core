@@ -11,9 +11,11 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.showcase.CaseBase;
+import br.net.mirante.singular.showcase.ResourceRef;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -27,11 +29,17 @@ import org.apache.wicket.model.IModel;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collections;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 3200319871613673285L;
 
     private Form<?> inputForm = new Form<>("save-form");
     private BSGrid container = new BSGrid("generated");
@@ -42,8 +50,18 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     public ItemCasePanel(String id, CaseBase caseBase) {
         super(id);
         this.caseBase = caseBase;
+        add(new Label("description", $m.ofValue(caseBase.getDescriptionHtml().orElse(""))));
         createInstance();
         updateContainer();
+        add(buildCodeTabs());
+    }
+
+    private BSTabPanel buildCodeTabs() {
+        BSTabPanel bsTabPanel = new BSTabPanel("codes");
+        for(ResourceRef rr : Collections.singletonList(caseBase.getMainSourceResourceName().get())){
+            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel($m.ofValue(rr.getContent())));
+        }
+        return bsTabPanel;
     }
 
     private void createInstance() {
@@ -66,7 +84,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private BSContainer<?> buildBodyContainer() {
         BSContainer<?> bodyContainer = new BSContainer<>("body-container");
-        add(bodyContainer);
+        inputForm.add(bodyContainer);
         return bodyContainer;
     }
 
@@ -74,12 +92,13 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     protected void onInitialize() {
         super.onInitialize();
         add(inputForm
-                .add(createFeedbackPanel())
-                .add(createSaveButton())
-                .add(createValidateButton())
+                        .add(createFeedbackPanel())
+                        .add(createSaveButton())
+                        .add(createValidateButton())
         );
     }
 
+    @SuppressWarnings("serial")
     private Component createSaveButton() {
         return new AjaxButton("save-btn") {
             @Override
@@ -103,6 +122,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         return null;
     }
 
+    @SuppressWarnings("serial")
     private Component createFeedbackPanel() {
         return new FencedFeedbackPanel("feedback", inputForm).add(new Behavior() {
             @Override
@@ -135,6 +155,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         }
     }
 
+    @SuppressWarnings("serial")
     private AjaxButton createValidateButton() {
         return new AjaxButton("validate-btn") {
             @Override

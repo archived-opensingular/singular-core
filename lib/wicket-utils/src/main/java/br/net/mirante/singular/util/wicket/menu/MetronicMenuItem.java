@@ -33,18 +33,16 @@ public class MetronicMenuItem extends AbstractMenuItem {
         Link anchor = new Link("anchor") {
             @Override
             public void onClick() {
-                getWebSession().setAttribute("*_-!menu-id!-_*", menuItemId);
+                getWebSession().setAttribute(ATTR_ACTIVE_ITEM, itemId);
                 if (responsePageObject != null) {
                     setResponsePage(responsePageObject);
                 } else if (responsePageClass != null) {
                     setResponsePage(responsePageClass, parameters);
+                } else if (href != null) {
+                    setHref(href);
                 }
             }
         };
-
-        if (href != null) {
-            anchor.add($b.attr("href", href));
-        }
 
         WebMarkupContainer iconMarkup = new WebMarkupContainer("icon");
 
@@ -62,8 +60,8 @@ public class MetronicMenuItem extends AbstractMenuItem {
     }
 
     @Override
-    protected void configureOpenedItem(String openedItemId) {
-        if (getMenuItemId().equals(openedItemId)) {
+    protected void configureActiveItem(String activeItemId) {
+        if (getItemId().equals(activeItemId)) {
             menuItem.add($b.classAppender("active"));
         }
     }

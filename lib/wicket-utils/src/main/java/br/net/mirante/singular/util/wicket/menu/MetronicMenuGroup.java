@@ -13,6 +13,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 public class MetronicMenuGroup extends AbstractMenuItem {
 
     private List<AbstractMenuItem> itens = new ArrayList<>();
+
     private WebMarkupContainer menuGroup = new WebMarkupContainer("menu-group");
     private WebMarkupContainer subMenu = new WebMarkupContainer("sub-menu");
     private WebMarkupContainer arrow = new WebMarkupContainer("arrow");
@@ -29,10 +30,6 @@ public class MetronicMenuGroup extends AbstractMenuItem {
 
     public void addItem(MetronicMenuItem item) {
         itens.add(item);
-    }
-
-    public void addSubgroup(MetronicMenuGroup grupo) {
-        itens.add(grupo);
     }
 
     @Override
@@ -63,16 +60,16 @@ public class MetronicMenuGroup extends AbstractMenuItem {
     }
 
     @Override
-    public void mapMenuId(String menuItemId) {
-        super.mapMenuId(menuItemId);
-        itens.forEach(i -> i.mapMenuId(menuItemId + itens.indexOf(i)));
+    public void mapItemId(String itemId) {
+        super.mapItemId(itemId);
+        itens.forEach(i -> i.mapItemId(itemId + itens.indexOf(i)));
     }
 
     @Override
-    protected void configureOpenedItem(String openedItemId) {
+    protected void configureActiveItem(String activeItemId) {
         itens.forEach(i -> {
-            if (i.getMenuItemId().equals(openedItemId)) {
-                i.configureOpenedItem(openedItemId);
+            if (i.getItemId().equals(activeItemId)) {
+                i.configureActiveItem(activeItemId);
                 subMenu.add($b.attr("style", "display: block;"));
                 menuGroup.add($b.classAppender("open"));
                 arrow.add($b.classAppender("open"));

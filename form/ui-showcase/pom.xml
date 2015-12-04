@@ -38,6 +38,12 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <attachClasses>true</attachClasses>
+                    <webResources>
+                        <resource>
+                            <directory>${build.sourceDirectory}/br/net/mirante/singular/showcase</directory>
+                            <targetPath>WEB-INF/classes/br/net/mirante/singular/showcase</targetPath>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
         </plugins>

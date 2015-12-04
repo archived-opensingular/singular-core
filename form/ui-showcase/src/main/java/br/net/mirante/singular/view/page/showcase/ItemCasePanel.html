@@ -1,10 +1,17 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
     <div class="panel-body">
+        <blockquote>
+            <p wicket:id="description"></p>
+        </blockquote>
+        <hr/>
         <form wicket:id="save-form">
-            <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
-            <div class="form-body" wicket:id="generated"></div>
-            <div class="form-actions noborder">
+            <div class="form-body">
+                <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
+                <div class="form-body" wicket:id="generated"></div>
+                <div wicket:id="body-container"></div>
+            </div>
+            <div class="form-actions">
                 <button type="submit" class="btn blue" wicket:id="save-btn">
                     <wicket:message key="label.button.save"/>
                 </button>
@@ -16,7 +23,8 @@
                 <pre wicket:id="xmlCode"></pre>
             </div>
         </form>
-        <div wicket:id="body-container"></div>
+        <hr/>
+        <wicket:fragment wicket:id="codes"></wicket:fragment>
     </div>
 </wicket:panel>
 </html>

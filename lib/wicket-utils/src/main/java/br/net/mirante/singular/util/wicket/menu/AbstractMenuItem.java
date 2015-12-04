@@ -4,7 +4,9 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 public abstract class AbstractMenuItem extends Panel {
 
-    protected String menuItemId;
+    public static String ATTR_ACTIVE_ITEM = "*_-!item-active-id!-_*";
+
+    protected String itemId;
     protected String title;
     protected String icon;
 
@@ -12,17 +14,17 @@ public abstract class AbstractMenuItem extends Panel {
         super(id);
     }
 
-    public String getMenuItemId() {
-        return menuItemId;
+    public String getItemId() {
+        return itemId;
     }
 
-    public void setMenuItemId(String menuItemId) {
-        this.menuItemId = menuItemId;
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
-    public void mapMenuId(String menuItemId){
-        this.menuItemId = menuItemId;
+    public void mapItemId(String itemId) {
+        this.itemId = itemId;
     }
 
-    protected abstract void configureOpenedItem(String openedItemId);
+    protected abstract void configureActiveItem(String activeItemId);
 }
