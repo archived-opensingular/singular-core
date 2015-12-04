@@ -37,9 +37,9 @@ public class LookupOptionsProvider implements MOptionsProvider {
 
     private MOptionsProvider whichProvider(SDocument document) {
         if(providerName != null){
-            return document.lookupLocalService(providerName, MOptionsProvider.class);
+            return document.lookupService(providerName, MOptionsProvider.class);
         }else if(providerClass != null){
-            return document.lookupLocalService(providerClass);
+            return document.lookupService(providerClass);
         }
         return null;
     }

@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 
 /**
@@ -31,6 +32,7 @@ import br.net.mirante.singular.form.mform.event.MInstanceListeners;
  */
 public class SDocument {
 
+    public static final String FILE_TEMPORARY_SERVICE = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
@@ -39,7 +41,7 @@ public class SDocument {
 
     private MInstanceListeners instanceListeners;
     
-    private ServiceRegistry registry = new DefaultServiceRegistry();
+    private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
     public SDocument() {}
 
@@ -69,14 +71,15 @@ public class SDocument {
     }
 
     public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
-        bindLocalService(IAttachmentPersistenceHandler.class, ref);
+        bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, ref);
     }
 
     public IAttachmentPersistenceHandler getAttachmentPersistenceHandler() {
-        IAttachmentPersistenceHandler ref = lookupLocalService(IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            bindLocalService(FILE_TEMPORARY_SERVICE, 
+                    IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
         }
         return ref;
     }
@@ -99,16 +102,17 @@ public class SDocument {
     }
 
     /**
-     * Stablishes where to look for services. 
+     * Stablishes a new registry where to look for services, which is chained
+     *  to the default one. 
      */
-    public void setServiceRegistry(ServiceRegistry registry) {
-        this.registry = registry;
+    public void addServiceRegistry(ServiceRegistry registry) {
+        this.registry.addRegistry(registry);
     }
     
     /**
      * @see  ServiceRegistry#services()
      */
-    public Map<String, ServiceRef<?>> getLocalServices() {
+    public Map<String, Pair> getServices() {
         return registry.services();
     }
 
@@ -118,19 +122,8 @@ public class SDocument {
      *
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
-    public <T> T lookupLocalService(Class<T> targetClass) {
-        return lookupLocalService(targetClass.getName(), targetClass);
-    }
-
-    /**
-     * Tenta encontrar um serviço da classe solicitada supondo que o nome no
-     * registro é o nome da própria classe junto com o subName. Ou seja, retorna
-     * um caso específico de targetClass.
-     *
-     * @return Null se não encontrado ou se o conteúdo do registro for null.
-     */
-    public <T> T lookupLocalService(Class<T> targetClass, String subName) {
-        return registry.lookupLocalService(targetClass, subName);
+    public <T> T lookupService(Class<T> targetClass) {
+        return registry.lookupService(targetClass);
     }
 
     /**
@@ -140,8 +133,8 @@ public class SDocument {
      *
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
-    public <T> T lookupLocalService(String name, Class<T> targetClass) {
-        return registry.lookupLocalService(name, targetClass);
+    public <T> T lookupService(String name, Class<T> targetClass) {
+        return registry.lookupService(name, targetClass);
     }
 
     /**
@@ -153,18 +146,10 @@ public class SDocument {
     }
 
     /**
-     * Registar um serviço com o nome da classe informada mais o subNome. O
-     * provider pode ser uma classe derivada da registerClass.
-     */
-    public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
-        registry.bindLocalService(registerClass, subName, provider);
-    }
-
-    /**
      * Registar um serviço com o nome informado.
      */
-    public void bindLocalService(String serviceName, ServiceRef<?> provider) {
-        registry.bindLocalService(serviceName, provider);
+    public void bindLocalService(String serviceName, Class<?> registerClass, ServiceRef<?> provider) {
+        registry.bindLocalService(serviceName, registerClass, provider);
     }
 
     public MInstanceListeners getInstanceListeners() {
@@ -195,7 +180,7 @@ public class SDocument {
     //  intercept the persist call and do this job before the model
     //  would be persisted.
     public void persistFiles() {
-        IAttachmentPersistenceHandler persistent = lookupLocalService(
+        IAttachmentPersistenceHandler persistent = lookupService(
             SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);

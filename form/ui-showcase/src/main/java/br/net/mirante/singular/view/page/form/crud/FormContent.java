@@ -105,7 +105,7 @@ public class FormContent extends Content
 //        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
 //        document.bindLocalService("filesChoiceProvider", choiceRef);
 //        document.setServiceRegistry(createSpringRegistry());
-        document.setServiceRegistry(serviceRegistry);
+        document.addServiceRegistry(serviceRegistry);
     }
 
     private void populateInstance(final MTipo<?> tipo) {

@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 public class TestSDocumentServices {
     private MTipoComposto<?> groupingType;
@@ -41,16 +44,16 @@ public class TestSDocumentServices {
     
     @Test public void findsRegisteredServiceByName(){
         final Object provider = new Object();
-        document.bindLocalService("something", ref(provider)); 
+        document.bindLocalService("something", Object.class, ref(provider)); 
         
-        assertThat(document.lookupLocalService("something", Object.class))
+        assertThat(document.lookupService("something", Object.class))
             .isSameAs(provider);
     }
     
     @Test public void doesNotConfusesNames(){
-        document.bindLocalService("something", ref(new Object())); 
+        document.bindLocalService("something", Object.class, ref(new Object())); 
         
-        assertThat(document.lookupLocalService("nothing", Object.class))
+        assertThat(document.lookupService("nothing", Object.class))
             .isNull();
     }
     
@@ -59,16 +62,57 @@ public class TestSDocumentServices {
         final Object provider = new Object();
         document.bindLocalService(Object.class, ref(provider)); 
         
-        assertThat(document.lookupLocalService(Object.class))
+        assertThat(document.lookupService(Object.class))
             .isSameAs(provider);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void findsRegisteredServiceByClassWhenIsSubtype(){
+        final Integer provider = new Integer(1);
+        document.bindLocalService(Integer.class, ref(provider)); 
+        
+        assertThat(document.lookupService(Number.class))
+            .isSameAs(provider);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test(expected=Exception.class) 
+    public void rejectsFindByClassWhenThereAreMoreThanOneOptions(){
+        final Object provider = new Object();
+        document.bindLocalService(Object.class, ref(provider)); 
+        document.bindLocalService(Object.class, ref(provider)); 
+        
+        assertThat(document.lookupService(Object.class));
     }
     
     @SuppressWarnings("unchecked")
     @Test public void doesNotAceptsSubclasses(){
         document.bindLocalService(Object.class, ref(new Object())); 
         
-        assertThat(document.lookupLocalService(String.class))
+        assertThat(document.lookupService(String.class))
             .isNull();
+    }
+    
+    @Test public void usesAddedRegistriesForLookupByName(){
+        final Object provider = new Object();
+        ServiceRegistry registry = mock(ServiceRegistry.class);
+        when(registry.lookupService("another", Object.class)).
+            thenReturn(provider);
+        document.addServiceRegistry(registry);
+        
+        assertThat(document.lookupService("another", Object.class))
+            .isEqualTo(provider);
+    }
+    
+    @Test public void usesAddedRegistriesForLookupByClass(){
+        final Object provider = new Object();
+        ServiceRegistry registry = mock(ServiceRegistry.class);
+        when(registry.lookupService(Object.class)).
+            thenReturn(provider);
+        document.addServiceRegistry(registry);
+        
+        assertThat(document.lookupService(Object.class))
+            .isEqualTo(provider);
     }
 
 }

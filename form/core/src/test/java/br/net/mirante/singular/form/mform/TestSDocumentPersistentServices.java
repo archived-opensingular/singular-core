@@ -51,7 +51,8 @@ public class TestSDocumentPersistentServices {
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
         document.setAttachmentPersistenceHandler(serviceRef(tempHandler));
-        document.bindLocalService("filePersistence", serviceRef(persistentHandler));
+        document.bindLocalService("filePersistence", 
+            IAttachmentPersistenceHandler.class, serviceRef(persistentHandler));
     }
     
     @Test public void deveMigrarOsAnexosParaAPersistencia(){
