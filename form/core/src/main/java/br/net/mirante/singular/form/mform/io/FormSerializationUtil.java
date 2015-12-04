@@ -9,9 +9,9 @@ import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 /**
@@ -95,7 +95,7 @@ public class FormSerializationUtil {
     private static FormSerialized toSerialized(SDocument document, MDicionarioResolverSerializable dicionaroResolverSerializable) {
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
         FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml, dicionaroResolverSerializable);
-        Map<String, ServiceRef<?>> services = document.getLocalServices();
+        Map<String, Pair> services = document.getServices();
         if (!services.isEmpty()) {
             if (!(services instanceof Serializable)) {
                 throw new SingularFormException("O mapa de serviço do document não é serializável");
@@ -148,7 +148,11 @@ public class FormSerializationUtil {
             MInstancia root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
             if (fs.getServices() != null) {
                 SDocument document = root.getDocument();
-                fs.getServices().entrySet().stream().forEach(entry -> document.bindLocalService(entry.getKey(), entry.getValue()));
+                fs.getServices().entrySet().stream()
+                    .forEach(entry -> {
+                        Pair p = entry.getValue();
+                        document.bindLocalService(entry.getKey(), p.type, p.provider);
+                        });
             }
 
             if (StringUtils.isBlank(fs.getFocusFieldPath())) {
@@ -170,15 +174,17 @@ public class FormSerializationUtil {
      *
      * @author Daniel C. Bordin
      */
+    @SuppressWarnings("serial")
     public static final class FormSerialized implements Serializable {
 
         private final MDicionarioResolverSerializable dicionarioResolver;
         private final String rootType;
         private final MElement xml;
         private String focusFieldPath;
-        private Map<String, ServiceRef<?>> services;
+        private Map<String, Pair> services;
 
-        public FormSerialized(String rootType, MElement xml, MDicionarioResolverSerializable dicionarioResolver) {
+        public FormSerialized(String rootType, MElement xml, 
+            MDicionarioResolverSerializable dicionarioResolver) {
             this.dicionarioResolver = dicionarioResolver;
             this.rootType = rootType;
             this.xml = xml;
@@ -200,11 +206,11 @@ public class FormSerializationUtil {
             this.focusFieldPath = focusFieldPath;
         }
 
-        public Map<String, ServiceRef<?>> getServices() {
+        public Map<String, Pair> getServices() {
             return services;
         }
 
-        public void setServices(Map<String, ServiceRef<?>> services) {
+        public void setServices(Map<String, Pair> services) {
             this.services = services;
         }
 

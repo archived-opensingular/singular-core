@@ -92,7 +92,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService("fruitProvider", ref(provider));
+        document.bindLocalService("fruitProvider", MOptionsProvider.class, ref(provider));
         
         buildPage();
         

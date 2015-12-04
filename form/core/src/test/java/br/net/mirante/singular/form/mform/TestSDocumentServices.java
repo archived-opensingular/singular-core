@@ -41,16 +41,16 @@ public class TestSDocumentServices {
     
     @Test public void findsRegisteredServiceByName(){
         final Object provider = new Object();
-        document.bindLocalService("something", ref(provider)); 
+        document.bindLocalService("something", Object.class, ref(provider)); 
         
-        assertThat(document.lookupLocalService("something", Object.class))
+        assertThat(document.lookupService("something", Object.class))
             .isSameAs(provider);
     }
     
     @Test public void doesNotConfusesNames(){
-        document.bindLocalService("something", ref(new Object())); 
+        document.bindLocalService("something", Object.class, ref(new Object())); 
         
-        assertThat(document.lookupLocalService("nothing", Object.class))
+        assertThat(document.lookupService("nothing", Object.class))
             .isNull();
     }
     
@@ -59,15 +59,34 @@ public class TestSDocumentServices {
         final Object provider = new Object();
         document.bindLocalService(Object.class, ref(provider)); 
         
-        assertThat(document.lookupLocalService(Object.class))
+        assertThat(document.lookupService(Object.class))
             .isSameAs(provider);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void findsRegisteredServiceByClassWhenIsSubtype(){
+        final Integer provider = new Integer(1);
+        document.bindLocalService(Integer.class, ref(provider)); 
+        
+        assertThat(document.lookupService(Number.class))
+            .isSameAs(provider);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test(expected=Exception.class) 
+    public void rejectsFindByClassWhenThereAreMoreThanOneOptions(){
+        final Object provider = new Object();
+        document.bindLocalService(Object.class, ref(provider)); 
+        document.bindLocalService(Object.class, ref(provider)); 
+        
+        assertThat(document.lookupService(Object.class));
     }
     
     @SuppressWarnings("unchecked")
     @Test public void doesNotAceptsSubclasses(){
         document.bindLocalService(Object.class, ref(new Object())); 
         
-        assertThat(document.lookupLocalService(String.class))
+        assertThat(document.lookupService(String.class))
             .isNull();
     }
 

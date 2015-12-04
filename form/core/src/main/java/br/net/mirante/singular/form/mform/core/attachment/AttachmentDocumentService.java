@@ -21,6 +21,8 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  */
 class AttachmentDocumentService {
 
+    private static final String ATTACHMENT_DOCUMENT_SERVICE = "DefaultAttachmentDocumentService";
+
     private final SDocument document;
 
     private final Multiset<String> contador = HashMultiset.create();
@@ -54,10 +56,12 @@ class AttachmentDocumentService {
     }
 
     private static AttachmentDocumentService lookup(SDocument document) {
-        AttachmentDocumentService aService = document.lookupLocalService(AttachmentDocumentService.class);
+        AttachmentDocumentService aService = document.lookupService(ATTACHMENT_DOCUMENT_SERVICE,
+            AttachmentDocumentService.class);
         if (aService == null) {
             aService = new AttachmentDocumentService(document);
-            document.bindLocalService(AttachmentDocumentService.class, ServiceRef.ofToBeDescartedIfSerialized(aService));
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, 
+                ServiceRef.ofToBeDescartedIfSerialized(aService));
         }
         return aService;
     }
