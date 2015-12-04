@@ -41,7 +41,7 @@ public class SDocument {
 
     private MInstanceListeners instanceListeners;
     
-    private ServiceRegistry registry = new DefaultServiceRegistry();
+    private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
     public SDocument() {}
 
@@ -102,10 +102,11 @@ public class SDocument {
     }
 
     /**
-     * Stablishes where to look for services. 
+     * Stablishes a new registry where to look for services, which is chained
+     *  to the default one. 
      */
-    public void setServiceRegistry(ServiceRegistry registry) {
-        this.registry = registry;
+    public void addServiceRegistry(ServiceRegistry registry) {
+        this.registry.addRegistry(registry);
     }
     
     /**

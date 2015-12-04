@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
 
-import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 /**
@@ -43,28 +42,6 @@ public class SpringServiceRegistry implements ServiceRegistry,
         @Override
         public Object lookupService(String name) {
             return applicationContext.getBean(name);
-        }
-
-        @Override
-        public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<?> provider) {
-            // TODO Auto-generated method stub
-            
-        }
-
-//        @Override
-//        public void bindLocalService(String serviceName, ServiceRef<?> provider) {
-//            DefaultListableBeanFactory factory = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-//            factory.registerSingleton(serviceName, provider.get());
-//        }
-//
-//        @Override
-//        public <T> void bindLocalService(Class<T> registerClass, String subName, ServiceRef<? extends T> provider) {
-//
-//        }
-
-        @Override
-        public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
-            
         }
 
         @Override

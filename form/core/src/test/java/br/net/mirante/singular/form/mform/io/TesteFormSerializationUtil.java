@@ -74,6 +74,7 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("bairro"), loader);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testTipoListSimples() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
@@ -90,6 +91,7 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("[1]"), loader);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testTipoListComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
@@ -216,6 +218,7 @@ public class TesteFormSerializationUtil {
 
     }
 
+    @SuppressWarnings("serial")
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
         @SuppressWarnings("unused")
         private Object ref;
@@ -293,15 +296,6 @@ public class TesteFormSerializationUtil {
             @Override
             protected void configDicionary(MDicionario newDicionary, String taregetTypeName) {
                 setupCode.accept(newDicionary.criarNovoPacote("teste"));
-            }
-        };
-    }
-
-    private static MDicionarioLoader createLoader(Consumer<MDicionario> setupCode) {
-        return new MDicionarioLoader() {
-            @Override
-            protected void configDicionary(MDicionario newDicionary, String taregetTypeName) {
-                setupCode.accept(newDicionary);
             }
         };
     }

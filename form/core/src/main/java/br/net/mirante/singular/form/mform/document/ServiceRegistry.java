@@ -50,20 +50,4 @@ public interface ServiceRegistry {
      * @return <code>Null</code> if not found.
      */
     Object lookupService(String name);
-
-    
-    //TODO: Bind é sempre local.
-    //TODO: Bind por nome, ou classe
-    
-    /**
-     * Registers a service factory based on service class.
-     */
-    <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider);
-
-
-    /**
-     * Registers a service factory based on service name.
-     */
-    <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<?> provider);
-
 }
