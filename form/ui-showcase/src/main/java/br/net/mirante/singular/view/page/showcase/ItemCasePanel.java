@@ -170,7 +170,6 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private void viewXml(AjaxRequestTarget target, String xml) {
         viewXmlModal.addOrReplace(new Label("xmlCode", $m.ofValue(xml)));
         viewXmlModal.show(target);
-        viewXmlModal.setSize(BSModalBorder.Size.FIT);
     }
 
 }

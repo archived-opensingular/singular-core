@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.input.core.*;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
 
 import java.io.Serializable;
@@ -13,7 +14,7 @@ public class ShowCaseTable {
     public ShowCaseTable() {
 
         // @formatter:off
-        group("Input")
+        group("Input", Icone.PUZZLE)
             .addCase(CaseInputCoreDate.class)
             .addCase(CaseInputCoreYearMonth.class)
             .addCase(CaseInputCoreInteger.class)
@@ -24,26 +25,32 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)
-            .addCase(CaseInputCoreAttachment.class)
             .addCase(CaseInputCoreSelectSearch.class)
         ;
+
+        group("File", Icone.FOLDER)
+                .addCase(CaseInputCoreAttachment.class);
         //@formatter:on
     }
 
     public ShowCaseItem findCaseItemByComponentName(String name){
         final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
         getGroups().stream().forEach(i -> {
-            showCaseItem[0] = i.getItens()
-                    .stream().filter(f -> name.equalsIgnoreCase(f.getComponentName())).findFirst().get();
+           Optional<ShowCaseItem> op = i.getItens().stream()
+                   .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
+                   .findFirst();
+            if(op.isPresent()){
+                showCaseItem[0] = op.get();
+            }
         });
 
         return showCaseItem[0];
     }
 
-    private ShowCaseGroup group(String groupName) {
+    private ShowCaseGroup group(String groupName, Icone icon) {
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
-            group = new ShowCaseGroup(groupName);
+            group = new ShowCaseGroup(groupName, icon);
             groups.put(groupName, group);
         }
         return group;
@@ -56,11 +63,13 @@ public class ShowCaseTable {
     public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
+        private final Icone icon;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 
-        public ShowCaseGroup(String groupName) {
+        public ShowCaseGroup(String groupName, Icone icon) {
             this.groupName = groupName;
+            this.icon = icon;
         }
 
         public String getGroupName() {
@@ -87,6 +96,10 @@ public class ShowCaseTable {
 
         public Collection<ShowCaseItem> getItens() {
             return itens.values();
+        }
+
+        public Icone getIcon() {
+            return icon;
         }
     }
 

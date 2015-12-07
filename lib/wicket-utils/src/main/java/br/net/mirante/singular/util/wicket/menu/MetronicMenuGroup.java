@@ -1,5 +1,6 @@
 package br.net.mirante.singular.util.wicket.menu;
 
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -22,7 +23,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         this(null, title);
     }
 
-    public MetronicMenuGroup(String icon, String title) {
+    public MetronicMenuGroup(Icone icon, String title) {
         super("menu-item");
         this.icon = icon;
         this.title = title;

@@ -1,5 +1,6 @@
 package br.net.mirante.singular.util.wicket.menu;
 
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -27,11 +28,11 @@ public class MetronicMenuItem extends AbstractMenuItem {
         this(null, title, responsePageClass, parameters);
     }
 
-    public MetronicMenuItem(String icon, String title, Class<? extends IRequestablePage> responsePageClass) {
+    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass) {
         this(icon, title, responsePageClass, null);
     }
 
-    public MetronicMenuItem(String icon, String title, Class<? extends IRequestablePage> responsePageClass,
+    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
                             PageParameters parameters) {
         super("menu-item");
         this.icon = icon;
@@ -55,7 +56,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
         WebMarkupContainer iconMarkup = new WebMarkupContainer("icon");
 
         if (icon != null) {
-            iconMarkup.add($b.classAppender(icon));
+            iconMarkup.add($b.classAppender(icon.getCssClass()));
         } else {
             iconMarkup.setVisible(false);
         }

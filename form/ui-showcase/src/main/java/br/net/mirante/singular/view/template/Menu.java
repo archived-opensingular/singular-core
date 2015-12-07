@@ -4,6 +4,7 @@ import br.net.mirante.singular.showcase.ShowCaseTable;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.view.page.showcase.ComponentPage;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -24,11 +25,11 @@ public class Menu extends Panel {
     private MetronicMenu buildMenu() {
         MetronicMenu menu = new MetronicMenu("menu");
 
-        menu.addItem(new MetronicMenuItem("icon-home", "Início", CrudPage.class));
-        menu.addItem(new MetronicMenuItem("icon-rocket", "Demo", CrudPage.class));
+        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", CrudPage.class));
+        menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", CrudPage.class));
 
         new ShowCaseTable().getGroups().forEach((group -> {
-            MetronicMenuGroup showCaseGroup = new MetronicMenuGroup("icon-puzzle", group.getGroupName());
+            MetronicMenuGroup showCaseGroup = new MetronicMenuGroup(group.getIcon(), group.getGroupName());
             group.getItens().forEach(item -> {
                 showCaseGroup
                         .addItem(new MetronicMenuItem(item.getComponentName(),
