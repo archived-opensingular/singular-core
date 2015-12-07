@@ -58,17 +58,11 @@ public class FormContent extends Content
     private ExampleDataDTO currentModel;
     
     
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return new InMemoryAttachmentPersitenceHandler();
-        }
-    };
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
+        ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
     
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = 
+        ServiceRef.of(filePersistence);
     
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);

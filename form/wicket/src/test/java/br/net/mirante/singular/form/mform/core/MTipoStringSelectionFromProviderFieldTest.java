@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -55,14 +54,6 @@ public class MTipoStringSelectionFromProviderFieldTest {
     }
 
     @SuppressWarnings("serial")
-    private ServiceRef<MOptionsProvider> ref(MOptionsProvider provider) {
-        return new ServiceRef<MOptionsProvider>() {
-            public MOptionsProvider get() {
-                return provider;
-            }
-        };
-    }
-
     private MOptionsProvider createProviderWithOptions(final List<String> options) {
         return new MOptionsProvider() {
             public String toDebug() {
@@ -92,7 +83,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService("fruitProvider", MOptionsProvider.class, ref(provider));
+        document.bindLocalService("fruitProvider", MOptionsProvider.class, ServiceRef.of(provider));
         
         buildPage();
         
@@ -111,7 +102,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService(MOptionsProvider.class, ref(provider));
+        document.bindLocalService(MOptionsProvider.class, ServiceRef.of(provider));
         buildPage();
         
         driver.assertEnabled(formField(form, "favoriteFruit"));

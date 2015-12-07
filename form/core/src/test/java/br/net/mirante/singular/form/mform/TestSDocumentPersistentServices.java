@@ -50,9 +50,9 @@ public class TestSDocumentPersistentServices {
         
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
-        document.setAttachmentPersistenceHandler(serviceRef(tempHandler));
+        document.setAttachmentPersistenceHandler(ServiceRef.of(tempHandler));
         document.bindLocalService("filePersistence", 
-            IAttachmentPersistenceHandler.class, serviceRef(persistentHandler));
+            IAttachmentPersistenceHandler.class, ServiceRef.of(persistentHandler));
     }
     
     @Test public void deveMigrarOsAnexosParaAPersistencia(){
@@ -131,15 +131,6 @@ public class TestSDocumentPersistentServices {
         verify(tempHandler, never()).deleteAttachment(Matchers.any());
     }
     
-    @SuppressWarnings("serial")
-    private ServiceRef<IAttachmentPersistenceHandler> serviceRef(IAttachmentPersistenceHandler handler) {
-        return new ServiceRef<IAttachmentPersistenceHandler>() {
-            public IAttachmentPersistenceHandler get() {
-                return handler;
-            }
-        };
-    }
-
     private IAttachmentRef attachmentRef(String hash, byte[] content) {
         return new IAttachmentRef() {
             

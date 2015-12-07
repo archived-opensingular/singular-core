@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
+import java.io.Serializable;
+
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
@@ -11,7 +13,7 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
  *  {@link MTipoSimples#withSelectionFromProvider(String)} method.
  *
  */
-public interface MOptionsProvider {
+public interface MOptionsProvider extends Serializable {
 
     public abstract String toDebug();
 
