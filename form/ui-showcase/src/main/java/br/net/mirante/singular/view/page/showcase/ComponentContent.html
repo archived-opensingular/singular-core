@@ -1,6 +1,12 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
-    <div wicket:id="itemDetail"></div>
+    <div class="portlet light bordered">
+        <div class="portlet-body">
+            <div wicket:id="casesContainer" class="panel-group accordion">
+                <wicket:fragment wicket:id="cases"></wicket:fragment>
+            </div>
+        </div>
+    </div>
     <wicket:fragment wicket:id="breadcrumbShowCase">
         <li>
             <a wicket:id="breadcrumbShowCaseLink">

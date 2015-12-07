@@ -58,8 +58,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private BSTabPanel buildCodeTabs() {
         BSTabPanel bsTabPanel = new BSTabPanel("codes");
-        for(ResourceRef rr : Collections.singletonList(caseBase.getMainSourceResourceName().get())){
-            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel($m.ofValue(rr.getContent())));
+        for (ResourceRef rr : Collections.singletonList(caseBase.getMainSourceResourceName().get())) {
+            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
         }
         return bsTabPanel;
     }

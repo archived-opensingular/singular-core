@@ -1,8 +1,12 @@
 package br.net.mirante.singular.util.wicket.menu;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.StatelessLink;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -11,19 +15,29 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 public class MetronicMenuItem extends AbstractMenuItem {
 
     private WebMarkupContainer menuItem = new WebMarkupContainer("menu-item");
-    private IRequestablePage responsePageObject;
     private PageParameters parameters;
     private Class<? extends IRequestablePage> responsePageClass;
-    private String href;
 
-    public MetronicMenuItem(String title) {
-        this(null, title);
+    public MetronicMenuItem(String title, Class<? extends IRequestablePage> responsePageClass) {
+        this(null, title, responsePageClass, null);
     }
 
-    public MetronicMenuItem(String icon, String title) {
+    public MetronicMenuItem(String title, Class<? extends IRequestablePage> responsePageClass,
+                            PageParameters parameters) {
+        this(null, title, responsePageClass, parameters);
+    }
+
+    public MetronicMenuItem(String icon, String title, Class<? extends IRequestablePage> responsePageClass) {
+        this(icon, title, responsePageClass, null);
+    }
+
+    public MetronicMenuItem(String icon, String title, Class<? extends IRequestablePage> responsePageClass,
+                            PageParameters parameters) {
         super("menu-item");
         this.icon = icon;
         this.title = title;
+        this.responsePageClass = responsePageClass;
+        this.parameters = parameters;
     }
 
     @Override
@@ -34,13 +48,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
             @Override
             public void onClick() {
                 getWebSession().setAttribute(ATTR_ACTIVE_ITEM, itemId);
-                if (responsePageObject != null) {
-                    setResponsePage(responsePageObject);
-                } else if (responsePageClass != null) {
-                    setResponsePage(responsePageClass, parameters);
-                } else if (href != null) {
-                    setHref(href);
-                }
+                setResponsePage(responsePageClass, parameters);
             }
         };
 
@@ -75,40 +83,5 @@ public class MetronicMenuItem extends AbstractMenuItem {
         return this;
     }
 
-    public IRequestablePage getResponsePageObject() {
-        return responsePageObject;
-    }
-
-    public MetronicMenuItem setResponsePageObject(IRequestablePage responsePageObject) {
-        this.responsePageObject = responsePageObject;
-        return this;
-    }
-
-    public PageParameters getParameters() {
-        return parameters;
-    }
-
-    public MetronicMenuItem setParameters(PageParameters parameters) {
-        this.parameters = parameters;
-        return this;
-    }
-
-    public Class<? extends IRequestablePage> getResponsePageClass() {
-        return responsePageClass;
-    }
-
-    public MetronicMenuItem setResponsePageClass(Class<? extends IRequestablePage> responsePageClass) {
-        this.responsePageClass = responsePageClass;
-        return this;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public MetronicMenuItem setHref(String href) {
-        this.href = href;
-        return this;
-    }
 }
 
