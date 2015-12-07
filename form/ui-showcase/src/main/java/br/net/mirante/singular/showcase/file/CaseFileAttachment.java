@@ -1,12 +1,12 @@
-package br.net.mirante.singular.showcase.input.core;
+package br.net.mirante.singular.showcase.file;
 
 import br.net.mirante.singular.showcase.CaseBase;
 
 import java.io.Serializable;
 
-public class CaseInputCoreAttachment extends CaseBase implements Serializable {
+public class CaseFileAttachment extends CaseBase implements Serializable {
 
-    public CaseInputCoreAttachment() {
+    public CaseFileAttachment() {
         super("Attachment");
         setDescriptionHtml("Campo para anexar arquivos");
         //TODO: How to handle personalization of attachment

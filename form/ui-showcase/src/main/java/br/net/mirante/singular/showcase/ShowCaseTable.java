@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase;
 
+import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
@@ -27,11 +28,10 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
-            .addCase(CaseInputCoreBoolean.class)
-        ;
-
+            .addCase(CaseInputCoreBoolean.class);
         group("File", Icone.FOLDER)
-                .addCase(CaseInputCoreAttachment.class);
+                .addCase(CaseFileAttachment.class);
+        group("Layout", Icone.GRID);
         //@formatter:on
     }
 
