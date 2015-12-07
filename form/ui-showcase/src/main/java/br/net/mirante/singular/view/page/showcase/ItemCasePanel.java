@@ -2,6 +2,7 @@ package br.net.mirante.singular.view.page.showcase;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
@@ -17,6 +18,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -27,6 +29,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
+import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -40,6 +43,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
      *
      */
     private static final long serialVersionUID = 3200319871613673285L;
+
+    @Inject
+    private SpringServiceRegistry serviceRegistry;
 
     private Form<?> inputForm = new Form<>("save-form");
     private BSGrid container = new BSGrid("generated");
@@ -67,6 +73,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private void createInstance() {
         MTipo<?> tipo = caseBase.getCaseType();
         currentInstance = new MInstanceRootModel<>(tipo.novaInstancia());
+        bindDefaultServices(currentInstance.getObject().getDocument());
     }
 
     private void updateContainer() {
@@ -172,4 +179,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         viewXmlModal.show(target);
     }
 
+    private void bindDefaultServices(SDocument document) {
+        document.addServiceRegistry(serviceRegistry);
+    }
 }
