@@ -8,51 +8,31 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public class MTipoStringSelectionFromProviderFieldTest {
-    private static MDicionario dicionario;
-    private PacoteBuilder localPackage;
-    private MTipoString selectType;
+public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBaseTest {
+    private List<String> referenceOptions = 
+        Lists.newArrayList("strawberry", "apple", "orange", 
+                            "banana", "avocado", "grapes");
 
-    private WicketTester driver;
-    private TestPage page;
-    private FormTester form;
-    private List<String> referenceOptions;
-
-    @BeforeClass
-    public static void createDicionario() {
-        dicionario = MDicionario.create();
+    protected MTipoString selectType;
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    MTipo createSelectionType(MTipoComposto group) {
+        return selectType = group.addCampoString("favoriteFruit");
     }
-
-    public void setupPage() {
-        driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
-        page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
-        MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
-        selectType = group.addCampoString("favoriteFruit");
-        
-        page.setNewInstanceOfType(group.getNome());
-        referenceOptions = Lists.newArrayList("strawberry", "apple", "orange", "banana", "avocado", "grapes");
-    }
-
+    
     @SuppressWarnings("serial")
     private MOptionsProvider createProviderWithOptions(final List<String> options) {
         return new MOptionsProvider() {
@@ -67,13 +47,6 @@ public class MTipoStringSelectionFromProviderFieldTest {
                 return r;
             }
         };
-    }
-
-    private void buildPage() {
-        page.build();
-        driver.startPage(page);
-        
-        form = driver.newFormTester("test-form", false);
     }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -116,4 +89,5 @@ public class MTipoStringSelectionFromProviderFieldTest {
     private String formField(FormTester form, String leafName) {
         return "test-form:" + findId(form.getForm(), leafName).get();
     }
+
 }

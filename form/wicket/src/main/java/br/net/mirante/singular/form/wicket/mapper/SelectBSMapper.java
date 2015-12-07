@@ -9,6 +9,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
+@SuppressWarnings("serial")
 public class SelectBSMapper extends SelectMapper {
 
     @Override

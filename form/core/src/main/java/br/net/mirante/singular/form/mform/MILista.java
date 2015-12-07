@@ -66,6 +66,13 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         consumer.accept(novo);
         return addInterno(novo);
     }
+    
+    @SuppressWarnings("unchecked")
+    public E addElement(Object e) {
+        E element = (E) e;
+        element.setDocument(getDocument());
+        return addInterno(element);
+    }
 
     public E addNovoAt(int index) {
         E instancia = getTipoElementos().newInstance(getDocument());

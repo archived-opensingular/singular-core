@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 /**
  * <p>
@@ -37,6 +38,7 @@ public class ViewResolver {
         addRule(MTipoLista.class, MPanelListaView.class);
         addRule(MTipoLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
         addRule(MTipoSimples.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(MTipoSelectItem.class, new ViewRuleTypeSimpleSelectionOf());
     }
 
     /**

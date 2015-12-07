@@ -8,49 +8,20 @@ import java.util.List;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public class MTipoStringSelectionFieldTest {
-    private static MDicionario dicionario;
-    private PacoteBuilder localPackage;
-    private MTipoString selectType;
+public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
+    protected MTipoString selectType;
     
-    private WicketTester driver;
-    private TestPage page;
-    private FormTester form;
-
-    @BeforeClass
-    public static void createDicionario() {
-        dicionario = MDicionario.create();
-    }
-
-    private void setupPage() {
-        driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
-        page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
-        MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
-        selectType = group.addCampoString("favoriteFruit");
-        
-        page.setNewInstanceOfType(group.getNome());
+    @Override
+    @SuppressWarnings("rawtypes")
+    MTipo createSelectionType(MTipoComposto group) {
+        return selectType = group.addCampoString("favoriteFruit");
     }
     
-    private void buildPage() {
-        page.build();
-        driver.startPage(page);
-        
-        form = driver.newFormTester("test-form", false);
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test public void rendersAnDropDownWithSpecifiedOptions(){
         setupPage();

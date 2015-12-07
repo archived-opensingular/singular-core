@@ -29,6 +29,8 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         this.classeTipoNativo = classeTipoNativo;
     }
 
+    // SELECTION OF BEGIN
+    
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
@@ -94,6 +96,8 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         return this;
     }
 
+    // SELECTION OF END
+    
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());
     }

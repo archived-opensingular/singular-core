@@ -26,6 +26,7 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
@@ -50,6 +51,8 @@ public class UIBuilderWicket {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSelectItem.class,     MSelecaoPorRadioView.class,            RadioMapper::new);
+        MAPPERS.register(MTipoSelectItem.class,     MSelecaoPorSelectView.class,           SelectBSMapper::new);
         MAPPERS.register(MTipoBoolean.class,                                           BooleanMapper::new);
         MAPPERS.register(MTipoInteger.class,                                           IntegerMapper::new);
         MAPPERS.register(MTipoString.class,                                            StringMapper::new);
