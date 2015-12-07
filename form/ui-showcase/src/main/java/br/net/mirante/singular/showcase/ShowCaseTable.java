@@ -27,6 +27,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
+            .addCase(CaseInputCoreBoolean.class)
         ;
 
         group("File", Icone.FOLDER)

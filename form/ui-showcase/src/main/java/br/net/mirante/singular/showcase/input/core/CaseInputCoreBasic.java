@@ -7,8 +7,8 @@ import java.io.Serializable;
 public class CaseInputCoreBasic  extends CaseBase implements Serializable {
 
     public CaseInputCoreBasic() {
-        super("Basic Inputs");
-        setDescriptionHtml("Campos básicos ");
+        super("Basic");
+        setDescriptionHtml("Campos básicos");
     }
 
 }
