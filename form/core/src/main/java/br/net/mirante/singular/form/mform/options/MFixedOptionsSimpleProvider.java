@@ -32,7 +32,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
         return opcoes;
     }
 

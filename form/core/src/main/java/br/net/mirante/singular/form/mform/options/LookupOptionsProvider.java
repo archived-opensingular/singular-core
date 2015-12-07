@@ -29,10 +29,10 @@ public class LookupOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes(MInstancia instance) {
+    public MILista<? extends MInstancia> listOptions(MInstancia instance) {
         SDocument document = instance.getDocument();
         MOptionsProvider provider = whichProvider(document);
-        return provider.getOpcoes(instance);
+        return provider.listOptions(instance);
     }
 
     private MOptionsProvider whichProvider(SDocument document) {

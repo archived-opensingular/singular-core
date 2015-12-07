@@ -31,7 +31,7 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
         List<ExampleFile> files = filePersistence.list();
         TemplateRepository repo = TemplateRepository.get();
         MTipo<?> type = repo.getEntries().iterator().next().getType();

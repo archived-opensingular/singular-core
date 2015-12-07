@@ -21,5 +21,5 @@ public interface MOptionsProvider {
      * @param optionsInstance : Current isntance used to select the options.
      * @return list of options from the expected {@link MInstancia} type.
      */
-    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance);
+    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance);
 }

@@ -69,7 +69,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
                 return "debug this";
             }
 
-            public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+            public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
                 MTipoString s = dicionario.getTipo(MTipoString.class);
                 MILista<?> r = s.novaLista();
                 options.forEach((o) -> {r.addValor(o);});

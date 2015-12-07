@@ -16,7 +16,7 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
             MISimples<?> simple = (MISimples<?>) instance;
             if (simple.getMTipo().getProviderOpcoes() != null) {
               //TODO: [Fabs] this decision is strange to apply when the value is dynamic
-                int size = simple.getMTipo().getProviderOpcoes().getOpcoes(instance).size();
+                int size = simple.getMTipo().getProviderOpcoes().listOptions(instance).size();
                 if (size <= 3 && simple.getMTipo().isObrigatorio()) {
                     return newInstance(MSelecaoPorRadioView.class);
                 }

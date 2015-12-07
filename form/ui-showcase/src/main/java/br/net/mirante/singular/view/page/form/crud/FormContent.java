@@ -26,6 +26,9 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -55,25 +58,17 @@ public class FormContent extends Content
     private ExampleDataDTO currentModel;
     
     
-//    @Inject FileDao filePersistence;
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        public IAttachmentPersistenceHandler get() {
+            return new InMemoryAttachmentPersitenceHandler();
+        }
+    };
     
-//    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-//        public IAttachmentPersistenceHandler get() {
-//            return new InMemoryAttachmentPersitenceHandler();
-//        }
-//    };
-//    
-//    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-//        public IAttachmentPersistenceHandler get() {
-//            return filePersistence;
-//        }
-//    };
-    
-//    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
-//        public MOptionsProvider get() {
-//            return new MFileIdsOptionsProvider(filePersistence);
-//        }
-//    };
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        public IAttachmentPersistenceHandler get() {
+            return filePersistence;
+        }
+    };
     
     public FormContent(String id, StringValue type, StringValue key) {
         super(id, false, true);
@@ -101,10 +96,9 @@ public class FormContent extends Content
     }
 
     private void bindDefaultServices(SDocument document) {
-//        document.setAttachmentPersistenceHandler(temporaryRef);
-//        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, persistanceRef);
-//        document.bindLocalService("filesChoiceProvider", choiceRef);
-//        document.setServiceRegistry(createSpringRegistry());
+        document.setAttachmentPersistenceHandler(temporaryRef);
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
+            IAttachmentPersistenceHandler.class, persistanceRef);
         document.addServiceRegistry(serviceRegistry);
     }
 

@@ -7,14 +7,12 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 public class TestSDocumentServices {
     private MTipoComposto<?> groupingType;
-    private MIAttachment fileFieldInstance;
     private SDocument document;
 
     @Before public void setup(){
@@ -32,7 +30,6 @@ public class TestSDocumentServices {
     private void createInstances() {
         MIComposto instance = (MIComposto) groupingType.novaInstancia();
         document = instance.getDocument();
-        fileFieldInstance = (MIAttachment) instance.getAllChildren().iterator().next();
     }
     
     @SuppressWarnings({ "rawtypes", "serial" })
