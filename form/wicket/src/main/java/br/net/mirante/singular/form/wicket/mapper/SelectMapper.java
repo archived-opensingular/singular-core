@@ -30,7 +30,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
                 && ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes() != null) {
             MOptionsProvider opcoes = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
             opcoesValue = new ArrayList<>();
-            opcoesValue.addAll(opcoes.listOptions(model.getObject()).getValor()
+            opcoesValue.addAll(opcoes.listAvailableOptions(model.getObject()).getValor()
                     .stream().map(Object::toString).collect(Collectors.toList()));
         } else {
             opcoesValue = Collections.emptyList();

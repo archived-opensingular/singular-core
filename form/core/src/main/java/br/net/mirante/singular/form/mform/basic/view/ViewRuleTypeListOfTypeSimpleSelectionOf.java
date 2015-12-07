@@ -20,7 +20,7 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
                 MTipoSimples<?, ?> simples = (MTipoSimples<?, ?>) list.getTipoElementos();
                 if (simples.getProviderOpcoes() != null) {
                     //TODO: [Fabs] this decision is strange to apply when the value is dynamic
-                    int size = simples.getProviderOpcoes().listOptions(instance).size();
+                    int size = simples.getProviderOpcoes().listAvailableOptions(instance).size();
                     if (size <= 3) {
                         return newInstance(MSelecaoMultiplaPorCheckView.class);
                     } else if (size < 20) {

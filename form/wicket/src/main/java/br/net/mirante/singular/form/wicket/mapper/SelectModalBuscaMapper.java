@@ -173,7 +173,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             @Override
             public Iterator<? extends Dado> iterator(long first, long count) {
                 Iterator<? extends Dado> it = getProvider(model)
-                        .listOptions(model.getObject())
+                        .listAvailableOptions(model.getObject())
                         .getValor()
                         .stream()
                         .map(Object::toString)
@@ -187,7 +187,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             @Override
             public long size() {
                 long size = getProvider(model)
-                        .listOptions(model.getObject())
+                        .listAvailableOptions(model.getObject())
                         .getValor()
                         .stream()
                         .map(Object::toString)

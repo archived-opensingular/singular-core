@@ -36,7 +36,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
                 && ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes() != null) {
             MOptionsProvider opcoes = ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes();
             opcoesValue = new ArrayList<>();
-            opcoesValue.addAll(opcoes.listOptions(model.getObject()).getValor()
+            opcoesValue.addAll(opcoes.listAvailableOptions(model.getObject()).getValor()
                     .stream().map(Object::toString).collect(Collectors.toList()));
         } else {
             opcoesValue = Collections.emptyList();

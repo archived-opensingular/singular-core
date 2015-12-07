@@ -21,10 +21,6 @@ import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 public class MFileIdsOptionsProvider implements MOptionsProvider {
     @Inject private FileDao filePersistence;
 
-//    MFileIdsOptionsProvider(FileDao filePersistence) {
-//        this.filePersistence = filePersistence;
-//    }
-
     @Override
     public String toDebug() {
         return null;

@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  * @author Fabricio Buzeto
  *
  */
+@SuppressWarnings("serial")
 public class LookupOptionsProvider implements MOptionsProvider {
     private String providerName;
     private Class<? extends MOptionsProvider> providerClass;
@@ -32,7 +33,7 @@ public class LookupOptionsProvider implements MOptionsProvider {
     public MILista<? extends MInstancia> listOptions(MInstancia instance) {
         SDocument document = instance.getDocument();
         MOptionsProvider provider = whichProvider(document);
-        return provider.listOptions(instance);
+        return provider.listAvailableOptions(instance);
     }
 
     private MOptionsProvider whichProvider(SDocument document) {

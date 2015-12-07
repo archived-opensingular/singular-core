@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -34,25 +33,30 @@ public class MTipoStringSelectionFieldTest {
         dicionario = MDicionario.create();
     }
 
-    @Before public void setupPage() {
+    private void setupPage() {
         driver = new WicketTester(new TestApp());
         page = new TestPage(null);
         page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
         selectType = group.addCampoString("favoriteFruit");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        
         page.setNewInstanceOfType(group.getNome());
-        page.build();
-        driver.startPage(page);
     }
     
-    @Before public void setupFormAssessor() {
+    private void buildPage() {
+        page.build();
+        driver.startPage(page);
+        
         form = driver.newFormTester("test-form", false);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test public void rendersAnDropDownWithSpecifiedOptions(){
+        setupPage();
+        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        buildPage();
+        
         driver.assertEnabled(formField(form, "favoriteFruit"));
         form.submit("save-btn");
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
@@ -60,6 +64,23 @@ public class MTipoStringSelectionFieldTest {
         DropDownChoice choices = options.get(0);
         assertThat(choices.getChoices())
             .containsExactly("strawberry","apple","orange","banana");
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test public void rendersAnDropDownWithDanglingOptions(){
+        setupPage();
+        page.getCurrentInstance()
+                .setValor(selectType.getNomeSimples(), "avocado");;
+        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        buildPage();
+        
+        driver.assertEnabled(formField(form, "favoriteFruit"));
+        form.submit("save-btn");
+        List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
+        assertThat(options).hasSize(1);
+        DropDownChoice choices = options.get(0);
+        assertThat(choices.getChoices())
+            .containsExactly("avocado","strawberry","apple","orange","banana");
     }
     
     private String formField(FormTester form, String leafName) {
