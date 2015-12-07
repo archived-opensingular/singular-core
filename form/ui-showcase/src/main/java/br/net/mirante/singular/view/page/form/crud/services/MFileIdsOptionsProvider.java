@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
+@SuppressWarnings("serial")
 @Component("filesChoiceProvider")
 public class MFileIdsOptionsProvider implements MOptionsProvider {
     @Inject private FileDao filePersistence;

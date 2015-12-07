@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -27,21 +28,30 @@ public interface MOptionsProvider extends Serializable {
     default public MILista<? extends MInstancia> listAvailableOptions(
             MInstancia optionsInstance){
         MILista<? extends MInstancia> defaultOptions = listOptions(optionsInstance);
-        Object value = optionsInstance.getValor();
-        if( value != null ){
-            boolean contains = false;
-            for(MInstancia c : defaultOptions.getAllChildren()){
-                if (value.equals(c.getValor())){
-                    contains = true;
-                }
-            }
-            
-            if(!contains){
-                MInstancia newValue = defaultOptions.addNovoAt(0);
-                newValue.setValor(value);
-            }
-        }
+        checkForDanglingValues(optionsInstance, defaultOptions);
         return defaultOptions;
+    }
+
+    public default void checkForDanglingValues(MInstancia optionsInstance, MILista<? extends MInstancia> defaultOptions) {
+        Object value = optionsInstance.getValor();
+        if( value == null ) return;
+        if( value instanceof Collection && ((Collection<?>)value).isEmpty()) return;
+        if(!containsValue(defaultOptions, value)){
+            addNewValueUpfront(defaultOptions, value);
+        }
+        
+    }
+
+    public default boolean containsValue(MILista<? extends MInstancia> defaultOptions, Object value) {
+        for(MInstancia c : defaultOptions.getAllChildren()){
+            if (value.equals(c.getValor())) return true;
+        }
+        return false;
+    }
+    
+    public default void addNewValueUpfront(MILista<? extends MInstancia> defaultOptions, Object value) {
+        MInstancia newValue = defaultOptions.addNovoAt(0);
+        newValue.setValor(value);
     }
     
     /**

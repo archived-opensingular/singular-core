@@ -78,6 +78,7 @@ public class TestViewResolver {
         assertView(MSelecaoMultiplaPorPicklistView.class, listString20);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static MTipoLista<?, ?> createSimpleList(PacoteBuilder pb, String name, Class<? extends MTipoSimples<?, ?>> type, int size,
             Object value) {
         MTipoSimples<?, ?> simpleType = pb.createTipo(name, type);
@@ -93,6 +94,7 @@ public class TestViewResolver {
         return l;
     }
 
+    @SuppressWarnings("unchecked")
     private static void assertView(Class<?> expectedView, Class<?> type) {
         MDicionario dicionario = MDicionario.create();
         assertView(expectedView, dicionario.getTipo((Class<MTipo<?>>) type));

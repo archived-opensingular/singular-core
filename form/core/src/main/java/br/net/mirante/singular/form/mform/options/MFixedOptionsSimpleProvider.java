@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
+@SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private final MILista<? extends MInstancia> opcoes;
