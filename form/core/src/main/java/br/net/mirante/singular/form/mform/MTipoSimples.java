@@ -18,7 +18,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
 
     private transient Converter converter;
 
-    protected MOptionsProvider providerOpcoes;
+    protected MOptionsProvider optionsProvider;
 
     public MTipoSimples() {
         this.classeTipoNativo = null;
@@ -30,28 +30,42 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
     }
 
     public MOptionsProvider getProviderOpcoes() {
-        return providerOpcoes;
+        return optionsProvider;
     }
 
     public MOptionsProvider selectionOf(Collection<TIPO_NATIVO> opcoes) {
-        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
-        return providerOpcoes;
+        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
+        return optionsProvider;
     }
 
     @SuppressWarnings("unchecked")
-    public MOptionsProvider selectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
-        return providerOpcoes;
+    protected MOptionsProvider selectionOf(TIPO_NATIVO... opcoes) {
+        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
+        return optionsProvider;
     }
 
+    /**
+     * Register a collection of options to be selected for this field.
+     * Laso restricts the range of values available for the field.
+     * 
+     * @param options Collection of values to be used.
+     * @return <code>this</code>
+     */
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(Collection<TIPO_NATIVO> options) {
-        providerOpcoes = new MFixedOptionsSimpleProvider(this, options);
+        optionsProvider = new MFixedOptionsSimpleProvider(this, options);
         return this;
     }
-
+    
+    /**
+     * Register a collection of options to be selected for this field.
+     * Laso restricts the range of values available for the field.
+     * 
+     * @param options Collection of values to be used.
+     * @return <code>this</code>
+     */
     @SuppressWarnings("unchecked")
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
+        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return this;
     }
     
@@ -64,7 +78,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
      * @return <code>this</code>
      */
     public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(final String providerName) {
-        providerOpcoes = new LookupOptionsProvider(providerName);
+        optionsProvider = new LookupOptionsProvider(providerName);
         return this;
     }
     
@@ -76,7 +90,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
      * @return <code>this</code>
      */
     public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
-        providerOpcoes = new LookupOptionsProvider(providerClass);
+        optionsProvider = new LookupOptionsProvider(providerClass);
         return this;
     }
 
