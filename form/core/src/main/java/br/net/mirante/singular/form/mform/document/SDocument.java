@@ -170,15 +170,15 @@ public class SDocument {
 
         try {
             MInstances.visitAll(getRoot(), true, instance -> {
-                Predicate<MInstancia> requiredFunc = (Predicate<MInstancia>) instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION.getNomeCompleto());
+                Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
                 if (requiredFunc != null)
                     instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
 
-                Predicate<MInstancia> enabledFunc = (Predicate<MInstancia>) instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION.getNomeCompleto());
+                Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
                 if (enabledFunc != null)
                     instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
 
-                Predicate<MInstancia> visibleFunc = (Predicate<MInstancia>) instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION.getNomeCompleto());
+                Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
                 if (visibleFunc != null)
                     instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
             });

@@ -37,7 +37,8 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-@SuppressWarnings({"serial","rawtypes"})
+
+@SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
 
     private final WicketBuildContext                parent;
@@ -101,14 +102,14 @@ public class WicketBuildContext implements Serializable {
             formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-//        MTipo<?> tipo = model.getMInstancia().getMTipo();
-//        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
-//        if (dependentes != null && !dependentes.isEmpty()) {
-            addAjaxUpdateToComponent(
-                formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
-                (s, t, m) -> WicketFormProcessing.onFieldUpdated((FormComponent<?>) s, Optional.of(t), m.getObject()));
-//        }
+        //        MTipo<?> tipo = model.getMInstancia().getMTipo();
+        //        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
+        //        if (dependentes != null && !dependentes.isEmpty()) {
+        addAjaxUpdateToComponent(
+            formComponent,
+            IMInstanciaAwareModel.getInstanceModel(model),
+            new OnFieldUpdatedListener());
+        //        }
 
         return formComponent;
     }
@@ -184,20 +185,44 @@ public class WicketBuildContext implements Serializable {
             (component instanceof CheckBoxMultipleChoice) ||
             (component instanceof RadioGroup) ||
             (component instanceof CheckGroup)) {
-            component.add(new AjaxFormChoiceComponentUpdatingBehavior() {
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    listener.onUpdate(this.getComponent(), target, model);
-                }
-            });
+            component.add(new AjaxUpdateChoiceBehavior(model, listener));
 
         } else if (component instanceof AbstractTextComponent<?>) {
-            component.add(new AjaxFormComponentUpdatingBehavior("blur") {
-                @Override
-                protected void onUpdate(AjaxRequestTarget target) {
-                    listener.onUpdate(this.getComponent(), target, model);
-                }
-            });
+            component.add(new AjaxUpdateInputBehavior("blur", model, listener));
+        }
+    }
+
+    private static final class AjaxUpdateChoiceBehavior extends AjaxFormChoiceComponentUpdatingBehavior {
+        private final IAjaxUpdateListener listener;
+        private final IModel<MInstancia>  model;
+        public AjaxUpdateChoiceBehavior(IModel<MInstancia> model, IAjaxUpdateListener listener) {
+            this.listener = listener;
+            this.model = model;
+        }
+        @Override
+        protected void onUpdate(AjaxRequestTarget target) {
+            listener.onUpdate(this.getComponent(), target, model);
+        }
+    }
+
+    private static final class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
+        private final IAjaxUpdateListener listener;
+        private final IModel<MInstancia>  model;
+        private AjaxUpdateInputBehavior(String event, IModel<MInstancia> model, IAjaxUpdateListener listener) {
+            super(event);
+            this.listener = listener;
+            this.model = model;
+        }
+        @Override
+        protected void onUpdate(AjaxRequestTarget target) {
+            listener.onUpdate(this.getComponent(), target, model);
+        }
+    }
+
+    private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
+        @Override
+        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
+            WicketFormProcessing.onFieldUpdated((FormComponent<?>) s, Optional.of(t), m.getObject());
         }
     }
 
