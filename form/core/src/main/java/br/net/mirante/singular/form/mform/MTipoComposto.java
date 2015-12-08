@@ -14,6 +14,10 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
 public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
@@ -129,6 +133,22 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoString addCampoString(String nomeCampo) {
         return addCampo(nomeCampo, MTipoString.class);
+    }
+
+    public MTipoCPF addCampoCPF(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCPF.class);
+    }
+
+    public MTipoCNPJ addCampoCNPJ(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCNPJ.class);
+    }
+
+    public MTipoEMail addCampoEmail(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoEMail.class);
+    }
+
+    public MTipoCEP addCampoCEP(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCEP.class);
     }
 
     public MTipoString addCampoString(String nomeCampo, boolean obrigatorio) {

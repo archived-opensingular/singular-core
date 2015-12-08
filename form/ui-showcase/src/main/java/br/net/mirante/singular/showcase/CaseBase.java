@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
  * Representa um exemplo de um componente ou solução junto com os respectivo
  * códigos e explicações.
  */
-public class CaseBase {
+public class CaseBase implements Serializable {
 
     private final String componentName;
     private final String subCaseName;
