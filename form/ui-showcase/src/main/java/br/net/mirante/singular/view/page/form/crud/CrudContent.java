@@ -6,6 +6,7 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.dao.form.TemplateRepository.TemplateEntry;
 import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.wicket.mapper.SelectOption;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;

@@ -51,6 +51,25 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
             .containsExactly("Distrito Federal","São Paulo");
     }
     
+    @Test @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void rendersAnDropDownWithDanglingOptions() {
+        setupPage();
+        MISelectItem value = currentSelectionInstance();
+        value.setValorItem("GO", "Goias");
+        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
+            newSelectItem("SP", "São Paulo"));
+        buildPage();
+        driver.assertEnabled(formField(form, "originUF"));
+        form.submit("save-btn");
+        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+        assertThat(options).hasSize(1);
+        DropDownChoice choices = options.get(0);
+        assertThat(extractProperty("key").from(choices.getChoices()))
+            .containsExactly("GO","DF","SP");
+        assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("Goias","Distrito Federal","São Paulo");
+    }
+    
     @Test public void submitsSelectedValue(){
         setupPage();
         selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
@@ -58,9 +77,15 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
+        MISelectItem value = currentSelectionInstance();
+        assertThat(value.getFieldId()).isEqualTo("DF");
+    }
+
+
+    private MISelectItem currentSelectionInstance() {
         MIComposto currentInstance = page.getCurrentInstance();
         MISelectItem value = (MISelectItem) currentInstance.getAllFields().iterator().next();
-        assertThat(value.getFieldId()).isEqualTo("DF");
+        return value;
     }
     
     private String formField(FormTester form, String leafName) {

@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import org.apache.wicket.model.IModel;
 
-//TODO: This must be abstracted
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption<T> implements IModel {
     private String key;
@@ -51,5 +50,25 @@ public class SelectOption<T> implements IModel {
     @Override
     public String toString() {
         return String.format("SelectOption('%s','%s')", key,value);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || ! (obj instanceof SelectOption)) return false;
+        
+        boolean eq = true;
+        SelectOption op = (SelectOption) obj;
+        eq &= key != null && key.equals(op.key);
+//        eq &= value != null && value.equals(op.value);
+        
+        return eq;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 1;
+        if(key != null) hash += key.hashCode();
+//        if(value != null) hash += value.hashCode();
+        return hash;
     }
 }

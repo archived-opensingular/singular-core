@@ -26,11 +26,11 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
             MTipoSelectItem.class);
         ingredienteQuimico.withSelectionOf(
                 MISelectItem.create("h2o", "Água", pb.getDicionario()),
-                MISelectItem.create("h2o2", "Água OxigenADA", pb.getDicionario()),
+                MISelectItem.create("h2o2", "Água Oxigenada", pb.getDicionario()),
                 MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
                 MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
             );
-        tipoSelection.as(AtrBasic::new).label("Seleção de Componentes Químicos");
+        ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
         
     }
 

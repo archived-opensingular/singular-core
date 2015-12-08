@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
@@ -36,22 +37,33 @@ public interface MOptionsProvider extends Serializable {
         Object value = optionsInstance.getValor();
         if( value == null ) return;
         if( value instanceof Collection && ((Collection<?>)value).isEmpty()) return;
-        if(!containsValue(defaultOptions, value)){
-            addNewValueUpfront(defaultOptions, value);
+        if(!containsValue(defaultOptions, optionsInstance)){
+            addNewValueUpfront(defaultOptions, optionsInstance);
         }
-        
     }
 
-    public default boolean containsValue(MILista<? extends MInstancia> defaultOptions, Object value) {
+    public default boolean containsValue(
+            MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         for(MInstancia c : defaultOptions.getAllChildren()){
-            if (value.equals(c.getValor())) return true;
+            if(value instanceof MISimples){
+                if (value.getValor().equals(c.getValor())) return true;
+            }
+            else if (value.equals(c)) return true;
         }
         return false;
     }
     
-    public default void addNewValueUpfront(MILista<? extends MInstancia> defaultOptions, Object value) {
+    public default void addNewValueUpfront(
+        MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         MInstancia newValue = defaultOptions.addNovoAt(0);
-        newValue.setValor(value);
+        //TODO [Fabs] : This is becoming very anoying
+        if(newValue instanceof MISimples){
+            newValue.setValor(value.getValor());
+        }else if(newValue instanceof MISelectItem){
+            MISelectItem item = (MISelectItem) value;
+            ((MISelectItem) newValue).setFieldId(item.getFieldId());
+            ((MISelectItem) newValue).setFieldValue(item.getFieldValue());
+        }
     }
     
     /**

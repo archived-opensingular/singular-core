@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.IObjectClassAwareModel;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
@@ -29,7 +28,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 public class SelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         List<SelectOption<String>> opcoesValue = newArrayList();
         MTipo<?> type = model.getObject().getMTipo();
@@ -47,6 +46,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         return formGroupAppender(formGroup, model, opcoesValue);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<SelectOption<String>> addStringOptions(IModel<? extends MInstancia> model) {
         MOptionsProvider opcoes = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
         List<SelectOption<String>> opcoesValue = newArrayList();
@@ -54,26 +54,28 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         return opcoesValue;
     }
 
+    @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final List<SelectOption<String>> opcoesValue) {
         final DropDownChoice<SelectOption> choices = (DropDownChoice<SelectOption>) retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setNullValid(true), false, false);
         return choices;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(IModel<? extends MInstancia> model, final List<SelectOption<String>> opcoesValue) {
         String id = model.getObject().getNome();
-//        return new DropDownChoice<>(id, new MInstanciaValorModel<>(model), opcoesValue, choiceRenderer);
         return new DropDownChoice<SelectOption>(id, 
                 new MSelectionInstanceModel(model), opcoesValue, rendererer());
     }
 
+    @SuppressWarnings("rawtypes")
     protected ChoiceRenderer rendererer() {
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("value", "key");
         return choiceRenderer;
     }
 }
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "rawtypes" })
 class MSelectionInstanceModel implements IModel<SelectOption>,
     IMInstanciaAwareModel<SelectOption>{
 
