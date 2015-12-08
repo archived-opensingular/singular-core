@@ -5,6 +5,8 @@ import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
+import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
 
@@ -38,6 +40,9 @@ public class ShowCaseTable {
                 .addCase(CaseGrid.class)
                 .addCase(CaseGridList.class)
                 .addCase(CaseGridTable.class);
+        group("Validation", Icone.BAN)
+                .addCase(CaseValidationRequired.class)
+                .addCase(CaseValidationCustom.class);
         //@formatter:on
     }
 
