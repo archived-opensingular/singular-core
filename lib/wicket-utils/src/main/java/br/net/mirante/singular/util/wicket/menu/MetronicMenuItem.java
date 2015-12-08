@@ -94,7 +94,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
             String url = onlyLetters.matcher(getRequest().getUrl().toString()).replaceAll("");
             String thisUrl = onlyLetters.matcher(menuItemUrl).replaceAll("");
 
-            if (url.contains(thisUrl)) {
+            if (url.endsWith(thisUrl)) {
                 menuItem.add($b.classAppender("active"));
                 return true;
             }

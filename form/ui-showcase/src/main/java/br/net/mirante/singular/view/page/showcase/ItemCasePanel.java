@@ -43,15 +43,13 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
      *
      */
     private static final long serialVersionUID = 3200319871613673285L;
-
+    private final BSModalBorder viewXmlModal = new BSModalBorder("viewXmlModal");
     @Inject
     private SpringServiceRegistry serviceRegistry;
-
     private Form<?> inputForm = new Form<>("save-form");
     private BSGrid container = new BSGrid("generated");
     private IModel<MInstancia> currentInstance;
     private CaseBase caseBase;
-    private final BSModalBorder viewXmlModal = new BSModalBorder("viewXmlModal");
 
     public ItemCasePanel(String id, CaseBase caseBase) {
         super(id);
@@ -110,10 +108,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         return new AjaxButton("save-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-
-                MInstancia trueInstance = currentInstance.getObject();
-                trueInstance.getDocument().persistFiles();
-                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                MElement rootXml = MformPersistenciaXML.toXML(currentInstance.getObject());
                 //TODO validação
                 viewXml(target, printXml(rootXml));
             }

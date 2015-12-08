@@ -3,6 +3,7 @@ package br.net.mirante.singular.showcase;
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
+import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
 
@@ -33,7 +34,8 @@ public class ShowCaseTable {
         group("File", Icone.FOLDER)
                 .addCase(CaseFileAttachment.class);
         group("Layout", Icone.GRID)
-                .addCase(CaseGrid.class);
+                .addCase(CaseGrid.class)
+                .addCase(CaseGridList.class);
         //@formatter:on
     }
 
