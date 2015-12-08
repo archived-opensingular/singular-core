@@ -14,6 +14,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.AbstractTextComponent;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.CheckGroup;
@@ -89,6 +90,41 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
+    public void init(IModel<? extends MInstancia> instanceModel) {
+        MInstancia instance = instanceModel.getObject();
+        if (isRootContext()) {
+            MultiMap<MTipo<?>, MTipo<?>> dependents = new MultiMap<>();
+            MInstances.streamDescendants(instance.getDocument().getRoot(), true)
+                .forEach(ins -> {
+                    Supplier<Collection<MTipo<?>>> func = ins.getValorAtributo(MPacoteBasic.ATR_DEPENDS_FUNCTION);
+                    if (func != null) {
+                        for (MTipo<?> dependency : func.get()) {
+                            dependents.addValue(dependency, ins.getMTipo());
+                        }
+                    }
+                });
+            this.dependencyMap = dependents;
+            getContainer().add(new InitRootContainerBehavior(instanceModel));
+        }
+        if (getContainer().getDefaultModel() == null) {
+            getContainer().setDefaultModel(instanceModel);
+        }
+        WicketFormUtils.setInstanceId(getContainer(), instance);
+        WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+    }
+
+    // TODO refatorar este método para ele ser estensível e configurável de forma global
+    protected void addAjaxUpdateToComponent(Component component, IModel<MInstancia> model, IAjaxUpdateListener listener) {
+        if ((component instanceof RadioChoice) ||
+            (component instanceof CheckBoxMultipleChoice) ||
+            (component instanceof RadioGroup) ||
+            (component instanceof CheckGroup)) {
+            component.add(new AjaxUpdateChoiceBehavior(model, listener));
+
+        } else if (component instanceof AbstractTextComponent<?>) {
+            component.add(new AjaxUpdateInputBehavior("change", model, listener));
+        }
+    }
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
         return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
     }
@@ -102,14 +138,14 @@ public class WicketBuildContext implements Serializable {
             formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-        //        MTipo<?> tipo = model.getMInstancia().getMTipo();
-        //        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
-        //        if (dependentes != null && !dependentes.isEmpty()) {
-        addAjaxUpdateToComponent(
-            formComponent,
-            IMInstanciaAwareModel.getInstanceModel(model),
-            new OnFieldUpdatedListener());
-        //        }
+        MTipo<?> tipo = model.getMInstancia().getMTipo();
+        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
+        if (dependentes != null && !dependentes.isEmpty()) {
+            addAjaxUpdateToComponent(
+                formComponent,
+                IMInstanciaAwareModel.getInstanceModel(model),
+                new OnFieldUpdatedListener());
+        }
 
         return formComponent;
     }
@@ -161,34 +197,14 @@ public class WicketBuildContext implements Serializable {
         return (isRootContext()) ? dependencyMap : getRootContext().getDependencyMap();
     }
 
-    public void init(MInstancia instance) {
-        if (isRootContext()) {
-            MultiMap<MTipo<?>, MTipo<?>> dependents = new MultiMap<>();
-            MInstances.streamDescendants(instance.getDocument().getRoot(), true)
-                .forEach(ins -> {
-                    Supplier<Collection<MTipo<?>>> func = ins.getValorAtributo(MPacoteBasic.ATR_DEPENDS_FUNCTION);
-                    if (func != null) {
-                        for (MTipo<?> dependency : func.get()) {
-                            dependents.addValue(dependency, ins.getMTipo());
-                        }
-                    }
-                });
-            this.dependencyMap = dependents;
+    private static final class InitRootContainerBehavior extends Behavior {
+        private final IModel<? extends MInstancia> instanceModel;
+        public InitRootContainerBehavior(IModel<? extends MInstancia> instanceModel) {
+            this.instanceModel = instanceModel;
         }
-        WicketFormUtils.setInstanceId(getContainer(), instance);
-        WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
-    }
-
-    // TODO refatorar este método para ele ser estensível e configurável de forma global
-    protected void addAjaxUpdateToComponent(Component component, IModel<MInstancia> model, IAjaxUpdateListener listener) {
-        if ((component instanceof RadioChoice) ||
-            (component instanceof CheckBoxMultipleChoice) ||
-            (component instanceof RadioGroup) ||
-            (component instanceof CheckGroup)) {
-            component.add(new AjaxUpdateChoiceBehavior(model, listener));
-
-        } else if (component instanceof AbstractTextComponent<?>) {
-            component.add(new AjaxUpdateInputBehavior("blur", model, listener));
+        @Override
+        public void onConfigure(Component component) {
+            instanceModel.getObject().getDocument().updateAttributes(null);
         }
     }
 
@@ -222,7 +238,7 @@ public class WicketBuildContext implements Serializable {
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
         @Override
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
-            WicketFormProcessing.onFieldUpdated((FormComponent<?>) s, Optional.of(t), m.getObject());
+            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m.getObject());
         }
     }
 

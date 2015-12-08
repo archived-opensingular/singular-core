@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 
@@ -23,7 +24,35 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public class WicketFormProcessing {
 
-    public static void onFieldUpdated(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia instance) {
+    public static void onFormSubmit(Form<?> form, Optional<AjaxRequestTarget> target, MInstancia instance) {
+        if (instance == null)
+            return;
+
+        // Validação do valor do componente
+        InstanceValidationContext validationContext = new InstanceValidationContext(instance);
+        validationContext.validateAll();
+        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+            associateErrorsToComponents(validationContext, form);
+            refresh(target, form);
+            return;
+        }
+
+        // atualizar documento e recuperar instancias com atributos alterados
+        IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
+        instance.getDocument().updateAttributes(eventCollector);
+        List<MInstancia> updatedInstances = eventCollector.getEvents().stream()
+            .map(it -> it.getSource())
+            .collect(toList());
+
+        // re-renderizar componentes atualizados
+        WicketFormUtils.streamComponentsByInstance(form, updatedInstances)
+            .map(c -> WicketFormUtils.findCellContainer(c))
+            .filter(c -> c.isPresent())
+            .map(c -> c.get())
+            .forEach(c -> refresh(target, c));
+    }
+
+    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia instance) {
         if (instance == null)
             return;
 
