@@ -14,6 +14,11 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <context-param>
+        <param-name>spring.profiles.active</param-name>
+        <param-value>cache</param-value>
+    </context-param>
+
     <!-- CONFIGURACOES SPRING SECURITY-->
 	<filter>
         <filter-name>springSecurityFilterChain</filter-name>

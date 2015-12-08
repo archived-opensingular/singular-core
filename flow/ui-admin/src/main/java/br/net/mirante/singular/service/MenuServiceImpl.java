@@ -1,22 +1,20 @@
 package br.net.mirante.singular.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
 import br.net.mirante.singular.dao.CategoryMenuDAO;
 import br.net.mirante.singular.dao.GroupDAO;
 import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service("menuService")
 public class MenuServiceImpl implements MenuService {
@@ -29,7 +27,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Inject
     private FlowAuthorizationFacade authorizationFacade;
-    
+
     @Override
     @Transactional
     @Cacheable(value = "retrieveAllCategoriesMenu", cacheManager = "cacheManager")
@@ -44,7 +42,7 @@ public class MenuServiceImpl implements MenuService {
         Object[] result = categoryMenuDAO.retrieveCategoryDefinitionIdsByCode(code);
         return new ImmutablePair<>(((Integer) result[0]).longValue(), ((Integer) result[1]).longValue());
     }
-    
+
     @Override
     @Transactional
     @Cacheable(value = "retrieveAllCategoriesWithAccessMenu", key = "#userId", cacheManager = "cacheManager")
@@ -54,9 +52,13 @@ public class MenuServiceImpl implements MenuService {
             definitions.addAll(authorizationFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
         }
         List<MenuItemDTO> allCategories = retrieveAllCategories();
-        allCategories.forEach(category ->{
-            category.getItens().removeIf(def -> !definitions.contains(def.getId()));
-        });
+
+        for (MenuItemDTO category : allCategories) {
+            category.getItens().removeIf(def -> {
+                return !definitions.contains(def.getId());
+            });
+        }
+
         allCategories.removeIf(category -> category.getItens().isEmpty());
         return allCategories;
     }
