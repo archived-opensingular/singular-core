@@ -1,6 +1,10 @@
-var Page = function () {
+var Page = function() {
 
-    var handleDatePickers = function () {
+    function handleSlimScroll(){
+        $('.scroller').slimScroll({});
+    }
+
+    function handleDatePickers() {
         if (jQuery().datepicker) {
             $('.date-picker').datepicker({
                 rtl: Metronic.isRTL(),
@@ -9,25 +13,21 @@ var Page = function () {
                 language: 'pt-BR'
             });
         }
-    };
+    }
 
-    var handleBootstrapSelect = function () {
+    function handleBootstrapSelect() {
         $('.bs-select').selectpicker({
             iconBase: 'fa',
             tickIcon: 'fa-check'
         });
-    };
+    }
 
-    var handleMultiSelect = function () {
+    function handleMultiSelect() {
         $('.multi-select').multiSelect();
-    };
-
-    var handleSlimScroll = function () {
-        $('.scroller').slimScroll({});
     }
 
     return {
-        init: function () {
+        init: function() {
             handleDatePickers();
             handleBootstrapSelect();
             handleMultiSelect();

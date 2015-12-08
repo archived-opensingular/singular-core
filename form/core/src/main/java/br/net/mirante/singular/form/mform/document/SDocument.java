@@ -16,6 +16,8 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
+import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 
 /**
@@ -158,20 +160,31 @@ public class SDocument {
         return this.instanceListeners;
     }
 
-    public void updateAttributes() {
-        MInstances.visitAll(getRoot(), true, instance -> {
-            Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
-            if (requiredFunc != null)
-                instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
+    /**
+     * 
+     * @return eventos coletados
+     */
+    public void updateAttributes(IMInstanceListener listener) {
+        if (listener != null)
+            getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
-            Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
-            if (enabledFunc != null)
-                instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
+        try {
+            MInstances.visitAll(getRoot(), true, instance -> {
+                Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+                if (requiredFunc != null)
+                    instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
 
-            Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
-            if (visibleFunc != null)
-                instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
-        });
+                Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
+                if (enabledFunc != null)
+                    instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
+
+                Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
+                if (visibleFunc != null)
+                    instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
+            });
+        } finally {
+            getInstanceListeners().remove(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
+        }
     }
 
     //TODO: Review how this method works. It'd be better if the developer did 
