@@ -73,7 +73,9 @@ public class UIBuilderWicket {
         Object obj = model.getObject();
         MInstancia instancia = (MInstancia) obj;
         MView view = ViewResolver.resolve(instancia);
-        ctx.setContainerInstance(instancia);
+        
+        ctx.init(model);
+        
         IWicketComponentMapper mapper = MAPPERS.getMapper(instancia, view)
                 .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
         mapper.buildView(ctx, view, model);

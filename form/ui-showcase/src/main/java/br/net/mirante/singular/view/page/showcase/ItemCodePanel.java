@@ -11,7 +11,7 @@ public class ItemCodePanel extends Panel {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(OnDomReadyHeaderItem.forScript("SyntaxHighlighter.all();"));
+        response.render(OnDomReadyHeaderItem.forScript("SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();"));
     }
 
     public ItemCodePanel(String id, IModel<String> code) {

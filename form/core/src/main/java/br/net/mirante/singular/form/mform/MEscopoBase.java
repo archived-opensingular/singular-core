@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.common.base.Preconditions;
 
 public abstract class MEscopoBase implements MEscopo {
 
@@ -138,5 +138,16 @@ public abstract class MEscopoBase implements MEscopo {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
         return appendable;
+    }
+
+    final public boolean hasAnyValidation() {
+        if(tiposLocais != null) {
+            for (Map.Entry<String, MTipo<?>> entry : tiposLocais.entrySet()) {
+                if(entry.getValue().hasValidation() || entry.getValue().hasAnyValidation()){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -55,9 +55,9 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private <T> List<ServiceRef<?>> findAllMathingProviders(Class<T> targetClass) {
         List<ServiceRef<?>> result = newArrayList();
-        for(Class<?> key : servicesByClass.keySet()){
-            if(targetClass.isAssignableFrom(key)){
-                result.addAll(servicesByClass.get(key));
+        for(Map.Entry<Class<?>, List<ServiceRef<?>>> entry : servicesByClass.entrySet()){
+            if(targetClass.isAssignableFrom(entry.getKey())){
+                result.addAll(servicesByClass.get(entry.getKey()));
             }
         }
         return result;

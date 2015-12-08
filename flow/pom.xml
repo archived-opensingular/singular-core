@@ -22,6 +22,7 @@
         <module>persistence</module>
         <module>test</module>
 		<module>rest-client</module>
+		<module>alocpro-mock-client</module>
     </modules>
 
 </project>

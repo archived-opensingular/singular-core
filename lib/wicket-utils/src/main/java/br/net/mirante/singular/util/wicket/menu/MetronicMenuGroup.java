@@ -61,21 +61,16 @@ public class MetronicMenuGroup extends AbstractMenuItem {
     }
 
     @Override
-    public void mapItemId(String itemId) {
-        super.mapItemId(itemId);
-        itens.forEach(i -> i.mapItemId(itemId + itens.indexOf(i)));
-    }
-
-    @Override
-    protected void configureActiveItem(String activeItemId) {
-        itens.forEach(i -> {
-            if (i.getItemId().equals(activeItemId)) {
-                i.configureActiveItem(activeItemId);
+    protected boolean configureActiveItem() {
+        for (AbstractMenuItem i : itens) {
+            if (i.configureActiveItem()) {
                 subMenu.add($b.attr("style", "display: block;"));
                 menuGroup.add($b.classAppender("open"));
                 arrow.add($b.classAppender("open"));
+                return true;
             }
-        });
+        }
+        return false;
     }
 
 }
