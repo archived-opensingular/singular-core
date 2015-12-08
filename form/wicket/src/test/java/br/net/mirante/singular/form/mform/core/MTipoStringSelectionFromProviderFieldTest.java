@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.core;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
@@ -65,7 +66,8 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices()).containsExactly(referenceOptions.toArray());
+        assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly(referenceOptions.toArray());
     }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -83,7 +85,8 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices()).containsExactly(referenceOptions.toArray());
+        assertThat(extractProperty("value").from(choices.getChoices()))
+        .containsExactly(referenceOptions.toArray());
     }
 
     private String formField(FormTester form, String leafName) {

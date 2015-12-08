@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.core;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices())
+        assertThat(extractProperty("key").from(choices.getChoices()))
+            .containsExactly("strawberry","apple","orange","banana");
+        assertThat(extractProperty("value").from(choices.getChoices()))
             .containsExactly("strawberry","apple","orange","banana");
     }
     
@@ -50,8 +53,20 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices())
+        assertThat(extractProperty("key").from(choices.getChoices()))
             .containsExactly("avocado","strawberry","apple","orange","banana");
+        assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("avocado","strawberry","apple","orange","banana");
+    }
+    
+    @Test public void submitsSelectedValue(){
+        setupPage();
+        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        buildPage();
+        form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
+        form.submit("save-btn");
+        Object value = page.getCurrentInstance().getValor(selectType.getNomeSimples());
+        assertThat(value).isEqualTo("orange");
     }
     
     private String formField(FormTester form, String leafName) {

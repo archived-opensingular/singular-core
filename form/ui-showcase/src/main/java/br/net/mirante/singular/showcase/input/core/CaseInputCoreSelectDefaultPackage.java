@@ -5,6 +5,8 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreSelectDefaultPackage extends MPacote {
 
@@ -17,10 +19,19 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         addSelection(tipoMyForm, 10, false);
         
         MTipoString tipoSelection = tipoMyForm.addCampoString("opcoesDeArquivo");
-
         tipoSelection.withSelectionFromProvider("filesChoiceProvider");
-
         tipoSelection.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
+        
+        MTipoSelectItem ingredienteQuimico = tipoMyForm.addCampo("ingredienteQuimico",
+            MTipoSelectItem.class);
+        ingredienteQuimico.withSelectionOf(
+                MISelectItem.create("h2o", "Água", pb.getDicionario()),
+                MISelectItem.create("h2o2", "Água OxigenADA", pb.getDicionario()),
+                MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
+                MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
+            );
+        tipoSelection.as(AtrBasic::new).label("Seleção de Componentes Químicos");
+        
     }
 
     private static void addSelection(MTipoComposto<?> tipoMyForm, int sizeOptions, boolean required) {

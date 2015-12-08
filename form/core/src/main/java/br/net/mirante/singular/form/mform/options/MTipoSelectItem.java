@@ -29,10 +29,24 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem> {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
-//        tb.createTipoAtributo(ID_FIELD).withDefaultValueIfNull(FIELD_ID);
-//        tb.createTipoAtributo(ID_FIELD).withDefaultValueIfNull(FIELD_VALUE);
+        tb.createTipoAtributo(ID_FIELD);//.withDefaultValueIfNull(FIELD_ID);
+        tb.createTipoAtributo(VALUE_FIELD);//.withDefaultValueIfNull(FIELD_VALUE);
+//        withIdField(FIELD_ID);
+//        withValueField(FIELD_VALUE);
         addCampoString(FIELD_ID);
         addCampoString(FIELD_VALUE);
+    }
+    
+    public MTipoSelectItem withIdField(String fieldName){
+        setValorAtributo(ID_FIELD, fieldName);
+        addCampoString(fieldName);
+        return this;
+    }
+    
+    public MTipoSelectItem withValueField(String fieldName){
+        setValorAtributo(FIELD_VALUE, fieldName);
+        addCampoString(fieldName);
+        return this;
     }
     
     // SELECTION OF BEGIN

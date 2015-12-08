@@ -1,4 +1,4 @@
-package br.net.mirante.singular.view.page.form.crud;
+package br.net.mirante.singular.form.wicket.mapper;
 
 import org.apache.wicket.model.IModel;
 
@@ -46,5 +46,10 @@ public class SelectOption<T> implements IModel {
             this.setKey(s.getKey());
             this.setValue((T) s.getValue());
         }
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("SelectOption('%s','%s')", key,value);
     }
 }

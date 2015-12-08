@@ -15,12 +15,14 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 public class RadioMapper extends SelectMapper {
 
     @Override
-    protected RadioChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
-            final List<String> opcoesValue) {
-        return new RadioChoice<String>(model.getObject().getNome(), new MInstanciaValorModel<>(model), opcoesValue) {
+    protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
+            final List<SelectOption<String>> opcoesValue) {
+        String id = model.getObject().getNome();
+        return new RadioChoice<SelectOption<String>>(id, 
+                new MInstanciaValorModel<>(model), opcoesValue, rendererer()) {
             @SuppressWarnings("Contract")
             @Override
-            protected IValueMap getAdditionalAttributesForLabel(int index, String choice) {
+            protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption<String> choice) {
                 IValueMap map = new ValueMap();
                 map.put("class", "radio-inline");
                 map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;");
@@ -28,7 +30,7 @@ public class RadioMapper extends SelectMapper {
             }
 
             @Override
-            protected IValueMap getAdditionalAttributes(int index, String choice) {
+            protected IValueMap getAdditionalAttributes(int index, SelectOption<String> choice) {
                 IValueMap map = new ValueMap();
                 map.put("style", "left:20px;");
                 return map;
@@ -43,7 +45,7 @@ public class RadioMapper extends SelectMapper {
 
     @Override
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-            final List<String> opcoesValue) {
+            final List<SelectOption<String>> opcoesValue) {
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendRadioChoice(choices);
         return choices;
