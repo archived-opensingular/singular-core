@@ -155,9 +155,8 @@ License: You must have a valid license purchased only from themeforest(the above
 <!-- END PAGE LEVEL SCRIPTS -->
 <script>
     jQuery(document).ready(function () {
-        Metronic.init(); // init metronic core componets
+
         Layout.init(); // init layout
-        Page.init(); // init page content
 
         Wicket.Event.subscribe('/ajax/call/beforeSend', function(evt, attrs, jqXHR, settings) {
             if (enableAJAXPageBlock) {
