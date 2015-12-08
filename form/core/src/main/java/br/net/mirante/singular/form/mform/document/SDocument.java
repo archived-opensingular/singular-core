@@ -170,7 +170,7 @@ public class SDocument {
 
         try {
             MInstances.visitAll(getRoot(), true, instance -> {
-                Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+                Predicate<MInstancia> requiredFunc = (Predicate<MInstancia>) instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION.getNomeCompleto());
                 if (requiredFunc != null)
                     instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
 
