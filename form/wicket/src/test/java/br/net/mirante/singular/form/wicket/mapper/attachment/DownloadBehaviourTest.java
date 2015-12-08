@@ -16,13 +16,13 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -85,7 +85,9 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
     @SuppressWarnings("serial")
     private IAttachmentRef setupPersistenceFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, new ServiceRef<IAttachmentPersistenceHandler>() {
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
+            IAttachmentPersistenceHandler.class,
+                new ServiceRef<IAttachmentPersistenceHandler>() {
             public IAttachmentPersistenceHandler get() {
                 return persistentHandler;
             }

@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MProviderOpcoes;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -48,8 +48,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return formGroupAppender(formGroup, bodyContainer, model);
     }
 
-    public MProviderOpcoes getProvider(IModel<? extends MInstancia> model) {
-        MProviderOpcoes provider = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
+    public MOptionsProvider getProvider(IModel<? extends MInstancia> model) {
+        MOptionsProvider provider = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
         return provider;
     }
 
@@ -167,12 +167,13 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         });
     }
 
-    public SortableDataProvider<Dado, Filtro> buildDataProvider(IModel<? extends MInstancia> model, final IModel<Filtro> filtro) {
+    public SortableDataProvider<Dado, Filtro> buildDataProvider(
+            IModel<? extends MInstancia> model, final IModel<Filtro> filtro) {
         return new SortableDataProvider<Dado, Filtro>() {
             @Override
             public Iterator<? extends Dado> iterator(long first, long count) {
                 Iterator<? extends Dado> it = getProvider(model)
-                        .getOpcoes()
+                        .getOpcoes(model.getObject())
                         .getValor()
                         .stream()
                         .map(Object::toString)
@@ -186,7 +187,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             @Override
             public long size() {
                 long size = getProvider(model)
-                        .getOpcoes()
+                        .getOpcoes(model.getObject())
                         .getValor()
                         .stream()
                         .map(Object::toString)

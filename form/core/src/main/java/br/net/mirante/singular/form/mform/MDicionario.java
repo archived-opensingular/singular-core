@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 public class MDicionario implements IContextoTipo {
 

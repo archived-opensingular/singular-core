@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Representa um tipo lista, o qual deve ter um tipo definido para todos os seus
