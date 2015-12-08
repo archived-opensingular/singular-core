@@ -2,59 +2,64 @@ package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.markup.html.form.AbstractChoice;
+import org.apache.wicket.markup.html.form.AbstractTextComponent;
+import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
+import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.collections.MultiMap;
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.mform.function.IBehaviorContext;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
+import br.net.mirante.singular.form.wicket.behavior.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-
 @SuppressWarnings({"serial","rawtypes"})
 public class WicketBuildContext implements Serializable {
-
-    private static final MetaDataKey<Integer>  KEY_INSTANCE_ID        = new MetaDataKey<Integer>() {};
-    public static final MetaDataKey<Component> KEY_INSTANCE_CONTAINER = new MetaDataKey<Component>() {};
 
     private final WicketBuildContext                parent;
     private final BSContainer<?>                    container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean                           hintsInherited;
-    private final  BSContainer                      externalContainer;
+    private final BSContainer                       externalContainer;
+    private final BSContainer                       rootContainer;
+    private MultiMap<MTipo<?>, MTipo<?>>            dependencyMap;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
         this(null, container, bodyContainer, false);
     }
 
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container,  BSContainer externalContainer, boolean hintsInherited) {
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer, boolean hintsInherited) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
+        this.rootContainer = ObjectUtils.defaultIfNull((parent == null) ? null : parent.getRootContainer(), container);
+        WicketFormUtils.markAsCellContainer(container);
+        container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
     public WicketBuildContext getParent() {
         return parent;
@@ -88,40 +93,23 @@ public class WicketBuildContext implements Serializable {
     }
 
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
+        WicketFormUtils.setCellContainer(formComponent, getContainer());
+
         formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-//        formComponent.add(new MInstanciaValueValidator<>());
-        formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
-        formComponent.setMetaData(KEY_INSTANCE_CONTAINER, getContainer());
+
+        if (formComponent.getLabel() == null)
+            formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-        MTipo<?> tipo = model.getMInstancia().getMTipo();
+//        MTipo<?> tipo = model.getMInstancia().getMTipo();
+//        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
+//        if (dependentes != null && !dependentes.isEmpty()) {
+            addAjaxUpdateToComponent(
+                formComponent,
+                IMInstanciaAwareModel.getInstanceModel(model),
+                (s, t, m) -> WicketFormProcessing.onFieldUpdated((FormComponent<?>) s, Optional.of(t), m.getObject()));
+//        }
 
-        if (tipo.as(MPacoteBasic.aspect()).hasOnChange()) {
-            if (formComponent instanceof TextField<?> ||
-                formComponent instanceof AbstractChoice<?, ?>) {
-                formComponent.add(new AjaxFormComponentUpdatingBehavior("change") {
-                    @Override
-                    protected void onUpdate(AjaxRequestTarget target) {
-                        IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) this.getComponent().getDefaultModel();
-                        MInstancia instance = model.getMInstancia();
-                        IBehavior<MInstancia> onChange = instance.as(MPacoteBasic.aspect()).getOnChange();
-                        if (onChange != null) {
-                            onChange.on(new IBehaviorContext() {
-                                @Override
-                                public IBehaviorContext update(MTipo<?>... fields) {
-                                    for (MTipo<?> field : fields)
-                                        target.add(instance.findNearest(field)
-                                            .flatMap(target -> WicketFormUtils.findChildByInstance(formComponent.getPage(), target))
-                                            .map(target -> Optional.ofNullable(target.getMetaData(KEY_INSTANCE_CONTAINER)).orElse(target))
-                                            .get());
-                                    return this;
-                                }
-                            }, model.getMInstancia());
-                        }
-                    }
-                });
-            }
-        }
         return formComponent;
     }
 
@@ -155,20 +143,62 @@ public class WicketBuildContext implements Serializable {
         }
         return "[" + formComponent.getId() + "]";
     }
-    public void setContainerInstance(MInstancia instancia) {
-        getContainer().setMetaData(KEY_INSTANCE_ID, instancia.getId());
+
+    public WicketBuildContext getRootContext() {
+        WicketBuildContext ctx = this;
+        while (!ctx.isRootContext())
+            ctx = ctx.getParent();
+        return ctx;
     }
-    public boolean isContainerForInstance(MInstancia instance) {
-        return Objects.equals(instance.getId(), getContainer().getMetaData(KEY_INSTANCE_ID));
+    public boolean isRootContext() {
+        return (this.getParent() == null);
     }
-    public Optional<MInstancia> findContainerInstance(SDocument document) {
-        return ((MIComposto) document.getRoot()).streamDescendants(true)
-            .filter(it -> Objects.equals(it.getId(), getContainer().getMetaData(KEY_INSTANCE_ID)))
-            .findFirst();
+    public BSContainer getRootContainer() {
+        return rootContainer;
     }
-    public Optional<MarkupContainer> findContainerForInstance(Component start, MInstancia instance) {
-        return WicketFormUtils.streamAscendants(start)
-            .filter(it -> Objects.equals(instance.getId(), it.getMetaData(KEY_INSTANCE_ID)))
-            .findFirst();
+    public MultiMap<MTipo<?>, MTipo<?>> getDependencyMap() {
+        return (isRootContext()) ? dependencyMap : getRootContext().getDependencyMap();
     }
+
+    public void init(MInstancia instance) {
+        if (isRootContext()) {
+            MultiMap<MTipo<?>, MTipo<?>> dependents = new MultiMap<>();
+            MInstances.streamDescendants(instance.getDocument().getRoot(), true)
+                .forEach(ins -> {
+                    Supplier<Collection<MTipo<?>>> func = ins.getValorAtributo(MPacoteBasic.ATR_DEPENDS_FUNCTION);
+                    if (func != null) {
+                        for (MTipo<?> dependency : func.get()) {
+                            dependents.addValue(dependency, ins.getMTipo());
+                        }
+                    }
+                });
+            this.dependencyMap = dependents;
+        }
+        WicketFormUtils.setInstanceId(getContainer(), instance);
+        WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+    }
+
+    // TODO refatorar este método para ele ser estensível e configurável de forma global
+    protected void addAjaxUpdateToComponent(Component component, IModel<MInstancia> model, IAjaxUpdateListener listener) {
+        if ((component instanceof RadioChoice) ||
+            (component instanceof CheckBoxMultipleChoice) ||
+            (component instanceof RadioGroup) ||
+            (component instanceof CheckGroup)) {
+            component.add(new AjaxFormChoiceComponentUpdatingBehavior() {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    listener.onUpdate(this.getComponent(), target, model);
+                }
+            });
+
+        } else if (component instanceof AbstractTextComponent<?>) {
+            component.add(new AjaxFormComponentUpdatingBehavior("blur") {
+                @Override
+                protected void onUpdate(AjaxRequestTarget target) {
+                    listener.onUpdate(this.getComponent(), target, model);
+                }
+            });
+        }
+    }
+
 }

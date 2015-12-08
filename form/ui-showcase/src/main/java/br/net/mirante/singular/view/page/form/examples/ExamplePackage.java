@@ -61,10 +61,10 @@ public class ExamplePackage extends MPacote {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
-        this.orderNumber = addField(order, 
-                "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.orderNumber = addField(order,
+            "OrderNumber", "Número do Pedido", MTipoInteger.class);
         this.orderNumber.withObrigatorio(true);
-        
+
         buildBuyerField();
         buildAddressField();
     }
@@ -78,9 +78,9 @@ public class ExamplePackage extends MPacote {
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
         this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
-        this.buyerNome.as(MPacoteBasic.aspect()).onChange((ctx, i) -> ctx.update(buyerCpf));
 
-        buyerCpf.as(MPacoteBasic.aspect())
+        this.buyerCpf.as(MPacoteBasic.aspect())
+            .depends(this.buyerNome)
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
             .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }
