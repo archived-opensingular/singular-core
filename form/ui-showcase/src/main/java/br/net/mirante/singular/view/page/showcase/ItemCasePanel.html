@@ -1,20 +1,31 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
-    <form wicket:id="save-form">
-        <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
-        <div class="form-body" wicket:id="generated"></div>
-        <div class="form-actions noborder">
-            <button type="submit" class="btn blue" wicket:id="save-btn">
-                <wicket:message key="label.button.save"/>
-            </button>
-            <button type="submit" class="btn red" wicket:id="validate-btn">
-                <wicket:message key="label.button.validate"/>
-            </button>
-        </div>
-        <div wicket:id="viewXmlModal" class="portlet-body form">
-            <pre wicket:id="xmlCode"></pre>
-        </div>
-    </form>
-    <div wicket:id="body-container"></div>
+    <div class="panel-body">
+        <blockquote>
+            <p wicket:id="description"></p>
+        </blockquote>
+        <hr/>
+        <form wicket:id="save-form">
+            <div class="form-body">
+                <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
+                <div class="form-body" wicket:id="generated"></div>
+                <div wicket:id="body-container"></div>
+            </div>
+            <br/>
+            <div class="form-actions">
+                <button type="submit" class="btn blue" wicket:id="save-btn">
+                    <wicket:message key="label.button.save"/>
+                </button>
+                <button type="submit" class="btn red" wicket:id="validate-btn">
+                    <wicket:message key="label.button.validate"/>
+                </button>
+            </div>
+            <div wicket:id="viewXmlModal" class="portlet-body form">
+                <pre wicket:id="xmlCode"></pre>
+            </div>
+        </form>
+        <hr/>
+        <wicket:fragment wicket:id="codes"></wicket:fragment>
+    </div>
 </wicket:panel>
 </html>

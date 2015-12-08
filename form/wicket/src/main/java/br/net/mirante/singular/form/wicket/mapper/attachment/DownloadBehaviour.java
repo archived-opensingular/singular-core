@@ -15,10 +15,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 @SuppressWarnings("serial")
 public class DownloadBehaviour extends Behavior implements IResourceListener {
@@ -62,7 +62,7 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
     }
 
     private void writeFileFromPersistent(MIAttachment attachment, SDocument document) throws IOException {
-        IAttachmentPersistenceHandler handler = document.lookupLocalService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler handler = document.lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         IAttachmentRef data = handler.getAttachment(attachment.getFileId());
         writeFileToResponse(attachment.getFileName(), data, w.response());
     }

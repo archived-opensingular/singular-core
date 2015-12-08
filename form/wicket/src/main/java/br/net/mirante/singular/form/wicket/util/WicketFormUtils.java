@@ -1,19 +1,18 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.model.IModel;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public abstract class WicketFormUtils {
     private WicketFormUtils() {}
@@ -47,7 +46,7 @@ public abstract class WicketFormUtils {
             final IModel<?> model = component.getDefaultModel();
 
             final MInstancia instance;
-            if (model.getObject() instanceof MInstancia) {
+            if (model != null && model.getObject() instanceof MInstancia) {
                 instance = (MInstancia) model.getObject();
 
             } else if (model instanceof IMInstanciaAwareModel<?>) {

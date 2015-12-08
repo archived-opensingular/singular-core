@@ -13,9 +13,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;

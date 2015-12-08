@@ -3,6 +3,9 @@ package br.net.mirante.singular.view.page.form.crud;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.util.string.StringValue;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import br.net.mirante.singular.view.template.Content;
@@ -26,4 +29,5 @@ public class FormPage extends Template {
         super.renderHead(response);
         response.render(OnDomReadyHeaderItem.forScript("$('#_menuItemDemo').addClass('active');"));
     }
+
 }
