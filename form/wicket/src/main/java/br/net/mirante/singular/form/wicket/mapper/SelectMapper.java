@@ -91,7 +91,7 @@ class MSelectionInstanceModel implements IModel<SelectOption>,
             Object value = ((MISimples) model.getObject()).getValor();
             String v = value != null ? value.toString() : null;
             return new SelectOption<String>(v, v);
-        }else if (model instanceof MISelectItem){
+        }else if (model.getObject() instanceof MISelectItem){
             MISelectItem item = (MISelectItem) model.getObject();
             return new SelectOption<String>(item.getFieldId(), item.getFieldValue());
         }
