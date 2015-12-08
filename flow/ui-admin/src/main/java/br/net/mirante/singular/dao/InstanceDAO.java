@@ -37,7 +37,7 @@ public class InstanceDAO extends BaseDAO{
     @SuppressWarnings("unchecked")
     public List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod) {
         Query hql = getSession().createQuery("select ti.cod as cod, (ti.task.name||' - '||pi.description) as descricao, pi.beginDate as dataInicial, ti.beginDate as dataAtividade, au.nome as usuarioAlocado "
-            + "from TaskInstanceEntity ti join ti.processInstance pi left join ti.allocatedUser au where ti.endDate is null and pi.processVersion.processDefinition.cod = :cod");
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd left join ti.allocatedUser au where ti.endDate is null and pd.cod = :cod");
         hql.setParameter("cod", processDefinitionCod);
         hql.setFirstResult(first);
         hql.setMaxResults(size);
@@ -78,9 +78,10 @@ public class InstanceDAO extends BaseDAO{
     private List<Map<String, String>> retrieveNewQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
         Query hqlQuery = getSession().createQuery("select trim(str(month(pi.beginDate))) || trim(str(year(pi.beginDate))) as POS, "
             + " trim(str(month(pi.beginDate))) ||'/'|| trim(str(year(pi.beginDate))) as MES, trim(str(count(pi))) as QTD_NEW from ProcessInstanceEntity pi "
-            + " where pi.processVersion.processDefinition.key in(:processCodeWithAccess) "
+            + " join pi.processVersion pv join pv.processDefinition pd "
+            + " where pd.key in(:processCodeWithAccess) "
             + " and pi.beginDate >= :datalimite "
-            + (processCode != null ? " and pi.processVersion.processDefinition.key = :processCode" : "")
+            + (processCode != null ? " and pd.key = :processCode" : "")
             + " group by month(pi.beginDate), year(pi.beginDate) order by month(pi.beginDate) asc, year(pi.beginDate) asc");
         if (processCode != null) {
             hqlQuery.setParameter("processCode", processCode);
@@ -95,9 +96,10 @@ public class InstanceDAO extends BaseDAO{
     private List<Map<String, String>> retrieveFinishedQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
         Query hqlQuery = getSession().createQuery("select trim(str(month(pi.endDate))) || trim(str(year(pi.endDate))) as POS, "
             + " trim(str(month(pi.endDate))) ||'/'|| trim(str(year(pi.endDate))) as MES, trim(str(count(pi))) as QTD_CLS from ProcessInstanceEntity pi "
-            + " where pi.processVersion.processDefinition.key in(:processCodeWithAccess) "
+            + " join pi.processVersion pv join pv.processDefinition pd "
+            + " where pd.key in(:processCodeWithAccess) "
             + " and pi.endDate >= :datalimite "
-            + (processCode != null ? " and pi.processVersion.processDefinition.key = :processCode" : "")
+            + (processCode != null ? " and pd.key = :processCode" : "")
             + " group by month(pi.endDate), year(pi.endDate) order by month(pi.endDate) asc, year(pi.endDate) asc");
         if (processCode != null) {
             hqlQuery.setParameter("processCode", processCode);
@@ -127,7 +129,8 @@ public class InstanceDAO extends BaseDAO{
     public List<Map<String, String>> retrieveAllDelayedBySigla(String processCode, BigDecimal media) {
         Query hqlQuery = getSession().createQuery("select pi.description as DESCRICAO, "
             + " trim(str((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as DIAS from ProcessInstanceEntity pi "
-            + " where pi.endDate is null and pi.processVersion.processDefinition.key = :processCode "
+            + "join pi.processVersion pv join pv.processDefinition pd "
+            + " where pi.endDate is null and pd.key = :processCode "
             + " and ((cast(current_date() as double)) - (cast(pi.beginDate as double))) > :media "
             );
         hqlQuery.setParameter("processCode", processCode);
@@ -147,8 +150,9 @@ public class InstanceDAO extends BaseDAO{
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         Query hqlQuery = getSession().createQuery("select '"+processCode+"' as processCode, cast(count(pi) as integer) as amount, "
             + " cast(avg((cast(current_date() as double)) - (cast(pi.beginDate as double))) as integer) as averageTimeInDays from ProcessInstanceEntity pi "
+            + "join pi.processVersion pv join pv.processDefinition pd  "
             + " where pi.endDate is null  "
-            + (processCode != null ?" and pi.processVersion.processDefinition.key = :processCode": ""));
+            + (processCode != null ?" and pd.key = :processCode": ""));
         if (processCode != null) {
             hqlQuery.setParameter("processCode", processCode);
         }
