@@ -37,6 +37,7 @@ import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Optional;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -83,8 +84,11 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private BSTabPanel buildCodeTabs() {
         BSTabPanel bsTabPanel = new BSTabPanel("codes");
-        for (ResourceRef rr : Collections.singletonList(caseBase.getMainSourceResourceName().get())) {
-            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
+        Optional<ResourceRef> sources = caseBase.getMainSourceResourceName();
+        if(sources.isPresent()) {
+            for (ResourceRef rr : Collections.singletonList(sources.get())) {
+                bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
+            }
         }
         return bsTabPanel;
     }
