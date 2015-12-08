@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 

@@ -2,16 +2,18 @@ package br.net.mirante.singular.flow.core;
 
 public enum TaskType implements IEntityTaskType {
 
-    Java("J", "design/imagens/execute.png"),
-    People("P", "design/imagens/pessoa.png"),
-    Wait("E", "design/imagens/wait.png"),
-    End("F", "design/imagens/jbpm_end.png");
+    Java("J", "Java", "design/imagens/execute.png"),
+    People("P", "Humana", "design/imagens/pessoa.png"),
+    Wait("E", "Espera", "design/imagens/wait.png"),
+    End("F", "Fim", "design/imagens/jbpm_end.png");
 
-    private final String image;
     private final String abbreviation;
+    private final String description;
+    private final String image;
 
-    private TaskType(String abbreviation, String image) {
+    private TaskType(String abbreviation, String description, String image) {
         this.abbreviation = abbreviation;
+        this.description = description;
         this.image = image;
     }
 
@@ -53,5 +55,10 @@ public enum TaskType implements IEntityTaskType {
     @Override
     public String getAbbreviation() {
         return abbreviation;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
     }
 }

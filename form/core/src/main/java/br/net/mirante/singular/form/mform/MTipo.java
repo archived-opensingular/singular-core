@@ -1,5 +1,16 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.function.IBehavior;
+import br.net.mirante.singular.form.validation.IInstanceValidatable;
+import br.net.mirante.singular.form.validation.IInstanceValidator;
+import br.net.mirante.singular.form.validation.ValidationError;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.apache.commons.lang3.NotImplementedException;
+
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,17 +19,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang3.NotImplementedException;
-
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
-import br.net.mirante.singular.form.validation.IInstanceValidator;
-import br.net.mirante.singular.form.validation.ValidationError;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
@@ -84,7 +84,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.superTipo = superTipo;
     }
 
-    protected void onCargaTipo(TipoBuilder tb) {}
+    protected void onCargaTipo(TipoBuilder tb) {
+    }
 
     final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
@@ -149,8 +150,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new RuntimeException(
-                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -196,7 +197,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -416,7 +417,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                	+ "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -554,5 +555,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public <T extends Object> T converter(Object valor, Class<T> classeDestino) {
         throw new RuntimeException("Método não suportado");
+    }
+
+    public boolean hasValidation(){
+        return isObrigatorio() || !instanceValidators.isEmpty();
     }
 }

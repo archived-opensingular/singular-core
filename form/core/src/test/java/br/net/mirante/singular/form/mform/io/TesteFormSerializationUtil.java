@@ -30,13 +30,14 @@ import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
 
 public class TesteFormSerializationUtil {
@@ -73,6 +74,7 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("bairro"), loader);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testTipoListSimples() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
@@ -89,6 +91,7 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("[1]"), loader);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testTipoListComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
@@ -179,14 +182,16 @@ public class TesteFormSerializationUtil {
         });
         MInstancia instancia = resolver.loadType("teste.endereco").novaInstancia();
 
-        instancia.getDocument().bindLocalService("A", ServiceRef.of("AA"));
+        instancia.getDocument().bindLocalService("A", String.class,
+            ServiceRef.of("AA"));
         MInstancia instancia2 = testSerializacao(instancia, resolver);
-        assertEquals("AA", instancia2.getDocument().lookupLocalService("A", String.class));
+        assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
 
         // Testa itens não mantido entre serializações
-        instancia.getDocument().bindLocalService("B", ServiceRef.ofToBeDescartedIfSerialized("BB"));
+        instancia.getDocument().bindLocalService("B", String.class,
+            ServiceRef.ofToBeDescartedIfSerialized("BB"));
         instancia2 = serializarEDeserializar(instancia, resolver);
-        assertNull(instancia2.getDocument().lookupLocalService("B", String.class));
+        assertNull(instancia2.getDocument().lookupService("B", String.class));
 
     }
 
@@ -213,6 +218,7 @@ public class TesteFormSerializationUtil {
 
     }
 
+    @SuppressWarnings("serial")
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
         @SuppressWarnings("unused")
         private Object ref;
@@ -294,25 +300,16 @@ public class TesteFormSerializationUtil {
         };
     }
 
-    private static MDicionarioLoader createLoader(Consumer<MDicionario> setupCode) {
-        return new MDicionarioLoader() {
-            @Override
-            protected void configDicionary(MDicionario newDicionary, String taregetTypeName) {
-                setupCode.accept(newDicionary);
-            }
-        };
-    }
-
     public static void assertEquivalent(SDocument original, SDocument novo) {
         assertNotSame(original, novo);
         assertEquals(original.getLastId(), novo.getLastId());
 
-        for (Entry<String, ServiceRef<?>> service : original.getLocalServices().entrySet()) {
-            Object originalService = original.lookupLocalService(service.getKey(), Object.class);
-            Object novoService = novo.lookupLocalService(service.getKey(), Object.class);
+        for (Entry<String, Pair> service : original.getServices().entrySet()) {
+            Object originalService = original.lookupService(service.getKey(), Object.class);
+            Object novoService = novo.lookupService(service.getKey(), Object.class);
             if (originalService == null) {
                 assertNull(novoService);
-            } else if (novoService == null && !(service.getValue() instanceof ServiceRefTransientValue)) {
+            } else if (novoService == null && !(service.getValue().provider instanceof ServiceRefTransientValue)) {
                 fail("O documento deserializado para o serviço '" + service.getKey() + "' em vez de retorna uma instancia de "
                         + originalService.getClass().getName() + " retornou null");
             }

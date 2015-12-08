@@ -2,7 +2,9 @@ package br.net.mirante.singular.showcase.input.core;
 
 import br.net.mirante.singular.showcase.CaseBase;
 
-public class CaseInputCoreSelectSearch extends CaseBase {
+import java.io.Serializable;
+
+public class CaseInputCoreSelectSearch extends CaseBase implements Serializable {
 
     public CaseInputCoreSelectSearch() {
         super("Single Select", "Search");

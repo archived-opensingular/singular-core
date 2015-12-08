@@ -7,9 +7,9 @@ import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Faz a gestão da referência a anexos mantidos por um documento. Se entender
@@ -20,6 +20,8 @@ import br.net.mirante.singular.form.mform.SingularFormException;
  *
  */
 class AttachmentDocumentService {
+
+    private static final String ATTACHMENT_DOCUMENT_SERVICE = "DefaultAttachmentDocumentService";
 
     private final SDocument document;
 
@@ -54,10 +56,12 @@ class AttachmentDocumentService {
     }
 
     private static AttachmentDocumentService lookup(SDocument document) {
-        AttachmentDocumentService aService = document.lookupLocalService(AttachmentDocumentService.class);
+        AttachmentDocumentService aService = document.lookupService(ATTACHMENT_DOCUMENT_SERVICE,
+            AttachmentDocumentService.class);
         if (aService == null) {
             aService = new AttachmentDocumentService(document);
-            document.bindLocalService(AttachmentDocumentService.class, ServiceRef.ofToBeDescartedIfSerialized(aService));
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, 
+                ServiceRef.ofToBeDescartedIfSerialized(aService));
         }
         return aService;
     }

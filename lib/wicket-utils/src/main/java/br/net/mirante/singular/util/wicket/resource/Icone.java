@@ -51,7 +51,9 @@ public enum Icone {
     USERS /*            */("icon-users"),
     USERS3 /*           */("fa fa-users"),
     VERTICAL_ELLIPSIS /**/("fa fa-ellipsis-v"),
-    WALLET /*           */("icon-wallet");
+    WALLET /*           */("icon-wallet"),
+    PUZZLE /*           */("icon-puzzle"),
+    FOLDER /*           */("icon-folder");
 
     private final String cssClass;
 

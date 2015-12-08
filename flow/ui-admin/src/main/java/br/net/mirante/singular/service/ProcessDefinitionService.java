@@ -8,19 +8,19 @@ import br.net.mirante.singular.dto.MetaDataDTO;
 
 public interface ProcessDefinitionService {
 
-    DefinitionDTO retrieveById(Long id);
+    DefinitionDTO retrieveById(Integer processDefinitionCod);
 
     List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc);
 
     int countAll();
 
-    List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id);
+    List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod);
 
-    int countAll(Long id);
+    int countAll(Integer processDefinitionCod);
 
     byte[] retrieveProcessDiagramFromRestURL(String sigla);
 
     byte[] retrieveProcessDiagram(String sigla);
 
-    List<MetaDataDTO> retrieveMetaData(Long id);
+    List<MetaDataDTO> retrieveMetaData(Integer processDefinitionCod);
 }

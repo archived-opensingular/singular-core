@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.Optional;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -84,7 +85,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
         this.appendInputGroup(componentId -> newInputGroup()
-                .appendExtraClasses("input-medium date date-picker")
+                .appendExtraClasses(" date date-picker ")
                 .appendExtraAttributes(extraAttributes)
                 .appendInputText(datepicker)
                 .appendButtonAddon(Icone.CALENDAR));

@@ -42,14 +42,14 @@ public class MenuServiceImpl implements MenuService {
     @Cacheable(value = "retrieveCategoryDefinitionIdsByCodeMenu", key = "#code", cacheManager = "cacheManager")
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
         Object[] result = categoryMenuDAO.retrieveCategoryDefinitionIdsByCode(code);
-        return new ImmutablePair<>((Long) result[0], (Long) result[1]);
+        return new ImmutablePair<>(((Integer) result[0]).longValue(), ((Integer) result[1]).longValue());
     }
     
     @Override
     @Transactional
     @Cacheable(value = "retrieveAllCategoriesWithAccessMenu", key = "#userId", cacheManager = "cacheManager")
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
-        Set<Long> definitions = new HashSet<>();
+        Set<Integer> definitions = new HashSet<>();
         for (GroupDTO groupDTO : groupDAO.retrieveAll()) {
             definitions.addAll(authorizationFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
         }

@@ -6,24 +6,23 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.net.mirante.singular.persistence.entity.Actor;
-import br.net.mirante.singular.persistence.util.Constants;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.IntegerType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
+import br.net.mirante.singular.persistence.util.Constants;
 
 @Named
 @Transactional

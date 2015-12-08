@@ -22,10 +22,10 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Class responsible for handling the temporary upload of files inside the
