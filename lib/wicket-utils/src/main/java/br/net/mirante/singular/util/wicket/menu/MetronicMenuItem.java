@@ -27,7 +27,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
     private WebMarkupContainer menuItem;
     private PageParameters parameters;
     private Class<? extends IRequestablePage> responsePageClass;
-    private Optional<String> menuItemUrl;
+    private String menuItemUrl;
     private String href;
 
     public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
@@ -59,11 +59,11 @@ public class MetronicMenuItem extends AbstractMenuItem {
         if (href != null) {
             anchor = new WebMarkupContainer("anchor");
             anchor.add($b.attr("href", href));
-            this.menuItemUrl = Optional.ofNullable(href);
+            this.menuItemUrl = href;
         } else if (responsePageClass != null) {
             anchor = new BookmarkablePageLink("anchor", responsePageClass, parameters) {
                 {
-                    menuItemUrl = Optional.ofNullable(getURL().toString());
+                    menuItemUrl = getURL().toString();
                 }
             };
         } else {
@@ -89,13 +89,15 @@ public class MetronicMenuItem extends AbstractMenuItem {
     @Override
     protected boolean configureActiveItem() {
 
-        Pattern onlyLetters = Pattern.compile("[^a-z]");
-        String url = onlyLetters.matcher(getRequest().getUrl().toString()).replaceAll("");
-        String thisUrl = onlyLetters.matcher(menuItemUrl.orElse("")).replaceAll("");
+        if (menuItemUrl != null) {
+            Pattern onlyLetters = Pattern.compile("[^a-z]");
+            String url = onlyLetters.matcher(getRequest().getUrl().toString()).replaceAll("");
+            String thisUrl = onlyLetters.matcher(menuItemUrl).replaceAll("");
 
-        if (url.contains(thisUrl)) {
-            menuItem.add($b.classAppender("active"));
-            return true;
+            if (url.contains(thisUrl)) {
+                menuItem.add($b.classAppender("active"));
+                return true;
+            }
         }
 
         return false;
