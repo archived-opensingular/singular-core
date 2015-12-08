@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
+import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
@@ -27,20 +28,17 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     public void onConfigure(Component component) {
         super.onConfigure(component);
 
-        FormComponent<?> formComponent = (FormComponent<?>) component;
-        formComponent.setEnabled(isInstanceEnabled(component));
-        //        Optional.ofNullable(formComponent.getMetaData(WicketBuildContext.KEY_INSTANCE_CONTAINER))
-        //            .orElse(formComponent)
-        //            .setVisible(isInstanceVisible(formComponent));
-        formComponent.setVisible(isInstanceVisible(formComponent));
+        component.setEnabled(isInstanceEnabled(component));
+        component.setVisible(isInstanceVisible(component));
     }
 
     public void renderHead(Component component, IHeaderResponse response) {
-        response.render(OnDomReadyHeaderItem.forScript(""
-            + "$('label[for=" + component.getMarkupId() + "]')"
-            + ".find('span.required').remove().end()"
-            + ((isInstanceRequired(component)) ? ".append('<span class=\\'required\\'>*</span>')" : "")
-            + ""));
+        if (component instanceof FormComponent<?>)
+            response.render(OnDomReadyHeaderItem.forScript(""
+                + "$('label[for=" + component.getMarkupId() + "]')"
+                + ".find('span.required').remove().end()"
+                + ((isInstanceRequired(component)) ? ".append('<span class=\\'required\\'>*</span>')" : "")
+                + ""));
     }
 
     @Override
@@ -65,19 +63,27 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     }
 
     protected static boolean isInstanceRequired(Component component) {
-        return !Boolean.FALSE.equals(getInstanceFromModel(component).getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
+        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteCore.ATR_OBRIGATORIO));
     }
 
     protected static boolean isInstanceEnabled(Component component) {
-        return !Boolean.FALSE.equals(getInstanceFromModel(component).getValorAtributo(MPacoteBasic.ATR_ENABLED));
+        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteBasic.ATR_ENABLED));
     }
 
     protected static boolean isInstanceVisible(Component component) {
-        return !Boolean.FALSE.equals(getInstanceFromModel(component).getValorAtributo(MPacoteBasic.ATR_VISIVEL));
+        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteBasic.ATR_VISIVEL));
     }
 
-    private static MInstancia getInstanceFromModel(Component component) {
-        IModel<?> model = component.getDefaultModel();
-        return ((IMInstanciaAwareModel<?>) model).getMInstancia();
+    private static <V extends Object> V getValorAtributo(Component component, AtrRef<?, ?, V> atr) {
+        if (component != null) {
+            IModel<?> model = component.getDefaultModel();
+            if (model != null) {
+                MInstancia instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+                if (instance != null) {
+                    return instance.getValorAtributo(atr);
+                }
+            }
+        }
+        return null;
     }
 }
