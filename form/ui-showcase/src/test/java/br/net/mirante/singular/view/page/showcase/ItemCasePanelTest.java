@@ -26,7 +26,7 @@ public class ItemCasePanelTest extends TestCase {
 
     @Before
     public void setup() {
-        wt = new WicketTester(app);
+        wt = new WicketTester(app, false);
         cb = new CaseInputCoreInteger();
     }
 

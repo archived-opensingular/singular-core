@@ -24,7 +24,7 @@ public class ComponentPageTest extends TestCase {
 
     @Before
     public void setup() {
-        wt = new WicketTester(app);
+        wt = new WicketTester(app, false);
     }
 
     @Test
