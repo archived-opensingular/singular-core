@@ -77,13 +77,13 @@ public class ProcessosContent extends Content implements SingularWicketContainer
         };
 
         queue(new BSDataTableBuilder<>(dataProvider)
-                .appendPropertyColumn(getMessage("label.table.column.code"), "cod", IDefinitionDTO::getCod)
-                .appendPropertyColumn(getMessage("label.table.column.name"), "name", IDefinitionDTO::getNome)
-                .appendPropertyColumn(getMessage("label.table.column.category"), "category", IDefinitionDTO::getCategoria)
-                .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", IDefinitionDTO::getQuantidade)
-                .appendPropertyColumn(getMessage("label.table.column.time"), "time", IDefinitionDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", IDefinitionDTO::getThroughput)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", IDefinitionDTO::getVersion)
+                .appendPropertyColumn(getMessage("label.table.column.code"), "pd.cod", IDefinitionDTO::getCod)
+                .appendPropertyColumn(getMessage("label.table.column.name"), "pd.name", IDefinitionDTO::getNome)
+                .appendPropertyColumn(getMessage("label.table.column.category"), "cd.name", IDefinitionDTO::getCategoria)
+                .appendPropertyColumn(getMessage("label.table.column.quantity"), "count(distinct pi)", IDefinitionDTO::getQuantidade)
+                .appendPropertyColumn(getMessage("label.table.column.time"), "cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long)", IDefinitionDTO::getTempoMedioString)
+                .appendPropertyColumn(getMessage("label.table.column.throu"), IDefinitionDTO::getThroughput)
+                .appendPropertyColumn(getMessage("label.table.column.version"), IDefinitionDTO::getVersion)
                 .appendColumn(new BSActionColumn<IDefinitionDTO, String>(WicketUtils.$m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                             getPage().getPageParameters().add("sigla", model.getObject().getSigla());

@@ -127,4 +127,10 @@ public class DefinitionDTO implements IDefinitionDTO {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+    @Override
+    public String toString() {
+        return "DefinitionDTO [cod=" + cod + ", nome=" + nome + ", sigla=" + sigla + ", categoria=" + categoria + ", codGrupo=" + codGrupo + ", quantidade=" + quantidade + ", tempoMedio=" + tempoMedio + ", throughput=" + throughput + ", version=" + version + "]";
+    }
+    
 }

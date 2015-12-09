@@ -2,7 +2,6 @@ package br.net.mirante.singular.service;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -42,11 +41,7 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     @Override
     @Transactional
     public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
-        return results.stream()
-                .map(o -> new DefinitionDTO((Integer) o[0], (String) o[1], (String) o[2], (String) o[3],
-                    (String) o[4],(Long) o[5], (Long) o[6], (Long) o[7]))
-                .collect(Collectors.toList());
+        return definitionDAO.retrieveAll(first, size, orderByProperty, asc);
     }
 
     @Override
