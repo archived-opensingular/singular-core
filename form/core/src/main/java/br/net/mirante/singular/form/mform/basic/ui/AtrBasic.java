@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AtrBasic extends MTranslatorParaAtributo {
 
@@ -100,11 +100,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
     //        return (IBehavior<MInstancia>) getAlvo().getValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR.getNomeCompleto());
     //    }
 
-    public AtrBasic multiLinha(Boolean valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
-        return this;
-    }
-
     public String getLabel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_LABEL);
     }
@@ -129,7 +124,4 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
     }
 
-    public Boolean isMultiLinha() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_MULTI_LINHA);
-    }
 }

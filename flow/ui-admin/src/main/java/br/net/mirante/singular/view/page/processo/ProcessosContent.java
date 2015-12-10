@@ -82,8 +82,8 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                 .appendPropertyColumn(getMessage("label.table.column.category"), "category", IDefinitionDTO::getCategoria)
                 .appendPropertyColumn(getMessage("label.table.column.quantity"), "quantity", IDefinitionDTO::getQuantidade)
                 .appendPropertyColumn(getMessage("label.table.column.time"), "time", IDefinitionDTO::getTempoMedioString)
-                .appendPropertyColumn(getMessage("label.table.column.throu"), "throu", IDefinitionDTO::getThroughput)
-                .appendPropertyColumn(getMessage("label.table.column.version"), "version", IDefinitionDTO::getVersion)
+                .appendPropertyColumn(getMessage("label.table.column.throu"), IDefinitionDTO::getThroughput)
+                .appendPropertyColumn(getMessage("label.table.column.version"), IDefinitionDTO::getVersion)
                 .appendColumn(new BSActionColumn<IDefinitionDTO, String>(WicketUtils.$m.ofValue(""))
                         .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                             getPage().getPageParameters().add("sigla", model.getObject().getSigla());

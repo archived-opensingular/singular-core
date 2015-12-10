@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;

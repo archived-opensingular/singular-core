@@ -5,6 +5,7 @@ import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -34,6 +35,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)
+            .addCase(CaseInputCoreTextArea.class)
             .addCase(CaseInputCoreDecimal.class);
         group("File", Icone.FOLDER)
                 .addCase(CaseFileAttachment.class);
@@ -43,7 +45,8 @@ public class ShowCaseTable {
                 .addCase(CaseGridTable.class);
         group("Validation", Icone.BAN)
                 .addCase(CaseValidationRequired.class)
-                .addCase(CaseValidationCustom.class);
+                .addCase(CaseValidationCustom.class)
+                .addCase(CaseValidationBetweenFields.class);
         //@formatter:on
     }
 
