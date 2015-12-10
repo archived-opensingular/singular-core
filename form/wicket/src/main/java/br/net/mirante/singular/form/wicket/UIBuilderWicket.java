@@ -40,16 +40,25 @@ public class UIBuilderWicket {
     }
 
     public static void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+        build(ctx, model, ViewMode.EDITION);
+    }
+
+    public static void buildForView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+        build(ctx, model, ViewMode.VISUALIZATION);
+    }
+
+    public static void build(WicketBuildContext ctx, IModel<? extends MInstancia> model, ViewMode viewMode) {
         Object obj = model.getObject();
         MInstancia instancia = (MInstancia) obj;
         MView view = ViewResolver.resolve(instancia);
-        
+
         ctx.init(model);
-        
+
         IWicketComponentMapper mapper = MAPPERS.getMapper(instancia, view)
                 .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
-        mapper.buildView(ctx, view, model, ViewMode.EDITION);
+        mapper.buildView(ctx, view, model, viewMode);
     }
+
 
     private static SingularFormException createErro(MInstancia instancia, MView view, String msg) {
         return new SingularFormException(
