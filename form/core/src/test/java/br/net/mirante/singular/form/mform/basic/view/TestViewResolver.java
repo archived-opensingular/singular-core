@@ -36,10 +36,10 @@ public class TestViewResolver {
     public void testTipoSimplesSelectOf() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoSimples<?, ?> tipoInteger = pb.createTipo("Integer", MTipoInteger.class).withSelectionOf(repeate(1, 2));
-        MTipoSimples<?, ?> tipoDate = pb.createTipo("Date", MTipoData.class).withSelectionOf(repeate(new Date(), 2));
-        MTipoSimples<?, ?> tipoString = pb.createTipo("String", MTipoString.class).withSelectionOf(repeate("A", 2));
-        MTipoSimples<?, ?> tipoStringLarge = pb.createTipo("StringLarge", MTipoString.class).withSelectionOf(repeate("A", 5));
+        MTipoSimples<?, ?> tipoInteger = pb.createTipo("Integer", MTipoInteger.class).withSelectionOf(repeate(1, 2).toArray(new Integer[]{}));
+        MTipoSimples<?, ?> tipoDate = pb.createTipo("Date", MTipoData.class).withSelectionOf(repeate(new Date(), 2).toArray(new Date[]{}));
+        MTipoSimples<?, ?> tipoString = pb.createTipo("String", MTipoString.class).withSelectionOf(repeate("A", 2).toArray(new String[]{}));
+        MTipoSimples<?, ?> tipoStringLarge = pb.createTipo("StringLarge", MTipoString.class).withSelectionOf(repeate("A", 5).toArray(new String[]{}));
 
         assertView(MSelecaoPorSelectView.class, tipoInteger);
         assertView(MSelecaoPorSelectView.class, tipoDate);

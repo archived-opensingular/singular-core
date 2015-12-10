@@ -38,6 +38,7 @@ public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<
      * MILista&lt;MIString> lista2 = tipoLista.novaInstancia(MIString.class);
      * </pre>
      */
+    @SuppressWarnings("unchecked")
     public <T extends MInstancia> MILista<T> novaInstancia(Class<T> classOfElements) {
         MILista<?> nova = novaInstancia();
         if (!classOfElements.isAssignableFrom(getTipoElementos().getClasseInstancia())) {
@@ -75,6 +76,7 @@ public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<
      * nome infomado. O novo tipo é criado sem campos, devendo ser estruturado
      * na sequencia.
      */
+    @SuppressWarnings("unchecked")
     void setTipoElementosNovoTipoComposto(String nomeSimplesNovoTipoComposto) {
         MTipoComposto<?> tipo = extenderTipo(nomeSimplesNovoTipoComposto, MTipoComposto.class);
         setTipoElementos((E) tipo);

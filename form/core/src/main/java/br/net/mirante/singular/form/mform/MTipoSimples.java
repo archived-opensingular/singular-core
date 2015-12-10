@@ -1,18 +1,19 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.Collection;
-
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.MSelectionableType;
 
+@SuppressWarnings("rawtypes")
 @MInfoTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
-public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends MTipo<I> {
+public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> 
+    extends MTipo<I> 
+    implements MSelectionableType<MTipoSimples>{
 
     private final Class<TIPO_NATIVO> classeTipoNativo;
 
@@ -34,10 +35,10 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
-
-    public MOptionsProvider selectionOf(Collection<TIPO_NATIVO> opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return optionsProvider;
+    
+    @Override
+    public void setProviderOpcoes(MOptionsProvider p) {
+        optionsProvider = p;
     }
 
     @SuppressWarnings("unchecked")
@@ -45,58 +46,12 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return optionsProvider;
     }
-
-    /**
-     * Register a collection of options to be selected for this field.
-     * Laso restricts the range of values available for the field.
-     * 
-     * @param options Collection of values to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(Collection<TIPO_NATIVO> options) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, options);
-        return this;
-    }
     
-    /**
-     * Register a collection of options to be selected for this field.
-     * Laso restricts the range of values available for the field.
-     * 
-     * @param options Collection of values to be used.
-     * @return <code>this</code>
-     */
     @SuppressWarnings("unchecked")
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
         optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return this;
     }
-    
-    /**
-     * Registers the name of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
-     * 
-     * @param providerName : Name of the {@link MOptionsProvider} to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(final String providerName) {
-        optionsProvider = new LookupOptionsProvider(providerName);
-        return this;
-    }
-    
-    /**
-     * Registers the class of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
-     * @param providerClass : Class of the {@link MOptionsProvider} to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
-        optionsProvider = new LookupOptionsProvider(providerClass);
-        return this;
-    }
-
-    // SELECTION OF END
     
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());

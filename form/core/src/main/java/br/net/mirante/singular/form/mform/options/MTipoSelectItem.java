@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform.options;
 
-import java.util.Collection;
-
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -11,7 +9,8 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
 @MInfoTipo(nome = "SelectItem", pacote = MPacoteCore.class)
-public class MTipoSelectItem extends MTipoComposto<MISelectItem> {
+public class MTipoSelectItem extends MTipoComposto<MISelectItem>
+    implements MSelectionableType{
     private MOptionsProvider optionsProvider;
     
     protected static final String FIELD_ID = "id", FIELD_VALUE = "value";
@@ -54,65 +53,8 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem> {
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
-
-    public MOptionsProvider selectionOf(Collection<MISelectItem> opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return optionsProvider;
-    }
-
-    protected MOptionsProvider selectionOf(MISelectItem ... opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return optionsProvider;
-    }
-
-    /**
-     * Register a collection of options to be selected for this field.
-     * Laso restricts the range of values available for the field.
-     * 
-     * @param options Collection of values to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSelectItem withSelectionOf(Collection<MISelectItem> options) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, options);
-        return this;
-    }
     
-    /**
-     * Register a collection of options to be selected for this field.
-     * Laso restricts the range of values available for the field.
-     * 
-     * @param options Collection of values to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSelectItem withSelectionOf(MISelectItem ... opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return this;
+    public void setProviderOpcoes(MOptionsProvider p){
+        optionsProvider = p;
     }
-    
-    /**
-     * Registers the name of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
-     * 
-     * @param providerName : Name of the {@link MOptionsProvider} to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSelectItem withSelectionFromProvider(final String providerName) {
-        optionsProvider = new LookupOptionsProvider(providerName);
-        return this;
-    }
-    
-    /**
-     * Registers the class of the provider used to load options for this type.
-     * This provider will be loaded from the SDocument attached to the Minstance
-     * enclosing this type.
-     * @param providerClass : Class of the {@link MOptionsProvider} to be used.
-     * @return <code>this</code>
-     */
-    public MTipoSelectItem withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
-        optionsProvider = new LookupOptionsProvider(providerClass);
-        return this;
-    }
-
-    // SELECTION OF END
 }

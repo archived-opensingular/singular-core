@@ -15,8 +15,28 @@ public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addMultiSelection(pb, tipoMyForm, 3);
+        
+//        MTipoLista<MTipoSelectItem,MISelectItem> sexo = tipoMyForm.addCampoListaOf("sexo", 
+//            MTipoSelectItem.class);
+//        sexo.withSelectionOf(
+//                MISelectItem.create("M", "Masculino", pb.getDicionario()),
+//                MISelectItem.create("F", "Feminino", pb.getDicionario()),
+//                MISelectItem.create("X", "Não Declarar", pb.getDicionario())
+//            );
+        
         addMultiSelection(pb, tipoMyForm, 15);
         addMultiSelection(pb, tipoMyForm, 25);
+        
+//        MTipoLista<MTipoSelectItem,MISelectItem> ingredienteQuimico = tipoMyForm.addCampoListaOf("ingredienteQuimico",
+//            MTipoSelectItem.class);
+//        ingredienteQuimico.withSelectionOf(
+//                MISelectItem.create("h2o", "Água", pb.getDicionario()),
+//                MISelectItem.create("h2o2", "Água Oxigenada", pb.getDicionario()),
+//                MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
+//                MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
+//            );
+//        ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
+        
     }
 
     private static void addMultiSelection(PacoteBuilder pb, MTipoComposto<?> tipoMyForm, int size) {
