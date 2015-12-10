@@ -47,6 +47,16 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
+    public AtrBasic tamanhoInteiroMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO, valor);
+        return this;
+    }
+
+    public AtrBasic tamanhoDecimalMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO, valor);
+        return this;
+    }
+
     public AtrBasic visivel(Boolean valor) {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIVEL, valor);
         return this;

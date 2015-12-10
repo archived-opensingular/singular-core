@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
+import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.SelectModalBuscaMapper;
 import org.apache.wicket.model.IModel;
 
@@ -66,6 +68,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MGridListaView.class,                  PanelListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
+        MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
         //@formatter:on
     }
 
