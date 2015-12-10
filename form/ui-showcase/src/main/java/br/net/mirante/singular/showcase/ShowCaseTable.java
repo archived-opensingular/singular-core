@@ -35,7 +35,8 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)
-            .addCase(CaseInputCoreTextArea.class);
+            .addCase(CaseInputCoreTextArea.class)
+            .addCase(CaseInputCoreDecimal.class);
         group("File", Icone.FOLDER)
                 .addCase(CaseFileAttachment.class);
         group("Layout", Icone.GRID)

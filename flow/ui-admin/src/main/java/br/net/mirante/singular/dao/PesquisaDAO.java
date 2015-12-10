@@ -27,14 +27,14 @@ public class PesquisaDAO extends BaseDAO{
     private static final int MAX_MAP_SIZE = 7;
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
-        Query hqlQuery = getSession().createQuery("select pd.key as sigla, pd.name as nome, "
-            + "avg(((cast(pi.endDate as double)) - (cast(pi.beginDate as double)))) as mean "
+        Query hqlQuery = getSession().createQuery("select pd.key as SIGLA, pd.name as NOME, "
+            + "trim(str(avg(((cast(pi.endDate as double)) - (cast(pi.beginDate as double)))))) as MEAN "
             + "from ProcessInstanceEntity pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null "
             + (period != null ? "and pi.beginDate >= :startPeriod and pi.endDate <= :endPeriod " : "")
             + (processCode != null ? " and pd.key = :processCode " : "")
             + "and pd.key in(:processCodeWithAccess) "
-            + "group by pd.key, pd.name order by mean desc");
+            + "group by pd.key, pd.name order by MEAN desc");
         hqlQuery.setParameterList("processCodeWithAccess", processCodeWithAccess).setMaxResults(15).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         if (period != null) {
             hqlQuery.setParameter("startPeriod", periodFromNow(period));
@@ -76,12 +76,12 @@ public class PesquisaDAO extends BaseDAO{
     }
 
     private List<Map<String, String>> retrieveMeanTimeByTasks(Period period, String processCode, int max) {
-        Query hqlQuery = getSession().createQuery("select ti.task.name as nome, pd.cod as cod, pd.name as nome_definicao, "
-            + " avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as mean "
+        Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, pd.cod as COD, pd.name as NOME_DEFINICAO, "
+            + " avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
             + "and ti.task.type <> :taskEnd "
-            + "group by ti.task.name, pd.cod, pd.name order by mean desc");
+            + "group by ti.task.name, pd.cod, pd.name order by MEAN desc");
         hqlQuery.setMaxResults(max)
             .setParameter("startPeriod", periodFromNow(period))
             .setParameter("processCode", processCode)
@@ -93,11 +93,11 @@ public class PesquisaDAO extends BaseDAO{
 
     @SuppressWarnings("rawtypes")
     private Map<String, String> retrieveMeanTimeByOthers(Period period, String processCode, int max) {
-        Query hqlQuery = getSession().createQuery("select pd.name as nome_definicao, avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as mean "
+        Query hqlQuery = getSession().createQuery("select pd.name as NOME_DEFINICAO, avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
             + "and ti.task.type <> :taskEnd "
-            + "group by pd.cod, pd.name,ti.task.name order by mean");
+            + "group by pd.cod, pd.name,ti.task.name order by MEAN");
         hqlQuery.setMaxResults(max)
             .setParameter("startPeriod", periodFromNow(period))
             .setParameter("processCode", processCode)
@@ -105,22 +105,22 @@ public class PesquisaDAO extends BaseDAO{
             .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         
         Map map = new HashMap(4);
-        map.put("nome", "Outras");
-        map.put("cod", 0);
-        map.put("mean", 0.0);
+        map.put("NOME", "Outras");
+        map.put("COD", 0);
+        map.put("MEAN", 0.0);
         for (Map<String, Object> result : (List<Map<String, Object>>) hqlQuery.list()) {
-            map.put("nome_definicao", result.get("nome_definicao"));
-            map.put("mean", ((Double)map.get("mean")) + Math.round((Double)result.get("mean")));
+            map.put("NOME_DEFINICAO", result.get("NOME_DEFINICAO"));
+            map.put("MEAN", ((Double)map.get("MEAN")) + Math.round((Double)result.get("MEAN")));
         }
         return map;
     }
 
     public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
-        Query hqlQuery = getSession().createQuery("select ti.task.name as nome, count(distinct pi.cod) as quantidade, "
-            + "avg(((cast(current_date() as double)) - (cast(ti.beginDate as double))) * (24 * 60 * 60)) / (24 * 60 * 60) as tempo "
+        Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, count(distinct pi.cod) as QUANTIDADE, "
+            + "avg(((cast(current_date() as double)) - (cast(ti.beginDate as double))) * (24 * 60 * 60)) / (24 * 60 * 60) as TEMPO "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is null and ti.endDate is null and pd.key = :processCode "
-            + "group by ti.task.name order by quantidade desc");
+            + "group by ti.task.name order by QUANTIDADE desc");
         hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .setParameter("processCode", processCode);
         
