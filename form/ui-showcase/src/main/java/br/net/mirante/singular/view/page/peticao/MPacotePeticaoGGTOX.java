@@ -96,7 +96,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         componentes
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Componente").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Componente");
 
         componente.as(AtrBasic::new).label("Registro de Componente");
 
@@ -145,7 +145,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         sinonimias
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Lista de sinonímias sugeridas para esta substância/mistura").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Lista de sinonímias sugeridas para esta substância/mistura");
 
         MTipoComposto<MIComposto> finalidadesComponente = componente.addCampoComposto("finalidadesComponente");
 
@@ -189,11 +189,11 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         fabricantes
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Fabricante(s)").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Fabricante(s)");
 
         nomesComerciais
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Nome comercial").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Nome comercial");
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> embalagens = componente.addCampoListaOfComposto("embalagens", "embalagem");
         MTipoComposto<MIComposto> embalagem = embalagens.getTipoElementos();
@@ -230,14 +230,14 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         embalagens
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Embalagem").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Embalagem");
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> anexos = componente.addCampoListaOfComposto("anexos", "anexo");
         MTipoComposto<MIComposto> anexo = anexos.getTipoElementos();
 
         anexos
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Anexos").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Anexos");
 
         MTipoAttachment arquivo = anexo.addCampo("arquivo", MTipoAttachment.class);
         arquivo.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo");
@@ -296,7 +296,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         testes
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Testes Características fisíco-químicas").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Testes Características fisíco-químicas");
 
         teste.as(AtrBasic::new).label("Características fisíco-químicas")
                 .as(AtrWicket::new).larguraPref(4);
@@ -398,7 +398,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         phs
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Embalagem").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Embalagem");
 
         teste.addCampoString("coeficienteParticao")
                 .as(AtrBasic::new).label("Coeficiente de partição octanol/Água a 20-25 ºC");
@@ -420,7 +420,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         testes
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
 
         teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
                 .as(AtrWicket::new).larguraPref(4);

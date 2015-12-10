@@ -25,7 +25,7 @@ public class CaseGridListPackage extends MPacote {
 
         {
             experiencias.withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(1);
+                    .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
                     .as(AtrWicket::new).larguraPref(2);

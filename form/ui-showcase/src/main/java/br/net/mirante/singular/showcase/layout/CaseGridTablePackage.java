@@ -24,7 +24,7 @@ public class CaseGridTablePackage extends MPacote {
         {
             certificacoes
                     .withView(MTableListaView::new)
-                    .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
+                    .as(AtrBasic::new).label("Certificações");
             certificacao
                     .as(AtrBasic::new).label("Certificação");
             dataCertificacao

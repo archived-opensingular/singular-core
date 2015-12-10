@@ -98,7 +98,7 @@ public class MPacoteCurriculo extends MPacote {
         {
             formacao
                 .withView(MGridListaView::new)
-                .as(AtrBasic::new).label("Formação Acadêmica").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Formação Acadêmica");
             academicoTipo
                 .withView(MSelecaoPorRadioView::new)
                 .as(AtrBasic::new).label("Tipo")
@@ -130,7 +130,7 @@ public class MPacoteCurriculo extends MPacote {
         {
             experiencias
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(2);
+                .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                 .as(AtrBasic::new).label("Data inicial")
                 .as(AtrWicket::new).larguraPref(2);
@@ -156,7 +156,7 @@ public class MPacoteCurriculo extends MPacote {
         {
             certificacoes
                 .withView(MTableListaView::new)
-                .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
+                .as(AtrBasic::new).label("Certificações");
             certificacao
                 .as(AtrBasic::new).label("Certificação");
             dataCertificacao
