@@ -9,4 +9,9 @@ public class MIString extends MIComparable<String> {
     public MTipoString getMTipo() {
         return (MTipoString) super.getMTipo();
     }
+    
+    @Override
+    public String toString() {
+        return String.format("MIString('%s')", getValor());
+    }
 }

@@ -32,8 +32,7 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
         return null;
     }
 
- // TODO: [Fabs] this decision is strange to apply when the value
-    // is dynamic
+    //TODO: [Fabs] this decision is strange to apply when the value is dynamic
     private MView decideView(MInstancia instance, MInstancia simple, MOptionsProvider provider) {
         int size = provider.listAvailableOptions(instance).size();
         if (size <= 3 && simple.getMTipo().isObrigatorio()) {

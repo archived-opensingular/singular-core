@@ -59,7 +59,6 @@ public class SelectOption<T> implements IModel {
         boolean eq = true;
         SelectOption op = (SelectOption) obj;
         eq &= key != null && key.equals(op.key);
-//        eq &= value != null && value.equals(op.value);
         
         return eq;
     }
@@ -68,7 +67,6 @@ public class SelectOption<T> implements IModel {
     public int hashCode() {
         int hash = 1;
         if(key != null) hash += key.hashCode();
-//        if(value != null) hash += value.hashCode();
         return hash;
     }
 }

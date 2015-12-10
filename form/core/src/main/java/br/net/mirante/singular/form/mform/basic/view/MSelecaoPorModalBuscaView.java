@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.basic.view;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
+@SuppressWarnings("serial")
 public class MSelecaoPorModalBuscaView extends MView {
 
     private String tituloModal;

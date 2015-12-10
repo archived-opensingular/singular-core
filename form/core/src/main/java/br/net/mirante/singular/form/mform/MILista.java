@@ -251,4 +251,9 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         }
         return true;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("MILista(%s)", getAllChildren());
+    }
 }

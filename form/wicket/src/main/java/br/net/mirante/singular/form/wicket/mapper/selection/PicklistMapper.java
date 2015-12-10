@@ -6,15 +6,15 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.wicket.mapper.MultipleSelectMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 @SuppressWarnings("serial")
 public class PicklistMapper extends MultipleSelectMapper {
 
     @Override
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-            final List<String> opcoesValue) {
+    protected Component formGroupAppender(BSControls formGroup, 
+            IModel<? extends MInstancia> model,
+            final List<SelectOption<String>> opcoesValue) {
         return formGroup.appendPicklist(retrieveChoices(model, opcoesValue));
     }
 }

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
@@ -12,9 +12,11 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 public class MultipleSelectBSMapper extends MultipleSelectMapper {
 
     @Override
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-            final List<String> opcoesValue) {
-        final ListMultipleChoice<String> choices = retrieveChoices(model, opcoesValue);
+    protected Component formGroupAppender(BSControls formGroup, 
+        IModel<? extends MInstancia> model,
+            final List<SelectOption<String>> opcoesValue) {
+        final ListMultipleChoice<SelectOption<String>> choices = 
+                                            retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setMaxRows(5), true);
         return choices;
     }

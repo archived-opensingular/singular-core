@@ -19,7 +19,7 @@ public class RadioMapper extends SelectMapper {
             final List<SelectOption<String>> opcoesValue) {
         String id = model.getObject().getNome();
         return new RadioChoice<SelectOption<String>>(id, 
-                (IModel)new MSelectionInstanceModel(model), opcoesValue, rendererer()) {
+                (IModel)new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer()) {
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption<String> choice) {
                 IValueMap map = new ValueMap();

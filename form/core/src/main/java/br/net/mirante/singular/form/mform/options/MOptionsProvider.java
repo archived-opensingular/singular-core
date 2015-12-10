@@ -37,8 +37,31 @@ public interface MOptionsProvider extends Serializable {
         Object value = optionsInstance.getValor();
         if( value == null ) return;
         if( value instanceof Collection && ((Collection<?>)value).isEmpty()) return;
-        if(!containsValue(defaultOptions, optionsInstance)){
-            addNewValueUpfront(defaultOptions, optionsInstance);
+        addNotPresentElement(optionsInstance, defaultOptions);
+    }
+
+    public default void addNotPresentElement(MInstancia optionsInstance, 
+            MILista<? extends MInstancia> defaultOptions) {
+        if(optionsInstance instanceof MILista){
+            addNotPresentElementsOfList(optionsInstance, defaultOptions);
+        } else{
+            addNotPresentElement(defaultOptions, optionsInstance);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public default void addNotPresentElementsOfList(MInstancia optionsInstance, 
+            MILista<? extends MInstancia> defaultOptions) {
+        MILista selected = (MILista) optionsInstance;
+        for(MInstancia subValue : selected.getAllChildren()){
+            addNotPresentElement(defaultOptions, subValue);
+        }
+    }
+
+    public default void addNotPresentElement(
+            MILista<? extends MInstancia> defaultOptions, MInstancia subValue) {
+        if(!containsValue(defaultOptions, subValue)){
+            addNewValueUpfront(defaultOptions, subValue);
         }
     }
 

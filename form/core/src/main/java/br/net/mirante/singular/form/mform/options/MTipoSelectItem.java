@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 
 @MInfoTipo(nome = "SelectItem", pacote = MPacoteCore.class)
 public class MTipoSelectItem extends MTipoComposto<MISelectItem>
-    implements MSelectionableType{
+    implements MSelectionableType<MTipoSelectItem>{
     private MOptionsProvider optionsProvider;
     
     protected static final String FIELD_ID = "id", FIELD_VALUE = "value";

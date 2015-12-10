@@ -7,6 +7,8 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
 
@@ -16,26 +18,29 @@ public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
 
         addMultiSelection(pb, tipoMyForm, 3);
         
-//        MTipoLista<MTipoSelectItem,MISelectItem> sexo = tipoMyForm.addCampoListaOf("sexo", 
-//            MTipoSelectItem.class);
-//        sexo.withSelectionOf(
-//                MISelectItem.create("M", "Masculino", pb.getDicionario()),
-//                MISelectItem.create("F", "Feminino", pb.getDicionario()),
-//                MISelectItem.create("X", "Não Declarar", pb.getDicionario())
-//            );
+        MTipoSelectItem tipoSexo = pb.createTipo("sexo", MTipoSelectItem.class);
+        tipoSexo.withSelectionOf(
+                MISelectItem.create("M", "Masculino", pb.getDicionario()),
+                MISelectItem.create("F", "Feminino", pb.getDicionario()),
+                MISelectItem.create("X", "Não Declarar", pb.getDicionario())
+            );
+        
+        MTipoLista<MTipoSelectItem, MISelectItem> sexField = tipoMyForm.addCampoListaOf("sex", tipoSexo);
+        sexField.as(AtrBasic::new).label("Sexo");
         
         addMultiSelection(pb, tipoMyForm, 15);
         addMultiSelection(pb, tipoMyForm, 25);
         
-//        MTipoLista<MTipoSelectItem,MISelectItem> ingredienteQuimico = tipoMyForm.addCampoListaOf("ingredienteQuimico",
-//            MTipoSelectItem.class);
-//        ingredienteQuimico.withSelectionOf(
-//                MISelectItem.create("h2o", "Água", pb.getDicionario()),
-//                MISelectItem.create("h2o2", "Água Oxigenada", pb.getDicionario()),
-//                MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
-//                MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
-//            );
-//        ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
+        MTipoSelectItem tipoIngrediente = pb.createTipo("tipoIngrediente", MTipoSelectItem.class);
+        tipoIngrediente.withSelectionOf(
+                MISelectItem.create("h2o", "Água", pb.getDicionario()),
+                MISelectItem.create("h2o2", "Água Oxigenada", pb.getDicionario()),
+                MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
+                MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
+            );
+        MTipoLista<MTipoSelectItem, MISelectItem> ingredienteQuimico = 
+            tipoMyForm.addCampoListaOf("ingredientes", tipoIngrediente);
+        ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
         
     }
 
