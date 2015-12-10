@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
@@ -35,6 +37,7 @@ public class MCPFValidator extends AbstractValueValidator<MIString, String> {
 
     private boolean isValid(String cpf) {
         try {
+            cpf = unmask(cpf);
             if (invalidPatterns.contains(cpf)) {
                 return false;
             }
@@ -77,5 +80,21 @@ public class MCPFValidator extends AbstractValueValidator<MIString, String> {
         }
 
         return false;
+    }
+
+
+    private String unmask(String cnpj) {
+        StringBuilder sb = new StringBuilder();
+        Pattern p = Pattern.compile("[0-9]?");
+        Matcher m = p.matcher(cnpj);
+        while (m.find()) {
+            if (m.groupCount() > 0) {
+                for (int i = 0; i < m.groupCount(); i++) {
+                    sb.append(m.group(i));
+                }
+            }
+            sb.append(m.group());
+        }
+        return sb.toString();
     }
 }

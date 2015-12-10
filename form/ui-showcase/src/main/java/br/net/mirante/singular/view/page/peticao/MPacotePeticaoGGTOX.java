@@ -1,17 +1,8 @@
 package br.net.mirante.singular.view.page.peticao;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
@@ -416,8 +407,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrBasic::new).label("Densidade (g/cm³ a 20ºC)");
 
         teste.addCampoString("observacoes")
-                .as(AtrBasic::new).label("Observações")
-                .multiLinha(true);
+                .withView(MTextAreaView::new)
+                .as(AtrBasic::new).label("Observações");
     }
 
     private void addTesteIrritacaoOcular(PacoteBuilder pb, MTipoComposto<?> componente) {
@@ -517,8 +508,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoString("observacoes")
-                .as(AtrBasic::new).label("Observações")
-                .multiLinha(true);
+                .withView(MTextAreaView::new)
+                .as(AtrBasic::new).label("Observações");
 
     }
 

@@ -1,11 +1,8 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.common.base.Optional;
+import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -17,9 +14,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -115,8 +113,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("p", true, "class='form-control-static'", text);
     }
 
-    public BSControls appendTextarea(Component textarea) {
-        return super.appendTag("textarea", true, "class='form-control' rows='3'", textarea);
+    public BSControls appendTextarea(Component textarea, Integer linhas) {
+        return super.appendTag("textarea", true, "class='form-control' rows='"+linhas+"'", textarea);
     }
 
     public BSControls appendTypeahead(Component typeahead) {
