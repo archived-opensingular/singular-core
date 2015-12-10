@@ -108,7 +108,11 @@ class MSelectionInstanceModel implements IModel<SelectOption>,
         }
         else if(instance instanceof MISelectItem) {
             MISelectItem item = (MISelectItem) instance;
-            item.setValorItem(object.getKey(), object.getValue()); 
+            if(object != null){
+                item.setValorItem(object.getKey(), object.getValue());
+            }else{
+                item.setValorItem(null, null); 
+            }
         }
     }
 
