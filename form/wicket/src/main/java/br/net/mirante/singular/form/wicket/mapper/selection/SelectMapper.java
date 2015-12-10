@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -12,7 +12,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -20,7 +19,7 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
@@ -73,57 +72,4 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("value", "key");
         return choiceRenderer;
     }
-}
-
-@SuppressWarnings({ "serial", "rawtypes" })
-class MSelectionInstanceModel implements IModel<SelectOption>,
-    IMInstanciaAwareModel<SelectOption>{
-
-    private IModel<? extends MInstancia> model;
-    
-    public MSelectionInstanceModel(IModel<? extends MInstancia> instanciaModel) {
-        this.model = instanciaModel;
-    }
-    
-    @Override
-    public SelectOption getObject() {
-        if(model.getObject() instanceof MISimples){
-            Object value = ((MISimples) model.getObject()).getValor();
-            String v = value != null ? value.toString() : null;
-            return new SelectOption<String>(v, v);
-        }else if (model.getObject() instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) model.getObject();
-            return new SelectOption<String>(item.getFieldId(), item.getFieldValue());
-        }
-        return null;
-    }
-
-    @Override
-    public void setObject(SelectOption object) {
-        MInstancia instance = model.getObject();
-        if(instance instanceof MISimples){
-            Object value = null;
-            if(object != null) value = object.getValue();
-            instance.setValor(value);
-        }
-        else if(instance instanceof MISelectItem) {
-            MISelectItem item = (MISelectItem) instance;
-            if(object != null){
-                item.setValorItem(object.getKey(), object.getValue());
-            }else{
-                item.setValorItem(null, null); 
-            }
-        }
-    }
-
-    @Override
-    public void detach() {
-        model.detach();
-    }
-
-    @Override
-    public MInstancia getMInstancia() {
-        return model.getObject();
-    }
-    
 }

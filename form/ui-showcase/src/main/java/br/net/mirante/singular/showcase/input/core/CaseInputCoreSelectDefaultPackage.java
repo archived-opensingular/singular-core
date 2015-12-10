@@ -15,6 +15,15 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addSelection(tipoMyForm, 3, true);
+        
+        MTipoSelectItem sexo = tipoMyForm.addCampo("sexo",
+            MTipoSelectItem.class,true);
+        sexo.withSelectionOf(
+                MISelectItem.create("M", "Masculino", pb.getDicionario()),
+                MISelectItem.create("F", "Feminino", pb.getDicionario()),
+                MISelectItem.create("X", "Não Declarar", pb.getDicionario())
+            );
+        
         addSelection(tipoMyForm, 3, false);
         addSelection(tipoMyForm, 10, false);
         

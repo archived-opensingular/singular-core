@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
@@ -9,18 +9,17 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
+@SuppressWarnings("serial")
 public class RadioMapper extends SelectMapper {
 
-    @Override
+    @Override @SuppressWarnings({ "rawtypes", "unchecked" })
     protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
             final List<SelectOption<String>> opcoesValue) {
         String id = model.getObject().getNome();
         return new RadioChoice<SelectOption<String>>(id, 
-                new MInstanciaValorModel<>(model), opcoesValue, rendererer()) {
-            @SuppressWarnings("Contract")
+                (IModel)new MSelectionInstanceModel(model), opcoesValue, rendererer()) {
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption<String> choice) {
                 IValueMap map = new ValueMap();
@@ -43,7 +42,7 @@ public class RadioMapper extends SelectMapper {
         };
     }
 
-    @Override
+    @Override @SuppressWarnings("unchecked")
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
             final List<SelectOption<String>> opcoesValue) {
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);

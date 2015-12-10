@@ -80,6 +80,18 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         MISelectItem value = currentSelectionInstance();
         assertThat(value.getFieldId()).isEqualTo("DF");
     }
+    
+    @Test public void alsoWorksWhenFieldIsMandatory(){
+        setupPage();
+        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
+            newSelectItem("SP", "São Paulo"));
+        selectType.withObrigatorio(true);
+        buildPage();
+        form.select(findId(form.getForm(), "originUF").get(), 0);
+        form.submit("save-btn");
+        MISelectItem value = currentSelectionInstance();
+        assertThat(value.getFieldId()).isEqualTo("DF");
+    }
 
 
     private MISelectItem currentSelectionInstance() {

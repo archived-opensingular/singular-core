@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.wicket.mapper.SelectModalBuscaMapper;
+
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -35,13 +35,14 @@ import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 
 public class UIBuilderWicket {
 
