@@ -2,13 +2,10 @@ package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoDecimal;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
 import org.apache.wicket.model.IModel;
@@ -51,7 +48,7 @@ public class UIBuilderWicket {
         
         IWicketComponentMapper mapper = MAPPERS.getMapper(instancia, view)
                 .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
-        mapper.buildView(ctx, view, model);
+        mapper.buildView(ctx, view, model, ViewMode.EDITION);
     }
 
     private static SingularFormException createErro(MInstancia instancia, MView view, String msg) {
