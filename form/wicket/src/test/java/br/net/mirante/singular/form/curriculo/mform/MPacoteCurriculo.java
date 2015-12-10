@@ -1,26 +1,13 @@
 package br.net.mirante.singular.form.curriculo.mform;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.comuns.*;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
 import br.net.mirante.singular.form.validation.validator.MCPFValidator;
@@ -156,7 +143,8 @@ public class MPacoteCurriculo extends MPacote {
             cargo
                 .as(AtrBasic::new).label("Cargo");
             atividades
-                .as(AtrBasic::new).label("Atividades Desenvolvidas").multiLinha(true);
+                .withView(MTextAreaView::new)
+                .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
@@ -188,7 +176,8 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
         {
             informacoesAdicionais
-                .as(AtrBasic::new).label("Informações adicionais").multiLinha(true);
+                    .withView(MTextAreaView::new)
+                    .as(AtrBasic::new).label("Informações adicionais");
         }
 
 //        pb.debug();
