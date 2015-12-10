@@ -201,7 +201,7 @@ public class InstanceDAO extends BaseDAO{
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private List<Map<String, String>> retrieveMeanTimeInstances(boolean active, String processCode, boolean count, boolean move, Set<String> processCodeWithAccess) {
-        List<Map> result = new ArrayList<>(12);
+        List result = new ArrayList<>(12);
         Query hqlQuery;
         if (active) {
             if (count) {
@@ -266,7 +266,7 @@ public class InstanceDAO extends BaseDAO{
                 result.add(map);
             }
         }
-        result.sort((ob1,ob2) -> Integer.compare((int)ob1.get("POS"), (int)ob2.get("POS")));
-        return new ArrayList<>(result);
+        ((List<Map>)result).sort((ob1,ob2) -> Integer.compare((int)ob1.get("POS"), (int)ob2.get("POS")));
+        return result;
     }
 }
