@@ -14,6 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.inject.Inject;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
 public class ItemCasePanelTest extends TestCase {
@@ -32,13 +34,13 @@ public class ItemCasePanelTest extends TestCase {
 
     @Test
     public void testRendering() {
-        ItemCasePanel icp = new ItemCasePanel("icp", cb);
+        ItemCasePanel icp = new ItemCasePanel("icp", $m.ofValue(cb));
         assertNotNull(icp);
     }
 
     @Test
     public void testeSaveForm() {
-        ItemCasePanel icp = new ItemCasePanel("icp", cb);
+        ItemCasePanel icp = new ItemCasePanel("icp", $m.ofValue(cb));
         wt.startComponentInPage(icp);
         FormTester formTester = wt.newFormTester("icp:save-form");
         assertNotNull(formTester);
