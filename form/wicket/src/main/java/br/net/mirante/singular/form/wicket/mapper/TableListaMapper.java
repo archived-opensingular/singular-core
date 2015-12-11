@@ -1,12 +1,17 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
@@ -15,6 +20,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSiz
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import com.google.common.base.Strings;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -23,7 +29,6 @@ import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class TableListaMapper extends AbstractListaMapper {
 
@@ -32,39 +37,46 @@ public class TableListaMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
-        final IModel<MTipo<MInstancia>> tipoElementos = new MTipoElementosModel(mLista);
 
         ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
 
         final BSContainer<?> parentCol = ctx.getContainer();
 
-        final TemplatePanel template = parentCol.newTemplateTag(t -> ""
-            + "<form wicket:id='_f'>"
-            + "<div class='panel panel-default'>"
-            + "  <div class='panel-heading' wicket:id='_title'></div>"
-            + "  <div class='panel-body'>"
-            + "    <table wicket:id='_t' class='table table-condensed table-unstyled'>"
-            + "      <thead wicket:id='_h'></thead>"
-            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody>"
-            + "      <tfoot wicket:id='_ft'>"
-            + "        <tr><td colspan='99' wicket:id='_fb'></td></tr>"
-            + "      </tfoot>"
-            + "    </table>"
-            + "  </div>"
-            + "</div>"
-            + "</form>");
-        final Form<?> form = new Form<>("_f");
-        final WebMarkupContainer table = new WebMarkupContainer("_t");
+        parentCol.appendComponent(id ->
+                        MetronicPanel.MetronicPanelBuilder.build(id,
+                                (header, form) ->
+                                        buildHeader(header, form, label),
+                                (content, form) ->
+                                        builContent(content, form, mLista, ctx, view, viewMode),
+                                (footer, form) ->
+                                        footer.setVisible(false)
+                        )
+        );
+
+    }
+
+    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<String> label) {
+        header.appendTag("span", new Label("_title", label));
+        header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+    }
+
+    private void builContent(BSContainer<?> content, Form<?> form, IModel<MILista<MInstancia>> mLista, WicketBuildContext ctx, MView view, ViewMode viewMode) {
+
+        final IModel<MTipo<MInstancia>> tipoElementos = new MTipoElementosModel(mLista);
+
+        final TemplatePanel template = content.newTemplateTag(t -> ""
+                + "    <table class='table table-condensed table-unstyled'>"
+                + "      <thead wicket:id='_h'></thead>"
+                + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody>"
+                + "      <tfoot wicket:id='_ft'>"
+                + "        <tr><td colspan='99' wicket:id='_fb'></td></tr>"
+                + "      </tfoot>"
+                + "    </table>");
         final BSTSection thead = new BSTSection("_h").setTagName("thead");
         final ElementsView trView = new TableElementsView("_e", mLista, ctx, view, form, viewMode);
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
-        final Label title = new Label("_title", label);
 
-        form.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
-
-        if (isBlank(label.getObject()))
-            title.setVisible(false);
 
         final MTipo<?> tElementos = tipoElementos.getObject();
         if (tElementos instanceof MTipoComposto<?>) {
@@ -87,30 +99,29 @@ public class TableListaMapper extends AbstractListaMapper {
         } else {
             footer.setVisible(false);
         }
-
         template
-            .add(form
-                .add(title)
-                .add(table
-                    .add(thead)
-                    .add(trView)
-                    .add(footer
-                        .add(footerBody))));
+                .add(thead)
+                .add(trView)
+                .add(footer
+                        .add(footerBody));
     }
 
+
     private static final class TableElementsView extends ElementsView {
+
         private final WicketBuildContext ctx;
-        private final MView              view;
-        private final Form<?>            form;
-        private final ViewMode           viewMode;
-        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
-                                  Form<?> form, ViewMode viewMode) {
+        private final MView view;
+        private final Form<?> form;
+        private final ViewMode viewMode;
+
+        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
             this.viewMode = viewMode;
         }
+
         @Override
         @SuppressWarnings("unchecked")
         protected void populateItem(Item<MInstancia> item) {
