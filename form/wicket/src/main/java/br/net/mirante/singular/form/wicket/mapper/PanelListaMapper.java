@@ -70,10 +70,16 @@ public class PanelListaMapper extends AbstractListaMapper {
         private final Form<?> form;
 
         private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form) {
+        private final MView              view;
+        private final Form<?>            form;
+        private final ViewMode           viewMode;
+        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
+                                  Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
+            this.viewMode = viewMode;
         }
 
         @Override
@@ -81,7 +87,7 @@ public class PanelListaMapper extends AbstractListaMapper {
             final BSGrid grid = new BSGrid("_r");
             final BSRow row = grid.newRow();
 
-            UIBuilderWicket.buildForEdit(ctx.createChild(row.newCol(11), true), item.getModel());
+            UIBuilderWicket.build(ctx.createChild(row.newCol(11), true), item.getModel(), viewMode);
 
             final BSGrid btnGrid = row.newCol(1).newGrid();
 

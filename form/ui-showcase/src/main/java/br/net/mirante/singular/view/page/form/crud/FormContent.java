@@ -1,26 +1,5 @@
 package br.net.mirante.singular.view.page.form.crud;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -34,18 +13,35 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
-import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+
+import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content
@@ -60,10 +56,12 @@ public class FormContent extends Content
     private BSGrid                         container = new BSGrid("generated");
     private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
-    private ExampleDataDTO                 currentModel;
-
-    //    @Inject FileDao filePersistence;
-
+    private ExampleDataDTO currentModel;
+    private ViewMode viewMode;
+    
+    
+//    @Inject FileDao filePersistence;
+    
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
             return new InMemoryAttachmentPersitenceHandler();
@@ -75,15 +73,20 @@ public class FormContent extends Content
             return filePersistence;
         }
     };
-
-    //    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
-    //        public MOptionsProvider get() {
-    //            return new MFileIdsOptionsProvider(filePersistence);
-    //        }
-    //    };
-
-    public FormContent(String id, StringValue type, StringValue key) {
+    
+//    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
+//        public MOptionsProvider get() {
+//            return new MFileIdsOptionsProvider(filePersistence);
+//        }
+//    };
+    
+    public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
+        if(viewMode.isNull()) {
+            this.viewMode = ViewMode.EDITION;
+        } else {
+            this.viewMode = ViewMode.valueOf(viewMode.toString());
+        }
         String typeName = type.toString();
         loadOrCreateModel(key, typeName);
         currentModel.setType(typeName);
@@ -139,7 +142,7 @@ public class FormContent extends Content
 
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.buildForEdit(ctx, currentInstance);
+        UIBuilderWicket.build(ctx, currentInstance, viewMode);
     }
 
     @SuppressWarnings("rawtypes")
@@ -204,6 +207,12 @@ public class FormContent extends Content
                 currentModel.setXml(printXml(rootXml));
                 dao.save(currentModel);
                 backToCrudPage(this);
+            }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(viewMode.isEdition());
             }
         };
     }
@@ -274,6 +283,12 @@ public class FormContent extends Content
                     target.add(form);
                     Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
                 }
+            }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(viewMode.isEdition());
             }
         };
     }
