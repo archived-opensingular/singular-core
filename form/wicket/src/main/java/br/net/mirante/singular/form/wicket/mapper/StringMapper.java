@@ -45,7 +45,7 @@ public class StringMapper implements ControlsFieldComponentMapper {
     @Override
     public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
         if (model.getObject() != null && model.getObject().getValor() != null) {
-            return (String) model.getObject().getValor();
+            return String.valueOf(model.getObject().getValor());
         }
         return "";
     }

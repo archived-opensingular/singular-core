@@ -25,8 +25,13 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;
 
+    private static final String INTEGER_DIGITS = "integerDigits";
+    private static final String DIGITS = "digits";
+
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
+                                 IModel<? extends MInstancia> model, IModel<String> labelModel)
+    {
         TextField<BigDecimal> comp = new TextField<>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), BigDecimal.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
@@ -46,14 +51,25 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
         return comp;
     }
 
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        if (model.getObject() != null && model.getObject().getValor() != null) {
+            BigDecimal b = (BigDecimal) model.getObject().getValor();
+            Integer digitos = (int) withOptionsOf(model).get(DIGITS);
+            BigDecimal divisor = new BigDecimal(Math.pow(10, digitos));
+            return String.format("R$ %."+digitos+"f", b.divide(divisor));
+        }
+        return "";
+    }
+
     private Map<String, Object> withOptionsOf(IModel<? extends MInstancia> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
         Optional<Integer> decimalMaximo = Optional.ofNullable(
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
         Map<String, Object> options = defaultOptions();
-        options.put("integerDigits", inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
-        options.put("digits", decimalMaximo.orElse(DEFAULT_DIGITS));
+        options.put(INTEGER_DIGITS, inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
+        options.put(DIGITS, decimalMaximo.orElse(DEFAULT_DIGITS));
         return options;
     }
 
