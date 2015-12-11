@@ -39,6 +39,14 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         return formGroupAppender(formGroup, model, opcoesValue);
     }
 
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        if (model.getObject() != null && model.getObject().getValor() != null) {
+            return model.getObject().getValor().toString();
+        }
+        return "";
+    }
+
     protected AbstractSingleSelectChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
             final List<String> opcoesValue) {
         return new DropDownChoice<>(model.getObject().getNome(), new MInstanciaValorModel<>(model), opcoesValue);

@@ -45,6 +45,25 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         return formGroupAppender(formGroup, model, opcoesValue);
     }
 
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        StringBuilder output = new StringBuilder();
+
+        if (model.getObject() != null && model.getObject().getValor() != null
+                && model.getObject().getValor() instanceof List) {
+            List<?> collection = (List<?>) model.getObject().getValor();
+            for (Object o : collection) {
+                if (collection.indexOf(o) == 0) {
+                    output.append(o.toString());
+                } else {
+                    output.append(", ").append(o.toString());
+                }
+            }
+        }
+
+        return output.toString();
+    }
+
     protected ListMultipleChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
             final List<String> opcoesValue) {
         return new ListMultipleChoice<>(model.getObject().getNome(), new MInstanciaValorModel<>(model), opcoesValue);

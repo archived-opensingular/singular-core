@@ -244,4 +244,9 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             this.termo = termo;
         }
     }
+
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        return "";
+    }
 }
