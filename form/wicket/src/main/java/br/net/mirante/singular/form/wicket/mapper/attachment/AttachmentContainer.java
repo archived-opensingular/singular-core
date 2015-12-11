@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -168,7 +166,7 @@ class AttachmentContainer extends BSContainer {
         return progressContainer;
     }
 
-    private final class DownloadLink extends AjaxFallbackLink<Object> {
+    private final class DownloadLink extends Link<Object> {
         private DownloadLink(String id, IModel<Object> model) {
             super(id, model);
             setBody(model);
@@ -178,7 +176,7 @@ class AttachmentContainer extends BSContainer {
             return downloader.getUrl();
         }
 
-        public void onClick(AjaxRequestTarget target) {}
+        public void onClick() {}
     }
 
     @SuppressWarnings("unchecked")

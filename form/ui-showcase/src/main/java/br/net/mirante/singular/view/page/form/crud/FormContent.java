@@ -1,26 +1,5 @@
 package br.net.mirante.singular.view.page.form.crud;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -44,26 +23,44 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+
+import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
-public class FormContent extends Content 
-                        implements SingularWicketContainer<CrudContent, Void> {
+public class FormContent extends Content
+    implements SingularWicketContainer<CrudContent, Void> {
 
-    @Inject ExampleDataDAO dao;
-    @Inject FileDao filePersistence;
-    @Inject SpringServiceRegistry serviceRegistry;
-    private BSGrid container = new BSGrid("generated");
-    private Form<?> inputForm = new Form<>("save-form");
+    @Inject ExampleDataDAO                         dao;
+    @Inject FileDao                                filePersistence;
+    @Inject SpringServiceRegistry                  serviceRegistry;
+    private BSGrid                         container = new BSGrid("generated");
+    private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
     
-    
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
-        ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
-    
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = 
-        ServiceRef.of(filePersistence);
+                    ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
+
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef =
+                                                ServiceRef.of(filePersistence);
     
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
@@ -87,7 +84,7 @@ public class FormContent extends Content
         createInstance(typeName);
         updateContainer();
     }
-    
+
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -97,7 +94,7 @@ public class FormContent extends Content
 
     private void bindDefaultServices(SDocument document) {
         document.setAttachmentPersistenceHandler(temporaryRef);
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
             IAttachmentPersistenceHandler.class, persistanceRef);
         document.addServiceRegistry(serviceRegistry);
     }
@@ -115,21 +112,21 @@ public class FormContent extends Content
             throw new RuntimeException(e);
         }
     }
-    
+
     private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
         buildContainer();
     }
-    
+
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.build(ctx, currentInstance, viewMode);
     }
 
     @SuppressWarnings("rawtypes")
-    private BSContainer buildBodyContainer(){
+    private BSContainer buildBodyContainer() {
         BSContainer bodyContainer = new BSContainer("body-container");
         add(bodyContainer);
         return bodyContainer;
@@ -144,7 +141,7 @@ public class FormContent extends Content
     protected IModel<?> getContentSubtitlelModel() {
         return new ResourceModel("label.content.title");
     }
-    
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -164,7 +161,6 @@ public class FormContent extends Content
             }
         });
     }
-    
 
     private AjaxButton createSaveButton(String wicketId, boolean validate) {
         return new AjaxButton(wicketId) {
@@ -248,9 +244,9 @@ public class FormContent extends Content
         };
     }
 
-    private void backToCrudPage(Component componentContext){
+    private void backToCrudPage(Component componentContext) {
         PageParameters params = new PageParameters()
-                .add(CrudPage.TYPE_NAME, currentModel.getType());
+            .add(CrudPage.TYPE_NAME, currentModel.getType());
         componentContext.setResponsePage(CrudPage.class, params);
     }
 
@@ -277,8 +273,8 @@ public class FormContent extends Content
         };
     }
 
-//    public ServiceRegistry createSpringRegistry() throws BeansException {
-//        ShowcaseApplication app = (ShowcaseApplication) getApplication();
-//        return new SpringServiceRegistry(app.getApplicationContext());
-//    }
+    //    public ServiceRegistry createSpringRegistry() throws BeansException {
+    //        ShowcaseApplication app = (ShowcaseApplication) getApplication();
+    //        return new SpringServiceRegistry(app.getApplicationContext());
+    //    }
 }

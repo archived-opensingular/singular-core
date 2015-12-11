@@ -8,10 +8,12 @@ import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import com.google.common.base.Strings;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
@@ -19,7 +21,6 @@ import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class PanelListaMapper extends AbstractListaMapper {
@@ -33,54 +34,51 @@ public class PanelListaMapper extends AbstractListaMapper {
 
         final BSContainer<?> parentCol = ctx.getContainer();
 
-        final TemplatePanel template = parentCol.newTemplateTag(t -> ""
-            + "<form wicket:id='_f'>"
-            + "  <div class='panel panel-default'>"
-            + "    <div wicket:id='_h' class='panel-heading'></div>"
-            + "    <ul class='list-group'>"
-            + "      <li wicket:id='_e' class='list-group-item'>"
-            + "        <div wicket:id='_r'></div>"
-            + "      </li>"
-            + "    </ul>"
-            + "    <div wicket:id='_f' class='panel-footer text-right'></div>"
-            + "  </div>"
-            + "</form>");
-        final Form<?> form = new Form<>("_f");
-        final BSContainer<?> heading = new BSContainer<>("_h");
-        final ElementsView elementsView = new PanelElementsView("_e", listaModel, ctx, view, form, viewMode);
-        final BSContainer<?> footer = new BSContainer<>("_f");
+        parentCol.appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
+                        (heading, form) -> {
 
-        form.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
+                            heading.appendTag("span", new Label("_title", label));
+                            heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-        if (isNotBlank(label.getObject()))
-            heading.appendTag("span", new Label("_title", label));
+                        },
+                        (content, form) -> {
 
-        if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()) {
-            AdicionarButton btn = appendAdicionarButton(listaModel, form, footer);
-        } else {
-            footer.setVisible(false);
-        }
+                            TemplatePanel list = content.newTemplateTag(t -> ""
+                                    + "    <ul class='list-group'>"
+                                    + "      <li wicket:id='_e' class='list-group-item'>"
+                                    + "        <div wicket:id='_r'></div>"
+                                    + "      </li>"
+                                    + "    </ul>");
+                            list.add(new PanelElementsView("_e", listaModel, ctx, view, form, viewMode));
 
-        template
-            .add(form
-                .add(heading)
-                .add(elementsView)
-                .add(footer));
+                        },
+                        (footer, form) -> {
+
+                            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()) {
+                                appendAdicionarButton(listaModel, form, footer);
+                            } else {
+                                footer.setVisible(false);
+                            }
+
+                        })
+        );
     }
 
     private static final class PanelElementsView extends ElementsView {
+
+        private final MView view;
+        private final Form<?> form;
+        private final ViewMode viewMode;
         private final WicketBuildContext ctx;
-        private final MView              view;
-        private final Form<?>            form;
-        private final ViewMode           viewMode;
-        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
-                                  Form<?> form, ViewMode viewMode) {
+
+        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
             this.viewMode = viewMode;
         }
+
         @Override
         protected void populateItem(Item<MInstancia> item) {
             final BSGrid grid = new BSGrid("_r");
@@ -92,11 +90,11 @@ public class PanelListaMapper extends AbstractListaMapper {
 
             if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha()))
                 appendInserirButton(this, form, item, btnGrid.newColInRow())
-                    .add($b.classAppender("pull-right"));
+                        .add($b.classAppender("pull-right"));
 
             if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha())
                 appendRemoverButton(this, form, item, btnGrid.newColInRow())
-                    .add($b.classAppender("pull-right"));
+                        .add($b.classAppender("pull-right"));
 
             item.add(grid);
         }
