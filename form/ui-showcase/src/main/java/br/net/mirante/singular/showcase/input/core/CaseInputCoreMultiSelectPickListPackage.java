@@ -28,7 +28,7 @@ public class CaseInputCoreMultiSelectPickListPackage extends MPacote {
         MTipoLista<MTipoString, MIString> contatos = tipoMyForm.addCampoListaOf("contatos","contato")
                 .withMultiSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
-
+        // A escolha é essa -----
         MTipoLista<MTipoString, MIString> infoPub = tipoMyForm.addCampoListaOf("contatos", "contato", MTipoString.class);
         contatos.getTipoElemento().withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
