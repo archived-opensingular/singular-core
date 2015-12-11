@@ -49,7 +49,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                     + "        <div wicket:id='_r'></div>"
                                     + "      </li>"
                                     + "    </ul>");
-                            list.add(new PanelElementsView("_e", listaModel, ctx, view, form));
+                            list.add(new PanelElementsView("_e", listaModel, ctx, view, form, viewMode));
 
                         },
                         (footer, form) -> {
@@ -65,16 +65,13 @@ public class PanelListaMapper extends AbstractListaMapper {
     }
 
     private static final class PanelElementsView extends ElementsView {
-        private final WicketBuildContext ctx;
+
         private final MView view;
         private final Form<?> form;
+        private final ViewMode viewMode;
+        private final WicketBuildContext ctx;
 
-        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form) {
-        private final MView              view;
-        private final Form<?>            form;
-        private final ViewMode           viewMode;
-        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
-                                  Form<?> form, ViewMode viewMode) {
+        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;

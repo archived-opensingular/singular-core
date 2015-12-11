@@ -1,14 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -56,7 +47,7 @@ public class TableListaMapper extends AbstractListaMapper {
                                 (header, form) ->
                                         buildHeader(header, form, label),
                                 (content, form) ->
-                                        builContent(content, form, mLista, ctx, view),
+                                        builContent(content, form, mLista, ctx, view, viewMode),
                                 (footer, form) ->
                                         footer.setVisible(false)
                         )
@@ -69,7 +60,7 @@ public class TableListaMapper extends AbstractListaMapper {
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
     }
 
-    private void builContent(BSContainer<?> content, Form<?> form, IModel<MILista<MInstancia>> mLista, WicketBuildContext ctx, MView view) {
+    private void builContent(BSContainer<?> content, Form<?> form, IModel<MILista<MInstancia>> mLista, WicketBuildContext ctx, MView view, ViewMode viewMode) {
 
         final IModel<MTipo<MInstancia>> tipoElementos = new MTipoElementosModel(mLista);
 
@@ -117,16 +108,13 @@ public class TableListaMapper extends AbstractListaMapper {
 
 
     private static final class TableElementsView extends ElementsView {
+
         private final WicketBuildContext ctx;
         private final MView view;
         private final Form<?> form;
+        private final ViewMode viewMode;
 
-        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form) {
-        private final MView              view;
-        private final Form<?>            form;
-        private final ViewMode           viewMode;
-        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
-                                  Form<?> form, ViewMode viewMode) {
+        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
