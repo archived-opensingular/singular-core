@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AtrBasic extends MTranslatorParaAtributo {
 
@@ -37,13 +37,18 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
-    public AtrBasic tamanhoInicial(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL, valor);
+    public AtrBasic tamanhoMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO, valor);
         return this;
     }
 
-    public AtrBasic tamanhoMaximo(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO, valor);
+    public AtrBasic tamanhoInteiroMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO, valor);
+        return this;
+    }
+
+    public AtrBasic tamanhoDecimalMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO, valor);
         return this;
     }
 
@@ -90,11 +95,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
     //        return (IBehavior<MInstancia>) getAlvo().getValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR.getNomeCompleto());
     //    }
 
-    public AtrBasic multiLinha(Boolean valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
-        return this;
-    }
-
     public String getLabel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_LABEL);
     }
@@ -107,10 +107,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO);
     }
 
-    public Integer getTamanhoInicial() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL);
-    }
-
     public Integer getTamanhoMaximo() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO);
     }
@@ -119,7 +115,4 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
     }
 
-    public Boolean isMultiLinha() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_MULTI_LINHA);
-    }
 }

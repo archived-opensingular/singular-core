@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.document;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -13,6 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;

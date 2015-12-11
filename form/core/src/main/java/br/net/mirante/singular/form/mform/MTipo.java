@@ -350,6 +350,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return this;
     }
 
+    public MTipo<I> withView(MView mView) {
+        this.view = mView;
+        return this;
+    }
+
     public <T extends MView> T setView(Supplier<T> factory) {
         T v = factory.get();
         this.view = v;

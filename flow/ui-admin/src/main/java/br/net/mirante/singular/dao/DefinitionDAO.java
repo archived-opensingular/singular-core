@@ -36,14 +36,39 @@ public class DefinitionDAO extends BaseDAO{
 
     @SuppressWarnings("unchecked")
     public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        Query hqlQuery = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, "
+        String hql = "select pd.cod as cod, pd.name as nome, pd.key as sigla, "
             + "cd.name as categoria, trim(str(cd.cod)) as codGrupo, cast((select count(pv) from ProcessVersionEntity pv where pv.processDefinition.cod = pd.cod) as long) as version, "
             + "count(distinct pi) as quantidade, "
             + "cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long) as tempoMedio "
             + "from ProcessDefinitionEntity pd join pd.category cd left join pd.processInstances pi "
             + "where pi.endDate is null "
             + "group by pd.cod, pd.name, pd.key, cd.name, cd.cod "
-            + "order by "+(orderByProperty != null ? orderByProperty +(asc?" asc":" desc"): " pd.cod asc"));
+            + "order by ";
+        if(orderByProperty != null){
+            switch (orderByProperty) {
+            case "cod":
+                hql+=" pd.cod";
+                break;
+            case "name":
+                hql+=" pd.name";
+                break;
+            case "category":
+                hql+=" cd.name";
+                break;
+            case "quantity":
+                hql+=" count(distinct pi)";
+                break;
+            case "time":
+                hql+=" cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long)";
+                break;
+            default:
+                break;
+            }
+            hql+= (asc?" asc":"desc");
+        } else {
+            hql+=" pd.cod asc";
+        }
+        Query hqlQuery = getSession().createQuery(hql);
         
         hqlQuery.setFirstResult(first);
         hqlQuery.setMaxResults(size);

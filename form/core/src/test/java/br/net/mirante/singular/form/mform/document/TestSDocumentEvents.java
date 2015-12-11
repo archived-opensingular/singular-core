@@ -1,8 +1,10 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.document;
 
 import org.junit.Assert;
 import org.junit.Before;
 
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;

@@ -35,12 +35,12 @@ public class ComponentContent extends Content implements SingularWicketContainer
                 if (name == null) {
                     name = c.getComponentName();
                 }
-                bsTabPanel.addTab(name, new ItemCasePanel(BSTabPanel.getTabPanelId(), c));
+                bsTabPanel.addTab(name, new ItemCasePanel(BSTabPanel.getTabPanelId(), $m.ofValue(c)));
             });
             casesContainer.add(bsTabPanel);
 
         } else if (!showCaseItem.getCases().isEmpty()) {
-            casesContainer.add(new ItemCasePanel("cases", showCaseItem.getCases().get(0)));
+            casesContainer.add(new ItemCasePanel("cases", $m.ofValue(showCaseItem.getCases().get(0))));
         }
 
         return casesContainer;
