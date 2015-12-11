@@ -144,7 +144,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .tamanhoMaximo(100);
 
         sinonimias
-                .withView(MPanelListaView::new)
+                .withView(MTableListaView::new)
                 .as(AtrBasic::new).label("Lista de sinonímias sugeridas para esta substância/mistura");
 
         MTipoComposto<MIComposto> finalidadesComponente = componente.addCampoComposto("finalidadesComponente");
@@ -229,7 +229,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrWicket::new).larguraPref(3);
 
         embalagens
-                .withView(MPanelListaView::new)
+                .withView(MTableListaView::new)
                 .as(AtrBasic::new).label("Embalagem");
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> anexos = componente.addCampoListaOfComposto("anexos", "anexo");
