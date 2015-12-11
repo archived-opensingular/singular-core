@@ -5,6 +5,7 @@ import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -176,7 +177,16 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                                 + ""));
                         } else {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error');"
+                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
+                                + ""));
+                        }
+                        if (fp.anyMessage(FeedbackMessage.WARNING)) {
+                            response.render(OnDomReadyHeaderItem.forScript(""
+                                + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"
+                                + ""));
+                        } else {
+                            response.render(OnDomReadyHeaderItem.forScript(""
+                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
                                 + ""));
                         }
                     }

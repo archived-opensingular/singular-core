@@ -1,5 +1,26 @@
 package br.net.mirante.singular.view.page.form.crud;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -19,6 +40,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -45,14 +67,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
-public class FormContent extends Content 
-                        implements SingularWicketContainer<CrudContent, Void> {
+public class FormContent extends Content
+    implements SingularWicketContainer<CrudContent, Void> {
 
-    @Inject ExampleDataDAO dao;
-    @Inject FileDao filePersistence;
-    @Inject SpringServiceRegistry serviceRegistry;
-    private BSGrid container = new BSGrid("generated");
-    private Form<?> inputForm = new Form<>("save-form");
+    @Inject
+    ExampleDataDAO                         dao;
+    @Inject
+    FileDao                                filePersistence;
+    @Inject
+    SpringServiceRegistry                  serviceRegistry;
+    private BSGrid                         container = new BSGrid("generated");
+    private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
@@ -65,7 +90,7 @@ public class FormContent extends Content
             return new InMemoryAttachmentPersitenceHandler();
         }
     };
-    
+
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
         public IAttachmentPersistenceHandler get() {
             return filePersistence;
@@ -87,16 +112,16 @@ public class FormContent extends Content
     }
 
     private void loadOrCreateModel(StringValue key, String typeName) {
-        if(key.isEmpty()){
+        if (key.isEmpty()) {
             currentModel = new ExampleDataDTO(UUID.randomUUID().toString());
-        }else{
-            currentModel = dao.find(key.toString(),typeName);
+        } else {
+            currentModel = dao.find(key.toString(), typeName);
         }
         currentModel.setType(typeName);
         createInstance(typeName);
         updateContainer();
     }
-    
+
     private void createInstance(String nomeDoTipo) {
         MTipo<?> tipo = TemplateRepository.get().loadType(nomeDoTipo);
         currentInstance = new MInstanceRootModel<MInstancia>(tipo.novaInstancia());
@@ -106,10 +131,10 @@ public class FormContent extends Content
 
     private void bindDefaultServices(SDocument document) {
         document.setAttachmentPersistenceHandler(temporaryRef);
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
             IAttachmentPersistenceHandler.class, persistanceRef);
-//        document.bindLocalService("filesChoiceProvider", choiceRef);
-//        document.setServiceRegistry(createSpringRegistry());
+        //        document.bindLocalService("filesChoiceProvider", choiceRef);
+        //        document.setServiceRegistry(createSpringRegistry());
         document.addServiceRegistry(serviceRegistry);
     }
 
@@ -126,21 +151,21 @@ public class FormContent extends Content
             throw new RuntimeException(e);
         }
     }
-    
+
     private void updateContainer() {
         inputForm.remove(container);
         container = new BSGrid("generated");
         inputForm.queue(container);
         buildContainer();
     }
-    
+
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
         UIBuilderWicket.build(ctx, currentInstance, viewMode);
     }
 
     @SuppressWarnings("rawtypes")
-    private BSContainer buildBodyContainer(){
+    private BSContainer buildBodyContainer() {
         BSContainer bodyContainer = new BSContainer("body-container");
         add(bodyContainer);
         return bodyContainer;
@@ -155,17 +180,16 @@ public class FormContent extends Content
     protected IModel<?> getContentSubtitlelModel() {
         return new ResourceModel("label.content.title");
     }
-    
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
         queue(inputForm
-                .add(createFeedbackPanel())
-                .add(createSaveButton("save-btn", true))
-                .add(createSaveButton("save-whitout-validate-btn", false))
-                .add(createValidateButton())
-                .add(createCancelButton())
-        );
+            .add(createFeedbackPanel())
+            .add(createSaveButton("save-btn", true))
+            .add(createSaveButton("save-whitout-validate-btn", false))
+            .add(createValidateButton())
+            .add(createCancelButton()));
     }
 
     private Component createFeedbackPanel() {
@@ -176,7 +200,6 @@ public class FormContent extends Content
             }
         });
     }
-    
 
     private AjaxButton createSaveButton(String wicketId, boolean validate) {
         return new AjaxButton(wicketId) {
@@ -188,13 +211,16 @@ public class FormContent extends Content
                 MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
 
                 if (validate) {
-                    try {
-                        addValidationErrors(target, form, trueInstance, rootXml);
-                    } catch (Exception e) {
+                    if (!addValidationErrors(target, form, trueInstance, rootXml)) {
                         target.add(form);
-                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
                         return;
                     }
+//                    try {
+//                    } catch (Exception e) {
+                    target.add(form);
+//                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+//                        return;
+//                    }
                 }
 
                 currentModel.setXml(printXml(rootXml));
@@ -210,31 +236,35 @@ public class FormContent extends Content
         };
     }
 
-    private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-                                     MElement rootXml) throws Exception {
-        runDefaultValidators(form, trueInstance);
-        validateEmptyForm(form, rootXml);
+    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+        MElement rootXml) {
+        boolean proceed = runDefaultValidators(target, form, trueInstance);
+        if (!proceed)
+            return false;
+        return validateEmptyForm(form, rootXml);
     }
 
-    private void validateEmptyForm(Form<?> form, MElement rootXml) {
+    private boolean validateEmptyForm(Form<?> form, MElement rootXml) {
         if (rootXml == null) {
             form.error(getMessage("form.message.empty").getString());
-            throw new RuntimeException("Has empty form");
+            return false;
         }
+        return true;
     }
 
-    private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
-        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        validationContext.validateAll();
-        WicketFormUtils.associateErrorsToComponents(validationContext, form);
-
-        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-            throw new RuntimeException("Has form errors");
-        }
+    private boolean runDefaultValidators(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance) {
+        return WicketFormProcessing.onFormSubmit(form, Optional.of(target), trueInstance);
+        //        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+        //        validationContext.validateAll();
+        //        WicketFormUtils.associateErrorsToComponents(validationContext, form);
+        //
+        //        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+        //            throw new RuntimeException("Has form errors");
+        //        }
     }
 
     private String printXml(MElement rootXml) {
-        if(rootXml != null) {
+        if (rootXml != null) {
             StringWriter buffer = new StringWriter();
             rootXml.printTabulado(new PrintWriter(buffer));
             return buffer.toString();
@@ -253,9 +283,9 @@ public class FormContent extends Content
         };
     }
 
-    private void backToCrudPage(Component componentContext){
+    private void backToCrudPage(Component componentContext) {
         PageParameters params = new PageParameters()
-                .add(CrudPage.TYPE_NAME, currentModel.getType());
+            .add(CrudPage.TYPE_NAME, currentModel.getType());
         componentContext.setResponsePage(CrudPage.class, params);
     }
 
@@ -282,8 +312,8 @@ public class FormContent extends Content
         };
     }
 
-//    public ServiceRegistry createSpringRegistry() throws BeansException {
-//        ShowcaseApplication app = (ShowcaseApplication) getApplication();
-//        return new SpringServiceRegistry(app.getApplicationContext());
-//    }
+    //    public ServiceRegistry createSpringRegistry() throws BeansException {
+    //        ShowcaseApplication app = (ShowcaseApplication) getApplication();
+    //        return new SpringServiceRegistry(app.getApplicationContext());
+    //    }
 }

@@ -14,6 +14,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisitor;
+import org.apache.wicket.util.visit.Visits;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
@@ -24,9 +26,9 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public class WicketFormProcessing {
 
-    public static void onFormSubmit(Form<?> form, Optional<AjaxRequestTarget> target, MInstancia instance) {
+    public static boolean onFormSubmit(Form<?> form, Optional<AjaxRequestTarget> target, MInstancia instance) {
         if (instance == null)
-            return;
+            return false;
 
         // Validação do valor do componente
         InstanceValidationContext validationContext = new InstanceValidationContext(instance);
@@ -34,22 +36,15 @@ public class WicketFormProcessing {
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, form);
             refresh(target, form);
-            return;
+            return false;
         }
 
         // atualizar documento e recuperar instancias com atributos alterados
-        IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
-        instance.getDocument().updateAttributes(eventCollector);
-        List<MInstancia> updatedInstances = eventCollector.getEvents().stream()
-            .map(it -> it.getSource())
-            .collect(toList());
+        instance.getDocument().updateAttributes(null);
 
-        // re-renderizar componentes atualizados
-        WicketFormUtils.streamComponentsByInstance(form, updatedInstances)
-            .map(c -> WicketFormUtils.findCellContainer(c))
-            .filter(c -> c.isPresent())
-            .map(c -> c.get())
-            .forEach(c -> refresh(target, c));
+        // re-renderizar form
+        refresh(target, form);
+        return true;
     }
 
     public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia instance) {
@@ -88,40 +83,46 @@ public class WicketFormProcessing {
 
     private static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container) {
         final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
-        container.visitChildren((component, visit) -> associateErrorsToComponent(instanceErrors, component));
+        IVisitor<Component, Object> visitor = (component, visit) -> associateErrorsToComponent(component, instanceErrors);
+        Visits.visitPostOrder(container, visitor);
+        instanceErrors.values().stream()
+            .forEach(it -> associateErrorsToComponent(container, it));
     }
 
-    private static void associateErrorsToComponent(final Map<Integer, Set<IValidationError>> instanceErrors, Component component) {
+    private static void associateErrorsToComponent(Component component, final Map<Integer, Set<IValidationError>> instanceErrors) {
         final Optional<MInstancia> instance = resolveInstance(component.getDefaultModel());
         if (!instance.isPresent())
             return;
 
-        Set<IValidationError> errors = instanceErrors.get(instance.get().getId());
+        Set<IValidationError> errors = instanceErrors.remove(instance.get().getId());
         if (errors != null) {
-            for (IValidationError error : errors) {
-                switch (error.getErrorLevel()) {
-                    case ERROR:
-                        component.error(error.getMessage());
-                        return;
-                    case WARNING:
-                        component.warn(error.getMessage());
-                        return;
-                    default:
-                        throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
-                }
+            associateErrorsToComponent(component, errors);
+        }
+    }
+
+    protected static void associateErrorsToComponent(Component component, Set<IValidationError> errors) {
+        for (IValidationError error : errors) {
+            switch (error.getErrorLevel()) {
+                case ERROR:
+                    component.error(error.getMessage());
+                    return;
+                case WARNING:
+                    component.warn(error.getMessage());
+                    return;
+                default:
+                    throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
             }
         }
     }
 
     protected static Optional<MInstancia> resolveInstance(final IModel<?> model) {
-        if (model.getObject() instanceof MInstancia) {
-            return Optional.of((MInstancia) model.getObject());
-
-        } else if (model instanceof IMInstanciaAwareModel<?>) {
+        //        if ((model != null) && (model.getObject() instanceof MInstancia)) {
+        //            return Optional.of((MInstancia) model.getObject());
+        //
+        //        } else 
+        if (model instanceof IMInstanciaAwareModel<?>) {
             return Optional.of(((IMInstanciaAwareModel<?>) model).getMInstancia());
-
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 }
