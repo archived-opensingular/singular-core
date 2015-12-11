@@ -3,6 +3,7 @@ package br.net.mirante.singular.showcase.layout;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.AtrWicket;
@@ -24,7 +25,7 @@ public class CaseGridListPackage extends MPacote {
 
         {
             experiencias.withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(1);
+                    .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
                     .as(AtrWicket::new).larguraPref(2);
@@ -37,7 +38,8 @@ public class CaseGridListPackage extends MPacote {
             cargo
                     .as(AtrBasic::new).label("Cargo");
             atividades
-                    .as(AtrBasic::new).label("Atividades Desenvolvidas").multiLinha(true);
+                    .withView(MTextAreaView::new)
+                    .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
     }

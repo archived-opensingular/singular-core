@@ -28,6 +28,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -63,7 +64,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private IModel<MInstancia> currentInstance;
 
-    private CaseBase caseBase;
+    private IModel<CaseBase> caseBase;
 
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = InMemoryAttachmentPersitenceHandler::new;
 
@@ -73,18 +74,29 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         }
     };
 
-    public ItemCasePanel(String id, CaseBase caseBase) {
+    public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
         super(id);
         this.caseBase = caseBase;
-        add(new Label("description", $m.ofValue(caseBase.getDescriptionHtml().orElse(""))));
+        add(buildBlockquote());
         createInstance();
         updateContainer();
         add(buildCodeTabs());
     }
 
+    private WebMarkupContainer buildBlockquote(){
+
+        WebMarkupContainer blockquote = new WebMarkupContainer("blockquote");
+        String description = caseBase.getObject().getDescriptionHtml().orElse("");
+
+        blockquote.add(new Label("description", $m.ofValue(description)));
+        blockquote.setVisible(!description.isEmpty());
+
+        return blockquote;
+    }
+
     private BSTabPanel buildCodeTabs() {
         BSTabPanel bsTabPanel = new BSTabPanel("codes");
-        Optional<ResourceRef> sources = caseBase.getMainSourceResourceName();
+        Optional<ResourceRef> sources = caseBase.getObject().getMainSourceResourceName();
         if(sources.isPresent()) {
             for (ResourceRef rr : Collections.singletonList(sources.get())) {
                 bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
@@ -94,7 +106,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private void createInstance() {
-        MTipo<?> tipo = caseBase.getCaseType();
+        MTipo<?> tipo = caseBase.getObject().getCaseType();
         currentInstance = new MInstanceRootModel<>(tipo.novaInstancia());
         bindDefaultServices(currentInstance.getObject().getDocument());
     }
@@ -178,7 +190,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
             @Override
             public boolean isVisible() {
-                return caseBase.getCaseType().hasAnyValidation();
+                return caseBase.getObject().getCaseType().hasAnyValidation();
             }
         };
     }

@@ -8,10 +8,10 @@ import static br.net.mirante.singular.flow.core.service.IFlowAuthorizationREST.g
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.flow.core.MBPMUtil;
@@ -20,7 +20,7 @@ import br.net.mirante.singular.flow.core.service.IFlowAuthorizationService;
 
 class FlowAuthorizationSpringREST implements IFlowAuthorizationService{
 
-    static final Logger logger = Logger.getLogger(MBPMUtil.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(MBPMUtil.class);
     
     private final String groupToken;
     private final String connectionURL;
@@ -39,7 +39,7 @@ class FlowAuthorizationSpringREST implements IFlowAuthorizationService{
                 "userCod","accessLevel"), Set.class,  userCod, accessLevel.name());
             return result;
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
+            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_WITH_ACCESS, e);
             return Collections.emptySet();
         }
     }
@@ -51,7 +51,7 @@ class FlowAuthorizationSpringREST implements IFlowAuthorizationService{
                 "processDefinitionKey","userCod","accessLevel"), Boolean.class, 
                 processDefinitionKey, userCod, accessLevel.name());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_HAS_ACCESS, e);
+            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_DEFINITION_HAS_ACCESS, e);
             return false;
         }
     }
@@ -63,7 +63,7 @@ class FlowAuthorizationSpringREST implements IFlowAuthorizationService{
                 "processInstanceFullId","userCod","accessLevel"), Boolean.class, 
                 processInstanceFullId, userCod, accessLevel.name());
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_INSTANCE_HAS_ACCESS, e);
+            logger.error("Erro ao acessar serviço: "+connectionURL+PATH_PROCESS_INSTANCE_HAS_ACCESS, e);
             return false;
         }
     }

@@ -56,10 +56,6 @@ public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<
         MILista<I> lista = new MILista<>();
         lista.setTipo(this);
         lista.setDocument(owner);
-        Integer tamanhoInicial = lista.as(AtrBasic.class).getTamanhoInicial();
-        if (tamanhoInicial != null)
-            for (int i = tamanhoInicial; i > 0; i--)
-                lista.addNovo();
         return lista;
     }
 

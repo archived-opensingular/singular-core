@@ -5,20 +5,20 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.FloatType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -27,36 +27,24 @@ public class PesquisaDAO extends BaseDAO{
     private static final int MAX_MAP_SIZE = 7;
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
-        String sql = "SELECT DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA,"
-                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS"
-                + "  INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "  INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL"
-                + (period != null ? " AND INS.DT_INICIO >= :startPeriod AND INS.DT_FIM <= :endPeriod" : "")
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "")
-                + " AND DEF.SG_PROCESSO in(:processCodeWithAccess)"
-                + " GROUP BY DEF.SG_PROCESSO, DEF.NO_PROCESSO ORDER BY MEAN DESC";
-
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("MEAN", StringType.INSTANCE)
-                .addScalar("SIGLA", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
+        Query hqlQuery = getSession().createQuery("select pd.key as SIGLA, pd.name as NOME, "
+            + "trim(str(avg(((cast(pi.endDate as double)) - (cast(pi.beginDate as double)))))) as MEAN "
+            + "from ProcessInstanceEntity pi join pi.processVersion pv join pv.processDefinition pd "
+            + "where pi.endDate is not null "
+            + (period != null ? "and pi.beginDate >= :startPeriod and pi.endDate <= :endPeriod " : "")
+            + (processCode != null ? " and pd.key = :processCode " : "")
+            + "and pd.key in(:processCodeWithAccess) "
+            + "group by pd.key, pd.name order by MEAN desc");
+        hqlQuery.setParameterList("processCodeWithAccess", processCodeWithAccess).setMaxResults(15).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
         if (period != null) {
-            query.setParameter("startPeriod", periodFromNow(period));
-            query.setParameter("endPeriod", new Date());
+            hqlQuery.setParameter("startPeriod", periodFromNow(period));
+            hqlQuery.setParameter("endPeriod", new Date());
         }
-
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            hqlQuery.setParameter("processCode", processCode);
         }
-        query.setParameterList("processCodeWithAccess", processCodeWithAccess);
-
-        query.setMaxResults(15);
-
-        return (List<Map<String, String>>) query.list();
+        
+        return (List<Map<String, String>>) hqlQuery.list();
     }
 
     private Date periodFromNow(Period period) {
@@ -70,8 +58,7 @@ public class PesquisaDAO extends BaseDAO{
         int count = retrieveMeanTimeByTaskCount(period, processCode);
         if (count > MAX_MAP_SIZE) {
             List<Map<String, String>> mainTasks = retrieveMeanTimeByTasks(period, processCode, MAX_MAP_SIZE - 1);
-            List<Map<String, String>> others = retrieveMeanTimeByOthers(period, processCode, count - MAX_MAP_SIZE + 1);
-            mainTasks.addAll(others.stream().collect(Collectors.toList()));
+            mainTasks.add(retrieveMeanTimeByOthers(period, processCode, count - MAX_MAP_SIZE + 1));
             return mainTasks;
         } else {
             return retrieveMeanTimeByTasks(period, processCode, MAX_MAP_SIZE);
@@ -79,108 +66,78 @@ public class PesquisaDAO extends BaseDAO{
     }
 
     private Integer retrieveMeanTimeByTaskCount(Period period, String processCode) {
-        String sql = "SELECT COUNT(DISTINCT TAR.NO_TAREFA) AS QUANTIDADE"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_TAREFA t"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON TAR.CO_VERSAO_TAREFA = t.CO_VERSAO_TAREFA"
-                + " INNER JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
-                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal();
-
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", IntegerType.INSTANCE)
-                .setParameter("processCode", processCode)
-                .setParameter("startPeriod", periodFromNow(period));
-
-        return ((Number) query.uniqueResult()).intValue();
+        Query hqlQuery = getSession().createQuery("select count(distinct ti.task.name) as quantidade "
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
+            + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
+            + "and ti.task.type <> :taskEnd ");
+        hqlQuery.setParameter("startPeriod", periodFromNow(period)).setParameter("processCode", processCode).setParameter("taskEnd", TaskType.End);
+        
+        return ((Number) hqlQuery.uniqueResult()).intValue();
     }
 
     private List<Map<String, String>> retrieveMeanTimeByTasks(Period period, String processCode, int max) {
-        String sql = "SELECT TOP " + max + " TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD,"
-                + " d.NO_PROCESSO AS NOME_DEFINICAO,"
-                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, t.DT_INICIO, t.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_TAREFA t"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON TAR.CO_VERSAO_TAREFA = t.CO_VERSAO_TAREFA"
-                + " INNER JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
-                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO ORDER BY MEAN DESC";
-
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("COD", StringType.INSTANCE)
-                .addScalar("NOME_DEFINICAO", StringType.INSTANCE)
-                .addScalar("MEAN", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .setParameter("processCode", processCode)
-                .setParameter("startPeriod", periodFromNow(period));
-
-        return (List<Map<String, String>>) query.list();
+        Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, pd.cod as COD, pd.name as NOME_DEFINICAO, "
+            + " avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
+            + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
+            + "and ti.task.type <> :taskEnd "
+            + "group by ti.task.name, pd.cod, pd.name order by MEAN desc");
+        hqlQuery.setMaxResults(max)
+            .setParameter("startPeriod", periodFromNow(period))
+            .setParameter("processCode", processCode)
+            .setParameter("taskEnd", TaskType.End)
+            .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        
+        return (List<Map<String, String>>) hqlQuery.list();
     }
 
-    private List<Map<String, String>> retrieveMeanTimeByOthers(Period period, String processCode, int max) {
-        String sql = "SELECT 'Outras' AS NOME, 0 AS COD, NOME_DEFINICAO, SUM(MEAN) AS MEAN"
-                + " FROM (SELECT TOP " + max + " TAR.NO_TAREFA AS NOME, d.CO_DEFINICAO_PROCESSO AS COD, d.NO_PROCESSO AS NOME_DEFINICAO,"
-                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, t.DT_INICIO, t.DT_FIM) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS MEAN"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_TAREFA t"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON TAR.CO_VERSAO_TAREFA = t.CO_VERSAO_TAREFA"
-                + " INNER JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON t.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO d ON d.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NOT NULL AND INS.DT_FIM >= :startPeriod AND d.SG_PROCESSO = :processCode"
-                + " AND TAR.CO_TIPO_TAREFA != " + TaskType.End.ordinal()
-                + " GROUP BY TAR.NO_TAREFA, d.CO_DEFINICAO_PROCESSO, d.NO_PROCESSO"
-                + " ORDER BY MEAN) AS OTHERS GROUP BY NOME_DEFINICAO";
-
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("COD", StringType.INSTANCE)
-                .addScalar("NOME_DEFINICAO", StringType.INSTANCE)
-                .addScalar("MEAN", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
-                .setParameter("processCode", processCode)
-                .setParameter("startPeriod", periodFromNow(period));
-
-        return (List<Map<String, String>>) query.list();
+    @SuppressWarnings("rawtypes")
+    private Map<String, String> retrieveMeanTimeByOthers(Period period, String processCode, int max) {
+        Query hqlQuery = getSession().createQuery("select pd.name as NOME_DEFINICAO, avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
+            + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
+            + "and ti.task.type <> :taskEnd "
+            + "group by pd.cod, pd.name,ti.task.name order by MEAN");
+        hqlQuery.setMaxResults(max)
+            .setParameter("startPeriod", periodFromNow(period))
+            .setParameter("processCode", processCode)
+            .setParameter("taskEnd", TaskType.End)
+            .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        
+        Map map = new HashMap(4);
+        map.put("NOME", "Outras");
+        map.put("COD", 0);
+        map.put("MEAN", 0.0);
+        for (Map<String, Object> result : (List<Map<String, Object>>) hqlQuery.list()) {
+            map.put("NOME_DEFINICAO", result.get("NOME_DEFINICAO"));
+            map.put("MEAN", ((Double)map.get("MEAN")) + Math.round((Double)result.get("MEAN")));
+        }
+        return map;
     }
 
     public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
-        String sql = "SELECT TAR.NO_TAREFA AS NOME, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
-                + " ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INSTA.DT_INICIO, GETDATE()) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO"
-                + " FROM "+DBSCHEMA+"TB_INSTANCIA_TAREFA INSTA"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TAR ON TAR.CO_VERSAO_TAREFA = INSTA.CO_VERSAO_TAREFA"
-                + " INNER JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON INSTA.CO_INSTANCIA_PROCESSO = INS.CO_INSTANCIA_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND INSTA.DT_FIM IS NULL AND DEF.SG_PROCESSO = :processCode"
-                + " GROUP BY TAR.NO_TAREFA ORDER BY QUANTIDADE DESC";
-
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("QUANTIDADE", StringType.INSTANCE)
-                .addScalar("TEMPO", FloatType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
+        Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, count(distinct pi.cod) as QUANTIDADE, "
+            + "avg(((cast(current_date() as double)) - (cast(ti.beginDate as double))) * (24 * 60 * 60)) / (24 * 60 * 60) as TEMPO "
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
+            + "where pi.endDate is null and ti.endDate is null and pd.key = :processCode "
+            + "group by ti.task.name order by QUANTIDADE desc");
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP)
                 .setParameter("processCode", processCode);
-
-        return (List<Map<String, String>>) query.list();
+        
+        return hqlQuery.list();
     }
 
     public String retrieveProcessDefinitionName(String processCode) {
-        String sql = "SELECT NO_PROCESSO AS NOME FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO WHERE SG_PROCESSO = :processCode";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("NOME", StringType.INSTANCE)
-                .setParameter("processCode", processCode);
-        return (String) query.uniqueResult();
+        Criteria criteria = getSession().createCriteria(ProcessDefinitionEntity.class);
+        criteria.add(Restrictions.eq("key", processCode));
+        criteria.setProjection(Projections.property("name"));
+        return (String) criteria.uniqueResult();
     }
 
-    public Long retrieveProcessDefinitionId(String processCode) {
-        String sql = "SELECT CO_DEFINICAO_PROCESSO AS ID FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO WHERE SG_PROCESSO = :processCode";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("ID", LongType.INSTANCE)
-                .setParameter("processCode", processCode);
-        return (Long) query.uniqueResult();
+    public Integer retrieveProcessDefinitionId(String processCode) {
+        Criteria criteria = getSession().createCriteria(ProcessDefinitionEntity.class);
+        criteria.add(Restrictions.eq("key", processCode));
+        criteria.setProjection(Projections.id());
+        return (Integer) criteria.uniqueResult();
     }
 }

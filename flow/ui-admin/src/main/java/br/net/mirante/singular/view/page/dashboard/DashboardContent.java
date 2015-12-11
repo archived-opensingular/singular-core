@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -27,13 +26,9 @@ import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
-
-    @Inject
-    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
     private UIAdminFacade uiAdminFacade;
@@ -69,7 +64,7 @@ public class DashboardContent extends Content {
         WebMarkupContainer infoLink = new WebMarkupContainer(id);
         infoLink.add($b.attr("data-original-title",
                 getString("label.content.info.title")));
-        infoLink.add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process")
+        infoLink.add($b.attr("href", "process"
                 .concat("?").concat(ProcessosPage.PROCESS_DEFINITION_ID_PARAM)
                 .concat("=").concat(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode))));
         return infoLink;
@@ -78,13 +73,10 @@ public class DashboardContent extends Content {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssReferenceHeaderItem.forUrl("resources/admin/page/css/page.css"));
-        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/page.js"));
         response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/settings.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    SettingUI.init(); // init settings features\n")
-                .append("    Index.init();\n")
                 .append("});");
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
