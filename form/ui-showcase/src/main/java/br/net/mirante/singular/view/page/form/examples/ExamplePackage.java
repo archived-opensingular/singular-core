@@ -18,7 +18,9 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
+import br.net.mirante.singular.form.validation.validator.MCPFValidator;
 
 public class ExamplePackage extends MPacote {
 
@@ -79,7 +81,9 @@ public class ExamplePackage extends MPacote {
 
         this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
 
-        this.buyerCpf.as(MPacoteBasic.aspect())
+        this.buyerCpf
+            .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
+            .as(MPacoteBasic.aspect())
             .depends(this.buyerNome)
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
             .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
