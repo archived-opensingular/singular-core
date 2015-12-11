@@ -1,5 +1,26 @@
 package br.net.mirante.singular.view.page.form.crud;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.inject.Inject;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -23,25 +44,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-
-import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content
@@ -55,13 +57,13 @@ public class FormContent extends Content
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
-    
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
+
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef =
                     ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
 
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef =
                                                 ServiceRef.of(filePersistence);
-    
+
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
         if(viewMode.isNull()) {
@@ -171,22 +173,17 @@ public class FormContent extends Content
 
                 MInstancia trueInstance = currentInstance.getObject();
                 trueInstance.getDocument().persistFiles(); //TODO: review this order
-                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                Optional<String> stringXml = MformPersistenciaXML.toStringXML(trueInstance);
 
                 if (validate) {
-                    if (!addValidationErrors(target, form, trueInstance, rootXml)) {
+                    if (!addValidationErrors(target, form, trueInstance, stringXml)) {
                         target.add(form);
                         return;
                     }
-//                    try {
-//                    } catch (Exception e) {
                     target.add(form);
-//                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
-//                        return;
-//                    }
                 }
 
-                currentModel.setXml(printXml(rootXml));
+                currentModel.setXml(stringXml.get());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -199,18 +196,13 @@ public class FormContent extends Content
         };
     }
 
-    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-        MElement rootXml) {
-        boolean proceed = runDefaultValidators(target, form, trueInstance);
-        if (!proceed)
-            return false;
-        return validateEmptyForm(form, rootXml);
-    }
+    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance, Optional<?> xml) {
+        if (runDefaultValidators(target, form, trueInstance)) {
+            if (!xml.isPresent()) {
+                form.error(getMessage("form.message.empty").getString());
+                return false;
+            }
 
-    private boolean validateEmptyForm(Form<?> form, MElement rootXml) {
-        if (rootXml == null) {
-            form.error(getMessage("form.message.empty").getString());
-            return false;
         }
         return true;
     }
@@ -229,7 +221,7 @@ public class FormContent extends Content
     private String printXml(MElement rootXml) {
         if (rootXml != null) {
             StringWriter buffer = new StringWriter();
-            rootXml.printTabulado(new PrintWriter(buffer));
+            rootXml.print(new PrintWriter(buffer), true, true);
             return buffer.toString();
         }
         return null;
@@ -258,9 +250,9 @@ public class FormContent extends Content
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 MInstancia trueInstance = currentInstance.getObject();
                 trueInstance.getDocument().persistFiles(); //TODO: review this order
-                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                Optional<String> xml = MformPersistenciaXML.toStringXML(trueInstance);
                 try {
-                    addValidationErrors(target, form, trueInstance, rootXml);
+                    addValidationErrors(target, form, trueInstance, xml);
                 } catch (Exception e) {
                     target.add(form);
                     Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
