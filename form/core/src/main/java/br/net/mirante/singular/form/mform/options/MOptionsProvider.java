@@ -67,6 +67,12 @@ public interface MOptionsProvider extends Serializable {
 
     public default boolean containsValue(
             MILista<? extends MInstancia> defaultOptions, MInstancia value) {
+        if(value instanceof MISelectItem){
+            MISelectItem item = (MISelectItem) value;
+            if(item.getFieldId() == null){
+                return true;
+            }
+        }
         for(MInstancia c : defaultOptions.getAllChildren()){
             if(value instanceof MISimples){
                 if (value.getValor().equals(c.getValor())) return true;

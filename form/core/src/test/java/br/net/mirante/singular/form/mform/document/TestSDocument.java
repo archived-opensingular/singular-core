@@ -1,5 +1,6 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.document;
 
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 

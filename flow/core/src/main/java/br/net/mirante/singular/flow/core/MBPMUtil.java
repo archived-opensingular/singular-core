@@ -9,8 +9,6 @@ import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -18,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+
+import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
@@ -223,7 +223,7 @@ public class MBPMUtil {
             ProcessDefinition<?> definicao = definitionClass.cast(definitionClass.newInstance());
             new ImageViewer("Diagrama: " + definicao.getName(), renderer.generateImage(definicao));
         } catch (InstantiationException | IllegalAccessException e) {
-            Logger.getLogger(MBPMUtil.class.getName()).log(Level.WARNING, e.getMessage(), e);
+            LoggerFactory.getLogger(MBPMUtil.class).warn(e.getMessage(), e);
         }
     }
 

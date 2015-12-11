@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
@@ -177,6 +178,10 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoInteger addCampoInteger(String nomeCampo, boolean obrigatorio) {
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
+    }
+
+    public MTipoDecimal addCampoDecimal(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoDecimal.class);
     }
 
     /**

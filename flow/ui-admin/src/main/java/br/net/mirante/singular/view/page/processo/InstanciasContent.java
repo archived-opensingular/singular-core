@@ -27,15 +27,11 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class InstanciasContent extends Content implements SingularWicketContainer<InstanciasContent, Void> {
-
-    @Inject
-    private UIAdminWicketFilterContext uiAdminWicketFilterContext;
 
     @Inject
     private UIAdminFacade uiAdminFacade;
@@ -159,7 +155,7 @@ public class InstanciasContent extends Content implements SingularWicketContaine
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
         WebMarkupContainer breadcrumb = new Fragment(id, "breadcrumbProcess", this);
         breadcrumb.add(new WebMarkupContainer("processListLink")
-                .add($b.attr("href", uiAdminWicketFilterContext.getRelativeContext().concat("process"))));
+                .add($b.attr("href", "process")));
         return breadcrumb;
     }
 

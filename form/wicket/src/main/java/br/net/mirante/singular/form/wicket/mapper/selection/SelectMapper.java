@@ -43,7 +43,6 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings("rawtypes")
     protected ChoiceRenderer rendererer() {
-        ChoiceRenderer choiceRenderer = new ChoiceRenderer("value", "key");
-        return choiceRenderer;
+        return new ChoiceRenderer("value", "key");
     }
 }

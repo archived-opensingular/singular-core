@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -34,7 +35,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final MIComposto instance = (MIComposto) model.getObject();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
@@ -49,7 +50,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         grid.setDefaultModel(model);
 
         for (MTipo<?> tCampo : tComposto.getFields()) {
-            buildField(ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()));
+            buildField(ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
         }
     }
 
@@ -61,14 +62,15 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
     }
 
-    private void buildField(WicketBuildContext ctx, final BSRow row, final MInstanciaCampoModel<MInstancia> mCampo) {
+    private void buildField(WicketBuildContext ctx, final BSRow row, final MInstanciaCampoModel<MInstancia> mCampo,
+                            ViewMode viewMode) {
         MTipo<?> type = mCampo.getMInstancia().getMTipo();
         final MInstancia iCampo = mCampo.getObject();
         if (iCampo instanceof MIComposto) {
             final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            UIBuilderWicket.buildForEdit(ctx.createChild(col.newGrid().newColInRow(), true), mCampo);
+            UIBuilderWicket.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
         } else {
-            UIBuilderWicket.buildForEdit(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo);
+            UIBuilderWicket.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
         }
     }
 

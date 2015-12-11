@@ -1,24 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
@@ -27,12 +15,21 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSiz
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class TableListaMapper extends AbstractListaMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
         final IModel<MTipo<MInstancia>> tipoElementos = new MTipoElementosModel(mLista);
@@ -59,7 +56,7 @@ public class TableListaMapper extends AbstractListaMapper {
         final Form<?> form = new Form<>("_f");
         final WebMarkupContainer table = new WebMarkupContainer("_t");
         final BSTSection thead = new BSTSection("_h").setTagName("thead");
-        final ElementsView trView = new TableElementsView("_e", mLista, ctx, view, form);
+        final ElementsView trView = new TableElementsView("_e", mLista, ctx, view, form, viewMode);
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
         final Label title = new Label("_title", label);
@@ -105,11 +102,14 @@ public class TableListaMapper extends AbstractListaMapper {
         private final WicketBuildContext ctx;
         private final MView              view;
         private final Form<?>            form;
-        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form) {
+        private final ViewMode           viewMode;
+        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
+                                  Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
+            this.viewMode = viewMode;
         }
         @Override
         @SuppressWarnings("unchecked")
@@ -127,10 +127,10 @@ public class TableListaMapper extends AbstractListaMapper {
                 for (MTipo<?> tCampo : tComposto.getFields()) {
                     final MInstanciaCampoModel<MInstancia> mCampo =
                             new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
-                    UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
+                    UIBuilderWicket.build(ctx.createChild(tr.newCol(), true), mCampo, viewMode);
                 }
             } else {
-                UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), itemModel);
+                UIBuilderWicket.build(ctx.createChild(tr.newCol(), true), itemModel, viewMode);
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha())

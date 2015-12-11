@@ -1,16 +1,16 @@
-package br.net.mirante.singular.form.mform;
+package br.net.mirante.singular.form.mform.document;
 
-import org.junit.Assert;
-import org.junit.Before;
-
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
+import org.junit.Assert;
+import org.junit.Before;
 
 public class TestSDocumentEvents extends TestCaseForm {
 

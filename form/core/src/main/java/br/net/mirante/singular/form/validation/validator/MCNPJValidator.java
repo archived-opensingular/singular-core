@@ -1,29 +1,29 @@
 package br.net.mirante.singular.form.validation.validator;
 
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.validation.IInstanceValidatable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MCNPJValidator extends AbstractValueValidator<MIString, String> {
 
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
-
-    private List<String> invalidPatterns = Arrays.asList(
-        "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
-        "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
-
     private static final MCNPJValidator INSTANCE = new MCNPJValidator();
-
-    public static MCNPJValidator getInstance() {
-        return INSTANCE;
-    }
+    private List<String> invalidPatterns = Arrays.asList(
+            "00000000000000", "11111111111111", "22222222222222", "33333333333333", "44444444444444",
+            "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
 
     protected MCNPJValidator() {
         /* COSNTRUTOR VAZIO */
+    }
+
+    public static MCNPJValidator getInstance() {
+        return INSTANCE;
     }
 
     @Override
@@ -35,6 +35,8 @@ public class MCNPJValidator extends AbstractValueValidator<MIString, String> {
 
     private boolean isValid(String cnpj) {
         try {
+            cnpj = unmask(cnpj);
+
             if (invalidPatterns.contains(cnpj)) {
                 return false;
             }
@@ -58,6 +60,22 @@ public class MCNPJValidator extends AbstractValueValidator<MIString, String> {
 
         return false;
     }
+
+    private String unmask(String cnpj) {
+        StringBuilder sb = new StringBuilder();
+        Pattern p = Pattern.compile("[0-9]?");
+        Matcher m = p.matcher(cnpj);
+        while (m.find()) {
+            if (m.groupCount() > 0) {
+                for (int i = 0; i < m.groupCount(); i++) {
+                    sb.append(m.group(i));
+                }
+            }
+            sb.append(m.group());
+        }
+        return sb.toString();
+    }
+
 
     private int retrieveDV(char[] cnpjArray) {
         int factor = 5;

@@ -40,7 +40,7 @@
                     <attachClasses>true</attachClasses>
                     <webResources>
                         <resource>
-                            <directory>${build.sourceDirectory}/br/net/mirante/singular/showcase</directory>
+                            <directory>${project.build.sourceDirectory}/br/net/mirante/singular/showcase</directory>
                             <targetPath>WEB-INF/classes/br/net/mirante/singular/showcase</targetPath>
                         </resource>
                     </webResources>

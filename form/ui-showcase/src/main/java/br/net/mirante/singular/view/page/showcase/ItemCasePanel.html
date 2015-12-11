@@ -1,7 +1,7 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel>
     <div class="panel-body">
-        <blockquote>
+        <blockquote wicket:id="blockquote">
             <p wicket:id="description"></p>
         </blockquote>
         <hr/>
@@ -11,6 +11,7 @@
                 <div class="form-body" wicket:id="generated"></div>
                 <div wicket:id="body-container"></div>
             </div>
+            <br/>
             <div class="form-actions">
                 <button type="submit" class="btn blue" wicket:id="save-btn">
                     <wicket:message key="label.button.save"/>

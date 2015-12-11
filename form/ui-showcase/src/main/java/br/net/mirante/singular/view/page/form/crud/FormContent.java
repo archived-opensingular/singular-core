@@ -2,6 +2,7 @@ package br.net.mirante.singular.view.page.form.crud;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,12 +34,11 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
@@ -56,6 +56,7 @@ public class FormContent extends Content
     private Form<?> inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
+    private ViewMode viewMode;
     
     
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
@@ -64,18 +65,23 @@ public class FormContent extends Content
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = 
         ServiceRef.of(filePersistence);
     
-    public FormContent(String id, StringValue type, StringValue key) {
+    public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
+        if(viewMode.isNull()) {
+            this.viewMode = ViewMode.EDITION;
+        } else {
+            this.viewMode = ViewMode.valueOf(viewMode.toString());
+        }
         String typeName = type.toString();
         loadOrCreateModel(key, typeName);
         currentModel.setType(typeName);
     }
 
     private void loadOrCreateModel(StringValue key, String typeName) {
-        if(key.isEmpty()){
+        if (key.isEmpty()) {
             currentModel = new ExampleDataDTO(UUID.randomUUID().toString());
-        }else{
-            currentModel = dao.find(key.toString(),typeName);
+        } else {
+            currentModel = dao.find(key.toString(), typeName);
         }
         currentModel.setType(typeName);
         createInstance(typeName);
@@ -119,7 +125,7 @@ public class FormContent extends Content
     
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.buildForEdit(ctx, currentInstance);
+        UIBuilderWicket.build(ctx, currentInstance, viewMode);
     }
 
     @SuppressWarnings("rawtypes")
@@ -143,12 +149,11 @@ public class FormContent extends Content
     protected void onInitialize() {
         super.onInitialize();
         queue(inputForm
-                .add(createFeedbackPanel())
-                .add(createSaveButton("save-btn", true))
-                .add(createSaveButton("save-whitout-validate-btn", false))
-                .add(createValidateButton())
-                .add(createCancelButton())
-        );
+            .add(createFeedbackPanel())
+            .add(createSaveButton("save-btn", true))
+            .add(createSaveButton("save-whitout-validate-btn", false))
+            .add(createValidateButton())
+            .add(createCancelButton()));
     }
 
     private Component createFeedbackPanel() {
@@ -171,47 +176,60 @@ public class FormContent extends Content
                 MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
 
                 if (validate) {
-                    try {
-                        addValidationErrors(target, form, trueInstance, rootXml);
-                    } catch (Exception e) {
+                    if (!addValidationErrors(target, form, trueInstance, rootXml)) {
                         target.add(form);
-                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
                         return;
                     }
+//                    try {
+//                    } catch (Exception e) {
+                    target.add(form);
+//                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+//                        return;
+//                    }
                 }
 
                 currentModel.setXml(printXml(rootXml));
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(viewMode.isEdition());
+            }
         };
     }
 
-    private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-                                     MElement rootXml) throws Exception {
-        runDefaultValidators(form, trueInstance);
-        validateEmptyForm(form, rootXml);
+    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
+        MElement rootXml) {
+        boolean proceed = runDefaultValidators(target, form, trueInstance);
+        if (!proceed)
+            return false;
+        return validateEmptyForm(form, rootXml);
     }
 
-    private void validateEmptyForm(Form<?> form, MElement rootXml) {
+    private boolean validateEmptyForm(Form<?> form, MElement rootXml) {
         if (rootXml == null) {
             form.error(getMessage("form.message.empty").getString());
-            throw new RuntimeException("Has empty form");
+            return false;
         }
+        return true;
     }
 
-    private void runDefaultValidators(Form<?> form, MInstancia trueInstance) {
-        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        validationContext.validateAll();
-        WicketFormUtils.associateErrorsToComponents(validationContext, form);
-
-        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-            throw new RuntimeException("Has form errors");
-        }
+    private boolean runDefaultValidators(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance) {
+        return WicketFormProcessing.onFormSubmit(form, Optional.of(target), trueInstance);
+        //        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
+        //        validationContext.validateAll();
+        //        WicketFormUtils.associateErrorsToComponents(validationContext, form);
+        //
+        //        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
+        //            throw new RuntimeException("Has form errors");
+        //        }
     }
 
     private String printXml(MElement rootXml) {
-        if(rootXml != null) {
+        if (rootXml != null) {
             StringWriter buffer = new StringWriter();
             rootXml.printTabulado(new PrintWriter(buffer));
             return buffer.toString();
@@ -249,6 +267,12 @@ public class FormContent extends Content
                     target.add(form);
                     Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
                 }
+            }
+
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                setVisible(viewMode.isEdition());
             }
         };
     }

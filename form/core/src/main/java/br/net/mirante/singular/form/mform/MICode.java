@@ -10,10 +10,19 @@ public class MICode<T> extends MInstancia {
     public T getValor() {
         return code;
     }
+
     @Override
     public Object getValorWithDefault() {
-        return null;
+        // TODO ??? não sei como implementar isso...
+        return getValor();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MTipoCode<MICode<T>, T> getMTipo() {
+        return (MTipoCode<MICode<T>, T>) super.getMTipo();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void setValor(Object valor) {

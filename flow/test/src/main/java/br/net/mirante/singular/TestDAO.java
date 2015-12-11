@@ -6,13 +6,10 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
@@ -22,7 +19,6 @@ import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
-import br.net.mirante.singular.persistence.util.Constants;
 
 @Named
 @Transactional
@@ -88,14 +84,9 @@ public class TestDAO {
         ).setParameter("id", id).list();
     }
 
+    @SuppressWarnings("unchecked")
     public Actor getSomeUser(int index){
-        SQLQuery query = getSession().createSQLQuery("select CO_ATOR as \"cod\", CO_USUARIO as \"codUsuario\", NO_ATOR as \"nome\", DS_EMAIL as \"email\" FROM " + Constants.SCHEMA + ".VW_ATOR ");
-        query.setResultTransformer(new AliasToBeanResultTransformer(Actor.class));
-        query.addScalar("cod", StandardBasicTypes.INTEGER);
-        query.addScalar("nome", StandardBasicTypes.STRING);
-        query.addScalar("email", StandardBasicTypes.STRING);
-        query.addScalar("codUsuario", StandardBasicTypes.STRING);
-        List<Actor> actors = query.list();
+        List<Actor> actors = getSession().createCriteria(Actor.class).list();
         return actors.get(index);
     }
 

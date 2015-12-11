@@ -1,16 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -18,10 +7,24 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.wicket.Component;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
+import org.apache.wicket.model.IModel;
+
+import java.util.Optional;
+
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
@@ -46,7 +49,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
     @Override
-    default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+    default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
@@ -69,7 +72,15 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                 .add($b.classAppender("hidden-sm"))
                 .add($b.classAppender("hidden-md"))
                 .add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        final Component input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+
+        Component input = null;
+        if(viewMode.equals(ViewMode.EDITION)){
+            input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+        } else {
+          Optional<Object> output = Optional.ofNullable(model.getObject().getValor());
+          input = new BOutputPanel("_output"+model.getObject().getNome(), $m.ofValue(output.orElse("").toString()));
+          controls.appendTag("div", input);
+        }
         controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());
