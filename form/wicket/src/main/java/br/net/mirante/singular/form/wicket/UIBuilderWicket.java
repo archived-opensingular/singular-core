@@ -1,12 +1,11 @@
 package br.net.mirante.singular.form.wicket;
 
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
@@ -24,6 +23,7 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
@@ -33,6 +33,8 @@ import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
+import br.net.mirante.singular.form.wicket.mapper.MListMasterDetailMapper;
+import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
@@ -45,6 +47,7 @@ import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
+import org.apache.wicket.model.IModel;
 
 public class UIBuilderWicket {
 
@@ -69,6 +72,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,                                             TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
+        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           MListMasterDetailMapper::new);
         MAPPERS.register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new);
         MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
         MAPPERS.register(MTipoMonetario.class,                                         MonetarioMapper::new);
@@ -98,11 +102,11 @@ public class UIBuilderWicket {
 
     private static SingularFormException createErro(MInstancia instancia, MView view, String msg) {
         return new SingularFormException(
-            msg + " (instancia=" + instancia.getPathFull()
-                + ", tipo=" + instancia.getMTipo().getNome()
-                + ", classeInstancia=" + instancia.getClass()
-                + ", tipo=" + instancia.getMTipo()
-                + ", view=" + view
-                + ")");
+                msg + " (instancia=" + instancia.getPathFull()
+                        + ", tipo=" + instancia.getMTipo().getNome()
+                        + ", classeInstancia=" + instancia.getClass()
+                        + ", tipo=" + instancia.getMTipo()
+                        + ", view=" + view
+                        + ")");
     }
 }
