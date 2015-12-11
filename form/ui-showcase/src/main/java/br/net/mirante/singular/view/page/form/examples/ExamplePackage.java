@@ -1,13 +1,6 @@
 package br.net.mirante.singular.view.page.form.examples;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
@@ -21,6 +14,8 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
 import br.net.mirante.singular.form.validation.validator.MCPFValidator;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class ExamplePackage extends MPacote {
 

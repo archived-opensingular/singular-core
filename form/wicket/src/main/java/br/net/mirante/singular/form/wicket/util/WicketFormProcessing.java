@@ -1,12 +1,11 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -17,12 +16,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 public class WicketFormProcessing {
 
