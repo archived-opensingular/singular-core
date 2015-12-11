@@ -156,8 +156,8 @@ public class InputMaskBehavior extends Behavior {
         setJsonOptions(opts);
     }
 
-    public InputMaskBehavior(final Map<String, Object> options) {
-        this((String) null, options, true);
+    public InputMaskBehavior(final Map<String, Object> options, boolean appendDefaultOptions) {
+        this((String) null, options, appendDefaultOptions);
     }
 
     /**

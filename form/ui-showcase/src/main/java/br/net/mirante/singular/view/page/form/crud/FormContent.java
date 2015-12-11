@@ -47,38 +47,20 @@ import java.util.logging.Logger;
 public class FormContent extends Content
     implements SingularWicketContainer<CrudContent, Void> {
 
-    @Inject
-    ExampleDataDAO                         dao;
-    @Inject
-    FileDao                                filePersistence;
-    @Inject
-    SpringServiceRegistry                  serviceRegistry;
+    @Inject ExampleDataDAO                         dao;
+    @Inject FileDao                                filePersistence;
+    @Inject SpringServiceRegistry                  serviceRegistry;
     private BSGrid                         container = new BSGrid("generated");
     private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
     
-    
-//    @Inject FileDao filePersistence;
-    
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return new InMemoryAttachmentPersitenceHandler();
-        }
-    };
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
+                    ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
 
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
-    
-//    private ServiceRef<MOptionsProvider> choiceRef = new ServiceRef<MOptionsProvider>() {
-//        public MOptionsProvider get() {
-//            return new MFileIdsOptionsProvider(filePersistence);
-//        }
-//    };
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef =
+                                                ServiceRef.of(filePersistence);
     
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
