@@ -36,6 +36,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
         MAPPERS.register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new);
         MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
+        MAPPERS.register(MTipoMonetario.class,                                         MonetarioMapper::new);
         //@formatter:on
     }
 
