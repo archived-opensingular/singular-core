@@ -1,5 +1,23 @@
 package br.net.mirante.singular.view.page.showcase;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Collections;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -23,24 +41,6 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-
-import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collections;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -69,6 +69,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = InMemoryAttachmentPersitenceHandler::new;
 
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        @Override
         public IAttachmentPersistenceHandler get() {
             return filePersistence;
         }
@@ -147,20 +148,11 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (addValidationErrors(form, currentInstance.getObject())) {
                     MElement rootXml = MformPersistenciaXML.toXML(currentInstance.getObject());
-                    viewXml(target, printXml(rootXml));
+                    viewXml(target, rootXml.toString());
                 }
                 target.add(form);
             }
         };
-    }
-
-    private String printXml(MElement rootXml) {
-        if (rootXml != null) {
-            StringWriter buffer = new StringWriter();
-            rootXml.printTabulado(new PrintWriter(buffer));
-            return buffer.toString();
-        }
-        return null;
     }
 
     @SuppressWarnings("serial")
