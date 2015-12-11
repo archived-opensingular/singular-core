@@ -56,7 +56,7 @@ public class TableListaMapper extends AbstractListaMapper {
         final Form<?> form = new Form<>("_f");
         final WebMarkupContainer table = new WebMarkupContainer("_t");
         final BSTSection thead = new BSTSection("_h").setTagName("thead");
-        final ElementsView trView = new TableElementsView("_e", mLista, ctx, view, form);
+        final ElementsView trView = new TableElementsView("_e", mLista, ctx, view, form, viewMode);
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
         final Label title = new Label("_title", label);
@@ -102,11 +102,14 @@ public class TableListaMapper extends AbstractListaMapper {
         private final WicketBuildContext ctx;
         private final MView              view;
         private final Form<?>            form;
-        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form) {
+        private final ViewMode           viewMode;
+        private TableElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view,
+                                  Form<?> form, ViewMode viewMode) {
             super(id, model);
             this.ctx = ctx;
             this.view = view;
             this.form = form;
+            this.viewMode = viewMode;
         }
         @Override
         @SuppressWarnings("unchecked")
@@ -124,10 +127,10 @@ public class TableListaMapper extends AbstractListaMapper {
                 for (MTipo<?> tCampo : tComposto.getFields()) {
                     final MInstanciaCampoModel<MInstancia> mCampo =
                             new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
-                    UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), mCampo);
+                    UIBuilderWicket.build(ctx.createChild(tr.newCol(), true), mCampo, viewMode);
                 }
             } else {
-                UIBuilderWicket.buildForEdit(ctx.createChild(tr.newCol(), true), itemModel);
+                UIBuilderWicket.build(ctx.createChild(tr.newCol(), true), itemModel, viewMode);
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha())

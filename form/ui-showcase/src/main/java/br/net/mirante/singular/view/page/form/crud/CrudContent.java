@@ -6,6 +6,7 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.dao.form.TemplateRepository.TemplateEntry;
 import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
@@ -148,21 +149,35 @@ public class CrudContent extends Content
                 .appendPropertyColumn(getMessage("label.table.column.key"),
                         "key", ExampleDataDTO::getKey)
                 .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.edit"),
-                                Icone.PENCIL_SQUARE,
-                                (target, model) -> {
-                                    setResponsePage(FormPage.class,
-                                            new PageParameters()
-                                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                                    .add(FormPage.MODEL_KEY, model.getObject().getKey())
-                                    );
-                                }
-                        )
+                                .appendAction(getMessage("label.table.column.edit"),
+                                        Icone.PENCIL_SQUARE,
+                                        (target, model) -> {
+                                            setResponsePage(FormPage.class,
+                                                    new PageParameters()
+                                                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                                            .add(FormPage.VIEW_MODE, ViewMode.EDITION)
+                                            );
+                                        }
+                                )
                 )
                 .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.delete"),
-                                Icone.MINUS, this::deleteSelected
-                        )
+                                .appendAction(getMessage("label.table.column.visualizar"),
+                                        Icone.EYE,
+                                        (target, model) -> {
+                                            setResponsePage(FormPage.class,
+                                                    new PageParameters()
+                                                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                                            .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
+                                            );
+                                        }
+                                )
+                )
+                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                                .appendAction(getMessage("label.table.column.delete"),
+                                        Icone.MINUS, this::deleteSelected
+                                )
                 )
                 .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                         .appendAction(getMessage("label.table.column.visualizar.xml"),

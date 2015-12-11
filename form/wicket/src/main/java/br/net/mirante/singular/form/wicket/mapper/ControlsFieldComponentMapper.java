@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -20,7 +21,10 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
+import java.util.Optional;
+
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
@@ -68,7 +72,15 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                 .add($b.classAppender("hidden-sm"))
                 .add($b.classAppender("hidden-md"))
                 .add(InvisibleIfNullOrEmptyBehavior.getInstance());
-        final Component input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+
+        Component input = null;
+        if(viewMode.equals(ViewMode.EDITION)){
+            input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+        } else {
+          Optional<Object> output = Optional.ofNullable(model.getObject().getValor());
+          input = new BOutputPanel("_output"+model.getObject().getNome(), $m.ofValue(output.orElse("").toString()));
+          controls.appendTag("div", input);
+        }
         controls.appendFeedback(controls, feedbackMessageFilter);
 
         input.add(DisabledClassBehavior.getInstance());
