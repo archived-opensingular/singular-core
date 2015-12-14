@@ -1,10 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -92,10 +88,12 @@ public class TableListaMapper extends AbstractListaMapper {
             thead.setVisible(false);
         }
 
-        if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()) {
+        if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()
+                && viewMode.isEdition()) {
             AdicionarButton btn = appendAdicionarButton(mLista, form, footerBody);
-            if (!((MTableListaView) view).isPermiteInsercaoDeLinha())
+            if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
                 btn.add($b.classAppender("pull-right"));
+            }
         } else {
             footer.setVisible(false);
         }
@@ -144,8 +142,10 @@ public class TableListaMapper extends AbstractListaMapper {
                 UIBuilderWicket.build(ctx.createChild(tr.newCol(), true), itemModel, viewMode);
             }
 
-            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha())
+            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
+                    && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, tr.newCol());
+            }
 
             item.add(tr);
         }
