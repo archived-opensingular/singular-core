@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.model.IModel;
@@ -37,7 +36,7 @@ class MSelectionInstanceModel<T> implements IModel<T>,
     }
 
     @SuppressWarnings("unchecked")
-    private T getSimpleSelection(MInstancia target) {
+    protected T getSimpleSelection(MInstancia target) {
         if(target instanceof MISimples){
             Object value = ((MISimples) target).getValor();
             String v = value != null ? value.toString() : null;

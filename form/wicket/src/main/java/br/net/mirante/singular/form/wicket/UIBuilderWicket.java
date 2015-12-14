@@ -59,8 +59,9 @@ public class UIBuilderWicket {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
-        MAPPERS.register(MTipoSelectItem.class,     MSelecaoPorRadioView.class,            RadioMapper::new);
-        MAPPERS.register(MTipoSelectItem.class,     MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSelectItem.class, MSelecaoPorRadioView.class,            RadioMapper::new);
+        MAPPERS.register(MTipoSelectItem.class, MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSelectItem.class, MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new);
         MAPPERS.register(MTipoBoolean.class,                                           BooleanMapper::new);
         MAPPERS.register(MTipoInteger.class,                                           IntegerMapper::new);
         MAPPERS.register(MTipoString.class,                                            StringMapper::new);

@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreSelectSearchPackage extends MPacote {
 
@@ -21,6 +22,19 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
                 .withView(MSelecaoPorModalBuscaView::new);
 
 
-
+        //Select with key values
+        MTipoSelectItem degreeType = tipoMyForm.addCampo("degree",
+                                                        MTipoSelectItem.class);
+        degreeType.withSelectionOf(
+            degreeType.create("Alfabetizado","Alfabetização"),
+            degreeType.create("1º Grau","Ensino Fundamental"),
+            degreeType.create("2º Grau","Ensino Médio"),
+            degreeType.create("Técnico","Escola Técnica"),
+            degreeType.create("Graduado","Superior"),
+            degreeType.create("Pós","Pós Graduação"),
+            degreeType.create("MsC","Mestrado"),
+            degreeType.create("PhD","Doutorado")
+            );
+        degreeType.withView(MSelecaoPorModalBuscaView::new);
     }
 }
