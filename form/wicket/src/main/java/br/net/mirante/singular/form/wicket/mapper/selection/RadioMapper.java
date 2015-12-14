@@ -16,12 +16,13 @@ public class RadioMapper extends SelectMapper {
 
     @Override @SuppressWarnings({ "rawtypes", "unchecked" })
     protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
+            final List<SelectOption> opcoesValue) {
         String id = model.getObject().getNome();
-        return new RadioChoice<SelectOption<String>>(id, 
+        return new RadioChoice<SelectOption>(id, 
                 (IModel)new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer()) {
             @Override
-            protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption<String> choice) {
+            protected IValueMap getAdditionalAttributesForLabel(int index, 
+                    SelectOption choice) {
                 IValueMap map = new ValueMap();
                 map.put("class", "radio-inline");
                 map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;");
@@ -29,7 +30,8 @@ public class RadioMapper extends SelectMapper {
             }
 
             @Override
-            protected IValueMap getAdditionalAttributes(int index, SelectOption<String> choice) {
+            protected IValueMap getAdditionalAttributes(int index, 
+                SelectOption choice) {
                 IValueMap map = new ValueMap();
                 map.put("style", "left:20px;");
                 return map;
@@ -42,9 +44,9 @@ public class RadioMapper extends SelectMapper {
         };
     }
 
-    @Override @SuppressWarnings("unchecked")
+    @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
+            final List<SelectOption> opcoesValue) {
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendRadioChoice(choices);
         return choices;

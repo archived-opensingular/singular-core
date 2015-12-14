@@ -22,20 +22,22 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     @SuppressWarnings({ "rawtypes" })
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         MTipo<?> type = model.getObject().getMTipo();
-        List<SelectOption<String>> opcoesValue = WicketSelectionUtils.createOptions(model, type);
+        List<SelectOption> opcoesValue = WicketSelectionUtils.createOptions(model, type);
 
         return formGroupAppender(formGroup, model, opcoesValue);
     }
 
     @SuppressWarnings("rawtypes")
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final List<SelectOption<String>> opcoesValue) {
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final List<SelectOption> opcoesValue) {
         final DropDownChoice<SelectOption> choices = (DropDownChoice<SelectOption>) retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setNullValid(true), false, false);
         return choices;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(IModel<? extends MInstancia> model, final List<SelectOption<String>> opcoesValue) {
+    protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
+                                    IModel<? extends MInstancia> model, 
+                                    final List<SelectOption> opcoesValue) {
         String id = model.getObject().getNome();
         return new DropDownChoice<SelectOption>(id, 
                 new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer());

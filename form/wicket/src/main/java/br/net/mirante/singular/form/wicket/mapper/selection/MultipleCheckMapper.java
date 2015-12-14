@@ -15,20 +15,20 @@ public class MultipleCheckMapper extends MultipleSelectMapper {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    protected CheckBoxMultipleChoice<SelectOption<String>> retrieveChoices(
-        IModel<? extends MInstancia> model,
-            List<SelectOption<String>> opcoesValue) {
-        return new CheckBoxMultipleChoice<>(model.getObject().getNome(),
-                (IModel)new MSelectionInstanceModel<List<SelectOption>>(model), opcoesValue, renderer())
-                .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
+    protected CheckBoxMultipleChoice<SelectOption> retrieveChoices
+        (IModel<? extends MInstancia> model, List<SelectOption> opcoesValue) {
+        return new CheckBoxMultipleChoice<>(
+            model.getObject().getNome(), 
+            (IModel) new MSelectionInstanceModel<List<SelectOption>>(model), 
+                                        opcoesValue, renderer())
+            .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);
     }
 
-    @Override
+    @Override @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, 
-        IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
-        final CheckBoxMultipleChoice<SelectOption<String>> choices = 
-            retrieveChoices(model, opcoesValue);
+        IModel<? extends MInstancia> model, final List<SelectOption> opcoesValue) {
+        final CheckBoxMultipleChoice<SelectOption> choices = 
+                                            retrieveChoices(model, opcoesValue);
         formGroup.appendCheckboxChoice(choices);
         return choices;
     }

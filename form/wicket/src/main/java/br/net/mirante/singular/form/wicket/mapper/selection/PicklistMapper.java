@@ -11,10 +11,10 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 @SuppressWarnings("serial")
 public class PicklistMapper extends MultipleSelectMapper {
 
-    @Override
+    @Override @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, 
             IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
+            final List<SelectOption> opcoesValue) {
         return formGroup.appendPicklist(retrieveChoices(model, opcoesValue));
     }
 }

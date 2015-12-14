@@ -15,7 +15,7 @@ public class SelectBSMapper extends SelectMapper {
     @Override
     @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
+            final List<SelectOption> opcoesValue) {
         final DropDownChoice<SelectOption> choices = (DropDownChoice<SelectOption>) retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setNullValid(true));
         return choices;

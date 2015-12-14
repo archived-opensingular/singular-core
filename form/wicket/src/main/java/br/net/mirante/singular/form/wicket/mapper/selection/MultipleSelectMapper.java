@@ -23,7 +23,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     public Component appendInput(MView view, BSContainer bodyContainer, 
             BSControls formGroup, final IModel<? extends MInstancia> model, 
             IModel<String> labelModel) {
-        final List<SelectOption<String>> opcoesValue;
+        final List<SelectOption> opcoesValue;
         final MTipoLista tipoLista;
         if (model.getObject().getMTipo() instanceof MTipoLista) {
             tipoLista = (MTipoLista) model.getObject().getMTipo();
@@ -37,16 +37,18 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected ListMultipleChoice<SelectOption<String>> retrieveChoices(IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
+    protected ListMultipleChoice<SelectOption> retrieveChoices(
+                                    IModel<? extends MInstancia> model,
+                                  final List<SelectOption> opcoesValue) {
         return new ListMultipleChoice<>(model.getObject().getNome(), 
             (IModel)new MSelectionInstanceModel<List<SelectOption>>(model), opcoesValue, renderer());
     }
 
+    @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, 
-            IModel<? extends MInstancia> model,
-            final List<SelectOption<String>> opcoesValue) {
-        final ListMultipleChoice<SelectOption<String>> choices = retrieveChoices(model, opcoesValue);
+                                        IModel<? extends MInstancia> model,
+                                        final List<SelectOption> opcoesValue) {
+        final ListMultipleChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setMaxRows(5), true, false);
         return choices;
     }
