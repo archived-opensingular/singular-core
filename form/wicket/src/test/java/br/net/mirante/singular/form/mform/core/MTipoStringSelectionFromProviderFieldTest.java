@@ -1,31 +1,22 @@
 package br.net.mirante.singular.form.mform.core;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import com.google.common.collect.Lists;
-
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import com.google.common.collect.Lists;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.List;
+
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MTipoStringSelectionFromProviderFieldTest {
     private static MDicionario dicionario;
@@ -44,7 +35,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
 
     public void setupPage() {
         driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
+        page = new TestPage();
         page.setDicionario(dicionario);
         localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
