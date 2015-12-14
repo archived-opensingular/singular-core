@@ -115,4 +115,7 @@ public class TestPage extends WebPage {
         return currentInstance;
     }
 
+    public void setCurrentInstance(MIComposto currentInstance) {
+        this.currentInstance = currentInstance;
+    }
 }

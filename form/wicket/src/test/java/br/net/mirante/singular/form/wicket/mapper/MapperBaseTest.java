@@ -13,6 +13,8 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
+
 public abstract class MapperBaseTest {
 
     protected WicketTester wicketTester;
@@ -33,13 +35,19 @@ public abstract class MapperBaseTest {
     public FormTester startPage(ViewMode viewMode) {
         testPage = new TestPage(new PageParameters().add("viewMode", viewMode));
         testPage.setDicionario(dicionario);
-        testPage.setNewInstanceOfType(form.getNome());
+
+        MIComposto formInstance = (MIComposto) dicionario.getTipo(form.getNome()).novaInstancia();
+        assertNotNull(formInstance);
+        mockFormValues(formInstance);
+        testPage.setCurrentInstance(formInstance);
         testPage.build();
         wicketTester.startPage(testPage);
 
         wicketTester.assertRenderedPage(TestPage.class);
         return wicketTester.newFormTester("test-form");
     }
+
+    protected abstract void mockFormValues(MIComposto formInstance);
 
     public abstract void appendInputs(MTipoComposto<? extends MIComposto> form);
 
