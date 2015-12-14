@@ -21,8 +21,6 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
-import java.util.Optional;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
@@ -68,7 +66,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     @SuppressWarnings("rawtypes")
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                           IModel<? extends MInstancia> model, IModel<String> labelModel){
-        BOutputPanel comp = new BOutputPanel("_output" + model.getObject().getNome(),
+        BOutputPanel comp = new BOutputPanel(model.getObject().getNome(),
                 $m.ofValue(getReadOnlyFormatedText(model)));
         formGroup.appendTag("div", comp);
         return comp;

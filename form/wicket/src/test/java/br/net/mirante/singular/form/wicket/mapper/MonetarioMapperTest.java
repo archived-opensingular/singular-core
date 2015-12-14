@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 
@@ -29,9 +30,8 @@ public class MonetarioMapperTest extends MapperBaseTest {
     public void testEditRendering() {
         FormTester formTester = startPage(ViewMode.EDITION);
         Optional<String> money = findId(formTester.getForm(), "money");
-        Optional<String> _outputmoney = findId(formTester.getForm(), "_outputmoney");
         assertTrue(money.isPresent());
-        assertFalse(_outputmoney.isPresent());
+        assertTrue(formTester.getForm().get(money.get()) instanceof TextField);
     }
 
     @Test
@@ -39,12 +39,9 @@ public class MonetarioMapperTest extends MapperBaseTest {
         FormTester formTester = startPage(ViewMode.VISUALIZATION);
 
         Optional<String> money = findId(formTester.getForm(), "money");
-        assertFalse(money.isPresent());
+        assertTrue(money.isPresent());
 
-        Optional<String> _outputmoney = findId(formTester.getForm(), "_outputmoney");
-        assertTrue(_outputmoney.isPresent());
-
-        Component panel = formTester.getForm().get(_outputmoney.get());
+        Component panel = formTester.getForm().get(money.get());
         assertNotNull(panel);
         assertTrue(panel instanceof BOutputPanel);
 
