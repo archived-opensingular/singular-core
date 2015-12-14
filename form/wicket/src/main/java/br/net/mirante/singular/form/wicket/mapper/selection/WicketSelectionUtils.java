@@ -31,12 +31,11 @@ public class WicketSelectionUtils {
         return newArrayList();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static List<SelectOption<String>> createStringOptions(IModel<? extends MInstancia> model, MOptionsProvider provider) {
         MInstancia instance = model.getObject();
         MILista<? extends MInstancia> options = provider.listAvailableOptions(instance);
         return options.getValor().stream()
-                .map((x) -> new SelectOption(x.toString(), x))
+                .map((x) -> new SelectOption<String>(x.toString(), x.toString()))
                 .collect(Collectors.toList());
     }
     

@@ -82,7 +82,6 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         return addFile(fileName, content, handler);
     }
     
-    @SuppressWarnings("serial")
     private IAttachmentRef setupPersistenceFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 

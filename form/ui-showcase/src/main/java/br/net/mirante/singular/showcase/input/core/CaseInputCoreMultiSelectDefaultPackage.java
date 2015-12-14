@@ -20,9 +20,9 @@ public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
         
         MTipoSelectItem tipoSexo = pb.createTipo("sexo", MTipoSelectItem.class);
         tipoSexo.withSelectionOf(
-                MISelectItem.create("M", "Masculino", pb.getDicionario()),
-                MISelectItem.create("F", "Feminino", pb.getDicionario()),
-                MISelectItem.create("X", "Não Declarar", pb.getDicionario())
+            tipoSexo.create("M", "Masculino"),
+            tipoSexo.create("F", "Feminino"),
+            tipoSexo.create("X", "Não Declarar")
             );
         
         MTipoLista<MTipoSelectItem, MISelectItem> sexField = tipoMyForm.addCampoListaOf("sex", tipoSexo);
@@ -33,10 +33,10 @@ public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
         
         MTipoSelectItem tipoIngrediente = pb.createTipo("tipoIngrediente", MTipoSelectItem.class);
         tipoIngrediente.withSelectionOf(
-                MISelectItem.create("h2o", "Água", pb.getDicionario()),
-                MISelectItem.create("h2o2", "Água Oxigenada", pb.getDicionario()),
-                MISelectItem.create("o2", "Gás Oxigênio", pb.getDicionario()),
-                MISelectItem.create("C12H22O11", "Açúcar", pb.getDicionario())
+            tipoIngrediente.create("h2o", "Água"),
+            tipoIngrediente.create("h2o2", "Água Oxigenada"),
+            tipoIngrediente.create("o2", "Gás Oxigênio"),
+            tipoIngrediente.create("C12H22O11", "Açúcar")
             );
         MTipoLista<MTipoSelectItem, MISelectItem> ingredienteQuimico = 
             tipoMyForm.addCampoListaOf("ingredientes", tipoIngrediente);

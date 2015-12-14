@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form.mform.options;
 
+import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 
 public class MISelectItem extends MIComposto {
     public MISelectItem() {}
@@ -15,7 +18,16 @@ public class MISelectItem extends MIComposto {
     }
 
     private String key() {
-        return getValorAtributo(MTipoSelectItem.ID_FIELD);
+        return getAndCheckKeyValueAttributes(MTipoSelectItem.ID_FIELD);
+    }
+
+    private String getAndCheckKeyValueAttributes(AtrRef<MTipoString, MIString, String> attr) {
+        String value = getValorAtributo(attr);
+        if(value == null){
+            ((MTipoSelectItem)getMTipo()).configureKeyValueFields();
+            value = getValorAtributo(attr);
+        }
+        return value;
     }
 
     public void setFieldValue(Object value) {
@@ -23,7 +35,7 @@ public class MISelectItem extends MIComposto {
     }
     
     private String value() {
-        return getValorAtributo(MTipoSelectItem.VALUE_FIELD);
+        return getAndCheckKeyValueAttributes(MTipoSelectItem.VALUE_FIELD);
     }
 
     public String getFieldId() {
