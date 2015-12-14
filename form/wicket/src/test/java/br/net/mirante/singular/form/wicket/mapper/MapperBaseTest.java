@@ -11,7 +11,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
-import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -29,7 +28,7 @@ public abstract class MapperBaseTest {
         dicionario = MDicionario.create();
         PacoteBuilder pacoteBuilder = dicionario.criarNovoPacote("MonetarioMapperPackage");
         form = pacoteBuilder.createTipoComposto("form");
-        appendInputs(form);
+        appendPackageFields(form);
     }
 
     public FormTester startPage(ViewMode viewMode) {
@@ -47,14 +46,8 @@ public abstract class MapperBaseTest {
         return wicketTester.newFormTester("test-form");
     }
 
-    protected abstract void mockFormValues(MIComposto formInstance);
+    public abstract void appendPackageFields(MTipoComposto<? extends MIComposto> form);
 
-    public abstract void appendInputs(MTipoComposto<? extends MIComposto> form);
-
-    @Test
-    public abstract void testEditRendering();
-
-    @Test
-    public abstract void testVisualizationRendering();
+    public abstract void mockFormValues(MIComposto formInstance);
 
 }
