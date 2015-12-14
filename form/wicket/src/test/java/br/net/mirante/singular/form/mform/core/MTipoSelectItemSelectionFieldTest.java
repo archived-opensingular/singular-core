@@ -24,12 +24,14 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
-        return selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
+        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
+        selectType.withKeyValueField("chave","valor");
+        return selectType;
     }
 
 
     private MISelectItem newSelectItem(String id, String value) {
-        return MISelectItem.create(id, value, dicionario);
+        return selectType.create(id, value);
     }
 
     

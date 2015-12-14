@@ -33,8 +33,8 @@ public class SQueryTest {
             .find(pacote.telefones).addVal("8888-8888").addVal("9999-8888").addVal("9999-9999").end()
             .find(pacote.emails).addVal("fulano@detal.com").end();
 
-        System.out.println($(contato).find(pacote.telefones).children().val());
-
+//        System.out.println($(contato).find(pacote.telefones).children().val());
+//
 //        contato.debug();
     }
 

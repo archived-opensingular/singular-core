@@ -255,8 +255,8 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         
         instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3,"what");
         
-        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getNome());
-        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome());
+//        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getNome());
+//        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome());
         
         
         String basePath = pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome()+".";

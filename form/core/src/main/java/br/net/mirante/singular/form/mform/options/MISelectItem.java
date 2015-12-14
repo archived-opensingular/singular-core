@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
 
 public class MISelectItem extends MIComposto {
@@ -12,29 +11,29 @@ public class MISelectItem extends MIComposto {
     }
 
     public void setFieldId(Object value) {
-        setValor(MTipoSelectItem.FIELD_ID, value);
+        setValor(key(), value);
+    }
+
+    private String key() {
+        return getValorAtributo(MTipoSelectItem.ID_FIELD);
     }
 
     public void setFieldValue(Object value) {
-        setValor(MTipoSelectItem.FIELD_VALUE, value);
+        setValor(value(), value);
+    }
+    
+    private String value() {
+        return getValorAtributo(MTipoSelectItem.VALUE_FIELD);
     }
 
     public String getFieldId() {
-        return getValorString(MTipoSelectItem.FIELD_ID);
+        return getValorString(key());
     }
 
     public String getFieldValue() {
-        return getValorString(MTipoSelectItem.FIELD_VALUE);
+        return getValorString(value());
     }
 
-    public static MISelectItem create(Object key, Object value, MDicionario dict){
-        MTipoSelectItem tipo = dict.getTipo(MTipoSelectItem.class);
-        MISelectItem instance = tipo.novaInstancia();
-        instance.setFieldId(key);
-        instance.setFieldValue(value);
-        return instance;
-    }
-    
     public void setValorItem(Object key, Object value) {
         setFieldId(key);
         setFieldValue(value);
