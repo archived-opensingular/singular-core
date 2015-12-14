@@ -36,7 +36,8 @@ public class TextAreaMapper extends StringMapper {
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));
-                textArea.add(new CountDownBehaviour(maxSize.get()));
+                //TODO Conforme solicitado pelo Daniel, o contador devera ser evoluido apos upgrade do Metronic
+                //textArea.add(new CountDownBehaviour(maxSize.get()));
             }
 
             return textArea;

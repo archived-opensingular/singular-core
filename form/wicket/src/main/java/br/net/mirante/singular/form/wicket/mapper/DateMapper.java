@@ -1,20 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.YearMonth;
-import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.ConversionException;
-import org.apache.wicket.util.convert.IConverter;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -23,6 +8,19 @@ import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.ConversionException;
+import org.apache.wicket.util.convert.IConverter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class DateMapper implements ControlsFieldComponentMapper {
@@ -73,7 +71,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
                 return (new SimpleDateFormat(MTipoData.FORMAT)).format(dt);
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
 }
