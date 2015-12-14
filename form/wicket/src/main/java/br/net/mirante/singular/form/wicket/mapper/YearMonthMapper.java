@@ -1,20 +1,18 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.time.YearMonth;
-import java.util.HashMap;
-
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import org.apache.wicket.Component;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.form.YearMonthField;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
+
+import java.time.YearMonth;
+import java.util.HashMap;
 
 public class YearMonthMapper implements ControlsFieldComponentMapper {
 
@@ -40,6 +38,6 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
                 return String.format("%02d/%04d", ym.getMonthValue(), ym.getYear());
             }
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 }
