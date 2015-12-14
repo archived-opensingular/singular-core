@@ -1,140 +1,109 @@
 package br.net.mirante.singular.dao;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.hibernate.Query;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.flow.core.TaskType;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
+import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessVersionEntity;
 
 @Repository
 public class DefinitionDAO extends BaseDAO{
 
-    private enum Columns {
-        cod("CODIGO"),
-        name("NOME"),
-        category("CATEGORIA"),
-        quantity("QUANTIDADE"),
-        time("TEMPO"),
-        throu("THROU"),
-        version("1");
-
-        private String code;
-
-        Columns(String code) {
-            this.code = code;
-        }
-
-        @Override
-        public String toString() {
-            return code;
-        }
-    }
-
-    public DefinitionDTO retrieveById(Long id) {
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla, DEF.CO_GRUPO_PROCESSO AS codGrupo"
-                + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
-                + " WHERE DEF.CO_DEFINICAO_PROCESSO = :id";
-        Query query = getSession().createSQLQuery(sql)
-            .addScalar("cod", LongType.INSTANCE)
-            .addScalar("nome", StringType.INSTANCE)
-            .addScalar("sigla", StringType.INSTANCE)
-            .addScalar("codGrupo", StringType.INSTANCE)
-            .setParameter("id", id)
-            .setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
-
-        return (DefinitionDTO) query.uniqueResult();
+    public DefinitionDTO retrieveById(Integer id) {
+        Query hql = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, pd.processGroup.cod as codGrupo from ProcessDefinitionEntity pd where pd.cod = :cod");
+        hql.setParameter("cod", id);
+        hql.setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
+        return (DefinitionDTO) hql.uniqueResult();
     }
 
     public DefinitionDTO retrieveByKey(String key) {
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS cod, DEF.NO_PROCESSO AS nome, DEF.SG_PROCESSO AS sigla, DEF.CO_GRUPO_PROCESSO AS codGrupo"
-            + " FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO DEF"
-            + " WHERE DEF.SG_PROCESSO = :key";
-        Query query = getSession().createSQLQuery(sql)
-            .addScalar("cod", LongType.INSTANCE)
-            .addScalar("nome", StringType.INSTANCE)
-            .addScalar("sigla", StringType.INSTANCE)
-            .addScalar("codGrupo", StringType.INSTANCE)
-            .setParameter("key", key)
-            .setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
-        
-        return (DefinitionDTO) query.uniqueResult();
+        Query hql = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, pd.processGroup.cod as codGrupo from ProcessDefinitionEntity pd where pd.key = :key");
+        hql.setParameter("key", key);
+        hql.setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
+        return (DefinitionDTO) hql.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Object[]> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        StringBuilder orderByStatement = new StringBuilder("");
-        if (orderByProperty != null) {
-            orderByStatement.append("ORDER BY ").append(Columns.valueOf(orderByProperty)).append(" ");
-            orderByStatement.append(asc ? "ASC" : "DESC");
+    public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
+        String hql = "select pd.cod as cod, pd.name as nome, pd.key as sigla, "
+            + "cd.name as categoria, trim(str(cd.cod)) as codGrupo, cast((select count(pv) from ProcessVersionEntity pv where pv.processDefinition.cod = pd.cod) as long) as version, "
+            + "count(distinct pi) as quantidade, "
+            + "cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long) as tempoMedio "
+            + "from ProcessDefinitionEntity pd join pd.category cd left join pd.processInstances pi "
+            + "where pi.endDate is null "
+            + "group by pd.cod, pd.name, pd.key, cd.name, cd.cod "
+            + "order by ";
+        if(orderByProperty != null){
+            switch (orderByProperty) {
+            case "cod":
+                hql+=" pd.cod";
+                break;
+            case "name":
+                hql+=" pd.name";
+                break;
+            case "category":
+                hql+=" cd.name";
+                break;
+            case "quantity":
+                hql+=" count(distinct pi)";
+                break;
+            case "time":
+                hql+=" cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long)";
+                break;
+            default:
+                break;
+            }
+            hql+= (asc?" asc":"desc");
+        } else {
+            hql+=" pd.cod asc";
         }
-
-        String sql = "SELECT DEF.CO_DEFINICAO_PROCESSO AS CODIGO, DEF.NO_PROCESSO AS NOME, DEF.SG_PROCESSO AS SIGLA, "
-                + "          CAT.NO_CATEGORIA AS CATEGORIA,DEF.CO_GRUPO_PROCESSO, COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE,"
-                + "          AVG(DATEDIFF(SECOND, INS.DT_INICIO, INS.DT_FIM)) AS TEMPO,"
-                + "          (SELECT AVG(SUBDEM.THRO) FROM ("
-                + "             SELECT CO_DEFINICAO_PROCESSO AS COD, MONTH(DT_FIM) AS MES,"
-                + "                    COUNT(CO_INSTANCIA_PROCESSO) AS THRO"
-                + "             FROM "+DBSCHEMA+"TB_INSTANCIA_PROCESSO TBIP"
-                + "               INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO TBP ON TBP.CO_VERSAO_PROCESSO = TBIP.CO_VERSAO_PROCESSO"
-                + "             WHERE DT_FIM IS NOT NULL AND TBP.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "             GROUP BY CO_DEFINICAO_PROCESSO, MONTH(DT_FIM)"
-                + "          ) SUBDEM GROUP BY SUBDEM.COD) AS THROU"
-                + "   FROM TB_DEFINICAO_PROCESSO DEF"
-                + "     INNER JOIN "+DBSCHEMA+"TB_CATEGORIA CAT ON CAT.CO_CATEGORIA = DEF.CO_CATEGORIA"
-                + "     INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                + "     LEFT JOIN "+DBSCHEMA+"TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   WHERE INS.DT_FIM IS NULL"
-                + "   GROUP BY DEF.CO_DEFINICAO_PROCESSO, DEF.NO_PROCESSO, DEF.SG_PROCESSO, CAT.NO_CATEGORIA,DEF.CO_GRUPO_PROCESSO "
-                + orderByStatement.toString();
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("CODIGO", LongType.INSTANCE)
-                .addScalar("NOME", StringType.INSTANCE)
-                .addScalar("SIGLA", StringType.INSTANCE)
-                .addScalar("CATEGORIA", StringType.INSTANCE)
-                .addScalar("CO_GRUPO_PROCESSO", LongType.INSTANCE)
-                .addScalar("QUANTIDADE", LongType.INSTANCE)
-                .addScalar("TEMPO", LongType.INSTANCE)
-                .addScalar("THROU", LongType.INSTANCE);
-
-        query.setFirstResult(first);
-        query.setMaxResults(size);
-
-        return (List<Object[]>) query.list();
+        Query hqlQuery = getSession().createQuery(hql);
+        
+        hqlQuery.setFirstResult(first);
+        hqlQuery.setMaxResults(size);
+        hqlQuery.setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
+        
+        List<DefinitionDTO> result = (List<DefinitionDTO>) hqlQuery.list();
+        
+        hqlQuery = getSession().createQuery("select pd.cod as codigo, "
+            + "month(pi.endDate) as mes, count(distinct pi) as quantidade "
+            + "from ProcessInstanceEntity pi join pi.processVersion pv join pv.processDefinition pd join pd.category cd "
+            + "where pi.endDate is null "
+            + "group by pd.cod, month(pi.endDate)");
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        Map<Integer, Double> media = ((List<Map<String, Number>>)hqlQuery.list()).stream().collect(Collectors.groupingBy(obj -> obj.get("codigo").intValue(), Collectors.averagingLong(obj -> obj.get("quantidade").longValue())));
+        for (DefinitionDTO definitionDTO : result) {
+            definitionDTO.setThroughput(media.getOrDefault(definitionDTO.getCod(), 0.0).longValue());
+        }
+        return result;
     }
-
+    
     public int countAll() {
-        return ((Number) getSession()
-                .createSQLQuery("SELECT COUNT(*) FROM "+DBSCHEMA+"TB_DEFINICAO_PROCESSO").uniqueResult()).intValue();
+        return ((Number) getSession().createCriteria(ProcessDefinitionEntity.class).setProjection(Projections.rowCount()).uniqueResult()).intValue();
     }
 
     @SuppressWarnings("unchecked")
-    public List<MetaDataDTO> retrieveMetaData(Long id) {
-        long newestProcessVersionId = ((Number) getSession()
-                .createSQLQuery("SELECT MAX(CO_VERSAO_PROCESSO) FROM "+DBSCHEMA+"TB_VERSAO_PROCESSO WHERE CO_DEFINICAO_PROCESSO = :id")
-                .setParameter("id", id)
-                .uniqueResult()).longValue();
-        String sql =
-                "SELECT TAR.CO_VERSAO_TAREFA AS id, TAR.NO_TAREFA AS task, TIT.DS_TIPO_TAREFA AS type, '' AS executor"
-                        + " FROM "+DBSCHEMA+"TB_VERSAO_TAREFA TAR"
-                        + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
-                        + "   INNER JOIN "+DBSCHEMA+"TB_TIPO_TAREFA TIT ON TIT.CO_TIPO_TAREFA = TAR.CO_TIPO_TAREFA"
-                        + " WHERE TIT.CO_TIPO_TAREFA != :fim AND PRO.CO_VERSAO_PROCESSO = :id";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("id", LongType.INSTANCE)
-                .addScalar("task", StringType.INSTANCE)
-                .addScalar("type", StringType.INSTANCE)
-                .addScalar("executor", StringType.INSTANCE)
-                .setParameter("fim", TaskType.End.ordinal())
-                .setParameter("id", newestProcessVersionId)
-                .setResultTransformer(Transformers.aliasToBean(MetaDataDTO.class));
-        List<MetaDataDTO> metaDatas = query.list();
+    public List<MetaDataDTO> retrieveMetaData(Integer processDefinitionCod) {
+        
+        Integer newestProcessVersionId = ((Number) getSession().createCriteria(ProcessVersionEntity.class).add(Restrictions.eq("processDefinition.cod", processDefinitionCod)).setProjection(Projections.max("cod")).uniqueResult()).intValue();
+        
+        Query hql = getSession().createQuery("select tv.cod as id, tv.name as task, tv.type as enumType from TaskVersionEntity tv where tv.type <> :fim and tv.processVersion.cod = :processVersion");
+        hql.setResultTransformer(Transformers.aliasToBean(MetaDataDTO.class));
+        hql.setParameter("fim", TaskType.End)
+            .setParameter("processVersion", newestProcessVersionId);
+        
+        List<MetaDataDTO> metaDatas = hql.list();
         for (MetaDataDTO metaData : metaDatas) {
             metaData.setTransactions(retrieveTransactions(metaData.getId()));
         }
@@ -142,18 +111,10 @@ public class DefinitionDAO extends BaseDAO{
     }
 
     @SuppressWarnings("unchecked")
-    private List<ITransactionDTO> retrieveTransactions(Long id) {
-        return getSession().createSQLQuery(
-                "SELECT TRA.NO_TRANSICAO AS name, SOU.NO_TAREFA AS source, TGT.NO_TAREFA AS target"
-                        + " FROM "+DBSCHEMA+"TB_VERSAO_TRANSICAO TRA"
-                        + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA SOU ON SOU.CO_VERSAO_TAREFA = TRA.CO_VERSAO_TAREFA_ORIGEM"
-                        + "   INNER JOIN "+DBSCHEMA+"TB_VERSAO_TAREFA TGT ON TGT.CO_VERSAO_TAREFA = TRA.CO_VERSAO_TAREFA_DESTINO"
-                        + " WHERE SOU.CO_VERSAO_TAREFA = :id"
-        ).addScalar("name", StringType.INSTANCE)
-                .addScalar("source", StringType.INSTANCE)
-                .addScalar("target", StringType.INSTANCE)
-                .setParameter("id", id)
-                .setResultTransformer(Transformers.aliasToBean(MetaDataDTO.TransactionDTO.class))
-                .list();
+    private List<ITransactionDTO> retrieveTransactions(Integer originTaskVersionCod) {
+        Query hql = getSession().createQuery("select tr.name as name, ot.name as source, dt.name as target from TaskTransitionVersionEntity tr join tr.originTask ot join tr.destinationTask dt where ot.cod = :originTaskVersionCod");
+        hql.setParameter("originTaskVersionCod", originTaskVersionCod);
+        hql.setResultTransformer(Transformers.aliasToBean(MetaDataDTO.TransactionDTO.class));
+        return hql.list();
     }
 }

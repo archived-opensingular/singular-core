@@ -1,9 +1,7 @@
 package br.net.mirante.singular.service;
 
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -36,18 +34,14 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public DefinitionDTO retrieveById(Long id) {
-        return definitionDAO.retrieveById(id);
+    public DefinitionDTO retrieveById(Integer processDefinitionCod) {
+        return definitionDAO.retrieveById(processDefinitionCod);
     }
 
     @Override
     @Transactional
     public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        List<Object[]> results = definitionDAO.retrieveAll(first, size, orderByProperty, asc);
-        return results.stream()
-                .map(o -> new DefinitionDTO((Long) o[0], (String) o[1], (String) o[2], (String) o[3],
-                    (Long) o[4],(Long) o[5], (Long) o[6], (Long) o[7]))
-                .collect(Collectors.toList());
+        return definitionDAO.retrieveAll(first, size, orderByProperty, asc);
     }
 
     @Override
@@ -58,24 +52,20 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Override
     @Transactional
-    public List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id) {
-        List<Object[]> results = instanceDAO.retrieveAll(first, size, orderByProperty, asc, id);
-        return results.stream()
-                .map(o -> new InstanceDTO((Long) o[0], (String) o[1], (Long) o[2], (Date) o[3],
-                        (Long) o[4], (Date) o[5], (String) o[6]))
-                .collect(Collectors.toList());
+    public List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod) {
+        return instanceDAO.retrieveAll(first, size, orderByProperty, asc, processDefinitionCod);
     }
 
     @Override
     @Transactional
-    public int countAll(Long id) {
-        return instanceDAO.countAll(id);
+    public int countAll(Integer processDefinitionCod) {
+        return instanceDAO.countAll(processDefinitionCod);
     }
 
     @Override
     @Transactional
-    public List<MetaDataDTO> retrieveMetaData(Long id) {
-        return definitionDAO.retrieveMetaData(id);
+    public List<MetaDataDTO> retrieveMetaData(Integer processDefinitionCod) {
+        return definitionDAO.retrieveMetaData(processDefinitionCod);
     }
 
     @Override

@@ -12,8 +12,14 @@ import java.util.stream.Collectors;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
 public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
@@ -122,12 +128,29 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
     // Atalhos de conveniência
     // --------------------------------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     public MTipoComposto<MIComposto> addCampoComposto(String nomeCampo) {
         return addCampo(nomeCampo, MTipoComposto.class);
     }
 
     public MTipoString addCampoString(String nomeCampo) {
         return addCampo(nomeCampo, MTipoString.class);
+    }
+
+    public MTipoCPF addCampoCPF(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCPF.class);
+    }
+
+    public MTipoCNPJ addCampoCNPJ(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCNPJ.class);
+    }
+
+    public MTipoEMail addCampoEmail(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoEMail.class);
+    }
+
+    public MTipoCEP addCampoCEP(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCEP.class);
     }
 
     public MTipoString addCampoString(String nomeCampo, boolean obrigatorio) {
@@ -156,6 +179,14 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoInteger addCampoInteger(String nomeCampo, boolean obrigatorio) {
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
+    }
+
+    public MTipoDecimal addCampoDecimal(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoDecimal.class);
+    }
+
+    public MTipoMonetario addCampoMonetario(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
     /**

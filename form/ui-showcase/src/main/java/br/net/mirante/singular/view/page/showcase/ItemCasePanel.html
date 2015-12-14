@@ -1,0 +1,37 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel>
+    <div class="panel-body">
+        <blockquote wicket:id="blockquote">
+            <p wicket:id="description"></p>
+        </blockquote>
+        <hr/>
+        <form wicket:id="save-form">
+            <div class="form-body">
+                <div wicket:id="feedback" class="alert alert-danger" role="alert"></div>
+                <div class="form-body" wicket:id="generated"></div>
+                <div wicket:id="body-container"></div>
+            </div>
+            <br/>
+            <div class="form-actions">
+                <button type="submit" class="btn blue" wicket:id="save-btn">
+                    <wicket:message key="label.button.save"/>
+                </button>
+                <button type="submit" class="btn red" wicket:id="validate-btn">
+                    <wicket:message key="label.button.validate"/>
+                </button>
+                <button type="submit" class="btn yellow" wicket:id="visualizar-btn">
+                    <wicket:message key="label.button.view.mode"/>
+                </button>
+                <button type="submit" class="btn yellow" wicket:id="editar-btn">
+                    <wicket:message key="label.button.edit.mode"/>
+                </button>
+            </div>
+            <div wicket:id="viewXmlModal" class="portlet-body form">
+                <pre wicket:id="xmlCode"></pre>
+            </div>
+        </form>
+        <hr/>
+        <wicket:fragment wicket:id="codes"></wicket:fragment>
+    </div>
+</wicket:panel>
+</html>

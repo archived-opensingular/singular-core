@@ -18,7 +18,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 import static br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 
-public class IntegerMapper implements ControlsFieldComponentMapper {
+public class IntegerMapper extends StringMapper {
 
     private static final int DEFAULT_SIZE = 9;
 

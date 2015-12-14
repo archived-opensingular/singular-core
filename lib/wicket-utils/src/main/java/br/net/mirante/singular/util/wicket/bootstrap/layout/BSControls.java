@@ -1,12 +1,11 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
@@ -16,9 +15,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -84,7 +84,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
         this.appendInputGroup(componentId -> newInputGroup()
-                .appendExtraClasses("input-medium date date-picker")
+                .appendExtraClasses(" date date-picker ")
                 .appendExtraAttributes(extraAttributes)
                 .appendInputText(datepicker)
                 .appendButtonAddon(Icone.CALENDAR));
@@ -114,8 +114,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         return super.appendTag("p", true, "class='form-control-static'", text);
     }
 
-    public BSControls appendTextarea(Component textarea) {
-        return super.appendTag("textarea", true, "class='form-control' rows='3'", textarea);
+    public BSControls appendTextarea(Component textarea, Integer linhas) {
+        return super.appendTag("textarea", true, "class='form-control' rows='"+linhas+"'", textarea);
     }
 
     public BSControls appendTypeahead(Component typeahead) {
@@ -177,7 +177,16 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                                 + ""));
                         } else {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error');"
+                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
+                                + ""));
+                        }
+                        if (fp.anyMessage(FeedbackMessage.WARNING)) {
+                            response.render(OnDomReadyHeaderItem.forScript(""
+                                + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"
+                                + ""));
+                        } else {
+                            response.render(OnDomReadyHeaderItem.forScript(""
+                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
                                 + ""));
                         }
                     }

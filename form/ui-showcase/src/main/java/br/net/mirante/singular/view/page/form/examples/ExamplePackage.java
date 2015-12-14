@@ -1,15 +1,9 @@
 package br.net.mirante.singular.view.page.form.examples;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
@@ -17,7 +11,11 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
+import br.net.mirante.singular.form.validation.validator.MCPFValidator;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class ExamplePackage extends MPacote {
 
@@ -60,7 +58,9 @@ public class ExamplePackage extends MPacote {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 
-        this.orderNumber = addField(order, "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.orderNumber = addField(order,
+            "OrderNumber", "Número do Pedido", MTipoInteger.class);
+        this.orderNumber.withObrigatorio(true);
 
         buildBuyerField();
         buildAddressField();
@@ -73,11 +73,13 @@ public class ExamplePackage extends MPacote {
         this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
-        
-        this.buyerNome.as(MPacoteBasic.aspect())
-            .onChange((ctx, i) -> ctx.update(buyerCpf));
 
-        buyerCpf.as(MPacoteBasic.aspect())
+        this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
+
+        this.buyerCpf
+            .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
+            .as(MPacoteBasic.aspect())
+            .depends(this.buyerNome)
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
             .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }

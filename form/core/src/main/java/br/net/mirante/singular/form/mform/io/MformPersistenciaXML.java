@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform.io;
 
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.w3c.dom.Attr;
@@ -58,7 +59,8 @@ public class MformPersistenciaXML {
     }
 
     private static void fromXML(MInstancia instancia, MElement xml) {
-        if (xml == null) return; // Não precisa fazer nada
+        if (xml == null)
+            return; // Não precisa fazer nada
         lerAtributos(instancia, xml);
         if (instancia instanceof MISimples) {
             MISimples<?> instanciaS = (MISimples<?>) instancia;
@@ -96,6 +98,15 @@ public class MformPersistenciaXML {
                 }
             }
         }
+    }
+
+    /**
+     * Gera uma string XML representando a instância de forma apropriada para
+     * persitência. Já trata escapes de caracteres especiais dentro dos valores.
+     */
+    public static Optional<String> toStringXML(MInstancia instancia) {
+        MElement xml = toXML(instancia);
+        return xml == null ? Optional.empty() : Optional.of(xml.toStringExato());
     }
 
     public static MElement toXML(MInstancia instancia) {

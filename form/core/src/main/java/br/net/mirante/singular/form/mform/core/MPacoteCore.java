@@ -55,6 +55,8 @@ public class MPacoteCore extends MPacote {
         pb.createTipo(MTipoInteger.class);
         pb.createTipo(MTipoBoolean.class);
         pb.createTipo(MTipoData.class);
+        pb.createTipo(MTipoDecimal.class);
+        pb.createTipo(MTipoMonetario.class);
 
         pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO);
         pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO_FUNCTION);
@@ -69,8 +71,8 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoString.class, ATR_TRIM).withDefaultValueIfNull(true);
         pb.createTipoAtributo(MTipoString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
 
-//        pb.createTipo(MTipoFormula.class);
-//        pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
+        pb.createTipo(MTipoFormula.class);
+        pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
     }

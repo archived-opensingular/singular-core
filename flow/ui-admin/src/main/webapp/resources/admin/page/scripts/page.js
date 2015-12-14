@@ -1,8 +1,37 @@
-var Index = function () {
+var Page = function () {
+
+    var handleDatePickers = function () {
+        if (jQuery().datepicker) {
+            $('.date-picker').datepicker({
+                rtl: Metronic.isRTL(),
+                orientation: "right",
+                autoclose: true,
+                language: 'pt-BR'
+            });
+        }
+    };
+
+    var handleBootstrapSelect = function () {
+        $('.bs-select').selectpicker({
+            iconBase: 'fa',
+            tickIcon: 'fa-check'
+        });
+    };
+
+    var handleMultiSelect = function () {
+        $('.multi-select').multiSelect();
+    };
+
+    var handleSlimScroll = function () {
+        $('.scroller').slimScroll({});
+    }
 
     return {
         init: function () {
-            /* main function */
+            handleDatePickers();
+            handleBootstrapSelect();
+            handleMultiSelect();
+            handleSlimScroll();
         }
     };
 

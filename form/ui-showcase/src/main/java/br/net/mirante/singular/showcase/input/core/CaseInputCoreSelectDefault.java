@@ -2,7 +2,9 @@ package br.net.mirante.singular.showcase.input.core;
 
 import br.net.mirante.singular.showcase.CaseBase;
 
-public class CaseInputCoreSelectDefault extends CaseBase {
+import java.io.Serializable;
+
+public class CaseInputCoreSelectDefault extends CaseBase implements Serializable {
 
     public CaseInputCoreSelectDefault() {
         super("Select", "Default");

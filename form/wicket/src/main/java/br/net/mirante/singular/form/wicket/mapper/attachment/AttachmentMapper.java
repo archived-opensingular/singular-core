@@ -21,4 +21,9 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
         formGroup.appendTypeahead(container);
         return container.field();
     }
+
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        return "";
+    }
 }

@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform.util.comuns;
 
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,14 +34,19 @@ public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
         } else if (valor instanceof Calendar) {
             Calendar cal = (Calendar) valor;
             return YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
+        } else if (valor instanceof String){
+            DateTimeFormatter monthAndYear = new DateTimeFormatterBuilder()
+                .appendPattern("MMyyyy")
+                .toFormatter();
+            return YearMonth.parse((String)valor, monthAndYear);
         }
         throw createErroConversao(valor);
     }
 
     private YearMonth converterFromInteger(int valor) {
-        int mes = valor % 100;
-        int ano = valor / 100;
-        if (ano < 1 || ano > 12) {
+        int ano = valor % 10000;
+        int mes = valor / 10000;
+        if (mes < 1 || mes > 12) {
             throw createErroConversao(valor, YearMonth.class, "Não representa um mês válido (entre 1 e 12)", null);
         }
         return YearMonth.of(ano, mes);
@@ -70,7 +77,7 @@ public class MTipoAnoMes extends MTipoSimples<MIAnoMes, YearMonth> {
         if (valorOriginal == null) {
             return null;
         }
-        return Integer.toString(valorOriginal.getYear() * 100 + valorOriginal.getMonthValue());
+        return String.format("%02d%04d", valorOriginal.getMonthValue(), valorOriginal.getYear());
     }
 
     @Override

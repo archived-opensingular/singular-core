@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular</artifactId>
-        <version>0.4.9</version>
+        <version>0.5.0</version>
     </parent>
 
     <artifactId>singular-flow</artifactId>
@@ -22,6 +22,7 @@
         <module>persistence</module>
         <module>test</module>
 		<module>rest-client</module>
+		<module>alocpro-mock-client</module>
     </modules>
 
 </project>

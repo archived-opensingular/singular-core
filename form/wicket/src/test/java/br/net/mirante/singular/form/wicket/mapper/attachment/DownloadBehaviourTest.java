@@ -1,11 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -15,17 +20,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.SDocument;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
@@ -55,7 +54,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         new WicketTester(new TestApp());
         b = new DownloadBehaviour(instance = setupInstance());
         b.setWebWrapper(createWebWrapper());
-        b.bind(new TestPage(null));
+        b.bind(new TestPage());
         createPersistentHandler();
     }
     
@@ -85,7 +84,9 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
     @SuppressWarnings("serial")
     private IAttachmentRef setupPersistenceFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, new ServiceRef<IAttachmentPersistenceHandler>() {
+        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
+            IAttachmentPersistenceHandler.class,
+                new ServiceRef<IAttachmentPersistenceHandler>() {
             public IAttachmentPersistenceHandler get() {
                 return persistentHandler;
             }
@@ -107,7 +108,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         b.onResourceRequested();
         
         verify(response).addHeader("Content-Type", "application/octet-stream");
-        verify(response).addHeader("Content-disposition", "attachment; filename=abacate.txt");
+        verify(response).addHeader("Content-disposition", "attachment; filename=\"abacate.txt\"");
     }
     
     @Test public void respondsWithTheFileContentFromTheInstance(){
@@ -128,7 +129,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         
         b.onResourceRequested();
         
-        verify(response).addHeader("Content-disposition", "attachment; filename=anything.i.want");
+        verify(response).addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
         ByteArrayOutputStream baos = (ByteArrayOutputStream) response.getOutputStream();
         assertThat(baos.toByteArray()).isEqualTo(new byte[]{1,2,3,4,5,6});
     }

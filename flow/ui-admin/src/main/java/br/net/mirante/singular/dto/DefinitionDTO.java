@@ -5,7 +5,7 @@ import br.net.mirante.singular.util.FormatUtil;
 
 public class DefinitionDTO implements IDefinitionDTO {
 
-    private Long cod;
+    private Integer cod;
     private String nome;
     private String sigla;
     private String categoria;
@@ -18,8 +18,8 @@ public class DefinitionDTO implements IDefinitionDTO {
     public DefinitionDTO() {
     }
     
-    public DefinitionDTO(Long cod, String nome, String sigla, String categoria,
-        Long codGrupo, Long quantidade, Long tempoMedio, Long throughput) {
+    public DefinitionDTO(Integer cod, String nome, String sigla, String categoria,
+        String codGrupo, Long quantidade, Long tempoMedio, Long throughput) {
         this.cod = cod;
         this.nome = nome;
         this.sigla = sigla;
@@ -27,6 +27,7 @@ public class DefinitionDTO implements IDefinitionDTO {
         this.quantidade = quantidade;
         this.tempoMedio = tempoMedio;
         this.throughput = throughput;
+        this.codGrupo = codGrupo;
         this.version = 1L;
     }
 
@@ -39,12 +40,12 @@ public class DefinitionDTO implements IDefinitionDTO {
     }
 
     @Override
-    public Long getCod() {
+    public Integer getCod() {
         return cod;
     }
 
     @Override
-    public void setCod(Long cod) {
+    public void setCod(Integer cod) {
         this.cod = cod;
     }
 
@@ -126,4 +127,10 @@ public class DefinitionDTO implements IDefinitionDTO {
     public void setVersion(Long version) {
         this.version = version;
     }
+
+    @Override
+    public String toString() {
+        return "DefinitionDTO [cod=" + cod + ", nome=" + nome + ", sigla=" + sigla + ", categoria=" + categoria + ", codGrupo=" + codGrupo + ", quantidade=" + quantidade + ", tempoMedio=" + tempoMedio + ", throughput=" + throughput + ", version=" + version + "]";
+    }
+    
 }

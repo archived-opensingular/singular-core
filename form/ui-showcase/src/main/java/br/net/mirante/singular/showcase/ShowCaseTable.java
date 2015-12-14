@@ -1,25 +1,18 @@
 package br.net.mirante.singular.showcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectSearch;
+import br.net.mirante.singular.showcase.file.CaseFileAttachment;
+import br.net.mirante.singular.showcase.input.core.*;
+import br.net.mirante.singular.showcase.layout.CaseGrid;
+import br.net.mirante.singular.showcase.layout.CaseGridList;
+import br.net.mirante.singular.showcase.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
+import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
+import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
 
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreAttachment;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreDate;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCheckbox;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectCombo;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectDefault;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreMultiSelectPickList;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectComboRadio;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectDefault;
-import br.net.mirante.singular.showcase.input.core.CaseInputCoreSelectOtherTypes;
+import java.io.Serializable;
+import java.util.*;
 
 public class ShowCaseTable {
 
@@ -28,8 +21,9 @@ public class ShowCaseTable {
     public ShowCaseTable() {
 
         // @formatter:off
-        group("Input")
+        group("Input", Icone.PUZZLE)
             .addCase(CaseInputCoreDate.class)
+            .addCase(CaseInputCoreYearMonth.class)
             .addCase(CaseInputCoreInteger.class)
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
@@ -38,16 +32,43 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)
-            .addCase(CaseInputCoreAttachment.class)
             .addCase(CaseInputCoreSelectSearch.class)
-        ;
+            .addCase(CaseInputCoreBasic.class)
+            .addCase(CaseInputCoreBoolean.class)
+            .addCase(CaseInputCoreTextArea.class)
+            .addCase(CaseInputCoreDecimal.class)
+            .addCase(CaseInputCoreMonetario.class);
+        group("File", Icone.FOLDER)
+                .addCase(CaseFileAttachment.class);
+        group("Layout", Icone.GRID)
+                .addCase(CaseGrid.class)
+                .addCase(CaseGridList.class)
+                .addCase(CaseGridTable.class);
+        group("Validation", Icone.BAN)
+                .addCase(CaseValidationRequired.class)
+                .addCase(CaseValidationCustom.class)
+                .addCase(CaseValidationBetweenFields.class);
         //@formatter:on
     }
 
-    private ShowCaseGroup group(String groupName) {
+    public ShowCaseItem findCaseItemByComponentName(String name){
+        final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
+        getGroups().stream().forEach(i -> {
+           Optional<ShowCaseItem> op = i.getItens().stream()
+                   .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
+                   .findFirst();
+            if(op.isPresent()){
+                showCaseItem[0] = op.get();
+            }
+        });
+
+        return showCaseItem[0];
+    }
+
+    private ShowCaseGroup group(String groupName, Icone icon) {
         ShowCaseGroup group = groups.get(groupName);
         if (group == null) {
-            group = new ShowCaseGroup(groupName);
+            group = new ShowCaseGroup(groupName, icon);
             groups.put(groupName, group);
         }
         return group;
@@ -57,14 +78,16 @@ public class ShowCaseTable {
         return groups.values();
     }
 
-    public static class ShowCaseGroup {
+    public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
+        private final Icone icon;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 
-        public ShowCaseGroup(String groupName) {
+        public ShowCaseGroup(String groupName, Icone icon) {
             this.groupName = groupName;
+            this.icon = icon;
         }
 
         public String getGroupName() {
@@ -92,9 +115,13 @@ public class ShowCaseTable {
         public Collection<ShowCaseItem> getItens() {
             return itens.values();
         }
+
+        public Icone getIcon() {
+            return icon;
+        }
     }
 
-    public static class ShowCaseItem {
+    public static class ShowCaseItem implements Serializable {
 
         private final String componentName;
 

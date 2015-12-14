@@ -2,10 +2,12 @@ package br.net.mirante.singular.showcase;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Representa um referência um recurso no class path e seu respectivo nome para
@@ -46,7 +48,7 @@ public class ResourceRef {
     public String getContent() {
         InputStream in = referenceClass.getResourceAsStream(resourcePath);
         try {
-            return new String(ByteStreams.toByteArray(in));
+            return IOUtils.toString(in, Charset.forName("UTF-8"));
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }

@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
@@ -13,9 +11,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.SDocument;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -168,7 +166,7 @@ class AttachmentContainer extends BSContainer {
         return progressContainer;
     }
 
-    private final class DownloadLink extends AjaxFallbackLink<Object> {
+    private final class DownloadLink extends Link<Object> {
         private DownloadLink(String id, IModel<Object> model) {
             super(id, model);
             setBody(model);
@@ -178,7 +176,7 @@ class AttachmentContainer extends BSContainer {
             return downloader.getUrl();
         }
 
-        public void onClick(AjaxRequestTarget target) {}
+        public void onClick() {}
     }
 
     @SuppressWarnings("unchecked")

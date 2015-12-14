@@ -13,16 +13,18 @@ import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MProviderOpcoes;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, 
+            BSControls formGroup, final IModel<? extends MInstancia> model, 
+            IModel<String> labelModel) {
         final List<String> opcoesValue;
         final MTipoLista tipoLista;
         if (model.getObject().getMTipo() instanceof MTipoLista) {
@@ -32,15 +34,34 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         }
         if (tipoLista != null && tipoLista.getTipoElementos() instanceof MTipoString
                 && ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes() != null) {
-            MProviderOpcoes opcoes = ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes();
+            MOptionsProvider opcoes = ((MTipoString) tipoLista.getTipoElementos()).getProviderOpcoes();
             opcoesValue = new ArrayList<>();
-            opcoesValue.addAll(opcoes.getOpcoes().getValor()
+            opcoesValue.addAll(opcoes.getOpcoes(model.getObject()).getValor()
                     .stream().map(Object::toString).collect(Collectors.toList()));
         } else {
             opcoesValue = Collections.emptyList();
         }
 
         return formGroupAppender(formGroup, model, opcoesValue);
+    }
+
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        StringBuilder output = new StringBuilder();
+
+        if (model.getObject() != null && model.getObject().getValor() != null
+                && model.getObject().getValor() instanceof List) {
+            List<?> collection = (List<?>) model.getObject().getValor();
+            for (Object o : collection) {
+                if (collection.indexOf(o) == 0) {
+                    output.append(o.toString());
+                } else {
+                    output.append(", ").append(o.toString());
+                }
+            }
+        }
+
+        return output.toString();
     }
 
     protected ListMultipleChoice<String> retrieveChoices(IModel<? extends MInstancia> model,

@@ -1,40 +1,49 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MProviderOpcoes;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, 
+            BSControls formGroup, IModel<? extends MInstancia> model, 
+            IModel<String> labelModel) {
         final List<String> opcoesValue;
         if (model.getObject().getMTipo() instanceof MTipoString
                 && ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes() != null) {
-            MProviderOpcoes opcoes = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
+            MOptionsProvider opcoes = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
             opcoesValue = new ArrayList<>();
-            opcoesValue.addAll(opcoes.getOpcoes().getValor()
+            opcoesValue.addAll(opcoes.getOpcoes(model.getObject()).getValor()
                     .stream().map(Object::toString).collect(Collectors.toList()));
         } else {
             opcoesValue = Collections.emptyList();
         }
 
         return formGroupAppender(formGroup, model, opcoesValue);
+    }
+
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        if (model.getObject() != null && model.getObject().getValor() != null) {
+            return model.getObject().getValor().toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     protected AbstractSingleSelectChoice<String> retrieveChoices(IModel<? extends MInstancia> model,
