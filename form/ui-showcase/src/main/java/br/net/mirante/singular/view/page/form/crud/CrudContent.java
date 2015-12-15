@@ -219,7 +219,7 @@ public class CrudContent extends Content
         viewXmlModal.addOrReplace(new Label("xmlCode", $m.property(model, "xml")));
         viewXmlModal.addOrReplace(new Label("definicao", sb.toString()));
         viewXmlModal.show(target);
-        viewXmlModal.setSize(BSModalBorder.Size.FIT);
+        viewXmlModal.setSize(BSModalBorder.Size.LARGE);
     }
 
     private void updateListTableFromModal(AjaxRequestTarget target) {
