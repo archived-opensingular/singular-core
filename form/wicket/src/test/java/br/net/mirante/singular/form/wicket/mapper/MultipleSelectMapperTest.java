@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 
@@ -39,9 +40,8 @@ public class MultipleSelectMapperTest extends MapperBaseTest {
     public void testEditRendering() {
         FormTester formTester = startPage(ViewMode.EDITION);
         Optional<String> gadgets = findId(formTester.getForm(), "gadgets");
-        Optional<String> _outputgadgets =  findId(formTester.getForm(), "_outputgadgets");
         assertTrue(gadgets.isPresent());
-        assertFalse(_outputgadgets.isPresent());
+        assertTrue(formTester.getForm().get(gadgets.get()) instanceof ListMultipleChoice);
     }
 
     @Test
@@ -49,12 +49,9 @@ public class MultipleSelectMapperTest extends MapperBaseTest {
         FormTester formTester = startPage(ViewMode.VISUALIZATION);
 
         Optional<String> gadgets = findId(formTester.getForm(), "gadgets");
-        assertFalse(gadgets.isPresent());
+        assertTrue(gadgets.isPresent());
 
-        Optional<String> _outputgadgets = findId(formTester.getForm(), "_outputgadgets");
-        assertTrue(_outputgadgets.isPresent());
-
-        Component panel = formTester.getForm().get(_outputgadgets.get());
+        Component panel = formTester.getForm().get(gadgets.get());
         assertNotNull(panel);
         assertTrue(panel instanceof BOutputPanel);
 
