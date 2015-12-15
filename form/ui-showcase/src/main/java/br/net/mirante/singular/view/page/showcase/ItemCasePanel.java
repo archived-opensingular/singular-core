@@ -140,7 +140,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private Component createVisualizarButton() {
-        return new AjaxButton("visualizar-btn") {
+        return new ItemCaseAjaxButton("visualizar-btn") {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 viewMode = ViewMode.VISUALIZATION;
@@ -156,7 +157,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private Component createEditarButton() {
-        return new AjaxButton("editar-btn") {
+        return new ItemCaseAjaxButton("editar-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 viewMode = ViewMode.EDITION;
@@ -173,7 +174,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     @SuppressWarnings("serial")
     private Component createSaveButton() {
-        return new AjaxButton("save-btn") {
+        return new ItemCaseAjaxButton("save-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (addValidationErrors(form, currentInstance.getObject())) {
@@ -207,7 +208,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private AjaxButton createValidateButton() {
-        return new AjaxButton("validate-btn") {
+        return new ItemCaseAjaxButton("validate-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 addValidationErrors(form, currentInstance.getObject());
@@ -231,5 +232,18 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
                 IAttachmentPersistenceHandler.class, persistanceRef);
         document.addServiceRegistry(serviceRegistry);
+    }
+
+    private class ItemCaseAjaxButton extends AjaxButton {
+
+        public ItemCaseAjaxButton(String id) {
+            super(id);
+        }
+
+        @Override
+        protected void onError(AjaxRequestTarget target, Form<?> form) {
+            super.onError(target, form);
+            target.add(form);
+        }
     }
 }
