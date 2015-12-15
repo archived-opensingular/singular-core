@@ -2,7 +2,10 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,19 +22,6 @@ import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class MonetarioMapper implements ControlsFieldComponentMapper {
