@@ -16,11 +16,10 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,8 +27,6 @@ import java.io.OutputStream;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class AttachmentMapper implements ControlsFieldComponentMapper {
-
-    private final static Logger LOGGER = LoggerFactory.getLogger(AttachmentMapper.class);
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -41,7 +38,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         return StringUtils.EMPTY;
     }
 
@@ -76,11 +73,12 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
                 ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
                 requestHandler.setFileName(fileName);
                 requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
-                getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+                final RequestCycle requestCycle = getRequestCycle();
+                requestCycle.scheduleRequestHandlerAfterCurrent(requestHandler);
             }
         };
 
-        final BSWellBorder outputBorder = new BSWellBorder("outputBorder");
+        final BSWellBorder outputBorder = BSWellBorder.small("outputBorder");
         final Label fileNameLabel = new Label("fileName", $m.ofValue(fileName));
 
         templatePanel.add(outputBorder.add(downloadLink.add(fileNameLabel)));

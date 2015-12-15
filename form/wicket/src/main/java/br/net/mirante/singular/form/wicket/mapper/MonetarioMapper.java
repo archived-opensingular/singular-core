@@ -14,7 +14,10 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,8 +31,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
 
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
-                                 IModel<? extends MInstancia> model, IModel<String> labelModel)
-    {
+                                 IModel<? extends MInstancia> model, IModel<String> labelModel) {
         TextField<BigDecimal> comp = new TextField<>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), BigDecimal.class);
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
@@ -50,21 +52,38 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        if (model.getObject() != null && model.getObject().getValor() != null) {
-            BigDecimal b = (BigDecimal) model.getObject().getValor();
-            Integer digitos = (int) withOptionsOf(model).get(DIGITS);
-            BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, digitos));
-            return String.format("R$ %."+digitos+"f", b.divide(divisor));
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+
+        if ((mi != null) && (mi.getValor() != null)) {
+
+            final NumberFormat numberFormat = NumberFormat.getInstance(new Locale("pt", "BR"));
+            final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
+            final BigDecimal valor = (BigDecimal) mi.getValor();
+            final Map<String, Object> options = withOptionsOf(model);
+            final Integer digitos = (int) options.get(DIGITS);
+            final StringBuilder pattern = new StringBuilder();
+
+            pattern.append("R$ ###,###.");
+
+            for (int i = 0; i < digitos; i += 1) {
+                pattern.append("#");
+            }
+
+            decimalFormat.applyPattern(pattern.toString());
+
+            return decimalFormat.format(valor);
         }
+
         return StringUtils.EMPTY;
     }
 
     private Map<String, Object> withOptionsOf(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                mi.getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                mi.getValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
         Map<String, Object> options = defaultOptions();
         options.put(INTEGER_DIGITS, inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
         options.put(DIGITS, decimalMaximo.orElse(DEFAULT_DIGITS));

@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -28,11 +27,12 @@ public class TextAreaMapper extends StringMapper {
 
             MTextAreaView mTextAreaView = (MTextAreaView) view;
 
-            FormComponent<?> textArea = new TextArea<>(model.getObject().getNome(),
-                    new MInstanciaValorModel<>(model)).setLabel(labelModel);
+            final MInstancia mi = model.getObject();
+            FormComponent<?> textArea = new TextArea<>(mi.getNome(),new MInstanciaValorModel<>(model));
+            textArea.setLabel(labelModel);
             formGroup.appendTextarea(textArea, mTextAreaView.getLinhas());
 
-            Optional<Integer> maxSize = Optional.ofNullable(model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO));
+            Optional<Integer> maxSize = Optional.ofNullable(mi.getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO));
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));

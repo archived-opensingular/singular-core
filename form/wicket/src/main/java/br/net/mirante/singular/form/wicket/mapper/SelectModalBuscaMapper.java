@@ -242,9 +242,10 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        if (model.getObject() != null && model.getObject().getValor() != null) {
-            return String.valueOf(model.getObject().getValor());
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        if ((mi != null) && (mi.getValor() != null)) {
+            return String.valueOf(mi.getValor());
         }
         return StringUtils.EMPTY;
     }
