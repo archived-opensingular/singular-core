@@ -106,6 +106,10 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         return valorOriginal.toString();
     }
 
+    public TIPO_NATIVO fromStringPersistencia(String valorOriginal) {
+        return converter(valorOriginal, classeTipoNativo);
+    }
+
     public String toStringDisplay(TIPO_NATIVO valor) {
         return toStringPersistencia(valor);
     }

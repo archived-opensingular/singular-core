@@ -41,4 +41,19 @@ public class MTipoDecimal extends MTipoSimples<MIBigDecimal, BigDecimal> {
             throw createErroConversao(valor, BigDecimal.class, null, e);
         }
     }
+
+    @Override
+    public BigDecimal fromStringPersistencia(String valor) {
+        valor = StringUtils.trimToNull(valor);
+        if (valor == null) {
+            return null;
+        }
+
+        try {
+            return new BigDecimal(valor);
+
+        } catch (Exception e) {
+            throw createErroConversao(valor, BigDecimal.class, null, e);
+        }
+    }
 }

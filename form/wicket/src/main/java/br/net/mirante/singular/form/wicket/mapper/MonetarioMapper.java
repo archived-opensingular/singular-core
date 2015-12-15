@@ -1,22 +1,25 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.behavior.MoneyMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class MonetarioMapper implements ControlsFieldComponentMapper {
 
@@ -45,8 +48,18 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
                         component.getResponse().write("</div>");
                     }
                 })
-                .add(new InputMaskBehavior(withOptionsOf(model), false)));
+                .add(new MoneyMaskBehavior(withOptionsOf(model)))
+                .add(WicketUtils.$b.attr("maxlength", calcularMaxLength(model))));
         return comp;
+    }
+
+    private Serializable calcularMaxLength(IModel<?extends MInstancia> model) {
+        Integer inteiro = getInteiroMaximo(model);
+        Integer decimal = getDecimalMaximo(model);
+
+        int tamanhoMascara = (int) Math.ceil((double)inteiro / 3);
+
+        return inteiro + tamanhoMascara + decimal;
     }
 
     @Override
@@ -61,25 +74,29 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     }
 
     private Map<String, Object> withOptionsOf(IModel<? extends MInstancia> model) {
-        Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+        Map<String, Object> options = defaultOptions();
+        options.put("precision", getDecimalMaximo(model));
+        return options;
+    }
+
+    private Integer getDecimalMaximo(IModel<? extends MInstancia> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
                 model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
-        Map<String, Object> options = defaultOptions();
-        options.put(INTEGER_DIGITS, inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
-        options.put(DIGITS, decimalMaximo.orElse(DEFAULT_DIGITS));
-        return options;
+        return decimalMaximo.orElse(DEFAULT_DIGITS);
+    }
+
+    private Integer getInteiroMaximo(IModel<? extends MInstancia> model) {
+        Optional<Integer> inteiroMaximo = Optional.ofNullable(
+                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+        return inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS);
     }
 
     private Map<String, Object> defaultOptions() {
         Map<String, Object> options = new HashMap<>();
-        options.put("alias", "decimal");
-        options.put("radixPoint", ",");
-        options.put("groupSeparator", ".");
-        options.put("placeholder", "0");
-        options.put("autoGroup", true);
-        options.put("digitsOptional", false);
-        options.put("showMaskOnHover", false);
+        options.put("thousands", ".");
+        options.put("decimal", ",");
+        options.put("allowZero", true);
+        options.put("allowNegative", true);
 
         return options;
     }
