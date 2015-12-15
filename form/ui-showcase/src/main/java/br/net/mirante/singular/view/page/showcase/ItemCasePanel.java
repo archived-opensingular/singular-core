@@ -21,10 +21,10 @@ import br.net.mirante.singular.showcase.ResourceRef;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -37,6 +37,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -179,11 +181,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (addValidationErrors(form, currentInstance.getObject())) {
                     MElement rootXml = MformPersistenciaXML.toXML(currentInstance.getObject());
-                    if(rootXml != null) {
-                        viewXml(target, rootXml.toString());
-                    } else {
-                        viewXml(target, StringUtils.EMPTY);
-                    }
+                    viewXml(target, rootXml);
                 }
                 target.add(form);
             }
@@ -222,9 +220,23 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         };
     }
 
-    private void viewXml(AjaxRequestTarget target, String xml) {
-        viewXmlModal.addOrReplace(new Label("xmlCode", $m.ofValue(xml)));
+    private void viewXml(AjaxRequestTarget target, MElement xml) {
+        final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
+        xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, false))));
+        xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, true))));
+        viewXmlModal.addOrReplace(xmlCodes);
         viewXmlModal.show(target);
+    }
+
+    private String getXmlOutput(MElement xml, boolean tabulado) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        if (tabulado) {
+            xml.printTabulado(pw);
+        } else {
+            xml.print(pw);
+        }
+        return sw.toString();
     }
 
     private void bindDefaultServices(SDocument document) {
