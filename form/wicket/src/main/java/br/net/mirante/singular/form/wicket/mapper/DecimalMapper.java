@@ -1,12 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -14,11 +13,13 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class DecimalMapper extends StringMapper {
 
@@ -68,6 +69,27 @@ public class DecimalMapper extends StringMapper {
         return options;
     }
 
+    @Override
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+
+        if ((mi != null) && (mi.getValor() != null)) {
+
+            final BigDecimal valor = (BigDecimal) mi.getValor();
+            return formatDecimal(valor);
+        }
+
+        return StringUtils.EMPTY;
+    }
+
+    private String formatDecimal(BigDecimal bigDecimal) {
+        DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
+        nf.setParseBigDecimal(true);
+        nf.setGroupingUsed(true);
+        nf.setMinimumFractionDigits(0);
+        return nf.format(bigDecimal);
+    }
+
     @SuppressWarnings("rawtypes")
     private class BigDecimalConverter implements IConverter {
         private Integer maximoCasasDecimais;
@@ -96,7 +118,8 @@ public class DecimalMapper extends StringMapper {
             BigDecimal bigDecimal = (BigDecimal) value;
             int casasValue = bigDecimal.scale();
             int casasDecimais = casasValue < this.maximoCasasDecimais ? casasValue : this.maximoCasasDecimais;
-            return bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP).toString();
+            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP));
         }
+
     }
 }

@@ -14,6 +14,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -34,8 +35,15 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                  IModel<? extends MInstancia> model, IModel<String> labelModel) {
-        TextField<BigDecimal> comp = new TextField<>(model.getObject().getNome(),
-                new MInstanciaValorModel<>(model), BigDecimal.class);
+        Integer decimalMaximo = getDecimalMaximo(model);
+        TextField<String> comp = new TextField<String>(model.getObject().getNome(),
+                new MInstanciaValorModel<>(model), String.class) {
+            @Override
+            public IConverter getConverter(Class type) {
+                return new MonetarioConverter(decimalMaximo);
+            }
+        };
+
         formGroup.appendInputText(comp.setLabel(labelModel).setOutputMarkupId(true)
                 .add(new Behavior() {
                     @Override
@@ -51,6 +59,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
                 })
                 .add(new MoneyMaskBehavior(withOptionsOf(model)))
                 .add(WicketUtils.$b.attr("maxlength", calcularMaxLength(model))));
+
         return comp;
     }
 
@@ -113,9 +122,48 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
         Map<String, Object> options = new HashMap<>();
         options.put("thousands", ".");
         options.put("decimal", ",");
-        options.put("allowZero", true);
+        options.put("allowZero", false);
         options.put("allowNegative", true);
 
         return options;
+    }
+
+    private String formatDecimal(BigDecimal bigDecimal, Integer casasDecimais) {
+        DecimalFormat nf = (DecimalFormat) DecimalFormat.getInstance(new Locale("pt", "BR"));
+        nf.setParseBigDecimal(true);
+        nf.setGroupingUsed(true);
+        nf.setMinimumFractionDigits(casasDecimais);
+        nf.setMaximumFractionDigits(casasDecimais);
+        return nf.format(bigDecimal);
+    }
+
+    private class MonetarioConverter implements IConverter {
+        private Integer casasDecimais;
+
+        public MonetarioConverter(Integer casasDecimais) {
+            this.casasDecimais = casasDecimais;
+        }
+
+        @Override
+        public Object convertToObject(String value, Locale locale) {
+            if (!StringUtils.isEmpty(value)) {
+                return new BigDecimal(value.replaceAll("\\.", "").replaceAll(",", "."));
+            }
+
+            return null;
+        }
+
+        @Override
+        public String convertToString(Object value, Locale locale) {
+            if (value == null) {
+                return "";
+            }else if (value instanceof String) {
+                value = convertToObject((String) value, locale);
+            }
+
+            BigDecimal bigDecimal = (BigDecimal) value;
+            return formatDecimal(bigDecimal.setScale(casasDecimais, BigDecimal.ROUND_HALF_UP), casasDecimais);
+        }
+
     }
 }
