@@ -68,14 +68,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ViewMode viewMode = ViewMode.EDITION;
 
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = InMemoryAttachmentPersitenceHandler::new;
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
 
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        @Override
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = ServiceRef.of(filePersistence);
 
     public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
         super(id);

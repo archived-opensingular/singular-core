@@ -1,17 +1,35 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
+import org.apache.wicket.request.resource.ContentDisposition;
+import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("serial")
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 public class AttachmentMapper implements ControlsFieldComponentMapper {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(AttachmentMapper.class);
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -24,6 +42,60 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
     public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        return "";
+        return StringUtils.EMPTY;
+    }
+
+    @Override
+    public Component appendReadOnlyInput(MView view, BSContainer bodyContainer,
+                                         BSControls formGroup, IModel<? extends MInstancia> model,
+                                         IModel<String> labelModel) {
+
+        final TemplatePanel templatePanel = formGroup.newTemplateTag(tt -> {
+            String template = "";
+            template += "<div wicket:id='outputBorder'>";
+            template += "   <a wicket:id='downloadLink'><span wicket:id='fileName'></span></a>";
+            template += "</div>";
+            return template;
+        });
+
+        final MIAttachment attachment = (MIAttachment) model.getObject();
+        final IAttachmentRef attachmentRef = getAttachmentRef(attachment.getDocument(), attachment.getFileId());
+
+        final byte[] content = attachmentRef.getContentAsByteArray();
+        final String fileName = attachment.getFileName();
+
+        final Link<Void> downloadLink = new Link<Void>("downloadLink") {
+            @Override
+            public void onClick() {
+                AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                    @Override
+                    public void write(OutputStream outputStream) throws IOException {
+                        outputStream.write(content);
+                    }
+                };
+                ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+                requestHandler.setFileName(fileName);
+                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+                getRequestCycle().scheduleRequestHandlerAfterCurrent(requestHandler);
+            }
+        };
+
+        final BSWellBorder outputBorder = new BSWellBorder("outputBorder");
+        final Label fileNameLabel = new Label("fileName", $m.ofValue(fileName));
+
+        templatePanel.add(outputBorder.add(downloadLink.add(fileNameLabel)));
+
+        return templatePanel;
+    }
+
+    private IAttachmentRef getAttachmentRef(final SDocument document, final String fileId) {
+        final IAttachmentPersistenceHandler temporaryHandler = document.lookupService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        final IAttachmentPersistenceHandler persistenceHandler = document.lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+
+        if (temporaryHandler.getAttachment(fileId) != null) {
+            return temporaryHandler.getAttachment(fileId);
+        } else {
+            return persistenceHandler.getAttachment(fileId);
+        }
     }
 }
