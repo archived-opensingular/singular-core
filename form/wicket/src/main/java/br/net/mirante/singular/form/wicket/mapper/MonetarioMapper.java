@@ -71,6 +71,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
             }
 
             decimalFormat.applyPattern(pattern.toString());
+            decimalFormat.setMinimumFractionDigits(digitos);
 
             return decimalFormat.format(valor);
         }
