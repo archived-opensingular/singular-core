@@ -29,8 +29,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;
 
-    private static final String INTEGER_DIGITS = "integerDigits";
-    private static final String DIGITS = "digits";
+    private static final String PRECISION = "precision";
 
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
@@ -74,7 +73,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
             final BigDecimal valor = (BigDecimal) mi.getValor();
             final Map<String, Object> options = withOptionsOf(model);
-            final Integer digitos = (int) options.get(DIGITS);
+            final Integer digitos = (int) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();
 
             pattern.append("R$ ###,###.");
@@ -94,7 +93,7 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
 
     private Map<String, Object> withOptionsOf(IModel<? extends MInstancia> model) {
         Map<String, Object> options = defaultOptions();
-        options.put("precision", getDecimalMaximo(model));
+        options.put(PRECISION, getDecimalMaximo(model));
         return options;
     }
 
