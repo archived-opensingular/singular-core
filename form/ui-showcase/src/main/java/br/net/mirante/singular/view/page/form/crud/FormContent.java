@@ -23,6 +23,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -55,13 +56,13 @@ public class FormContent extends Content
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
-    
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = 
+
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef =
                     ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
 
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef =
                                                 ServiceRef.of(filePersistence);
-    
+
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
         if(viewMode.isNull()) {
@@ -102,7 +103,7 @@ public class FormContent extends Content
     }
 
     private void populateInstance(final MTipo<?> tipo) {
-        if (currentModel.getXml() == null)
+        if ((currentModel.getXml() == null) || currentModel.getXml().isEmpty())
             return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
@@ -170,23 +171,20 @@ public class FormContent extends Content
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 
                 MInstancia trueInstance = currentInstance.getObject();
-                trueInstance.getDocument().persistFiles(); //TODO: review this order
-                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                final SDocument document = trueInstance.getDocument();
+
+                document.persistFiles();
+                Optional<String> stringXml = MformPersistenciaXML.toStringXML(trueInstance);
 
                 if (validate) {
-                    if (!addValidationErrors(target, form, trueInstance, rootXml)) {
+                    if (!addValidationErrors(target, form, trueInstance, stringXml)) {
                         target.add(form);
                         return;
                     }
-//                    try {
-//                    } catch (Exception e) {
                     target.add(form);
-//                        Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
-//                        return;
-//                    }
                 }
 
-                currentModel.setXml(printXml(rootXml));
+                currentModel.setXml(stringXml.orElse(StringUtils.EMPTY));
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -199,37 +197,22 @@ public class FormContent extends Content
         };
     }
 
-    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,
-        MElement rootXml) {
-        boolean proceed = runDefaultValidators(target, form, trueInstance);
-        if (!proceed)
-            return false;
-        return validateEmptyForm(form, rootXml);
-    }
-
-    private boolean validateEmptyForm(Form<?> form, MElement rootXml) {
-        if (rootXml == null) {
+    private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance, Optional<?> xml) {
+        if (!xml.isPresent()) {
             form.error(getMessage("form.message.empty").getString());
             return false;
         }
-        return true;
+        return runDefaultValidators(target, form, trueInstance);
     }
 
     private boolean runDefaultValidators(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance) {
         return WicketFormProcessing.onFormSubmit(form, Optional.of(target), trueInstance);
-        //        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        //        validationContext.validateAll();
-        //        WicketFormUtils.associateErrorsToComponents(validationContext, form);
-        //
-        //        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-        //            throw new RuntimeException("Has form errors");
-        //        }
     }
 
     private String printXml(MElement rootXml) {
         if (rootXml != null) {
             StringWriter buffer = new StringWriter();
-            rootXml.printTabulado(new PrintWriter(buffer));
+            rootXml.print(new PrintWriter(buffer), true, true);
             return buffer.toString();
         }
         return null;
@@ -258,9 +241,9 @@ public class FormContent extends Content
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 MInstancia trueInstance = currentInstance.getObject();
                 trueInstance.getDocument().persistFiles(); //TODO: review this order
-                MElement rootXml = MformPersistenciaXML.toXML(trueInstance);
+                Optional<String> xml = MformPersistenciaXML.toStringXML(trueInstance);
                 try {
-                    addValidationErrors(target, form, trueInstance, rootXml);
+                    addValidationErrors(target, form, trueInstance, xml);
                 } catch (Exception e) {
                     target.add(form);
                     Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);

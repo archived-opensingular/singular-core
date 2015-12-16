@@ -40,7 +40,7 @@ import br.net.mirante.singular.form.wicket.mapper.MultipleSelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.PicklistMapper;
 import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.SelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.SelectModalBuscaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
@@ -56,7 +56,7 @@ public class UIBuilderWicket {
     static {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
-        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new);
         MAPPERS.register(MTipoBoolean.class,                                           BooleanMapper::new);
         MAPPERS.register(MTipoInteger.class,                                           IntegerMapper::new);
         MAPPERS.register(MTipoString.class,                                            StringMapper::new);

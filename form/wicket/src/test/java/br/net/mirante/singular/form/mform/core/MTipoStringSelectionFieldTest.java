@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.mform.core;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -13,12 +13,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import java.util.List;
+
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class MTipoStringSelectionFieldTest {
     private static MDicionario dicionario;
@@ -36,7 +35,7 @@ public class MTipoStringSelectionFieldTest {
 
     @Before public void setupPage() {
         driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
+        page = new TestPage();
         page.setDicionario(dicionario);
         localPackage = dicionario.criarNovoPacote("test");
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");

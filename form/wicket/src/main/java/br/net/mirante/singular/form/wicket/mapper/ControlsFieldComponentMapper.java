@@ -21,8 +21,6 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
-import java.util.Optional;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
@@ -48,17 +46,44 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     @SuppressWarnings("rawtypes")
     Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
+    String getReadOnlyFormattedText(IModel<? extends MInstancia> model);
+
+    /**
+     *
+     * @param view
+     *  Instancia da MView utilizada para configurar o componente
+     * @param bodyContainer
+     *  Container não aninhado no formulário, utilizado para adicionar modais por exemplo
+     * @param formGroup
+     *  Container onde dever adicionado o input
+     * @param model
+     *  Model da MInstancia
+     * @param labelModel
+     *  Model contendo o label do componente
+     * @return
+     *   Retorna o componente  já adicionado ao formGroup
+     */
+    @SuppressWarnings("rawtypes")
+    default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
+                                          IModel<? extends MInstancia> model, IModel<String> labelModel){
+        final MInstancia mi = model.getObject();
+        BOutputPanel comp = new BOutputPanel(mi.getNome(),
+                $m.ofValue(getReadOnlyFormattedText(model)));
+        formGroup.appendTag("div", comp);
+        return comp;
+    }
+
     @Override
     default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
 
-        final BSControls controls = ctx.getContainer().newFormGroup();
+        final BSContainer<?> container = ctx.getContainer();
+        final BSControls controls = container.newFormGroup();
 
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
-        final AtributoModel<Integer> size = new AtributoModel<>(model, MPacoteBasic.ATR_TAMANHO_EDICAO);
 
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
@@ -73,22 +98,20 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                 .add($b.classAppender("hidden-md"))
                 .add(InvisibleIfNullOrEmptyBehavior.getInstance());
 
-        Component input = null;
-        if(viewMode.equals(ViewMode.EDITION)){
-            input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
-        } else {
-          Optional<Object> output = Optional.ofNullable(model.getObject().getValor());
-          input = new BOutputPanel("_output"+model.getObject().getNome(), $m.ofValue(output.orElse("").toString()));
-          controls.appendTag("div", input);
-        }
-        controls.appendFeedback(controls, feedbackMessageFilter);
+        final Component input;
 
-        input.add(DisabledClassBehavior.getInstance());
+        if (viewMode.isEdition()) {
+            input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+            controls.appendFeedback(controls, feedbackMessageFilter);
+            input.add(DisabledClassBehavior.getInstance());
+        } else {
+            input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
+        }
 
         if (input instanceof FormComponent<?>) {
             ctx.configure((FormComponent<?>) input);
         }
-        if (input instanceof LabeledWebMarkupContainer && ((LabeledWebMarkupContainer) input).getLabel() == null) {
+        if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 

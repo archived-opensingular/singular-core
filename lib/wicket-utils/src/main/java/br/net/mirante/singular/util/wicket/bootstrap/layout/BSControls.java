@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
+public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSControls> {
 
     public BSControls(String id) {
         this(id, true);
@@ -44,9 +44,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
             .appendTag("div", true, "class='checkbox'", new BSContainer<>("_" + checkbox.getId())
                 .appendTag("label", new BSContainer<>("_")
                     .appendTag("input", false, "type='checkbox'", checkbox)
-                    .appendTag("span", label)
-                )
-            );
+                    .appendTag("span", label)));
         return this;
     }
 
@@ -69,25 +67,27 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     public BSControls appendInputText(Component input) {
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
-    
+
     public BSControls appendRadioChoice(Component input) {
         return super.appendTag("div", true, "class='radio-list'", input);
     }
 
     public BSControls appendDatepicker(Component datepicker) {
-        return this.appendDatepicker(datepicker, new HashMap<String, String>() {{
-            put("data-date-format", "dd/mm/yyyy");
-            put("data-date-start-view", "days");
-            put("data-date-min-view-mode", "days");
-        }});
+        return this.appendDatepicker(datepicker, new HashMap<String, String>() {
+            {
+                put("data-date-format", "dd/mm/yyyy");
+                put("data-date-start-view", "days");
+                put("data-date-min-view-mode", "days");
+            }
+        });
     }
 
     public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
         this.appendInputGroup(componentId -> newInputGroup()
-                .appendExtraClasses(" date date-picker ")
-                .appendExtraAttributes(extraAttributes)
-                .appendInputText(datepicker)
-                .appendButtonAddon(Icone.CALENDAR));
+            .appendExtraClasses(" date date-picker ")
+            .appendExtraAttributes(extraAttributes)
+            .appendInputText(datepicker)
+            .appendButtonAddon(Icone.CALENDAR));
         return this;
     }
 
@@ -100,10 +100,12 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
-        return super.appendTag("select", true, (bootstrap
-                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title")
-                + "'" : "class='form-control'")
-                + (multiple ? "multiple" : ""), select);
+        return super.appendTag("select", true,
+            ((bootstrap)
+                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
+                : "class='form-control'")
+                + (multiple ? "multiple" : ""),
+            select);
     }
 
     public BSControls appendPicklist(Component select) {
@@ -115,7 +117,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendTextarea(Component textarea, Integer linhas) {
-        return super.appendTag("textarea", true, "class='form-control' rows='"+linhas+"'", textarea);
+        return super.appendTag("textarea", true, "class='form-control' rows='" + linhas + "'", textarea);
     }
 
     public BSControls appendTypeahead(Component typeahead) {
@@ -190,8 +192,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                                 + ""));
                         }
                     }
-                })
-            );
+                }));
     }
 
     public Label newHelpBlock(IModel<String> textModel) {

@@ -13,7 +13,9 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
  */
 public interface MOptionsProvider {
 
-    public abstract String toDebug();
+    public default String toDebug() {
+        return null;
+    }
 
     /**
      * Returns the list of options for this selection.

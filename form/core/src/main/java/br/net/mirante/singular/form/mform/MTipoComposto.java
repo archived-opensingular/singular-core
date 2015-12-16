@@ -22,7 +22,7 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
-public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
+public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> implements ICompositeType {
 
     private Map<String, MTipo<?>> fieldsLocal;
 
@@ -37,6 +37,11 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         super(classeInstancia);
     }
 
+    @Override
+    public Collection<MTipo<?>> getContainedTypes() {
+        return getFields();
+    }
+    
     private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();

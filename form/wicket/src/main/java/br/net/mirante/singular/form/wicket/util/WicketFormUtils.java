@@ -1,11 +1,9 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import org.apache.wicket.Component;
@@ -14,6 +12,7 @@ import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.model.IModel;
 
 import com.google.common.base.Objects;
+
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
@@ -73,27 +72,19 @@ public abstract class WicketFormUtils {
             .filter(c -> instanciaIfAware(c.getDefaultModel()) == instance)
             .findAny();
     }
-    public static Stream<Component> streamComponentsByInstance(Component anyComponent, Collection<MInstancia> instances) {
-        Set<Integer> instanceIds = instances.stream().map(it -> it.getId()).collect(toSet());
-        instanceIds.remove(null);
-
+    public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, MInstancia> predicate) {
         MarkupContainer rootContainer = streamAscendants(anyComponent)
             .map(c -> getRootContainer(c))
             .filter(c -> c != null)
             .findAny()
             .get();
-
         return streamDescendants(rootContainer)
-            .filter(c -> instanceIds.contains(instanceIdIfAware(c.getDefaultModel())));
+            .filter(c -> c.getDefaultModel() instanceof IMInstanciaAwareModel<?>)
+            .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel())));
     }
     private static MInstancia instanciaIfAware(IModel<?> model) {
         return (model instanceof IMInstanciaAwareModel<?>)
             ? ((IMInstanciaAwareModel<?>) model).getMInstancia()
-            : null;
-    }
-    private static Integer instanceIdIfAware(IModel<?> model) {
-        return (model instanceof IMInstanciaAwareModel<?>)
-            ? ((IMInstanciaAwareModel<?>) model).getMInstancia().getId()
             : null;
     }
 

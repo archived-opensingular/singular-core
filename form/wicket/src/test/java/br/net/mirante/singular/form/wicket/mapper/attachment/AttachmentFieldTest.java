@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static org.fest.assertions.api.Assertions.assertThat;
-
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MISimples;
+import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -12,11 +12,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import java.util.List;
+
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings("rawtypes")
 public class AttachmentFieldTest {
@@ -36,7 +35,7 @@ public class AttachmentFieldTest {
     @Before
     public void setupPage() {
         driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
+        page = new TestPage();
         page.setDicionario(dicionario);
         page.setNewInstanceOfType(TestPackage.TIPO_ATTACHMENT);
         page.build();
