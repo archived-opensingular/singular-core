@@ -87,9 +87,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
-        if (hintNoDecoration) {
-            label.add($b.classAppender("visible-sm visible-xs"));
-        }
+        label.setVisible(!hintNoDecoration);
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle)
