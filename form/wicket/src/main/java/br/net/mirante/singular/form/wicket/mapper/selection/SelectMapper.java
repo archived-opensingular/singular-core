@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
@@ -25,6 +26,14 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         List<SelectOption> opcoesValue = WicketSelectionUtils.createOptions(model, type);
 
         return formGroupAppender(formGroup, model, opcoesValue);
+    }
+    
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        if (model.getObject() != null && model.getObject().getValor() != null) {
+            return model.getObject().getValor().toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     @SuppressWarnings("rawtypes")

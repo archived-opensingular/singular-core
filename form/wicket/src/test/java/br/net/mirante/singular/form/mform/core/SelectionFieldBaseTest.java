@@ -26,7 +26,7 @@ public abstract class SelectionFieldBaseTest {
 
     protected void setupPage() {
         driver = new WicketTester(new TestApp());
-        page = new TestPage(null);
+        page = new TestPage();
         page.setDicionario(dicionario);
         localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");

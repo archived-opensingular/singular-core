@@ -57,4 +57,23 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     protected ChoiceRenderer renderer() {
         return new ChoiceRenderer("value", "key");
     }
+    
+    @Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        StringBuilder output = new StringBuilder();
+
+        if (model.getObject() != null && model.getObject().getValor() != null
+                && model.getObject().getValor() instanceof List) {
+            List<?> collection = (List<?>) model.getObject().getValor();
+            for (Object o : collection) {
+                if (collection.indexOf(o) == 0) {
+                    output.append(o.toString());
+                } else {
+                    output.append(", ").append(o.toString());
+                }
+            }
+        }
+
+        return output.toString();
+    }
 }

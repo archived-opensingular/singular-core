@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,7 +26,7 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
  * Usage:
  * <pre>
  * 	driver = new WicketTester(new TestApp());
- * page = new TestPage(null);
+ * page = new TestPage();
  * page.build();
  * driver.startPage(page);
  * </pre>
@@ -39,8 +40,19 @@ public class TestPage extends WebPage {
     private Form<?> submittedForm;
     private MIComposto currentInstance;
 
+    private ViewMode viewMode;
+
+    public TestPage() {
+        viewMode = ViewMode.EDITION;
+    }
+
     public TestPage(final PageParameters parameters) {
         super(parameters);
+        if(parameters.get("viewMode").isNull()){
+            viewMode = ViewMode.EDITION;
+        } else {
+            viewMode = ViewMode.valueOf(parameters.get("viewMode").toString());
+        }
     }
 
     public void build() {
@@ -59,7 +71,7 @@ public class TestPage extends WebPage {
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer);
-        UIBuilderWicket.buildForEdit(ctx, createTipoModel(dicionario));
+        UIBuilderWicket.build(ctx, createTipoModel(dicionario), viewMode);
         return container;
     }
 
@@ -103,4 +115,7 @@ public class TestPage extends WebPage {
         return currentInstance;
     }
 
+    public void setCurrentInstance(MIComposto currentInstance) {
+        this.currentInstance = currentInstance;
+    }
 }

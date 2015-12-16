@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class DecimalMapper implements ControlsFieldComponentMapper {
+public class DecimalMapper extends StringMapper {
 
     private static final int DEFAULT_INTEGER_DIGITS = 9;
     private static final int DEFAULT_DIGITS = 2;

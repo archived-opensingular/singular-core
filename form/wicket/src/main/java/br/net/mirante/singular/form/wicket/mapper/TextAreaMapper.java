@@ -17,7 +17,7 @@ import org.apache.wicket.validation.validator.StringValidator;
 
 import java.util.Optional;
 
-public class TextAreaMapper implements ControlsFieldComponentMapper {
+public class TextAreaMapper extends StringMapper {
 
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer,
@@ -36,7 +36,8 @@ public class TextAreaMapper implements ControlsFieldComponentMapper {
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));
-                textArea.add(new CountDownBehaviour(maxSize.get()));
+                //TODO Conforme solicitado pelo Daniel, o contador devera ser evoluido apos upgrade do Metronic
+                //textArea.add(new CountDownBehaviour(maxSize.get()));
             }
 
             return textArea;
@@ -45,5 +46,4 @@ public class TextAreaMapper implements ControlsFieldComponentMapper {
         throw new WicketRuntimeException("TextAreaMapper deve ser utilizado com MTextAreaView");
 
     }
-
 }

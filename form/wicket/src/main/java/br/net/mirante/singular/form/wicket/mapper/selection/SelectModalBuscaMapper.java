@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -233,5 +234,13 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             return v.getKey();
         }
         
+    }
+
+	@Override
+    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
+        if (model.getObject() != null && model.getObject().getValor() != null) {
+            return String.valueOf(model.getObject().getValor());
+        }
+        return StringUtils.EMPTY;
     }
 }

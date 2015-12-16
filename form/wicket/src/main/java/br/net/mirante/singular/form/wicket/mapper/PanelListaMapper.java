@@ -54,7 +54,8 @@ public class PanelListaMapper extends AbstractListaMapper {
                         },
                         (footer, form) -> {
 
-                            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()) {
+                            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                                    && viewMode.isEdition()) {
                                 appendAdicionarButton(listaModel, form, footer);
                             } else {
                                 footer.setVisible(false);
@@ -88,13 +89,17 @@ public class PanelListaMapper extends AbstractListaMapper {
 
             final BSGrid btnGrid = row.newCol(1).newGrid();
 
-            if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha()))
+            if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha())
+                    && viewMode.isEdition()) {
                 appendInserirButton(this, form, item, btnGrid.newColInRow())
                         .add($b.classAppender("pull-right"));
+            }
 
-            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha())
+            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha()
+                    && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, btnGrid.newColInRow())
                         .add($b.classAppender("pull-right"));
+            }
 
             item.add(grid);
         }

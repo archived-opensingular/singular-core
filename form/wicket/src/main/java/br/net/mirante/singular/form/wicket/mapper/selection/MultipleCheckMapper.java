@@ -13,8 +13,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 @SuppressWarnings("serial")
 public class MultipleCheckMapper extends MultipleSelectMapper {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
+    
+    @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     protected CheckBoxMultipleChoice<SelectOption> retrieveChoices
         (IModel<? extends MInstancia> model, List<SelectOption> opcoesValue) {
         return new CheckBoxMultipleChoice<>(

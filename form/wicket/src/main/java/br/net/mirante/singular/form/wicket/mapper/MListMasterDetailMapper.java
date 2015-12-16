@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -14,20 +15,18 @@ import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import com.google.common.base.Strings;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -109,10 +108,29 @@ public class MListMasterDetailMapper implements IWicketComponentMapper {
         };
     }
 
+    @SuppressWarnings("unchecked")
     private void configureColumns(Map<String, String> mapColumns, BSDataTableBuilder<MInstancia, ?, ?> builder, IModel<? extends MInstancia> model) {
-        for (Map.Entry<String, String> entry : mapColumns.entrySet()) {
 
-            MTipo mtipo = model.getObject().getDicionario().getTipo(entry.getKey());
+        Map<MTipo, String> mapColumnsTipos = new HashMap<>();
+
+        if (mapColumns.isEmpty()) {
+            MTipo tipo = ((MILista) model.getObject()).getTipoElementos();
+            if (tipo instanceof MTipoSimples) {
+                mapColumnsTipos.put((MTipoSimples) tipo, null);
+            }
+            if (tipo instanceof MTipoComposto) {
+                ((MTipoComposto) tipo)
+                        .getFields()
+                        .stream()
+                        .filter(mtipo -> mtipo instanceof MTipoSimples)
+                        .forEach(mtipo -> mapColumnsTipos.put((MTipoSimples) mtipo, null));
+
+            }
+        } else {
+            mapColumns.forEach((key, value) -> mapColumnsTipos.put(model.getObject().getDicionario().getTipo(key), value));
+        }
+
+        for (Map.Entry<MTipo, String> entry : mapColumnsTipos.entrySet()) {
 
             IModel<String> labelModel;
             String label = entry.getValue();
@@ -120,12 +138,13 @@ public class MListMasterDetailMapper implements IWicketComponentMapper {
             if (label != null) {
                 labelModel = $m.ofValue(label);
             } else {
-                labelModel = $m.ofValue((String) mtipo.getValorAtributo(MPacoteBasic.ATR_LABEL.getNomeCompleto()));
+                labelModel = $m.ofValue((String) entry.getKey().getValorAtributo(MPacoteBasic.ATR_LABEL.getNomeCompleto()));
             }
 
-            propertyColumnAppender(builder, labelModel, new MTipoModel(mtipo));
+            propertyColumnAppender(builder, labelModel, new MTipoModel(entry.getKey()));
         }
     }
+
 
     private void propertyColumnAppender(BSDataTableBuilder<MInstancia, ?, ?> builder, IModel<String> labelModel, IModel<MTipo<?>> mTipoModel) {
         builder.appendPropertyColumn(labelModel, o -> {

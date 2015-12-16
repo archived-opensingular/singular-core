@@ -1,9 +1,8 @@
 package br.net.mirante.singular.flow.schedule.quartz;
 
-import org.junit.Test;
-
 import br.net.mirante.singular.flow.schedule.IScheduledJob;
 import br.net.mirante.singular.flow.schedule.ScheduledJob;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +10,7 @@ public class QuartzScheduleServiceTest {
 
     private static final String JOB_ID = "jobTestID";
 
-    private static String jobRunResult;
+    private String jobRunResult;
 
     @Test
     public void testSchedule() throws Exception {

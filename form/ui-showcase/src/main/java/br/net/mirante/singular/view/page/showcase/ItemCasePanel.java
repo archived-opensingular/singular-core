@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.showcase.CaseBase;
@@ -23,6 +24,7 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -35,8 +37,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -66,9 +66,12 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private IModel<CaseBase> caseBase;
 
+    private ViewMode viewMode = ViewMode.EDITION;
+
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = InMemoryAttachmentPersitenceHandler::new;
 
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
+        @Override
         public IAttachmentPersistenceHandler get() {
             return filePersistence;
         }
@@ -112,32 +115,65 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private void updateContainer() {
-        inputForm.remove(container);
         container = new BSGrid("generated");
-        inputForm.add(container);
-        inputForm.add(viewXmlModal);
+        inputForm.addOrReplace(container);
+        inputForm.addOrReplace(viewXmlModal);
         buildContainer();
     }
 
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.buildForEdit(ctx, currentInstance);
+        UIBuilderWicket.build(ctx, currentInstance, viewMode);
     }
 
     private BSContainer<?> buildBodyContainer() {
         BSContainer<?> bodyContainer = new BSContainer<>("body-container");
-        inputForm.add(bodyContainer);
+        inputForm.addOrReplace(bodyContainer);
         return bodyContainer;
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(inputForm
-                        .add(createFeedbackPanel())
-                        .add(createSaveButton())
-                        .add(createValidateButton())
+        add(inputForm.add(createFeedbackPanel())
+                     .add(createSaveButton())
+                     .add(createValidateButton())
+                     .add(createVisualizarButton())
+                     .add(createEditarButton())
+
         );
+    }
+
+    private Component createVisualizarButton() {
+        return new AjaxButton("visualizar-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                viewMode = ViewMode.VISUALIZATION;
+                updateContainer();
+                target.add(form);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return viewMode.isEdition();
+            }
+        };
+    }
+
+    private Component createEditarButton() {
+        return new AjaxButton("editar-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                viewMode = ViewMode.EDITION;
+                updateContainer();
+                target.add(form);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return viewMode.isVisualization();
+            }
+        };
     }
 
     @SuppressWarnings("serial")
@@ -147,20 +183,15 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (addValidationErrors(form, currentInstance.getObject())) {
                     MElement rootXml = MformPersistenciaXML.toXML(currentInstance.getObject());
-                    viewXml(target, printXml(rootXml));
+                    if(rootXml != null) {
+                        viewXml(target, rootXml.toString());
+                    } else {
+                        viewXml(target, StringUtils.EMPTY);
+                    }
                 }
                 target.add(form);
             }
         };
-    }
-
-    private String printXml(MElement rootXml) {
-        if (rootXml != null) {
-            StringWriter buffer = new StringWriter();
-            rootXml.printTabulado(new PrintWriter(buffer));
-            return buffer.toString();
-        }
-        return null;
     }
 
     @SuppressWarnings("serial")
