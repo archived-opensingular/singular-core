@@ -21,10 +21,10 @@ public class ItemCodePanel extends Panel {
     public ItemCodePanel(String id, IModel<String> code) {
         super(id);
         final ProcessadorCondigoFonte pcf = new ProcessadorCondigoFonte(code.getObject());
-        add(new Label("code", pcf.getFonteProcessado()).add(WicketUtils.$b.classAppender(getSyntaxHightliterConfig(pcf.getLinhasParaDestacar()))));
+        add(new Label("code", pcf.getFonteProcessado()).add(WicketUtils.$b.classAppender(getSyntaxHighlighterConfig(pcf.getLinhasParaDestacar()))));
     }
 
-    private String getSyntaxHightliterConfig(List<Integer> linhasParaDestacar) {
+    private String getSyntaxHighlighterConfig(List<Integer> linhasParaDestacar) {
         StringBuilder config = new StringBuilder();
         config.append("brush: java;");
 
