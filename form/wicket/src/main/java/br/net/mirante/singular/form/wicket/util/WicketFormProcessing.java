@@ -2,10 +2,10 @@ package br.net.mirante.singular.form.wicket.util;
 
 import static java.util.stream.Collectors.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
@@ -52,7 +52,7 @@ public class WicketFormProcessing {
             return;
 
         // Validação do valor do componente
-        InstanceValidationContext validationContext = new InstanceValidationContext(instance);
+        final InstanceValidationContext validationContext = new InstanceValidationContext(instance);
         validationContext.validateSingle();
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, formComponent);
@@ -60,19 +60,30 @@ public class WicketFormProcessing {
             return;
         }
 
-        // atualizar documento e recuperar instancias com atributos alterados
-        IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
+        // atualizar documento e recuperar os IDs das instancias com atributos alterados
+        final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
         instance.getDocument().updateAttributes(eventCollector);
-        List<MInstancia> updatedInstances = eventCollector.getEvents().stream()
-            .map(it -> it.getSource())
-            .collect(toList());
 
-        // re-renderizar componentes atualizados
-        WicketFormUtils.streamComponentsByInstance(formComponent, updatedInstances)
-            .map(c -> WicketFormUtils.findCellContainer(c))
-            .filter(c -> c.isPresent())
-            .map(c -> c.get())
-            .forEach(c -> refresh(target, c));
+        target.ifPresent(t -> {
+
+            final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
+                .map(it -> it.getSource())
+                .map(it -> it.getId())
+                .collect(toSet());
+
+            final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
+                return (ins.getMTipo().hasProviderOpcoes() && instance.getMTipo().getDependentTypes().contains(ins))
+                    || (updatedInstanceIds.contains(ins.getId()));
+            };
+
+            // re-renderizar componentes
+            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
+                .map(c -> WicketFormUtils.findCellContainer(c))
+                .filter(c -> c.isPresent())
+                .map(c -> c.get())
+                .filter(c -> c != null)
+                .forEach(c -> t.add(c));
+        });
     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {

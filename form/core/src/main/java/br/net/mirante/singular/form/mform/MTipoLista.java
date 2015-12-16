@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import java.util.Collection;
+import java.util.Collections;
+
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
@@ -11,7 +13,7 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  * @author Daniel C. Bordin
  */
 @MInfoTipo(nome = "MTipoLista", pacote = MPacoteCore.class)
-public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<MILista<I>> {
+public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<MILista<I>> implements ICompositeType {
 
     private E tipoElementos;
 
@@ -23,6 +25,11 @@ public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<
         super((Class<? extends MILista<I>>) (Class<? extends MInstancia>) MILista.class);
     }
 
+    @Override
+    public Collection<MTipo<?>> getContainedTypes() {
+        return Collections.singleton(getTipoElementos());
+    }
+    
     /**
      * Cria a nova instância de lista com o cast para o generic tipo de
      * instancia informado. Se o tipo do conteudo não for compatível dispara

@@ -69,12 +69,12 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION, valor);
         return this;
     }
-    public AtrBasic depends(Supplier<Collection<MTipo<?>>> valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_DEPENDS_FUNCTION, valor);
+    public AtrBasic dependsOn(Supplier<Collection<MTipo<?>>> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION, valor);
         return this;
     }
-    public AtrBasic depends(MTipo<?>... tipos) {
-        return depends(() -> Arrays.asList(tipos));
+    public AtrBasic dependsOn(MTipo<?>... tipos) {
+        return dependsOn(() -> Arrays.asList(tipos));
     }
 
     //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {

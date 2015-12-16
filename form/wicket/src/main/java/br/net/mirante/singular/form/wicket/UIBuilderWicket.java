@@ -17,7 +17,7 @@ public class UIBuilderWicket {
     static {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
-        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new);
         MAPPERS.register(MTipoBoolean.class,                                           BooleanMapper::new);
         MAPPERS.register(MTipoInteger.class,                                           IntegerMapper::new);
         MAPPERS.register(MTipoString.class,                                            StringMapper::new);

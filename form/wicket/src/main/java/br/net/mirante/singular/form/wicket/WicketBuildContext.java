@@ -2,12 +2,10 @@ package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
@@ -15,17 +13,16 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.FormComponentPanel;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.collections.MultiMap;
 import org.apache.wicket.util.string.Strings;
+import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -48,7 +45,6 @@ public class WicketBuildContext implements Serializable {
     private final boolean                           hintsInherited;
     private final BSContainer                       externalContainer;
     private final BSContainer                       rootContainer;
-    private MultiMap<MTipo<?>, MTipo<?>>            dependencyMap;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
         this(null, container, bodyContainer, false);
@@ -93,17 +89,6 @@ public class WicketBuildContext implements Serializable {
     public void init(IModel<? extends MInstancia> instanceModel) {
         MInstancia instance = instanceModel.getObject();
         if (isRootContext()) {
-            MultiMap<MTipo<?>, MTipo<?>> dependents = new MultiMap<>();
-            MInstances.streamDescendants(instance.getDocument().getRoot(), true)
-                .forEach(ins -> {
-                    Supplier<Collection<MTipo<?>>> func = ins.getValorAtributo(MPacoteBasic.ATR_DEPENDS_FUNCTION);
-                    if (func != null) {
-                        for (MTipo<?> dependency : func.get()) {
-                            dependents.addValue(dependency, ins.getMTipo());
-                        }
-                    }
-                });
-            this.dependencyMap = dependents;
             getContainer().add(new InitRootContainerBehavior(instanceModel));
         }
         if (getContainer().getDefaultModel() == null) {
@@ -121,8 +106,10 @@ public class WicketBuildContext implements Serializable {
             (component instanceof CheckGroup)) {
             component.add(new AjaxUpdateChoiceBehavior(model, listener));
 
-        } else if (component instanceof AbstractTextComponent<?>) {
+        } else if (!(component instanceof FormComponentPanel<?>)) {
             component.add(new AjaxUpdateInputBehavior("change", model, listener));
+        } else {
+            LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
     }
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
@@ -135,12 +122,11 @@ public class WicketBuildContext implements Serializable {
         formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
 
         if (formComponent.getLabel() == null)
-            formComponent.setLabel((IReadOnlyModel<String>) () -> getLabel(formComponent));
+            formComponent.setLabel(IReadOnlyModel.of(() -> getLabel(formComponent)));
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
         MTipo<?> tipo = model.getMInstancia().getMTipo();
-        List<MTipo<?>> dependentes = getRootContext().getDependencyMap().get(tipo);
-        if (dependentes != null && !dependentes.isEmpty()) {
+        if (tipo.hasDependentTypes()) {
             addAjaxUpdateToComponent(
                 formComponent,
                 IMInstanciaAwareModel.getInstanceModel(model),
@@ -192,9 +178,6 @@ public class WicketBuildContext implements Serializable {
     }
     public BSContainer getRootContainer() {
         return rootContainer;
-    }
-    public MultiMap<MTipo<?>, MTipo<?>> getDependencyMap() {
-        return (isRootContext()) ? dependencyMap : getRootContext().getDependencyMap();
     }
 
     private static final class InitRootContainerBehavior extends Behavior {
