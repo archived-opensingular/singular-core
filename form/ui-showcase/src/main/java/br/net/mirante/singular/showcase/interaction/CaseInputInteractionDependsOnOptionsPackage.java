@@ -2,6 +2,7 @@ package br.net.mirante.singular.showcase.interaction;
 
 import static java.util.stream.Collectors.*;
 
+import java.lang.reflect.Modifier;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.MILista;
@@ -21,10 +22,11 @@ public class CaseInputInteractionDependsOnOptionsPackage extends MPacote {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
         super.carregarDefinicoes(pb);
+        if (Modifier.isStatic(pb.getClass().getModifiers()));
 
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
-        prefix = tipoMyForm.addCampoString("Prefixo");
-        suffix = tipoMyForm.addCampoString("Sufixo");
+        prefix = tipoMyForm.addCampoString("prefixo");
+        suffix = tipoMyForm.addCampoString("sufixo");
 
         prefix.as(MPacoteBasic.aspect())
             .label("Prefixo");

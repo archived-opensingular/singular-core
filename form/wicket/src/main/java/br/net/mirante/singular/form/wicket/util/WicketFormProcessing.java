@@ -47,12 +47,12 @@ public class WicketFormProcessing {
         return true;
     }
 
-    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia instance) {
-        if (instance == null)
+    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia fieldInstance) {
+        if (fieldInstance == null)
             return;
 
         // Validação do valor do componente
-        final InstanceValidationContext validationContext = new InstanceValidationContext(instance);
+        final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance);
         validationContext.validateSingle();
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, formComponent);
@@ -62,7 +62,7 @@ public class WicketFormProcessing {
 
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
-        instance.getDocument().updateAttributes(eventCollector);
+        fieldInstance.getDocument().updateAttributes(eventCollector);
 
         target.ifPresent(t -> {
 
@@ -72,7 +72,7 @@ public class WicketFormProcessing {
                 .collect(toSet());
 
             final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
-                return (ins.getMTipo().hasProviderOpcoes() && instance.getMTipo().getDependentTypes().contains(ins))
+                return (ins.getMTipo().hasProviderOpcoes() && fieldInstance.getMTipo().getDependentTypes().contains(ins.getMTipo()))
                     || (updatedInstanceIds.contains(ins.getId()));
             };
 
