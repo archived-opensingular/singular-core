@@ -2,7 +2,8 @@ package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
-import br.net.mirante.singular.showcase.interaction.CaseInputInteractionDependsOnOptions;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
@@ -40,17 +41,18 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreDecimal.class)
             .addCase(CaseInputCoreMonetario.class);
         group("File", Icone.FOLDER)
-                .addCase(CaseFileAttachment.class);
+            .addCase(CaseFileAttachment.class);
         group("Layout", Icone.GRID)
-                .addCase(CaseGrid.class)
-                .addCase(CaseGridList.class)
-                .addCase(CaseGridTable.class);
+            .addCase(CaseGrid.class)
+            .addCase(CaseGridList.class)
+            .addCase(CaseGridTable.class);
         group("Validation", Icone.BAN)
-                .addCase(CaseValidationRequired.class)
-                .addCase(CaseValidationCustom.class)
-                .addCase(CaseValidationBetweenFields.class);
+            .addCase(CaseValidationRequired.class)
+            .addCase(CaseValidationCustom.class)
+            .addCase(CaseValidationBetweenFields.class);
         group("Interaction", Icone.ROCKET)
-            .addCase(CaseInputInteractionDependsOnOptions.class);
+            .addCase(CaseInteractionEnabledVisible.class)
+            .addCase(CaseInteractionDependsOnOptions.class);
         //@formatter:on
     }
 
