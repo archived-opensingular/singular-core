@@ -89,8 +89,4 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
         .containsExactly(referenceOptions.toArray());
     }
 
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
-
 }

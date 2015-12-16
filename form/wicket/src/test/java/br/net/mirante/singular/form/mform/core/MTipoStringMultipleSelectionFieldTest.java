@@ -78,7 +78,4 @@ public class MTipoStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         assertThat(value).containsOnly("orange");
     }
  
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
 }

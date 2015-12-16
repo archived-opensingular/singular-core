@@ -12,6 +12,8 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+
 public abstract class SelectionFieldBaseTest {
     protected static MDicionario dicionario;
     protected PacoteBuilder localPackage;
@@ -43,5 +45,9 @@ public abstract class SelectionFieldBaseTest {
         driver.startPage(page);
         
         form = driver.newFormTester("test-form", false);
+    }
+
+    protected String formField(FormTester form, String leafName) {
+        return "test-form:" + findId(form.getForm(), leafName).get();
     }
 }

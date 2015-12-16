@@ -102,8 +102,4 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         return value;
     }
     
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
-    
 }

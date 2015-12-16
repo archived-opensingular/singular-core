@@ -68,9 +68,5 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         Object value = page.getCurrentInstance().getValor(selectType.getNomeSimples());
         assertThat(value).isEqualTo("orange");
     }
-    
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
-    
+
 }

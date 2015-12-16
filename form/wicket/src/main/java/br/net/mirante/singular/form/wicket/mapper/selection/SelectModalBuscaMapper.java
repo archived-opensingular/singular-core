@@ -49,7 +49,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
     protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer, IModel<? extends MInstancia> model) {
         MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
-        BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGrupo");
+        BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGroup");
         TextField<String> t = new TextField<>(model.getObject().getNome() + "selection", valueModel);
         t.setEnabled(false);
         t.add($b.attr("readonly", "readonly"));
@@ -72,7 +72,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         BSContainer panel = new BSContainer(id);
 
 
-        final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, modalContainer, model, filterModel);
+        final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, modalContainer,
+                                                                    model, filterModel);
 
         panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
             @Override
@@ -118,14 +119,12 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                 .appendPropertyColumn(Model.of("value"), "value")
                 .appendColumn(new BSActionColumn<SelectOption, Filtro>(Model.of(""))
                         .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
-//                            ((IModel<String>) valueInput.getDefaultModel())
-//                                .setObject(selectedModel.getObject().getValue());
                             ((IModel<SelectOption>) valueInput.getDefaultModel())
                             .setObject(selectedModel.getObject());
                             modal.hide(target);
                             target.add(valueInput);
                         }))
-                .build("processos");
+                .build("whatever");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
@@ -140,7 +139,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     public void buildSearchField(String id, IModel<?> filterModel, BSGrid grid, Component table, Form<?> form) {
         BSControls formGroup = grid.newFormGroup();
 
-        BSContainer inputGroup = new BSContainer(id + "inputGrup");
+        BSContainer inputGroup = new BSContainer(id + "inputGroup");
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", inputGroup);
 
         TextField inputFiltro = new TextField("termo", new PropertyModel(filterModel, "termo"));
