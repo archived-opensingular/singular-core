@@ -256,8 +256,9 @@ public abstract class MInstancia implements MAtributoEnabled {
     public <A extends MInstancia> Optional<A> findNearest(MTipo<A> targetType) {
         return MInstances.findNearest(this, targetType);
     }
-    public Optional<Object> findNearestValue(MTipo<?> targetType) {
-        return MInstances.findNearest(this, targetType).map(it -> it.getValorWithDefault());
+    @SuppressWarnings("unchecked")
+    public <V> Optional<V> findNearestValue(MTipo<?> targetType) {
+        return (Optional<V>) MInstances.findNearest(this, targetType).map(it -> it.getValorWithDefault());
     }
     public <V> Optional<V> findNearestValue(MTipo<?> targetType, Class<V> classeValor) {
         return MInstances.findNearest(this, targetType).map(it -> classeValor.cast(it.getValorWithDefault(classeValor)));
