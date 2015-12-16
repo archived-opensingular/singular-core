@@ -35,27 +35,36 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content
     implements SingularWicketContainer<CrudContent, Void> {
 
-    @Inject ExampleDataDAO                         dao;
-    @Inject FileDao                                filePersistence;
-    @Inject SpringServiceRegistry                  serviceRegistry;
+    private static Logger logger = LoggerFactory.getLogger(FormContent.class);
+
     private BSGrid                         container = new BSGrid("generated");
     private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
+
+    @Inject
+    private ExampleDataDAO dao;
+
+    @Inject
+    private FileDao filePersistence;
+
+    @Inject
+    private SpringServiceRegistry serviceRegistry;
+
 
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef =
                     ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
@@ -111,7 +120,7 @@ public class FormContent extends Content
             currentInstance = new MInstanceRootModel<MInstancia>(instance);
             bindDefaultServices(currentInstance.getObject().getDocument());
         } catch (Exception e) {
-            Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+            logger.warn("Captured during insertion", e);
             throw new RuntimeException(e);
         }
     }
@@ -246,7 +255,7 @@ public class FormContent extends Content
                     addValidationErrors(target, form, trueInstance, xml);
                 } catch (Exception e) {
                     target.add(form);
-                    Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+                    logger.warn("Captured during insertion", e);
                 }
             }
 
@@ -258,8 +267,4 @@ public class FormContent extends Content
         };
     }
 
-    //    public ServiceRegistry createSpringRegistry() throws BeansException {
-    //        ShowcaseApplication app = (ShowcaseApplication) getApplication();
-    //        return new SpringServiceRegistry(app.getApplicationContext());
-    //    }
 }
