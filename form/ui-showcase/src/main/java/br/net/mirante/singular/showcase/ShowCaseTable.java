@@ -2,7 +2,8 @@ package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
-import br.net.mirante.singular.showcase.interaction.CaseInputInteractionDependsOnOptions;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
@@ -58,7 +59,8 @@ public class ShowCaseTable {
             .addCase(CaseValidationCustom.class)
             .addCase(CaseValidationBetweenFields.class);
         group("Interaction", Icone.ROCKET)
-            .addCase(CaseInputInteractionDependsOnOptions.class);
+            .addCase(CaseInteractionEnabledVisible.class)
+            .addCase(CaseInteractionDependsOnOptions.class);
         //@formatter:on
     }
 

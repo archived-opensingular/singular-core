@@ -389,12 +389,24 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validateInstance(IInstanceValidatable<?> validatable) {
-        MInstancia instance = validatable.getInstance();
-        Boolean required = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
-        if (Boolean.TRUE.equals(required) && validatable.getInstance().getValor() == null) {
+        final MInstancia instance = validatable.getInstance();
+
+        final boolean required = Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
+
+        if (instance instanceof ICompositeInstance) {
+            ICompositeInstance comp = (ICompositeInstance) instance;
+            boolean anyRequiredLeafWithNullValue = comp.streamDescendants(false)
+                .filter(it -> !(it instanceof ICompositeInstance))
+                .filter(it -> it.as(MPacoteCore.aspect()).isObrigatorio())
+                .anyMatch(it -> it.getValor() == null);
+            if (anyRequiredLeafWithNullValue)
+                return;
+
+        } else if (required && validatable.getInstance().getValor() == null) {
             validatable.error(new ValidationError(validatable.getInstance(), ValidationErrorLevel.ERROR, "Obrigatório"));
             return;
         }
+
         for (Map.Entry<IInstanceValidator<?>, ValidationErrorLevel> entry : this.instanceValidators.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
             entry.getKey().validate((IInstanceValidatable) validatable);
@@ -577,7 +589,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public boolean hasValidation() {
         return isObrigatorio() || !instanceValidators.isEmpty();
     }
-    
+
     public MOptionsProvider getProviderOpcoes() {
         throw new UnsupportedOperationException();
     }

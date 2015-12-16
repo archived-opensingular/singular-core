@@ -31,22 +31,26 @@ public class BooleanMapper implements IWicketComponentMapper {
         label.add(DisabledClassBehavior.getInstance());
         formGroup.appendLabel(label);
 
-        if (viewMode.isVisualization()) {
-            buildForVisualization(model, formGroup, labelModel, label, labelText);
-        } else {
-            buildForEdition(model, formGroup, labelModel);
+        switch (viewMode) {
+            case VISUALIZATION:
+                buildForVisualization(model, formGroup, labelModel, label, labelText);
+                break;
+            case EDITION:
+                buildForEdition(ctx, model, formGroup, labelModel);
+                break;
         }
     }
 
-    private void buildForEdition(IModel<? extends MInstancia> model, BSControls formGroup,
-                                 AtributoModel<String> labelModel) {
+    private void buildForEdition(WicketBuildContext ctx, IModel<? extends MInstancia> model, BSControls formGroup,
+        AtributoModel<String> labelModel) {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, labelModel);
         input.add(DisabledClassBehavior.getInstance());
+        ctx.configure(input);
     }
 
     private void buildForVisualization(IModel<? extends MInstancia> model, BSControls formGroup,
-                                       AtributoModel<String> labelModel, BSLabel label, IModel<String> labelText) {
+        AtributoModel<String> labelModel, BSLabel label, IModel<String> labelText) {
         labelText.setObject("&zwnj;");
         label.setEscapeModelStrings(false);
         final Boolean checked;
@@ -60,10 +64,10 @@ public class BooleanMapper implements IWicketComponentMapper {
 
         String clazz = checked ? "fa fa-check-square" : "fa fa-square-o";
         String idSuffix = (mi != null) ? mi.getNome() : StringUtils.EMPTY;
-        TemplatePanel tp = formGroup.newTemplateTag(t ->
-                      "<div wicket:id='" + "_well" + idSuffix + "'>"
-                    + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
-                    + " </div>");
+        TemplatePanel tp = formGroup.newTemplateTag(t -> ""
+            + "<div wicket:id='" + "_well" + idSuffix + "'>"
+            + "   <i class='" + clazz + "'></i> <span wicket:id='label'></span> "
+            + " </div>");
         final BSWellBorder wellBorder = BSWellBorder.small("_well" + idSuffix);
         tp.add(wellBorder.add(new Label("label", labelModel.getObject())));
     }
