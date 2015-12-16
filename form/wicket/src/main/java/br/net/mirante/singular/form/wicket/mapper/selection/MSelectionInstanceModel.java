@@ -40,10 +40,10 @@ class MSelectionInstanceModel<T> implements IModel<T>,
         if(target instanceof MISimples){
             Object value = ((MISimples) target).getValor();
             String v = value != null ? value.toString() : null;
-            return (T) new SelectOption<String>(v, v);
+            return (T) new SelectOption<String>(v, v, target);
         }else if (target instanceof MISelectItem){
             MISelectItem item = (MISelectItem) target;
-            return (T) new SelectOption<String>(item.getFieldId(), item.getFieldValue());
+            return (T) new SelectOption<String>(item.getFieldId(), item.getFieldValue(), target);
         }
         return null;
     }

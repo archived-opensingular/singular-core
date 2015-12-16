@@ -1,12 +1,14 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.AtrRef;
-import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * This Type defines a <key,value> pair that can be used on selection lists
@@ -25,7 +27,9 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem>
                             MTipoString.class, MIString.class, String.class),
         VALUE_FIELD = new AtrRef<>(MPacoteCore.class, "VALUE_FIELD",
                             MTipoString.class, MIString.class, String.class);
-    
+
+    private List<String> searchFields = newArrayList(); //TODO [FABS] Change to use attribute later
+
     public MTipoSelectItem() {
         super(MISelectItem.class);
     }
@@ -84,5 +88,15 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem>
     
     public void setProviderOpcoes(MOptionsProvider p){
         optionsProvider = p;
+    }
+
+    public void showFieldsOnSearch(String ... fields) {
+        for(String f : fields){
+            searchFields.add(f);
+        }
+    }
+
+    public List<String> searchFields(){
+        return newArrayList(searchFields);
     }
 }

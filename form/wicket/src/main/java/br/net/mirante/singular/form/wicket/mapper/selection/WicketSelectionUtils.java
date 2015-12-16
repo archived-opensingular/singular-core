@@ -45,7 +45,7 @@ public class WicketSelectionUtils {
         List<SelectOption> opcoesValue;
         MILista<MISelectItem> rawOptions = (MILista<MISelectItem>) provider.listAvailableOptions(model.getObject());
         opcoesValue = rawOptions.getValores().stream()
-                .map((x) -> new SelectOption<>(x.getFieldId(), x.getFieldValue())).collect(Collectors.toList());
+                .map((x) -> new SelectOption<>(x.getFieldId(), x.getFieldValue(), x)).collect(Collectors.toList());
         return opcoesValue;
     }
 }

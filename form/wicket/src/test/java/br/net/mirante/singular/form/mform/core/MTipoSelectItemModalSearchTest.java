@@ -3,40 +3,38 @@ package br.net.mirante.singular.form.mform.core;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.TagTester;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
 
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
 
+public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
 
-public class MTipoSelectItemModalSearchTest  extends SelectionFieldBaseTest {
-
-//    MTipoSelectItem selectType;
-    protected MTipoString selectType;
+    //    MTipoSelectItem selectType;
+    protected MTipoSelectItem selectType;
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
-//        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
-//        selectType.configureKeyValueFields();
-        selectType = group.addCampoString("favoriteFruit");
+        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
+        selectType.configureKeyValueFields();
+        selectType.addCampoInteger("population");
+        selectType.addCampoInteger("areasqrkm");
+        selectType.addCampoInteger("phonecode");
+        selectType.addCampoDecimal("gdp");
+        selectType.addCampoDecimal("hdi");
         selectType.withView(MSelecaoPorModalBuscaView::new);
         return selectType;
     }
 
     @Test public void showModalWhenClicked(){
         setupPage();
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        selectType.withSelectionOf(federaldistrict(),goias());
         buildPage();
 
         driver.assertContainsNot("Buscar");
@@ -45,65 +43,48 @@ public class MTipoSelectItemModalSearchTest  extends SelectionFieldBaseTest {
 
         driver.assertContains("Buscar");
 
-        assertHasATable();
-
-        driver.assertContains("strawberry");
-        driver.assertContains("apple");
-        driver.assertContains("orange");
-        driver.assertContains("banana");
+        driver.assertContains("Distrito Federal");
+        driver.assertContains("Goiás");
     }
 
-    private void assertHasATable() {
-        String responseTxt = driver.getLastResponse().getDocument();
-        TagTester table = TagTester.createTagByAttribute(responseTxt,"table");
-
-        assertThat(table).isNotNull();
-    }
-
-    @Test public void showPreviousValueWhenRendering(){
+    @Test public void showModalWithExtrafields(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"apple");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
+        selectType.withSelectionOf(federaldistrict(),goias());
+        selectType.showFieldsOnSearch("population","phonecode");
         buildPage();
 
-        driver.assertContains("apple");
-        driver.assertContainsNot("strawberry");
-
-    }
-
-    @Test public void showDanglingValueOnOptions(){
-        setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"avocado");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
+        driver.assertContainsNot("Buscar");
 
         clickOpenLink();
 
-        driver.assertContains("avocado");
-        driver.assertContains("strawberry");
-        driver.assertContains("apple");
-        driver.assertContains("orange");
-        driver.assertContains("banana");
+        driver.assertContains("Buscar");
 
+        driver.assertContains("Distrito Federal");
+        driver.assertContains("2852372");
+        driver.assertContains("61");
+        driver.assertContains("Goiás");
+        driver.assertContains("6155998");
+        driver.assertContains("62");
     }
 
-    @Ignore("Must understand how to handle the ajax modal and its actions")
-    @Test public void changeValueWhenSelected(){
-        setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"orange");
-        selectType.withSelectionOf("strawberry","apple","orange","banana");
-        buildPage();
-        assertThat(page.size()).isEqualTo(3);
+    private MISelectItem federaldistrict() {
+        MISelectItem df = selectType.create("DF", "Distrito Federal");
+        df.setValor("population",2852372);
+        df.setValor("areasqrkm",5802);
+        df.setValor("phonecode",61);
+        df.setValor("gdp",189800000000l);
+        df.setValor("hdi",0.824);
+        return df;
+    }
 
-        clickOpenLink();
-
-        final Component[] modal = new Component[]{null};
-        page.visitChildren((x,y) -> {
-            if(x.getId().endsWith("_modal")){
-                modal[0] = x;
-            }
-        });
-
+    private MISelectItem goias() {
+        MISelectItem go = selectType.create("Go", "Goiás");
+        go.setValor("population",6155998);
+        go.setValor("areasqrkm", 340086);
+        go.setValor("phonecode",62);
+        go.setValor("gdp",57091000000l);
+        go.setValor("hdi",0.735 );
+        return go;
     }
 
     private void clickOpenLink() {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -115,16 +117,30 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
     private Component buildResultTable(String id, final Component valueInput, final IModel<? extends MInstancia> model, IModel<Filtro> filterModel, final BSModalWindow modal) {
-        BSDataTable<SelectOption, Filtro> table = new BSDataTableBuilder<>(buildDataProvider(model, filterModel))
-                .appendPropertyColumn(Model.of("value"), "value")
-                .appendColumn(new BSActionColumn<SelectOption, Filtro>(Model.of(""))
+        BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
+        builder.appendPropertyColumn(Model.of("value"), "value");
+        MTipo<?> type = model.getObject().getMTipo();
+        if(type instanceof MTipoSelectItem){
+            MTipoSelectItem selectType = (MTipoSelectItem) type;
+            for(String field: selectType.searchFields()){
+//                builder.appendPropertyColumn(Model.of(field), field);
+                builder.appendPropertyColumn(Model.of(field),
+                        o -> {
+                            MIComposto target = (MIComposto) ((SelectOption) o).getTarget();
+                            return target.getValorString(field);
+//                            return "";
+                        });
+            }
+        }
+        builder.appendColumn(new BSActionColumn<SelectOption, Filtro>(Model.of(""))
                         .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
                             ((IModel<SelectOption>) valueInput.getDefaultModel())
-                            .setObject(selectedModel.getObject());
+                                    .setObject(selectedModel.getObject());
                             modal.hide(target);
                             target.add(valueInput);
-                        }))
-                .build("whatever");
+                        }));
+
+        BSDataTable<SelectOption, Filtro> table = builder.build("selectionModalTable");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {

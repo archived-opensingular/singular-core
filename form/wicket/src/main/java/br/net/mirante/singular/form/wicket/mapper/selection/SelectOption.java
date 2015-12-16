@@ -1,15 +1,22 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.MInstancia;
 import org.apache.wicket.model.IModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption<T> implements IModel {
     private String key;
     private T value;
+    private MInstancia target;
 
     public SelectOption(String key, T value) {
+        this(key, value, null);
+    }
+
+    public SelectOption(String key, T value, MInstancia target) {
         this.key = key;
         this.value = value;
+        this.target = target;
     }
 
     public String getKey() {
@@ -28,8 +35,13 @@ public class SelectOption<T> implements IModel {
         this.value = value;
     }
 
+    public MInstancia getTarget(){
+        return target;
+    }
+
     @Override
     public void detach() {
+//        target = null;
     }
 
     @Override
@@ -44,6 +56,7 @@ public class SelectOption<T> implements IModel {
         if(o != null){
             this.setKey(s.getKey());
             this.setValue((T) s.getValue());
+            this.target = s.target;
         }
     }
     
