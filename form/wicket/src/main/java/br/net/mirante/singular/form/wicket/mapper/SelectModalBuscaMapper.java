@@ -44,7 +44,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return formGroupAppender(formGroup, bodyContainer, model);
     }
 
-    public MOptionsProvider getProvider(IModel<? extends MInstancia> model) {
+    public static MOptionsProvider getProvider(IModel<? extends MInstancia> model) {
         MOptionsProvider provider = ((MTipoString) model.getObject().getMTipo()).getProviderOpcoes();
         return provider;
     }
@@ -163,7 +163,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         });
     }
 
-    public SortableDataProvider<Dado, Filtro> buildDataProvider(
+    public static SortableDataProvider<Dado, Filtro> buildDataProvider(
             IModel<? extends MInstancia> model, final IModel<Filtro> filtro) {
         return new SortableDataProvider<Dado, Filtro>() {
             @Override
@@ -173,7 +173,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                         .getValor()
                         .stream()
                         .map(Object::toString)
-                        .filter(s -> SelectModalBuscaMapper.this.filtrar(filtro, s))
+                        .filter(s -> SelectModalBuscaMapper.filtrar(filtro, s))
                         .map(s -> new Dado(s))
                         .collect(Collectors.toList())
                         .iterator();
@@ -187,7 +187,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                         .getValor()
                         .stream()
                         .map(Object::toString)
-                        .filter(s -> SelectModalBuscaMapper.this.filtrar(filtro, s))
+                        .filter(s -> SelectModalBuscaMapper.filtrar(filtro, s))
                         .count();
                 return size;
             }
@@ -199,7 +199,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         };
     }
 
-    public boolean filtrar(IModel<Filtro> filtro, String s) {
+    public static boolean filtrar(IModel<Filtro> filtro, String s) {
         if (filtro != null && filtro.getObject() != null) {
             String termo = filtro.getObject().getTermo();
             return termo == null

@@ -34,12 +34,7 @@ public class CaseInputInteractionDependsOnOptionsPackage extends MPacote {
             .label("Sufixo")
             .dependsOn(prefix)
             .enabled(ins -> ins.findNearest(prefix).get().getValor() != null);
-        suffix.withSelectionFromProvider(new ProviderImpl());
-    }
-
-    private static final class ProviderImpl implements MOptionsProvider {
-        @Override
-        public MILista<? extends MInstancia> getOpcoes(MInstancia ins) {
+        suffix.withSelectionFromProvider(ins -> {
             CaseInputInteractionDependsOnOptionsPackage pac = (CaseInputInteractionDependsOnOptionsPackage) ins.getMTipo().getPacote();
             MIString pref = ins.findNearest(pac.prefix).get();
             return (pref.getValor() == null)
@@ -48,7 +43,7 @@ public class CaseInputInteractionDependsOnOptionsPackage extends MPacote {
                     .addValores(Stream.of("a", "b", "c", "d", "e", "f")
                         .map(s -> pref.getValor() + s)
                         .collect(toList()));
-        }
+        });
     }
 }
 /**
