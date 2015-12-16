@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.json.JsonFunction;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
@@ -65,6 +66,9 @@ public class DecimalMapper extends StringMapper {
         options.put("groupSeparator", ".");
         options.put("autoGroup", true);
         options.put("digitsOptional", true);
+        options.put("onBeforePaste", new JsonFunction("function (pastedValue, opts) {" +
+                "                return pastedValue.replace(/[^0-9,]/g, '');" +
+                "            }"));
 
         return options;
     }
