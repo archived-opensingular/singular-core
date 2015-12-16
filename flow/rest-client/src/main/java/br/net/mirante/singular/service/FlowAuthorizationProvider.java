@@ -1,6 +1,7 @@
 package br.net.mirante.singular.service;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class FlowAuthorizationProvider implements IFlowAuthorizationProvider {
         }
     }
 
-    private static LoadingCache<GroupDTO, IFlowAuthorizationService> authorizationService = CacheBuilder.newBuilder().maximumSize(5).build(new CacheLoader<GroupDTO, IFlowAuthorizationService>() {
+    private static LoadingCache<GroupDTO, IFlowAuthorizationService> authorizationService = CacheBuilder.newBuilder().maximumSize(5).expireAfterWrite(1, TimeUnit.HOURS).build(new CacheLoader<GroupDTO, IFlowAuthorizationService>() {
         @Override
         public IFlowAuthorizationService load(GroupDTO groupDTO) throws Exception {
             return new FlowAuthorizationSpringREST(groupDTO.getCod(), groupDTO.getConnectionURL());
