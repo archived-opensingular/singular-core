@@ -108,7 +108,7 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         this.hoverRows = hoverRows;
         return this;
     }
-    public BSDataTableBuilder<T, S, ?> setAdvancedeTable(boolean advanceTable) {
+    public BSDataTableBuilder<T, S, ?> setAdvancedTable(boolean advanceTable) {
         this.advanceTable = advanceTable;
         return this;
     }

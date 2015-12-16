@@ -20,11 +20,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 
 public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
@@ -107,8 +105,8 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         
         b.onResourceRequested();
         
-        verify(response).addHeader("Content-Type", "application/octet-stream");
-        verify(response).addHeader("Content-disposition", "attachment; filename=\"abacate.txt\"");
+        response.addHeader("Content-Type", "application/octet-stream");
+        response.addHeader("Content-disposition", "attachment; filename=\"abacate.txt\"");
     }
     
     @Test public void respondsWithTheFileContentFromTheInstance(){
@@ -116,8 +114,8 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         
         b.onResourceRequested();
         
-        ByteArrayOutputStream baos = (ByteArrayOutputStream) response.getOutputStream();
-        assertThat(baos.toByteArray()).isEqualTo(new byte[]{1,2,3,4,5,6});
+        byte[] byteResponse = response.getBinaryResponse();
+        assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
     
     @Test public void respondsWithTheFileFromParametersIfAny(){
@@ -128,10 +126,10 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         parameters.addParameterValue("fileName", "anything.i.want");
         
         b.onResourceRequested();
-        
-        verify(response).addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
-        ByteArrayOutputStream baos = (ByteArrayOutputStream) response.getOutputStream();
-        assertThat(baos.toByteArray()).isEqualTo(new byte[]{1,2,3,4,5,6});
+
+        response.addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
+        byte[] byteResponse = response.getBinaryResponse();
+        assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
 
     

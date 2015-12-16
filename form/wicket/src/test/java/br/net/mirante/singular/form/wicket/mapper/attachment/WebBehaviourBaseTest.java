@@ -1,22 +1,21 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayOutputStream;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.wicket.mock.MockRequestParameters;
+import org.apache.wicket.mock.MockWebResponse;
+import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.http.WebResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.wicket.mock.MockRequestParameters;
-import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
-import org.apache.wicket.request.http.WebResponse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class WebBehaviourBaseTest {
     protected ServletWebRequest request;
     protected MockRequestParameters parameters;
     protected HttpServletRequest containerRequest;
-    protected WebResponse response;
+    protected MockWebResponse response;
 
     protected ServletWebRequest mockRequest() throws FileUploadException {
         request = mock(ServletWebRequest.class);
@@ -30,8 +29,7 @@ public class WebBehaviourBaseTest {
     }
 
     protected WebResponse mockResponse() {
-        response = mock(WebResponse.class);
-        when(response.getOutputStream()).thenReturn(new ByteArrayOutputStream());
+        response = new MockWebResponse();
         return response;
     }
 }
