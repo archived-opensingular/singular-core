@@ -1,12 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import java.io.PrintWriter;
-import static java.util.Collections.*;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
@@ -18,14 +15,16 @@ import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
+import java.util.List;
+
+import static java.util.Collections.synchronizedList;
 
 /**
  * Class responsible for handling the temporary upload of files inside the
@@ -67,7 +66,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
     private void handleRequest(ServletWebRequest request, Response response) throws FileUploadException {
         validateFormType(request);
         MultipartServletWebRequest multipart = extractMultipartRequest(request);
-        handleFiles(multipart, new PrintWriter(response.getOutputStream()));
+        handleFiles(multipart, response);
     }
 
     private MultipartServletWebRequest extractMultipartRequest(ServletWebRequest request) throws FileUploadException {
@@ -83,7 +82,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
                     "Request is not Multipart as Expected");
     }
 
-    private void handleFiles(MultipartServletWebRequest request, PrintWriter writer) {
+    private void handleFiles(MultipartServletWebRequest request, Response response) {
         JSONArray filesJson = new JSONArray();
         try {
             synchronized(temporaryIds){
@@ -96,7 +95,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            writeResponseAnswer(writer, filesJson);
+            writeResponseAnswer(response, filesJson);
         }
     }
 
@@ -134,11 +133,14 @@ class UploadBehavior extends Behavior implements IResourceListener {
         }
     }
 
-    private void writeResponseAnswer(PrintWriter writer, JSONArray filesJson) {
+    private void writeResponseAnswer(Response response, JSONArray filesJson) {
         JSONObject answer = new JSONObject();
         answer.put("files", filesJson);
-        writer.write(answer.toString());
-        writer.close();
+        if (response instanceof WebResponse) {
+            WebResponse wr = (WebResponse) response;
+            wr.setContentType("application/json");
+            wr.write(answer.toString());
+        }
     }
 
     @Override
