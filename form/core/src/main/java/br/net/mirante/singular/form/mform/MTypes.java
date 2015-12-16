@@ -84,6 +84,7 @@ public abstract class MTypes {
         if (node instanceof ICompositeType) {
             result.addAll(((ICompositeType) node).getContainedTypes());
         }
+        result.removeIf(it -> it == null);
         return result;
     }
 }
