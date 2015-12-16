@@ -1,5 +1,6 @@
 package br.net.mirante.singular.util.wicket.modal;
 
+import br.net.mirante.singular.util.wicket.lambda.IConsumer;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -36,6 +37,19 @@ public class BSModalWindow extends Panel {
         super(id, model);
         doInit(wrapBodyWithForm);
     }
+
+    public BSModalWindow(String id, IModel<?> model, boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
+        super(id, model);
+        this.resetOnBodySwitch = resetOnBodySwitch;
+        doInit(wrapBodyWithForm);
+    }
+
+    public BSModalWindow(String id, boolean wrapBodyWithForm, boolean resetOnBodySwitch) {
+        super(id);
+        this.resetOnBodySwitch = resetOnBodySwitch;
+        doInit(wrapBodyWithForm);
+    }
+
     public BSModalWindow(String id, boolean wrapBodyWithForm) {
         super(id);
         doInit(wrapBodyWithForm);
@@ -109,6 +123,11 @@ public class BSModalWindow extends Panel {
 
     public <T> BSModalWindow addLink(ButtonStyle style, ActionAjaxLink<T> button) {
         getModalBorder().addLink(style, button);
+        return this;
+    }
+
+    public <T> BSModalWindow setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallback) {
+        getModalBorder().setCloseIconCallback(closeIconCallback);
         return this;
     }
 

@@ -6,6 +6,10 @@ import br.net.mirante.singular.showcase.interaction.CaseInputInteractionDependsO
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetail;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailButtons;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailColumns;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailNested;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
@@ -40,15 +44,19 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreDecimal.class)
             .addCase(CaseInputCoreMonetario.class);
         group("File", Icone.FOLDER)
-                .addCase(CaseFileAttachment.class);
+            .addCase(CaseFileAttachment.class);
         group("Layout", Icone.GRID)
-                .addCase(CaseGrid.class)
-                .addCase(CaseGridList.class)
-                .addCase(CaseGridTable.class);
+            .addCase(CaseGrid.class)
+            .addCase(CaseGridList.class)
+            .addCase(CaseGridTable.class)
+            .addCase(CaseMasterDetail.class)
+            .addCase(CaseMasterDetailColumns.class)
+            .addCase(CaseMasterDetailButtons.class)
+            .addCase(CaseMasterDetailNested.class);
         group("Validation", Icone.BAN)
-                .addCase(CaseValidationRequired.class)
-                .addCase(CaseValidationCustom.class)
-                .addCase(CaseValidationBetweenFields.class);
+            .addCase(CaseValidationRequired.class)
+            .addCase(CaseValidationCustom.class)
+            .addCase(CaseValidationBetweenFields.class);
         group("Interaction", Icone.ROCKET)
             .addCase(CaseInputInteractionDependsOnOptions.class);
         //@formatter:on

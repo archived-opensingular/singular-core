@@ -33,7 +33,7 @@ import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.MListMasterDetailMapper;
+import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectBSMapper;
@@ -72,7 +72,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,                                             TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
-        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           MListMasterDetailMapper::new);
+        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new);
         MAPPERS.register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new);
         MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
         MAPPERS.register(MTipoMonetario.class,                                         MonetarioMapper::new);
