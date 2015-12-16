@@ -4,15 +4,12 @@ import static java.util.stream.Collectors.*;
 
 import java.util.stream.Stream;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
 public class CaseInputInteractionDependsOnOptionsPackage extends MPacote {
     private MTipoString prefix;
