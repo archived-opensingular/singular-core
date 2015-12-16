@@ -59,32 +59,6 @@ public class WicketBuildContext implements Serializable {
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
-    public WicketBuildContext getParent() {
-        return parent;
-    }
-
-    public BSContainer<?> getContainer() {
-        return container;
-    }
-
-    public BSContainer<?> getExternalContainer() {
-        return externalContainer;
-    }
-
-    public <T extends Serializable> WicketBuildContext setHint(HintKey<T> key, T value) {
-        hints.put(key, value);
-        return this;
-    }
-    @SuppressWarnings("unchecked")
-    public <T> T getHint(HintKey<T> key) {
-        if (hints.containsKey(key)) {
-            return (T) hints.get(key);
-        } else if (hintsInherited && getParent() != null) {
-            return getParent().getHint(key);
-        } else {
-            return key.getDefaultValue();
-        }
-    }
 
     public void init(IModel<? extends MInstancia> instanceModel) {
         MInstancia instance = instanceModel.getObject();
@@ -112,9 +86,6 @@ public class WicketBuildContext implements Serializable {
             LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
     }
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
-    }
 
     public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
         WicketFormUtils.setCellContainer(formComponent, getContainer());
@@ -134,6 +105,10 @@ public class WicketBuildContext implements Serializable {
         }
 
         return formComponent;
+    }
+    
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
+        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
     }
 
     protected static <T> String getLabel(FormComponent<?> formComponent) {
@@ -178,6 +153,33 @@ public class WicketBuildContext implements Serializable {
     }
     public BSContainer getRootContainer() {
         return rootContainer;
+    }
+
+    public WicketBuildContext getParent() {
+        return parent;
+    }
+
+    public BSContainer<?> getContainer() {
+        return container;
+    }
+
+    public BSContainer<?> getExternalContainer() {
+        return externalContainer;
+    }
+
+    public <T extends Serializable> WicketBuildContext setHint(HintKey<T> key, T value) {
+        hints.put(key, value);
+        return this;
+    }
+    @SuppressWarnings("unchecked")
+    public <T> T getHint(HintKey<T> key) {
+        if (hints.containsKey(key)) {
+            return (T) hints.get(key);
+        } else if (hintsInherited && getParent() != null) {
+            return getParent().getHint(key);
+        } else {
+            return key.getDefaultValue();
+        }
     }
 
     private static final class InitRootContainerBehavior extends Behavior {
