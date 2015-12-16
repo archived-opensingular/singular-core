@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
@@ -187,6 +188,10 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoDecimal addCampoDecimal(String nomeCampo) {
         return addCampo(nomeCampo, MTipoDecimal.class);
+    }
+
+    public MTipoMonetario addCampoMonetario(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
     /**

@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
@@ -36,6 +37,15 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
     protected boolean isBSSelect(IModel<? extends MInstancia> model) {
         return false;
+    }
+
+    @Override
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        if ((mi != null) && (mi.getValor() != null)) {
+            return mi.getValor().toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     protected boolean isMultiple(IModel<? extends MInstancia> model) {

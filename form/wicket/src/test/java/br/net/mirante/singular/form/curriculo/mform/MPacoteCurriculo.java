@@ -97,7 +97,6 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
             formacao
-                .withView(MGridListaView::new)
                 .as(AtrBasic::new).label("Formação Acadêmica");
             academicoTipo
                 .withView(MSelecaoPorRadioView::new)

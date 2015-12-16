@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
@@ -41,4 +42,14 @@ public class StringMapper implements ControlsFieldComponentMapper {
 
         return comp;
     }
+
+    @Override
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        if ((mi != null) && (mi.getValor() != null)) {
+            return String.valueOf(mi.getValor());
+        }
+        return StringUtils.EMPTY;
+    }
+
 }

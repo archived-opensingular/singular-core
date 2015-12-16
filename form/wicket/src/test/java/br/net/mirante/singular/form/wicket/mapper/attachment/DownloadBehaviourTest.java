@@ -1,20 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
-
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
@@ -26,6 +11,20 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
@@ -55,7 +54,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         new WicketTester(new TestApp());
         b = new DownloadBehaviour(instance = setupInstance());
         b.setWebWrapper(createWebWrapper());
-        b.bind(new TestPage(null));
+        b.bind(new TestPage());
         createPersistentHandler();
     }
     

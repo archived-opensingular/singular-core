@@ -5,6 +5,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
+//TODO O contador devera ser evoluido apos upgrade do Metronic para versão > 4.1
 public class CountDownBehaviour extends Behavior {
 
     private Integer max;
