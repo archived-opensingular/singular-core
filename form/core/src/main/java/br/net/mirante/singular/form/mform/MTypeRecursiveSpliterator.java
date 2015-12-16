@@ -19,7 +19,8 @@ public class MTypeRecursiveSpliterator implements Spliterator<MTipo<?>> {
             return false;
 
         final MTipo<?> node = deque.removeFirst();
-        deque.addAll(MTypes.containedTypes(node));
+        if ((node != null) && (MTypes.containedTypes(node) != null))
+            deque.addAll(MTypes.containedTypes(node));
         action.accept(node);
         return true;
     }
