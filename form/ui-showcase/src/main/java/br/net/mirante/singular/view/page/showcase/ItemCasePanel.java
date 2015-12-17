@@ -25,6 +25,7 @@ import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -229,6 +230,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private String getXmlOutput(MElement xml, boolean tabulado) {
+        if(xml == null){
+            return StringUtils.EMPTY;
+        }
         final StringWriter sw = new StringWriter();
         final PrintWriter pw = new PrintWriter(sw);
         if (tabulado) {
