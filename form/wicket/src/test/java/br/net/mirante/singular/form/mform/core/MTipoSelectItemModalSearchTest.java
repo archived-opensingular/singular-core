@@ -34,9 +34,9 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         return selectType;
     }
 
-    @Test public void showModalWhenClicked(){
+    @Test public void showModalWhenClicked() {
         setupPage();
-        selectType.withSelectionOf(federaldistrict(),goias());
+        selectType.withSelectionOf(federaldistrict(), goias());
         buildPage();
 
         driver.assertContainsNot("Buscar");

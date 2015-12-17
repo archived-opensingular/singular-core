@@ -56,34 +56,72 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
                                           IModel<? extends MInstancia> model,
                                           MSelecaoPorModalBuscaView view) {
-        MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
-        BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGroup");
-        TextField<String> t = new TextField<>(model.getObject().getNome() + "selection", valueModel);
-        t.setEnabled(false);
-        t.add($b.attr("readonly", "readonly"));
-
-        panel.appendTag("input", true, "class=\"form-control\"", t);
-
-        Model<Filtro> f = Model.of(new Filtro());
-        panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
-                model.getObject().getNome() + "modal", t, modalContainer, model, valueModel, f, view));
-
-        /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
-        formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", panel);
-
-        return t;
+        SelectInputModalContainer panel = new SelectInputModalContainer(
+                                                model.getObject().getNome() + "inputGroup",
+                                                formGroup,modalContainer,model,view);
+        return panel.build();
     }
 
 
-    protected Panel buildSearchButton(String id, Component valueInput, 
-            BSContainer modalContainer, IModel<? extends MInstancia> model, 
-            MSelectionInstanceModel valueModel, IModel<Filtro> filterModel,
-                                      MSelecaoPorModalBuscaView view) {
+    @Override
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        if (mi != null){
+            if(mi instanceof MISimples && mi.getValor() != null) {
+                return String.valueOf(mi.getValor());
+            }else if(mi instanceof MISelectItem) {
+                return ((MISelectItem)mi).getFieldValue();
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+}
+
+class SelectInputModalContainer extends BSContainer {
+
+    private BSControls formGroup;
+    private BSContainer modalContainer;
+    private IModel<? extends MInstancia> model;
+    private MSelecaoPorModalBuscaView view;
+    private TextField<String> valueInput;
+
+    public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
+                                     IModel<? extends MInstancia> model,MSelecaoPorModalBuscaView view) {
+        super(id);
+        this.formGroup = formGroup;
+        this.modalContainer = modalContainer;
+        this.model = model;
+        this.view = view;
+    }
+
+    public Component build(){
+        MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
+        createValueInput(valueModel);
+
+        this.appendTag("input", true, "class=\"form-control\"", valueInput);
+
+        Model<Filter> f = Model.of(new Filter());
+        this.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
+                model.getObject().getNome() + "_modal", valueModel, f));
+
+        /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
+        formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", this);
+        return valueInput;
+    }
+
+    private void createValueInput(MSelectionModalInstanceModel valueModel) {
+        valueInput = new TextField<>(model
+                .getObject().getNome() + "selection", valueModel);
+        valueInput.setEnabled(false);
+        valueInput.add($b.attr("readonly", "readonly"));
+    }
+
+    protected Panel buildSearchButton(String id, MSelectionInstanceModel valueModel,
+                                                        IModel<Filter> filterModel) {
         BSContainer panel = new BSContainer(id);
 
 
-        final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, modalContainer,
-                                                                    model, filterModel, view);
+        final BSModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
         panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
             @Override
@@ -105,33 +143,26 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return panel;
     }
 
-    public BSModalWindow buildModal(String id, Component valueInput, BSContainer modalContainer,
-                                    IModel<? extends MInstancia> model, IModel<Filtro> filterModel,
-                                    MSelecaoPorModalBuscaView view) {
+    public BSModalWindow buildModal(String id, IModel<Filter> filterModel) {
         BSModalWindow searchModal = new BSModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
-        searchModal.setBody(buildConteudoModal(id, valueInput, model, filterModel, searchModal, view));
+        searchModal.setBody(buildConteudoModal(id, filterModel, searchModal));
         return searchModal;
     }
 
-    public BSGrid buildConteudoModal(String id, Component valueInput, IModel<? extends MInstancia> model,
-                                     IModel<Filtro> filterModel, BSModalWindow modal,
-                                     MSelecaoPorModalBuscaView view) {
+    public BSGrid buildConteudoModal(String id, IModel<Filter> filterModel, BSModalWindow modal) {
         BSGrid grid = new BSGrid(id + "_modalBody");
 
-        Component table = buildResultTable(id + "resultTable", valueInput, model, filterModel, modal, view);
+        Component table = buildResultTable(id + "_resultTable", filterModel, modal);
 
-        buildSearchField(id + "searchField", filterModel, grid, table, modal.getForm());
+        buildSearchField(id + "_searchField", filterModel, grid, table, modal.getForm());
 
         grid.appendTag("table", true, "", table);
 
         return grid;
     }
 
-    private Component buildResultTable(String id, final Component valueInput,
-                                       final IModel<? extends MInstancia> model,
-                                       IModel<Filtro> filterModel, final BSModalWindow modal,
-                                       MSelecaoPorModalBuscaView view) {
+    private Component buildResultTable(String id, IModel<Filter> filterModel, final BSModalWindow modal) {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();
@@ -147,15 +178,15 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                         });
             }
         }
-        builder.appendColumn(new BSActionColumn<SelectOption, Filtro>(Model.of(""))
-                        .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
-                            ((IModel<SelectOption>) valueInput.getDefaultModel())
-                                    .setObject(selectedModel.getObject());
-                            modal.hide(target);
-                            target.add(valueInput);
-                        }));
+        builder.appendColumn(new BSActionColumn<SelectOption, Filter>(Model.of(""))
+                .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
+                    ((IModel<SelectOption>) valueInput.getDefaultModel())
+                            .setObject(selectedModel.getObject());
+                    modal.hide(target);
+                    target.add(valueInput);
+                }));
 
-        BSDataTable<SelectOption, Filtro> table = builder.build("selectionModalTable");
+        BSDataTable<SelectOption, Filter> table = builder.build("selectionModalTable");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
@@ -195,16 +226,16 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         });
     }
 
-    public SortableDataProvider<SelectOption, Filtro> buildDataProvider(
-            IModel<? extends MInstancia> model, final IModel<Filtro> filtro) {
+    public SortableDataProvider<SelectOption, Filter> buildDataProvider(
+            IModel<? extends MInstancia> model, final IModel<Filter> filtro) {
         MTipo<?> type = model.getObject().getMTipo();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
-        return new SortableDataProvider<SelectOption, Filtro>() {
+        return new SortableDataProvider<SelectOption, Filter>() {
             @Override
             public Iterator<? extends SelectOption> iterator(long first, long count) {
                 return filterOptions(filtro, options)
-                            .collect(Collectors.toList())
-                            .iterator();
+                        .collect(Collectors.toList())
+                        .iterator();
             }
 
             @Override
@@ -212,11 +243,11 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                 return filterOptions(filtro, options).count();
             }
 
-            private Stream<SelectOption> filterOptions(final IModel<Filtro> filtro, 
-                final List<SelectOption> options) {
+            private Stream<SelectOption> filterOptions(final IModel<Filter> filter,
+                                                       final List<SelectOption> options) {
                 return options
-                .stream()
-                .filter(s -> SelectModalBuscaMapper.this.filtrar(filtro, s));
+                        .stream()
+                        .filter(s -> SelectInputModalContainer.this.filter(filter, s));
             }
 
             @Override
@@ -226,18 +257,24 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         };
     }
 
-    public boolean filtrar(IModel<Filtro> filtro, SelectOption s) {
-        if (filtro != null && filtro.getObject() != null) {
-            String termo = filtro.getObject().getTermo();
-            String value = s.getValue().toString();
-            return termo == null
-                    || value.toLowerCase().contains(termo.toLowerCase());
-        } else {
+    public boolean filter(IModel<Filter> filtro, SelectOption s) {
+        if (filtro != null && filtro.getObject() != null &&
+                filtro.getObject().getTermo() != null) {
+            String termo = filtro.getObject().getTermo().toLowerCase();
+            if (termo == null) return true;
+            String value = s.getValue().toString().toLowerCase();
+            if(value.contains(termo)) return true;
+            for (String field : view.searchFields()){
+                Object f = ((MIComposto)s.getTarget()).getValor(field);
+                String nValue = f.toString().toLowerCase();
+                if(nValue.contains(termo)) return true;
+            }
             return false;
         }
+        return true;
     }
 
-    public static class Filtro implements Serializable {
+    public static class Filter implements Serializable {
         private String termo = "";
 
         public String getTermo() {
@@ -248,13 +285,13 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             this.termo = termo;
         }
     }
-    
+
     public static class MSelectionModalInstanceModel extends MSelectionInstanceModel{
 
         public MSelectionModalInstanceModel(IModel instanciaModel) {
             super(instanciaModel);
         }
-        
+
         @Override
         protected Object getSimpleSelection(MInstancia target) {
             SelectOption v = (SelectOption) super.getSimpleSelection(target);
@@ -263,19 +300,6 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
             }
             return v.getValue();
         }
-        
-    }
 
-    @Override
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
-        final MInstancia mi = model.getObject();
-        if (mi != null){
-            if(mi instanceof MISimples && mi.getValor() != null) {
-                return String.valueOf(mi.getValor());
-            }else if(mi instanceof MISelectItem) {
-                return ((MISelectItem)mi).getFieldValue();
-            }
-        }
-        return StringUtils.EMPTY;
     }
 }
