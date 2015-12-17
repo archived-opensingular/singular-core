@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core.service;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,23 +17,23 @@ import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE extends IInstanceDTO,
         METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO, MENU extends IMenuItemDTO> {
 
-    DEFINITION retrieveDefinitionById(Long id);
+    DEFINITION retrieveDefinitionById(Integer processDefinitionCod);
 
     List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc);
 
     int countAllDefinition();
 
-    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Long id);
+    List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod);
 
-    int countAllInstance(Long id);
+    int countAllInstance(Integer processDefinitionCod);
 
     byte[] retrieveProcessDiagram(String sigla);
 
-    List<METADATA> retrieveMetaData(Long id);
+    List<METADATA> retrieveMetaData(Integer processDefinitionCod);
 
-    List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode);
+    List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess);
 
-    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode);
+    List<Map<String, String>> retrieveNewInstancesQuantityLastYear(String processCode, Set<String> processCodeWithAccess);
 
     List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode);
 
@@ -40,23 +41,25 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
 
     List<Map<String, String>> retrieveStatsByActiveTask(String processDefinitionCode);
 
-    STATUS retrieveActiveInstanceStatus(String processCode);
+    STATUS retrieveActiveInstanceStatus(String processCode, Set<String> processCodeWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode);
+    List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode, Set<String> processCodeWithAccess);
 
-    List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode);
+    List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode, Set<String> processCodeWithAccess);
 
-    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode);
+    List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode, Set<String> processCodeWithAccess);
 
-    List<Map<String, String>> retrieveCounterActiveInstances(String processCode);
+    List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess);
 
     String retrieveProcessDefinitionName(String processCode);
 
     String retrieveProcessDefinitionId(String processDefinitionCode);
 
-    List<FEED> retrieveAllFeed(String processCode);
+    List<FEED> retrieveAllFeed(String processCode, Set<String> processCodeWithAccess);
 
     List<MENU> retrieveAllCategories();
 
+    List<MENU> retrieveAllCategoriesWithAcces(String userId);
+    
     Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
 }

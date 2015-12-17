@@ -20,7 +20,7 @@ import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
  */
 @MappedSuperclass
 @Table(name = "TB_TIPO_VARIAVEL")
-public class AbstractVariableTypeEntity extends BaseEntity implements IEntityVariableType {
+public class AbstractVariableTypeEntity extends BaseEntity<Integer> implements IEntityVariableType {
 
     public static final String PK_GENERATOR_NAME = "GENERATED_CO_TIPO_VARIAVEL";
 

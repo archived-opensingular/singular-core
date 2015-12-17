@@ -1,4 +1,4 @@
-<html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
+<html xmlns:wicket="http://wicket.apache.org">
 <wicket:extend>
     <div wicket:id="feedback"></div>
     <wicket:fragment wicket:id="breadcrumbForm">
@@ -14,7 +14,7 @@
 
     <form wicket:id="optionsForm">
         <div class="form-group">
-            <label for="options">Template</label>
+            <label>Template</label>
             <select class="form-control" wicket:id="options"></select>
         </div>
     </form>
@@ -27,26 +27,21 @@
         <table wicket:id="data-list"></table>
     </div>
 
-	<div wicket:id="deleteModal" class="portlet-body form">
+    <div wicket:id="deleteModal" class="portlet-body form">
         <form wicket:id="delete-form">
             <div class="form-actions noborder">
-            	<p><wicket:message key="label.delete.message"/></p>
+                <p>
+                    <wicket:message key="label.delete.message"/>
+                </p>
                 <button type="submit" class="btn blue" wicket:id="delete-btn">
                     <wicket:message key="label.button.delete"/>
                 </button>
             </div>
         </form>
     </div>
-	
-    <div wicket:id="inputModal" class="portlet-body form">
-        <form wicket:id="save-form">
-            <div class="form-body" wicket:id="generated"></div>
-            <div class="form-actions noborder">
-                <button type="submit" class="btn blue" wicket:id="save-btn">
-                    <wicket:message key="label.button.save"/>
-                </button>
-            </div>
-        </form>
+
+    <div wicket:id="viewXmlModal" class="portlet-body form">
+        <wicket:fragment wicket:id="xmlTabs" />
     </div>
 </wicket:extend>
 </html>

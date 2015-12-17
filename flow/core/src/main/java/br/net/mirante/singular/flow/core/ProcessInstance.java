@@ -24,9 +24,9 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.service.IPersistenceService;
-import br.net.mirante.singular.flow.util.vars.ValidationResult;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.core.variable.ValidationResult;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
+import br.net.mirante.singular.flow.core.view.Lnk;
 
 /**
  * <p>

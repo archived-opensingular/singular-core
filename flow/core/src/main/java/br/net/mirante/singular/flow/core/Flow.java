@@ -6,57 +6,59 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
-import br.net.mirante.singular.flow.util.view.Lnk;
+import br.net.mirante.singular.flow.core.view.Lnk;
 
-public class Flow {
+@SuppressWarnings("unchecked")
+public final class Flow {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Flow.class);
-
-    private static SingularFlowConfigurationBean mbpmBean;
+    private static SingularFlowConfigurationBean configBean;
 
     private Flow() {
     }
 
     public static synchronized void setConf(SingularFlowConfigurationBean conf, boolean force) {
-        if (!force){
-            if(mbpmBean != null
-                    && mbpmBean != conf){
+        if (!force) {
+            if (configBean != null && configBean != conf) {
                 throw new SingularFlowException("O contexto já foi configurado.");
             }
         }
-        mbpmBean = conf;
-        mbpmBean.start();
+        configBean = conf;
+        configBean.start();
     }
 
     public static synchronized void setConf(SingularFlowConfigurationBean conf) {
         setConf(conf, false);
     }
 
-    public static SingularFlowConfigurationBean getMbpmBean() {
-        Objects.requireNonNull(mbpmBean, "Configuração do fluxo não realizada");
-        return mbpmBean;
+    public static SingularFlowConfigurationBean getConfigBean() {
+        Objects.requireNonNull(configBean, "Configuração do fluxo não realizada");
+        return configBean;
     }
 
     public static <K extends ProcessDefinition<?>> K getProcessDefinition(Class<K> classe) {
-        return getMbpmBean().getProcessDefinition(classe);
-    }
-    public static ProcessDefinition<?> getProcessDefinition(String abbreviation){
-        return getMbpmBean().getProcessDefinition(abbreviation);
+        return getConfigBean().getProcessDefinition(classe);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String abbreviation) {
-        return (K) getMbpmBean().getProcessDefinition(abbreviation);
+    /**
+     * <code> this method does not throw a exception if there is no ProcessDefinition associated with key</code>
+     * @param key
+     * @return
+     */
+    public static ProcessDefinition<?> getProcessDefinitionUnchecked(String key) {
+        return getConfigBean().getProcessDefinitionUnchecked(key);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * @throws SingularFlowException <code> if there is no ProcessDefinition associated with key</code>
+     */
+    public static <K extends ProcessDefinition<?>> K getProcessDefinitionWith(String key) {
+        return (K) getConfigBean().getProcessDefinition(key);
+    }
+
     public static <K extends ProcessDefinition<?>> List<K> getDefinitions() {
-        return (List<K>) getMbpmBean().getDefinitions();
+        return (List<K>) getConfigBean().getDefinitions();
     }
 
     public static TaskInstance getTaskInstance(IEntityTaskInstance entityTaskInstance) {
@@ -64,31 +66,31 @@ public class Flow {
     }
 
     public static ProcessInstance getProcessInstance(IEntityProcessInstance dadosInstanciaProcesso) {
-        return getMbpmBean().getProcessInstance(dadosInstanciaProcesso);
+        return getConfigBean().getProcessInstance(dadosInstanciaProcesso);
     }
 
     public static <X extends ProcessInstance, K extends ProcessDefinition<X>> X getProcessInstance(Class<K> expectedType, IEntityProcessInstance dadosInstanciaProcesso) {
-        return getMbpmBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
+        return getConfigBean().getProcessInstance(expectedType, dadosInstanciaProcesso);
     }
 
     public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, Integer cod) {
-        return getMbpmBean().getProcessInstance(processClass, cod);
+        return getConfigBean().getProcessInstance(processClass, cod);
     }
 
     public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstance(Class<T> processClass, String id) {
-        return getMbpmBean().getProcessInstance(processClass, id);
+        return getConfigBean().getProcessInstance(processClass, id);
     }
 
     public static final <X extends ProcessInstance, T extends ProcessDefinition<X>> X getProcessInstanceOrException(Class<T> processClass, String id) {
-        return getMbpmBean().getProcessInstanceOrException(processClass, id);
+        return getConfigBean().getProcessInstanceOrException(processClass, id);
     }
 
     public static <X extends ProcessInstance> X getProcessInstance(String processInstanceID) {
-        return (X) getMbpmBean().getProcessInstance(processInstanceID);
+        return (X) getConfigBean().getProcessInstance(processInstanceID);
     }
 
     public static final <T extends ProcessInstance> T getProcessInstanceOrException(String processInstanceID) {
-        return (T) getMbpmBean().getProcessInstanceOrException(processInstanceID);
+        return (T) getConfigBean().getProcessInstanceOrException(processInstanceID);
     }
 
     /**
@@ -101,40 +103,30 @@ public class Flow {
     }
 
     public static String generateID(ProcessInstance instancia) {
-        return getMbpmBean().generateID(instancia);
+        return getConfigBean().generateID(instancia);
     }
 
     public static String generateID(TaskInstance instanciaTarefa) {
-        return getMbpmBean().generateID(instanciaTarefa);
+        return getConfigBean().generateID(instanciaTarefa);
     }
 
     public static MUser getUserIfAvailable() {
-        return getMbpmBean().getUserService().getUserIfAvailable();
+        return getConfigBean().getUserService().getUserIfAvailable();
     }
 
-
-    /**
-     *
-     * @deprecated utilizar {@link #notifyListeners(Consumer) notifyListeners} para fazer uma notificação.
-     */
-    @Deprecated
-    public static ProcessNotifier getNotifiers() {
-        return getMbpmBean().getNotifiers();
-    }
-
-    public static void notifyListeners(Consumer<ProcessNotifier> operation){
-        getMbpmBean().notifyListeners(operation);
+    public static void notifyListeners(Consumer<ProcessNotifier> operation) {
+        getConfigBean().notifyListeners(operation);
     }
 
     static boolean canBeAllocated(MUser pessoa) {
-        return getMbpmBean().getUserService().canBeAllocated(pessoa);
+        return getConfigBean().getUserService().canBeAllocated(pessoa);
     }
 
     public static Lnk getDefaultHrefFor(ProcessInstance instanciaProcesso) {
-        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaProcesso);
+        return getConfigBean().getViewLocator().getDefaultHrefFor(instanciaProcesso);
     }
 
     public static Lnk getDefaultHrefFor(TaskInstance instanciaTarefa) {
-        return getMbpmBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
+        return getConfigBean().getViewLocator().getDefaultHrefFor(instanciaTarefa);
     }
 }

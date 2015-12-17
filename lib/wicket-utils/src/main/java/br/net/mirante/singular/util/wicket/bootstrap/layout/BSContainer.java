@@ -1,5 +1,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
@@ -10,9 +12,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     private String tagName;
@@ -107,13 +107,13 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
                         + (closeTag ? "</" + tag + ">\n" : "\n")));
         container
                 .add(component)
-                .setRenderBodyOnly(true);
+                .setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return component;
     }
 
     public TemplatePanel newTemplateTag(IFunction<TemplatePanel, String> markupFunc) {
         TemplatePanel container = newComponent(id -> new TemplatePanel(id, markupFunc));
-        container.setRenderBodyOnly(true);
+        container.setRenderBodyOnly(true).setOutputMarkupId(false).setOutputMarkupPlaceholderTag(false);
         return container;
     }
 

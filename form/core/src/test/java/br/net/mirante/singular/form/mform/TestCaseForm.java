@@ -7,6 +7,28 @@ import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase {
 
+    protected static void testCaminho(MInstancia registro, String path, String caminhoCompletoEsperado) {
+        MInstancia esperada = (path == null) ? registro : ((ICompositeInstance) registro).getCampo(path);
+        assertNotNull(esperada);
+        String caminho = esperada.getPathFromRoot();
+        assertEquals(caminhoCompletoEsperado, caminho);
+
+        String esperadoFull;
+        MInstancia raiz = registro.getDocument().getRoot();
+        if (caminho == null) {
+            esperadoFull = raiz.getNome();
+        } else if (raiz instanceof MILista) {
+            esperadoFull = raiz.getNome() + caminho;
+        } else {
+            esperadoFull = raiz.getNome() + "." + caminho;
+        }
+        assertEquals(esperadoFull, esperada.getPathFull());
+
+        if (caminho != null) {
+            assertEquals(esperada, ((ICompositeInstance) registro.getDocument().getRoot()).getCampo(caminho));
+        }
+    }
+
     protected static <R extends MInstancia & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor,
             int qtdFilhosEsperados) {
         testAtribuicao(registro, path, valor);
@@ -63,19 +85,19 @@ public abstract class TestCaseForm extends TestCase {
         }
     }
 
-    protected static void assertException(Runnable acao, String trechoMsgEsperada) {
+    public static void assertException(Runnable acao, String trechoMsgEsperada) {
         assertException(acao, RuntimeException.class, trechoMsgEsperada, null);
     }
 
-    protected static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
+    public static void assertException(Runnable acao, String trechoMsgEsperada, String msgFailException) {
         assertException(acao, RuntimeException.class, trechoMsgEsperada, msgFailException);
     }
 
-    protected static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
+    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada) {
         assertException(acao, exceptionEsperada, null, null);
     }
 
-    protected static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
+    public static void assertException(Runnable acao, Class<? extends Exception> exceptionEsperada, String trechoMsgEsperada,
             String msgFailException) {
         try {
             acao.run();

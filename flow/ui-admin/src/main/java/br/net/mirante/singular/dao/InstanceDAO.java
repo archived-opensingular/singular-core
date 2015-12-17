@@ -6,118 +6,58 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
-import javax.inject.Inject;
-
+import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.hibernate.type.FloatType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.hibernate.type.TimestampType;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import br.net.mirante.singular.dto.InstanceDTO;
+import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.TaskType;
+import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 
 @Repository
-public class InstanceDAO {
+public class InstanceDAO extends BaseDAO{
 
     public static final int MAX_FEED_SIZE = 30;
 
-    private enum Columns {
-        description("DESCRICAO"),
-        delta("DELTA"),
-        date("DIN"),
-        deltas("DELTAS"),
-        dates("DS"),
-        user("USUARIO");
-
-        private String code;
-
-        Columns(String code) {
-            this.code = code;
-        }
-
-        @Override
-        public String toString() {
-            return code;
-        }
-    }
-
-    @Inject
-    private SessionFactory sessionFactory;
-
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
     @SuppressWarnings("unchecked")
-    public List<Object[]> retrieveAll(int first, int size, String orderByProperty, boolean asc, Long id) {
-        StringBuilder orderByStatement = new StringBuilder("");
-        if (orderByProperty != null) {
-            orderByStatement.append("ORDER BY ").append(Columns.valueOf(orderByProperty)).append(" ");
-            orderByStatement.append(asc ? "ASC" : "DESC");
-        }
-
-        String sql = "SELECT DISTINCT INS.CO_INSTANCIA_PROCESSO AS CODIGO, INS.DS_INSTANCIA_PROCESSO AS DESCRICAO,"
-                + " DATEDIFF(SECOND, DT_INICIO, GETDATE()) AS DELTA, DT_INICIO AS DIN,"
-                + " DATEDIFF(SECOND, data_situacao_atual, GETDATE()) AS DELTAS, data_situacao_atual AS DS,"
-                + " PES.nome_guerra AS USUARIO"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "  LEFT JOIN CAD_PESSOA PES ON PES.cod_pessoa = INS.cod_pessoa_alocada"
-                + " WHERE INS.DT_FIM IS NULL AND PRO.CO_DEFINICAO_PROCESSO = :id " + orderByStatement.toString();
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("CODIGO", LongType.INSTANCE)
-                .addScalar("DESCRICAO", StringType.INSTANCE)
-                .addScalar("DELTA", LongType.INSTANCE)
-                .addScalar("DIN", TimestampType.INSTANCE)
-                .addScalar("DELTAS", LongType.INSTANCE)
-                .addScalar("DS", TimestampType.INSTANCE)
-                .addScalar("USUARIO", LongType.INSTANCE)
-                .setParameter("id", id);
-
-        query.setFirstResult(first);
-        query.setMaxResults(size);
-
-        return (List<Object[]>) query.list();
+    public List<InstanceDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod) {
+        Query hql = getSession().createQuery("select ti.cod as cod, (ti.task.name||' - '||pi.description) as descricao, pi.beginDate as dataInicial, ti.beginDate as dataAtividade, au.nome as usuarioAlocado "
+            + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd left join ti.allocatedUser au where ti.endDate is null and pd.cod = :cod");
+        hql.setParameter("cod", processDefinitionCod);
+        hql.setFirstResult(first);
+        hql.setMaxResults(size);
+        hql.setResultTransformer(Transformers.aliasToBean(InstanceDTO.class));
+        return hql.list();
     }
 
-    public int countAll(Long id) {
-        return ((Number) getSession().createSQLQuery(
-                "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO)"
-                        + " FROM TB_INSTANCIA_PROCESSO INS"
-                        + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                        + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                        + "  LEFT JOIN TB_DEFINICAO_TAREFA DFT ON DFT.CO_DEFINICAO_PROCESSO = DEF.CO_DEFINICAO_PROCESSO"
-                        + " WHERE INS.DT_FIM IS NULL AND PRO.CO_DEFINICAO_PROCESSO = :id")
-                .setParameter("id", id)
-                .uniqueResult()).intValue();
+    public int countAll(Integer processDefinitionCod) {
+        Query query = getSession().createQuery("select count(ct) from ProcessDefinitionEntity pd join pd.processInstances pi with pi.endDate is null join pi.currentTasks ct where pd.cod = :cod");
+        query.setParameter("cod", processDefinitionCod);
+        return ((Number)query.uniqueResult()).intValue();
     }
 
-    public List<Map<String, String>> retrieveTransactionQuantityLastYear(String processCode) {
-        List<Map<String, String>> newTransactions = retrieveNewQuantityLastYear(processCode);
-        List<Map<String, String>> finishedTransations = retrieveFinishedQuantityLastYear(processCode);
-        List<Map<String, String>> transactions = newTransactions.stream().collect(Collectors.toList());
+    public List<Map<String, String>> retrieveTransactionQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+        List<Map<String, String>> newTransactions = retrieveNewQuantityLastYear(processCode, processCodeWithAccess);
+        List<Map<String, String>> finishedTransations = retrieveFinishedQuantityLastYear(processCode, processCodeWithAccess);
         for (Map<String, String> map : finishedTransations) {
-            Map<String, String> m = retrieveResultMap(map, transactions);
+            Map<String, String> m = retrieveResultMap(map, newTransactions);
             if (m == null) {
-                transactions.add(map);
+                newTransactions.add(map);
             } else {
                 m.put("QTD_CLS", map.get("QTD_CLS"));
             }
         }
-        return transactions;
+        return newTransactions;
     }
 
     private Map<String, String> retrieveResultMap(Map<String, String> map, List<Map<String, String>> list) {
@@ -130,90 +70,69 @@ public class InstanceDAO {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, String>> retrieveNewQuantityLastYear(String processCode) {
-        String sql = "SET LANGUAGE Portuguese;"
-                + "SELECT RIGHT('00' + CAST(MONTH(DT_INICIO) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS POS,"
-                + " UPPER(SUBSTRING(DATENAME(MONTH, DT_INICIO), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_INICIO), 3, 4) AS MES,"
-                + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_NEW"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE DT_INICIO >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
-                + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
-                + " GROUP BY MONTH(DT_INICIO), YEAR(DT_INICIO), DATENAME(MONTH, DT_INICIO), DATENAME(YEAR, DT_INICIO)"
-                + " ORDER BY YEAR(DT_INICIO), MONTH(DT_INICIO)";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("POS", StringType.INSTANCE)
-                .addScalar("MES", StringType.INSTANCE)
-                .addScalar("QTD_NEW", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    private List<Map<String, String>> retrieveNewQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+        Query hqlQuery = getSession().createQuery("select trim(str(month(pi.beginDate))) || trim(str(year(pi.beginDate))) as POS, "
+            + " trim(str(month(pi.beginDate))) ||'/'|| trim(str(year(pi.beginDate))) as MES, trim(str(count(pi))) as QTD_NEW from ProcessInstanceEntity pi "
+            + " join pi.processVersion pv join pv.processDefinition pd "
+            + " where pd.key in(:processCodeWithAccess) "
+            + " and pi.beginDate >= :datalimite "
+            + (processCode != null ? " and pd.key = :processCode" : "")
+            + " group by month(pi.beginDate), year(pi.beginDate) order by month(pi.beginDate) asc, year(pi.beginDate) asc");
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            hqlQuery.setParameter("processCode", processCode);
         }
-        return (List<Map<String, String>>) query.list();
+        hqlQuery.setParameter("datalimite", LocalDate.now().minusYears(1).toDate());
+        hqlQuery.setParameterList("processCodeWithAccess", processCodeWithAccess);
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        return hqlQuery.list();
     }
 
     @SuppressWarnings("unchecked")
-    private List<Map<String, String>> retrieveFinishedQuantityLastYear(String processCode) {
-        String sql = "SET LANGUAGE Portuguese;"
-                + "SELECT RIGHT('00' + CAST(MONTH(DT_FIM) AS VARCHAR(2)), 2) + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS POS,"
-                + " UPPER(SUBSTRING(DATENAME(MONTH, DT_FIM), 0, 4)) + '/' + SUBSTRING(DATENAME(YEAR, DT_FIM), 3, 4) AS MES,"
-                + " COUNT(CO_INSTANCIA_PROCESSO) AS QTD_CLS"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + " LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE DT_FIM >= CAST(FLOOR(CAST(GETDATE() - 364 - DAY(GETDATE()) AS FLOAT)) AS DATETIME)"
-                + (processCode != null ? " AND SG_PROCESSO = :processCode" : "")
-                + " GROUP BY MONTH(DT_FIM), YEAR(DT_FIM), DATENAME(MONTH, DT_FIM), DATENAME(YEAR, DT_FIM)"
-                + " ORDER BY YEAR(DT_FIM), MONTH(DT_FIM)";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("POS", StringType.INSTANCE)
-                .addScalar("MES", StringType.INSTANCE)
-                .addScalar("QTD_CLS", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+    private List<Map<String, String>> retrieveFinishedQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+        Query hqlQuery = getSession().createQuery("select trim(str(month(pi.endDate))) || trim(str(year(pi.endDate))) as POS, "
+            + " trim(str(month(pi.endDate))) ||'/'|| trim(str(year(pi.endDate))) as MES, trim(str(count(pi))) as QTD_CLS from ProcessInstanceEntity pi "
+            + " join pi.processVersion pv join pv.processDefinition pd "
+            + " where pd.key in(:processCodeWithAccess) "
+            + " and pi.endDate >= :datalimite "
+            + (processCode != null ? " and pd.key = :processCode" : "")
+            + " group by month(pi.endDate), year(pi.endDate) order by month(pi.endDate) asc, year(pi.endDate) asc");
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            hqlQuery.setParameter("processCode", processCode);
         }
-        return (List<Map<String, String>>) query.list();
+        hqlQuery.setParameter("datalimite", LocalDate.now().minusYears(1).toDate());
+        hqlQuery.setParameterList("processCodeWithAccess", processCodeWithAccess);
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        return hqlQuery.list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCod) {
-        String sql = "SELECT SIT.NO_TAREFA AS SITUACAO, COUNT(DEM.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_INSTANCIA_PROCESSO DEM"
-                + " INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = DEM.CO_VERSAO_PROCESSO"
-                + " INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " LEFT JOIN TB_VERSAO_TAREFA SIT ON SIT.CO_VERSAO_TAREFA = DEM.cod_situacao"
-                + " WHERE DEM.data_situacao_atual >= :startPeriod AND DEF.SG_PROCESSO = :processCod"
-                + " AND SIT.CO_TIPO_TAREFA = " + TaskType.End.ordinal()
-                + " GROUP BY SIT.NO_TAREFA";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("SITUACAO", StringType.INSTANCE)
-                .addScalar("QUANTIDADE", LongType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-
-        query.setParameter("processCod", processCod);
-        query.setParameter("startPeriod", periodFromNow(period));
-        return (List<Map<String, String>>) query.list();
+    public List<Map<String, String>> retrieveEndStatusQuantityByPeriod(Period period, String processCode) {
+        Query hqlQuery = getSession().createQuery("select ti.task.name as SITUACAO, "
+            + " trim(str(count(ti))) as QUANTIDADE from TaskInstanceEntity ti "
+            + " where ti.task.type = :taskType and ti.beginDate >= :startPeriod "
+            + " and ti.task.processVersion.processDefinition.key = :processCode"
+            + " group by ti.task.name");
+        hqlQuery.setParameter("taskType", TaskType.End);
+        hqlQuery.setParameter("processCode", processCode);
+        hqlQuery.setParameter("startPeriod", periodFromNow(period));
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        
+        return hqlQuery.list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Map<String, String>> retrieveAllDelayedBySigla(String sigla, BigDecimal media) {
-        String sql = "SELECT INS.DS_INSTANCIA_PROCESSO AS DESCRICAO,"
-                + " ROUND(ISNULL(CAST(DATEDIFF(SECOND, INS.DT_INICIO, GETDATE()) AS FLOAT), 0) / (24 * 60 * 60), 2) AS DIAS"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "  INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "  INNER JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.SG_PROCESSO = :sigla"
-                + "  AND ROUND(ISNULL(CAST(DATEDIFF(SECOND, INS.DT_INICIO, GETDATE()) AS FLOAT), 0) / (24 * 60 * 60), 2) > :media";
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("DESCRICAO", StringType.INSTANCE)
-                .addScalar("DIAS", StringType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        query.setParameter("media", media);
-        query.setParameter("sigla", sigla);
-        query.setMaxResults(MAX_FEED_SIZE);
-        return (List<Map<String, String>>) query.list();
+    public List<Map<String, String>> retrieveAllDelayedBySigla(String processCode, BigDecimal media) {
+        Query hqlQuery = getSession().createQuery("select pi.description as DESCRICAO, "
+            + " trim(str((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as DIAS from ProcessInstanceEntity pi "
+            + "join pi.processVersion pv join pv.processDefinition pd "
+            + " where pi.endDate is null and pd.key = :processCode "
+            + " and ((cast(current_date() as double)) - (cast(pi.beginDate as double))) > :media "
+            );
+        hqlQuery.setParameter("processCode", processCode);
+        hqlQuery.setParameter("media", media.doubleValue());
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        hqlQuery.setMaxResults(MAX_FEED_SIZE);
+        return hqlQuery.list();
     }
 
     private Date periodFromNow(Period period) {
@@ -224,199 +143,130 @@ public class InstanceDAO {
     }
 
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
-        String sql = "SELECT '" + processCode + "' AS processCode,"
-                + " COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS amount,"
-                + " AVG(DATEDIFF(DAY, INS.DT_INICIO, GETDATE())) AS averageTimeInDays"
-                + " FROM TB_INSTANCIA_PROCESSO INS"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + " WHERE INS.DT_FIM IS NULL AND DEF.se_ativo = 1"
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("processCode", StringType.INSTANCE)
-                .addScalar("amount", IntegerType.INSTANCE)
-                .addScalar("averageTimeInDays", IntegerType.INSTANCE);
+        Query hqlQuery = getSession().createQuery("select '"+processCode+"' as processCode, cast(count(pi) as integer) as amount, "
+            + " cast(avg((cast(current_date() as double)) - (cast(pi.beginDate as double))) as integer) as averageTimeInDays from ProcessInstanceEntity pi "
+            + "join pi.processVersion pv join pv.processDefinition pd  "
+            + " where pi.endDate is null  "
+            + (processCode != null ?" and pd.key = :processCode": ""));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            hqlQuery.setParameter("processCode", processCode);
         }
-        query.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
-        StatusDTO status = (StatusDTO) query.uniqueResult();
+        hqlQuery.setResultTransformer(Transformers.aliasToBean(StatusDTO.class));
+        StatusDTO status = (StatusDTO) hqlQuery.uniqueResult();
         status.setOpenedInstancesLast30Days(countOpenedInstancesLast30Days(processCode));
         status.setFinishedInstancesLast30Days(countFinishedInstancesLast30Days(processCode));
         return status;
     }
 
     public Integer countOpenedInstancesLast30Days(String processCode) {
-        String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_INICIO >= (GETDATE() - 30) AND DEF.se_ativo = 1"
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        Criteria criteria = getSession().createCriteria(ProcessInstanceEntity.class, "PI");
+        criteria.add(Restrictions.ge("PI.beginDate", LocalDate.now().minusDays(30).toDate()));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            criteria.createAlias("PI.processVersion", "PV");
+            criteria.createAlias("PV.processDefinition", "PD");
+            criteria.add(Restrictions.eq("PD.key", processCode));
         }
-        return ((Number) query.uniqueResult()).intValue();
+        criteria.setProjection(Projections.rowCount());
+        
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
     public Integer countFinishedInstancesLast30Days(String processCode) {
-        String sql = "SELECT COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE"
-                + " FROM TB_DEFINICAO_PROCESSO DEF"
-                + "   INNER JOIN TB_VERSAO_PROCESSO PRO ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO"
-                + "   LEFT JOIN TB_INSTANCIA_PROCESSO INS ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO"
-                + "   LEFT JOIN TB_VERSAO_TAREFA TAR ON PRO.CO_VERSAO_PROCESSO = TAR.CO_VERSAO_PROCESSO"
-                + " WHERE INS.DT_FIM >= (GETDATE() - 30) AND DEF.se_ativo = 1"
-                + (processCode != null ? " AND DEF.SG_PROCESSO = :processCode" : "");
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("QUANTIDADE", LongType.INSTANCE);
+        Criteria criteria = getSession().createCriteria(ProcessInstanceEntity.class, "PI");
+        criteria.add(Restrictions.ge("PI.endDate", LocalDate.now().minusDays(30).toDate()));
         if (processCode != null) {
-            query.setParameter("processCode", processCode);
+            criteria.createAlias("PI.processVersion", "PV");
+            criteria.createAlias("PV.processDefinition", "PD");
+            criteria.add(Restrictions.eq("PD.key", processCode));
         }
-        return ((Number) query.uniqueResult()).intValue();
+        criteria.setProjection(Projections.rowCount());
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
-    private static final String ACTIVE_DATE_DIST_SQL =
-            "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
-                    + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
-                    + "%s%n"
-                    + "FROM TB_INSTANCIA_PROCESSO INS%n"
-                    + "  LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
-                    + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
-                    + "WHERE DT_INICIO < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
-                    + "      AND (DT_FIM > CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) OR DT_FIM IS NULL)%s";
-    private static final String FINISHED_DATE_DIST_SQL =
-            "SELECT %d AS POS, UPPER(SUBSTRING(DATENAME(MONTH, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 0, 4))%n"
-                    + "       + '/' + SUBSTRING(DATENAME(YEAR, CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)), 3, 4) AS MES,%n"
-                    + "%s%n"
-                    + "FROM TB_INSTANCIA_PROCESSO INS%n"
-                    + "  LEFT JOIN TB_VERSAO_PROCESSO PRO ON PRO.CO_VERSAO_PROCESSO = INS.CO_VERSAO_PROCESSO%n"
-                    + "  INNER JOIN TB_DEFINICAO_PROCESSO DEF ON DEF.CO_DEFINICAO_PROCESSO = PRO.CO_DEFINICAO_PROCESSO%n"
-                    + "WHERE DT_FIM >= CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%n"
-                    + "      AND DT_FIM < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)%s";
-    private static final String PROCESS_CODE_FILTER_SQL = " AND SG_PROCESSO = :processCode";
-    private static final String SELECT_AVERAGE_TIME_SQL =
-            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO";
-    private static final String SELECT_AVERAGE_2_TIME_SQL =
-            "       CAST(YEAR(CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)) AS VARCHAR) + '-' + RIGHT('00' + CAST(MONTH(CAST('%04d-%02d-01T00:00:00.000' AS DATETIME)) AS VARCHAR(2)), 2) AS DATA,%n" +
-            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO,%n" +
-            "       ROUND(ISNULL(AVG(CAST(DATEDIFF(SECOND, INS.DT_INICIO, (CASE WHEN ISNULL(INS.DT_FIM, GETDATE()) < CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) THEN ISNULL(INS.DT_FIM, GETDATE()) ELSE CAST('%04d-%02d-01T00:00:00.000' AS DATETIME) END)) AS FLOAT)), 0) / (24 * 60 * 60), 2) AS TEMPO2";
-    private static final String SELECT_COUNT_SQL =
-            "       COUNT(DISTINCT INS.CO_INSTANCIA_PROCESSO) AS QUANTIDADE";
-
-    private String mountDateDistSQL(boolean active, boolean processCodeFilter) {
-        return mountDateDistSQL(active, false, processCodeFilter);
+    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(true, processCode, false, false, processCodeWithAccess);
     }
 
-    private String mountDateDistSQL(boolean active, boolean count, boolean processCodeFilter) {
-        return mountDateDistSQL(active, count, false, processCodeFilter);
+    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(true, processCode, false, true, processCodeWithAccess);
     }
 
-    private String mountDateDistSQL(boolean active, boolean count, boolean move, boolean processCodeFilter) {
-        List<String> sqls = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MONTH, 1);
-        for (int pos = 13; pos > 0; pos--) {
-            int monthPlus1 = calendar.get(Calendar.MONTH) + 1;
-            int yearPlus1 = calendar.get(Calendar.YEAR);
-            calendar.add(Calendar.MONTH, -1);
-            int month = calendar.get(Calendar.MONTH) + 1;
-            int year = calendar.get(Calendar.YEAR);
-            formatDateDistSQL(sqls, pos, month, year, monthPlus1, yearPlus1, active, count, move, processCodeFilter);
-        }
-        int pos = 13;
-        StringBuilder result = new StringBuilder("SET LANGUAGE Portuguese;");
-        for (String sql : sqls) {
-            result.append(String.format("%s%n%s%n", sql, pos-- == 1 ? "ORDER BY POS" : "UNION"));
-        }
-        return result.toString();
+    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(false, processCode, false, false, processCodeWithAccess);
     }
 
-    private String formatDateDistMoveSQL(int month, int year, int yearPlus1, int monthPlus1) {
-        int yearPlus3;
-        int monthPlus3;
-        int yearPlus6;
-        int monthPlus6;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, yearPlus1);
-        calendar.set(Calendar.MONTH, monthPlus1 - 1);
-        calendar.add(Calendar.MONTH, 2);
-        yearPlus3 = calendar.get(Calendar.YEAR);
-        monthPlus3 = calendar.get(Calendar.MONTH) + 1;
-
-        calendar.add(Calendar.MONTH, 3);
-        yearPlus6 = calendar.get(Calendar.YEAR);
-        monthPlus6 = calendar.get(Calendar.MONTH) + 1;
-
-        return String.format(SELECT_AVERAGE_2_TIME_SQL, year, month, year, month,
-                yearPlus3, monthPlus3, yearPlus3, monthPlus3,
-                yearPlus6, monthPlus6, yearPlus6, monthPlus6);
+    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode, Set<String> processCodeWithAccess) {
+        return retrieveMeanTimeInstances(true, processCode, true, false, processCodeWithAccess);
     }
-
-    private void formatDateDistSQL(List<String> sqls, int pos, int month, int year,
-            int monthPlus1, int yearPlus1, boolean active, boolean count, boolean move, boolean processCodeFilter) {
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private List<Map<String, String>> retrieveMeanTimeInstances(boolean active, String processCode, boolean count, boolean move, Set<String> processCodeWithAccess) {
+        List result = new ArrayList<>(12);
+        Query hqlQuery;
         if (active) {
             if (count) {
-                sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
-                        yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
+                hqlQuery =getSession().createQuery("select coalesce(count(distinct pi),0) as QUANTIDADE "
+                    + "from ProcessInstanceEntity pi "
+                    + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
+                    + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
+                    + (processCode != null ? " and pd.key = :processCode" : ""));
+            } else if(move){
+                hqlQuery =getSession().createQuery(
+                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate1 then coalesce(pi.endDate,current_date()) else :endDate1 end) as double) - cast(pi.beginDate as double))),0) as TEMPO, "
+                    + "coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate2 then coalesce(pi.endDate,current_date()) else :endDate2 end) as double) - cast(pi.beginDate as double))),0) as TEMPO2 "
+                    + "from ProcessInstanceEntity pi "
+                    + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
+                    + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
+                    + (processCode != null ? " and pd.key = :processCode" : ""));
             } else {
-                sqls.add(String.format(ACTIVE_DATE_DIST_SQL, pos, year, month, year, month,
-                        (move
-                                ? formatDateDistMoveSQL(month, year, yearPlus1, monthPlus1)
-                                : String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1)
-                        ),
-                        yearPlus1, monthPlus1, yearPlus1, monthPlus1,
-                        (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
+                hqlQuery =getSession().createQuery(
+                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end) as double) - cast(pi.beginDate as double))),0) as TEMPO "
+                        + "from ProcessInstanceEntity pi "
+                        + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
+                        + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
+                        + (processCode != null ? " and pd.key = :processCode" : ""));
             }
         } else {
             if (count) {
-                sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month, SELECT_COUNT_SQL,
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
+                hqlQuery =getSession().createQuery("select coalesce(count(distinct pi),0) as QUANTIDADE "
+                    + "from ProcessInstanceEntity pi "
+                    + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
+                    + "where pi.endDate >= :beginDate and pi.endDate < :endDate "
+                    + (processCode != null ? " and pd.key = :processCode" : ""));
             } else {
-                sqls.add(String.format(FINISHED_DATE_DIST_SQL, pos, year, month, year, month,
-                        String.format(SELECT_AVERAGE_TIME_SQL, yearPlus1, monthPlus1, yearPlus1, monthPlus1),
-                        year, month, yearPlus1, monthPlus1, (processCodeFilter ? PROCESS_CODE_FILTER_SQL : "")));
+                hqlQuery =getSession().createQuery(
+                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end) as double) - cast(pi.beginDate as double))),0) as TEMPO "
+                    + "from ProcessInstanceEntity pi "
+                    + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
+                    + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
+                    + (processCode != null ? " and pd.key = :processCode" : ""));
             }
         }
-    }
-
-    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode, boolean count) {
-        return retrieveMeanTimeInstances(sql, processCode, count, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Map<String, String>> retrieveMeanTimeInstances(String sql, String processCode,
-            boolean count, boolean move) {
-        Query query = getSession().createSQLQuery(sql)
-                .addScalar("POS", IntegerType.INSTANCE)
-                .addScalar("MES", StringType.INSTANCE)
-                .addScalar(count ? "QUANTIDADE" : "TEMPO", count ? IntegerType.INSTANCE : FloatType.INSTANCE)
-                .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-        if (move) {
-            ((SQLQuery) query).addScalar("DATA", StringType.INSTANCE).addScalar("TEMPO2", FloatType.INSTANCE);
+        hqlQuery.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+        LocalDate mes = LocalDate.now().plusMonths(1).withDayOfMonth(1);
+        for (int pos = 13; pos > 0; pos--) {
+            hqlQuery.setParameter("beginDate", mes.toDate());
+            hqlQuery.setParameter("endDate", mes.toDate());
+            if(processCode != null){
+                hqlQuery.setParameter("processCode", processCode);
+            }
+            if(active && !count && move){
+                hqlQuery.setParameter("endDate1", mes.plusMonths(3).toDate());
+                hqlQuery.setParameter("endDate2", mes.plusMonths(3).toDate());
+            }
+            mes = mes.minusMonths(1);
+            String descrMes = mes.toString("MMM/yy").toUpperCase();
+            String descrAnoMes = mes.toString("yyyy-MM");
+            for (Map map : (List<Map>)hqlQuery.list()) {
+                map.put("POS", pos);
+                map.put("MES", descrMes);
+                if(active && !count && move){
+                    map.put("DATA", descrAnoMes);
+                }
+                result.add(map);
+            }
         }
-        if (processCode != null) {
-            query.setParameter("processCode", processCode);
-        }
-        return (List<Map<String, String>>) query.list();
-    }
-
-    public List<Map<String, String>> retrieveMeanTimeActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, processCode != null), processCode, false);
-    }
-
-    public List<Map<String, String>> retrieveAverageTimesActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, false, true, true), processCode, false, true);
-    }
-
-    public List<Map<String, String>> retrieveMeanTimeFinishedInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(false, processCode != null), processCode, false);
-    }
-
-    public List<Map<String, String>> retrieveCounterActiveInstances(String processCode) {
-        return retrieveMeanTimeInstances(mountDateDistSQL(true, true, processCode != null), processCode, true);
+        ((List<Map>)result).sort((ob1,ob2) -> Integer.compare((int)ob1.get("POS"), (int)ob2.get("POS")));
+        return result;
     }
 }

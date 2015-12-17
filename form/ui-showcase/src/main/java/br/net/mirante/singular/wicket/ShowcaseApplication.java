@@ -14,12 +14,16 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import br.net.mirante.singular.view.error.Error403Page;
 import br.net.mirante.singular.view.page.form.ListPage;
 
-public class ShowcaseApplication extends AuthenticatedWebApplication implements ApplicationContextAware {
+public class ShowcaseApplication extends AuthenticatedWebApplication 
+    implements ApplicationContextAware {
+
+    public static final String BASE_FOLDER = "/tmp/fileUploader";
 
     private ApplicationContext ctx;
 
@@ -39,11 +43,16 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
+        getComponentInitializationListeners().add(c -> {
+            if (!c.getRenderBodyOnly())
+                c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
+        });
 
         if (ctx != null) {
             getComponentInstantiationListeners().add(new SpringComponentInjector(this, ctx, true));
         } else {
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
+            ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
     }
@@ -80,4 +89,9 @@ public class ShowcaseApplication extends AuthenticatedWebApplication implements 
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         this.ctx = ctx;
     }
+    
+    public ApplicationContext getApplicationContext(){
+        return ctx;
+    }
+    
 }

@@ -1,16 +1,20 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public abstract class MInstancia implements MAtributoEnabled {
 
     private MInstancia pai;
+
+    private MInstancia attributeOwner;
 
     private MTipo<?> mTipo;
 
@@ -18,24 +22,46 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     private SDocument document;
 
+    private Integer id;
+
+    /** Mapa de bits de flags. Veja {@link FlagsInstancia} */
+    private int flags;
+
     public MTipo<?> getMTipo() {
         return mTipo;
     }
 
     public SDocument getDocument() {
-        // if (document == null) {
-        // throw new RuntimeException(errorMsg("Documento não foi configurado na
-        // instância"));
-        // }
         return document;
+    }
+
+    /**
+     * Retorna um ID único dentre as instâncias do mesmo documento. Um ID nunca
+     * é reutilizado, mesmo se a instancia for removida de dentro do documento.
+     * Funcionamento semelhante a uma sequence de banco de dados.
+     *
+     * @return Nunca Null
+     */
+    public Integer getId() {
+        if (id == null) {
+            id = document.nextId();
+        }
+        return id;
+    }
+
+    /**
+     * Apenas para uso nas soluções de persistencia. Não deve ser usado fora
+     * dessa situação.
+     */
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     final void setDocument(SDocument document) {
         this.document = document;
-    }
-
-    public MView getView() {
-        return getMTipo().getView();
+        if (id == null && document != null) {
+            id = document.nextId();
+        }
     }
 
     @Override
@@ -43,8 +69,37 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getDicionario();
     }
 
+    /**
+     * Indica se a instância constitui um dado do documento ou se se é um
+     * atributo de uma instância ou tipo. Também retorna true se a instância for
+     * um campo ou item de lista de uma instanância pai que é um atributo. Ou
+     * seja, todos os subcampos de um instancia onde isAtribute == true,
+     * retornam true.
+     */
+    public boolean isAttribute() {
+        return getFlag(FlagsInstancia.IsAtributo);
+    }
+
+    final void setAsAttribute(MInstancia attributeOwner) {
+        setFlag(FlagsInstancia.IsAtributo, true);
+        this.attributeOwner = attributeOwner;
+    }
+
+    /**
+     * Se a instância for um atributo ou sub campo de uma atributo, retorna a
+     * instancia ao qual pertence o atributo. Retorna null, se a instancia não
+     * for um atributo ou se atributo pertencer a um tipo em vez de uma
+     * instância.
+     */
+    public MInstancia getAttributeOwner() {
+        return attributeOwner;
+    }
+
     final void setPai(MInstancia pai) {
         this.pai = pai;
+        if (pai != null && pai.isAttribute()) {
+            setAsAttribute(pai.getAttributeOwner());
+        }
     }
 
     final void setTipo(MTipo<?> tipo) {
@@ -83,6 +138,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -90,6 +146,7 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().converter(getValorWithDefault(), classeDestino);
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends Object> T getValor(Class<T> classeDestino) {
         if (classeDestino == null) {
             return (T) getValor();
@@ -147,17 +204,18 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     @Override
-    public <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
+    public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor) {
         MInstancia instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
         } else {
-            instanciaAtr = atributos.get(atr.getNomeCompleto());
+            instanciaAtr = atributos.get(nomeCompletoAtributo);
         }
         if (instanciaAtr == null) {
-            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(atr.getNomeCompleto());
+            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
-            atributos.put(atr.getNomeCompleto(), instanciaAtr);
+            instanciaAtr.setAsAttribute(this);
+            atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
             instanciaAtr.setValor(new LeitorPath(subPath), valor);
@@ -177,6 +235,10 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
     }
 
+    public Map<String, MInstancia> getAtributos() {
+        return atributos == null ? Collections.emptyMap() : atributos;
+    }
+
     public MInstancia getPai() {
         return this.pai;
     }
@@ -185,12 +247,30 @@ public abstract class MInstancia implements MAtributoEnabled {
         throw new RuntimeException("implementar");
     }
 
+    public <A extends MInstancia & ICompositeInstance> A getAncestor(MTipo<A> ancestorType) {
+        return findAncestor(ancestorType).get();
+    }
+    public <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MTipo<A> ancestorType) {
+        return MInstances.findAncestor(this, ancestorType);
+    }
+    public <A extends MInstancia> Optional<A> findNearest(MTipo<A> targetType) {
+        return MInstances.findNearest(this, targetType);
+    }
+    @SuppressWarnings("unchecked")
+    public <V> Optional<V> findNearestValue(MTipo<?> targetType) {
+        return (Optional<V>) MInstances.findNearest(this, targetType).map(it -> it.getValorWithDefault());
+    }
+    public <V> Optional<V> findNearestValue(MTipo<?> targetType, Class<V> classeValor) {
+        return MInstances.findNearest(this, targetType).map(it -> classeValor.cast(it.getValorWithDefault(classeValor)));
+    }
+
+    @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
-                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
@@ -200,24 +280,48 @@ public abstract class MInstancia implements MAtributoEnabled {
         return getMTipo().getNomeSimples();
     }
 
-    public final String getCaminhoCompleto() {
-        if (pai == null) {
-            return getNome();
-        }
-        return getCaminhoCompleto(new StringBuilder(), null).toString();
+    /**
+     * <p>
+     * Retorna o path da instancia atual relativa ao elemento raiz, ou seja, não
+     * inclui o nome da instância raiz no path gerado.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz (vamos dizer chamado cadastro):
+     * </p>
+     *
+     * <pre>
+     *     "enderecos[0].rua"
+     *     "experiencias[0].empresa.nome"
+     *     "experiencias[1].empresa.ramo"
+     * </pre>
+     *
+     * @return Null se chamado em uma instância raiz.
+     */
+    public final String getPathFromRoot() {
+        return MFormUtil.generatePath(this, i -> i.pai == null);
     }
 
-    protected StringBuilder getCaminhoCompleto(StringBuilder sb, MInstancia filhoReferencia) {
-        if (pai != null) {
-            pai.getCaminhoCompleto(sb, this);
-            sb.append('.');
-        }
-        sb.append(getNome());
-        return sb;
+    /**
+     * <p>
+     * Retorna o path da instancia atual desde o raiz, incluindo o nome da
+     * instancia raiz.
+     * </p>
+     * Exemplos, supundo que enderecos e experiencias estao dentro de um
+     * elemento raiz (vamos dizer chamado cadastro):
+     * </p>
+     *
+     * <pre>
+     *     "cadastro.enderecos[0].rua"
+     *     "cadastro.experiencias[0].empresa.nome"
+     *     "cadastro.experiencias[1].empresa.ramo"
+     * </pre>
+     */
+    public final String getPathFull() {
+        return MFormUtil.generatePath(this, i -> i == null);
     }
 
     public void debug() {
-        MElement xml = MformPersistenciaXML.toXML(this);
+        MElement xml = new PersistenceBuilderXML().withPersistId(false).toXML(this);
         if (xml == null) {
             System.out.println("null");
         } else {
@@ -234,7 +338,58 @@ public abstract class MInstancia implements MAtributoEnabled {
      * mensagem fornecida.
      */
     protected final String errorMsg(String msgToBeAppended) {
-        return "'" + getCaminhoCompleto() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
-                + msgToBeAppended;
+        return "'" + getPathFull() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
+            + msgToBeAppended;
     }
+
+    /**
+     * Signals this Component that it is removed from the Component hierarchy.
+     */
+    final void internalOnRemove() {
+        setFlag(FlagsInstancia.RemovendoInstancia, true);
+        onRemove();
+        if (getFlag(FlagsInstancia.RemovendoInstancia)) {
+            throw new SingularFormException(MInstancia.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
+                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+        }
+        this.setPai(null);
+        removeChildren();
+    }
+
+    /**
+     * Sinaliza essa instancia para remover da hierarquia todos os seus filhos.
+     */
+    void removeChildren() {
+        if (this instanceof ICompositeInstance) {
+            for (MInstancia child : ((ICompositeInstance) this).getChildren()) {
+                child.internalOnRemove();
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Chamado para notificar que a instancia está sendo removida da hierarquia.
+     * </p>
+     * <p>
+     * Métodos derivados devem chamar a implementação super, o lugar mais lógico
+     * para fazer essa chamada é na última linha do método que sobreescreve.
+     * </p>
+     */
+    protected void onRemove() {
+        setFlag(FlagsInstancia.RemovendoInstancia, false);
+    }
+
+    final void setFlag(FlagsInstancia flag, boolean value) {
+        if (value) {
+            flags |= flag.bit();
+        } else {
+            flags &= ~flag.bit();
+        }
+    }
+
+    final boolean getFlag(FlagsInstancia flag) {
+        return (flags & flag.bit()) != 0;
+    }
+
 }

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
-import br.net.mirante.singular.flow.util.vars.ValidationResult;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.ValidationResult;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 
 public class TransitionRef {
 

@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,13 +29,33 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
     }
 
+    /**
+     * Retorna apenas os campos do tipo que já foram instanciados.
+     *
+     * @return instancias dos campos
+     */
     public Collection<MInstancia> getCampos() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
+    }
+
+    /**
+     * Retorna todos os campos do tipo, instanciando os que ainda não foram.
+     *
+     * @return instancias dos campos
+     */
+    public Collection<MInstancia> getAllFields() {
+        for (MTipo<?> field : getMTipo().getFields())
+            getCampo(field.getNomeSimples());
+        return getCampos();
     }
 
     @Override
     public Collection<MInstancia> getChildren() {
         return getCampos();
+    }
+    @Override
+    public Collection<MInstancia> getAllChildren() {
+        return getAllFields();
     }
 
     @Override
@@ -88,7 +109,11 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         }
         if (leitorPath.isUltimo()) {
             if (valor == null) {
-                fields.remove(fieldIndex);
+                MInstancia child = fields.getByIndex(fieldIndex);
+                if (child != null) {
+                    child.internalOnRemove();
+                    fields.remove(fieldIndex);
+                }
             } else {
                 instancia.setValor(valor);
             }
@@ -164,5 +189,51 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         public Stream<MInstancia> stream() {
             return Arrays.stream(instances).filter(i -> i != null);
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.hashCode(instances);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            FieldMapOfRecordInstance other = (FieldMapOfRecordInstance) obj;
+            if (!Arrays.equals(instances, other.instances))
+                return false;
+            return true;
+        }
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MIComposto other = (MIComposto) obj;
+        if (!getMTipo().equals(other.getMTipo())) {
+            return false;
+        }
+        return Objects.equals(fields, other.fields);
+    }
+
 }

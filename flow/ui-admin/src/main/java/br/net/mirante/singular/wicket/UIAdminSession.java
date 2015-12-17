@@ -12,10 +12,11 @@ public class UIAdminSession extends AuthenticatedWebSession {
     private String name;
     private String avatar;
     private String logout;
-
+    private String userId;
+    
     private Roles roles;
 
-    public UIAdminSession(Request request, @SuppressWarnings("UnusedParameters") Response response) {
+    public UIAdminSession(Request request, Response response) {
         super(request);
         this.name = request.getRequestParameters().getParameterValue("name").toString("Admin");
         this.avatar = request.getRequestParameters().getParameterValue("avatar").toString(null);
@@ -72,5 +73,13 @@ public class UIAdminSession extends AuthenticatedWebSession {
 
     public void setLogout(String logout) {
         this.logout = logout;
+    }
+    
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    
+    public String getUserId() {
+        return userId;
     }
 }

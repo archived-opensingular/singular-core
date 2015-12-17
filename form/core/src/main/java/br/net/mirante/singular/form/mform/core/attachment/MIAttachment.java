@@ -36,11 +36,20 @@ public class MIAttachment extends MIComposto {
     }
 
     public void deleteReference() {
-        getAttachmentService().deleteReference(getFileId());
+        if (getFileId() != null) {
+            getAttachmentService().deleteReference(getFileId());
+        }
         setValor(MTipoAttachment.FIELD_FILE_ID, null);
         setValor(MTipoAttachment.FIELD_HASH_SHA1, null);
         setValor(MTipoAttachment.FIELD_SIZE, null);
         setValor(MTipoAttachment.FIELD_NAME, null);
+        setValorAtributo(MTipoAttachment.REF_ORIGINAL_ID, null);
+    }
+
+    @Override
+    protected void onRemove() {
+        deleteReference();
+        super.onRemove();
     }
 
     public IAttachmentRef getAttachmentRef() {
@@ -57,6 +66,22 @@ public class MIAttachment extends MIComposto {
 
     public void setFileName(String name) {
         setValor(MTipoAttachment.FIELD_NAME, name);
+    }
+
+    public void setFileHashSHA1(String hash) {
+        setValor(MTipoAttachment.FIELD_HASH_SHA1, hash);
+    }
+
+    public void setFileId(String id) {
+        setValor(MTipoAttachment.FIELD_FILE_ID, id);
+    }
+    
+    public void setOriginalFileId(String id) {
+        setValorAtributo(MTipoAttachment.REF_ORIGINAL_ID, id);
+    }
+
+    public void setFileSize(Integer size) {
+        setValor(MTipoAttachment.FIELD_SIZE, size);
     }
 
     /**
@@ -77,6 +102,10 @@ public class MIAttachment extends MIComposto {
             return getFileHashSHA1();
         }
         return id;
+    }
+    
+    public String getOriginalFileId() {
+        return (String) getValorAtributo(MTipoAttachment.REF_ORIGINAL_ID);
     }
 
     public String getFileHashSHA1() {

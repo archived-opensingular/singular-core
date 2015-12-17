@@ -1,10 +1,12 @@
 package br.net.mirante.singular.util.wicket.lambda;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.wicket.model.IModel;
@@ -72,4 +74,35 @@ public interface ILambdasMixin {
             .compare(func.apply(a), func.apply(b));
     }
 
+    default <T> IFunction<T, Stream<T>> recursiveStream(IFunction<T, Stream<T>> childrenFunction) {
+        return t -> Stream.concat(
+            Stream.of(t),
+            (t == null)
+                ? Stream.empty()
+                : childrenFunction.apply(t)
+                    .flatMap(recursiveStream(childrenFunction)));
+    }
+
+    default <T> IFunction<T, Stream<T>> recursiveCollection(IFunction<T, Collection<T>> childrenFunction) {
+        IFunction<Collection<T>, Stream<T>> toStream = c -> (c == null) ? Stream.empty() : c.stream();
+        return t -> Stream.concat(
+            Stream.of(t),
+            (t == null)
+                ? Stream.empty()
+                : toStream.apply(childrenFunction.apply(t)).flatMap(recursiveCollection(childrenFunction)));
+    }
+
+    default <T> IFunction<T, Stream<T>> recursiveIterable(IFunction<T, Iterable<T>> childrenFunction) {
+        IFunction<Iterable<T>, Stream<T>> toStream = c -> (c == null)
+            ? Stream.empty()
+            : (c instanceof Collection)
+                ? ((Collection<T>) c).stream()
+                : StreamSupport.stream(c.spliterator(), true);
+        return t -> Stream.concat(
+            Stream.of(t),
+            (t == null)
+                ? Stream.empty()
+                : toStream.apply(childrenFunction.apply(t))
+                    .flatMap(recursiveIterable(childrenFunction)));
+    }
 }

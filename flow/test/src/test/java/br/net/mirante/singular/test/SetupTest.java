@@ -9,6 +9,7 @@ import br.net.mirante.singular.persistence.entity.Actor;
 import br.net.mirante.singular.persistence.entity.CategoryEntity;
 import br.net.mirante.singular.persistence.entity.ExecutionVariableEntity;
 import br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity;
+import br.net.mirante.singular.persistence.entity.ProcessGroupEntity;
 import br.net.mirante.singular.persistence.entity.ProcessInstanceEntity;
 import br.net.mirante.singular.persistence.entity.ProcessRight;
 import br.net.mirante.singular.persistence.entity.ProcessRightPK;
@@ -21,15 +22,9 @@ import br.net.mirante.singular.persistence.entity.TaskInstanceHistoryEntity;
 import br.net.mirante.singular.persistence.entity.TaskRight;
 import br.net.mirante.singular.persistence.entity.TaskTransitionVersionEntity;
 import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
-import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 import br.net.mirante.singular.test.support.TestSupport;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Testes gerais para o setup de teste do projeto
@@ -48,6 +43,7 @@ public abstract class SetupTest extends TestSupport {
         listaAllFor(ExecutionVariableEntity.class);
         listaAllFor(br.net.mirante.singular.persistence.entity.ProcessVersionEntity.class);
         listaAllFor(ProcessDefinitionEntity.class);
+        listaAllFor(ProcessGroupEntity.class);
         listaAllFor(ProcessInstanceEntity.class);
         listaAllFor(ProcessRight.class);
         listaAllFor(ProcessRightPK.class);

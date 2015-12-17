@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,8 +16,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     private MTipo<E> tipoElementos;
 
-    public MILista() {
-    }
+    public MILista() {}
 
     static <I extends MInstancia> MILista<I> of(MTipo<I> tipoElementos) {
         MILista<I> lista = new MILista<>();
@@ -25,8 +26,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
-    public MTipoLista<?> getMTipo() {
-        return (MTipoLista<?>) super.getMTipo();
+    public MTipoLista<?, ?> getMTipo() {
+        return (MTipoLista<?, ?>) super.getMTipo();
     }
 
     @SuppressWarnings("unchecked")
@@ -56,43 +57,40 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     public E addNovo() {
-        if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().newInstance(getDocument());
-            addInterno(instancia);
-            return instancia;
-        }
-        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
+        return addInterno(getTipoElementos().newInstance(getDocument()));
+    }
+
+    public E addNovo(Consumer<E> consumer) {
+        E novo = getTipoElementos().newInstance(getDocument());
+        consumer.accept(novo);
+        return addInterno(novo);
     }
 
     public E addNovoAt(int index) {
-        if (getTipoElementos() instanceof MTipoComposto) {
-            E instancia = getTipoElementos().newInstance(getDocument());
-            addAtInterno(index, instancia);
-            return instancia;
-        }
-        throw new RuntimeException(errorMsg("O tipo da lista não é um tipo composto (é " + getTipoElementos().getNome() + ")"));
-    }
-
-    public E addValor(Object valor) {
-        if (valor == null) {
-            throw new RuntimeException(errorMsg("Não é aceito null na lista de instâncias"));
-        }
         E instancia = getTipoElementos().newInstance(getDocument());
-        instancia.setValor(valor);
-        if (instancia.isEmptyOfData()) {
-            throw new RuntimeException(errorMsg("Apesar da opção '" + valor
-                    + "' não ser null, o resultado na instância foi convertido para null. Não é permitido ter uma opção com valor null"));
-        }
-        addInterno(instancia);
+        addAtInterno(index, instancia);
         return instancia;
     }
 
-    private void addInterno(E instancia) {
+    public E addValor(Object valor) {
+        E instancia = getTipoElementos().newInstance(getDocument());
+        instancia.setValor(valor);
+        return addInterno(instancia);
+    }
+
+    public MILista<E> addValores(Collection<?> valores) {
+        for (Object valor : valores)
+            addValor(valor);
+        return this;
+    }
+
+    private E addInterno(E instancia) {
         if (valores == null) {
             valores = new ArrayList<>();
         }
         valores.add(instancia);
         instancia.setPai(this);
+        return instancia;
     }
 
     private void addAtInterno(int index, E instancia) {
@@ -101,6 +99,12 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         }
         valores.add(index, instancia);
         instancia.setPai(this);
+    }
+
+    public void clear() {
+        if (valores != null) {
+            valores.clear();
+        }
     }
 
     public MInstancia get(int index) {
@@ -157,6 +161,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
+        E child = valores.get(index);
+        child.internalOnRemove();
         return valores.remove(index);
     }
 
@@ -164,8 +170,20 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return get(index).getValor();
     }
 
-    public int indexOf(MInstancia object) {
-        return valores.indexOf(object);
+    /**
+     * Retornar o índice da instancia dentro da lista. Utiliza identidade (==)
+     * em vez de equals().
+     *
+     * @param supposedChild
+     * @return -1 senão encontrou
+     */
+    public int indexOf(MInstancia supposedChild) {
+        for (int i = size() - 1; i != -1; i--) {
+            if (valores.get(i) == supposedChild) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int size() {
@@ -190,11 +208,45 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return (valores == null) ? Collections.emptyIterator() : valores.iterator();
     }
 
+    @Override
     public Stream<E> stream() {
         return getValores().stream();
     }
 
     public String toDebug() {
         return stream().map(i -> i.getDisplayString()).collect(Collectors.joining("; "));
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((tipoElementos == null) ? 0 : tipoElementos.hashCode());
+        for (E e : this)
+            result = prime * result + (e == null ? 0 : e.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MILista<?> other = (MILista<?>) obj;
+        if (size() != other.size()) {
+            return false;
+        } else if (!getMTipo().equals(other.getMTipo())) {
+            return false;
+        } else if (!Objects.equals(tipoElementos, other.tipoElementos))
+            return false;
+        for (int i = size() - 1; i != -1; i--) {
+            if (!Objects.equals(get(i), other.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

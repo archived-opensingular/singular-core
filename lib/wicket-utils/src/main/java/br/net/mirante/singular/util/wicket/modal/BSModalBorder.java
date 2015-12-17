@@ -4,6 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.io.Serializable;
 
+import br.net.mirante.singular.util.wicket.lambda.IConsumer;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -44,8 +45,8 @@ public class BSModalBorder extends Border {
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
-        DEFAULT, PRIMARY, LINK,
-        //        SUCCESS, INFO, WARNING, DANGER,
+        DEFAULT, PRIMARY, LINK, DANGER
+        //        SUCCESS, INFO, WARNING, ,
         ;
         public IModel<String> cssClassModel() {
             return new AbstractReadOnlyModel<String>() {
@@ -58,7 +59,7 @@ public class BSModalBorder extends Border {
     }
 
     public enum Size {
-        NORMAL(""), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
+        NORMAL("modal-belver"), LARGE("modal-lg"), SMALL("modal-sm"), FULL("modal-full"), FIT("modal-fit");
         protected final String styleClass;
         private Size(String styleClass) {
             this.styleClass = styleClass;
@@ -97,6 +98,7 @@ public class BSModalBorder extends Border {
     private final Component closeIcon;
     private final Component compressIcon;
     private final Component expandIcon;
+    private  IConsumer<AjaxRequestTarget> closeIconCallBack;
 
     public BSModalBorder(String id) {
         this(id, null);
@@ -284,6 +286,11 @@ public class BSModalBorder extends Border {
         return closeIcon.isVisible();
     }
 
+    public BSModalBorder setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallBack){
+        this.closeIconCallBack = closeIconCallBack;
+        return this;
+    }
+
     public BSModalBorder setMinimizable(boolean minimizable) {
         compressIcon.setVisible(minimizable);
         expandIcon.setVisible(minimizable);
@@ -459,6 +466,9 @@ public class BSModalBorder extends Border {
     }
 
     protected void onCloseClicked(AjaxRequestTarget target) {
+        if (closeIconCallBack != null){
+            closeIconCallBack.accept(target);
+        }
         hide(target);
     }
 

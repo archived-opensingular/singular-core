@@ -1,12 +1,32 @@
 package br.net.mirante.singular.form.mform;
 
-public class MICode extends MInstancia {
+public class MICode<T> extends MInstancia {
 
-    private Object code;
+    private T code;
+
+    public MICode() {}
 
     @Override
-    public Object getValor() {
+    public T getValor() {
         return code;
+    }
+
+    @Override
+    public Object getValorWithDefault() {
+        // TODO ??? não sei como implementar isso...
+        return getValor();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public MTipoCode<MICode<T>, T> getMTipo() {
+        return (MTipoCode<MICode<T>, T>) super.getMTipo();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setValor(Object valor) {
+        this.code = (T) valor;
     }
 
     @Override
@@ -14,4 +34,8 @@ public class MICode extends MInstancia {
         return code != null;
     }
 
+    @Override
+    public String getDisplayString() {
+        return getMTipo().getNomeSimples();
+    }
 }

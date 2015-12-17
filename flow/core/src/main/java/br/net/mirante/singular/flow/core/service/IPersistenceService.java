@@ -23,9 +23,9 @@ import br.net.mirante.singular.flow.core.entity.IEntityTaskTransitionVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskVersion;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableType;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMap;
-import br.net.mirante.singular.flow.util.vars.VarType;
+import br.net.mirante.singular.flow.core.variable.VarInstance;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
+import br.net.mirante.singular.flow.core.variable.VarType;
 
 public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory, PROCESS_DEF extends IEntityProcessDefinition, PROCESS_VERSION extends IEntityProcessVersion, PROCESS_INSTANCE extends IEntityProcessInstance, TASK_INSTANCE extends IEntityTaskInstance, TASK_DEF extends IEntityTaskDefinition, TASK_VERSION extends IEntityTaskVersion, VARIABLE_INSTANCE extends IEntityVariableInstance, ROLE extends IEntityRoleDefinition, ROLE_USER extends IEntityRoleInstance> {
 
@@ -88,8 +88,8 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
     void commitTransaction();
 
     // Consultas
-    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable Date minDataInicio,
-            @Nullable Date maxDataInicio, @Nullable Collection<? extends TASK_DEF> states);
+    List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable Date beginDate,
+            @Nullable Date endDate, @Nullable Collection<? extends TASK_DEF> states);
 
     List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable MUser creatingUser,
             @Nullable Boolean active);

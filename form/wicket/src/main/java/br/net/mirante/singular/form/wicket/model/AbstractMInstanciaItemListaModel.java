@@ -60,7 +60,7 @@ public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
         final I object = this.getObject();
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((object == null) ? 0 : object.getCaminhoCompleto().hashCode());
+        result = prime * result + ((object == null) ? 0 : object.getPathFull().hashCode());
         return result;
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractMInstanciaItemListaModel<I extends MInstancia>
         if (object == null) {
             if (otherObject != null)
                 return false;
-        } else if (!object.getCaminhoCompleto().equals(otherObject.getCaminhoCompleto()))
+        } else if (!object.getPathFull().equals(otherObject.getPathFull()))
             return false;
         if (getIndex() != other.getIndex())
             return false;

@@ -3,6 +3,8 @@ package br.net.mirante.singular.form.mform;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.mform.io.ServiceRefTransientValue;
+
 /**
  * <p>
  * Prove acesso a um serviço e ao mesmo tempo permite serializar essa referência
@@ -57,15 +59,12 @@ public interface ServiceRef<T> extends Serializable, Supplier<T> {
         };
     }
 
-    public static <T> ServiceRef<T> ofToBeDescartedIfSerialized(T value) {
-        return new ServiceRef<T>() {
-            private transient T value2 = value;
-
-            @Override
-            public T get() {
-                return value2;
-            }
-        };
-
+    /**
+     * Cria uma ServiceRef para o valor informado mas que descarta o valor caso
+     * a refência seja serializada. Tipicamente é utilizado para referência do
+     * tipo cache ou que pode ser recalculada depois.
+     */
+    public static <T> ServiceRefTransientValue<T> ofToBeDescartedIfSerialized(T value) {
+        return new ServiceRefTransientValue<T>(value);
     }
 }

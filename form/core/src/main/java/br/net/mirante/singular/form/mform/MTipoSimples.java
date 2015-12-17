@@ -7,6 +7,9 @@ import org.apache.commons.beanutils.Converter;
 
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
+import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
 @MInfoTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
 public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends MTipo<I> {
@@ -15,7 +18,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
 
     private transient Converter converter;
 
-    private MProviderOpcoes providerOpcoes;
+    protected MOptionsProvider providerOpcoes;
 
     public MTipoSimples() {
         this.classeTipoNativo = null;
@@ -26,22 +29,71 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
         this.classeTipoNativo = classeTipoNativo;
     }
 
-    public MProviderOpcoes getProviderOpcoes() {
+    @Override
+    public MOptionsProvider getProviderOpcoes() {
+        return providerOpcoes;
+    }
+    @Override
+    public boolean hasProviderOpcoes() {
+        return providerOpcoes != null;
+    }
+
+    public MOptionsProvider selectionOf(Collection<TIPO_NATIVO> opcoes) {
+        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
         return providerOpcoes;
     }
 
-    public MProviderOpcoes selectionOf(Collection<TIPO_NATIVO> opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
+    @SuppressWarnings("unchecked")
+    public MOptionsProvider selectionOf(TIPO_NATIVO... opcoes) {
+        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
         return providerOpcoes;
     }
 
-    public MProviderOpcoes selectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
-        return providerOpcoes;
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(Collection<TIPO_NATIVO> options) {
+        providerOpcoes = new MFixedOptionsSimpleProvider(this, options);
+        return this;
     }
 
+    @SuppressWarnings("unchecked")
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
-        providerOpcoes = new MProviderOpcoesFixoSimples(this, opcoes);
+        providerOpcoes = new MFixedOptionsSimpleProvider(this, opcoes);
+        return this;
+    }
+
+    /**
+     * Registers the name of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * 
+     * @param providerName : Name of the {@link MOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(final String providerName) {
+        providerOpcoes = new LookupOptionsProvider(providerName);
+        return this;
+    }
+
+    /**
+     * Registers the class of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * @param providerClass : Class of the {@link MOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(Class<? extends MOptionsProvider> providerClass) {
+        providerOpcoes = new LookupOptionsProvider(providerClass);
+        return this;
+    }
+
+    /**
+     * Registers the class of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * @param provider: instance of {@link MOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
+    public MTipoSimples<I, TIPO_NATIVO> withSelectionFromProvider(MOptionsProvider provider) {
+        this.providerOpcoes = provider;
         return this;
     }
     
@@ -69,6 +121,10 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
             return null;
         }
         return valorOriginal.toString();
+    }
+
+    public TIPO_NATIVO fromStringPersistencia(String valorOriginal) {
+        return converter(valorOriginal, classeTipoNativo);
     }
 
     public String toStringDisplay(TIPO_NATIVO valor) {
@@ -126,7 +182,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> extends
 
     protected final RuntimeException createErroConversao(Object valor, Class<?> tipoDestino, String complemento, Exception e) {
         String msg = "O tipo '" + getClass().getName() + "' não consegue converter o valor '" + valor + "' do tipo "
-                + valor.getClass().getName();
+            + valor.getClass().getName();
         if (tipoDestino != null) {
             msg += " para o tipo '" + tipoDestino.getName() + "'";
         }

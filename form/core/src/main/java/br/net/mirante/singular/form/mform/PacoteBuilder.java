@@ -31,11 +31,8 @@ public class PacoteBuilder {
         T novo = dicionario.getTiposInterno().vericaNaoDeveEstarPresente(classeNovoTipo);
         novo = pacote.registrarTipo(novo, classeNovoTipo);
 
-        TipoBuilder tb = new TipoBuilder();
+        TipoBuilder tb = new TipoBuilder(novo, classeNovoTipo, this);
         novo.onCargaTipo(tb);
-        if (!tb.chamouSuper) {
-            throw new SingularFormException("O tipo da classe " + classeNovoTipo.getName() + " não chama o super no método onCargaTipo()");
-        }
         return novo;
     }
 
@@ -44,17 +41,17 @@ public class PacoteBuilder {
         return createTipo(nomeSimplesNovoTipo, MTipoComposto.class);
     }
 
-    public MTipoLista<MTipoComposto<?>> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
+    public <I extends MIComposto> MTipoLista<MTipoComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
         return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
     }
 
-    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo,
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo,
             Class<T> classeTipoLista) {
         T tipoLista = (T) dicionario.getTipo(classeTipoLista);
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoLista);
     }
 
-    public <T extends MTipo<?>> MTipoLista<T> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoElementos);
     }
 
@@ -108,16 +105,20 @@ public class PacoteBuilder {
     public <T extends MTipo<?>> MAtributo createTipoAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr) {
         T tipoAtributo;
         if (atr.isSelfReference()) {
-            tipoAtributo = (T) dicionario.getTipo(classeAlvo);
+            tipoAtributo = (T) dicionario.getTipo((Class) classeAlvo);
         } else {
-            tipoAtributo = (T) dicionario.getTipo(atr.getClasseTipo());
+            tipoAtributo = (T) dicionario.getTipo((Class) atr.getClasseTipo());
         }
-        return createTipoAtributo(classeAlvo, atr, tipoAtributo);
+        MTipo<?> tipoAlvo = dicionario.getTipo(classeAlvo);
+        return createTipoAtributo(tipoAlvo, classeAlvo, atr, tipoAtributo);
     }
 
-    public MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, Class<? extends MTipo<?>> classeTipoAtributo) {
+    public <T extends MTipo<?>> MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, Class<T> classeTipoAtributo) {
         MTipo<?> tipoAtributo = dicionario.getTipo(classeTipoAtributo);
+        return createTipoAtributo(tipoAlvo, nomeSimplesAtributo, tipoAtributo);
+    }
 
+    public MAtributo createTipoAtributo(MTipo<?> tipoAlvo, String nomeSimplesAtributo, MTipo<?> tipoAtributo) {
         if (tipoAlvo.getPacote() == pacote) {
             return createAtributoInterno(tipoAlvo, nomeSimplesAtributo, false, tipoAtributo);
         } else {
@@ -130,9 +131,8 @@ public class PacoteBuilder {
         }
     }
 
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr, T tipoAtributo) {
-        MTipo<?> tipoAlvo = dicionario.getTipo(classeAlvo);
-
+    final <T extends MTipo<?>> MAtributo createTipoAtributo(MTipo<?> tipoAlvo, Class<? extends MTipo> classeAlvo, AtrRef<T, ?, ?> atr,
+            T tipoAtributo) {
         if (tipoAlvo.getPacote() == pacote) {
             resolverBind(tipoAlvo, (Class<MTipo>) classeAlvo, atr, tipoAtributo);
             return createAtributoInterno(tipoAlvo, atr.getNomeSimples(), atr.isSelfReference(), tipoAtributo);
@@ -156,14 +156,14 @@ public class PacoteBuilder {
         return novo;
     }
 
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
+    public <I extends MInstancia, T extends MTipo<I>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
         if (atr.isSelfReference()) {
             throw new RuntimeException("Não pode ser criado um atributo global que seja selfReference");
         }
         return createTipoAtributo(atr, dicionario.getTipo(atr.getClasseTipo()));
     }
 
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
+    private <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
         resolverBind(pacote, null, atr, tipoAtributo);
         dicionario.getTiposInterno().vericaNaoDeveEstarPresente(atr.getNomeCompleto());
 

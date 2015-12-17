@@ -5,9 +5,9 @@ import java.util.Objects;
 
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityVariableInstance;
-import br.net.mirante.singular.flow.util.props.MetaDataRef;
-import br.net.mirante.singular.flow.util.vars.VarInstance;
-import br.net.mirante.singular.flow.util.vars.VarInstanceMapImpl;
+import br.net.mirante.singular.flow.core.property.MetaDataRef;
+import br.net.mirante.singular.flow.core.variable.VarInstance;
+import br.net.mirante.singular.flow.core.variable.VarInstanceMapImpl;
 
 public class VarInstanceTableProcess extends VarInstanceMapImpl {
 

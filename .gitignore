@@ -1,3 +1,9 @@
+# Arquivos H2/HSQL   #
+######################
+**/*.h2.db
+**/*.trace.db
+**/*.tmp
+
 # Arquivos MAVEN     #
 ######################
 **/target/

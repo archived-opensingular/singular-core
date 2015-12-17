@@ -12,11 +12,17 @@ import java.util.stream.Collectors;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
-public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> {
+public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> implements ICompositeType {
 
     private Map<String, MTipo<?>> fieldsLocal;
 
@@ -31,6 +37,11 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         super(classeInstancia);
     }
 
+    @Override
+    public Collection<MTipo<?>> getContainedTypes() {
+        return getFields();
+    }
+    
     private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -78,19 +89,19 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return addInterno(nomeCampo, novo);
     }
 
-    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
         T tipo = resolverTipo(classeTipoLista);
-        MTipoLista<T> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
+        MTipoLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
         return addInterno(nomeSimplesNovoTipo, novo);
     }
 
-    public <T extends MTipo<?>> MTipoLista<T> addCampoListaOf(String nomeCampo, T tipoElementos) {
-        MTipoLista<T> novo = createTipoListaOf(nomeCampo, tipoElementos);
+    public <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
+        MTipoLista<T, I> novo = createTipoListaOf(nomeCampo, tipoElementos);
         return addInterno(nomeCampo, novo);
     }
 
-    public MTipoLista<MTipoComposto<?>> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
-        MTipoLista<MTipoComposto<?>> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
+    public <I extends MIComposto> MTipoLista<MTipoComposto<I>, I> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
+        MTipoLista<MTipoComposto<I>, I> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
         return addInterno(nomeCampo, novo);
     }
 
@@ -98,10 +109,16 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return getFieldsConsolidated().get(nomeCampo);
     }
 
+    /**
+     * @return todos os campos deste tipo específico, incluindo os campos do tipo pai.
+     */
     public Collection<MTipo<?>> getFields() {
         return getFieldsConsolidated().getFields();
     }
 
+    /**
+     * @return campos declarados neste tipo específico, não incluindo os campos do tipo pai.
+     */
     public Collection<MTipo<?>> getFieldsLocal() {
         return (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
 
@@ -116,12 +133,29 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
     // Atalhos de conveniência
     // --------------------------------------------------------------------------
 
-    public MTipoComposto<?> addCampoComposto(String nomeCampo) {
+    @SuppressWarnings("unchecked")
+    public MTipoComposto<MIComposto> addCampoComposto(String nomeCampo) {
         return addCampo(nomeCampo, MTipoComposto.class);
     }
 
     public MTipoString addCampoString(String nomeCampo) {
         return addCampo(nomeCampo, MTipoString.class);
+    }
+
+    public MTipoCPF addCampoCPF(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCPF.class);
+    }
+
+    public MTipoCNPJ addCampoCNPJ(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCNPJ.class);
+    }
+
+    public MTipoEMail addCampoEmail(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoEMail.class);
+    }
+
+    public MTipoCEP addCampoCEP(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoCEP.class);
     }
 
     public MTipoString addCampoString(String nomeCampo, boolean obrigatorio) {
@@ -150,6 +184,14 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     public MTipoInteger addCampoInteger(String nomeCampo, boolean obrigatorio) {
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
+    }
+
+    public MTipoDecimal addCampoDecimal(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoDecimal.class);
+    }
+
+    public MTipoMonetario addCampoMonetario(String nomeCampo) {
+        return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
     /**
@@ -186,7 +228,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         }
 
         public void addAll(FieldMapOfRecordType toBeAdded) {
-            if (! toBeAdded.isEmpty()) {
+            if (!toBeAdded.isEmpty()) {
                 toBeAdded.fields.values().forEach(fr -> addInterno(fr.getField()));
             }
         }
@@ -236,7 +278,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     private static final class FieldRef {
         private final MTipo<?> field;
-        private int index = -1;
+        private int            index = -1;
 
         public FieldRef(MTipo<?> field) {
             this.field = field;

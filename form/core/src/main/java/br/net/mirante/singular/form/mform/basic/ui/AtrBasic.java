@@ -1,7 +1,14 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class AtrBasic extends MTranslatorParaAtributo {
 
@@ -30,13 +37,18 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return this;
     }
 
-    public AtrBasic tamanhoInicial(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL, valor);
+    public AtrBasic tamanhoMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO, valor);
         return this;
     }
 
-    public AtrBasic tamanhoMaximo(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO, valor);
+    public AtrBasic tamanhoInteiroMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO, valor);
+        return this;
+    }
+
+    public AtrBasic tamanhoDecimalMaximo(Integer valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO, valor);
         return this;
     }
 
@@ -44,11 +56,44 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIVEL, valor);
         return this;
     }
-
-    public AtrBasic multiLinha(Boolean valor) {
-        getAlvo().setValorAtributo(MPacoteBasic.ATR_MULTI_LINHA, valor);
+    public AtrBasic visivel(Predicate<MInstancia> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION, valor);
         return this;
     }
+
+    public AtrBasic enabled(Boolean valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED, valor);
+        return this;
+    }
+    public AtrBasic enabled(Predicate<MInstancia> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION, valor);
+        return this;
+    }
+    public AtrBasic dependsOn(Supplier<Collection<MTipo<?>>> valor) {
+        getAlvo().setValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION, valor);
+        return this;
+    }
+    public AtrBasic dependsOn(MTipo<?>... tipos) {
+        return dependsOn(() -> Arrays.asList(tipos));
+    }
+
+    //    public AtrBasic onChange(Function<IBehavior<MInstancia>, IBehavior<MInstancia>> behaviorFunction) {
+    //        IBehavior<MInstancia> existingBehavior = getOnChange();
+    //        IBehavior<MInstancia> newBehavior = behaviorFunction.apply(IBehavior.noopIfNull(existingBehavior));
+    //        getAlvo().setValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR, newBehavior);
+    //        return this;
+    //    }
+    //    public AtrBasic onChange(IBehavior<MInstancia> behavior) {
+    //        onChange(old -> old.andThen(behavior));
+    //        return this;
+    //    }
+    //    public boolean hasOnChange() {
+    //        return getOnChange() != null;
+    //    }
+    //    @SuppressWarnings("unchecked")
+    //    public IBehavior<MInstancia> getOnChange() {
+    //        return (IBehavior<MInstancia>) getAlvo().getValorAtributo(MPacoteBasic.ATR_ONCHANGE_BEHAVIOR.getNomeCompleto());
+    //    }
 
     public String getLabel() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_LABEL);
@@ -62,10 +107,6 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_EDICAO);
     }
 
-    public Integer getTamanhoInicial() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INICIAL);
-    }
-
     public Integer getTamanhoMaximo() {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO);
     }
@@ -74,7 +115,4 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
     }
 
-    public Boolean isMultiLinha() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_MULTI_LINHA);
-    }
 }

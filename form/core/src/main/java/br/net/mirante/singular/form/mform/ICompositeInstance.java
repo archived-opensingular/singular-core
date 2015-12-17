@@ -1,12 +1,17 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface ICompositeInstance {
 
     public Collection<? extends MInstancia> getChildren();
+    public default Collection<? extends MInstancia> getAllChildren() {
+        return getChildren();
+    }
 
     public Stream<? extends MInstancia> stream();
 
@@ -41,7 +46,7 @@ public interface ICompositeInstance {
             return typeOfInstance.cast(instancia);
         }
         throw new RuntimeException("'" + path + "' + retornou uma instancia do tipo " + instancia.getClass().getName()
-                + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
+            + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
     }
 
     /**
@@ -56,7 +61,7 @@ public interface ICompositeInstance {
         MInstancia instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof MIComposto)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                    + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + MIComposto.class.getName());
+                + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + MIComposto.class.getName());
         }
         return (MIComposto) instancia;
     }
@@ -78,8 +83,8 @@ public interface ICompositeInstance {
             return (MILista<T>) lista;
         }
         throw new RuntimeException(
-                "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getTipoElementos().getClasseInstancia().getName()
-                        + ", que não é compatível com o tipo solicitado " + typeOfInstanceElements.getName());
+            "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getTipoElementos().getClasseInstancia().getName()
+                + ", que não é compatível com o tipo solicitado " + typeOfInstanceElements.getName());
     }
 
     /**
@@ -94,7 +99,7 @@ public interface ICompositeInstance {
         MInstancia instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof MILista)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                    + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + MILista.class.getName());
+                + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + MILista.class.getName());
         }
         return (MILista<?>) instancia;
     }
@@ -115,4 +120,28 @@ public interface ICompositeInstance {
         }
         return null;
     }
+
+    public default <D extends MInstancia> D getDescendant(MTipo<D> descendantType) {
+        return MInstances.getDescendant((MInstancia) this, descendantType);
+    }
+    public default <D extends MInstancia> Optional<D> findDescendant(MTipo<D> descendantType) {
+        return MInstances.findDescendant((MInstancia) this, descendantType);
+    }
+    public default <D extends MInstancia> List<D> listDescendants(MTipo<D> descendantType) {
+        return MInstances.listDescendants((MInstancia) this, descendantType);
+    }
+    public default <D extends MInstancia, V> List<V> listDescendants(MTipo<?> descendantType, Function<D, V> function) {
+        return MInstances.listDescendants((MInstancia) this, descendantType, function);
+    }
+    @SuppressWarnings("unchecked")
+    public default <V> List<V> listDescendantValues(MTipo<?> descendantType, Class<V> valueType) {
+        return MInstances.listDescendants((MInstancia) this, descendantType, node -> (V) node.getValor());
+    }
+    public default Stream<MInstancia> streamDescendants(boolean includeRoot) {
+        return MInstances.streamDescendants((MInstancia) this, includeRoot);
+    }
+    public default <D extends MInstancia> Stream<D> streamDescendants(MTipo<D> descendantType, boolean includeRoot) {
+        return MInstances.streamDescendants((MInstancia) this, includeRoot, descendantType);
+    }
+
 }

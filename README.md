@@ -1,4 +1,4 @@
-![Versão](https://img.shields.io/badge/version-0.4.0--SNAPSHOT-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-warn-yellow.svg) ![Test](https://img.shields.io/badge/test-96%-yellow.svg)
+![Versão](https://img.shields.io/badge/version-0.4.9-lightgrey.svg) ![Build](https://img.shields.io/badge/build-success-brightgreen.svg) ![Sonar](https://img.shields.io/badge/sonar-ok-green.svg) ![Test](https://img.shields.io/badge/test-99%-yellow.svg)
 
 # Projeto SINGULAR
 
@@ -6,7 +6,7 @@ Módulos JAVA do projeto SINGULAR.
 
 ## Testes
 
-![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:4,1,118,2&cht=p&chl=failure%20%284%29|error%20%281%29|success%20%28118%29|skipped%20%282%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
+![Result](https://chart.googleapis.com/chart?chs=400x250&chd=t:1,2,244,10&cht=p&chl=failure%20%281%29|error%20%282%29|success%20%28244%29|skipped%20%2810%29&chco=FF0000|DEBDDE|DEF3BD|FFC6A5&chtt=Unit%20Tests)
 
 ## Links
 
@@ -18,4 +18,4 @@ Módulos JAVA do projeto SINGULAR.
         * [GitBlit](http://git.mirante.net.br/summary/MIRANTE%2Fsingular.git)
         * [TeamCity](http://ci.mirante.net.br/project.html?projectId=Mirante&tab=projectOverview)
         * [Sonar](http://sonar.mirante.net.br/dashboard/index/36298)
-        * [Site do Projeto](http://10.0.10.1/docs/home)
+        * [Site do Projeto](http://singular.mirante.net.br)

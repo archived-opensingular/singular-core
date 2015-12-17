@@ -8,13 +8,22 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 public class WicketEventUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(WicketEventUtils.class);
 
     private WicketEventUtils() {}
 
     public static void addErrorMessage(Component component, String messageKey, IModel<?> messageModel) {
-        component.error(new StringResourceModel(messageKey, messageModel).getString());
+        if (messageKey != null && component != null) {
+            component.error(new StringResourceModel(messageKey, messageModel).getString());
+        }
+        logger.error("Obrigatório informar component e messageKey em addErrorMessage, ignorando chamada...");
     }
 
     public static void sendAjaxErrorEvent(Component component, AjaxRequestTarget target) {

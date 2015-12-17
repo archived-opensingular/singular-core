@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.mform.core;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MProviderOpcoes;
 import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
 @MInfoTipo(nome = "String", pacote = MPacoteCore.class)
 public class MTipoString extends MTipoSimples<MIString, String> {
@@ -29,7 +29,7 @@ public class MTipoString extends MTipoSimples<MIString, String> {
         return (MTipoString) with(MPacoteCore.ATR_TRIM, valor);
     }
 
-    public <T extends Enum<T>> MProviderOpcoes selectionOf(Class<T> enumType) {
+    public <T extends Enum<T>> MOptionsProvider selectionOf(Class<T> enumType) {
         T[] ops = enumType.getEnumConstants();
         String[] nomes = new String[ops.length];
         for (int i = 0; i < ops.length; i++) {
@@ -42,7 +42,7 @@ public class MTipoString extends MTipoSimples<MIString, String> {
     public MTipoString withSelectionOf(String... opcoes) {
         return (MTipoString) super.withSelectionOf(opcoes);
     }
-
+    
     @Override
     public String converter(Object valor) {
         String s = super.converter(valor);
@@ -64,4 +64,5 @@ public class MTipoString extends MTipoSimples<MIString, String> {
     public String converterNaoNativoNaoString(Object valor) {
         return valor.toString();
     }
+
 }

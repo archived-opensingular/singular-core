@@ -1,31 +1,14 @@
 package br.net.mirante.singular.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MGridListaView;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
-import br.net.mirante.singular.form.validation.MCNPJValidator;
-import br.net.mirante.singular.form.validation.MCPFValidator;
-import br.net.mirante.singular.form.validation.MEmailValidator;
+import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.util.comuns.*;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
+import br.net.mirante.singular.form.validation.validator.MCPFValidator;
+import br.net.mirante.singular.form.validation.validator.MEmailValidator;
 import br.net.mirante.singular.form.wicket.AtrWicket;
 
 public class MPacoteCurriculo extends MPacote {
@@ -51,7 +34,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
             .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
-        final MTipoLista<MTipoString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
+        final MTipoLista<MTipoString, MIString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
                 pb.createTipo("tipoContato", MTipoString.class)
                         .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax"));
         {
@@ -61,7 +44,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(7);
             cpf
-                .addValidacao(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
+                .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
                 .as(AtrBasic::new).subtitle("cadastro de pessoa física")
                 .as(AtrWicket::new).larguraPref(3);
             dtNasc
@@ -87,7 +70,7 @@ public class MPacoteCurriculo extends MPacote {
             contatos
                 .as(AtrBasic::new).label("Contatos");
             email
-                .addValidacao(MEmailValidator.getInstance())
+                .addInstanceValidator(MEmailValidator.getInstance())
                 .as(AtrBasic::new).label("e-Mail")
                 .as(AtrWicket::new).larguraPref(6);
             telFixo
@@ -115,7 +98,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrWicket::new).larguraPref(8);
         }
 
-        final MTipoLista<MTipoComposto<?>> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
         final MTipoComposto<?> cursoAcademico = formacao.getTipoElementos();
         final MTipoString academicoTipo = cursoAcademico.addCampoString("tipo", true)
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
@@ -126,8 +109,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", MTipoAnoMes.class, true);
         {
             formacao
-                .withView(MGridListaView::new)
-                .as(AtrBasic::new).label("Formação Acadêmica").tamanhoInicial(1);
+                .as(AtrBasic::new).label("Formação Acadêmica");
             academicoTipo
                 .withView(MSelecaoPorRadioView::new)
                 .as(AtrBasic::new).label("Tipo");
@@ -137,7 +119,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrWicket::new).larguraPref(3);
             academicoCNPJ
-                .addValidacao(MCNPJValidator.getInstance())
+                .addInstanceValidator(MCNPJValidator.getInstance())
                 .as(AtrWicket::new).larguraPref(3);
             academicoCargaHoraria
                 .as(AtrBasic::new).label("Carga Horária (h)")
@@ -148,7 +130,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrWicket::new).larguraPref(2);
         }
 
-        final MTipoLista<MTipoComposto<?>> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
         final MTipoComposto<?> experiencia = experiencias.getTipoElementos();
         final MTipoAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", MTipoAnoMes.class, true);
         final MTipoAnoMes dtFimExperiencia = experiencia.addCampo("fim", MTipoAnoMes.class);
@@ -158,7 +140,7 @@ public class MPacoteCurriculo extends MPacote {
         {
             experiencias
                 .withView(MPanelListaView::new)
-                .as(AtrBasic::new).label("Experiências profissionais").tamanhoInicial(2);
+                .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                 .as(AtrBasic::new).label("Data inicial")
                 .as(AtrWicket::new).larguraPref(2);
@@ -171,10 +153,11 @@ public class MPacoteCurriculo extends MPacote {
             cargo
                 .as(AtrBasic::new).label("Cargo");
             atividades
-                .as(AtrBasic::new).label("Atividades Desenvolvidas").multiLinha(true);
+                .withView(MTextAreaView::new)
+                .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
-        final MTipoLista<MTipoComposto<?>> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
+        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
         final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
         final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
         final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);
@@ -183,7 +166,7 @@ public class MPacoteCurriculo extends MPacote {
         {
             certificacoes
                 .withView(MTableListaView::new)
-                .as(AtrBasic::new).label("Certificações").tamanhoInicial(3);
+                .as(AtrBasic::new).label("Certificações");
             certificacao
                 .as(AtrBasic::new).label("Certificação");
             dataCertificacao
@@ -203,10 +186,11 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
         {
             informacoesAdicionais
-                .as(AtrBasic::new).label("Informações adicionais").multiLinha(true);
+                    .withView(MTextAreaView::new)
+                    .as(AtrBasic::new).label("Informações adicionais");
         }
 
-        pb.debug();
+//        pb.debug();
 
         // Formatação
         // ---------------------------------------------------------------------------------------------
