@@ -2,6 +2,8 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.MISimples;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
@@ -40,11 +42,14 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         return false;
     }
 
-    @Override
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         final MInstancia mi = model.getObject();
-        if ((mi != null) && (mi.getValor() != null)) {
-            return mi.getValor().toString();
+        if (mi != null){
+            if(mi instanceof MISimples && mi.getValor() != null) {
+                return String.valueOf(mi.getValor());
+            }else if(mi instanceof MISelectItem) {
+                return ((MISelectItem)mi).getFieldValue();
+            }
         }
         return StringUtils.EMPTY;
     }
