@@ -134,8 +134,9 @@ public class SelectInputModalContainer extends BSContainer {
                 String label = selectType.getCampo(field).as(AtrBasic::new).getLabel();
                 builder.appendPropertyColumn(Model.of(label),
                         o -> {
-                            MIComposto target = (MIComposto) ((SelectOption) o).getTarget();
-                            return target.getValorString(field);
+//                            MIComposto target = (MIComposto) ((SelectOption) o).getTarget();
+//                            return target.getValorString(field);
+                            return ((SelectOption) o).getOtherField(field);
                         });
             }
         }
@@ -233,7 +234,8 @@ public class SelectInputModalContainer extends BSContainer {
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
         for (String field : view.searchFields()){
-            Object f = ((MIComposto)s.getTarget()).getValor(field);
+//            Object f = ((MIComposto)s.getTarget()).getValor(field);
+            Object f = s.getOtherField(field);
             String nValue = f.toString().toLowerCase();
             if(nValue.contains(termo)) return true;
         }

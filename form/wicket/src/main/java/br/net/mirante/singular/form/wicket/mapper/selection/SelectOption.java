@@ -4,7 +4,12 @@ import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
 import org.apache.wicket.model.IModel;
+
+import java.util.Map;
+
+import static org.apache.wicket.util.lang.Generics.newHashMap;
 
 /**
  * This class represents a SelectOption used on DropDowns, Chacklists, Radios and etc.
@@ -17,7 +22,8 @@ public class SelectOption<T> implements IModel {
     private String key;
     private T value;
 //    private FormSerializationUtil.FormSerialized target;
-    private MInstancia target;
+//    private MInstancia target;
+    private Map<String, Object> otherFields = newHashMap();
 
     public SelectOption(String key, T value) {
         this(key, value, null);
@@ -28,7 +34,13 @@ public class SelectOption<T> implements IModel {
         this.value = value;
 //        this.target = null;
 //        if(target != null) {this.target = FormSerializationUtil.toSerializedObject(target);}
-        this.target = target;
+//        this.target = target;
+        if(target instanceof MISelectItem){
+            MISelectItem item = (MISelectItem) target;
+            for(MInstancia i :item.getAllChildren()){
+                otherFields.put(i.getNome(), i.getValor());
+            }
+        }
     }
 
     public String getKey() {
@@ -47,9 +59,13 @@ public class SelectOption<T> implements IModel {
         this.value = value;
     }
 
-    public MInstancia getTarget(){
+//    public MInstancia getTarget(){
 //        if(target != null) return FormSerializationUtil.toInstance(target);
-        return target;
+//        return target;
+//    }
+
+    public Object getOtherField(String key){
+        return otherFields.get(key);
     }
 
     @Override
@@ -69,7 +85,7 @@ public class SelectOption<T> implements IModel {
         if(o != null){
             this.setKey(s.getKey());
             this.setValue((T) s.getValue());
-            this.target = s.target;
+//            this.target = s.target;
         }
     }
     
