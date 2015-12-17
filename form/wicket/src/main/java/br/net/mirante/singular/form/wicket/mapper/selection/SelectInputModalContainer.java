@@ -36,6 +36,9 @@ import java.util.stream.Stream;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+/**
+ * This component is used to represent a selection placed in a modal search.
+ */
 public class SelectInputModalContainer extends BSContainer {
 
     private BSControls formGroup;
@@ -222,14 +225,19 @@ public class SelectInputModalContainer extends BSContainer {
             if (termo == null) return true;
             String value = s.getValue().toString().toLowerCase();
             if(value.contains(termo)) return true;
-            for (String field : view.searchFields()){
-                Object f = ((MIComposto)s.getTarget()).getValor(field);
-                String nValue = f.toString().toLowerCase();
-                if(nValue.contains(termo)) return true;
-            }
+            if (checkFilterAgainstAditionalFields(s, termo)) return true;
             return false;
         }
         return true;
+    }
+
+    private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
+        for (String field : view.searchFields()){
+            Object f = ((MIComposto)s.getTarget()).getValor(field);
+            String nValue = f.toString().toLowerCase();
+            if(nValue.contains(termo)) return true;
+        }
+        return false;
     }
 
 }
