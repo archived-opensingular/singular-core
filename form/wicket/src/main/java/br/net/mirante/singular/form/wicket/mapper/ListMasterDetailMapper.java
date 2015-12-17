@@ -272,7 +272,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             this.listModel = $m.get(() -> (MILista<MInstancia>) model.getObject());
             this.containerExterno = containerExterno;
 
-            this.setSize(BSModalBorder.Size.FIT);
+            this.setSize(BSModalBorder.Size.NORMAL);
 
             this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"), new ActionAjaxButton("btn") {
                 @Override
