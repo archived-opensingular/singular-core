@@ -33,14 +33,14 @@ import br.net.mirante.singular.form.wicket.mapper.DateMapper;
 import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
 import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
 import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.MListMasterDetailMapper;
+import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleCheckMapper;
 import br.net.mirante.singular.form.wicket.mapper.MultipleSelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.PicklistMapper;
 import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.SelectMapper;
 import br.net.mirante.singular.form.wicket.mapper.SelectModalBuscaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
@@ -56,7 +56,7 @@ public class UIBuilderWicket {
     static {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
-        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new);
         MAPPERS.register(MTipoBoolean.class,                                           BooleanMapper::new);
         MAPPERS.register(MTipoInteger.class,                                           IntegerMapper::new);
         MAPPERS.register(MTipoString.class,                                            StringMapper::new);
@@ -72,7 +72,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,                                             TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
-        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           MListMasterDetailMapper::new);
+        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new);
         MAPPERS.register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new);
         MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
         MAPPERS.register(MTipoMonetario.class,                                         MonetarioMapper::new);

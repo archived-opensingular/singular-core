@@ -23,7 +23,7 @@ public class MonetarioMapperTest extends MapperBaseTest {
 
     @Override
     public void mockFormValues(MIComposto formInstance) {
-        formInstance.setValor("money", "10.00");
+        formInstance.setValor("money", "10,00");
     }
 
     @Test

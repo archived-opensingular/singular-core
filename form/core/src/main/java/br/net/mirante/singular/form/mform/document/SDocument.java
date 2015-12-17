@@ -1,12 +1,16 @@
 package br.net.mirante.singular.form.mform.document;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -34,7 +38,7 @@ import br.net.mirante.singular.form.mform.event.MInstanceListeners;
  */
 public class SDocument {
 
-    public static final String FILE_TEMPORARY_SERVICE = "fileTemporary";
+    public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
     private MInstancia root;
@@ -42,7 +46,7 @@ public class SDocument {
     private int lastId = 0;
 
     private MInstanceListeners instanceListeners;
-    
+
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
     public SDocument() {}
@@ -80,8 +84,8 @@ public class SDocument {
         IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(FILE_TEMPORARY_SERVICE, 
-                    IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            bindLocalService(FILE_TEMPORARY_SERVICE,
+                IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
         }
         return ref;
     }
@@ -101,6 +105,14 @@ public class SDocument {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
+        MTypes.streamDescendants(getRoot().getMTipo(), true).forEach(tipo -> {
+            // init dependencies
+            final Supplier<Collection<MTipo<?>>> func = tipo.getValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION);
+            if (func != null) {
+                for (MTipo<?> dependency : func.get())
+                    dependency.getDependentTypes().add(tipo);
+            }
+        });
     }
 
     /**
@@ -110,7 +122,7 @@ public class SDocument {
     public void addServiceRegistry(ServiceRegistry registry) {
         this.registry.addRegistry(registry);
     }
-    
+
     /**
      * @see  ServiceRegistry#services()
      */

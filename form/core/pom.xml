@@ -8,7 +8,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.5.0</version>
+        <version>0.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>form-core</artifactId>
@@ -16,6 +16,11 @@
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-commons</artifactId>
+            <version>0.5.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
           <groupId>org.easytesting</groupId>
           <artifactId>fest-assert-core</artifactId>

@@ -63,12 +63,13 @@ public class DateMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        if (model != null && model.getObject() != null) {
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        if ((model != null) && (model.getObject() != null)) {
             MInstancia instancia = model.getObject();
             if (instancia.getValor() instanceof Date) {
                 Date dt = (Date) instancia.getValor();
-                return (new SimpleDateFormat(MTipoData.FORMAT)).format(dt);
+                final SimpleDateFormat formattter = new SimpleDateFormat(MTipoData.FORMAT);
+                return formattter.format(dt);
             }
         }
         return StringUtils.EMPTY;

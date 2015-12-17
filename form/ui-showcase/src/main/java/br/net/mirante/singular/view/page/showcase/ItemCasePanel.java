@@ -21,10 +21,10 @@ import br.net.mirante.singular.showcase.ResourceRef;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -37,6 +37,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -68,14 +70,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ViewMode viewMode = ViewMode.EDITION;
 
-    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = InMemoryAttachmentPersitenceHandler::new;
+    private ServiceRef<IAttachmentPersistenceHandler> temporaryRef = ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
 
-    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = new ServiceRef<IAttachmentPersistenceHandler>() {
-        @Override
-        public IAttachmentPersistenceHandler get() {
-            return filePersistence;
-        }
-    };
+    private ServiceRef<IAttachmentPersistenceHandler> persistanceRef = ServiceRef.of(filePersistence);
 
     public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
         super(id);
@@ -145,7 +142,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private Component createVisualizarButton() {
-        return new AjaxButton("visualizar-btn") {
+        return new ItemCaseAjaxButton("visualizar-btn") {
+
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 viewMode = ViewMode.VISUALIZATION;
@@ -161,7 +159,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private Component createEditarButton() {
-        return new AjaxButton("editar-btn") {
+        return new ItemCaseAjaxButton("editar-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 viewMode = ViewMode.EDITION;
@@ -178,16 +176,12 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     @SuppressWarnings("serial")
     private Component createSaveButton() {
-        return new AjaxButton("save-btn") {
+        return new ItemCaseAjaxButton("save-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 if (addValidationErrors(form, currentInstance.getObject())) {
                     MElement rootXml = MformPersistenciaXML.toXML(currentInstance.getObject());
-                    if(rootXml != null) {
-                        viewXml(target, rootXml.toString());
-                    } else {
-                        viewXml(target, StringUtils.EMPTY);
-                    }
+                    viewXml(target, rootXml);
                 }
                 target.add(form);
             }
@@ -212,7 +206,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private AjaxButton createValidateButton() {
-        return new AjaxButton("validate-btn") {
+        return new ItemCaseAjaxButton("validate-btn") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 addValidationErrors(form, currentInstance.getObject());
@@ -226,9 +220,23 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         };
     }
 
-    private void viewXml(AjaxRequestTarget target, String xml) {
-        viewXmlModal.addOrReplace(new Label("xmlCode", $m.ofValue(xml)));
+    private void viewXml(AjaxRequestTarget target, MElement xml) {
+        final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
+        xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, false))));
+        xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, true))));
+        viewXmlModal.addOrReplace(xmlCodes);
         viewXmlModal.show(target);
+    }
+
+    private String getXmlOutput(MElement xml, boolean tabulado) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw);
+        if (tabulado) {
+            xml.printTabulado(pw);
+        } else {
+            xml.print(pw);
+        }
+        return sw.toString();
     }
 
     private void bindDefaultServices(SDocument document) {
@@ -236,5 +244,18 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
                 IAttachmentPersistenceHandler.class, persistanceRef);
         document.addServiceRegistry(serviceRegistry);
+    }
+
+    private class ItemCaseAjaxButton extends AjaxButton {
+
+        public ItemCaseAjaxButton(String id) {
+            super(id);
+        }
+
+        @Override
+        protected void onError(AjaxRequestTarget target, Form<?> form) {
+            super.onError(target, form);
+            target.add(form);
+        }
     }
 }

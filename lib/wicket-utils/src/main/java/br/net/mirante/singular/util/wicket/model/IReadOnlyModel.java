@@ -11,4 +11,8 @@ public interface IReadOnlyModel<T> extends IModel<T> {
     
     default void detach() {
     }
+    
+    public static <U> IReadOnlyModel<U> of(IReadOnlyModel<U> model) {
+        return model;
+    }
 }

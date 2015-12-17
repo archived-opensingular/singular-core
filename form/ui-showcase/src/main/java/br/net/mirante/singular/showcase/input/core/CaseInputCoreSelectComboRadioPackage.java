@@ -15,20 +15,24 @@ public class CaseInputCoreSelectComboRadioPackage extends MPacote {
     protected void carregarDefinicoes(PacoteBuilder pb) {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
-       //View por Select
-       MTipoString tipoContato1 = tipoMyForm.addCampoString("tipoContato1")
-               .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        //@destacar:bloco
+        //View por Select
+        MTipoString tipoContato1 = tipoMyForm.addCampoString("tipoContato1")
+                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        //@destacar:fim
 
-      tipoContato1
-          .withView(MSelecaoPorSelectView::new)
-          .as(AtrBasic::new).label("Tipo Contato (Combo)");
+        tipoContato1
+                .withView(MSelecaoPorSelectView::new)
+                .as(AtrBasic::new).label("Tipo Contato (Combo)");
 
-      //View por Radio
-      MTipoString tipoContato2 = tipoMyForm.addCampoString("tipoContato2")
-              .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        //@destacar:bloco
+        //View por Radio
+        MTipoString tipoContato2 = tipoMyForm.addCampoString("tipoContato2")
+                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
+        //@destacar:fim
 
-     tipoContato2
-         .withView(MSelecaoPorRadioView::new)
-         .as(AtrBasic::new).label("Tipo Contato (Radio)");
+        tipoContato2
+                .withView(MSelecaoPorRadioView::new)
+                .as(AtrBasic::new).label("Tipo Contato (Radio)");
     }
 }

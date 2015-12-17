@@ -1,24 +1,28 @@
 package br.net.mirante.singular.form.mform;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.NotImplementedException;
+
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import org.apache.commons.lang3.NotImplementedException;
-
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
@@ -39,6 +43,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     //    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
     private Map<IInstanceValidator<?>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
+    private Set<MTipo<?>>                                    dependentTypes;
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
@@ -84,8 +89,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.superTipo = superTipo;
     }
 
-    protected void onCargaTipo(TipoBuilder tb) {
-    }
+    protected void onCargaTipo(TipoBuilder tb) {}
 
     final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
@@ -150,8 +154,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new RuntimeException(
-                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -197,7 +201,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -365,6 +369,14 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return this.view;
     }
 
+    public Set<MTipo<?>> getDependentTypes() {
+        if (dependentTypes == null)
+            dependentTypes = new LinkedHashSet<>();
+        return dependentTypes;
+    }
+    public boolean hasDependentTypes() {
+        return (dependentTypes != null) && (!dependentTypes.isEmpty());
+    }
 
     public MTipo<I> addInstanceValidator(IInstanceValidator<I> validador) {
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
@@ -375,14 +387,26 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void validateInstance(IInstanceValidatable<?> validatable) {
-        MInstancia instance = validatable.getInstance();
-        Boolean required = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
-        if (Boolean.TRUE.equals(required) && validatable.getInstance().getValor() == null) {
+        final MInstancia instance = validatable.getInstance();
+
+        final boolean required = Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
+
+        if (instance instanceof ICompositeInstance) {
+            ICompositeInstance comp = (ICompositeInstance) instance;
+            boolean anyRequiredLeafWithNullValue = comp.streamDescendants(false)
+                .filter(it -> !(it instanceof ICompositeInstance))
+                .filter(it -> it.as(MPacoteCore.aspect()).isObrigatorio())
+                .anyMatch(it -> it.getValor() == null);
+            if (anyRequiredLeafWithNullValue)
+                return;
+
+        } else if (required && validatable.getInstance().getValor() == null) {
             validatable.error(new ValidationError(validatable.getInstance(), ValidationErrorLevel.ERROR, "Obrigatório"));
             return;
         }
+
         for (Map.Entry<IInstanceValidator<?>, ValidationErrorLevel> entry : this.instanceValidators.entrySet()) {
             validatable.setDefaultLevel(entry.getValue());
             entry.getKey().validate((IInstanceValidatable) validatable);
@@ -422,7 +446,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -484,22 +508,22 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             }
 
             atributosDefinidos
-                    .getAtributos()
-                    .stream()
-                    .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
-                    .forEach(att -> {
-                        try {
-                            pad(appendable, nivel + 1)
-                                    .append("att ")
-                                    .append("\n")
-                                    .append(suprimirPacote(att.getNome()))
-                                    .append(":")
-                                    .append(suprimirPacote(att.getSuperTipo().getNome()))
-                                    .append(att.isSelfReference() ? " SELF" : "");
-                        } catch (IOException ex) {
-                            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                        }
-                    });
+                .getAtributos()
+                .stream()
+                .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
+                .forEach(att -> {
+                    try {
+                        pad(appendable, nivel + 1)
+                            .append("att ")
+                            .append("\n")
+                            .append(suprimirPacote(att.getNome()))
+                            .append(":")
+                            .append(suprimirPacote(att.getSuperTipo().getNome()))
+                            .append(att.isSelfReference() ? " SELF" : "");
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+                    }
+                });
 
             super.debug(appendable, nivel + 1);
         } catch (IOException ex) {
@@ -515,9 +539,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
                 vals.entrySet().stream().forEach(e -> {
                     try {
                         appendable.append(suprimirPacote(e.getKey(), true))
-                                .append("=")
-                                .append(e.getValue().getDisplayString())
-                                .append("; ");
+                            .append("=")
+                            .append(e.getValue().getDisplayString())
+                            .append("; ");
                     } catch (IOException ex) {
                         LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                     }
@@ -562,7 +586,14 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new RuntimeException("Método não suportado");
     }
 
-    public boolean hasValidation(){
+    public boolean hasValidation() {
         return isObrigatorio() || !instanceValidators.isEmpty();
+    }
+
+    public MOptionsProvider getProviderOpcoes() {
+        throw new UnsupportedOperationException();
+    }
+    public boolean hasProviderOpcoes() {
+        return false;
     }
 }

@@ -5,14 +5,13 @@ import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.view.page.form.ListPage;
-import br.net.mirante.singular.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.view.page.showcase.ComponentPage;
 import br.net.mirante.singular.wicket.UIAdminWicketFilterContext;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import javax.inject.Inject;
+import java.util.Collection;
 
 public class Menu extends Panel {
 
@@ -32,18 +31,26 @@ public class Menu extends Panel {
     private MetronicMenu buildMenu() {
         MetronicMenu menu = new MetronicMenu("menu");
 
-        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", uiAdminWicketFilterContext.getRelativeContext().concat("form/list")));
-        menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", uiAdminWicketFilterContext.getRelativeContext().concat("form/crud")));
+        final String relativeContext = uiAdminWicketFilterContext.getRelativeContext();
 
-        new ShowCaseTable().getGroups().forEach((group -> {
-            MetronicMenuGroup showCaseGroup = new MetronicMenuGroup(group.getIcon(), group.getGroupName());
-            group.getItens().forEach(item -> {
+        menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", relativeContext + "form/list"));
+        menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", relativeContext + "form/crud"));
+
+        final ShowCaseTable showCaseTable = new ShowCaseTable();
+        final Collection<ShowCaseTable.ShowCaseGroup> groups = showCaseTable.getGroups();
+
+        groups.forEach(group -> {
+            final MetronicMenuGroup showCaseGroup = new MetronicMenuGroup(group.getIcon(), group.getGroupName());
+            final Collection<ShowCaseTable.ShowCaseItem> itens = group.getItens();
+            itens.forEach(item -> {
+                final PageParameters pageParameters = new PageParameters();
+                final String componentName = item.getComponentName();
                 showCaseGroup.addItem(
                         new MetronicMenuItem(null, item.getComponentName(), ComponentPage.class,
-                                new PageParameters().add("cn", item.getComponentName().toLowerCase())));
+                                pageParameters.add("cn", componentName.toLowerCase())));
             });
             menu.addItem(showCaseGroup);
-        }));
+        });
 
         return menu;
     }

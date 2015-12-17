@@ -8,7 +8,7 @@
     <groupId>br.net.mirante</groupId>
     <artifactId>singular</artifactId>
 
-    <version>0.5.0</version>
+    <version>0.5.1-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
@@ -140,6 +140,13 @@
             <artifactId>guava</artifactId>
             <version>18.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+
 
         <!-- Tests -->
         <dependency>

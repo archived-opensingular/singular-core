@@ -79,7 +79,7 @@ public class ExamplePackage extends MPacote {
         this.buyerCpf
             .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
             .as(MPacoteBasic.aspect())
-            .depends(this.buyerNome)
+            .dependsOn(this.buyerNome)
             .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
             .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5);
     }

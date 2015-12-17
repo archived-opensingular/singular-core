@@ -8,7 +8,7 @@ import org.apache.wicket.model.IModel;
 
 public class BOutputPanel extends Panel {
 
-    private IModel<String> outputText;
+    private final IModel<String> outputText;
 
     public BOutputPanel(String id, IModel<String> outputText) {
         super(id);
@@ -18,6 +18,7 @@ public class BOutputPanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(BSWellBorder.small("well").add(new Label("output", outputText)));
+        final BSWellBorder well = BSWellBorder.small("well");
+        add(well.add(new Label("output", outputText)));
     }
 }
