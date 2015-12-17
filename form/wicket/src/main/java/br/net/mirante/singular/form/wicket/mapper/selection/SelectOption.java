@@ -6,6 +6,12 @@ import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
 import org.apache.wicket.model.IModel;
 
+/**
+ * This class represents a SelectOption used on DropDowns, Chacklists, Radios and etc.
+ *
+ * @param <T> Type of value used buy this option
+ *
+ */
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption<T> implements IModel {
     private String key;
