@@ -30,8 +30,8 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        if (model != null && model.getObject() != null) {
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        if ((model != null) && (model.getObject() != null)) {
             MInstancia instancia = model.getObject();
             if (instancia.getValor() instanceof YearMonth) {
                 YearMonth ym = (YearMonth) instancia.getValor();

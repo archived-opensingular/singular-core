@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.wicket.mapper.MultipleSelectMapper;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 

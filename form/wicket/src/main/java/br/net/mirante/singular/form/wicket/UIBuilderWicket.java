@@ -1,5 +1,9 @@
 package br.net.mirante.singular.form.wicket;
 
+import br.net.mirante.singular.form.wicket.mapper.*;
+import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
+import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -31,25 +35,7 @@ import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateMapper;
-import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
-import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
-import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.MListMasterDetailMapper;
-import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
-import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.StringMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
-import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
 
 public class UIBuilderWicket {
 
@@ -58,7 +44,7 @@ public class UIBuilderWicket {
     static {
         //@formatter:off
         MAPPERS.register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new);
-        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectBSMapper::new);
+        MAPPERS.register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new);
         MAPPERS.register(MTipoSelectItem.class, MSelecaoPorRadioView.class,            RadioMapper::new);
         MAPPERS.register(MTipoSelectItem.class, MSelecaoPorSelectView.class,           SelectBSMapper::new);
         MAPPERS.register(MTipoSelectItem.class, MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new);
@@ -77,7 +63,7 @@ public class UIBuilderWicket {
         MAPPERS.register(MTipoLista.class,                                             TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new);
         MAPPERS.register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new);
-        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           MListMasterDetailMapper::new);
+        MAPPERS.register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new);
         MAPPERS.register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new);
         MAPPERS.register(MTipoDecimal.class,                                           DecimalMapper::new);
         MAPPERS.register(MTipoMonetario.class,                                         MonetarioMapper::new);

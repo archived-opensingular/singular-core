@@ -17,7 +17,9 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
  */
 public interface MOptionsProvider extends Serializable {
 
-    public abstract String toDebug();
+    public default String toDebug() {
+        return null;
+    }
 
     /**
      * Returns the list of options available for this selection, considering

@@ -1,7 +1,10 @@
-package br.net.mirante.singular.form.wicket.mapper.selection;
+package br.net.mirante.singular.form.wicket.mapper;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.wicket.mapper.selection.MSelectionInstanceModel;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.model.IModel;
@@ -9,17 +12,20 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
-@SuppressWarnings("serial")
 public class RadioMapper extends SelectMapper {
 
     @Override @SuppressWarnings({ "rawtypes", "unchecked" })
     protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
             final List<SelectOption> opcoesValue) {
-        String id = model.getObject().getNome();
+        MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
+		String id = model.getObject().getNome();
         return new RadioChoice<SelectOption>(id, 
-                (IModel)new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer()) {
+                (IModel)opcoesModel, opcoesValue, rendererer()) {
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index, 
                     SelectOption choice) {
@@ -39,9 +45,11 @@ public class RadioMapper extends SelectMapper {
 
             @Override
             protected void onConfigure() {
-                this.setVisible(!opcoesValue.isEmpty());
+                this.setVisible(!opcoesModel.getObject().toString().isEmpty());
             }
         };
+//		formGroup.appendRadioChoice(input);
+//        return input;
     }
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })

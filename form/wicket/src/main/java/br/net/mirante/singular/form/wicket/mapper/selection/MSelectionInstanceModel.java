@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 @SuppressWarnings({ "serial", "rawtypes" })
-class MSelectionInstanceModel<T> implements IModel<T>,
+public class MSelectionInstanceModel<T> implements IModel<T>,
     IMInstanciaAwareModel<T>{
 
     private IModel<? extends MInstancia> model;

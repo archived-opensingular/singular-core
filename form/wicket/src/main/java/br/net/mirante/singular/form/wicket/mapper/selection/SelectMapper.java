@@ -27,20 +27,30 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
         return formGroupAppender(formGroup, model, opcoesValue);
     }
-    
-    @Override
-    public String getReadOnlyFormatedText(IModel<? extends MInstancia> model) {
-        if (model.getObject() != null && model.getObject().getValor() != null) {
-            return model.getObject().getValor().toString();
-        }
-        return StringUtils.EMPTY;
-    }
 
     @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final List<SelectOption> opcoesValue) {
         final DropDownChoice<SelectOption> choices = (DropDownChoice<SelectOption>) retrieveChoices(model, opcoesValue);
-        formGroup.appendSelect(choices.setNullValid(true), false, false);
+        formGroup.appendSelect(choices.setNullValid(true), isMultiple(model), isBSSelect(model));
         return choices;
+    }
+
+
+    protected boolean isBSSelect(IModel<? extends MInstancia> model) {
+        return false;
+    }
+
+    @Override
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        if ((mi != null) && (mi.getValor() != null)) {
+            return mi.getValor().toString();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    protected boolean isMultiple(IModel<? extends MInstancia> model) {
+        return false;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

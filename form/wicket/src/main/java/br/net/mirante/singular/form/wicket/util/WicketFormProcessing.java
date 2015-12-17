@@ -1,11 +1,12 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.validation.IValidationError;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import static java.util.stream.Collectors.*;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiPredicate;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -16,12 +17,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.validation.IValidationError;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public class WicketFormProcessing {
 
@@ -46,12 +47,12 @@ public class WicketFormProcessing {
         return true;
     }
 
-    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia instance) {
-        if (instance == null)
+    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, MInstancia fieldInstance) {
+        if (fieldInstance == null)
             return;
 
         // Validação do valor do componente
-        InstanceValidationContext validationContext = new InstanceValidationContext(instance);
+        final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance);
         validationContext.validateSingle();
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, formComponent);
@@ -59,19 +60,30 @@ public class WicketFormProcessing {
             return;
         }
 
-        // atualizar documento e recuperar instancias com atributos alterados
-        IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
-        instance.getDocument().updateAttributes(eventCollector);
-        List<MInstancia> updatedInstances = eventCollector.getEvents().stream()
-            .map(it -> it.getSource())
-            .collect(toList());
+        // atualizar documento e recuperar os IDs das instancias com atributos alterados
+        final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
+        fieldInstance.getDocument().updateAttributes(eventCollector);
 
-        // re-renderizar componentes atualizados
-        WicketFormUtils.streamComponentsByInstance(formComponent, updatedInstances)
-            .map(c -> WicketFormUtils.findCellContainer(c))
-            .filter(c -> c.isPresent())
-            .map(c -> c.get())
-            .forEach(c -> refresh(target, c));
+        target.ifPresent(t -> {
+
+            final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
+                .map(it -> it.getSource())
+                .map(it -> it.getId())
+                .collect(toSet());
+
+            final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
+                return (ins.getMTipo().hasProviderOpcoes() && fieldInstance.getMTipo().getDependentTypes().contains(ins.getMTipo()))
+                    || (updatedInstanceIds.contains(ins.getId()));
+            };
+
+            // re-renderizar componentes
+            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
+                .map(c -> WicketFormUtils.findCellContainer(c))
+                .filter(c -> c.isPresent())
+                .map(c -> c.get())
+                .filter(c -> c != null)
+                .forEach(c -> t.add(c));
+        });
     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {

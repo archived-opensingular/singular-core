@@ -28,9 +28,9 @@ public class CaseValidationBetweenFieldsPackage extends MPacote {
         valorFinal.addInstanceValidator(validatable -> {
 
             MIInteger mivFinal = validatable.getInstance();
-            Optional<MIInteger> mivInicial = mivFinal.findNearest(valorInicial);
+            Optional<Integer> mivInicial = mivFinal.findNearest(valorInicial).map(it -> it.getInteger());
 
-            if (mivInicial.isPresent() && mivFinal.getInteger().compareTo(mivInicial.get().getInteger()) <= 0) {
+            if (mivInicial.isPresent() && mivFinal.getInteger().compareTo(mivInicial.get()) <= 0) {
                 validatable.error("O valor do campo final deve ser maior que o valor do campo inicial");
             }
 

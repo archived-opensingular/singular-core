@@ -2,9 +2,15 @@ package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
 import br.net.mirante.singular.showcase.layout.CaseGridList;
 import br.net.mirante.singular.showcase.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetail;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailButtons;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailColumns;
+import br.net.mirante.singular.showcase.layout.CaseMasterDetailNested;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
@@ -39,25 +45,32 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreDecimal.class)
             .addCase(CaseInputCoreMonetario.class);
         group("File", Icone.FOLDER)
-                .addCase(CaseFileAttachment.class);
+            .addCase(CaseFileAttachment.class);
         group("Layout", Icone.GRID)
-                .addCase(CaseGrid.class)
-                .addCase(CaseGridList.class)
-                .addCase(CaseGridTable.class);
+            .addCase(CaseGrid.class)
+            .addCase(CaseGridList.class)
+            .addCase(CaseGridTable.class)
+            .addCase(CaseMasterDetail.class)
+            .addCase(CaseMasterDetailColumns.class)
+            .addCase(CaseMasterDetailButtons.class)
+            .addCase(CaseMasterDetailNested.class);
         group("Validation", Icone.BAN)
-                .addCase(CaseValidationRequired.class)
-                .addCase(CaseValidationCustom.class)
-                .addCase(CaseValidationBetweenFields.class);
+            .addCase(CaseValidationRequired.class)
+            .addCase(CaseValidationCustom.class)
+            .addCase(CaseValidationBetweenFields.class);
+        group("Interaction", Icone.ROCKET)
+            .addCase(CaseInteractionEnabledVisible.class)
+            .addCase(CaseInteractionDependsOnOptions.class);
         //@formatter:on
     }
 
-    public ShowCaseItem findCaseItemByComponentName(String name){
+    public ShowCaseItem findCaseItemByComponentName(String name) {
         final ShowCaseItem[] showCaseItem = new ShowCaseItem[1];
         getGroups().stream().forEach(i -> {
-           Optional<ShowCaseItem> op = i.getItens().stream()
-                   .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
-                   .findFirst();
-            if(op.isPresent()){
+            Optional<ShowCaseItem> op = i.getItens().stream()
+                .filter(f -> name.equalsIgnoreCase(f.getComponentName()))
+                .findFirst();
+            if (op.isPresent()) {
                 showCaseItem[0] = op.get();
             }
         });
@@ -81,7 +94,7 @@ public class ShowCaseTable {
     public static class ShowCaseGroup implements Serializable {
 
         private final String groupName;
-        private final Icone icon;
+        private final Icone  icon;
 
         private final Map<String, ShowCaseItem> itens = new TreeMap<>();
 

@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -91,8 +90,8 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
 
         b.onResourceRequested();
 
-        ByteArrayOutputStream baos = (ByteArrayOutputStream) response.getOutputStream();
-        JSONObject result = new JSONObject(baos.toString());
+        CharSequence textResponse = response.getTextResponse();
+        JSONObject result = new JSONObject(textResponse);
         JSONObject answer = new JSONObject();
         JSONArray expected = new JSONArray();
         JSONObject jsonFile = new JSONObject();

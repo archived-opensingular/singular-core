@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class MListMasterDetailView extends MView {
 
-    private boolean editElement = true;
-    private boolean newElement = true;
-    private boolean deleteElements = true;
+    private boolean editElementEnabled = true;
+    private boolean newElementEnabled = true;
+    private boolean deleteElementsEnabled = true;
     private Map<String, String> columns = new LinkedHashMap<>();
 
     @Override
@@ -31,30 +31,30 @@ public class MListMasterDetailView extends MView {
 
 
     public MListMasterDetailView disableEdit() {
-        this.editElement = false;
+        this.editElementEnabled = false;
         return this;
     }
 
     public MListMasterDetailView disableDelete() {
-        this.deleteElements = false;
+        this.deleteElementsEnabled = false;
         return this;
     }
 
     public MListMasterDetailView disableNew() {
-        this.newElement = false;
+        this.newElementEnabled = false;
         return this;
     }
 
-    public boolean isEditElement() {
-        return editElement;
+    public boolean isEditElementEnabled() {
+        return editElementEnabled;
     }
 
-    public boolean isNewElement() {
-        return newElement;
+    public boolean isNewElementEnabled() {
+        return newElementEnabled;
     }
 
-    public boolean isDeleteElements() {
-        return deleteElements;
+    public boolean isDeleteElementsEnabled() {
+        return deleteElementsEnabled;
     }
 
     public Map<String, String> getColumns() {

@@ -1,6 +1,9 @@
 package br.net.mirante.singular.form.mform;
 
-public class SingularFormException extends RuntimeException {
+
+import br.net.mirante.singular.commons.base.SingularException;
+
+public class SingularFormException extends SingularException {
 
     public SingularFormException() {
     }
@@ -8,6 +11,11 @@ public class SingularFormException extends RuntimeException {
     public SingularFormException(String msg) {
         super(msg);
     }
+
+    public SingularFormException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 
     public SingularFormException(String msg, Exception e) {
         super(msg, e);

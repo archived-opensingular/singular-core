@@ -1,10 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
+import java.util.Collection;
+
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -79,6 +82,10 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
         return valorOriginal.toString();
     }
 
+    public TIPO_NATIVO fromStringPersistencia(String valorOriginal) {
+        return converter(valorOriginal, classeTipoNativo);
+    }
+
     public String toStringDisplay(TIPO_NATIVO valor) {
         return toStringPersistencia(valor);
     }
@@ -134,7 +141,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
 
     protected final RuntimeException createErroConversao(Object valor, Class<?> tipoDestino, String complemento, Exception e) {
         String msg = "O tipo '" + getClass().getName() + "' não consegue converter o valor '" + valor + "' do tipo "
-                + valor.getClass().getName();
+            + valor.getClass().getName();
         if (tipoDestino != null) {
             msg += " para o tipo '" + tipoDestino.getName() + "'";
         }

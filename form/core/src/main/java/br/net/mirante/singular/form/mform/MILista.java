@@ -16,8 +16,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     private MTipo<E> tipoElementos;
 
-    public MILista() {
-    }
+    public MILista() {}
 
     static <I extends MInstancia> MILista<I> of(MTipo<I> tipoElementos) {
         MILista<I> lista = new MILista<>();
@@ -84,6 +83,12 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         E instancia = getTipoElementos().newInstance(getDocument());
         instancia.setValor(valor);
         return addInterno(instancia);
+    }
+
+    public MILista<E> addValores(Collection<?> valores) {
+        for (Object valor : valores)
+            addValor(valor);
+        return this;
     }
 
     private E addInterno(E instancia) {

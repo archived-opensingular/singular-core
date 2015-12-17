@@ -1,26 +1,5 @@
 package br.net.mirante.singular.view.page.form.crud;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-
 import br.net.mirante.singular.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.dao.form.FileDao;
@@ -44,19 +23,48 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import java.util.UUID;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content
     implements SingularWicketContainer<CrudContent, Void> {
 
-    @Inject ExampleDataDAO                         dao;
-    @Inject FileDao                                filePersistence;
-    @Inject SpringServiceRegistry                  serviceRegistry;
+    private static Logger logger = LoggerFactory.getLogger(FormContent.class);
+
     private BSGrid                         container = new BSGrid("generated");
     private Form<?>                        inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
+
+    @Inject
+    private ExampleDataDAO dao;
+
+    @Inject
+    private FileDao filePersistence;
+
+    @Inject
+    private SpringServiceRegistry serviceRegistry;
+
 
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef =
                     ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
@@ -102,7 +110,7 @@ public class FormContent extends Content
     }
 
     private void populateInstance(final MTipo<?> tipo) {
-        if (currentModel.getXml() == null)
+        if ((currentModel.getXml() == null) || currentModel.getXml().isEmpty())
             return;
         try {
             MElement xml = MParser.parse(currentModel.getXml());
@@ -110,7 +118,7 @@ public class FormContent extends Content
             currentInstance = new MInstanceRootModel<MInstancia>(instance);
             bindDefaultServices(currentInstance.getObject().getDocument());
         } catch (Exception e) {
-            Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+            logger.warn("Captured during insertion", e);
             throw new RuntimeException(e);
         }
     }
@@ -170,7 +178,9 @@ public class FormContent extends Content
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
 
                 MInstancia trueInstance = currentInstance.getObject();
-                trueInstance.getDocument().persistFiles(); //TODO: review this order
+                final SDocument document = trueInstance.getDocument();
+
+                document.persistFiles();
                 Optional<String> stringXml = MformPersistenciaXML.toStringXML(trueInstance);
 
                 if (validate) {
@@ -181,7 +191,7 @@ public class FormContent extends Content
                     target.add(form);
                 }
 
-                currentModel.setXml(stringXml.get());
+                currentModel.setXml(stringXml.orElse(StringUtils.EMPTY));
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -195,25 +205,15 @@ public class FormContent extends Content
     }
 
     private boolean addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance, Optional<?> xml) {
-        if (runDefaultValidators(target, form, trueInstance)) {
-            if (!xml.isPresent()) {
-                form.error(getMessage("form.message.empty").getString());
-                return false;
-            }
-
+        if (!xml.isPresent()) {
+            form.error(getMessage("form.message.empty").getString());
+            return false;
         }
-        return true;
+        return runDefaultValidators(target, form, trueInstance);
     }
 
     private boolean runDefaultValidators(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance) {
         return WicketFormProcessing.onFormSubmit(form, Optional.of(target), trueInstance);
-        //        InstanceValidationContext validationContext = new InstanceValidationContext(trueInstance);
-        //        validationContext.validateAll();
-        //        WicketFormUtils.associateErrorsToComponents(validationContext, form);
-        //
-        //        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.WARNING)) {
-        //            throw new RuntimeException("Has form errors");
-        //        }
     }
 
     private String printXml(MElement rootXml) {
@@ -253,7 +253,7 @@ public class FormContent extends Content
                     addValidationErrors(target, form, trueInstance, xml);
                 } catch (Exception e) {
                     target.add(form);
-                    Logger.getGlobal().log(Level.WARNING, "Captured during insertion", e);
+                    logger.warn("Captured during insertion", e);
                 }
             }
 
@@ -265,8 +265,4 @@ public class FormContent extends Content
         };
     }
 
-    //    public ServiceRegistry createSpringRegistry() throws BeansException {
-    //        ShowcaseApplication app = (ShowcaseApplication) getApplication();
-    //        return new SpringServiceRegistry(app.getApplicationContext());
-    //    }
 }

@@ -6,6 +6,8 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.dao.form.TemplateRepository.TemplateEntry;
 import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -14,15 +16,17 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.FormVO;
 import br.net.mirante.singular.view.template.Content;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -31,8 +35,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +53,9 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 @SuppressWarnings("serial")
 public class CrudContent extends Content
         implements SingularWicketContainer<CrudContent, Void> {
+
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(CrudContent.class);
 
     private BSDataTable<ExampleDataDTO, String> listTable;
     private List<ExampleDataDTO> dataList = new LinkedList<>();
@@ -66,7 +79,7 @@ public class CrudContent extends Content
     }
 
     private void setActiveTemplate(StringValue pType) {
-        if(!pType.isEmpty()){
+        if (!pType.isEmpty()) {
             String strType = pType.toString();
             TemplateEntry t = TemplateRepository.get().findEntryByType(strType);
             selectedTemplate = new FormVO(t);
@@ -132,8 +145,8 @@ public class CrudContent extends Content
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 PageParameters params = new PageParameters().add(
-                    FormPage.TYPE_NAME, selectedTemplate.getTypeName());
-                setResponsePage(FormPage.class,params);
+                        FormPage.TYPE_NAME, selectedTemplate.getTypeName());
+                setResponsePage(FormPage.class, params);
             }
 
             @Override
@@ -181,9 +194,9 @@ public class CrudContent extends Content
                                 )
                 )
                 .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.visualizar.xml"),
-                                Icone.EYE, this::viewXml
-                        )
+                                .appendAction(getMessage("label.table.column.visualizar.xml"),
+                                        Icone.EYE, this::viewXml
+                                )
                 )
                 .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
                 .build("data-list");
@@ -199,7 +212,7 @@ public class CrudContent extends Content
 
             @Override
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
-                    String sortProperty, boolean ascending) {
+                                                               String sortProperty, boolean ascending) {
                 return dataList.iterator();
             }
         };
@@ -212,15 +225,38 @@ public class CrudContent extends Content
 
     private void viewXml(AjaxRequestTarget target, IModel<ExampleDataDTO> model) {
 
-        MPacote pacote = TemplateRepository.get().loadType(model.getObject().getType()).getPacote();
+        final String xmlPersistencia = model.getObject().getXml();
+        final String xmlTabulado = getXmlTabulado(xmlPersistencia);
+        final String definicao = getDefinicao(model.getObject().getType());
 
-        StringBuilder sb = new StringBuilder();
-        pacote.debug(sb);
+        final BSTabPanel xmlTabs = new BSTabPanel("xmlTabs");
+        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
+        xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlTabulado)));
+        xmlTabs.addTab(getString("label.definicao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(definicao)));
 
-        viewXmlModal.addOrReplace(new Label("xmlCode", $m.property(model, "xml")));
-        viewXmlModal.addOrReplace(new Label("definicao", sb.toString()));
+        viewXmlModal.addOrReplace(xmlTabs);
         viewXmlModal.show(target);
-        viewXmlModal.setSize(BSModalBorder.Size.FIT);
+        viewXmlModal.setSize(BSModalBorder.Size.LARGE);
+    }
+
+    private String getXmlTabulado(String xmlString) {
+        try {
+            final MElement xml = MParser.parse(xmlString);
+            final StringWriter sw = new StringWriter();
+            final PrintWriter writer = new PrintWriter(sw);
+            xml.printTabulado(writer);
+            return sw.toString();
+        } catch (SAXException | IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private String getDefinicao(String typeName) {
+        final MPacote pacote = TemplateRepository.get().loadType(typeName).getPacote();
+        StringBuilder definicaoOutput = new StringBuilder();
+        pacote.debug(definicaoOutput);
+        return definicaoOutput.toString();
     }
 
     private void updateListTableFromModal(AjaxRequestTarget target) {

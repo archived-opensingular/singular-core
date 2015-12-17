@@ -209,7 +209,7 @@ public class InputMaskBehavior extends Behavior {
      */
     protected String getScript(Component component) {
         return "var $this = $('#" + component.getMarkupId() + "');"
-                + "$this.on('paste', function() {setTimeout(function(){$this.change();},1);});"
+//                + "$this.on('paste', function(event) {console.log(event); setTimeout(function(){$this.change();},1);});"
                 + "$this.on('drop', function(event) {"
                 + "  event.preventDefault();"
                 + "  $this.val(event.originalEvent.dataTransfer.getData('text'));"

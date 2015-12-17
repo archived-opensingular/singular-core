@@ -46,7 +46,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     @SuppressWarnings("rawtypes")
     Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
 
-    String getReadOnlyFormatedText(IModel<? extends MInstancia> model);
+    String getReadOnlyFormattedText(IModel<? extends MInstancia> model);
 
     /**
      *
@@ -66,8 +66,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     @SuppressWarnings("rawtypes")
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                           IModel<? extends MInstancia> model, IModel<String> labelModel){
-        BOutputPanel comp = new BOutputPanel(model.getObject().getNome(),
-                $m.ofValue(getReadOnlyFormatedText(model)));
+        final MInstancia mi = model.getObject();
+        BOutputPanel comp = new BOutputPanel(mi.getNome(),
+                $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -78,17 +79,15 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
 
-        final BSControls controls = ctx.getContainer().newFormGroup();
+        final BSContainer<?> container = ctx.getContainer();
+        final BSControls controls = container.newFormGroup();
 
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
-        final AtributoModel<Integer> size = new AtributoModel<>(model, MPacoteBasic.ATR_TAMANHO_EDICAO);
 
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());
-        if (hintNoDecoration) {
-            label.add($b.classAppender("visible-sm visible-xs"));
-        }
+        label.setVisible(!hintNoDecoration);
 
         controls.appendLabel(label);
         controls.newHelpBlock(subtitle)
@@ -110,7 +109,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         if (input instanceof FormComponent<?>) {
             ctx.configure((FormComponent<?>) input);
         }
-        if (input instanceof LabeledWebMarkupContainer && ((LabeledWebMarkupContainer) input).getLabel() == null) {
+        if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
 

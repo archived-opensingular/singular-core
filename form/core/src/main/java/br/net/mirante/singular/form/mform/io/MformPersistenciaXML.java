@@ -65,7 +65,7 @@ public class MformPersistenciaXML {
         if (instancia instanceof MISimples) {
             MISimples<?> instanciaS = (MISimples<?>) instancia;
             MTipoSimples<?, ?> tipos = instanciaS.getMTipo();
-            instancia.setValor(tipos.converter(xml.getTextContent(), tipos.getClasseTipoNativo()));
+            instancia.setValor(tipos.fromStringPersistencia(xml.getTextContent()));
         } else if (instancia instanceof MIComposto) {
             MIComposto instc = (MIComposto) instancia;
             for (MTipo<?> campo : instc.getMTipo().getFields()) {
