@@ -97,7 +97,7 @@ public abstract class MInstancia implements MAtributoEnabled {
 
     final void setPai(MInstancia pai) {
         this.pai = pai;
-        if (pai.isAttribute()) {
+        if (pai != null && pai.isAttribute()) {
             setAsAttribute(pai.getAttributeOwner());
         }
     }
@@ -352,6 +352,7 @@ public abstract class MInstancia implements MAtributoEnabled {
             throw new SingularFormException(MInstancia.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                 + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
+        this.setPai(null);
         removeChildren();
     }
 
