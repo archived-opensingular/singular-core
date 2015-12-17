@@ -26,7 +26,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.Response;
 
 import java.io.Serializable;
@@ -60,7 +59,7 @@ public class SelectInputModalContainer extends BSContainer {
 
         this.appendTag("input", true, "class=\"form-control\"", valueInput);
 
-        Model<Filter> f = Model.of(new Filter());
+        Model<String> f = Model.of("");
         this.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
                 model.getObject().getNome() + "_modal", valueModel, f));
 
@@ -77,7 +76,7 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     protected Panel buildSearchButton(String id, MSelectionInstanceModel valueModel,
-                                      IModel<Filter> filterModel) {
+                                      IModel<String> filterModel) {
         BSContainer panel = new BSContainer(id);
 
 
@@ -103,14 +102,14 @@ public class SelectInputModalContainer extends BSContainer {
         return panel;
     }
 
-    public BSModalWindow buildModal(String id, IModel<Filter> filterModel) {
+    public BSModalWindow buildModal(String id, IModel<String> filterModel) {
         BSModalWindow searchModal = new BSModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
         searchModal.setBody(buildConteudoModal(id, filterModel, searchModal));
         return searchModal;
     }
 
-    public BSGrid buildConteudoModal(String id, IModel<Filter> filterModel, BSModalWindow modal) {
+    public BSGrid buildConteudoModal(String id, IModel<String> filterModel, BSModalWindow modal) {
         BSGrid grid = new BSGrid(id + "_modalBody");
 
         Component table = buildResultTable(id + "_resultTable", filterModel, modal);
@@ -122,7 +121,7 @@ public class SelectInputModalContainer extends BSContainer {
         return grid;
     }
 
-    private Component buildResultTable(String id, IModel<Filter> filterModel, final BSModalWindow modal) {
+    private Component buildResultTable(String id, IModel<String> filterModel, final BSModalWindow modal) {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();
@@ -134,11 +133,10 @@ public class SelectInputModalContainer extends BSContainer {
                         o -> {
                             MIComposto target = (MIComposto) ((SelectOption) o).getTarget();
                             return target.getValorString(field);
-//                            return "";
                         });
             }
         }
-        builder.appendColumn(new BSActionColumn<SelectOption, Filter>(Model.of(""))
+        builder.appendColumn(new BSActionColumn<SelectOption, String>(Model.of(""))
                 .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
                     ((IModel<SelectOption>) valueInput.getDefaultModel())
                             .setObject(selectedModel.getObject());
@@ -146,7 +144,7 @@ public class SelectInputModalContainer extends BSContainer {
                     target.add(valueInput);
                 }));
 
-        BSDataTable<SelectOption, Filter> table = builder.build("selectionModalTable");
+        BSDataTable<SelectOption, String> table = builder.build("selectionModalTable");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
@@ -164,7 +162,7 @@ public class SelectInputModalContainer extends BSContainer {
         BSContainer inputGroup = new BSContainer(id + "inputGroup");
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", inputGroup);
 
-        TextField inputFiltro = new TextField("termo", new PropertyModel(filterModel, "termo"));
+        TextField inputFiltro = new TextField("termo", filterModel);
         inputGroup.appendTag("input", true, "class=\"form-control\"", inputFiltro);
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
@@ -186,11 +184,11 @@ public class SelectInputModalContainer extends BSContainer {
         });
     }
 
-    public SortableDataProvider<SelectOption, Filter> buildDataProvider(
-            IModel<? extends MInstancia> model, final IModel<Filter> filtro) {
+    public SortableDataProvider<SelectOption, String> buildDataProvider(
+            IModel<? extends MInstancia> model, final IModel<String> filtro) {
         MTipo<?> type = model.getObject().getMTipo();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
-        return new SortableDataProvider<SelectOption, Filter>() {
+        return new SortableDataProvider<SelectOption, String>() {
             @Override
             public Iterator<? extends SelectOption> iterator(long first, long count) {
                 return filterOptions(filtro, options)
@@ -203,7 +201,7 @@ public class SelectInputModalContainer extends BSContainer {
                 return filterOptions(filtro, options).count();
             }
 
-            private Stream<SelectOption> filterOptions(final IModel<Filter> filter,
+            private Stream<SelectOption> filterOptions(final IModel<String> filter,
                                                        final List<SelectOption> options) {
                 return options
                         .stream()
@@ -217,10 +215,10 @@ public class SelectInputModalContainer extends BSContainer {
         };
     }
 
-    public boolean filter(IModel<Filter> filtro, SelectOption s) {
+    public boolean filter(IModel<String> filtro, SelectOption s) {
         if (filtro != null && filtro.getObject() != null &&
-                filtro.getObject().getTermo() != null) {
-            String termo = filtro.getObject().getTermo().toLowerCase();
+                filtro.getObject() != null) {
+            String termo = filtro.getObject().toLowerCase();
             if (termo == null) return true;
             String value = s.getValue().toString().toLowerCase();
             if(value.contains(termo)) return true;
@@ -234,17 +232,6 @@ public class SelectInputModalContainer extends BSContainer {
         return true;
     }
 
-    public static class Filter implements Serializable {
-        private String termo = "";
-
-        public String getTermo() {
-            return termo;
-        }
-
-        public void setTermo(String termo) {
-            this.termo = termo;
-        }
-    }
 }
 
 class MSelectionModalInstanceModel extends MSelectionInstanceModel{
