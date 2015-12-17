@@ -44,14 +44,14 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
         planetType.as(AtrBasic::new).label("Planeta Favorito");
         planetType.addCampoDecimal("radius").as(AtrBasic::new).label("Raio");;
         planetType.addCampoString("atmosphericComposition").as(AtrBasic::new).label("Composição Atmosférica");;
-        planetType.showFieldsOnSearch("radius","atmosphericComposition");
         planetType.withSelectionOf(
                 createPlanet(planetType, "1", "Mercury", 2439.64, "He, Na+, P+"),
                 createPlanet(planetType, "2", "Venus", 6051.59, "CO2, N2"),
                 createPlanet(planetType, "3", "Earth", 6378.1, "N2, O2, Ar"),
                 createPlanet(planetType, "4", "Mars", 3397.00, "CO2, N2, Ar")
         );
-        planetType.withView(MSelecaoPorModalBuscaView::new);
+        planetType.setView(MSelecaoPorModalBuscaView::new)
+                .setAdditionalFields("radius","atmosphericComposition");
     }
 
     private MISelectItem createPlanet(MTipoSelectItem planetType, String position, String name,

@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
@@ -18,17 +19,18 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
 
     //    MTipoSelectItem selectType;
     protected MTipoSelectItem selectType;
+    protected MSelecaoPorModalBuscaView view;
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
         selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
         selectType.configureKeyValueFields();
-        selectType.addCampoInteger("population");
-        selectType.addCampoInteger("areasqrkm");
-        selectType.addCampoInteger("phonecode");
-        selectType.addCampoDecimal("gdp");
-        selectType.addCampoDecimal("hdi");
-        selectType.withView(MSelecaoPorModalBuscaView::new);
+        selectType.addCampoInteger("population").as(AtrBasic::new).label("População");;;
+        selectType.addCampoInteger("areasqrkm").as(AtrBasic::new).label("Área");;;
+        selectType.addCampoInteger("phonecode").as(AtrBasic::new).label("DDD");;;
+        selectType.addCampoDecimal("gdp").as(AtrBasic::new).label("PIB");;;
+        selectType.addCampoDecimal("hdi").as(AtrBasic::new).label("IDH");;;
+        view = selectType.setView(MSelecaoPorModalBuscaView::new);
         return selectType;
     }
 
@@ -50,7 +52,7 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
     @Test public void showModalWithExtrafields(){
         setupPage();
         selectType.withSelectionOf(federaldistrict(),goias());
-        selectType.showFieldsOnSearch("population","phonecode");
+        view.setAdditionalFields("population","phonecode");
         buildPage();
 
         driver.assertContainsNot("Buscar");
@@ -58,6 +60,9 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         clickOpenLink();
 
         driver.assertContains("Buscar");
+
+        driver.assertContains("População");
+        driver.assertContains("DDD");
 
         driver.assertContains("Distrito Federal");
         driver.assertContains("2852372");

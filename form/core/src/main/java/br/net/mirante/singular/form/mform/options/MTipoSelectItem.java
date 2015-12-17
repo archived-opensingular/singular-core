@@ -28,8 +28,6 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem>
         VALUE_FIELD = new AtrRef<>(MPacoteCore.class, "VALUE_FIELD",
                             MTipoString.class, MIString.class, String.class);
 
-    private List<String> searchFields = newArrayList(); //TODO [FABS] Change to use attribute later
-
     public MTipoSelectItem() {
         super(MISelectItem.class);
     }
@@ -90,13 +88,4 @@ public class MTipoSelectItem extends MTipoComposto<MISelectItem>
         optionsProvider = p;
     }
 
-    public void showFieldsOnSearch(String ... fields) {
-        for(String f : fields){
-            searchFields.add(f);
-        }
-    }
-
-    public List<String> searchFields(){
-        return newArrayList(searchFields);
-    }
 }

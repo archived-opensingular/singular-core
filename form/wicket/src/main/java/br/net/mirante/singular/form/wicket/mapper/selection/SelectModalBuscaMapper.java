@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MISimples;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -46,10 +50,12 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     public Component appendInput(MView view, BSContainer bodyContainer, 
         BSControls formGroup, IModel<? extends MInstancia> model, 
         IModel<String> labelModel) {
-        return formGroupAppender(formGroup, bodyContainer, model);
+        return formGroupAppender(formGroup, bodyContainer, model, (MSelecaoPorModalBuscaView) view);
     }
 
-    protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer, IModel<? extends MInstancia> model) {
+    protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
+                                          IModel<? extends MInstancia> model,
+                                          MSelecaoPorModalBuscaView view) {
         MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
         BSContainer panel = new BSContainer(model.getObject().getNome() + "inputGroup");
         TextField<String> t = new TextField<>(model.getObject().getNome() + "selection", valueModel);
@@ -59,7 +65,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         panel.appendTag("input", true, "class=\"form-control\"", t);
 
         Model<Filtro> f = Model.of(new Filtro());
-        panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(model.getObject().getNome() + "modal", t, modalContainer, model, valueModel, f));
+        panel.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
+                model.getObject().getNome() + "modal", t, modalContainer, model, valueModel, f, view));
 
         /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", panel);
@@ -70,12 +77,13 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
     protected Panel buildSearchButton(String id, Component valueInput, 
             BSContainer modalContainer, IModel<? extends MInstancia> model, 
-            MSelectionInstanceModel valueModel, IModel<Filtro> filterModel) {
+            MSelectionInstanceModel valueModel, IModel<Filtro> filterModel,
+                                      MSelecaoPorModalBuscaView view) {
         BSContainer panel = new BSContainer(id);
 
 
         final BSModalWindow searchModal = buildModal(id + "__modal", valueInput, modalContainer,
-                                                                    model, filterModel);
+                                                                    model, filterModel, view);
 
         panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
             @Override
@@ -97,17 +105,21 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return panel;
     }
 
-    public BSModalWindow buildModal(String id, Component valueInput, BSContainer modalContainer, IModel<? extends MInstancia> model, IModel<Filtro> filterModel) {
+    public BSModalWindow buildModal(String id, Component valueInput, BSContainer modalContainer,
+                                    IModel<? extends MInstancia> model, IModel<Filtro> filterModel,
+                                    MSelecaoPorModalBuscaView view) {
         BSModalWindow searchModal = new BSModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
-        searchModal.setBody(buildConteudoModal(id, valueInput, model, filterModel, searchModal));
+        searchModal.setBody(buildConteudoModal(id, valueInput, model, filterModel, searchModal, view));
         return searchModal;
     }
 
-    public BSGrid buildConteudoModal(String id, Component valueInput, IModel<? extends MInstancia> model, IModel<Filtro> filterModel, BSModalWindow modal) {
+    public BSGrid buildConteudoModal(String id, Component valueInput, IModel<? extends MInstancia> model,
+                                     IModel<Filtro> filterModel, BSModalWindow modal,
+                                     MSelecaoPorModalBuscaView view) {
         BSGrid grid = new BSGrid(id + "_modalBody");
 
-        Component table = buildResultTable(id + "resultTable", valueInput, model, filterModel, modal);
+        Component table = buildResultTable(id + "resultTable", valueInput, model, filterModel, modal, view);
 
         buildSearchField(id + "searchField", filterModel, grid, table, modal.getForm());
 
@@ -116,15 +128,18 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         return grid;
     }
 
-    private Component buildResultTable(String id, final Component valueInput, final IModel<? extends MInstancia> model, IModel<Filtro> filterModel, final BSModalWindow modal) {
+    private Component buildResultTable(String id, final Component valueInput,
+                                       final IModel<? extends MInstancia> model,
+                                       IModel<Filtro> filterModel, final BSModalWindow modal,
+                                       MSelecaoPorModalBuscaView view) {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
-        builder.appendPropertyColumn(Model.of("value"), "value");
+        builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();
         if(type instanceof MTipoSelectItem){
             MTipoSelectItem selectType = (MTipoSelectItem) type;
-            for(String field: selectType.searchFields()){
-//                builder.appendPropertyColumn(Model.of(field), field);
-                builder.appendPropertyColumn(Model.of(field),
+            for(String field: view.searchFields()){
+                String label = selectType.getCampo(field).as(AtrBasic::new).getLabel();
+                builder.appendPropertyColumn(Model.of(label),
                         o -> {
                             MIComposto target = (MIComposto) ((SelectOption) o).getTarget();
                             return target.getValorString(field);
@@ -243,10 +258,10 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         @Override
         protected Object getSimpleSelection(MInstancia target) {
             SelectOption v = (SelectOption) super.getSimpleSelection(target);
-            if( v.getKey() == null ){
+            if( v.getValue() == null ){
                 return null;
             }
-            return v.getKey();
+            return v.getValue();
         }
         
     }
@@ -254,8 +269,12 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     @Override
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         final MInstancia mi = model.getObject();
-        if ((mi != null) && (mi.getValor() != null)) {
-            return String.valueOf(mi.getValor());
+        if (mi != null){
+            if(mi instanceof MISimples && mi.getValor() != null) {
+                return String.valueOf(mi.getValor());
+            }else if(mi instanceof MISelectItem) {
+                return ((MISelectItem)mi).getFieldValue();
+            }
         }
         return StringUtils.EMPTY;
     }
