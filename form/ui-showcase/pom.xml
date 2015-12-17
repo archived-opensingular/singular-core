@@ -25,11 +25,11 @@
                 <filtering>false</filtering>
                 <directory>src/main/java</directory>
                 <includes>
-                    <include>**</include>
+                    <include>**/*.js</include>
+                    <include>**/*.html</include>
+                    <include>**/*.properties</include>
+                    <include>**/*Package.java</include>
                 </includes>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
             </resource>
         </resources>
 
@@ -38,12 +38,6 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <attachClasses>true</attachClasses>
-                    <webResources>
-                        <resource>
-                            <directory>${project.build.sourceDirectory}/br/net/mirante/singular/showcase</directory>
-                            <targetPath>WEB-INF/classes/br/net/mirante/singular/showcase</targetPath>
-                        </resource>
-                    </webResources>
                 </configuration>
             </plugin>
         </plugins>
