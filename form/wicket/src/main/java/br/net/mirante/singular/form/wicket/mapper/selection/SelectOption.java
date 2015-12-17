@@ -1,12 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
 import org.apache.wicket.model.IModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption<T> implements IModel {
     private String key;
     private T value;
+//    private FormSerializationUtil.FormSerialized target;
     private MInstancia target;
 
     public SelectOption(String key, T value) {
@@ -16,6 +20,8 @@ public class SelectOption<T> implements IModel {
     public SelectOption(String key, T value, MInstancia target) {
         this.key = key;
         this.value = value;
+//        this.target = null;
+//        if(target != null) {this.target = FormSerializationUtil.toSerializedObject(target);}
         this.target = target;
     }
 
@@ -36,6 +42,7 @@ public class SelectOption<T> implements IModel {
     }
 
     public MInstancia getTarget(){
+//        if(target != null) return FormSerializationUtil.toInstance(target);
         return target;
     }
 

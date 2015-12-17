@@ -46,6 +46,7 @@ public class TemplateRepository extends MDicionarioResolver {
                 }
             }
         }
+//        MDicionarioResolver.setDefault(novo);
         return novo;
     }
 

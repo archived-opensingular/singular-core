@@ -20,6 +20,8 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
 
     static <I extends MInstancia> MILista<I> of(MTipo<I> tipoElementos) {
         MILista<I> lista = new MILista<>();
+        //TODO: FABS: Evaluate this case, sin it impacts in the serialization process.
+//        MILista<I> lista = (MILista<I>) tipoElementos.getDicionario().getTipo(MTipoLista.class).novaInstancia();
         lista.setTipo(tipoElementos.getDicionario().getTipo(MTipoLista.class));
         lista.tipoElementos = tipoElementos;
         return lista;
