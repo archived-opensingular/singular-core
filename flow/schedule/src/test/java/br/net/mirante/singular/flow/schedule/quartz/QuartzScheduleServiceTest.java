@@ -14,15 +14,24 @@ public class QuartzScheduleServiceTest {
 
     @Test
     public void testSchedule() throws Exception {
+        assertNull(jobRunResult);
+
+
+        QuartzSchedulerFactory factory = new QuartzSchedulerFactory();
+        WaitForShutdownListener waiForShutdownListener = new WaitForShutdownListener(factory::getScheduler);
+        factory.setSchedulerListeners(waiForShutdownListener);
+
         IScheduledJob job = new ScheduledJob(JOB_ID, null, () -> {
             jobRunResult = JOB_ID;
             return JOB_ID;
         });
-        QuartzScheduleService quartzScheduleService = new QuartzScheduleService(true);
+        QuartzScheduleService quartzScheduleService = new QuartzScheduleService(factory);
         quartzScheduleService.schedule(job);
 
-        assertNull(jobRunResult);
-        Thread.sleep(500);
+        Thread.yield();
+
+        waiForShutdownListener.waitForShutdown();
+
         assertNotNull(jobRunResult);
         assertEquals(JOB_ID, jobRunResult);
     }
