@@ -18,11 +18,20 @@ public class QuartzScheduleService implements IScheduleService {
         this(false);
     }
 
+    public QuartzScheduleService(QuartzSchedulerFactory quartzSchedulerFactory) {
+        this.quartzSchedulerFactory = quartzSchedulerFactory;
+        init();
+    }
+
     public QuartzScheduleService(boolean waitJobsOnShutdown) {
         quartzSchedulerFactory = new QuartzSchedulerFactory();
+        quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
+        init();
+    }
+
+    private void init(){
         quartzSchedulerFactory.setSchedulerName(SCHEDULER_NAME);
         quartzSchedulerFactory.setConfigLocation(ResourceBundle.getBundle(CONFIG_RESOURCE_NAME));
-        quartzSchedulerFactory.setWaitForJobsToCompleteOnShutdown(waitJobsOnShutdown);
         try {
             quartzSchedulerFactory.initialize();
             quartzSchedulerFactory.start();
