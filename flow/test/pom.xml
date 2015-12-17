@@ -4,7 +4,7 @@
     <parent>
         <artifactId>singular-flow</artifactId>
         <groupId>br.net.mirante</groupId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.5.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,13 +15,13 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.5.2-SNAPSHOT</version>
+            <version>0.5.3</version>
         </dependency>
 
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-persistence</artifactId>
-            <version>0.5.2-SNAPSHOT</version>
+            <version>0.5.3</version>
         </dependency>
 
         <!-- Spring -->
