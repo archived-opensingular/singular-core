@@ -52,17 +52,15 @@ public class MISelectItem extends MIComposto {
     }
     
     @Override
-    public void setValor(Object valor) {
-        // TODO Auto-generated method stub
-        super.setValor(valor);
-    }
-    
-    @Override
     public boolean equals(Object obj) {
         if(obj == null || !(obj instanceof MISelectItem)) return false;
         
         MISelectItem item = (MISelectItem) obj;
         return getFieldId() != null && getFieldId().equals(item.getFieldId());
     }
-    
+
+    @Override
+    public int hashCode() {
+        return getFieldId() != null ? getFieldId().hashCode() : -1 ;
+    }
 }

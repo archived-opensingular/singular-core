@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +29,8 @@ import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
+import static org.apache.wicket.util.lang.Generics.newArrayList;
+
 @SuppressWarnings("serial")
 public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
@@ -41,11 +43,11 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         final MTipoLista tipoLista;
         if (model.getObject().getMTipo() instanceof MTipoLista) {
             tipoLista = (MTipoLista) model.getObject().getMTipo();
+            MTipo elementType = tipoLista.getTipoElementos();
+            opcoesValue = WicketSelectionUtils.createOptions(model, elementType);
         } else {
-            tipoLista = null;
+            opcoesValue = newArrayList();
         }
-        MTipo elementType = tipoLista.getTipoElementos();
-        opcoesValue = WicketSelectionUtils.createOptions(model, elementType);
 
         return formGroupAppender(formGroup, model, opcoesValue);
     }

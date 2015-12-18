@@ -13,6 +13,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
@@ -29,10 +30,10 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         AttachmentContainer container = new AttachmentContainer(
-                                    (IModel<? extends MIAttachment>) model);
+                (IModel<? extends MIAttachment>) model);
         formGroup.appendTypeahead(container);
         return container.field();
     }
@@ -55,33 +56,45 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
             return template;
         });
 
-        final MIAttachment attachment = (MIAttachment) model.getObject();
-        final IAttachmentRef attachmentRef = getAttachmentRef(attachment.getDocument(), attachment.getFileId());
-
-        final byte[] content = attachmentRef.getContentAsByteArray();
-        final String fileName = attachment.getFileName();
-
-        final Link<Void> downloadLink = new Link<Void>("downloadLink") {
-            @Override
-            public void onClick() {
-                AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
-                    @Override
-                    public void write(OutputStream outputStream) throws IOException {
-                        outputStream.write(content);
-                    }
-                };
-                ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
-                requestHandler.setFileName(fileName);
-                requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
-                final RequestCycle requestCycle = getRequestCycle();
-                requestCycle.scheduleRequestHandlerAfterCurrent(requestHandler);
-            }
-        };
-
         final BSWellBorder outputBorder = BSWellBorder.small("outputBorder");
-        final Label fileNameLabel = new Label("fileName", $m.ofValue(fileName));
+        final MIAttachment attachment = (MIAttachment) model.getObject();
+        final String fileId = attachment.getFileId();
 
-        templatePanel.add(outputBorder.add(downloadLink.add(fileNameLabel)));
+        if (fileId != null) {
+            final IAttachmentRef attachmentRef = getAttachmentRef(attachment.getDocument(), fileId);
+
+            final byte[] content = attachmentRef.getContentAsByteArray();
+            final String fileName = attachment.getFileName();
+
+            final Link<Void> downloadLink = new Link<Void>("downloadLink") {
+                @Override
+                public void onClick() {
+                    AbstractResourceStreamWriter writer = new AbstractResourceStreamWriter() {
+                        @Override
+                        public void write(OutputStream outputStream) throws IOException {
+                            outputStream.write(content);
+                        }
+                    };
+                    ResourceStreamRequestHandler requestHandler = new ResourceStreamRequestHandler(writer);
+                    requestHandler.setFileName(fileName);
+                    requestHandler.setContentDisposition(ContentDisposition.ATTACHMENT);
+                    final RequestCycle requestCycle = getRequestCycle();
+                    requestCycle.scheduleRequestHandlerAfterCurrent(requestHandler);
+                }
+            };
+            final Label fileNameLabel = new Label("fileName", $m.ofValue(fileName));
+            outputBorder.add(downloadLink);
+            downloadLink.add(fileNameLabel);
+        } else {
+            outputBorder.add(new WebMarkupContainer("downloadLink") {
+                @Override
+                public boolean isVisible() {
+                    return false;
+                }
+            });
+        }
+
+        templatePanel.add(outputBorder);
 
         return templatePanel;
     }

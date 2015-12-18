@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class RadioMapper extends SelectMapper {
     protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
             final List<SelectOption> opcoesValue) {
         MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
-		String id = model.getObject().getNome();
+        String id = model.getObject().getNome();
         return new RadioChoice<SelectOption>(id, 
                 (IModel)opcoesModel, opcoesValue, rendererer()) {
             @Override
@@ -48,8 +48,6 @@ public class RadioMapper extends SelectMapper {
                 this.setVisible(!opcoesModel.getObject().toString().isEmpty());
             }
         };
-//		formGroup.appendRadioChoice(input);
-//        return input;
     }
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
