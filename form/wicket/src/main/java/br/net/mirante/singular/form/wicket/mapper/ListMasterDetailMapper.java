@@ -25,8 +25,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -51,7 +50,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
 
     @Override
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         if (!(view instanceof MListMasterDetailView)) {
             throw new SingularFormException("Error: Mapper " +
                     ListMasterDetailMapper.class.getSimpleName() +
@@ -70,7 +69,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         ctx.getExternalContainer().appendTag("div", true, null, externalIrmao);
 
 
-        final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (MListMasterDetailView) view, externalIrmao);
+        final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (MListMasterDetailView) view, externalIrmao, wicketBuilder);
 
         externalAtual.appendTag("div", true, null, modal);
 
@@ -254,6 +253,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private final IModel<MILista<MInstancia>> listModel;
         private final IModel<String> listaLabel;
         private final WicketBuildContext ctx;
+        private final UIBuilderWicket wicketBuilder;
         private final Component table;
         private final ViewMode viewMode;
         private IModel<MInstancia> currentInstance;
@@ -261,9 +261,17 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private MListMasterDetailView view;
         private BSContainer containerExterno;
 
-        public MasterDetailModal(String id, IModel<? extends MInstancia> model, IModel<String> listaLabel, WicketBuildContext ctx, ViewMode viewMode, MListMasterDetailView view, BSContainer containerExterno) {
+        public MasterDetailModal(String id,
+                                 IModel<? extends MInstancia> model,
+                                 IModel<String> listaLabel,
+                                 WicketBuildContext ctx,
+                                 ViewMode viewMode,
+                                 MListMasterDetailView view,
+                                 BSContainer containerExterno,
+                                 UIBuilderWicket wicketBuilder) {
             super(id, true, false);
 
+            this.wicketBuilder = wicketBuilder;
             this.listaLabel = listaLabel;
             this.ctx = ctx;
             this.table = ctx.getContainer();
@@ -326,7 +334,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 viewModeModal = ViewMode.VISUALIZATION;
             }
 
-            UIBuilderWicket.build(new WicketBuildContext(ctx, modalBody, containerExterno, true), currentInstance, viewModeModal);
+            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true), currentInstance, viewModeModal);
             target.add(containerExterno);
             this.show(target);
         }

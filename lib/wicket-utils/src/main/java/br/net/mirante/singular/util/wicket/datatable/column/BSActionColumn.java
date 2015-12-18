@@ -1,7 +1,7 @@
 package br.net.mirante.singular.util.wicket.datatable.column;
 
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;

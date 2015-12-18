@@ -27,7 +27,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final IModel<MILista<MInstancia>> listaModel = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final MILista<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(MPacoteBasic.aspect()).getLabel()));
@@ -49,7 +49,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                     + "        <div wicket:id='_r'></div>"
                                     + "      </li>"
                                     + "    </ul>");
-                            list.add(new PanelElementsView("_e", listaModel, ctx, view, form, viewMode));
+                            list.add(new PanelElementsView("_e", listaModel, wicketBuilder, ctx, view, form, viewMode));
 
                         },
                         (footer, form) -> {
@@ -71,9 +71,17 @@ public class PanelListaMapper extends AbstractListaMapper {
         private final Form<?> form;
         private final ViewMode viewMode;
         private final WicketBuildContext ctx;
+        private final UIBuilderWicket wicketBuilder;
 
-        private PanelElementsView(String id, IModel<MILista<MInstancia>> model, WicketBuildContext ctx, MView view, Form<?> form, ViewMode viewMode) {
+        private PanelElementsView(String id,
+                                  IModel<MILista<MInstancia>> model,
+                                  UIBuilderWicket wicketBuilder,
+                                  WicketBuildContext ctx,
+                                  MView view,
+                                  Form<?> form,
+                                  ViewMode viewMode) {
             super(id, model);
+            this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
             this.view = view;
             this.form = form;
@@ -85,7 +93,7 @@ public class PanelListaMapper extends AbstractListaMapper {
             final BSGrid grid = new BSGrid("_r");
             final BSRow row = grid.newRow();
 
-            UIBuilderWicket.build(ctx.createChild(row.newCol(11), true), item.getModel(), viewMode);
+            wicketBuilder.build(ctx.createChild(row.newCol(11), true), item.getModel(), viewMode);
 
             final BSGrid btnGrid = row.newCol(1).newGrid();
 

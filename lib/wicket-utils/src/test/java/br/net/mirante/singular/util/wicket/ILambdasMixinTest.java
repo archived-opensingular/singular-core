@@ -1,4 +1,4 @@
-package br.net.mirante.singular.util.wicket.lambda;
+package br.net.mirante.singular.util.wicket;
 
 import static java.util.stream.Collectors.*;
 
@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.util.wicket.lambda.ILambdasMixin;
 import org.junit.Assert;
 import org.junit.Test;
 

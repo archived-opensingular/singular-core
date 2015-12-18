@@ -4,6 +4,7 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.context.SingularFormContext;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -11,6 +12,8 @@ import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -60,6 +63,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     @Inject
     private FileDao filePersistence;
+
+    @Inject
+    private SingularFormContextWicket singularFormContext;
 
     private Form<?> inputForm = new Form<>("save-form");
 
@@ -121,7 +127,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.build(ctx, currentInstance, viewMode);
+        singularFormContext.getUIBuilder().build(ctx, currentInstance, viewMode);
     }
 
     private BSContainer<?> buildBodyContainer() {

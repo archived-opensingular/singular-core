@@ -35,7 +35,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final MIComposto instance = (MIComposto) model.getObject();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
@@ -50,7 +50,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         grid.setDefaultModel(model);
 
         for (MTipo<?> tCampo : tComposto.getFields()) {
-            buildField(ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
+            buildField(wicketBuilder, ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
         }
     }
 
@@ -62,15 +62,15 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
     }
 
-    private void buildField(WicketBuildContext ctx, final BSRow row, final MInstanciaCampoModel<MInstancia> mCampo,
+    private void buildField(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, final BSRow row, final MInstanciaCampoModel<MInstancia> mCampo,
                             ViewMode viewMode) {
         MTipo<?> type = mCampo.getMInstancia().getMTipo();
         final MInstancia iCampo = mCampo.getObject();
         if (iCampo instanceof MIComposto) {
             final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            UIBuilderWicket.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
         } else {
-            UIBuilderWicket.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
         }
     }
 

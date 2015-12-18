@@ -1,6 +1,6 @@
 package br.net.mirante.singular.util.wicket.util;
 
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IConsumer;
 import org.apache.wicket.Component;
 
 public interface IOnAfterPopulateItemConfigurable {

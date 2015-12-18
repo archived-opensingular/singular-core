@@ -10,8 +10,8 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IFunction;
 
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
