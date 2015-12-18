@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -28,7 +27,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,7 +83,7 @@ public class SelectInputModalContainer extends BSContainer {
 
         final BSModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
-        panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
+        panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 searchModal.show(target);
