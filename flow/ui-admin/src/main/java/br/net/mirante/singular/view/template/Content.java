@@ -1,6 +1,6 @@
 package br.net.mirante.singular.view.template;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -9,8 +9,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.wicket.UIAdminSession;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public abstract class Content extends Panel {
 
