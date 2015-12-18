@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
+@SuppressWarnings("serial")
 public class MInstanciaValorModel<T>
     implements
     IModel<T>,
@@ -33,7 +34,7 @@ public class MInstanciaValorModel<T>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setObject(T object) {
         MInstancia target = getTarget();
         if (target instanceof MILista) {

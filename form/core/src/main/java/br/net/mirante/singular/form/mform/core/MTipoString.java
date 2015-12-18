@@ -38,9 +38,10 @@ public class MTipoString extends MTipoSimples<MIString, String> {
         return super.selectionOf(nomes);
     }
     
-    @Override
-    public MTipoString withSelectionOf(String... opcoes) {
-        return (MTipoString) super.withSelectionOf(opcoes);
+    public MTipoString withSelectionOf(String ... opcoes) {
+//        return (MTipoString) super.withSelectionOf(opcoes);
+        selectionOf(opcoes);
+        return this;
     }
     
     @Override

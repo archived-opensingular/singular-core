@@ -16,7 +16,7 @@ import java.util.HashMap;
 
 public class YearMonthMapper implements ControlsFieldComponentMapper {
 
-    @Override
+    @Override @SuppressWarnings("rawtypes")
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
         YearMonthField comp = new YearMonthField(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendDatepicker(comp.setLabel(labelModel)

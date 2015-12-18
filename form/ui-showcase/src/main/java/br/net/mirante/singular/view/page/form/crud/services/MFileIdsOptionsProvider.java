@@ -17,13 +17,10 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
+@SuppressWarnings("serial")
 @Component("filesChoiceProvider")
 public class MFileIdsOptionsProvider implements MOptionsProvider {
     @Inject private FileDao filePersistence;
-
-//    MFileIdsOptionsProvider(FileDao filePersistence) {
-//        this.filePersistence = filePersistence;
-//    }
 
     @Override
     public String toDebug() {
@@ -31,7 +28,7 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
         List<ExampleFile> files = filePersistence.list();
         TemplateRepository repo = TemplateRepository.get();
         MTipo<?> type = repo.getEntries().iterator().next().getType();

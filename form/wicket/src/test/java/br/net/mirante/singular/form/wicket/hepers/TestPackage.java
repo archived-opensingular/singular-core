@@ -14,7 +14,7 @@ public class TestPackage extends MPacote {
     
     public MTipoComposto<?> baseType;
     public MTipoAttachment attachmentFileField;
-    private MTipoString stringField;
+    public MTipoString stringField;
 
     public TestPackage() {
         super(PACOTE);

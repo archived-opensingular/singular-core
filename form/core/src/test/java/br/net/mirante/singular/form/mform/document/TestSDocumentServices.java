@@ -1,14 +1,18 @@
 package br.net.mirante.singular.form.mform.document;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import br.net.mirante.singular.form.mform.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 public class TestSDocumentServices {
     private MTipoComposto<?> groupingType;

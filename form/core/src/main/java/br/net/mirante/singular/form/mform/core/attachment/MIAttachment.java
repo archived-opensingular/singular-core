@@ -121,4 +121,5 @@ public class MIAttachment extends MIComposto {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
     }
+    
 }

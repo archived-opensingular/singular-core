@@ -1,78 +1,53 @@
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import com.google.common.collect.Lists;
-import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class MTipoStringSelectionFromProviderFieldTest {
-    private static MDicionario dicionario;
-    private PacoteBuilder localPackage;
-    private MTipoString selectType;
+import java.util.List;
 
-    private WicketTester driver;
-    private TestPage page;
-    private FormTester form;
-    private List<String> referenceOptions;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.util.tester.FormTester;
+import org.junit.Test;
 
-    @BeforeClass
-    public static void createDicionario() {
-        dicionario = MDicionario.create();
+import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+
+public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBaseTest {
+    private List<String> referenceOptions = 
+        Lists.newArrayList("strawberry", "apple", "orange", 
+                            "banana", "avocado", "grapes");
+
+    protected MTipoString selectType;
+    
+    @Override
+    @SuppressWarnings("rawtypes")
+    MTipo createSelectionType(MTipoComposto group) {
+        return selectType = group.addCampoString("favoriteFruit");
     }
-
-    public void setupPage() {
-        driver = new WicketTester(new TestApp());
-        page = new TestPage();
-        page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
-        MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
-        selectType = group.addCampoString("favoriteFruit");
-        
-        page.setNewInstanceOfType(group.getNome());
-        referenceOptions = Lists.newArrayList("strawberry", "apple", "orange", "banana", "avocado", "grapes");
-    }
-
+    
     @SuppressWarnings("serial")
-    private ServiceRef<MOptionsProvider> ref(MOptionsProvider provider) {
-        return new ServiceRef<MOptionsProvider>() {
-            public MOptionsProvider get() {
-                return provider;
-            }
-        };
-    }
-
     private MOptionsProvider createProviderWithOptions(final List<String> options) {
         return new MOptionsProvider() {
             public String toDebug() {
                 return "debug this";
             }
-            public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+
+            public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
                 MTipoString s = dicionario.getTipo(MTipoString.class);
                 MILista<?> r = s.novaLista();
                 options.forEach((o) -> {r.addValor(o);});
                 return r;
             }
         };
-    }
-
-    private void buildPage() {
-        page.build();
-        driver.startPage(page);
-        
-        form = driver.newFormTester("test-form", false);
     }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -82,7 +57,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService("fruitProvider", MOptionsProvider.class, ref(provider));
+        document.bindLocalService("fruitProvider", MOptionsProvider.class, ServiceRef.of(provider));
         
         buildPage();
         
@@ -91,7 +66,8 @@ public class MTipoStringSelectionFromProviderFieldTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices()).containsExactly(referenceOptions.toArray());
+        assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly(referenceOptions.toArray());
     }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -101,7 +77,7 @@ public class MTipoStringSelectionFromProviderFieldTest {
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService(MOptionsProvider.class, ref(provider));
+        document.bindLocalService(MOptionsProvider.class, ServiceRef.of(provider));
         buildPage();
         
         driver.assertEnabled(formField(form, "favoriteFruit"));
@@ -109,10 +85,8 @@ public class MTipoStringSelectionFromProviderFieldTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(choices.getChoices()).containsExactly(referenceOptions.toArray());
+        assertThat(extractProperty("value").from(choices.getChoices()))
+        .containsExactly(referenceOptions.toArray());
     }
 
-    private String formField(FormTester form, String leafName) {
-        return "test-form:" + findId(form.getForm(), leafName).get();
-    }
 }

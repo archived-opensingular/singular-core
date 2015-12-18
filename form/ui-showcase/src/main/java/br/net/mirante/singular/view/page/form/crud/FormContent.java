@@ -106,8 +106,6 @@ public class FormContent extends Content
         document.setAttachmentPersistenceHandler(temporaryRef);
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
             IAttachmentPersistenceHandler.class, persistanceRef);
-        //        document.bindLocalService("filesChoiceProvider", choiceRef);
-        //        document.setServiceRegistry(createSpringRegistry());
         document.addServiceRegistry(serviceRegistry);
     }
 

@@ -5,13 +5,16 @@ import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
+@SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private final MILista<? extends MInstancia> opcoes;
 
-    public MFixedOptionsSimpleProvider(MTipoSimples<?, ?> tipoOpcoes, Collection<? extends Object> lista) {
+    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, 
+                            Collection<? extends Object> lista) {
         if (lista.isEmpty()) {
             throwEmpryListError();
         }
@@ -19,12 +22,16 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         lista.forEach(o -> opcoes.addValor(o));
     }
 
-    public MFixedOptionsSimpleProvider(MTipoSimples<?, ?> tipoOpcoes, Object[] lista) {
+    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Object[] lista) {
         if (lista.length == 0) {
             throwEmpryListError();
         }
         this.opcoes = tipoOpcoes.novaLista();
-        Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
+        if(tipoOpcoes instanceof MTipoSimples){
+            Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
+        }else if(tipoOpcoes instanceof MTipoSelectItem){
+            Arrays.stream(lista).forEach(o -> opcoes.addElement(o)); //TODO [Fabs]: also for collections
+        }
     }
 
     private void throwEmpryListError() {
@@ -32,7 +39,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> getOpcoes(MInstancia optionsInstance) {
+    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
         return opcoes;
     }
 

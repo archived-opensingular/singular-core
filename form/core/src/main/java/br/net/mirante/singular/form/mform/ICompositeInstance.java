@@ -75,6 +75,7 @@ public interface ICompositeInstance {
      * @return Null se o campo no path indicado não tiver sido instanciado
      *         ainda.
      */
+    @SuppressWarnings("unchecked")
     public default <T extends MInstancia> MILista<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
         MILista<?> lista = getFieldList(path);
         if (lista == null) {
