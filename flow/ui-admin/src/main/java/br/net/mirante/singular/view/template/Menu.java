@@ -15,11 +15,8 @@ import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.wicket.UIAdminSession;
 public class Menu extends Panel {
-
-
     @Inject
     private UIAdminFacade uiAdminFacade;
 
@@ -63,7 +60,7 @@ public class Menu extends Panel {
                     .add(new Label("definitionLabel", item.getName()))
                     .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#"
                             : "dashboard"
-                            .concat("?").concat(DashboardPage.PROCESS_DEFINITION_COD_PARAM)
+                            .concat("?").concat(Content.PROCESS_DEFINITION_COD_PARAM)
                             .concat("=").concat(item.getCode())))));
             definitionsMenu.add(definitionMenu);
         }

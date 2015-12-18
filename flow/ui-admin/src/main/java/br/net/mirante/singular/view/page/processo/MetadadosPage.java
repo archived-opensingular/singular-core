@@ -8,17 +8,13 @@ import org.wicketstuff.annotation.mount.MountPath;
 import br.net.mirante.singular.view.template.Content;
 import br.net.mirante.singular.view.template.Template;
 
-@MountPath("process")
-public class ProcessosPage extends Template {
+@MountPath("process/metadata")
+public class MetadadosPage extends Template {
 
     @Override
     protected Content getContent(String id) {
         StringValue processDefinitionCode = getPageParameters().get(Content.PROCESS_DEFINITION_COD_PARAM);
-        if (processDefinitionCode.isNull()) {
-            return new ProcessosContent(id, withSideBar());
-        } else {
-            return new InstanciasContent(id, withSideBar(), processDefinitionCode.toString());
-        }
+        return new MetadadosContent(id, withSideBar(), processDefinitionCode.toString());
     }
 
     @Override

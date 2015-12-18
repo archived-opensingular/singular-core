@@ -1,10 +1,11 @@
 package br.net.mirante.singular.view.template;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import org.apache.wicket.request.UrlUtils;
 
 public class Header extends Panel {
 
@@ -37,6 +38,6 @@ public class Header extends Panel {
             add(new WebMarkupContainer("_TopAction"));
         }
         add(new TopMenu("_TopMenu", withSideBar));
-        add(new WebMarkupContainer("brandLogo"));
+        add(new WebMarkupContainer("brandLogo").add($b.attr("src", UrlUtils.rewriteToContextRelative("resources/admin/page/img/brand.png", getRequestCycle()))));
     }
 }
