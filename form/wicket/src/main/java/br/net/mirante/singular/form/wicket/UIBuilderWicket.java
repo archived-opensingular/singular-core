@@ -1,55 +1,17 @@
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
-import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoDecimal;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoMonetario;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.context.UIComponentMapper;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
-import br.net.mirante.singular.form.wicket.mapper.DateMapper;
-import br.net.mirante.singular.form.wicket.mapper.DecimalMapper;
-import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
-import br.net.mirante.singular.form.wicket.mapper.IntegerMapper;
-import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
-import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
-import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.StringMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
-import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
-import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
+import br.net.mirante.singular.form.wicket.mapper.*;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleCheckMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.MultipleSelectBSMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.PicklistMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.RadioMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectMapper;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectModalBuscaMapper;
+import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import org.apache.wicket.model.IModel;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
@@ -107,8 +69,20 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
         ctx.init(model);
 
-        IWicketComponentMapper mapper = MAPPERS.getMapper(instancia, view)
-                .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
+        final IWicketComponentMapper mapper;
+        final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
+
+        if (customMapper != null) {
+            if (customMapper instanceof IWicketComponentMapper) {
+                mapper = (IWicketComponentMapper) customMapper;
+            } else {
+                throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario implementar IWicketComponentMapper");
+            }
+        } else {
+            mapper = MAPPERS.getMapper(instancia, view)
+                    .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
+        }
+
         mapper.buildView(this, ctx, view, model, viewMode);
     }
 

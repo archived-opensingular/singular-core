@@ -1,19 +1,19 @@
 package br.net.mirante.singular.showcase;
 
+import com.google.common.base.Throwables;
+import org.apache.commons.io.IOUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Optional;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Representa um referência um recurso no class path e seu respectivo nome para
  * exibição.
  */
-public class ResourceRef {
+public class ResourceRef implements Serializable {
 
     private final Class<?> referenceClass;
     private final String resourcePath;

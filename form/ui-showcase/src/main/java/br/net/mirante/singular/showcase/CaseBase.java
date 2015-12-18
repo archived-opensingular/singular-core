@@ -1,14 +1,14 @@
 package br.net.mirante.singular.showcase;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Representa um exemplo de um componente ou solução junto com os respectivo
@@ -19,6 +19,7 @@ public class CaseBase implements Serializable {
     private final String componentName;
     private final String subCaseName;
     private String descriptionHtml;
+    private List<ResourceRef> aditionalResources;
 
     public CaseBase(String componentName) {
         this(componentName, null);
@@ -27,6 +28,7 @@ public class CaseBase implements Serializable {
     public CaseBase(String componentName, String subCaseName) {
         this.componentName = componentName;
         this.subCaseName = subCaseName;
+        this.aditionalResources = new ArrayList<>();
     }
 
     public String getComponentName() {
@@ -80,6 +82,6 @@ public class CaseBase implements Serializable {
     }
 
     public List<ResourceRef> getAditionalSources() {
-        return Collections.emptyList();
+        return aditionalResources;
     }
 }

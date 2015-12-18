@@ -27,11 +27,10 @@
                     <include>**/*.css</include>
                     <include>**/*.html</include>
                     <include>**/*.properties</include>
-                    <include>**/*Package.java</include>
+                    <include>**/showcase/**/*.java</include>
                 </includes>
             </resource>
         </resources>
-
         <plugins>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>

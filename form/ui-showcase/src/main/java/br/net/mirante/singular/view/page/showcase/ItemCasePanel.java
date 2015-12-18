@@ -4,7 +4,6 @@ import br.net.mirante.singular.dao.form.FileDao;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.context.SingularFormContext;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -12,9 +11,7 @@ import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
@@ -43,7 +40,8 @@ import org.apache.wicket.model.IModel;
 import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -102,13 +100,23 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     private BSTabPanel buildCodeTabs() {
-        BSTabPanel bsTabPanel = new BSTabPanel("codes");
-        Optional<ResourceRef> sources = caseBase.getObject().getMainSourceResourceName();
-        if(sources.isPresent()) {
-            for (ResourceRef rr : Collections.singletonList(sources.get())) {
-                bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
-            }
+        final  BSTabPanel bsTabPanel = new BSTabPanel("codes");
+        final CaseBase caseBase = this.caseBase.getObject();
+        final Optional<ResourceRef> mainSource = caseBase.getMainSourceResourceName();
+        final List<ResourceRef> aditionalSources = caseBase.getAditionalSources();
+        final List<ResourceRef> allSources = new ArrayList<>();
+
+        if(mainSource.isPresent()) {
+            allSources.add(mainSource.get());
         }
+        if(aditionalSources != null){
+            allSources.addAll(aditionalSources);
+        }
+
+        for (ResourceRef rr : allSources) {
+            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
+        }
+
         return bsTabPanel;
     }
 

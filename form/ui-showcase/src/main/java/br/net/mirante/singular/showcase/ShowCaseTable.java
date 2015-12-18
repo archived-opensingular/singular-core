@@ -1,16 +1,11 @@
 package br.net.mirante.singular.showcase;
 
+import br.net.mirante.singular.showcase.custom.CaseCustomStringMapper;
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
-import br.net.mirante.singular.showcase.layout.CaseGrid;
-import br.net.mirante.singular.showcase.layout.CaseGridList;
-import br.net.mirante.singular.showcase.layout.CaseGridTable;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetail;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailButtons;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailColumns;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.layout.*;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
@@ -61,6 +56,8 @@ public class ShowCaseTable {
         group("Interaction", Icone.ROCKET)
             .addCase(CaseInteractionEnabledVisible.class)
             .addCase(CaseInteractionDependsOnOptions.class);
+        group("Custom", Icone.WRENCH)
+                .addCase(CaseCustomStringMapper.class);
         //@formatter:on
     }
 

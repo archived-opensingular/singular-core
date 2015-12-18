@@ -1,20 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.apache.commons.lang3.NotImplementedException;
-
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
@@ -23,6 +11,14 @@ import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import org.apache.commons.lang3.NotImplementedException;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
 public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtributoEnabled {
@@ -64,6 +60,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     private MTipo<I> superTipo;
 
     private MView view;
+
+    private UIComponentMapper customMapper;
 
     public MTipo() {
         this(null, (Class<MTipo>) null, null);
@@ -593,7 +591,17 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MOptionsProvider getProviderOpcoes() {
         throw new UnsupportedOperationException();
     }
+
     public boolean hasProviderOpcoes() {
         return false;
+    }
+
+    public <T extends UIComponentMapper> MTipo<I> withCustomMapper(Supplier<T> factory) {
+        this.customMapper = factory.get();
+        return this;
+    }
+
+    public UIComponentMapper getCustomMapper() {
+        return customMapper;
     }
 }
