@@ -14,6 +14,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
+import com.google.common.base.Throwables;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -50,7 +51,10 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     public Component appendInput(MView view, BSContainer bodyContainer, 
         BSControls formGroup, IModel<? extends MInstancia> model, 
         IModel<String> labelModel) {
-        return formGroupAppender(formGroup, bodyContainer, model, (MSelecaoPorModalBuscaView) view);
+        if(view instanceof MSelecaoPorModalBuscaView){
+            return formGroupAppender(formGroup, bodyContainer, model, (MSelecaoPorModalBuscaView) view);
+        }
+        throw new RuntimeException("SelectModalBuscaMapper only works with a MSelecaoPorModalBuscaView.");
     }
 
     protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
