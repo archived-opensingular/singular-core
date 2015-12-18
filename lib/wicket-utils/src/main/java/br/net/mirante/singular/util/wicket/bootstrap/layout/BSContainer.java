@@ -10,7 +10,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IFunction;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {

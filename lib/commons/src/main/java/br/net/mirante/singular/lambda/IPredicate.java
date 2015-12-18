@@ -1,4 +1,4 @@
-package br.net.mirante.singular.util.wicket.lambda;
+package br.net.mirante.singular.lambda;
 
 import java.io.Serializable;
 import java.util.function.Predicate;

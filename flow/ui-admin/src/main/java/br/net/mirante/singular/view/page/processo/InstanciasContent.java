@@ -24,7 +24,7 @@ import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 

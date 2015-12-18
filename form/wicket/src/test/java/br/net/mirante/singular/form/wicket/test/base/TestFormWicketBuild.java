@@ -2,6 +2,11 @@ package br.net.mirante.singular.form.wicket.test.base;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
+import br.net.mirante.singular.form.mform.context.SingularFormConfig;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicket;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -31,6 +36,7 @@ import junit.framework.TestCase;
 public class TestFormWicketBuild extends TestCase {
 
     WicketTester tester;
+    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().getContext();
 
     public void setUp() {
         tester = new WicketTester(new WebApplication() {
@@ -58,7 +64,7 @@ public class TestFormWicketBuild extends TestCase {
         };
         IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
         mCidade.getObject().setValor("Brasilia");
-        UIBuilderWicket.buildForEdit(ctx, mCidade);
+        singularFormContext.getUIBuilder(). buildForEdit(ctx, mCidade);
 
         tester.startComponentInPage(testPanel);
         assertEquals("Brasilia", mCidade.getObject().getValor());
@@ -85,7 +91,7 @@ public class TestFormWicketBuild extends TestCase {
             }
         };
         IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
-        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
+//        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
 
         tester.startComponentInPage(testPanel);

@@ -1,14 +1,15 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.lambda.ISupplier;
 
 /**
  * <p>
@@ -23,7 +24,7 @@ import br.net.mirante.singular.form.mform.MTipo;
  *
  * @author Daniel C. Bordin
  */
-public class ViewMapperRegistry<T> {
+public class ViewMapperRegistry<T> implements Serializable {
 
     private final HashMap<Class<? extends MTipo>, List<RegisterEntry<T>>> registry = new HashMap<>();
 
@@ -31,7 +32,7 @@ public class ViewMapperRegistry<T> {
      * Registra o fornecedor para o tipo para quando não for solicitado um view
      * especifica. Seria a factory default.
      */
-    public void register(Class<? extends MTipo> type, Supplier<T> factory) {
+    public void register(Class<? extends MTipo> type, ISupplier<T> factory) {
         register(type, null, factory);
     }
 
@@ -42,7 +43,7 @@ public class ViewMapperRegistry<T> {
      * @param viewType
      *            Pode ser null
      */
-    public void register(Class<? extends MTipo> type, Class<? extends MView> viewType, Supplier<T> factory) {
+    public void register(Class<? extends MTipo> type, Class<? extends MView> viewType, ISupplier<T> factory) {
         Objects.requireNonNull(factory);
         List<RegisterEntry<T>> list = registry.get(Objects.requireNonNull(type));
         if (list == null) {
@@ -115,12 +116,12 @@ public class ViewMapperRegistry<T> {
      *
      * @author Daniel C. Bordin
      */
-    private static final class RegisterEntry<T> {
+    private static final class RegisterEntry<T> implements Serializable {
         final Class<? extends MView> view;
-        final Supplier<T> factory;
+        final ISupplier<T> factory;
         final int priority;
 
-        RegisterEntry(Class<? extends MView> view, Supplier<T> factory, int priority) {
+        RegisterEntry(Class<? extends MView> view, ISupplier<T> factory, int priority) {
             this.view = view;
             this.factory = factory;
             this.priority = priority;

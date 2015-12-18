@@ -2,8 +2,8 @@ package br.net.mirante.singular.form.wicket.mapper.components;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IBiConsumer;
+import br.net.mirante.singular.lambda.IFunction;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 

@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.apache.wicket.model.Model;
 
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IFunction;
 
 public final class ValueModel<T extends Serializable> extends Model<T> {
     private final IFunction<T, Object> equalsHashArgsFunc;
