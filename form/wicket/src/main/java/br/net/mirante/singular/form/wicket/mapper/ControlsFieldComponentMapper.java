@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket.mapper;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.context.SingularFormContext;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -31,19 +30,12 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     HintKey<Boolean> NO_DECORATION = () -> false;
 
     /**
-     *
-     * @param view
-     *  Instancia da MView utilizada para configurar o componente
-     * @param bodyContainer
-     *  Container não aninhado no formulário, utilizado para adicionar modais por exemplo
-     * @param formGroup
-     *  Container onde dever adicionado o input
-     * @param model
-     *  Model da MInstancia
-     * @param labelModel
-     *  Model contendo o label do componente
-     * @return
-     *   Retorna o componente  já adicionado ao formGroup
+     * @param view          Instancia da MView utilizada para configurar o componente
+     * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
+     * @param formGroup     Container onde dever adicionado o input
+     * @param model         Model da MInstancia
+     * @param labelModel    Model contendo o label do componente
+     * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
     Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
@@ -51,23 +43,16 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     String getReadOnlyFormattedText(IModel<? extends MInstancia> model);
 
     /**
-     *
-     * @param view
-     *  Instancia da MView utilizada para configurar o componente
-     * @param bodyContainer
-     *  Container não aninhado no formulário, utilizado para adicionar modais por exemplo
-     * @param formGroup
-     *  Container onde dever adicionado o input
-     * @param model
-     *  Model da MInstancia
-     * @param labelModel
-     *  Model contendo o label do componente
-     * @return
-     *   Retorna o componente  já adicionado ao formGroup
+     * @param view          Instancia da MView utilizada para configurar o componente
+     * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
+     * @param formGroup     Container onde dever adicionado o input
+     * @param model         Model da MInstancia
+     * @param labelModel    Model contendo o label do componente
+     * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
-                                          IModel<? extends MInstancia> model, IModel<String> labelModel){
+                                          IModel<? extends MInstancia> model, IModel<String> labelModel) {
         final MInstancia mi = model.getObject();
         BOutputPanel comp = new BOutputPanel(mi.getNome(),
                 $m.ofValue(getReadOnlyFormattedText(model)));
