@@ -1,5 +1,13 @@
 package br.net.mirante.singular.util.wicket.util;
 
+
+import br.net.mirante.singular.util.wicket.lambda.ILambdasMixin;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.FeedbackCollector;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,22 +18,19 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.feedback.FeedbackCollector;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
-
-import br.net.mirante.singular.util.wicket.lambda.ILambdasMixin;
-
 public final class WicketUtils {
 
-    public static final IBehaviorsMixin  $b = new IBehaviorsMixin() {};
-    public static final IModelsMixin     $m = new IModelsMixin() {};
-    public static final IValidatorsMixin $v = new IValidatorsMixin() {};
-    public static final ILambdasMixin    $L = new ILambdasMixin() {};
+    public static final IBehaviorsMixin $b = new IBehaviorsMixin() {
+    };
+    public static final IModelsMixin $m = new IModelsMixin() {
+    };
+    public static final IValidatorsMixin $v = new IValidatorsMixin() {
+    };
+    public static final ILambdasMixin $L = new ILambdasMixin() {
+    };
 
-    private WicketUtils() {}
+    private WicketUtils() {
+    }
 
     @SuppressWarnings("unchecked")
     public static <C> Stream<C> findChildren(MarkupContainer container, Class<C> type) {
@@ -53,8 +58,8 @@ public final class WicketUtils {
 
     public static void clearMessagesForComponent(Component component) {
         new FeedbackCollector(component.getPage())
-            .collect(message -> Objects.equals(message.getReporter(), component)).stream()
-            .forEach(it -> it.markRendered());
+                .collect(message -> Objects.equals(message.getReporter(), component)).stream()
+                .forEach(it -> it.markRendered());
     }
 
     public static List<MarkupContainer> listParents(Component reporter) {
@@ -87,11 +92,12 @@ public final class WicketUtils {
 
     public static Optional<String> findPageRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class,
-            it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
+                it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
     }
+
     public static Optional<String> findContainerRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class, it -> it.getId().equals(childId))
-            .map(it -> it.getPageRelativePath())
-            .map(it -> it.substring(container.getPageRelativePath().length() + 1));
+                .map(it -> it.getPageRelativePath())
+                .map(it -> it.substring(container.getPageRelativePath().length() + 1));
     }
 }

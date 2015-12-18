@@ -6,7 +6,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import br.net.mirante.singular.util.wicket.lambda.IBiFunction;
+import br.net.mirante.singular.lambda.IBiFunction;
 
 public class BSTableGrid extends BSContainer<BSTableGrid> {
 

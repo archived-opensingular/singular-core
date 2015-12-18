@@ -4,7 +4,8 @@ import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
@@ -39,7 +40,7 @@ public class TestPage extends WebPage {
     private MDicionario dicionario;
     private Form<?> submittedForm;
     private MIComposto currentInstance;
-
+    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().getContext();
     private ViewMode viewMode;
 
     public TestPage() {
@@ -48,7 +49,7 @@ public class TestPage extends WebPage {
 
     public TestPage(final PageParameters parameters) {
         super(parameters);
-        if(parameters.get("viewMode").isNull()){
+        if (parameters.get("viewMode").isNull()) {
             viewMode = ViewMode.EDITION;
         } else {
             viewMode = ViewMode.valueOf(parameters.get("viewMode").toString());
@@ -71,7 +72,7 @@ public class TestPage extends WebPage {
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer);
-        UIBuilderWicket.build(ctx, createTipoModel(dicionario), viewMode);
+        singularFormContext.getUIBuilder().build(ctx, createTipoModel(dicionario), viewMode);
         return container;
     }
 

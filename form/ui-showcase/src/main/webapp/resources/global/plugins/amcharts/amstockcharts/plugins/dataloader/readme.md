@@ -1,6 +1,6 @@
 # amCharts Data Loader
 
-Version: 1.0.1
+Version: 1.0.8
 
 
 ## Description
@@ -65,7 +65,7 @@ AmCharts.makeChart( "chartdiv", {
   "dataSets": [{
     ...,
     "dataLoader": {
-      "url": "data.csv"
+      "url": "data.csv",
       "format": "csv",
       "delimiter": ",",       // column separator
       "useColumnNames": true, // use first row for column names
@@ -93,9 +93,10 @@ complete | | Callback function to execute when loader is done
 delimiter | , | [CSV only] a delimiter for columns (use \t for tab delimiters)
 error | | Callback function to execute if file load fails
 format | json | Type of data: json, csv
+headers | | An array of objects with two properties (key and value) to attach to HTTP request
 load | | Callback function to execute when file is successfully loaded (might be invoked multiple times)
 noStyles | false | If set to true no styles will be applied to "Data loading" curtain
-postProcess | | If set to function reference, that function will be called to "post-process" loaded data before passing it on to chart
+postProcess | | If set to function reference, that function will be called to "post-process" loaded data before passing it on to chart. The handler function will receive two parameters: loaded data, Data Loader options
 showErrors | true | Show loading errors in a chart curtain
 showCurtain | true| Show curtain over the chart area when loading data
 reload | 0 | Reload data every X seconds
@@ -154,6 +155,62 @@ var chart = AmCharts.makeChart("chartdiv", {
 
 Sure. You just add a `eventDataLoader` object to your data set. All the same 
 settings apply.
+
+
+## Adding custom headers to HTTP requests
+
+If you want to add additional headers to your data load HTTP requests, use
+"headers" array. Each header is an object with two keys: "key" and "value":
+
+```
+"dataLoader": {
+  "url": "data/serial.json",
+  "format": "json",
+  "headers": [{
+    "key": "x-access-token",
+    "value": "123456789"
+  }]
+}
+```
+
+
+## Manually triggering a reload of all data
+
+Once chart is initialized, you can trigger the reload of all data manually by
+calling `chart.dataLoader.loadData()` function. (replace "chart" with the actual
+variable that holds reference to your chart object)
+
+## Using callback functions
+
+Data Loader can call your own function when certain event happens, like data
+loading is complete, error occurs, etc.
+
+To set custom event handlers, use these config options:
+
+* "complete"
+
+Example:
+
+```
+AmCharts.makeChart( "chartdiv", {
+  ...,
+  "dataSets": [{
+    ...,
+    "dataLoader": {
+      "url": "data.json",
+      "load": function ( options, chart ) {
+        console.log( 'Loaded file: ' + options.url );
+      },
+      "complete": function ( chart ) {
+        console.log( 'Woohoo! Finished loading' );
+      },
+      "error": function ( options, chart ) {
+        console.log( 'Ummm something went wrong loading this file: ' + options.url );
+      }
+    }
+  }]
+} );
+```
 
 
 ## Translating into other languages
@@ -230,6 +287,31 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 
 ## Changelog
+
+### 1.0.8
+* Added "headers" config variable which allows adding custom headers to HTTP requests
+
+### 1.0.7
+* Fixed an issue with the Pie chart when it is being loaded in inactive tab
+
+### 1.0.6
+* Added support for Gauge chart (loads "arrows" array)
+
+### 1.0.5
+* Fixed JS error if periodSelector was not defined in chart config
+* Now all callback functions (complete, error, load) receive additional parameter: chart
+* postProcess function will now have "this" context set to Data Loader object as well as receive chart reference as third paramater
+
+### 1.0.4
+* Added chart.dataLoader.loadData() function which can be used to manually trigger all data reload
+
+### 1.0.3
+* Fixed the bug where defaults were not being applied properly
+* Fixed the bug with translations not being applied properly
+* Cleaned up the code (to pass JSHint validation)
+
+### 1.0.2
+* Fixed the issue with modified Array prototypes
 
 ### 1.0.1
 * Added "complete", "load" and "error" properties that can be set with function handlers to be invoked on load completion, successful file load or failed load respectively

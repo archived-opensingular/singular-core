@@ -13,4 +13,11 @@
     <bean id="uiAdminWicketFilterContext" class="br.net.mirante.singular.wicket.UIAdminWicketFilterContext"/>
     <bean id="myWebApp" class="br.net.mirante.singular.wicket.ShowcaseApplication"/>
 
+    <bean id="singularFormConfig" class="br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl">
+        <property name="serviceRegistry" ref="springServiceRegistry"/>
+    </bean>
+
+    <bean id="springServiceRegistry"
+          class="br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry"/>
+
 </beans>

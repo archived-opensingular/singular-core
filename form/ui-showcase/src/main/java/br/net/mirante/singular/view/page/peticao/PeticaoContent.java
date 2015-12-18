@@ -3,6 +3,8 @@ package br.net.mirante.singular.view.page.peticao;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import br.net.mirante.singular.form.mform.context.SingularFormContext;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -28,8 +30,13 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
 
+import javax.inject.Inject;
+
 public class PeticaoContent extends Content
         implements SingularWicketContainer<PeticaoContent, Void> {
+
+    @Inject
+    private SingularFormContext<UIBuilderWicket, IWicketComponentMapper> singularFormContext;
 
     private Form<?> inputForm = new Form<>("save-form");
     private BSGrid container = new BSGrid("generated");
@@ -61,7 +68,7 @@ public class PeticaoContent extends Content
 
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.buildForEdit(ctx, currentInstance);
+        singularFormContext.getUIBuilder().buildForEdit(ctx, currentInstance);
     }
 
     private BSContainer<?> buildBodyContainer(){

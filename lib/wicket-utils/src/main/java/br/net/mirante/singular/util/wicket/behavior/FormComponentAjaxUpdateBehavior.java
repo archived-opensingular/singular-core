@@ -5,8 +5,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
+import br.net.mirante.singular.lambda.IBiConsumer;
+import br.net.mirante.singular.lambda.ITriConsumer;
 import br.net.mirante.singular.util.wicket.util.WicketEventUtils;
 
 @SuppressWarnings({ "serial" })

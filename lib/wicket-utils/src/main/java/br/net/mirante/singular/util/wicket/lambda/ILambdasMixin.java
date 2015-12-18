@@ -8,6 +8,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.lambda.IPredicate;
+import br.net.mirante.singular.lambda.ISupplier;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.wicket.model.IModel;
 
