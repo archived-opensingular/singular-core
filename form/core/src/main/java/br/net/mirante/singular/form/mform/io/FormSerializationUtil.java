@@ -160,9 +160,9 @@ public class FormSerializationUtil {
             }
             return ((ICompositeInstance) root).getCampo(fs.getFocusFieldPath());
         } catch (Exception e) {
-            String msg = "Erro deseriazando " + fs.getRootType();
+            String msg = "Error when deserializing " + fs.getRootType();
             if (!StringUtils.isBlank(fs.getFocusFieldPath())) {
-                msg += " com subPath '" + fs.getRootType() + '\'';
+                msg += " with subPath '" + fs.getRootType() + '\'';
             }
             throw new SingularFormException(msg + ": " + e.getMessage(), e);
         }
