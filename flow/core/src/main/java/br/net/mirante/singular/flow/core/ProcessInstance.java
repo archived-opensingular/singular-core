@@ -518,9 +518,12 @@ public class ProcessInstance implements Serializable {
             tarefaOrigem.log("Alteração Manual de Estado", "de '" + tarefaOrigem.getName() + "' para '" + task.getName() + "'",
                 null, Flow.getUserIfAvailable(), agora).sendEmail(pessoasAnteriores);
         }
-
+        FlowEngine.initTask(this, task, tarefaNova);
         ExecutionContext execucaoMTask = new ExecutionContext(this, tarefaNova, null);
         task.notifyTaskStart(getLatestTask(task), execucaoMTask);
+        if (task.isImmediateExecution()) {
+            executeTransition();
+        }
     }
 
     /**
