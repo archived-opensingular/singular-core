@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.wicket.mapper.*;
-import br.net.mirante.singular.form.wicket.mapper.RadioMapper;
 import br.net.mirante.singular.form.wicket.mapper.SelectBSMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.*;
 import org.apache.wicket.model.IModel;
