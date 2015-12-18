@@ -20,6 +20,4 @@
     <bean id="springServiceRegistry"
           class="br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry"/>
 
-    <bean id="singularFormContext" factory-bean="singularFormConfig" factory-method="getContext"/>
-
 </beans>

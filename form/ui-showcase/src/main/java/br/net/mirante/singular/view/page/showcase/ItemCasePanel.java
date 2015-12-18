@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -64,7 +65,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private FileDao filePersistence;
 
     @Inject
-    private SingularFormContext<UIBuilderWicket, IWicketComponentMapper> singularFormContext;
+    private SingularFormContextWicket singularFormContext;
 
     private Form<?> inputForm = new Form<>("save-form");
 
