@@ -11,7 +11,7 @@ var Metronic = function() {
 
     var resizeHandlers = [];
 
-    var assetsPath = 'resources/';
+    var assetsPath = '../assets/';
 
     var globalImgPath = 'global/img/';
 
@@ -149,6 +149,7 @@ var Metronic = function() {
                     success: function(res) {
                         Metronic.unblockUI(el);
                         el.html(res);
+                        Metronic.initAjax() // reinitialize elements & plugins for newly loaded content
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
                         Metronic.unblockUI(el);
@@ -390,23 +391,23 @@ var Metronic = function() {
         // portlet tooltips
         $('.portlet > .portlet-title .fullscreen').tooltip({
             container: 'body',
-            title: 'Tela Cheia'
+            title: 'Fullscreen'
         });
         $('.portlet > .portlet-title > .tools > .reload').tooltip({
             container: 'body',
-            title: 'Recarregar'
+            title: 'Reload'
         });
         $('.portlet > .portlet-title > .tools > .remove').tooltip({
             container: 'body',
-            title: 'Remover'
+            title: 'Remove'
         });
         $('.portlet > .portlet-title > .tools > .config').tooltip({
             container: 'body',
-            title: 'Configurações'
+            title: 'Settings'
         });
         $('.portlet > .portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip({
             container: 'body',
-            title: 'Retrair/Expandir'
+            title: 'Collapse/Expand'
         });
     };
 
@@ -496,6 +497,18 @@ var Metronic = function() {
         }
     };
 
+    // Handles counterup plugin wrapper
+    var handleCounterup = function() {
+        if (!$().counterUp) {
+            return;
+        }
+
+        $("[data-counter='counterup']").counterUp({
+            delay: 10,
+            time: 1000
+        });
+    };
+
     // Fix input placeholder issue for IE8 and IE9
     var handleFixInputPlaceholderForIE = function() {
         //fix html5 placeholder attribute for ie7 & ie8
@@ -526,15 +539,17 @@ var Metronic = function() {
     // Handle Select2 Dropdowns
     var handleSelect2 = function() {
         if ($().select2) {
+            $.fn.select2.defaults.set("theme", "bootstrap");
             $('.select2me').select2({
                 placeholder: "Select",
+                width: 'auto', 
                 allowClear: true
             });
         }
     };
 
     // handle group element heights
-    var handleHeight = function() {
+   var handleHeight = function() {
        $('[data-auto-height]').each(function() {
             var parent = $(this);
             var items = $('[data-height]', parent);
@@ -564,9 +579,13 @@ var Metronic = function() {
                     $(this).css('min-height', height);
                 }
             });
+
+            if(parent.attr('data-related')) {
+                $(parent.attr('data-related')).css('height', parent.height());
+            }
        });       
     }
-
+    
     //* END:CORE HANDLERS *//
 
     return {
@@ -597,9 +616,9 @@ var Metronic = function() {
             handleModals(); // handle modals
             handleBootstrapConfirmation(); // handle bootstrap confirmations
             handleTextareaAutosize(); // handle autosize textareas
+            handleCounterup(); // handle counterup instances
 
             //Handle group element heights
-            handleHeight();
             this.addResizeHandler(handleHeight); // handle auto calculating height on window resize
 
             // Hacks
@@ -642,7 +661,7 @@ var Metronic = function() {
             _runResizeHandlers();
         },
 
-        // wrMetronicer function to scroll(focus) to an element
+        // wrApper function to scroll(focus) to an element
         scrollTo: function(el, offeset) {
             var pos = (el && el.size() > 0) ? el.offset().top : 0;
 
@@ -739,7 +758,7 @@ var Metronic = function() {
             Metronic.scrollTo();
         },
 
-        // wrMetronicer function to  block element(indicate loading)
+        // wrApper function to  block element(indicate loading)
         blockUI: function(options) {
             options = $.extend(true, {}, options);
             var html = '';
@@ -792,7 +811,7 @@ var Metronic = function() {
             }
         },
 
-        // wrMetronicer function to  un-block element(finish loading)
+        // wrApper function to  un-block element(finish loading)
         unblockUI: function(target) {
             if (target) {
                 $(target).unblock({
@@ -834,16 +853,16 @@ var Metronic = function() {
                 icon: "" // put icon before the message
             }, options);
 
-            var id = Metronic.getUniqueID("Metronic_alert");
+            var id = Metronic.getUniqueID("App_alert");
 
-            var html = '<div id="' + id + '" class="Metronic-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
+            var html = '<div id="' + id + '" class="custom-alerts alert alert-' + options.type + ' fade in">' + (options.close ? '<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>' : '') + (options.icon !== "" ? '<i class="fa-lg fa fa-' + options.icon + '"></i>  ' : '') + options.message + '</div>';
 
             if (options.reset) {
-                $('.Metronic-alerts').remove();
+                $('.custom-alerts').remove();
             }
 
             if (!options.container) {
-                if ($('body').hasClass("page-container-bg-solid")) {
+                if ($('body').hasClass("page-container-bg-solid") || $('body').hasClass("page-content-white")) {
                     $('.page-title').after(html);
                 } else {
                     if ($('.page-bar').size() > 0) {
@@ -887,7 +906,7 @@ var Metronic = function() {
             }
         },
 
-        //wrMetronicer function to update/sync jquery uniform checkbox & radios
+        //wrApper function to update/sync jquery uniform checkbox & radios
         updateUniform: function(els) {
             $.uniform.update(els); // update the uniform checkbox & radios UI after the actual input control state changed
         },
@@ -1020,3 +1039,7 @@ var Metronic = function() {
     };
 
 }();
+
+jQuery(document).ready(function() {    
+   Metronic.init(); // init metronic core componets
+});
