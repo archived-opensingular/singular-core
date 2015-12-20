@@ -40,7 +40,7 @@ public class SerializationTest {
 
     @Test public void serializeAndDeserialize(){
         TemplateRepository repo = TemplateRepository.get();
-        TemplateRepository.setDefault(TemplateRepository.get());
+//        TemplateRepository.setDefault(TemplateRepository.get());
         ExamplePackage pacote = null;
         for(TemplateRepository.TemplateEntry entry: repo.getEntries()){
             if(entry.getType().getNome().equals(ExamplePackage.Types.ORDER.name)){

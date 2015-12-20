@@ -2,17 +2,16 @@ package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import br.net.mirante.singular.form.mform.*;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
+
+import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * <p>
@@ -40,6 +39,8 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * @author Daniel C. Bordin
  */
 public class FormSerializationUtil {
+
+    private static DictionaryCache dictionaries = new DictionaryCache();
 
     private FormSerializationUtil() {
     }
@@ -70,15 +71,18 @@ public class FormSerializationUtil {
      * Não serializa a definição do tipo (dicionário). Guarda apenas o nome do
      * tipo.
      *
-     * @param dicionarioResolverSerializable
-     *            Pode ser null. Se for passado também serializa o dicionário
-     *            resolver para facilitar a recuperação.
-     *            </p>
+     * @param dicionarioResolverSerializable Pode ser null. Se for passado também serializa o dicionário
+     *                                       resolver para facilitar a recuperação.
+     *                                       </p>
      */
-    public static FormSerialized toSerializedObject(MInstancia instance, MDicionarioResolverSerializable dicionarioResolverSerializable) {
+    public static FormSerialized toSerializedObject(MInstancia instance,
+                                                    MDicionarioResolverSerializable dicionarioResolverSerializable) {
         FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
+        }
+        if (dicionarioResolverSerializable == null) {
+            fs.setDictionaryId(dictionaries.put(instance.getDicionario()));
         }
         return fs;
     }
@@ -92,7 +96,8 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    private static FormSerialized toSerialized(SDocument document, MDicionarioResolverSerializable dicionaroResolverSerializable) {
+    private static FormSerialized toSerialized(SDocument document,
+                                  MDicionarioResolverSerializable dicionaroResolverSerializable) {
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
         FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml, dicionaroResolverSerializable);
         Map<String, Pair> services = document.getServices();
@@ -140,11 +145,18 @@ public class FormSerializationUtil {
      */
     public static MInstancia toInstance(FormSerialized fs, MDicionarioResolver dicionaryResolver) {
         try {
-            dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
+            MTipo<?> rootType = null;
+                    dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
             if (dicionaryResolver == null) {
-                dicionaryResolver = MDicionarioResolver.getDefault();
+                if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
+                    rootType = dictionaries.get(fs.getDictionaryId()).getTipo(fs.getRootType());
+                }else{
+                    dicionaryResolver = MDicionarioResolver.getDefault();
+                }
             }
-            MTipo<?> rootType = dicionaryResolver.loadType(fs.getRootType());
+            if(rootType == null){
+                rootType = dicionaryResolver.loadType(fs.getRootType());
+            }
             MInstancia root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
             if (fs.getServices() != null) {
                 SDocument document = root.getDocument();
@@ -168,55 +180,5 @@ public class FormSerializationUtil {
         }
     }
 
-    /**
-     * Objeto transitório para guardar uma versão serilizável de MInstance ou
-     * MDocument.
-     *
-     * @author Daniel C. Bordin
-     */
-    @SuppressWarnings("serial")
-    public static final class FormSerialized implements Serializable {
-
-        private final MDicionarioResolverSerializable dicionarioResolver;
-        private final String rootType;
-        private final MElement xml;
-        private String focusFieldPath;
-        private Map<String, Pair> services;
-
-        public FormSerialized(String rootType, MElement xml, 
-            MDicionarioResolverSerializable dicionarioResolver) {
-            this.dicionarioResolver = dicionarioResolver;
-            this.rootType = rootType;
-            this.xml = xml;
-        }
-
-        public String getRootType() {
-            return rootType;
-        }
-
-        public String getFocusFieldPath() {
-            return focusFieldPath;
-        }
-
-        public MElement getXml() {
-            return xml;
-        }
-
-        public void setFocusFieldPath(String focusFieldPath) {
-            this.focusFieldPath = focusFieldPath;
-        }
-
-        public Map<String, Pair> getServices() {
-            return services;
-        }
-
-        public void setServices(Map<String, Pair> services) {
-            this.services = services;
-        }
-
-        public MDicionarioResolverSerializable getDicionarioResolver() {
-            return dicionarioResolver;
-        }
-
-    }
 }
+
