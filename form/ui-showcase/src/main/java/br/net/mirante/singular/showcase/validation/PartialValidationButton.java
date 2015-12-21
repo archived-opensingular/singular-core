@@ -23,7 +23,7 @@ public class PartialValidationButton extends AjaxButton {
         final MInstancia obrigatorio1 = ((MIComposto) instance).getCampo("obrigatorio_1");
         InstanceValidationContext validationContext = new InstanceValidationContext(obrigatorio1);
         //@destacar:fim
-        validationContext.validateAll();
+        validationContext.validateSingle();
         WicketFormUtils.associateErrorsToComponents(validationContext, form);
     }
 
