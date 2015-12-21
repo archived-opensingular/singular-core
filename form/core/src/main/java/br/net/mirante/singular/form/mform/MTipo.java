@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -19,9 +20,7 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
-import br.net.mirante.singular.form.validation.ValidationError;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = MPacoteCore.class)
@@ -42,7 +41,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     private MapaResolvedorDefinicaoAtributo atributosResolvidos;
 
     //    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
-    private Map<IInstanceValidator<?>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
+    private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
     private Set<MTipo<?>>                                    dependentTypes;
 
     /**
@@ -382,35 +381,16 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return addInstanceValidator(ValidationErrorLevel.ERROR, validador);
     }
 
-    public MTipo<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<?> validador) {
+    public MTipo<I> addInstanceValidator(ValidationErrorLevel level, IInstanceValidator<I> validador) {
         this.instanceValidators.put(validador, level);
         return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void validateInstance(IInstanceValidatable<?> validatable) {
-        final MInstancia instance = validatable.getInstance();
-
-        final boolean required = Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
-
-        if (instance instanceof ICompositeInstance) {
-            ICompositeInstance comp = (ICompositeInstance) instance;
-            boolean anyRequiredLeafWithNullValue = comp.streamDescendants(false)
-                .filter(it -> !(it instanceof ICompositeInstance))
-                .filter(it -> it.as(MPacoteCore.aspect()).isObrigatorio())
-                .anyMatch(it -> it.getValor() == null);
-            if (anyRequiredLeafWithNullValue)
-                return;
-
-        } else if (required && validatable.getInstance().getValor() == null) {
-            validatable.error(new ValidationError(validatable.getInstance(), ValidationErrorLevel.ERROR, "Obrigatório"));
-            return;
-        }
-
-        for (Map.Entry<IInstanceValidator<?>, ValidationErrorLevel> entry : this.instanceValidators.entrySet()) {
-            validatable.setDefaultLevel(entry.getValue());
-            entry.getKey().validate((IInstanceValidatable) validatable);
-        }
+    public Collection<IInstanceValidator<I>> getValidators() {
+        return instanceValidators.keySet();
+    }
+    public ValidationErrorLevel getValidatorErrorLevel(IInstanceValidator<I> validator) {
+        return instanceValidators.get(validator);
     }
 
     @SuppressWarnings("unchecked")
