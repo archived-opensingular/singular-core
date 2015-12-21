@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.input.core;
+package br.net.mirante.singular.showcase.input.core.select;
 
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -24,7 +24,9 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
         tipoContato.as(AtrBasic::new).label("Contato");
 
 
-        //Select with key values
+        /*
+            Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
+         */
         MTipoSelectItem degreeType = tipoMyForm.addCampo("degree", MTipoSelectItem.class);
         degreeType.as(AtrBasic::new).label("Escolaridade");
         degreeType.withSelectionOf(
@@ -39,7 +41,10 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
             );
         degreeType.withView(MSelecaoPorModalBuscaView::new);
 
-        //Select with key values
+        /*
+            No tipo composto é possível expandir a seleção para exibir outros campos além
+            do valor de descrição, fornecendo maior flexibilidade e abrangência.
+         */
         MTipoSelectItem planetType = tipoMyForm.addCampo("planet",MTipoSelectItem.class);
         planetType.as(AtrBasic::new).label("Planeta Favorito");
         planetType.addCampoDecimal("radius").as(AtrBasic::new).label("Raio");;

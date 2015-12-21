@@ -27,15 +27,28 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
         return null;
     }
 
+    /**
+     * Returns a MILista of the type of the field it will be used.
+     * @param optionsInstance : Current instance of the selection.
+     */
     @Override
     public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
-        List<ExampleFile> files = filePersistence.list();
-        TemplateRepository repo = TemplateRepository.get();
-        MTipo<?> type = repo.getEntries().iterator().next().getType();
-        Optional<MDicionario> dict = repo.loadDicionaryForType(type.getNome());
-        MTipoString tipoString = dict.get().getTipo(MTipoString.class);
-        MILista<?> list = tipoString.novaLista();
-        files.forEach((f) -> list.addValor(f.getId()));
+        MILista<?> list = newMIStringList(optionsInstance);
+        files().forEach((f) -> list.addValor(f.getId()));
         return list;
+    }
+
+    private MILista<?> newMIStringList(MInstancia optionsInstance) {
+        MTipoString tipoString = dictionary(optionsInstance).getTipo(MTipoString.class);
+        return tipoString.novaLista();
+    }
+
+    private MDicionario dictionary(MInstancia optionsInstance) {
+        MTipo<?> type = optionsInstance.getMTipo();
+        return type.getDicionario();
+    }
+
+    private List<ExampleFile> files() {
+        return filePersistence.list();
     }
 }
