@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreSelectOtherTypesPackage extends MPacote {
 
@@ -30,8 +29,7 @@ public class CaseInputCoreSelectOtherTypesPackage extends MPacote {
         tipoInteiro.withView(MSelecaoPorSelectView::new);
         
         //Select with composite Dates
-        MTipoSelectItem finishField = tipoMyForm.addCampo("finish",
-                                                        MTipoSelectItem.class);
+        MTipoComposto finishField = tipoMyForm.addCampoComposto("finish");
         finishField.withSelectionOf(
             finishField.create(DateTime.now().toDate(),"Today"),
             finishField.create(DateTime.now().minusDays(1).toDate(),"Yesterday"),

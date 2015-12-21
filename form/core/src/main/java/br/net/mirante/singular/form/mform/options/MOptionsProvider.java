@@ -69,8 +69,8 @@ public interface MOptionsProvider extends Serializable {
 
     public default boolean containsValue(
             MILista<? extends MInstancia> defaultOptions, MInstancia value) {
-        if(value instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) value;
+        if(value instanceof SelectionableInstance){
+            SelectionableInstance item = (SelectionableInstance) value;
             if(item.getFieldId() == null){
                 return true;
             }

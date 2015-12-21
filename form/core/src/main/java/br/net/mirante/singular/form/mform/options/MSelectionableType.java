@@ -10,12 +10,12 @@ public interface MSelectionableType<BASE extends MTipo> {
     
     public void setProviderOpcoes(MOptionsProvider p);
 
-    default public MOptionsProvider selectionOf(Collection<MISelectItem> opcoes) {
+    default public MOptionsProvider selectionOf(Collection<SelectionableInstance> opcoes) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, opcoes));
         return getProviderOpcoes();
     }
 
-    default public MOptionsProvider selectionOf(MISelectItem ... opcoes) {
+    default public MOptionsProvider selectionOf(SelectionableInstance ... opcoes) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, opcoes));
         return getProviderOpcoes();
     }
@@ -27,7 +27,7 @@ public interface MSelectionableType<BASE extends MTipo> {
      * @param options Collection of values to be used.
      * @return <code>this</code>
      */
-    default public BASE withSelectionOf(Collection<MISelectItem> options) {
+    default public BASE withSelectionOf(Collection<SelectionableInstance> options) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((MTipo<?>)this, options));
         return (BASE) this;
     }
@@ -39,7 +39,7 @@ public interface MSelectionableType<BASE extends MTipo> {
      * @param options Collection of values to be used.
      * @return <code>this</code>
      */
-    default public BASE withSelectionOf(MISelectItem ... options) {
+    default public BASE withSelectionOf(SelectionableInstance ... options) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE)this, options));
         return (BASE) this;
     }

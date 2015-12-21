@@ -3,12 +3,12 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.options.SelectionableInstance;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 @SuppressWarnings({ "serial", "rawtypes" })
@@ -41,8 +41,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
             Object value = ((MISimples) target).getValor();
             String v = value != null ? value.toString() : null;
             return (T) new SelectOption<String>(v, v, target);
-        }else if (target instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) target;
+        }else if (target instanceof SelectionableInstance){
+            SelectionableInstance item = (SelectionableInstance) target;
             return (T) new SelectOption<String>(item.getFieldId(), item.getFieldValue(), target);
         }
         return null;
@@ -67,12 +67,12 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
             if(object != null) value = object.getValue();
             instance.setValor(value);
         }
-        else if(instance instanceof MISelectItem) {
-            MISelectItem item = (MISelectItem) instance;
+        else if(instance instanceof SelectionableInstance) {
+            SelectionableInstance item = (SelectionableInstance) instance;
             if(object != null){
-                item.setValorItem(object.getKey(), object.getValue());
+                item.setValue(object.getKey(), object.getValue());
             }else{
-                item.setValorItem(null, null); 
+                item.setValue(null, null);
             }
         }
     }

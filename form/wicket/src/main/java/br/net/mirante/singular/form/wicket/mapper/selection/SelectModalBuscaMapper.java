@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
+import br.net.mirante.singular.form.mform.options.SelectionableInstance;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -41,8 +41,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         if (mi != null){
             if(mi instanceof MISimples && mi.getValor() != null) {
                 return String.valueOf(mi.getValor());
-            }else if(mi instanceof MISelectItem) {
-                return ((MISelectItem)mi).getFieldValue();
+            }else if(mi instanceof SelectionableInstance) {
+                return ((SelectionableInstance)mi).getFieldValue();
             }
         }
         return StringUtils.EMPTY;

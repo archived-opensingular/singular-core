@@ -14,23 +14,21 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
 
-    MTipoSelectItem selectType;
+    MTipoComposto selectType;
     
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
-        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
+        selectType = (MTipoComposto) group.addCampoComposto("originUF");
         selectType.withKeyValueField("chave","valor");
         return selectType;
     }
 
 
-    private MISelectItem newSelectItem(String id, String value) {
+    private MIComposto newSelectItem(String id, String value) {
         return selectType.create(id, value);
     }
 
@@ -56,8 +54,8 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithDanglingOptions() {
         setupPage();
-        MISelectItem value = currentSelectionInstance();
-        value.setValorItem("GO", "Goias");
+        MIComposto value = currentSelectionInstance();
+        value.setValue("GO", "Goias");
         selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
             newSelectItem("SP", "São Paulo"));
         buildPage();
@@ -79,7 +77,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
-        MISelectItem value = currentSelectionInstance();
+        MIComposto value = currentSelectionInstance();
         assertThat(value.getFieldId()).isEqualTo("DF");
     }
     
@@ -91,14 +89,14 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
-        MISelectItem value = currentSelectionInstance();
+        MIComposto value = currentSelectionInstance();
         assertThat(value.getFieldId()).isEqualTo("DF");
     }
 
 
-    private MISelectItem currentSelectionInstance() {
+    private MIComposto currentSelectionInstance() {
         MIComposto currentInstance = page.getCurrentInstance();
-        MISelectItem value = (MISelectItem) currentInstance.getAllFields().iterator().next();
+        MIComposto value = (MIComposto) currentInstance.getAllFields().iterator().next();
         return value;
     }
     

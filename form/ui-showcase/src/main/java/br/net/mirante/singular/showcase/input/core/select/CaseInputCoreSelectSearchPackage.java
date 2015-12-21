@@ -1,13 +1,12 @@
 package br.net.mirante.singular.showcase.input.core.select;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreSelectSearchPackage extends MPacote {
 
@@ -27,7 +26,7 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
         /*
             Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
          */
-        MTipoSelectItem degreeType = tipoMyForm.addCampo("degree", MTipoSelectItem.class);
+        MTipoComposto<?> degreeType = tipoMyForm.addCampoComposto("degree");
         degreeType.as(AtrBasic::new).label("Escolaridade");
         degreeType.withSelectionOf(
             degreeType.create("Alfabetizado","Alfabetização"),
@@ -45,7 +44,7 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
             No tipo composto é possível expandir a seleção para exibir outros campos além
             do valor de descrição, fornecendo maior flexibilidade e abrangência.
          */
-        MTipoSelectItem planetType = tipoMyForm.addCampo("planet",MTipoSelectItem.class);
+        MTipoComposto<?> planetType = tipoMyForm.addCampoComposto("planet");
         planetType.as(AtrBasic::new).label("Planeta Favorito");
         planetType.addCampoDecimal("radius").as(AtrBasic::new).label("Raio");;
         planetType.addCampoString("atmosphericComposition").as(AtrBasic::new).label("Composição Atmosférica");;
@@ -59,9 +58,9 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
                 .setAdditionalFields("radius","atmosphericComposition");
     }
 
-    private MISelectItem createPlanet(MTipoSelectItem planetType, String position, String name,
+    private MIComposto createPlanet(MTipoComposto<?> planetType, String position, String name,
                                       double radius, String composition) {
-        MISelectItem item = planetType.create(position, name);
+        MIComposto item = planetType.create(position, name);
         item.setValor("radius", radius);
         item.setValor("atmosphericComposition", composition);
         return item;

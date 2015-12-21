@@ -5,13 +5,10 @@ import static com.google.common.collect.Lists.newArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.options.SelectionableInstance;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 
@@ -43,9 +40,13 @@ public class WicketSelectionUtils {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static List<SelectOption> createSelectOptions(IModel<? extends MInstancia> model, MOptionsProvider provider) {
         List<SelectOption> opcoesValue;
-        MILista<MISelectItem> rawOptions = (MILista<MISelectItem>) provider.listAvailableOptions(model.getObject());
+        MILista<MIComposto> rawOptions = (MILista<MIComposto>) provider.listAvailableOptions(model.getObject());
         opcoesValue = rawOptions.getValores().stream()
-                .map((x) -> new SelectOption<>(x.getFieldId(), x.getFieldValue(), x)).collect(Collectors.toList());
+                .map((o) -> {
+                    SelectionableInstance x = (SelectionableInstance) o;
+                    return new SelectOption<>(x.getFieldId(), x.getFieldValue(), (MInstancia) x);
+                }
+                ).collect(Collectors.toList());
         return opcoesValue;
     }
 }

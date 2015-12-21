@@ -1,10 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
+import br.net.mirante.singular.form.mform.options.SelectionableInstance;
 import org.apache.wicket.model.IModel;
 
 import java.util.Map;
@@ -35,8 +36,8 @@ public class SelectOption<T> implements IModel {
 //        this.target = null;
 //        if(target != null) {this.target = FormSerializationUtil.toSerializedObject(target);}
 //        this.target = target;
-        if(target instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) target;
+        if(target instanceof MIComposto){
+            MIComposto item = (MIComposto) target;
             for(MInstancia i :item.getAllChildren()){
                 otherFields.put(i.getNome(), i.getValor());
             }

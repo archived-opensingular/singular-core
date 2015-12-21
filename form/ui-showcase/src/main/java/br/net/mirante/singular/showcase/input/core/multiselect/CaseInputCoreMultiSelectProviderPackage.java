@@ -7,8 +7,6 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class CaseInputCoreMultiSelectProviderPackage extends MPacote {
     @Override

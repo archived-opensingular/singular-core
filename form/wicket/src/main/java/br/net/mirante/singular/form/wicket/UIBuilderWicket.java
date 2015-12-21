@@ -27,7 +27,6 @@ import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
@@ -97,9 +96,9 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         return new ViewMapperRegistry<IWicketComponentMapper>()
                 .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
                 .register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorSelectView.class,           SelectBSMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
+                .register(MTipoComposto.class, MSelecaoPorRadioView.class,            RadioMapper::new)
+                .register(MTipoComposto.class, MSelecaoPorSelectView.class,           SelectBSMapper::new)
+                .register(MTipoComposto.class, MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
                 .register(MTipoBoolean.class,                                           BooleanMapper::new)
                 .register(MTipoInteger.class,                                           IntegerMapper::new)
                 .register(MTipoString.class,                                            StringMapper::new)
