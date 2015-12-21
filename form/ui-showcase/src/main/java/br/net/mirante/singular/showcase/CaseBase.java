@@ -89,4 +89,8 @@ public class CaseBase implements Serializable {
     public List<ItemCasePanel.ItemCaseButton> getBotoes() {
         return botoes;
     }
+
+    public boolean showValidateButton(){
+        return getCaseType().hasAnyValidation();
+    }
 }

@@ -89,15 +89,15 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         updateContainer();
     }
 
-    private WebMarkupContainer buildBlockquote() {
+    private WebMarkupContainer buildHeaderText() {
 
-        WebMarkupContainer blockquote = new WebMarkupContainer("blockquote");
+        WebMarkupContainer headerContainer = new WebMarkupContainer("header");
         String description = caseBase.getObject().getDescriptionHtml().orElse("");
 
-        blockquote.add(new Label("description", $m.ofValue(description)));
-        blockquote.setVisible(!description.isEmpty());
+        headerContainer.add(new Label("description", $m.ofValue(description)));
+        headerContainer.setVisible(!description.isEmpty());
 
-        return blockquote;
+        return headerContainer;
     }
 
     private BSTabPanel buildCodeTabs() {
@@ -146,7 +146,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(buildBlockquote());
+        add(buildHeaderText());
         add(inputForm
                         .add(buildFeedbackPanel())
                         .add(buildButtons())
@@ -219,7 +219,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             final BelverValidationButton bsb = new BelverValidationButton(id, ci) {
                 @Override
                 public boolean isVisible() {
-                    return caseBase.getObject().getCaseType().hasAnyValidation();
+                    return caseBase.getObject().showValidateButton();
                 }
             };
 
