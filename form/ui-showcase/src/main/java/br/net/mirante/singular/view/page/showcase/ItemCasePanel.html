@@ -13,25 +13,16 @@
             </div>
             <br/>
             <div class="form-actions">
-                <button type="submit" class="btn blue" wicket:id="save-btn">
-                    <wicket:message key="label.button.save"/>
-                </button>
-                <button type="submit" class="btn red" wicket:id="validate-btn">
-                    <wicket:message key="label.button.validate"/>
-                </button>
-                <button type="submit" class="btn yellow" wicket:id="visualizar-btn">
-                    <wicket:message key="label.button.view.mode"/>
-                </button>
-                <button type="submit" class="btn yellow" wicket:id="editar-btn">
-                    <wicket:message key="label.button.edit.mode"/>
-                </button>
+                <wicket:fragment wicket:id="buttons">
+                    <input type="button" class="btn" wicket:id="button"/>
+                </wicket:fragment>
             </div>
             <div wicket:id="viewXmlModal" class="portlet-body form">
                 <div wicket:id="xmlCodes"></div>
             </div>
         </form>
         <hr/>
-        <wicket:fragment wicket:id="codes"></wicket:fragment>
+        <wicket:fragment wicket:id="codes"/>
     </div>
 </wicket:panel>
 </html>
