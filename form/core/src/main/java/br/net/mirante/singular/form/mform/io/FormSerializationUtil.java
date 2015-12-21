@@ -2,9 +2,9 @@ package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -32,7 +32,6 @@ import static com.google.common.collect.Maps.newHashMap;
  * {@link MDicionarioResolverSerializable} para também ser serializado junto com
  * os dados. Na volta (deserialização) usa esse resolver que foi serializado
  * junto com os dados:
- * {@link #toInstance(FormSerialized, MDicionarioResolverSerializable)}</li>
  * </ul >
  * </p>
  *
@@ -78,13 +77,21 @@ public class FormSerializationUtil {
     public static FormSerialized toSerializedObject(MInstancia instance,
                                                     MDicionarioResolverSerializable dicionarioResolverSerializable) {
         FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
+        defineFocusField(instance, fs);
+        setDictionaryIfAny(instance, dicionarioResolverSerializable, fs);
+        return fs;
+    }
+
+    private static void defineFocusField(MInstancia instance, FormSerialized fs) {
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
         }
+    }
+
+    private static void setDictionaryIfAny(MInstancia instance, MDicionarioResolverSerializable dicionarioResolverSerializable, FormSerialized fs) {
         if (dicionarioResolverSerializable == null) {
             fs.setDictionaryId(dictionaries.put(instance.getDicionario()));
         }
-        return fs;
     }
 
     /**
@@ -100,14 +107,18 @@ public class FormSerializationUtil {
                                   MDicionarioResolverSerializable dicionaroResolverSerializable) {
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
         FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml, dicionaroResolverSerializable);
+        serializeServices(document, fs);
+        return fs;
+    }
+
+    private static void serializeServices(SDocument document, FormSerialized fs) {
         Map<String, Pair> services = document.getServices();
         if (!services.isEmpty()) {
             if (!(services instanceof Serializable)) {
-                throw new SingularFormException("O mapa de serviço do document não é serializável");
+                throw new SingularFormException("The Document service map is not Serializable.");
             }
             fs.setServices(services);
         }
-        return fs;
     }
 
     /**
@@ -134,7 +145,7 @@ public class FormSerializationUtil {
      *
      * @param fs
      *            Dado a ser deserializado
-     * @param dicionaryLoader
+     * @param dictionaryResolver
      *            Fornece as definições dos tipos (dicionário) para ser usado no
      *            contexto da recuperação. Senão for informado, tenta usar a
      *            versão serializada ou versão default
@@ -143,41 +154,51 @@ public class FormSerializationUtil {
      * @exception SingularFormException
      *                Senão encontrar o dicionário ou tipo necessário.
      */
-    public static MInstancia toInstance(FormSerialized fs, MDicionarioResolver dicionaryResolver) {
+    public static MInstancia toInstance(FormSerialized fs, MDicionarioResolver dictionaryResolver) {
         try {
-            MTipo<?> rootType = null;
-                    dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
-            if (dicionaryResolver == null) {
-                if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
-                    rootType = dictionaries.get(fs.getDictionaryId()).getTipo(fs.getRootType());
-                }else{
-                    dicionaryResolver = MDicionarioResolver.getDefault();
-                }
-            }
-            if(rootType == null){
-                rootType = dicionaryResolver.loadType(fs.getRootType());
-            }
+            MTipo<?> rootType = defineRootType(fs, dictionaryResolver);
             MInstancia root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
-            if (fs.getServices() != null) {
-                SDocument document = root.getDocument();
-                fs.getServices().entrySet().stream()
-                    .forEach(entry -> {
-                        Pair p = entry.getValue();
-                        document.bindLocalService(entry.getKey(), p.type, p.provider);
-                        });
-            }
-
-            if (StringUtils.isBlank(fs.getFocusFieldPath())) {
-                return root;
-            }
-            return ((ICompositeInstance) root).getCampo(fs.getFocusFieldPath());
+            deserializeServices(fs.getServices(), root.getDocument());
+            return defineRoot(fs, root);
         } catch (Exception e) {
-            String msg = "Error when deserializing " + fs.getRootType();
-            if (!StringUtils.isBlank(fs.getFocusFieldPath())) {
-                msg += " with subPath '" + fs.getRootType() + '\'';
-            }
-            throw new SingularFormException(msg + ": " + e.getMessage(), e);
+            throw deserializingError(fs, e);
         }
+    }
+
+    private static MTipo<?> defineRootType(FormSerialized fs, MDicionarioResolver dicionaryResolver) {
+        dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
+        if (dicionaryResolver == null) {
+            if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
+                return dictionaries.get(fs.getDictionaryId()).getTipo(fs.getRootType());
+            }else{
+                dicionaryResolver = MDicionarioResolver.getDefault();
+            }
+        }
+        return dicionaryResolver.loadType(fs.getRootType());
+    }
+
+    private static void deserializeServices(Map<String, Pair> services, SDocument document) {
+        if (services != null) {
+            services.entrySet().stream().forEach(entry -> bindService(document, entry));
+        }
+    }
+
+    private static void bindService(SDocument document, Map.Entry<String, Pair> entry) {
+        Pair p = entry.getValue();
+        document.bindLocalService(entry.getKey(), p.type, p.provider);
+    }
+
+    private static MInstancia defineRoot(FormSerialized fs, MInstancia root) {
+        if (StringUtils.isBlank(fs.getFocusFieldPath())) { return root; }
+        return ((ICompositeInstance) root).getCampo(fs.getFocusFieldPath());
+    }
+
+    private static SingularFormException deserializingError(FormSerialized fs, Exception e) {
+        String msg = "Error when deserializing " + fs.getRootType();
+        if (!StringUtils.isBlank(fs.getFocusFieldPath())) {
+            msg += " with subPath '" + fs.getRootType() + '\'';
+        }
+        return new SingularFormException(msg, e);
     }
 
 }
