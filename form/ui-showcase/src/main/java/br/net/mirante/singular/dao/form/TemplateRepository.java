@@ -22,6 +22,7 @@ public class TemplateRepository extends MDicionarioResolver {
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     static {
+        TemplateRepository.setDefault(TemplateRepository.get());
     }
 
     public static TemplateRepository get() {

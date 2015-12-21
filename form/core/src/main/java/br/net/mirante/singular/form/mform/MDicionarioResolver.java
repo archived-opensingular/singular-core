@@ -81,4 +81,19 @@ public abstract class MDicionarioResolver {
     public final MTipo<?> loadType(String typeName) {
         return loadDicionaryForTypeOrException(typeName).getTipo(typeName);
     }
+
+    /**
+     * Creates a resolver that always return the same dictionary.
+     *
+     * @param onlyDict MDicionario to be returned.
+     * @return MDicionarioResolver that always return onlyDict.
+     */
+    public static MDicionarioResolver of(final MDicionario onlyDict){
+        return new MDicionarioResolver(){
+            @Override
+            public Optional<MDicionario> loadDicionaryForType(String typeName) {
+                return Optional.of(onlyDict);
+            }
+        };
+    }
 }

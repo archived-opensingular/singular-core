@@ -26,7 +26,8 @@ public class MformPersistenciaXML {
 
     public static <T extends MInstancia> T fromXML(MTipo<T> tipo, MElement xml) {
         T novo = tipo.novaInstancia();
-        Integer lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID);
+        Integer lastId = 0;
+        if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
 
         // Colocar em modo de não geraçao de IDs
         novo.getDocument().setLastId(-1);

@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view.page.processo;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -8,7 +10,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.NonCachingImage;
-import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -26,6 +28,7 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.view.template.Content;
 
 public class ProcessosContent extends Content implements SingularWicketContainer<ProcessosContent, Void> {
@@ -93,8 +96,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                         })
                         .appendAction(getMessage("label.table.column.detail"), Icone.REDO, (target, model) -> {
                             setResponsePage(ProcessosPage.class,
-                                    new PageParameters().add(
-                                            ProcessosPage.PROCESS_DEFINITION_ID_PARAM, model.getObject().getCod()));
+                                    new PageParameters().add(Content.PROCESS_DEFINITION_COD_PARAM, model.getObject().getSigla()));
                         }))
                 .build("processos"));
 
@@ -114,7 +116,12 @@ public class ProcessosContent extends Content implements SingularWicketContainer
 
     @Override
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
-        return new Fragment(id, "breadcrumbProcess", this);
+        RepeatingView breadCrumb = new RepeatingView(id);
+        
+        breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
+            urlFor(DashboardPage.class, new PageParameters()).toString(), 
+            getString("breadcrumb.dashboard")));
+        return breadCrumb;
     }
 
     @Override
@@ -124,6 +131,6 @@ public class ProcessosContent extends Content implements SingularWicketContainer
 
     @Override
     protected IModel<?> getContentSubtitlelModel() {
-        return new ResourceModel("label.content.subtitle");
+        return $m.ofValue();
     }
 }

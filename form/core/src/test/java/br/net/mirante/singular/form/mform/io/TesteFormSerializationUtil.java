@@ -1,11 +1,6 @@
 package br.net.mirante.singular.form.mform.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
+import static org.fest.assertions.api.Assertions.assertThat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,27 +13,18 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MDicionarioLoader;
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
+
+import static org.junit.Assert.*;
 
 public class TesteFormSerializationUtil {
 
@@ -148,7 +134,7 @@ public class TesteFormSerializationUtil {
             pacote.createTipo("endereco", MTipoString.class);
         });
         MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
-        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+//        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
 
         MDicionarioResolver.setDefault(loader);
         testSerializacao(instancia, null);
@@ -161,7 +147,7 @@ public class TesteFormSerializationUtil {
         MInstancia instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
-        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+//        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
 
         testSerializacaoComResolverSerializado(instancia, resolver);
     }
@@ -217,6 +203,35 @@ public class TesteFormSerializationUtil {
         assertEquals("City", instancia2.getCampo("cidade").as(AtrBasic.class).getLabel());
 
     }
+
+    @Test public void serializationAndDeserializationAreIndempontent(){
+        MDicionario dict = MDicionario.create();
+        MPacoteTesteContatos pkt = dict.carregarPacote(MPacoteTesteContatos.class);
+        MIComposto bruce = pkt.contato.novaInstancia();
+        bruce.setValor("identificacao.nome","Bruce");
+        bruce.setValor("identificacao.sobrenome","Wayne");
+        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
+        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
+        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
+    }
+
+    @Test public void cachesDictionaryForDeserialization(){
+        MDicionario dict1 = MDicionario.create();
+        MPacoteTesteContatos pkt = dict1.carregarPacote(MPacoteTesteContatos.class);
+        MIComposto bruce = pkt.contato.novaInstancia();
+        bruce.setValor("identificacao.nome","Bruce");
+
+        MDicionario dict2 = MDicionario.create();
+        MPacoteTesteContatos pkt2 = dict2.carregarPacote(MPacoteTesteContatos.class);
+        MIComposto clark = pkt2.contato.novaInstancia();
+        clark.setValor("identificacao.nome","Clark");
+
+        FormSerialized fsBruce = FormSerializationUtil.toSerializedObject(bruce);
+        FormSerialized fsClark = FormSerializationUtil.toSerializedObject(clark);
+        MInstancia deBruce = FormSerializationUtil.toInstance(fsBruce);
+        assertThat(deBruce.getDicionario()).isSameAs(dict1);
+    }
+
 
     @SuppressWarnings("serial")
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {

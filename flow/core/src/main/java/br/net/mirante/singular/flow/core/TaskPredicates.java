@@ -14,7 +14,7 @@ public class TaskPredicates {
     }
 
     public static ITaskPredicate timeLimitInDays(final int numberOfDays) {
-        TaskPredicateImpl taskPredicateImpl = new TaskPredicateImpl("Prazo Extrapolado", (taskInstance) -> {
+        TaskPredicateImpl taskPredicateImpl = new TaskPredicateImpl("Prazo Extrapolado "+numberOfDays+" dias", (taskInstance) -> {
             Date date = taskInstance.getTargetEndDate();
             if (date != null) {
                 return Days.daysBetween(new DateTime(date), DateTime.now()).getDays() > numberOfDays;

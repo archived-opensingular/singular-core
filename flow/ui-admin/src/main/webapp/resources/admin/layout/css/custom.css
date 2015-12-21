@@ -61,3 +61,38 @@ table.dataTable thead th > a {
     width: 120px;
     margin-left: -120px;
 }
+
+/* Cubic Bezier Transition */
+.todo-main-header {
+  margin-top: -20px; }
+  .todo-main-header > h3 {
+    font-weight: 400;
+    font-size: 22px;
+    margin-right: 1em;
+    display: inline-block;
+    color: #3b464f; }
+  .todo-main-header > .todo-breadcrumb {
+    border-left: 1px solid;
+    border-color: #dae3eb;
+    padding: 0.5em 2em;
+    display: inline-block;
+    margin-top: 17px; }
+    .todo-main-header > .todo-breadcrumb > li {
+      display: inline-block;
+      font-size: 11px; }
+      .todo-main-header > .todo-breadcrumb > li > a {
+        color: #77838d;
+        text-transform: uppercase;
+        text-decoration: none; }
+        .todo-main-header > .todo-breadcrumb > li > a:hover {
+          color: #337ab7;
+          text-decoration: none; }
+      .todo-main-header > .todo-breadcrumb > li > .todo-active {
+        color: #49a7fa; }
+      .todo-main-header > .todo-breadcrumb > li:before {
+        content: "\002022";
+        color: #b6c1cb;
+        margin: 0 1em; }
+      .todo-main-header > .todo-breadcrumb > li:first-child:before {
+        content: "";
+        margin: 0; }

@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
+import com.google.common.base.Joiner;
+
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessInstance;
-import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityProcessVersion;
+import br.net.mirante.singular.flow.core.entity.IEntityRoleDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityRoleInstance;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskInstance;
@@ -20,16 +22,14 @@ import br.net.mirante.singular.flow.core.variable.VarDefinition;
 import br.net.mirante.singular.flow.core.variable.VarInstance;
 import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 
-import com.google.common.base.Joiner;
-
 class FlowEngine {
 
     public static TaskInstance start(ProcessInstance instancia, VarInstanceMap<?> paramIn) {
         instancia.validadeStart();
-        return updateEstado(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
+        return updateState(instancia, null, null, instancia.getProcessDefinition().getFlowMap().getStartTask(), paramIn);
     }
 
-    private static <P extends ProcessInstance> TaskInstance updateEstado(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
+    private static <P extends ProcessInstance> TaskInstance updateState(P instancia, TaskInstance tarefaOrigem, MTransition transicaoOrigem,
         MTask<?> taskDestino, VarInstanceMap<?> paramIn) {
         boolean primeiroLoop = true;
         while (true) {
@@ -46,49 +46,21 @@ class FlowEngine {
 
             getPersistenceService().flushSession();
             if (!taskDestino.isImmediateExecution()) {
-                if (taskDestino.isWait()) {
-                    final MTaskWait mTaskWait = (MTaskWait) taskDestino;
-                    if (mTaskWait.hasExecutionDateStrategy()) {
-                        final Date dataExecucao = mTaskWait.getExecutionDate(instancia, instanciaTarefa);
-                        instanciaTarefa.setTargetEndDate(dataExecucao);
-                        if (dataExecucao.before(new Date())) {
-                            instancia.executeTransition();
-                        }
-                    } else if (mTaskWait.getTargetDateExecutionStrategy() != null) {
-                        Date alvo = mTaskWait.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
-                        if (alvo != null) {
-                            instanciaTarefa.setTargetEndDate(alvo);
-                        }
-                    }
-                } else if (taskDestino.isPeople()) {
-                    final MTaskPeople taskPessoa = (MTaskPeople) taskDestino;
-                    final TaskAccessStrategy<ProcessInstance> estrategia = taskPessoa.getAccessStrategy();
-                    if (estrategia != null) {
-                        MUser pessoa = estrategia.getAutomaticAllocatedUser(instancia, instanciaTarefa);
-                        if (pessoa != null && Flow.canBeAllocated(pessoa)) {
-                            instanciaTarefa.relocateTask(null, pessoa, estrategia.isNotifyAutomaticAllocation(instancia, instanciaTarefa), null);
-                        }
-                    }
-                    final BiFunction<ProcessInstance, TaskInstance, Date> estrategiaData = taskPessoa.getTargetDateExecutionStrategy();
-                    if (estrategiaData != null) {
-                        Date alvo = estrategiaData.apply(instancia, instanciaTarefa);
-                        if (alvo != null) {
-                            instanciaTarefa.setTargetEndDate(alvo);
-                        }
-                    }
-                    if (transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
-                        for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
-                            if (papel.isAutomaticUserAllocation()) {
-                                MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
-                                    instanciaTarefa);
-                                Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
-                                        + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
+                initTask(instancia, taskDestino, instanciaTarefa);
+                
+                if (taskDestino.isPeople() && transicaoOrigem != null && transicaoOrigem.hasAutomaticRoleUsersToSet()) {
+                    for (MProcessRole papel : transicaoOrigem.getRolesToDefine()) {
+                        if (papel.isAutomaticUserAllocation()) {
+                            MUser pessoa = papel.getUserRoleSettingStrategy().getAutomaticAllocatedUser(instancia,
+                                instanciaTarefa);
+                            Objects.requireNonNull(pessoa, "Não foi possível determinar a pessoa com o papel " + papel.getName()
+                                    + " para " + instancia.getFullId() + " na transição " + transicaoOrigem.getName());
 
-                                instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
-                            }
+                            instancia.addOrReplaceUserRole(papel.getAbbreviation(), pessoa);
                         }
                     }
                 }
+                
                 final ExecutionContext execucaoTask = new ExecutionContext(instancia, tarefaOrigem, paramIn);
                 if (transicaoOrigem != null) {
                     validarParametrosInput(instancia, transicaoOrigem, paramIn);
@@ -116,6 +88,40 @@ class FlowEngine {
         }
     }
 
+    public static <P extends ProcessInstance> void initTask(P instancia, MTask<?> taskDestino, final TaskInstance instanciaTarefa) {
+        if (taskDestino.isWait()) {
+            final MTaskWait mTaskWait = (MTaskWait) taskDestino;
+            if (mTaskWait.hasExecutionDateStrategy()) {
+                final Date dataExecucao = mTaskWait.getExecutionDate(instancia, instanciaTarefa);
+                instanciaTarefa.setTargetEndDate(dataExecucao);
+                if (dataExecucao.before(new Date())) {
+                    instancia.executeTransition();
+                }
+            } else if (mTaskWait.getTargetDateExecutionStrategy() != null) {
+                Date alvo = mTaskWait.getTargetDateExecutionStrategy().apply(instancia, instanciaTarefa);
+                if (alvo != null) {
+                    instanciaTarefa.setTargetEndDate(alvo);
+                }
+            }
+        } else if (taskDestino.isPeople()) {
+            final MTaskPeople taskPessoa = (MTaskPeople) taskDestino;
+            final TaskAccessStrategy<ProcessInstance> estrategia = taskPessoa.getAccessStrategy();
+            if (estrategia != null) {
+                MUser pessoa = estrategia.getAutomaticAllocatedUser(instancia, instanciaTarefa);
+                if (pessoa != null && Flow.canBeAllocated(pessoa)) {
+                    instanciaTarefa.relocateTask(null, pessoa, estrategia.isNotifyAutomaticAllocation(instancia, instanciaTarefa), null);
+                }
+            }
+            final BiFunction<ProcessInstance, TaskInstance, Date> estrategiaData = taskPessoa.getTargetDateExecutionStrategy();
+            if (estrategiaData != null) {
+                Date alvo = estrategiaData.apply(instancia, instanciaTarefa);
+                if (alvo != null) {
+                    instanciaTarefa.setTargetEndDate(alvo);
+                }
+            }
+        }
+    }
+
     public static void executeScheduledTransition(MTaskJava taskJava, ProcessInstance instancia) {
         final ExecutionContext execucaoTask = new ExecutionContext(instancia, instancia.getCurrentTask(), null);
         instancia.setExecutionContext(execucaoTask);
@@ -134,7 +140,7 @@ class FlowEngine {
 
     static TaskInstance executeTransition(TaskInstance tarefaAtual, String transitionName, VarInstanceMap<?> param) {
         MTransition transicao = searchTransition(tarefaAtual, transitionName);
-        return updateEstado(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
+        return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 
     private static MTransition searchTransition(TaskInstance tarefaAtual, String nomeTransicao) {

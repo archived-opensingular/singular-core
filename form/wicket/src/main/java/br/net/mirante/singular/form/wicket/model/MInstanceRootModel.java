@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.event.MInstanceEvent;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
+import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
 
 /**
