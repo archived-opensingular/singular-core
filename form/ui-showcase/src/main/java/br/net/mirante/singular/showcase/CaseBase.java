@@ -8,7 +8,6 @@ import br.net.mirante.singular.view.page.showcase.ItemCasePanel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,7 @@ public class CaseBase implements Serializable {
     private final String subCaseName;
     private String descriptionHtml;
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
+    private final List<ResourceRef> aditionalSources = new ArrayList<>();
 
     public CaseBase(String componentName) {
         this(componentName, null);
@@ -83,7 +83,7 @@ public class CaseBase implements Serializable {
     }
 
     public List<ResourceRef> getAditionalSources() {
-        return Collections.emptyList();
+        return aditionalSources;
     }
 
     public List<ItemCasePanel.ItemCaseButton> getBotoes() {
