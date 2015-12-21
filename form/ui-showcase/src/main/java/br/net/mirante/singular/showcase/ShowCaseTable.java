@@ -2,6 +2,8 @@ package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
+import br.net.mirante.singular.showcase.input.core.multiselect.*;
+import br.net.mirante.singular.showcase.input.core.select.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
 import br.net.mirante.singular.showcase.layout.CaseGrid;
@@ -34,10 +36,12 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
             .addCase(CaseInputCoreSelectOtherTypes.class)
+            .addCase(CaseInputCoreSelectProvider.class)
             .addCase(CaseInputCoreMultiSelectCombo.class)
             .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
             .addCase(CaseInputCoreMultiSelectDefault.class)
+            .addCase(CaseInputCoreMultiSelectProvider.class)
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)

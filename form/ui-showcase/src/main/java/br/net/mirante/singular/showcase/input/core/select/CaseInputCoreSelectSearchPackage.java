@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.input.core;
+package br.net.mirante.singular.showcase.input.core.select;
 
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;

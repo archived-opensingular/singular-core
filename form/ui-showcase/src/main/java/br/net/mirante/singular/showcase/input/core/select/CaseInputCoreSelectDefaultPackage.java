@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.input.core;
+package br.net.mirante.singular.showcase.input.core.select;
 
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
@@ -25,10 +25,6 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         
         addSelection(tipoMyForm, 3, false);
         addSelection(tipoMyForm, 10, false);
-        
-        MTipoString tipoSelection = tipoMyForm.addCampoString("opcoesDeArquivo");
-        tipoSelection.withSelectionFromProvider("filesChoiceProvider");
-        tipoSelection.as(AtrBasic::new).label("Seleção de Arquivos Persistidos");
         
         MTipoSelectItem ingredienteQuimico = tipoMyForm.addCampo("ingredienteQuimico",
             MTipoSelectItem.class);
