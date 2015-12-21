@@ -14,27 +14,8 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addSelection(tipoMyForm, 3, true);
-        
-        MTipoSelectItem sexo = tipoMyForm.addCampo("sexo",
-            MTipoSelectItem.class,true);
-        sexo.withSelectionOf(
-            sexo.create("M", "Masculino"),
-            sexo.create("F", "Feminino"),
-            sexo.create("X", "Não Declarar")
-            );
-        
         addSelection(tipoMyForm, 3, false);
         addSelection(tipoMyForm, 10, false);
-        
-        MTipoSelectItem ingredienteQuimico = tipoMyForm.addCampo("ingredienteQuimico",
-            MTipoSelectItem.class);
-        ingredienteQuimico.withSelectionOf(
-            ingredienteQuimico.create("h2o", "Água"),
-            ingredienteQuimico.create("h2o2", "Água Oxigenada"),
-            ingredienteQuimico.create("o2", "Gás Oxigênio"),
-            ingredienteQuimico.create("C12H22O11", "Açúcar")
-            );
-        ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
         
     }
 
