@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.view.page.showcase.ItemCasePanel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ public class CaseBase implements Serializable {
     private final String componentName;
     private final String subCaseName;
     private String descriptionHtml;
-    private List<ResourceRef> aditionalResources;
+    private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
+    private final List<ResourceRef> aditionalSources = new ArrayList<>();
 
     public CaseBase(String componentName) {
         this(componentName, null);
@@ -82,6 +84,14 @@ public class CaseBase implements Serializable {
     }
 
     public List<ResourceRef> getAditionalSources() {
-        return aditionalResources;
+        return aditionalSources;
+    }
+
+    public List<ItemCasePanel.ItemCaseButton> getBotoes() {
+        return botoes;
+    }
+
+    public boolean showValidateButton(){
+        return getCaseType().hasAnyValidation();
     }
 }

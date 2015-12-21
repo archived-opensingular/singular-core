@@ -15,7 +15,7 @@ public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuild
     public void setCustomMappers(Map<Class<? extends MTipo>, Class<IWicketComponentMapper>> customMappers) {
         if (customMappers != null) {
             for (Map.Entry<Class<? extends MTipo>, Class<IWicketComponentMapper>> entry : customMappers.entrySet()) {
-                buildContext.getMAPPERS().register(entry.getKey(), () -> {
+                buildContext.getViewMapperRegistry().register(entry.getKey(), () -> {
                     try {
                         return entry.getValue().newInstance();
                     } catch (Exception e) {

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.input.core;
+package br.net.mirante.singular.showcase.input.core.multiselect;
 
 import br.net.mirante.singular.showcase.CaseBase;
 

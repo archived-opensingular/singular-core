@@ -56,19 +56,19 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
         letter.as(MPacoteBasic.aspect())
             .label("Letter");
         //TODO: Fabs : I'm commenting since this is causing some compilation errros, and I must revisit later.
-//        letter.selectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
+        letter.withSelectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
 
         word.as(MPacoteBasic.aspect())
             .label("Word")
             .dependsOn(letter);
-//        word.withSelectionFromProvider(ins -> {
-//            String prefix = ins.findNearest(letter).get().getValor();
-//            return (prefix == null)
-//                ? ins.getMTipo().novaLista()
-//                : ins.getMTipo().novaLista()
-//                    .addValores(Stream.of(WORDS)
-//                        .filter(s -> s.startsWith(prefix))
-//                        .collect(toList()));
-//        });
+        word.setProviderOpcoes(ins -> {
+            String prefix = ins.findNearest(letter).get().getValor();
+            return (prefix == null)
+                ? ins.getMTipo().novaLista()
+                : ins.getMTipo().novaLista()
+                    .addValores(Stream.of(WORDS)
+                        .filter(s -> s.startsWith(prefix))
+                        .collect(toList()));
+        });
     }
 }

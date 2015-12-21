@@ -111,8 +111,12 @@ public class AtrBasic extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(MPacoteBasic.ATR_TAMANHO_MAXIMO);
     }
 
-    public Boolean isVisivel() {
-        return getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL);
+    public boolean isVisible() {
+        return !Boolean.FALSE.equals(getAlvo().getValorAtributo(MPacoteBasic.ATR_VISIVEL));
     }
-
+    
+    public boolean isEnabled() {
+        return !Boolean.FALSE.equals(getAlvo().getValorAtributo(MPacoteBasic.ATR_ENABLED));
+    }
+    
 }

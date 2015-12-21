@@ -31,9 +31,10 @@ public class ViewMapperRegistry<T> implements Serializable {
     /**
      * Registra o fornecedor para o tipo para quando não for solicitado um view
      * especifica. Seria a factory default.
+     * @return 
      */
-    public void register(Class<? extends MTipo> type, ISupplier<T> factory) {
-        register(type, null, factory);
+    public ViewMapperRegistry<T> register(Class<? extends MTipo> type, ISupplier<T> factory) {
+        return register(type, null, factory);
     }
 
     /**
@@ -42,8 +43,9 @@ public class ViewMapperRegistry<T> implements Serializable {
      *
      * @param viewType
      *            Pode ser null
+     * @return 
      */
-    public void register(Class<? extends MTipo> type, Class<? extends MView> viewType, ISupplier<T> factory) {
+    public ViewMapperRegistry<T> register(Class<? extends MTipo> type, Class<? extends MView> viewType, ISupplier<T> factory) {
         Objects.requireNonNull(factory);
         List<RegisterEntry<T>> list = registry.get(Objects.requireNonNull(type));
         if (list == null) {
@@ -51,6 +53,7 @@ public class ViewMapperRegistry<T> implements Serializable {
             registry.put(type, list);
         }
         list.add(new RegisterEntry<T>(viewType, factory, 100));
+        return this;
     }
 
     /**
