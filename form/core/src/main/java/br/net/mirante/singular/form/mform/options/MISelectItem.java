@@ -2,8 +2,11 @@ package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+
+import java.util.List;
 
 public class MISelectItem extends MIComposto {
     public MISelectItem() {}
@@ -50,7 +53,27 @@ public class MISelectItem extends MIComposto {
         setFieldId(key);
         setFieldValue(value);
     }
-    
+
+    @Override
+    public void setValor(Object value) {
+        if(value instanceof MISelectItem) { setValue((MISelectItem) value);
+        }else if(value instanceof List){    setValue((List) value);
+        }else{                              super.setValor(value);
+        }
+    }
+
+    private void setValue(List<MInstancia> values) {
+        this.setValorItem(valueOf(values.get(0)), valueOf(values.get(1)));
+    }
+
+    private void setValue(MISelectItem item) {
+        this.setValorItem(item.getFieldId(),item.getFieldValue());
+    }
+
+    private Object valueOf(MInstancia instance) {
+        return instance.getValor();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj == null || !(obj instanceof MISelectItem)) return false;

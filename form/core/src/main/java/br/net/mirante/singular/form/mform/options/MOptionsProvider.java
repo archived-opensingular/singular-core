@@ -87,14 +87,7 @@ public interface MOptionsProvider extends Serializable {
     public default void addNewValueUpfront(
         MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         MInstancia newValue = defaultOptions.addNovoAt(0);
-        //TODO [Fabs] : This is becoming very anoying
-        if(newValue instanceof MISimples){
-            newValue.setValor(value.getValor());
-        }else if(newValue instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) value;
-            ((MISelectItem) newValue).setFieldId(item.getFieldId());
-            ((MISelectItem) newValue).setFieldValue(item.getFieldValue());
-        }
+        newValue.setValor(value.getValor());
     }
     
     /**

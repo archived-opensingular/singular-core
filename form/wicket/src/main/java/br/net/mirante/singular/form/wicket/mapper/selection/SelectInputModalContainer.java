@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
@@ -126,10 +127,11 @@ public class SelectInputModalContainer extends BSContainer {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();
-        if(type instanceof MTipoSelectItem){
-            MTipoSelectItem selectType = (MTipoSelectItem) type;
+        if(type instanceof MTipoComposto){
+            MTipoComposto selectType = (MTipoComposto) type;
             for(String field: view.searchFields()){
-                String label = selectType.getCampo(field).as(AtrBasic::new).getLabel();
+                MTipo<?> fieldType = selectType.getCampo(field);
+                String label = fieldType.as(AtrBasic::new).getLabel();
                 builder.appendPropertyColumn(Model.of(label),
                         o -> {
                             return ((SelectOption) o).getOtherField(field);

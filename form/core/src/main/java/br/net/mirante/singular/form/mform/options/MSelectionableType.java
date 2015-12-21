@@ -39,8 +39,8 @@ public interface MSelectionableType<BASE extends MTipo> {
      * @param options Collection of values to be used.
      * @return <code>this</code>
      */
-    default public BASE withSelectionOf(MISelectItem ... opcoes) {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE)this, opcoes));
+    default public BASE withSelectionOf(MISelectItem ... options) {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE)this, options));
         return (BASE) this;
     }
     
