@@ -10,50 +10,37 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
-public class CaseInteractionEnabledVisiblePackage extends MPacote {
+public class CaseInteractionEnabledPackage extends MPacote {
 
     public MTipoComposto<?>          testForm;
     public MTipoBoolean              enabled;
-    public MTipoBoolean              visible;
-    public MTipoBoolean              required;
     public MTipoComposto<MIComposto> record;
     public MTipoString               recordText;
     public MTipoData                 recordDate;
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
+
         super.carregarDefinicoes(pb);
 
         testForm = pb.createTipoComposto("testForm");
 
-        visible = testForm.addCampoBoolean("visible");
         enabled = testForm.addCampoBoolean("enabled");
-        required = testForm.addCampoBoolean("required");
 
         record = testForm.addCampoComposto("record");
         recordText = record.addCampoString("text");
         recordDate = record.addCampoData("date");
 
-        visible
-            .as(MPacoteBasic.aspect()).label("Visible");
-
         enabled
-            .as(MPacoteBasic.aspect()).label("Enabled")
-            .enabled(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false));
-
-        required
-            .as(MPacoteBasic.aspect()).label("Required")
-            .enabled(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false) && ins.findNearestValue(enabled, Boolean.class).orElse(false));
+            .as(MPacoteBasic.aspect()).label("Enable");
 
         record.as(MPacoteBasic.aspect())
             .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(false))
-            .visivel(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
-            .dependsOn(enabled, visible);
+            .dependsOn(enabled);
 
         recordText.as(MPacoteBasic.aspect())
             .label("Text")
-            .dependsOn(required)
-            .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
+            .as(AtrCore::new);
 
         recordDate.as(MPacoteBasic.aspect())
             .label("Date");

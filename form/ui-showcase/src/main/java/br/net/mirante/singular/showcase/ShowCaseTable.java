@@ -5,7 +5,9 @@ import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.input.core.multiselect.*;
 import br.net.mirante.singular.showcase.input.core.select.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
-import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabled;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionRequired;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionVisible;
 import br.net.mirante.singular.showcase.layout.*;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
@@ -61,7 +63,9 @@ public class ShowCaseTable {
             .addCase(CaseValidationBetweenFields.class)
             .addCase(CaseValidationPartial.class);
         group("Interaction", Icone.ROCKET)
-            .addCase(CaseInteractionEnabledVisible.class)
+            .addCase(CaseInteractionEnabled.class)
+            .addCase(CaseInteractionVisible.class)
+            .addCase(CaseInteractionRequired.class)
             .addCase(CaseInteractionDependsOnOptions.class);
         //@formatter:on
     }
