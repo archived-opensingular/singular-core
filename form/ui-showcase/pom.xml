@@ -28,6 +28,7 @@
                     <include>**/*.html</include>
                     <include>**/*.properties</include>
                     <include>**/*Package.java</include>
+                    <include>**/MFileIdsOptionsProvider.java</include>
                 </includes>
             </resource>
         </resources>

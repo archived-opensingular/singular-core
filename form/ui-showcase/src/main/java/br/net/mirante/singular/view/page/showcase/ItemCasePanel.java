@@ -109,6 +109,9 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
             }
         }
+        for (ResourceRef rr : caseBase.getObject().getAditionalSources()) {
+            bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
+        }
         return bsTabPanel;
     }
 
