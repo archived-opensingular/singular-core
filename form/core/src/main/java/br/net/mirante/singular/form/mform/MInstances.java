@@ -163,6 +163,15 @@ public abstract class MInstances {
             .flatMap(ancestor -> ancestor.findDescendant(targetType))
             .map(targetNode -> (A) targetNode);
     }
+    
+    /**
+     * Lista os ancestrais de <code>node</code>.
+     * @param node instância inicial da busca
+     * @return Lista das instâncias de ancestrais do tipo especificado
+     */
+    public static List<MInstancia> listAscendants(MInstancia instance) {
+        return listAscendants(instance, null);
+    }
 
     /**
      * Lista os ancestrais de <code>node</code>.

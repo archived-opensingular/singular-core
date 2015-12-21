@@ -13,15 +13,16 @@ import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
 public class InstanceValidationContext {
 
-    private MInstancia             instance;
+    private MInstancia             rootInstance;
     private List<IValidationError> errors = new ArrayList<>();
 
     public InstanceValidationContext(MInstancia instance) {
-        this.instance = instance;
+        this.rootInstance = instance;
     }
 
     public List<IValidationError> getErrors() {
@@ -36,46 +37,53 @@ public class InstanceValidationContext {
     }
 
     public void validateAll() {
-        MInstances.visitAllChildrenIncludingEmpty(instance, inst -> {
+        MInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> {
             validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
         });
     }
     public void validateSingle() {
-        validateInstance(new InstanceValidatable<>(instance, e -> errors.add(e)));
+        validateInstance(new InstanceValidatable<>(rootInstance, e -> errors.add(e)));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public <I extends MInstancia> void validateInstance(IInstanceValidatable<I> validatable) {
-        if (!checkRequired(validatable))
-            return;
+        final I instance = validatable.getInstance();
 
-        final MTipo<I> tipo = (MTipo<I>) validatable.getInstance().getMTipo();
+        if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
+            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Obrigatório"));
+            return;
+        }
+
+        final MTipo<I> tipo = (MTipo<I>) instance.getMTipo();
         for (IInstanceValidator<I> validator : tipo.getValidators()) {
             validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
             validator.validate((IInstanceValidatable) validatable);
         }
     }
 
-    protected <I extends MInstancia> boolean checkRequired(IInstanceValidatable<I> validatable) {
-        final boolean required = Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
-
-        final MInstancia instance = validatable.getInstance();
+    protected boolean checkRequired(MInstancia instance, boolean ignoreDisabledAndInvisible) {
+        if (!Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO)))
+            return true;
 
         if (instance instanceof ICompositeInstance) {
             ICompositeInstance comp = (ICompositeInstance) instance;
-            boolean anyRequiredLeafWithNullValue = comp.streamDescendants(false)
-                .filter(it -> !(it instanceof ICompositeInstance))
-                .filter(it -> it.as(MPacoteCore.aspect()).isObrigatorio())
-                .anyMatch(it -> it.getValor() == null);
-            if (anyRequiredLeafWithNullValue)
-                return false;
+            return comp.streamDescendants(false).anyMatch(it -> it.getValor() != null);
 
-        } else if (required && instance.getValor() == null) {
-            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Obrigatório"));
-            return false;
+        } else {
+            return (instance.getValor() != null);
         }
+    }
 
-        return true;
+    protected <I extends MInstancia> boolean isEnabledInHierarchy(MInstancia instance) {
+        return !MInstances.listAscendants(instance).stream()
+            .map(it -> it.getValorAtributo(MPacoteBasic.ATR_ENABLED))
+            .anyMatch(it -> Boolean.FALSE.equals(it));
+    }
+
+    protected <I extends MInstancia> boolean isVisibleInHierarchy(MInstancia instance) {
+        return !MInstances.listAscendants(instance).stream()
+            .map(it -> it.getValorAtributo(MPacoteBasic.ATR_VISIVEL))
+            .anyMatch(it -> Boolean.FALSE.equals(it));
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
