@@ -34,8 +34,17 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
     static final HintKey<Boolean> INLINE = () -> false;
 
     @Override
+    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.EDITION);
+    }
+
+    @Override
+    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.VISUALIZATION);
+    }
+
     @SuppressWarnings("unchecked")
-    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final MIComposto instance = (MIComposto) model.getObject();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
@@ -50,7 +59,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         grid.setDefaultModel(model);
 
         for (MTipo<?> tCampo : tComposto.getFields()) {
-            buildField(wicketBuilder, ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
+            buildField(ctx.getUiBuilderWicket(), ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
         }
     }
 

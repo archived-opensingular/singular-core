@@ -1,28 +1,5 @@
 package br.net.mirante.singular.form.wicket;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
-import org.apache.wicket.markup.html.form.CheckGroup;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.FormComponentPanel;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
-import org.slf4j.LoggerFactory;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
@@ -35,6 +12,19 @@ import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.*;
 
 @SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
@@ -45,6 +35,8 @@ public class WicketBuildContext implements Serializable {
     private final boolean                           hintsInherited;
     private final BSContainer                       externalContainer;
     private final BSContainer                       rootContainer;
+
+    private       UIBuilderWicket                   uiBuilderWicket;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
         this(null, container, bodyContainer, false);
@@ -60,7 +52,7 @@ public class WicketBuildContext implements Serializable {
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
 
-    public void init(IModel<? extends MInstancia> instanceModel) {
+    public void init(IModel<? extends MInstancia> instanceModel, UIBuilderWicket uiBuilderWicket) {
         MInstancia instance = instanceModel.getObject();
         if (isRootContext()) {
             getContainer().add(new InitRootContainerBehavior(instanceModel));
@@ -70,6 +62,7 @@ public class WicketBuildContext implements Serializable {
         }
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+        this.uiBuilderWicket = uiBuilderWicket;
     }
 
     // TODO refatorar este método para ele ser estensível e configurável de forma global
@@ -227,4 +220,7 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
+    public UIBuilderWicket getUiBuilderWicket() {
+        return uiBuilderWicket;
+    }
 }

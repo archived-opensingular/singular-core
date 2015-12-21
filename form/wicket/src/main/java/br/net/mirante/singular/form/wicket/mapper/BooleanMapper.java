@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -23,7 +22,16 @@ import org.apache.wicket.model.IModel;
 public class BooleanMapper implements IWicketComponentMapper {
 
     @Override
-    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.EDITION);
+    }
+
+    @Override
+    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.VISUALIZATION);
+    }
+
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
 

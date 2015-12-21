@@ -1,10 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -33,8 +29,17 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 public class TableListaMapper extends AbstractListaMapper {
 
     @Override
+    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.EDITION);
+    }
+
+    @Override
+    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.VISUALIZATION);
+    }
+
     @SuppressWarnings("unchecked")
-    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
 
@@ -47,7 +52,7 @@ public class TableListaMapper extends AbstractListaMapper {
                                 (header, form) ->
                                         buildHeader(header, form, label),
                                 (content, form) ->
-                                        builContent(content, form, mLista, wicketBuilder, ctx, view, viewMode),
+                                        builContent(content, form, mLista, ctx.getUiBuilderWicket(), ctx, view, viewMode),
                                 (footer, form) ->
                                         footer.setVisible(false)
                         )

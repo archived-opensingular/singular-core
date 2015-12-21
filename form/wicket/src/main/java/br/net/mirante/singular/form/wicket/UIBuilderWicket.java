@@ -18,7 +18,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private final ViewMapperRegistry<IWicketComponentMapper> registry = newViewMapperRegistry();
 
-    UIBuilderWicket() {}
+    UIBuilderWicket() {
+    }
 
     ViewMapperRegistry<IWicketComponentMapper> getViewMapperRegistry() {
         return registry;
@@ -37,7 +38,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         MInstancia instancia = (MInstancia) obj;
         MView view = ViewResolver.resolve(instancia);
 
-        ctx.init(model);
+        ctx.init(model, this);
 
         final IWicketComponentMapper mapper;
         final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
@@ -49,52 +50,57 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario implementar IWicketComponentMapper");
             }
         } else {
-            mapper = MAPPERS.getMapper(instancia, view)
+            mapper = getViewMapperRegistry().getMapper(instancia, view)
                     .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
         }
 
-        IWicketComponentMapper mapper = getViewMapperRegistry().getMapper(instancia, view)
-            .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
-        mapper.buildView(this, ctx, view, model, viewMode);
+        switch (viewMode) {
+            case EDITION:
+                mapper.buildForEdit(ctx, view, model);
+                break;
+            case VISUALIZATION:
+                mapper.buildForView(ctx, view, model);
+                break;
+        }
     }
 
     private SingularFormException createErro(MInstancia instancia, MView view, String msg) {
         return new SingularFormException(
-            msg + " (instancia=" + instancia.getPathFull()
-                + ", tipo=" + instancia.getMTipo().getNome()
-                + ", classeInstancia=" + instancia.getClass()
-                + ", tipo=" + instancia.getMTipo()
-                + ", view=" + view
-                + ")");
+                msg + " (instancia=" + instancia.getPathFull()
+                        + ", tipo=" + instancia.getMTipo().getNome()
+                        + ", classeInstancia=" + instancia.getClass()
+                        + ", tipo=" + instancia.getMTipo()
+                        + ", view=" + view
+                        + ")");
     }
 
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
-                .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorSelectView.class,           SelectBSMapper::new)
-                .register(MTipoSelectItem.class, MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(MTipoBoolean.class,                                           BooleanMapper::new)
-                .register(MTipoInteger.class,                                           IntegerMapper::new)
-                .register(MTipoString.class,                                            StringMapper::new)
-                .register(MTipoData.class,                                              DateMapper::new)
-                .register(MTipoAnoMes.class,                                            YearMonthMapper::new)
-                .register(MTipoAttachment.class,                                        AttachmentMapper::new)
-                .register(MTipoString.class,     MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
-                .register(MTipoComposto.class,                                          DefaultCompostoMapper::new)
-                .register(MTipoComposto.class,   MTabView.class,                        DefaultCompostoMapper::new)
-                .register(MTipoLista.class,                                             TableListaMapper::new)
-                .register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new)
-                .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
-                .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
-                .register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new)
-                .register(MTipoDecimal.class,                                           DecimalMapper::new)
-                .register(MTipoMonetario.class,                                         MonetarioMapper::new);
+                .register(MTipoSimples.class, MSelecaoPorRadioView.class, RadioMapper::new)
+                .register(MTipoSimples.class, MSelecaoPorSelectView.class, SelectMapper::new)
+                .register(MTipoSelectItem.class, MSelecaoPorRadioView.class, RadioMapper::new)
+                .register(MTipoSelectItem.class, MSelecaoPorSelectView.class, SelectBSMapper::new)
+                .register(MTipoSelectItem.class, MSelecaoPorModalBuscaView.class, SelectModalBuscaMapper::new)
+                .register(MTipoBoolean.class, BooleanMapper::new)
+                .register(MTipoInteger.class, IntegerMapper::new)
+                .register(MTipoString.class, StringMapper::new)
+                .register(MTipoData.class, DateMapper::new)
+                .register(MTipoAnoMes.class, YearMonthMapper::new)
+                .register(MTipoAttachment.class, AttachmentMapper::new)
+                .register(MTipoString.class, MSelecaoPorModalBuscaView.class, SelectModalBuscaMapper::new)
+                .register(MTipoLista.class, MSelecaoMultiplaPorSelectView.class, MultipleSelectBSMapper::new)
+                .register(MTipoLista.class, MSelecaoMultiplaPorCheckView.class, MultipleCheckMapper::new)
+                .register(MTipoLista.class, MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
+                .register(MTipoComposto.class, DefaultCompostoMapper::new)
+                .register(MTipoComposto.class, MTabView.class, DefaultCompostoMapper::new)
+                .register(MTipoLista.class, TableListaMapper::new)
+                .register(MTipoLista.class, MTableListaView.class, TableListaMapper::new)
+                .register(MTipoLista.class, MPanelListaView.class, PanelListaMapper::new)
+                .register(MTipoLista.class, MListMasterDetailView.class, ListMasterDetailMapper::new)
+                .register(MTipoString.class, MTextAreaView.class, TextAreaMapper::new)
+                .register(MTipoDecimal.class, DecimalMapper::new)
+                .register(MTipoMonetario.class, MonetarioMapper::new);
         //@formatter:on
     }
 }

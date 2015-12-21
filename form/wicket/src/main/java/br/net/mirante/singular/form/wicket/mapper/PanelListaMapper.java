@@ -26,8 +26,17 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class PanelListaMapper extends AbstractListaMapper {
 
     @Override
+    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.EDITION);
+    }
+
+    @Override
+    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
+        buildView(ctx, view, model, ViewMode.VISUALIZATION);
+    }
+
     @SuppressWarnings("unchecked")
-    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
         final IModel<MILista<MInstancia>> listaModel = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final MILista<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(MPacoteBasic.aspect()).getLabel()));
@@ -49,7 +58,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                     + "        <div wicket:id='_r'></div>"
                                     + "      </li>"
                                     + "    </ul>");
-                            list.add(new PanelElementsView("_e", listaModel, wicketBuilder, ctx, view, form, viewMode));
+                            list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form, viewMode));
 
                         },
                         (footer, form) -> {
