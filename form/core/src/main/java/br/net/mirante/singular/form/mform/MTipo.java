@@ -19,7 +19,6 @@ import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
@@ -568,12 +567,5 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public boolean hasValidation() {
         return isObrigatorio() || !instanceValidators.isEmpty();
-    }
-
-    public MOptionsProvider getProviderOpcoes() {
-        throw new UnsupportedOperationException();
-    }
-    public boolean hasProviderOpcoes() {
-        return false;
     }
 }

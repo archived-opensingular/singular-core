@@ -32,16 +32,13 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
 
     // SELECTION OF BEGIN
     
+    @Override
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;
-    }
-    @Override
-    public boolean hasProviderOpcoes() {
-        return this.getProviderOpcoes() != null;
     }
 
     @SuppressWarnings("unchecked")

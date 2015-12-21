@@ -7,9 +7,12 @@ import br.net.mirante.singular.form.mform.MTipo;
 @SuppressWarnings({"rawtypes","unchecked"})
 public interface MSelectionableType<BASE extends MTipo> {
     public MOptionsProvider getProviderOpcoes();
-    
     public void setProviderOpcoes(MOptionsProvider p);
-
+    
+    default public boolean hasProviderOpcoes() {
+        return getProviderOpcoes() != null;
+    }
+    
     default public MOptionsProvider selectionOf(Collection<MISelectItem> opcoes) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, opcoes));
         return getProviderOpcoes();
