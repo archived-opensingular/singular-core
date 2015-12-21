@@ -61,14 +61,14 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
         word.as(MPacoteBasic.aspect())
             .label("Word")
             .dependsOn(letter);
-//        word.withSelectionFromProvider(ins -> {
-//            String prefix = ins.findNearest(letter).get().getValor();
-//            return (prefix == null)
-//                ? ins.getMTipo().novaLista()
-//                : ins.getMTipo().novaLista()
-//                    .addValores(Stream.of(WORDS)
-//                        .filter(s -> s.startsWith(prefix))
-//                        .collect(toList()));
-//        });
+        word.setProviderOpcoes(ins -> {
+            String prefix = ins.findNearest(letter).get().getValor();
+            return (prefix == null)
+                ? ins.getMTipo().novaLista()
+                : ins.getMTipo().novaLista()
+                    .addValores(Stream.of(WORDS)
+                        .filter(s -> s.startsWith(prefix))
+                        .collect(toList()));
+        });
     }
 }
