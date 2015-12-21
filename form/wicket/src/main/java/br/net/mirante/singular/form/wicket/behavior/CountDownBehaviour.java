@@ -5,35 +5,18 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
-//TODO O contador devera ser evoluido apos upgrade do Metronic para versão > 4.1
 public class CountDownBehaviour extends Behavior {
-
-    private Integer max;
-
-    public CountDownBehaviour(Integer max) {
-        this.max = max;
-    }
 
     @Override
     public void renderHead(Component component, IHeaderResponse response) {
 
         String js = "";
 
-        js += " (function(id, max) {                               " ;
-        js += "      var parent = $(id).parent(),                  " ;
-        js += "          count = document.createElement('h6'),     " ;
-        js += "          updateContent = function() {              " ;
-        js += "             var output = max - $(id).val().length; " ;
-        js += "             $(count).html(output);                 " ;
-        js += "          };                                        " ;
-        js += "      updateContent();                              " ;
-        js += "      parent.append(count);                         " ;
-        js += "      $(count).addClass('pull-right');              " ;
-        js += "      $(id).on('keyup', updateContent);             " ;
-        js += " })('#%s', %d);                                     " ;
+        js += " $('#"+component.getMarkupId(true)+"').maxlength({ ";
+        js += "     alwaysShow: true";
+        js += " }); ";
 
-        String formatedJs = String.format(js, component.getMarkupId(true), max);
-        response.render(OnDomReadyHeaderItem.forScript(formatedJs));
+        response.render(OnDomReadyHeaderItem.forScript(js));
         super.renderHead(component, response);
     }
 

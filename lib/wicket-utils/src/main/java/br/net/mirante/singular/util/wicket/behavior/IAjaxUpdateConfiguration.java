@@ -7,8 +7,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.behavior.Behavior;
 
-import br.net.mirante.singular.util.wicket.lambda.IBiConsumer;
-import br.net.mirante.singular.util.wicket.lambda.ITriConsumer;
+import br.net.mirante.singular.lambda.IBiConsumer;
+import br.net.mirante.singular.lambda.ITriConsumer;
 
 public interface IAjaxUpdateConfiguration<C extends Component> extends Serializable {
 

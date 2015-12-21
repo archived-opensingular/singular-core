@@ -7,12 +7,14 @@ import br.net.mirante.singular.dao.form.TemplateRepository;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.context.SingularFormContext;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -21,7 +23,6 @@ import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -46,12 +47,12 @@ import java.util.UUID;
 
 @SuppressWarnings("serial")
 public class FormContent extends Content
-    implements SingularWicketContainer<CrudContent, Void> {
+        implements SingularWicketContainer<CrudContent, Void> {
 
     private static Logger logger = LoggerFactory.getLogger(FormContent.class);
 
-    private BSGrid                         container = new BSGrid("generated");
-    private Form<?>                        inputForm = new Form<>("save-form");
+    private BSGrid container = new BSGrid("generated");
+    private Form<?> inputForm = new Form<>("save-form");
     private MInstanceRootModel<MInstancia> currentInstance;
     private ExampleDataDTO currentModel;
     private ViewMode viewMode;
@@ -63,18 +64,18 @@ public class FormContent extends Content
     private FileDao filePersistence;
 
     @Inject
-    private SpringServiceRegistry serviceRegistry;
+    private SingularFormContext<UIBuilderWicket, IWicketComponentMapper> singularFormContext;
 
 
     private ServiceRef<IAttachmentPersistenceHandler> temporaryRef =
-                    ServiceRef.of(new InMemoryAttachmentPersitenceHandler()) ;
+            ServiceRef.of(new InMemoryAttachmentPersitenceHandler());
 
     private ServiceRef<IAttachmentPersistenceHandler> persistanceRef =
-                                                ServiceRef.of(filePersistence);
+            ServiceRef.of(filePersistence);
 
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
         super(id, false, true);
-        if(viewMode.isNull()) {
+        if (viewMode.isNull()) {
             this.viewMode = ViewMode.EDITION;
         } else {
             this.viewMode = ViewMode.valueOf(viewMode.toString());
@@ -105,8 +106,8 @@ public class FormContent extends Content
     private void bindDefaultServices(SDocument document) {
         document.setAttachmentPersistenceHandler(temporaryRef);
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE,
-            IAttachmentPersistenceHandler.class, persistanceRef);
-        document.addServiceRegistry(serviceRegistry);
+                IAttachmentPersistenceHandler.class, persistanceRef);
+        document.addServiceRegistry(singularFormContext.getServiceRegistry());
     }
 
     private void populateInstance(final MTipo<?> tipo) {
@@ -132,7 +133,7 @@ public class FormContent extends Content
 
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        UIBuilderWicket.build(ctx, currentInstance, viewMode);
+        singularFormContext.getUIBuilder().build(ctx, currentInstance, viewMode);
     }
 
     @SuppressWarnings("rawtypes")
@@ -156,11 +157,11 @@ public class FormContent extends Content
     protected void onInitialize() {
         super.onInitialize();
         queue(inputForm
-            .add(createFeedbackPanel())
-            .add(createSaveButton("save-btn", true))
-            .add(createSaveButton("save-whitout-validate-btn", false))
-            .add(createValidateButton())
-            .add(createCancelButton()));
+                .add(createFeedbackPanel())
+                .add(createSaveButton("save-btn", true))
+                .add(createSaveButton("save-whitout-validate-btn", false))
+                .add(createValidateButton())
+                .add(createCancelButton()));
     }
 
     private Component createFeedbackPanel() {
@@ -238,7 +239,7 @@ public class FormContent extends Content
 
     private void backToCrudPage(Component componentContext) {
         PageParameters params = new PageParameters()
-            .add(CrudPage.TYPE_NAME, currentModel.getType());
+                .add(CrudPage.TYPE_NAME, currentModel.getType());
         componentContext.setResponsePage(CrudPage.class, params);
     }
 

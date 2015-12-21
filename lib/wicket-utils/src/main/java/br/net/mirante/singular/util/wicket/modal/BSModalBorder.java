@@ -4,7 +4,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.io.Serializable;
 
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IConsumer;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;

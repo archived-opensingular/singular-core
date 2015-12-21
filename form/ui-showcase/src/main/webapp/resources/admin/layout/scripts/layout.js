@@ -3,15 +3,50 @@ Core script to handle the entire theme and core functions
 **/
 var Layout = function() {
 
-    var layoutImgPath = 'admin/layout/img/';
+    var layoutImgPath = 'layouts/layout4/img/';
 
-    var layoutCssPath = 'admin/layout/css/';
+    var layoutCssPath = 'layouts/layout4/css/';
 
     var resBreakpointMd = Metronic.getResponsiveBreakpoint('md');
 
     //* BEGIN:CORE HANDLERS *//
     // this function handles responsive layout on screen size resize or mobile device rotate.
 
+    // Set proper height for sidebar and content. The content and sidebar height must be synced always.
+    var handleSidebarAndContentHeight = function () {
+        var content = $('.page-content');
+        var sidebar = $('.page-sidebar');
+        var body = $('body');
+        var height;
+
+        if (body.hasClass("page-footer-fixed") === true && body.hasClass("page-sidebar-fixed") === false) {
+            var available_height = Metronic.getViewPort().height - $('.page-footer').outerHeight(true) - $('.page-header').outerHeight(true);
+            if (content.height() < available_height) {
+                content.attr('style', 'min-height:' + available_height + 'px');
+            }
+        } else {
+            if (body.hasClass('page-sidebar-fixed')) {
+                height = _calculateFixedSidebarViewportHeight()  - 10;
+                if (body.hasClass('page-footer-fixed') === false) {
+                    height = height - $('.page-footer').outerHeight(true);
+                }
+            } else {
+                var headerHeight = $('.page-header').outerHeight(true);
+                var footerHeight = $('.page-footer').outerHeight(true);
+
+                if (Metronic.getViewPort().width < resBreakpointMd) {
+                    height = Metronic.getViewPort().height - headerHeight - footerHeight;
+                } else {
+                    height = sidebar.height() - 10;
+                }
+
+                if ((height + headerHeight + footerHeight) <= Metronic.getViewPort().height) {
+                    height = Metronic.getViewPort().height - headerHeight - footerHeight - 45;
+                }
+            }
+            content.attr('style', 'min-height:' + height + 'px');
+        }
+    };
 
     // Handle sidebar menu links
     var handleSidebarMenuActiveLink = function(mode, el) {
@@ -127,6 +162,7 @@ var Layout = function() {
                             Metronic.scrollTo(the, slideOffeset);
                         }
                     }
+                    handleSidebarAndContentHeight();
                 });
             } else {
                 $('.arrow', $(this)).addClass("open");
@@ -141,11 +177,21 @@ var Layout = function() {
                             Metronic.scrollTo(the, slideOffeset);
                         }
                     }
+                    handleSidebarAndContentHeight();
                 });
             }
 
             e.preventDefault();
         });
+
+        // handle menu close for angularjs version
+        if (Metronic.isAngularJsApp()) {
+            $(".page-sidebar-menu li > a").on("click", function(e) {
+                if (Metronic.getViewPort().width < resBreakpointMd && $(this).next().hasClass('sub-menu') === false) {
+                    $('.page-header .responsive-toggler').click();
+                }
+            });
+        }
 
         // handle ajax links within sidebar menu
         $('.page-sidebar').on('click', ' li > a.ajaxify', function(e) {
@@ -238,7 +284,7 @@ var Layout = function() {
 
     // Helper function to calculate sidebar height for fixed sidebar layout.
     var _calculateFixedSidebarViewportHeight = function() {
-        var sidebarHeight = Metronic.getViewPort().height - $('.page-header').outerHeight() - 30;
+        var sidebarHeight = Metronic.getViewPort().height - $('.page-header').outerHeight(true) - 40;
         if ($('body').hasClass("page-footer-fixed")) {
             sidebarHeight = sidebarHeight - $('.page-footer').outerHeight();
         }
@@ -253,12 +299,14 @@ var Layout = function() {
         Metronic.destroySlimScroll(menu);
 
         if ($('.page-sidebar-fixed').size() === 0) {
+            handleSidebarAndContentHeight();
             return;
         }
 
         if (Metronic.getViewPort().width >= resBreakpointMd) {
             menu.attr("data-height", _calculateFixedSidebarViewportHeight());
             Metronic.initSlimScroll(menu);
+            handleSidebarAndContentHeight();
         }
     };
 
@@ -440,7 +488,7 @@ var Layout = function() {
             handleSidebarMenu(); // handles main menu
             handleSidebarToggler(); // handles sidebar hide/show
 
-            if (Metronic.isAngularJsApp()) {
+            if (Metronic.isAngularJsApp()) {      
                 handleSidebarMenuActiveLink('match'); // init sidebar active links 
             }
 
@@ -485,3 +533,9 @@ var Layout = function() {
     };
 
 }();
+
+if (Metronic.isAngularJsApp() === false) {
+    jQuery(document).ready(function() {    
+       Layout.init(); // init metronic core componets
+    });
+}

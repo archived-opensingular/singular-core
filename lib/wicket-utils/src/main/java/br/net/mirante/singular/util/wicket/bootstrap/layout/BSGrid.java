@@ -6,7 +6,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
-import br.net.mirante.singular.util.wicket.lambda.IBiFunction;
+import br.net.mirante.singular.lambda.IBiFunction;
 
 /**
 <p>Componente para gerar grids do bootstrap de forma programática (sem ter que escrever HTML). Este componente é bem leve,
