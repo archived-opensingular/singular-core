@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -30,6 +31,7 @@ import org.apache.wicket.model.ResourceModel;
 import javax.inject.Inject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 
 public class PeticaoContent extends Content
         implements SingularWicketContainer<PeticaoContent, Void> {
@@ -114,6 +116,12 @@ public class PeticaoContent extends Content
                 return;
             }
             System.out.println(printXml(rootXml));
+        }
+        
+        @Override
+        protected void onError(AjaxRequestTarget target, Form<?> form) {
+            super.onError(target, form);
+            WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance.getObject());
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,

@@ -14,14 +14,11 @@ public abstract class BelverSaveButton extends BelverValidationButton {
     }
 
     @Override
-    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-        if (addValidationErrors(form, getCurrentInstance().getObject())) {
-            MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-            handleSaveXML(target, rootXml);
-        }
-        target.add(form);
+    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<MInstancia> instanceModel) {
+        MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
+        handleSaveXML(target, rootXml);
     }
-
+    
     protected abstract void handleSaveXML(AjaxRequestTarget target, MElement xml);
 }
 
