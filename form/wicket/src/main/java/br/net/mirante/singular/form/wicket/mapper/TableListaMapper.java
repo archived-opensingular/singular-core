@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -34,7 +35,8 @@ public class TableListaMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
-        final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
+        String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
+        final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
 
