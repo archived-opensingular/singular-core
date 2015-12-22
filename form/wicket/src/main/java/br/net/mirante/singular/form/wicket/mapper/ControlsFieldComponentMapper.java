@@ -28,16 +28,6 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
     HintKey<Boolean> NO_DECORATION = () -> false;
 
-    @Override
-    default void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.EDITION);
-    }
-
-    @Override
-    default void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.VISUALIZATION);
-    }
-
     /**
      * @param view          Instancia da MView utilizada para configurar o componente
      * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
@@ -56,7 +46,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
      * @param formGroup     Container onde dever adicionado o input
      * @param model         Model da MInstancia
-     * @param labelModel    Model contendo o label do componente
+     * @param labelModel    Model contendo o label do componentes
      * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
@@ -69,7 +59,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         return comp;
     }
 
-    default void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    default void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
@@ -79,6 +70,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
+
+        final ViewMode viewMode = ctx.getViewMode();
+        final MView view = ctx.getView();
 
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());

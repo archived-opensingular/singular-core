@@ -3,9 +3,12 @@ package br.net.mirante.singular.form.wicket;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.behavior.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
@@ -36,13 +39,16 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer                       externalContainer;
     private final BSContainer                       rootContainer;
 
-    private       UIBuilderWicket                   uiBuilderWicket;
+    private UIBuilderWicket uiBuilderWicket;
+    private ViewMode        viewMode;
+    private MView           view;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
         this(null, container, bodyContainer, false);
     }
 
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer, boolean hintsInherited) {
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
+                              boolean hintsInherited) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
@@ -52,17 +58,28 @@ public class WicketBuildContext implements Serializable {
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
 
-    public void init(IModel<? extends MInstancia> instanceModel, UIBuilderWicket uiBuilderWicket) {
-        MInstancia instance = instanceModel.getObject();
+    public WicketBuildContext init(IModel<? extends MInstancia> instanceModel, UIBuilderWicket uiBuilderWicket,
+                                   ViewMode viewMode)
+    {
+
+        final MInstancia instance = instanceModel.getObject();
+
+        this.view = ViewResolver.resolve(instance);
+        this.uiBuilderWicket = uiBuilderWicket;
+        this.viewMode = viewMode;
+
         if (isRootContext()) {
             getContainer().add(new InitRootContainerBehavior(instanceModel));
         }
+
         if (getContainer().getDefaultModel() == null) {
             getContainer().setDefaultModel(instanceModel);
         }
+
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
-        this.uiBuilderWicket = uiBuilderWicket;
+
+        return this;
     }
 
     // TODO refatorar este método para ele ser estensível e configurável de forma global
@@ -101,7 +118,8 @@ public class WicketBuildContext implements Serializable {
     }
     
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
+        return new WicketBuildContext(this, childContainer, getExternalContainer(),
+                hintsInherited);
     }
 
     protected static <T> String getLabel(FormComponent<?> formComponent) {
@@ -222,5 +240,13 @@ public class WicketBuildContext implements Serializable {
 
     public UIBuilderWicket getUiBuilderWicket() {
         return uiBuilderWicket;
+    }
+
+    public ViewMode getViewMode() {
+        return viewMode;
+    }
+
+    public MView getView() {
+        return view;
     }
 }

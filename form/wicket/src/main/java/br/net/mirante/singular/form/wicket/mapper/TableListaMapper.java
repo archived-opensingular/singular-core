@@ -28,20 +28,13 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListaMapper extends AbstractListaMapper {
 
-    @Override
-    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.EDITION);
-    }
-
-    @Override
-    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.VISUALIZATION);
-    }
-
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
         final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
+        final ViewMode viewMode = ctx.getViewMode();
+        final MView view = ctx.getView();
 
         ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
 

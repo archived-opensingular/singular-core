@@ -18,50 +18,31 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private final ViewMapperRegistry<IWicketComponentMapper> registry = newViewMapperRegistry();
 
-    UIBuilderWicket() {
-    }
-
     ViewMapperRegistry<IWicketComponentMapper> getViewMapperRegistry() {
         return registry;
     }
 
-    public void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
-        build(ctx, model, ViewMode.EDITION);
-    }
-
-    public void buildForView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
-        build(ctx, model, ViewMode.VISUALIZATION);
-    }
-
     public void build(WicketBuildContext ctx, IModel<? extends MInstancia> model, ViewMode viewMode) {
-        Object obj = model.getObject();
-        MInstancia instancia = (MInstancia) obj;
-        MView view = ViewResolver.resolve(instancia);
+        final IWicketComponentMapper mapper = resolveMapper(model.getObject());
+        mapper.buildView(ctx.init(model, this, viewMode), model);
+    }
 
-        ctx.init(model, this);
+    private IWicketComponentMapper resolveMapper(MInstancia instancia) {
 
-        final IWicketComponentMapper mapper;
         final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
+        final MView view = ViewResolver.resolve(instancia);
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {
-                mapper = (IWicketComponentMapper) customMapper;
+                return (IWicketComponentMapper) customMapper;
             } else {
                 throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario implementar IWicketComponentMapper");
             }
         } else {
-            mapper = getViewMapperRegistry().getMapper(instancia, view)
+            return getViewMapperRegistry().getMapper(instancia, view)
                     .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
         }
 
-        switch (viewMode) {
-            case EDITION:
-                mapper.buildForEdit(ctx, view, model);
-                break;
-            case VISUALIZATION:
-                mapper.buildForView(ctx, view, model);
-                break;
-        }
     }
 
     private SingularFormException createErro(MInstancia instancia, MView view, String msg) {

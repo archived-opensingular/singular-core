@@ -41,17 +41,12 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
 
-    @Override
-    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.EDITION);
-    }
 
-    @Override
-    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model){
-        buildView(ctx, view, model, ViewMode.VISUALIZATION);
-    }
+    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+        final ViewMode viewMode = ctx.getViewMode();
+        final MView view = ctx.getView();
+
         if (!(view instanceof MListMasterDetailView)) {
             throw new SingularFormException("Error: Mapper " +
                     ListMasterDetailMapper.class.getSimpleName() +

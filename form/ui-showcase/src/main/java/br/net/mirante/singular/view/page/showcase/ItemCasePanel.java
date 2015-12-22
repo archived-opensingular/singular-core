@@ -8,8 +8,6 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistence
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BelverSaveButton;

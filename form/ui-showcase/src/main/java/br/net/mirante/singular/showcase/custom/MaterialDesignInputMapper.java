@@ -2,7 +2,6 @@ package br.net.mirante.singular.showcase.custom;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
@@ -19,7 +18,15 @@ import org.apache.wicket.model.Model;
 public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
     @Override
-    public void buildForEdit(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+        if(ctx.getViewMode().isEdition()){
+            buildForEdit(ctx, model);
+        } else {
+            buildForView(ctx, model);
+        }
+    }
+
+    public void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
         final BSControls formGroup = createFromGroup(ctx);
 
@@ -28,8 +35,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
         formGroup.add(new AttributeAppender("class", " form-md-line-input form-md-floating-label"));
     }
 
-    @Override
-    public void buildForView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model) {
+    public void buildForView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
         final BSControls formGroup = createFromGroup(ctx);
         final MInstancia mi = model.getObject();
