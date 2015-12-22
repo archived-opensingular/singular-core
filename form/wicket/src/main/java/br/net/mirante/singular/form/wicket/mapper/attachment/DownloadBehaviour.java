@@ -54,8 +54,10 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
         IRequestParameters parameters = request.getRequestParameters();
         StringValue id = parameters.getParameterValue("fileId");
         StringValue name = parameters.getParameterValue("fileName");
-        if (id.isEmpty() || name.isEmpty()) {
+        if ((id.isEmpty() || name.isEmpty() )&& !attachment.isTemporary()) {
             writeFileFromPersistent(attachment, document);
+        }else if(attachment.isTemporary()){
+            writeFileFromTemporary(document, attachment.getFileId(), attachment.getFileName());
         } else {
             writeFileFromTemporary(document, id.toString(), name.toString());
         }
