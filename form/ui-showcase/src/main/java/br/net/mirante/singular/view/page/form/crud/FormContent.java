@@ -114,7 +114,7 @@ public class FormContent extends Content
         try {
             MElement xml = MParser.parse(currentModel.getXml());
             MInstancia instance = MformPersistenciaXML.fromXML(tipo, xml);
-            currentInstance = new MInstanceRootModel<MInstancia>(instance);
+            currentInstance = new MInstanceRootModel<>(instance);
             bindDefaultServices(currentInstance.getObject().getDocument());
         } catch (Exception e) {
             logger.warn("Captured during insertion", e);

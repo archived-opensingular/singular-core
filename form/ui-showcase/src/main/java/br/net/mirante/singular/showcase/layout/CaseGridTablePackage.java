@@ -16,6 +16,7 @@ public class CaseGridTablePackage extends MPacote {
         MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
+        certificacoes.as(AtrBasic::new).label("Certificações");
         final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
         final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
         final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);

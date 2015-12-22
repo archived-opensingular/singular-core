@@ -19,29 +19,19 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
     @Override
     public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
-        if(ctx.getViewMode().isEdition()){
-            buildForEdit(ctx, model);
-        } else {
-            buildForView(ctx, model);
-        }
-    }
 
-    public void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
-
-        final BSControls formGroup = createFromGroup(ctx);
-
-        formGroup.appendInputText(buildTextField(model));
-        formGroup.appendLabel(buildLabel(model));
-        formGroup.add(new AttributeAppender("class", " form-md-line-input form-md-floating-label"));
-    }
-
-    public void buildForView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
-
-        final BSControls formGroup = createFromGroup(ctx);
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
         final MInstancia mi = model.getObject();
+        final BSLabel label = new BSLabel("label", new AtributoModel<>(model, MPacoteBasic.ATR_LABEL));
 
-        formGroup.appendLabel(buildLabel(model));
-        formGroup.appendTag("div", new BOutputPanel(mi.getNome(), getOutputString(mi)));
+        if(ctx.getViewMode().isVisualization()){
+            formGroup.appendLabel(label);
+            formGroup.appendTag("div", new BOutputPanel(mi.getNome(), getOutputString(mi)));
+        } else {
+            formGroup.appendInputText(new TextField<>(mi.getNome(), new MInstanciaValorModel<>(model)));
+            formGroup.appendLabel(label);
+            formGroup.add(new AttributeAppender("class", " form-md-line-input form-md-floating-label"));
+        }
     }
 
     private IModel<String> getOutputString(MInstancia mi) {
@@ -50,20 +40,6 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
         } else {
             return Model.of(StringUtils.EMPTY);
         }
-    }
-
-    private BSLabel buildLabel(IModel<? extends MInstancia> model) {
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
-        return new BSLabel("label", labelModel);
-    }
-
-    private TextField buildTextField(IModel<? extends MInstancia> model) {
-        final MInstancia mi = model.getObject();
-        return new TextField<>(mi.getNome(), new MInstanciaValorModel<>(model), String.class);
-    }
-
-    private BSControls createFromGroup(WicketBuildContext ctx) {
-        return ctx.getContainer().newFormGroup();
     }
 
 }

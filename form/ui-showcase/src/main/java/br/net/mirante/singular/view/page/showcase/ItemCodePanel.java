@@ -18,15 +18,16 @@ public class ItemCodePanel extends Panel {
         response.render(OnDomReadyHeaderItem.forScript("SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();"));
     }
 
-    public ItemCodePanel(String id, IModel<String> code) {
+    public ItemCodePanel(String id, IModel<String> code, IModel<String> extension) {
         super(id);
         final ProcessadorCondigoFonte pcf = new ProcessadorCondigoFonte(code.getObject());
-        add(new Label("code", pcf.getFonteProcessado()).add(WicketUtils.$b.classAppender(getSyntaxHighlighterConfig(pcf.getLinhasParaDestacar()))));
+        add(new Label("code", pcf.getFonteProcessado())
+                .add(WicketUtils.$b.classAppender(getSyntaxHighlighterConfig(pcf.getLinhasParaDestacar(), extension))));
     }
 
-    private String getSyntaxHighlighterConfig(List<Integer> linhasParaDestacar) {
+    private String getSyntaxHighlighterConfig(List<Integer> linhasParaDestacar, IModel<String> extension) {
         StringBuilder config = new StringBuilder();
-        config.append("brush: java;");
+        config.append(String.format("brush: %s;", extension.getObject()));
 
         if (!linhasParaDestacar.isEmpty()) {
             config.append(" highlight: [");

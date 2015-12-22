@@ -65,4 +65,12 @@ public class ResourceRef implements Serializable {
     private static Optional<ResourceRef> verifyExists(ResourceRef ref) {
         return ref.exists() ? Optional.of(ref) : Optional.empty();
     }
+
+    public String getExtension() {
+        final String displayName = getDisplayName();
+        if (displayName != null) {
+            return displayName.substring(displayName.lastIndexOf('.') + 1);
+        }
+        return null;
+    }
 }
