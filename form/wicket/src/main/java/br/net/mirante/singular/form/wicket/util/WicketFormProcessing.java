@@ -18,7 +18,9 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
@@ -72,8 +74,11 @@ public class WicketFormProcessing {
                 .collect(toSet());
 
             final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
-                return (ins.getMTipo().hasProviderOpcoes() && fieldInstance.getMTipo().getDependentTypes().contains(ins.getMTipo()))
-                    || (updatedInstanceIds.contains(ins.getId()));
+                MTipo<?> insTipo = ins.getMTipo();
+                boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
+                boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
+                boolean dependsOnField = fieldInstance.getMTipo().getDependentTypes().contains(insTipo);
+                return wasUpdated || (hasOptions && dependsOnField);
             };
 
             // re-renderizar componentes

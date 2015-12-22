@@ -15,7 +15,7 @@ public class RadioMapper extends SelectMapper {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
-                                          final List<SelectOption> opcoesValue) {
+                                          final IModel<? extends List<SelectOption>> opcoesValue) {
         MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
         String id = model.getObject().getNome();
         return new RadioChoice<SelectOption>(id,
@@ -47,7 +47,7 @@ public class RadioMapper extends SelectMapper {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
-                                          final List<SelectOption> opcoesValue) {
+                                          final IModel<? extends List<SelectOption>> opcoesValue) {
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendRadioChoice(choices);
         return choices;

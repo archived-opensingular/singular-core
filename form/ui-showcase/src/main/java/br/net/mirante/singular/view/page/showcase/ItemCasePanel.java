@@ -43,7 +43,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,28 +89,33 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         updateContainer();
     }
 
-    private WebMarkupContainer buildBlockquote() {
+    private WebMarkupContainer buildHeaderText() {
 
-        WebMarkupContainer blockquote = new WebMarkupContainer("blockquote");
+        WebMarkupContainer headerContainer = new WebMarkupContainer("header");
         String description = caseBase.getObject().getDescriptionHtml().orElse("");
 
-        blockquote.add(new Label("description", $m.ofValue(description)));
-        blockquote.setVisible(!description.isEmpty());
+        headerContainer.add(new Label("description", $m.ofValue(description)));
+        headerContainer.setVisible(!description.isEmpty());
 
-        return blockquote;
+        return headerContainer;
     }
 
     private BSTabPanel buildCodeTabs() {
-        BSTabPanel bsTabPanel = new BSTabPanel("codes");
-        Optional<ResourceRef> sources = caseBase.getObject().getMainSourceResourceName();
-        if (sources.isPresent()) {
-            for (ResourceRef rr : Collections.singletonList(sources.get())) {
-                bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
-            }
+
+        final BSTabPanel bsTabPanel = new BSTabPanel("codes");
+        final List<ResourceRef> sources = new ArrayList<>();
+        final Optional<ResourceRef> mainSource = caseBase.getObject().getMainSourceResourceName();
+
+        if (mainSource.isPresent()) {
+            sources.add(mainSource.get());
         }
-        for (ResourceRef rr : caseBase.getObject().getAditionalSources()) {
+
+        sources.addAll(caseBase.getObject().getAditionalSources());
+
+        for (ResourceRef rr : sources) {
             bsTabPanel.addTab(rr.getDisplayName(), new ItemCodePanel(BSTabPanel.getTabPanelId(), $m.ofValue(rr.getContent())));
         }
+
         return bsTabPanel;
     }
 
@@ -142,10 +146,10 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(buildBlockquote());
+        add(buildHeaderText());
         add(inputForm
-                .add(buildFeedbackPanel())
-                .add(buildButtons())
+                        .add(buildFeedbackPanel())
+                        .add(buildButtons())
         );
         add(buildCodeTabs());
 
@@ -212,10 +216,10 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildValidateButton() {
         return (id, ci) -> {
-            final BelverValidationButton bsb = new BelverValidationButton(id, ci){
+            final BelverValidationButton bsb = new BelverValidationButton(id, ci) {
                 @Override
                 public boolean isVisible() {
-                    return caseBase.getObject().getCaseType().hasAnyValidation();
+                    return caseBase.getObject().showValidateButton();
                 }
             };
 

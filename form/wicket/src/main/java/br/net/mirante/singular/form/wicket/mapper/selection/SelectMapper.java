@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 @SuppressWarnings("serial")
 public class SelectMapper implements ControlsFieldComponentMapper {
@@ -24,15 +25,20 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     @Override
     @SuppressWarnings({ "rawtypes" })
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
-        MTipo<?> type = model.getObject().getMTipo();
-        List<SelectOption> opcoesValue = WicketSelectionUtils.createOptions(model, type);
 
-        return formGroupAppender(formGroup, model, opcoesValue);
+        return formGroupAppender(formGroup, model, new IReadOnlyModel<List<SelectOption>>() {
+            @Override
+            public List<SelectOption> getObject() {
+                MTipo<?> type = model.getObject().getMTipo();
+                List<SelectOption> opcoesValue = WicketSelectionUtils.createOptions(model, type);
+                return opcoesValue;
+            }
+        });
     }
 
     @SuppressWarnings("rawtypes")
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final List<SelectOption> opcoesValue) {
-        final DropDownChoice<SelectOption> choices = (DropDownChoice<SelectOption>) retrieveChoices(model, opcoesValue);
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final IModel<? extends List<SelectOption>> opcoesValue) {
+        final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setNullValid(true), isMultiple(model), isBSSelect(model));
         return choices;
     }
@@ -59,10 +65,10 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
                                     IModel<? extends MInstancia> model, 
-                                    final List<SelectOption> opcoesValue) {
+                                    final IModel<? extends List<SelectOption>> opcoesModel) {
         String id = model.getObject().getNome();
         return new DropDownChoice<SelectOption>(id, 
-                new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer());
+                new MSelectionInstanceModel<SelectOption>(model), opcoesModel, rendererer());
     }
 
     @SuppressWarnings("rawtypes")

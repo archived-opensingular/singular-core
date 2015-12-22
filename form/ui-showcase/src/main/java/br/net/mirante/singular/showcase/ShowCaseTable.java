@@ -5,16 +5,13 @@ import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.input.core.multiselect.*;
 import br.net.mirante.singular.showcase.input.core.select.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
-import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
-import br.net.mirante.singular.showcase.layout.CaseGrid;
-import br.net.mirante.singular.showcase.layout.CaseGridList;
-import br.net.mirante.singular.showcase.layout.CaseGridTable;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetail;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailButtons;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailColumns;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabled;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionRequired;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionVisible;
+import br.net.mirante.singular.showcase.layout.*;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
+import br.net.mirante.singular.showcase.validation.CaseValidationPartial;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
@@ -63,9 +60,12 @@ public class ShowCaseTable {
         group("Validation", Icone.BAN)
             .addCase(CaseValidationRequired.class)
             .addCase(CaseValidationCustom.class)
-            .addCase(CaseValidationBetweenFields.class);
+            .addCase(CaseValidationBetweenFields.class)
+            .addCase(CaseValidationPartial.class);
         group("Interaction", Icone.ROCKET)
-            .addCase(CaseInteractionEnabledVisible.class)
+            .addCase(CaseInteractionEnabled.class)
+            .addCase(CaseInteractionVisible.class)
+            .addCase(CaseInteractionRequired.class)
             .addCase(CaseInteractionDependsOnOptions.class);
         //@formatter:on
     }
