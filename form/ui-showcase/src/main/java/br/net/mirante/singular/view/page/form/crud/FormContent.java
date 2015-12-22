@@ -83,6 +83,7 @@ public class FormContent extends Content
         String typeName = type.toString();
         loadOrCreateModel(key, typeName);
         currentModel.setType(typeName);
+        inputForm.setMultiPart(true);
     }
 
     private void loadOrCreateModel(StringValue key, String typeName) {
