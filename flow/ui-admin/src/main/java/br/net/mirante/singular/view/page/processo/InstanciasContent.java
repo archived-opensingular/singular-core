@@ -11,6 +11,7 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
@@ -29,27 +30,28 @@ public class InstanciasContent extends Content implements SingularWicketContaine
 
     public InstanciasContent(String id, boolean withSideBar, String processDefinitionCode) {
         super(id, false, withSideBar, false, true);
-        processDefinition = uiAdminFacade.retrieveDefinitionById(Integer.valueOf(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode)));
+        processDefinition = uiAdminFacade.retrieveDefinitionByKey(processDefinitionCode);
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
 
-        BaseDataProvider<IInstanceDTO, String> dataProvider = new BaseDataProvider<IInstanceDTO, String>() {
-            @Override
-            public Iterator<? extends IInstanceDTO> iterator(int first, int count,
+        if(flowMetadataFacade.hasAccessToProcessDefinition(processDefinition.getSigla(), getUserId(), AccessLevel.LIST)){
+            BaseDataProvider<IInstanceDTO, String> dataProvider = new BaseDataProvider<IInstanceDTO, String>() {
+                @Override
+                public Iterator<? extends IInstanceDTO> iterator(int first, int count,
                     String sortProperty, boolean ascending) {
-                return uiAdminFacade.retrieveAllInstance(first, count, sortProperty, ascending, processDefinition.getCod()).iterator();
-            }
-
-            @Override
-            public long size() {
-                return uiAdminFacade.countAllInstance(processDefinition.getCod());
-            }
-        };
-
-        queue(new BSDataTableBuilder<>(dataProvider)
+                    return uiAdminFacade.retrieveAllInstance(first, count, sortProperty, ascending, processDefinition.getCod()).iterator();
+                }
+                
+                @Override
+                public long size() {
+                    return uiAdminFacade.countAllInstance(processDefinition.getCod());
+                }
+            };
+            
+            queue(new BSDataTableBuilder<>(dataProvider)
                 .appendPropertyColumn(getMessage("label.table.column.description"), "description", IInstanceDTO::getDescricao)
                 .appendPropertyColumn(getMessage("label.table.column.time"), "delta", IInstanceDTO::getDeltaString)
                 .appendPropertyColumn(getMessage("label.table.column.date"), "date", IInstanceDTO::getDataInicialString)
@@ -57,6 +59,11 @@ public class InstanciasContent extends Content implements SingularWicketContaine
                 .appendPropertyColumn(getMessage("label.table.column.dates"), "dates", IInstanceDTO::getDataAtividadeString)
                 .appendPropertyColumn(getMessage("label.table.column.user"), "user", IInstanceDTO::getUsuarioAlocado)
                 .build("processos"));
+        } else {
+            queue(new WebMarkupContainer("processos").setVisible(false));
+            error(getString("error.user.without.access.to.process"));
+        }
+        
     }
 
     @Override

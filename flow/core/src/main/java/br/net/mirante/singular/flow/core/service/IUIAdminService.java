@@ -18,16 +18,16 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
         METADATA extends IMetaDataDTO, STATUS extends IStatusDTO, FEED extends IFeedDTO, MENU extends IMenuItemDTO> {
 
     DEFINITION retrieveDefinitionById(Integer processDefinitionCod);
+    
+    DEFINITION retrieveDefinitionByKey(String processDefinitionKey);
 
-    List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc);
+    List<DEFINITION> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess);
 
-    int countAllDefinition();
+    int countAllDefinition(Set<String> processCodeWithAccess);
 
     List<INSTANCE> retrieveAllInstance(int first, int size, String orderByProperty, boolean asc, Integer processDefinitionCod);
 
     int countAllInstance(Integer processDefinitionCod);
-
-    byte[] retrieveProcessDiagram(String sigla);
 
     List<METADATA> retrieveMetaData(Integer processDefinitionCod);
 
@@ -62,4 +62,8 @@ public interface IUIAdminService<DEFINITION extends IDefinitionDTO, INSTANCE ext
     List<MENU> retrieveAllCategoriesWithAcces(String userId);
     
     Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code);
+    
+    String getUserAvatar();
+
+    String getLogoutUrl();
 }

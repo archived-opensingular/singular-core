@@ -11,11 +11,13 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ExternalLink;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.StringValue;
 
+import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
@@ -29,7 +31,10 @@ public abstract class Content extends Panel {
     private boolean withSideBar;
 
     @Inject
-    private UIAdminFacade uiAdminFacade;
+    protected UIAdminFacade uiAdminFacade;
+    
+    @Inject
+    protected FlowMetadataFacade flowMetadataFacade;
     
     public Content(String id) {
         this(id, false, false, false, false);
@@ -56,6 +61,7 @@ public abstract class Content extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        queue(new FeedbackPanel("feedback"));
         add(new Label("contentTitle", getContentTitlelModel()));
         add(new Label("contentSubtitle", getContentSubtitlelModel()));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");

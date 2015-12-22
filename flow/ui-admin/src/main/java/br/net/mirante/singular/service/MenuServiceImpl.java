@@ -26,7 +26,7 @@ public class MenuServiceImpl implements MenuService {
     private GroupDAO groupDAO;
 
     @Inject
-    private FlowAuthorizationFacade authorizationFacade;
+    private FlowMetadataFacade flowMetadataFacade;
 
     @Override
     @Transactional
@@ -49,7 +49,7 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
         Set<Integer> definitions = new HashSet<>();
         for (GroupDTO groupDTO : groupDAO.retrieveAll()) {
-            definitions.addAll(authorizationFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
+            definitions.addAll(flowMetadataFacade.listProcessDefinitionCodsWithAccess(groupDTO, userId, AccessLevel.LIST));
         }
         List<MenuItemDTO> allCategories = retrieveAllCategories();
 

@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 
-public interface IFlowAuthorizationService {
+public interface IFlowMetadataService {
 
     Set<String> listProcessDefinitionsWithAccess(@NotNull String userCod, @NotNull AccessLevel accessLevel);
 
@@ -14,4 +14,5 @@ public interface IFlowAuthorizationService {
 
     boolean hasAccessToProcessInstance(@NotNull String processInstanceFullId, @NotNull String userCod, @NotNull AccessLevel accessLevel);
 
+    byte[] processDefinitionDiagram(@NotNull String processDefinitionKey);
 }

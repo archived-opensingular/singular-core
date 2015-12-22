@@ -15,10 +15,10 @@ import br.net.mirante.singular.dao.GroupDAO;
 import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
-import br.net.mirante.singular.flow.core.service.IFlowAuthorizationProvider;
+import br.net.mirante.singular.flow.core.service.IFlowMetadataProvider;
 
 @Service
-public class FlowAuthorizationFacade {
+public class FlowMetadataFacade {
 
     @Inject
     private GroupDAO groupDAO;
@@ -27,11 +27,22 @@ public class FlowAuthorizationFacade {
     private DefinitionDAO definitionDAO;
 
     @Inject
-    private IFlowAuthorizationProvider authorizationProvider;
+    private IFlowMetadataProvider flowMetadataProvider;
+
+    @Transactional
+    public byte[] processDefinitionDiagram(DefinitionDTO definitionDTO) {
+        return flowMetadataProvider.getMetadataService(retrieveGroup(definitionDTO.getCodGrupo())).processDefinitionDiagram(definitionDTO.getSigla());
+    }
+
+    @Cacheable(value = "retrieveGroup", cacheManager = "cacheManager")
+    @Transactional
+    public GroupDTO retrieveGroup(String codGrupo) {
+        return groupDAO.retrieveById(codGrupo);
+    }
 
     @Cacheable(value = "listProcessDefinitionKeysWithAccess", cacheManager = "cacheManager")
     public Set<String> listProcessDefinitionKeysWithAccess(GroupDTO groupDTO, String userCod, AccessLevel accessLevel) {
-        return authorizationProvider.getAuthorizationService(groupDTO).listProcessDefinitionsWithAccess(userCod, accessLevel);
+        return flowMetadataProvider.getMetadataService(groupDTO).listProcessDefinitionsWithAccess(userCod, accessLevel);
     }
 
     @Cacheable(value = "listProcessDefinitionsWithAccess", cacheManager = "cacheManager")
@@ -61,8 +72,8 @@ public class FlowAuthorizationFacade {
 
     @Transactional
     public boolean hasAccessToProcessDefinition(DefinitionDTO definitionDTO, String userCod, AccessLevel accessLevel) {
-        GroupDTO groupDTO = groupDAO.retrieveById(definitionDTO.getCodGrupo());
-        return authorizationProvider.getAuthorizationService(groupDTO).hasAccessToProcessDefinition(definitionDTO.getSigla(), userCod, accessLevel);
+        GroupDTO groupDTO = retrieveGroup(definitionDTO.getCodGrupo());
+        return flowMetadataProvider.getMetadataService(groupDTO).hasAccessToProcessDefinition(definitionDTO.getSigla(), userCod, accessLevel);
     }
 
 }
