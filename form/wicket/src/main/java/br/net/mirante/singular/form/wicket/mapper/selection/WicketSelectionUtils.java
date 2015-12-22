@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.options.SelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -43,7 +43,7 @@ public class WicketSelectionUtils {
         MILista<MIComposto> rawOptions = (MILista<MIComposto>) provider.listAvailableOptions(model.getObject());
         opcoesValue = rawOptions.getValores().stream()
                 .map((o) -> {
-                    SelectionableInstance x = (SelectionableInstance) o;
+                    MSelectionableInstance x = (MSelectionableInstance) o;
                     return new SelectOption<>(x.getFieldId(), x.getFieldValue(), (MInstancia) x);
                 }
                 ).collect(Collectors.toList());

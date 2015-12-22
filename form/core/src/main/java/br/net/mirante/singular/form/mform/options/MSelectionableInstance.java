@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.options;
 
-public interface SelectionableInstance {
+public interface MSelectionableInstance {
 
     public void setFieldId(Object value);
 

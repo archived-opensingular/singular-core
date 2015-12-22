@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.SelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         driver.assertContains("62");
     }
 
-    private SelectionableInstance federaldistrict() {
+    private MSelectionableInstance federaldistrict() {
         MIComposto df = selectType.create("DF", "Distrito Federal");
         df.setValor("population",2852372);
         df.setValor("areasqrkm",5802);
@@ -82,7 +82,7 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         return df;
     }
 
-    private SelectionableInstance goias() {
+    private MSelectionableInstance goias() {
         MIComposto go = selectType.create("Go", "Goiás");
         go.setValor("population",6155998);
         go.setValor("areasqrkm", 340086);

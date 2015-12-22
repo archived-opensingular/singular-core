@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.options.SelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MILista;
@@ -41,8 +41,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
             Object value = ((MISimples) target).getValor();
             String v = value != null ? value.toString() : null;
             return (T) new SelectOption<String>(v, v, target);
-        }else if (target instanceof SelectionableInstance){
-            SelectionableInstance item = (SelectionableInstance) target;
+        }else if (target instanceof MSelectionableInstance){
+            MSelectionableInstance item = (MSelectionableInstance) target;
             return (T) new SelectOption<String>(item.getFieldId(), item.getFieldValue(), target);
         }
         return null;
@@ -67,8 +67,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
             if(object != null) value = object.getValue();
             instance.setValor(value);
         }
-        else if(instance instanceof SelectionableInstance) {
-            SelectionableInstance item = (SelectionableInstance) instance;
+        else if(instance instanceof MSelectionableInstance) {
+            MSelectionableInstance item = (MSelectionableInstance) instance;
             if(object != null){
                 item.setValue(object.getKey(), object.getValue());
             }else{

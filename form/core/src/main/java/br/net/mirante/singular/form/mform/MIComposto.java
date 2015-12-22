@@ -11,11 +11,11 @@ import java.util.stream.Stream;
 import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.SelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 
 public class MIComposto
         extends MInstancia
-        implements ICompositeInstance, SelectionableInstance {
+        implements ICompositeInstance, MSelectionableInstance {
 
     private FieldMapOfRecordInstance fields;
 

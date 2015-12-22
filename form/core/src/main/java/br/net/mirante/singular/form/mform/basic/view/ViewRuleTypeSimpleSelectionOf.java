@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
-import br.net.mirante.singular.form.mform.options.SelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 
 /**
  * Decide a melhor view para um tipo simples que seja um selection of.
@@ -21,8 +21,8 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
                 MOptionsProvider provider = simple.getMTipo().getProviderOpcoes();
                 return decideView(instance, simple, provider);
             }
-        }else if (instance instanceof SelectionableInstance) {
-            SelectionableInstance simple = (SelectionableInstance) instance;
+        }else if (instance instanceof MSelectionableInstance) {
+            MSelectionableInstance simple = (MSelectionableInstance) instance;
             MSelectionableType type = (MSelectionableType) simple.getMTipo();
             if (type.getProviderOpcoes() != null) {
                 MOptionsProvider provider = type.getProviderOpcoes();
