@@ -1,13 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -19,13 +12,13 @@ import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaItemListaModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
+import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -49,8 +42,11 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class ListMasterDetailMapper implements IWicketComponentMapper {
 
 
-    @Override
-    public void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+
+        final ViewMode viewMode = ctx.getViewMode();
+        final MView view = ctx.getView();
+
         if (!(view instanceof MListMasterDetailView)) {
             throw new SingularFormException("Error: Mapper " +
                     ListMasterDetailMapper.class.getSimpleName() +
@@ -69,7 +65,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         ctx.getExternalContainer().appendTag("div", true, null, externalIrmao);
 
 
-        final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (MListMasterDetailView) view, externalIrmao, wicketBuilder);
+        final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (MListMasterDetailView) view, externalIrmao, ctx.getUiBuilderWicket());
 
         externalAtual.appendTag("div", true, null, modal);
 

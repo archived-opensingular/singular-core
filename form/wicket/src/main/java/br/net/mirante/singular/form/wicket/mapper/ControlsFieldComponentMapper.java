@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InvisibleIfNullOrEmptyBehavior;
@@ -47,7 +46,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      * @param bodyContainer Container não aninhado no formulário, utilizado para adicionar modais por exemplo
      * @param formGroup     Container onde dever adicionado o input
      * @param model         Model da MInstancia
-     * @param labelModel    Model contendo o label do componente
+     * @param labelModel    Model contendo o label do componentes
      * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
@@ -60,8 +59,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         return comp;
     }
 
-    @Override
-    default void buildView(UIBuilderWicket wicketBuilder, WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
+    default void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
@@ -71,6 +70,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
         final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
+
+        final ViewMode viewMode = ctx.getViewMode();
+        final MView view = ctx.getView();
 
         final BSLabel label = new BSLabel("label", labelModel);
         label.add(DisabledClassBehavior.getInstance());

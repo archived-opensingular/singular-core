@@ -231,7 +231,6 @@ body {
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li.active > a,
     .page-sidebar .page-sidebar-menu > li.active > a {
       border-left: 3px solid #5C9ACF !important;
-      margin-left: -3px;
       padding-left: 15px; }
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu li > a > .arrow:before,
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu li > a > .arrow.open:before,
