@@ -109,6 +109,11 @@ class UploadBehavior extends Behavior implements IResourceListener {
         if (!item.isFormField()) {
             IAttachmentRef ref = temporaryHandler().addAttachment(item.getInputStream());
             fileGroup.put(createJsonFile(item, ref));
+            instance.setFileName(item.getName());
+            instance.setFileId(ref.getId());
+            instance.setFileHashSHA1(ref.getHashSHA1());
+            instance.setFileSize(ref.getSize());
+            instance.setTemporary();
             synchronized(temporaryIds){
                 temporaryIds.add(ref.getId());
             }

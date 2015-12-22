@@ -44,6 +44,7 @@ public class MIAttachment extends MIComposto {
         setValor(MTipoAttachment.FIELD_SIZE, null);
         setValor(MTipoAttachment.FIELD_NAME, null);
         setValorAtributo(MTipoAttachment.REF_ORIGINAL_ID, null);
+        setValorAtributo(MTipoAttachment.IS_TEMPORARY, null);
     }
 
     @Override
@@ -121,5 +122,15 @@ public class MIAttachment extends MIComposto {
         IAttachmentRef ref = getAttachmentRef();
         return ref == null ? null : ref.getContent();
     }
-    
+
+    public void setTemporary() {
+        setValorAtributo(MTipoAttachment.IS_TEMPORARY, "true");
+    }
+
+
+    public boolean isTemporary() {
+        return getValorAtributo(MTipoAttachment.IS_TEMPORARY) != null;
+    }
+
+
 }
