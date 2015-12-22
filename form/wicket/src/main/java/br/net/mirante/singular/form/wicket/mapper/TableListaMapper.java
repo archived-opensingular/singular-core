@@ -1,9 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.AtrWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -14,6 +16,7 @@ import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
 import com.google.common.base.Strings;
@@ -32,7 +35,8 @@ public class TableListaMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
         final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
-        final IModel<String> label = new AtributoModel<>(mLista, MPacoteBasic.ATR_LABEL);
+        String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
+        final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
 
@@ -89,19 +93,36 @@ public class TableListaMapper extends AbstractListaMapper {
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha())) {
                 tr.newTHeaderCell($m.ofValue(""));
             }
+
+            int sumWidthPref = tComposto.getFields().stream()
+                                    .mapToInt((x) -> x.as(AtrWicket::new).getLarguraPref(1))
+                                    .sum();
+
             for (MTipo<?> tCampo : tComposto.getFields()) {
-                tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
+                Integer preferentialWidth = tCampo.as(AtrWicket::new).getLarguraPref(1);
+                BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
+                String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
+                cell.setInnerStyle(width);
             }
+
+            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()
+                    && viewMode.isEdition()) {
+                AdicionarButton btn = appendAdicionarButton(mLista, form, tr.newTHeaderCell($m.ofValue("")));
+                if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
+                    btn.add($b.classAppender("pull-right"));
+                }
+            }
+
         } else {
             thead.setVisible(false);
         }
 
         if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()
                 && viewMode.isEdition()) {
-            AdicionarButton btn = appendAdicionarButton(mLista, form, footerBody);
-            if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
-                btn.add($b.classAppender("pull-right"));
-            }
+//            AdicionarButton btn = appendAdicionarButton(mLista, form, footerBody);
+//            if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
+//                btn.add($b.classAppender("pull-right"));
+//            }
         } else {
             footer.setVisible(false);
         }

@@ -222,6 +222,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 public boolean isVisible() {
                     return caseBase.getObject().showValidateButton();
                 }
+                @Override
+                protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<MInstancia> instanceModel) {}
             };
 
             bsb.add($b.attr("value", getString("label.button.validate")));
