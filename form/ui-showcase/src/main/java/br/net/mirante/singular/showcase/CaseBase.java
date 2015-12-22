@@ -48,7 +48,7 @@ public class CaseBase implements Serializable {
         if (descriptionHtml != null) {
             return Optional.of(descriptionHtml);
         }
-        return getDescriptionResourceName().map(ref -> ref.getContent());
+        return getDescriptionResourceName().map(ResourceRef::getContent);
     }
 
     @SuppressWarnings("unchecked")
