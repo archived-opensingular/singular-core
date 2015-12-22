@@ -276,12 +276,6 @@ public class MIComposto
         return getValorString(value());
     }
 
-    @Override
-    public void setValue(Object key, Object value) {
-        setFieldId(key);
-        setFieldValue(value);
-    }
-
     private String key() {
 //        return getAndCheckKeyValueAttributes(getMTipo().ID_FIELD);
         if(getMTipo().id_sel == null ){

@@ -15,13 +15,7 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
 
     @Override
     public MView apply(MInstancia instance) {
-        if (instance instanceof MISimples) {
-            MISimples<?> simple = (MISimples<?>) instance;
-            if (simple.getMTipo().getProviderOpcoes() != null) {
-                MOptionsProvider provider = simple.getMTipo().getProviderOpcoes();
-                return decideView(instance, simple, provider);
-            }
-        }else if (instance instanceof MSelectionableInstance) {
+        if (instance instanceof MSelectionableInstance) {
             MSelectionableInstance simple = (MSelectionableInstance) instance;
             MSelectionableType type = (MSelectionableType) simple.getMTipo();
             if (type.getProviderOpcoes() != null) {

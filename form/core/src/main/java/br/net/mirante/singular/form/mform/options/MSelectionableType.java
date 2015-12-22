@@ -4,6 +4,10 @@ import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MTipo;
 
+/**
+ * Defines a type that can be restricted by a list of options (so selectionable).
+ * @param <BASE>
+ */
 @SuppressWarnings({"rawtypes","unchecked"})
 public interface MSelectionableType<BASE extends MTipo> {
     public MOptionsProvider getProviderOpcoes();

@@ -30,7 +30,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         if(tipoOpcoes instanceof MTipoSimples){
             Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
         }else if(tipoOpcoes instanceof MSelectionableType){
-            Arrays.stream(lista).forEach(o -> opcoes.addElement(o)); //TODO [Fabs]: also for collections
+            Arrays.stream(lista).forEach(o -> opcoes.addElement(o)); //TODO: Fabs : also for collections
         }
     }
 

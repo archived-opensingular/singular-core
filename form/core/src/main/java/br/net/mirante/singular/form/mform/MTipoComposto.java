@@ -27,6 +27,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     private transient FieldMapOfRecordType fieldsConsolidated;
 
 
+    //TODO: Fabs : Check why this is not working
     // SELECTION ATRIBUTES
 //    static final public AtrRef<MTipoString, MIString, String>
 //            ID_FIELD = new AtrRef<>(MPacoteCore.class, "ID_FIELD",

@@ -37,11 +37,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
 
     @SuppressWarnings("unchecked")
     protected T getSimpleSelection(MInstancia target) {
-        if(target instanceof MISimples){
-            Object value = ((MISimples) target).getValor();
-            String v = value != null ? value.toString() : null;
-            return (T) new SelectOption<String>(v, v, target);
-        }else if (target instanceof MSelectionableInstance){
+        if (target instanceof MSelectionableInstance){
             MSelectionableInstance item = (MSelectionableInstance) target;
             return (T) new SelectOption<String>(item.getFieldId(), item.getFieldValue(), target);
         }
@@ -62,12 +58,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
     }
 
     private void setValueAt(MInstancia instance, SelectOption object) {
-        if(instance instanceof MISimples){
-            Object value = null;
-            if(object != null) value = object.getValue();
-            instance.setValor(value);
-        }
-        else if(instance instanceof MSelectionableInstance) {
+        if(instance instanceof MSelectionableInstance) {
             MSelectionableInstance item = (MSelectionableInstance) instance;
             if(object != null){
                 item.setValue(object.getKey(), object.getValue());

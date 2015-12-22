@@ -76,10 +76,7 @@ public interface MOptionsProvider extends Serializable {
             }
         }
         for(MInstancia c : defaultOptions.getAllChildren()){
-            if(value instanceof MISimples){
-                if (value.getValor().equals(c.getValor())) return true;
-            }
-            else if (value.equals(c)) return true;
+           if (value.equals(c)) return true;
         }
         return false;
     }

@@ -39,9 +39,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         final MInstancia mi = model.getObject();
         if (mi != null){
-            if(mi instanceof MISimples && mi.getValor() != null) {
-                return String.valueOf(mi.getValor());
-            }else if(mi instanceof MSelectionableInstance) {
+            if(mi instanceof MSelectionableInstance) {
                 return ((MSelectionableInstance)mi).getFieldValue();
             }
         }

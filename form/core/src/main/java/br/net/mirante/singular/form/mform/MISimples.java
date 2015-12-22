@@ -1,8 +1,10 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+
 import java.util.Objects;
 
-public class MISimples<TIPO_NATIVO> extends MInstancia {
+public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionableInstance {
 
     private TIPO_NATIVO valor;
 
@@ -38,6 +40,26 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
     @Override
     public boolean isEmptyOfData() {
         return getValor() == null;
+    }
+
+    @Override
+    public void setFieldId(Object value) {
+        setValor(value);
+    }
+
+    @Override
+    public String getFieldId() {
+        return getValor() != null ? getValor().toString() : null;
+    }
+
+    @Override
+    public void setFieldValue(Object value) {
+        setFieldId(value);
+    }
+
+    @Override
+    public String getFieldValue() {
+        return getFieldId();
     }
 
     @Override
@@ -94,7 +116,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia {
         if (getClass() != obj.getClass())
             return false;
         MISimples<?> other = (MISimples<?>) obj;
-        if (getMTipo().equals(other.getMTipo())) {
+        if (!getMTipo().equals(other.getMTipo())) {
             return false;
         }
         if (getValor() == null) {
