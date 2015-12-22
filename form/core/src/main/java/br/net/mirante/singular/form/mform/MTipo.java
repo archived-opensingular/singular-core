@@ -579,6 +579,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return this;
     }
 
+    public <T extends UIComponentMapper> MTipo<I> withCustomMapper(UIComponentMapper uiComponentMapper) {
+        this.customMapper = uiComponentMapper;
+        return this;
+    }
+
     public UIComponentMapper getCustomMapper() {
         return customMapper;
     }

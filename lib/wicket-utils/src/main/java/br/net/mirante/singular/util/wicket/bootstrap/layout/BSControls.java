@@ -68,6 +68,10 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
         return super.appendTag("input", false, "type='text' class='form-control'", input);
     }
 
+    public BSControls appendInputHidden(Component input) {
+        return super.appendTag("input", false, "type='hidden' class='form-control'", input);
+    }
+
     public BSControls appendRadioChoice(Component input) {
         return super.appendTag("div", true, "class='radio-list'", input);
     }

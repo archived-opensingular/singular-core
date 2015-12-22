@@ -28,7 +28,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
     public void buildForEdit(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
-        final BSControls formGroup = createFromGroup(ctx);
+        final BSControls formGroup = createFormGroup(ctx);
 
         formGroup.appendInputText(buildTextField(model));
         formGroup.appendLabel(buildLabel(model));
@@ -37,7 +37,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
     public void buildForView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
 
-        final BSControls formGroup = createFromGroup(ctx);
+        final BSControls formGroup = createFormGroup(ctx);
         final MInstancia mi = model.getObject();
 
         formGroup.appendLabel(buildLabel(model));
@@ -62,7 +62,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
         return new TextField<>(mi.getNome(), new MInstanciaValorModel<>(model), String.class);
     }
 
-    private BSControls createFromGroup(WicketBuildContext ctx) {
+    private BSControls createFormGroup(WicketBuildContext ctx) {
         return ctx.getContainer().newFormGroup();
     }
 

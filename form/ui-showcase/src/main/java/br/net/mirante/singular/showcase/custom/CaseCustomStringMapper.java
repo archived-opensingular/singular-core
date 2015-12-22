@@ -8,7 +8,7 @@ import java.util.Optional;
 public class CaseCustomStringMapper extends CaseBase {
 
     public CaseCustomStringMapper() {
-        super("Custom Mapper");
+        super("Custom Mapper", "Material Desing Input");
         final Optional<ResourceRef> customStringMapper = ResourceRef.forSource(MaterialDesignInputMapper.class);
         if(customStringMapper.isPresent()) {
             getAditionalSources().add(customStringMapper.get());

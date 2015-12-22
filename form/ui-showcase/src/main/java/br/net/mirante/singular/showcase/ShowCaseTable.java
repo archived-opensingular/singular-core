@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.custom.CaseCustomStringMapper;
+import br.net.mirante.singular.showcase.custom.CaseCustonRangeMapper;
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
 import br.net.mirante.singular.showcase.input.core.multiselect.*;
@@ -69,7 +70,8 @@ public class ShowCaseTable {
             .addCase(CaseInteractionRequired.class)
             .addCase(CaseInteractionDependsOnOptions.class);
         group("Custom", Icone.WRENCH)
-                .addCase(CaseCustomStringMapper.class);
+                .addCase(CaseCustomStringMapper.class)
+                .addCase(CaseCustonRangeMapper.class);
         //@formatter:on
     }
 
