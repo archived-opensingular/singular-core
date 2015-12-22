@@ -116,7 +116,8 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
         if (getClass() != obj.getClass())
             return false;
         MISimples<?> other = (MISimples<?>) obj;
-        if (!getMTipo().equals(other.getMTipo())) {
+        if (!getMTipo().equals(other.getMTipo())
+                && !getMTipo().getNome().equals(other.getMTipo().getNome())) {
             return false;
         }
         if (getValor() == null) {
