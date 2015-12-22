@@ -17,7 +17,6 @@ import br.net.mirante.singular.form.mform.MTipoPredicate;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 
 public class MPacoteCore extends MPacote {
 
@@ -47,7 +46,7 @@ public class MPacoteCore extends MPacote {
     protected void carregarDefinicoes(PacoteBuilder pb) {
         pb.createTipo(MTipo.class);
         pb.createTipo(MTipoSimples.class);
-        pb.createTipo(MTipoComposto.class);
+
         pb.createTipo(MTipoLista.class);
         pb.createTipo(MTipoCode.class);
         pb.createTipo(MTipoPredicate.class);
@@ -59,7 +58,7 @@ public class MPacoteCore extends MPacote {
         pb.createTipo(MTipoDecimal.class);
         pb.createTipo(MTipoMonetario.class);
 
-        pb.createTipo(MTipoSelectItem.class);
+        pb.createTipo(MTipoComposto.class);
 
         pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO);
         pb.createTipoAtributo(MTipo.class, ATR_OBRIGATORIO_FUNCTION);

@@ -1,22 +1,22 @@
 package br.net.mirante.singular.showcase;
 
+import br.net.mirante.singular.showcase.custom.CaseCustomStringMapper;
+import br.net.mirante.singular.showcase.custom.CaseCustonRangeMapper;
 import br.net.mirante.singular.showcase.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.input.core.*;
+import br.net.mirante.singular.showcase.input.core.multiselect.*;
+import br.net.mirante.singular.showcase.input.core.select.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
-import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabledVisible;
-import br.net.mirante.singular.showcase.layout.CaseGrid;
-import br.net.mirante.singular.showcase.layout.CaseGridList;
-import br.net.mirante.singular.showcase.layout.CaseGridTable;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetail;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailButtons;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailColumns;
-import br.net.mirante.singular.showcase.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabled;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionRequired;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionVisible;
+import br.net.mirante.singular.showcase.layout.*;
 import br.net.mirante.singular.showcase.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.validation.CaseValidationCustom;
+import br.net.mirante.singular.showcase.validation.CaseValidationPartial;
 import br.net.mirante.singular.showcase.validation.CaseValidationRequired;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Throwables;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -34,18 +34,25 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreSelectComboRadio.class)
             .addCase(CaseInputCoreSelectDefault.class)
             .addCase(CaseInputCoreSelectOtherTypes.class)
+            .addCase(CaseInputCoreSelectComposite.class)
+            .addCase(CaseInputCoreSelectProvider.class)
+            .addCase(CaseInputCoreMultiSelectDefault.class)
             .addCase(CaseInputCoreMultiSelectCombo.class)
             .addCase(CaseInputCoreMultiSelectCheckbox.class)
             .addCase(CaseInputCoreMultiSelectPickList.class)
-            .addCase(CaseInputCoreMultiSelectDefault.class)
+            .addCase(CaseInputCoreMultiSelectComposite.class)
+            .addCase(CaseInputCoreMultiSelectProvider.class)
             .addCase(CaseInputCoreSelectSearch.class)
             .addCase(CaseInputCoreBasic.class)
             .addCase(CaseInputCoreBoolean.class)
+            .addCase(CaseInputCoreString.class)
             .addCase(CaseInputCoreTextArea.class)
             .addCase(CaseInputCoreDecimal.class)
-            .addCase(CaseInputCoreMonetario.class);
+            .addCase(CaseInputCoreMonetario.class)
+        ;
         group("File", Icone.FOLDER)
-            .addCase(CaseFileAttachment.class);
+            .addCase(CaseFileAttachment.class)
+        ;
         group("Layout", Icone.GRID)
             .addCase(CaseGrid.class)
             .addCase(CaseGridList.class)
@@ -53,14 +60,23 @@ public class ShowCaseTable {
             .addCase(CaseMasterDetail.class)
             .addCase(CaseMasterDetailColumns.class)
             .addCase(CaseMasterDetailButtons.class)
-            .addCase(CaseMasterDetailNested.class);
+            .addCase(CaseMasterDetailNested.class)
+        ;
         group("Validation", Icone.BAN)
             .addCase(CaseValidationRequired.class)
             .addCase(CaseValidationCustom.class)
-            .addCase(CaseValidationBetweenFields.class);
+            .addCase(CaseValidationBetweenFields.class)
+            .addCase(CaseValidationPartial.class);
         group("Interaction", Icone.ROCKET)
-            .addCase(CaseInteractionEnabledVisible.class)
-            .addCase(CaseInteractionDependsOnOptions.class);
+            .addCase(CaseInteractionEnabled.class)
+            .addCase(CaseInteractionVisible.class)
+            .addCase(CaseInteractionRequired.class)
+            .addCase(CaseInteractionDependsOnOptions.class)
+        ;
+        group("Custom", Icone.WRENCH)
+                .addCase(CaseCustomStringMapper.class)
+                .addCase(CaseCustonRangeMapper.class)
+        ;
         //@formatter:on
     }
 

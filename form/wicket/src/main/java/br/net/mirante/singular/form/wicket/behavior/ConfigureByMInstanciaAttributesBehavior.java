@@ -63,7 +63,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     }
 
     protected static boolean isInstanceRequired(Component component) {
-        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteCore.ATR_OBRIGATORIO));
+        return Boolean.TRUE.equals(getValorAtributo(component, MPacoteCore.ATR_OBRIGATORIO));
     }
 
     protected static boolean isInstanceEnabled(Component component) {

@@ -16,7 +16,7 @@ import br.net.mirante.singular.lambda.IFunction;
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     private String tagName;
-    private String cssClass = null;
+    private String cssClass = null, innerStyle = null;
     protected final RepeatingView items = new RepeatingView("_");
 
     public BSContainer(String id) {
@@ -45,6 +45,12 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
             @Override
             public String getObject() {
                 return getCssClass();
+            }
+        }, " "));
+        add(new AttributeAppender("style", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return getInnerStyle();
             }
         }, " "));
     }
@@ -137,6 +143,10 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         this.cssClass = cssClass;
         return (THIS) this;
     }
+    public THIS setInnerStyle(String innerStyle) {
+        this.innerStyle = innerStyle;
+        return (THIS) this;
+    }
 
     public String getTagName() {
         return tagName;
@@ -145,4 +155,6 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     public String getCssClass() {
         return cssClass;
     }
+
+    public String getInnerStyle() {return innerStyle; }
 }

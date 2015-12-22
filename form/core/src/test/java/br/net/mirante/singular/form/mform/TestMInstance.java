@@ -46,7 +46,7 @@ public class TestMInstance {
 //        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
-        MIComposto pedido2 = MformPersistenciaXML.fromXML(tipoPedido, xml);
+        MIComposto pedido2 = (MIComposto) MformPersistenciaXML.fromXML(tipoPedido, xml);
         assertId(pedido2, 1, 12);
         assertId(pedido2.getCampo("nome"), 13, 13);
         assertId(pedido2.getCampo("prioridade"), 8, 13);

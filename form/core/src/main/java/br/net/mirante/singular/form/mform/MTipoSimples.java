@@ -1,13 +1,10 @@
 package br.net.mirante.singular.form.mform;
 
-import java.util.Collection;
-
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.options.LookupOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -35,10 +32,10 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
 
     // SELECTION OF BEGIN
     
+    @Override
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
-    
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;

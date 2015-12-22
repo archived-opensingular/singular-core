@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform.core;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
