@@ -5,7 +5,6 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.view.page.showcase.ItemCasePanel;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class CaseBase implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends MPacote> getPackage() {
+    public Class<? extends MPacote> getPackage() {
         String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);

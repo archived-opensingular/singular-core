@@ -9,12 +9,12 @@ import org.apache.wicket.model.IModel;
 
 public abstract class BelverSaveButton extends BelverValidationButton {
 
-    public BelverSaveButton(String id, IModel<MInstancia> currentInstance) {
+    public BelverSaveButton(String id, IModel<? extends MInstancia>  currentInstance) {
         super(id, currentInstance);
     }
 
     @Override
-    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<MInstancia> instanceModel) {
+    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
         MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
         handleSaveXML(target, rootXml);
     }

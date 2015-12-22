@@ -5,9 +5,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
-
 import java.util.Optional;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
@@ -15,9 +13,9 @@ import org.apache.wicket.model.IModel;
 
 public class PartialValidationButton extends AjaxButton {
 
-    private final IModel<MInstancia> currentInstance;
+    private final IModel<? extends MInstancia>  currentInstance;
 
-    public PartialValidationButton(String id, IModel<MInstancia> currentInstance) {
+    public PartialValidationButton(String id, IModel<? extends MInstancia> currentInstance) {
         super(id);
         this.currentInstance = currentInstance;
     }
