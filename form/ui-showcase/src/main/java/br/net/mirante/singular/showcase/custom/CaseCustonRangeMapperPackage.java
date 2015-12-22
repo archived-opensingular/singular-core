@@ -21,7 +21,7 @@ public class CaseCustonRangeMapperPackage extends MPacote {
 
         faixaIdade.as(AtrBasic::new).label("Faixa de Idade");
         //@destacar
-        faixaIdade.withCustomMapper(new RangeSliderMapper(valorInicial.getNomeSimples(), valorFinal.getNomeSimples()));
+        faixaIdade.withCustomMapper(new RangeSliderMapper(valorInicial, valorFinal));
 
     }
 }

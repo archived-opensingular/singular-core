@@ -3,6 +3,7 @@ package br.net.mirante.singular.showcase.custom;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
@@ -23,9 +24,9 @@ public class RangeSliderMapper implements IWicketComponentMapper {
 
     private final String valorInicialPath, valorFinalPath;
 
-    public RangeSliderMapper(String valorInicialPath, String valorFinalPath) {
-        this.valorInicialPath = valorInicialPath;
-        this.valorFinalPath = valorFinalPath;
+    public RangeSliderMapper(MTipoInteger valorInicial, MTipoInteger valorFinal) {
+        this.valorInicialPath = valorInicial.getNomeSimples();
+        this.valorFinalPath = valorFinal.getNomeSimples();
     }
 
     @Override
