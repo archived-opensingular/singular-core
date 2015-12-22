@@ -24,6 +24,21 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
         ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
 
         /**
+         * Outra forma de se adicionar elementos é através do provedor padrão.
+         */
+        MTipoComposto<?> conjuntoNumerico = tipoMyForm.addCampoComposto("numberSet");
+        conjuntoNumerico.withSelection()
+                .add("N", "Naturais")
+                .add("Z", "Inteiros")
+                .add("Q", "Racionais")
+                .add("AR", "Racionais Algébricos")
+                .add("I", "Imaginários")
+                .add("A", "Algébricos")
+                .add("C", "Complexos");
+        conjuntoNumerico.as(AtrBasic::new).label("Conjunto Numérico");
+
+
+        /**
          * Neste caso os campos de chave e valor utilizados serão os definidos por
          * "abreviado" e "descricao".
          */

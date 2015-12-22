@@ -15,7 +15,14 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         addSelection(tipoMyForm, 3, true);
         addSelection(tipoMyForm, 3, false);
         addSelection(tipoMyForm, 10, false);
-        
+
+        /*
+            Outra forma de definir suas opções é populando o provedor padrão
+         */
+        MTipoString favvortiteFruit = tipoMyForm.addCampoString("favvortiteFruit");
+        favvortiteFruit.as(AtrBasic::new).label("Fruta Favorita");
+        favvortiteFruit.withSelection().add("Maçã").add("Laranja").add("Banana").add("Goiaba");
+
     }
 
     private static void addSelection(MTipoComposto<?> tipoMyForm, int sizeOptions, boolean required) {

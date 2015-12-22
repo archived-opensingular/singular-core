@@ -24,6 +24,11 @@ public interface MSelectionableType<BASE extends MTipo> {
         return getProviderOpcoes();
     }
 
+    default public MFixedOptionsSimpleProvider withSelection() {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, (Collection)null));
+        return (MFixedOptionsSimpleProvider) getProviderOpcoes();
+    }
+
     /**
      * Register a collection of options to be selected for this field.
      * Also restricts the range of values available for the field.

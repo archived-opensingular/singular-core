@@ -15,11 +15,11 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, 
                             Collection<? extends Object> lista) {
-        if (lista.isEmpty()) {
-            throwEmpryListError();
-        }
+//        if (lista.isEmpty()) {
+//            throwEmpryListError();
+//        }
         this.opcoes = tipoOpcoes.novaLista();
-        lista.forEach(o -> opcoes.addValor(o));
+        if(lista != null) { lista.forEach(o -> opcoes.addValor(o)); }
     }
 
     public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Object[] lista) {
@@ -36,6 +36,29 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private void throwEmpryListError() {
         throw new RuntimeException("Empty list is not valid as options.");
+    }
+
+    /**
+     * Add a new element to the Provider optionlist with value o.
+     * @param o Value to be set (MSelectionableInstance.setValor) on the element
+     * @return this
+     */
+    public MFixedOptionsSimpleProvider add(Object o){
+        MInstancia e = opcoes.addNovo();
+        e.setValor(o);
+        return this;
+    }
+
+    /**
+     * Add a new element to the Provider optionlist with the key values informed.
+     * @param key to be set (MSelectionableInstance.setValue) on the element
+     * @param value
+     * @return this
+     */
+    public MFixedOptionsSimpleProvider add(Object key, Object value){
+        MSelectionableInstance e = (MSelectionableInstance) opcoes.addNovo();
+        e.setValue(key, value);
+        return this;
     }
 
     @Override

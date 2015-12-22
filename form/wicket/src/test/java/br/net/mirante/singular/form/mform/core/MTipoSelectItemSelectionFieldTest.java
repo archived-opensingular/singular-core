@@ -50,6 +50,23 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         assertThat(extractProperty("value").from(choices.getChoices()))
             .containsExactly("Distrito Federal","São Paulo");
     }
+
+    @Test @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void hasADefaultProvider() {
+        setupPage();
+
+        selectType.withSelection().add("DF", "Distrito Federal").add("SP", "São Paulo");
+        buildPage();
+        driver.assertEnabled(formField(form, "originUF"));
+        form.submit("save-btn");
+        List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
+        assertThat(options).hasSize(1);
+        DropDownChoice choices = options.get(0);
+        assertThat(extractProperty("key").from(choices.getChoices()))
+                .containsExactly("DF","SP");
+        assertThat(extractProperty("value").from(choices.getChoices()))
+                .containsExactly("Distrito Federal","São Paulo");
+    }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithDanglingOptions() {
