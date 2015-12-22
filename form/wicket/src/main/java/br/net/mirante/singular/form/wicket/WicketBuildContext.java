@@ -107,7 +107,7 @@ public class WicketBuildContext implements Serializable {
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
         MTipo<?> tipo = model.getMInstancia().getMTipo();
-        if (tipo.hasDependentTypes()) {
+        if (tipo.hasDependentTypes() || tipo.dependsOnAnyType()) {
             addAjaxUpdateToComponent(
                 formComponent,
                 IMInstanciaAwareModel.getInstanceModel(model),
@@ -235,6 +235,10 @@ public class WicketBuildContext implements Serializable {
         @Override
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
             WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m.getObject());
+        }
+        @Override
+        public void onError(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel) {
+            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel.getObject());
         }
     }
 

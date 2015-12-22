@@ -82,6 +82,7 @@ public class WicketFormProcessing {
         final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
         fieldInstance.getDocument().updateAttributes(eventCollector);
 
+        refresh(target, formComponent);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
