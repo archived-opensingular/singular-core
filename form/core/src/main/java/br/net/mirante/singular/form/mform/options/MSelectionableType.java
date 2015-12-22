@@ -10,7 +10,7 @@ public interface MSelectionableType<BASE extends MTipo> {
 
     public void setProviderOpcoes(MOptionsProvider p);
 
-	default public boolean hasProviderOpcoes() {
+    default public boolean hasProviderOpcoes() {
         return getProviderOpcoes() != null;
     }
 
