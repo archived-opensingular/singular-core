@@ -87,4 +87,20 @@ public abstract class MTypes {
         result.removeIf(it -> it == null);
         return result;
     }
+
+    public static List<MTipo<?>> listAscendants(MTipo<?> root, boolean includeRoot) {
+
+        final List<MTipo<?>> list = new ArrayList<>();
+
+        if (includeRoot)
+            list.add(root);
+
+        MTipo<?> tipo = (MTipo<?>) root.getEscopoPai();
+        while (tipo != null) {
+            list.add(tipo);
+            MEscopo pai = tipo.getEscopoPai();
+            tipo = (pai instanceof MTipo<?>) ? (MTipo<?>) pai : null;
+        }
+        return list;
+    }
 }

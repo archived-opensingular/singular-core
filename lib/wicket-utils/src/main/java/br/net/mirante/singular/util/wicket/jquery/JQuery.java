@@ -26,6 +26,13 @@ public class JQuery {
             + "});");
     }
 
+    public static StringBuilder redirectEvent(Component originalComponent, String originalEvent, Component newComponent, String newEvent) {
+        return $(originalComponent).append(""
+            + ".on('" + originalEvent + "', function(){"
+            + $(newComponent) + ".trigger('" + newEvent + "');"
+            + "});");
+    }
+
     public static StringBuilder $(Component component, Component... moreComponents) {
         String selector = Stream.concat(Stream.of(component), Stream.of(moreComponents))
             .filter($L.notNull())

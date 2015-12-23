@@ -33,13 +33,10 @@ public class CaseInteractionExistsPackage extends MPacote {
 
         record
             .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))
-            .asAtrBasic()
-            .dependsOn(exists);
+            .asAtrBasic().dependsOn(exists);
 
-        recordText.asAtrBasic()
-            .label("Text");
+        recordText.asAtrBasic().label("Text");
 
-        recordDate.asAtrBasic()
-            .label("Date");
+        recordDate.asAtrBasic().label("Date");
     }
 }

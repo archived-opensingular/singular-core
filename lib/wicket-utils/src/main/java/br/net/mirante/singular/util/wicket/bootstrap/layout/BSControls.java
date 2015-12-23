@@ -1,5 +1,6 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -87,11 +88,15 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
     }
 
     public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
-        this.appendInputGroup(componentId -> newInputGroup()
-            .appendExtraClasses(" date date-picker ")
-            .appendExtraAttributes(extraAttributes)
-            .appendInputText(datepicker)
-            .appendButtonAddon(Icone.CALENDAR));
+        this.appendInputGroup(componentId -> {
+            BSInputGroup inputGroup = newInputGroup();
+            return inputGroup
+                .appendExtraClasses(" date date-picker ")
+                .appendExtraAttributes(extraAttributes)
+                .appendInputText(datepicker
+                    .setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                .appendButtonAddon(Icone.CALENDAR);
+        });
         return this;
     }
 

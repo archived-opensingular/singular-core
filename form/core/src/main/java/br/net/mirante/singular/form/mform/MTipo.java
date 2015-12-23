@@ -366,7 +366,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public <T> T as(Function<? super MTipo<I>, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
-    
+
     public MTipo<I> withView(Supplier<MView> factory) {
         this.view = factory.get();
         return this;
@@ -400,6 +400,10 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             .map(it -> it.get())
             .map(it -> !it.isEmpty())
             .orElse(false);
+    }
+    public boolean dependsOnAnyTypeInHierarchy() {
+        return MTypes.listAscendants(this, true).stream()
+            .anyMatch(it -> it.dependsOnAnyType());
     }
 
     public MTipo<I> addInstanceValidator(IInstanceValidator<I> validador) {
@@ -597,10 +601,6 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public MOptionsProvider getProviderOpcoes() {
         throw new UnsupportedOperationException();
-    }
-
-    public boolean hasProviderOpcoes() {
-        return false;
     }
 
     public <T extends UIComponentMapper> MTipo<I> withCustomMapper(Supplier<T> factory) {

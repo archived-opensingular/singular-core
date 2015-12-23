@@ -95,7 +95,8 @@ public class WicketFormProcessing {
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
                 boolean dependsOnField = fieldInstance.getMTipo().getDependentTypes().contains(insTipo);
-                return wasUpdated || (hasOptions && dependsOnField);
+                boolean result = wasUpdated || (hasOptions && dependsOnField);
+                return result;
             };
 
             // re-renderizar componentes
