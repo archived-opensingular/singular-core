@@ -24,6 +24,20 @@ public class AtrCore extends MTranslatorParaAtributo {
     }
     
     public Boolean isObrigatorio() {
-        return getAlvo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
+        return !Boolean.FALSE.equals(getAlvo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
+    }
+
+    public AtrCore exists(Boolean valor) {
+        getAlvo().setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, valor);
+        return this;
+    }
+    
+    public AtrCore exists(Predicate<MInstancia> valor) {
+        getAlvo().setValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION, valor);
+        return this;
+    }
+    
+    public boolean exists() {
+        return !Boolean.FALSE.equals(getAlvo().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO));
     }
 }
