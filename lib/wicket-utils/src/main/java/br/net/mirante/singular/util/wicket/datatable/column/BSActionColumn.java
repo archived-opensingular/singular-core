@@ -15,7 +15,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
-    private final List<ActionItem> actions = new ArrayList<>();
+    private final List<ActionItem<T>> actions = new ArrayList<>();
 
     public BSActionColumn() {
         super($m.ofValue(""));
@@ -42,7 +42,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     protected void onPopulateActions(IModel<T> rowModel, BSActionPanel<T> actionPanel) {
-        for (ActionItem item : actions)
+        for (ActionItem<T> item : actions)
             actionPanel.appendAction(item.label, item.icone, item.action, rowModel);
     }
 
@@ -56,7 +56,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
-        actions.add(new ActionItem(labelModel, iconeModel, action));
+        actions.add(new ActionItem<>(labelModel, iconeModel, action));
         return this;
     }
 
@@ -65,7 +65,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
         return (BSActionColumn<T, S>) super.setRowMergeIdFunction(rowMergeIdFunction);
     }
 
-    private class ActionItem implements Serializable {
+    private static class ActionItem<T> implements Serializable {
         final IModel<?> label;
         final IModel<Icone> icone;
         final IBSAction<T> action;
