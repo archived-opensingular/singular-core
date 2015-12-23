@@ -320,8 +320,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 //            .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Testes Características fisíco-químicas");
 
-        teste.as(AtrBasic::new).label("Características fisíco-químicas")
-            .as(AtrWicket::new).larguraPref(4);
+        teste.as(AtrBasic::new).label("Características fisíco-químicas");
 
         MTipoString estadoFisico = teste.addCampoString("estadoFisico", true);
         estadoFisico.withSelectionOf("Líquido", "Sólido", "Gasoso")
@@ -332,21 +331,17 @@ public class MPacotePeticaoGGTOX extends MPacote {
         MTipoString aspecto = teste.addCampoString("aspecto", true);
         aspecto.as(AtrBasic::new).label("Aspecto")
             .tamanhoMaximo(50)
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrWicket::new).larguraPref(4);
 
         MTipoString cor = teste.addCampoString("cor", true);
         cor.as(AtrBasic::new).label("Cor")
             .tamanhoMaximo(40)
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrWicket::new).larguraPref(3);
 
         MTipoString odor = teste.addCampoString("odor");
         odor.as(AtrBasic::new).label("Odor")
             .tamanhoMaximo(40)
-                .as(AtrWicket::new).larguraPref(2);
-
-        teste.addCampoDecimal("pontoFusao")
-            .as(AtrBasic::new).label("Ponto de fusão (ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrWicket::new).larguraPref(3);
 
         testes.withView(new MListMasterDetailView()
                 .col(estadoFisico)
@@ -356,55 +351,67 @@ public class MPacotePeticaoGGTOX extends MPacote {
         );
 
         MTipoComposto<MIComposto> faixaFusao = teste.addCampoComposto("faixaFusao");
+        faixaFusao.as(AtrWicket::new).larguraPref(6);
 
         //TODO cade as mascaras para campos decimais
-        faixaFusao.as(AtrBasic::new).label("Faixa de fusão (ºC)")
+        faixaFusao.as(AtrBasic::new).label("Fusão");
+
+        faixaFusao.addCampoDecimal("pontoFusao")
+                .as(AtrBasic::new).label("Ponto de fusão").subtitle("ºC")
                 .as(AtrWicket::new).larguraPref(4);
 
         //TODO o campo faixa de fusao precisa de um tipo intervalo
         // Exemplo: Faixa De 10 a 20
         faixaFusao.addCampoDecimal("faixaFusaoDe")
-            .as(AtrBasic::new).label("De")
-            .as(AtrWicket::new).larguraPref(6);
+            .as(AtrBasic::new).label("Início").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
         faixaFusao.addCampoDecimal("faixaFusaoA")
-            .as(AtrBasic::new).label("A")
-            .as(AtrWicket::new).larguraPref(6);
-
-        teste.addCampoDecimal("pontoEbulicao")
-            .as(AtrBasic::new).label("Ponto de ebulição (ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
         MTipoComposto<MIComposto> faixaEbulicao = teste.addCampoComposto("faixaEbulicao");
 
-        faixaEbulicao.as(AtrBasic::new).label("Faixa de ebulição (ºC)")
+        faixaEbulicao.as(AtrBasic::new).label("Ebulição")
+                .as(AtrWicket::new).larguraPref(6);
+
+        faixaEbulicao.addCampoDecimal("pontoEbulicao")
+                .as(AtrBasic::new).label("Ebulição").subtitle("ºC")
                 .as(AtrWicket::new).larguraPref(4);
 
         faixaEbulicao.addCampoDecimal("faixaEbulicaoDe")
-            .as(AtrBasic::new).label("De")
-            .as(AtrWicket::new).larguraPref(6);
+            .as(AtrBasic::new).label("Início").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
         faixaEbulicao.addCampoDecimal("faixaEbulicaoA")
-            .as(AtrBasic::new).label("A")
-            .as(AtrWicket::new).larguraPref(6);
+            .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoDecimal("pressaoVapor")
-            .as(AtrBasic::new).label("Pressão do vapor (mmHg/Pa/mPa)")
-                .as(AtrWicket::new).larguraPref(2);
+        MTipoComposto<MIComposto> pressaoVapor = teste.addCampoComposto("pressaoVapor");
+        pressaoVapor.as(AtrBasic::new).label("Pressão do vapor")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoString("tipoPressaoVapor")
+        pressaoVapor.addCampoDecimal("valor")
+            .as(AtrBasic::new).label("Valor")
+                .as(AtrWicket::new).larguraPref(6);
+
+        pressaoVapor.addCampoString("unidade")
             .withSelectionOf("mmHg", "Pa", "mPa")
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Tipo de Pressão do vapor")
-                .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Unidade")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoDecimal("solubilidadeAgua")
-            .as(AtrBasic::new).label("Solubilidade em água (mg/L a 20 ou 25 ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+        MTipoComposto<MIComposto> solubilidade = teste.addCampoComposto("solubilidade");
+        solubilidade.as(AtrBasic::new).label("Solubilidade")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoDecimal("solubilidadeOutrosSolventes")
-            .as(AtrBasic::new).label("Solubilidade em outros solventes (mg/L a 20 ou 25 ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+        solubilidade.addCampoDecimal("solubilidadeAgua")
+            .as(AtrBasic::new).label("em água").subtitle("mg/L a 20 ou 25 ºC")
+                .as(AtrWicket::new).larguraPref(6);
+
+        solubilidade.addCampoDecimal("solubilidadeOutrosSolventes")
+            .as(AtrBasic::new).label("em outros solventes").subtitle("mg/L a 20 ou 25 ºC")
+                .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoString("hidrolise")
             .as(AtrBasic::new).label("Hidrólise")
@@ -415,39 +422,39 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoDecimal("pontoFulgor")
-            .as(AtrBasic::new).label("Ponto de fulgor (ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Ponto de fulgor").subtitle("ºC")
+                .as(AtrWicket::new).larguraPref(3);
 
         teste.addCampoDecimal("constanteDissociacao")
             .as(AtrBasic::new).label("Constante de dissociação")
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrWicket::new).larguraPref(3);
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> phs = teste.addCampoListaOfComposto("phs", "ph");
         MTipoComposto<MIComposto> ph = phs.getTipoElementos();
 
         ph.addCampoDecimal("valorPh", true)
             .as(AtrBasic::new).label("pH")
-            .as(AtrWicket::new).larguraPref(2);
+            .as(AtrWicket::new).larguraPref(4);
 
         ph.addCampoDecimal("solucao", true)
-            .as(AtrBasic::new).label("Solução (%)")
-            .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Solução").subtitle("%")
+            .as(AtrWicket::new).larguraPref(4);
 
         ph.addCampoDecimal("temperatura", true)
-            .as(AtrBasic::new).label("Temperatura (ºC)")
-            .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Temperatura").subtitle("ºC")
+            .as(AtrWicket::new).larguraPref(4);
 
         phs
             .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Embalagem");
 
         teste.addCampoDecimal("coeficienteParticao")
-            .as(AtrBasic::new).label("Coeficiente de partição octanol/Água a 20-25 ºC")
-                .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Coeficiente de partição octanol/Água").subtitle("a 20-25 ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
         teste.addCampoDecimal("densidade")
-            .as(AtrBasic::new).label("Densidade (g/cm³ a 20ºC)")
-                .as(AtrWicket::new).larguraPref(2);
+            .as(AtrBasic::new).label("Densidade").subtitle("g/cm³ a 20ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
         teste.addCampoString("observacoes")
             .withView(MTextAreaView::new)
