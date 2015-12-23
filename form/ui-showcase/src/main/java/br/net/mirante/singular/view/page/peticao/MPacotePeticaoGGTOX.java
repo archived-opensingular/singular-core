@@ -317,36 +317,43 @@ public class MPacotePeticaoGGTOX extends MPacote {
         MTipoComposto<MIComposto> teste = testes.getTipoElementos();
 
         testes
-            .withView(MPanelListaView::new)
+//            .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Testes Características fisíco-químicas");
 
         teste.as(AtrBasic::new).label("Características fisíco-químicas")
             .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("estadoFisico", true)
-            .withSelectionOf("Líquido", "Sólido", "Gasoso")
+        MTipoString estadoFisico = teste.addCampoString("estadoFisico", true);
+        estadoFisico.withSelectionOf("Líquido", "Sólido", "Gasoso")
             .withView(MSelecaoPorSelectView::new)
             .as(AtrBasic::new).label("Estado físico")
                 .as(AtrWicket::new).larguraPref(2);
 
-        teste.addCampoString("aspecto", true)
-            .as(AtrBasic::new).label("Aspecto")
+        MTipoString aspecto = teste.addCampoString("aspecto", true);
+        aspecto.as(AtrBasic::new).label("Aspecto")
             .tamanhoMaximo(50)
                 .as(AtrWicket::new).larguraPref(2);
 
-        teste.addCampoString("cor", true)
-            .as(AtrBasic::new).label("Cor")
+        MTipoString cor = teste.addCampoString("cor", true);
+        cor.as(AtrBasic::new).label("Cor")
             .tamanhoMaximo(40)
                 .as(AtrWicket::new).larguraPref(2);
 
-        teste.addCampoString("odor")
-            .as(AtrBasic::new).label("Odor")
+        MTipoString odor = teste.addCampoString("odor");
+        odor.as(AtrBasic::new).label("Odor")
             .tamanhoMaximo(40)
                 .as(AtrWicket::new).larguraPref(2);
 
         teste.addCampoDecimal("pontoFusao")
             .as(AtrBasic::new).label("Ponto de fusão (ºC)")
                 .as(AtrWicket::new).larguraPref(2);
+
+        testes.withView(new MListMasterDetailView()
+                .col(estadoFisico)
+                .col(aspecto)
+                .col(cor)
+                .col(odor)
+        );
 
         MTipoComposto<MIComposto> faixaFusao = teste.addCampoComposto("faixaFusao");
 
@@ -445,6 +452,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
         teste.addCampoString("observacoes")
             .withView(MTextAreaView::new)
             .as(AtrBasic::new).label("Observações");
+
+
     }
 
     private void addTesteIrritacaoOcular(PacoteBuilder pb, MTipoComposto<?> componente) {
