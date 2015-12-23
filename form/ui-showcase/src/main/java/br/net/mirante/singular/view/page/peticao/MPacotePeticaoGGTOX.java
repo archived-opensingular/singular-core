@@ -3,6 +3,7 @@ package br.net.mirante.singular.view.page.peticao;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
@@ -471,27 +472,34 @@ public class MPacotePeticaoGGTOX extends MPacote {
         //TODO criar regra para pelo menos um campo preenchido
 
         testes
-            .withView(MPanelListaView::new)
+//            .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
 
         teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
             .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("laboratorio")
-            .as(AtrBasic::new).label("Laboratório")
+        MTipoString laboratorio = teste.addCampoString("laboratorio");
+        laboratorio.as(AtrBasic::new).label("Laboratório")
             .tamanhoMaximo(50);
 
-        teste.addCampoString("protocoloReferencia")
-            .as(AtrBasic::new).label("Protocolo de referência")
+        MTipoString protocolo = teste.addCampoString("protocoloReferencia");
+        protocolo.as(AtrBasic::new).label("Protocolo de referência")
             .tamanhoMaximo(50);
 
-        teste.addCampoData("dataInicioEstudo")
-            .as(AtrBasic::new).label("Data de início do estudo")
+        MTipoData inicio = teste.addCampoData("dataInicioEstudo");
+        inicio.as(AtrBasic::new).label("Data de início do estudo")
                 .as(AtrWicket::new).larguraPref(3);
 
-        teste.addCampoData("dataFimEstudo")
-            .as(AtrBasic::new).label("Data final do estudo")
+        MTipoData fim = teste.addCampoData("dataFimEstudo");
+        fim.as(AtrBasic::new).label("Data final do estudo")
                 .as(AtrWicket::new).larguraPref(3);
+
+        testes.withView(new MListMasterDetailView()
+                .col(laboratorio)
+                .col(protocolo)
+                .col(inicio)
+                .col(fim)
+        );
 
         teste.addCampoString("purezaProdutoTestado")
             .as(AtrBasic::new).label("Pureza do produto testado")
