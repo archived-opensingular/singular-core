@@ -331,6 +331,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true), currentInstance, viewModeModal);
+            target.add(ctx.getExternalContainer());
             target.add(containerExterno);
             this.show(target);
         }

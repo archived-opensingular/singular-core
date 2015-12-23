@@ -202,8 +202,12 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
     }
 
+    public MTipoDecimal addCampoDecimal(String nomeCampo, boolean obrigatorio) {
+        return addCampo(nomeCampo, MTipoDecimal.class, obrigatorio);
+    }
+
     public MTipoDecimal addCampoDecimal(String nomeCampo) {
-        return addCampo(nomeCampo, MTipoDecimal.class);
+        return addCampoDecimal(nomeCampo, false);
     }
 
     public MTipoMonetario addCampoMonetario(String nomeCampo) {

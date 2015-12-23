@@ -37,6 +37,14 @@ public class DefinitionDAO extends BaseDAO{
     }
 
     @SuppressWarnings("unchecked")
+    public List<DefinitionDTO> retrieveAll() {
+        Query hql = getSession().createQuery("select pd.cod as cod, pd.name as nome, pd.key as sigla, pd.processGroup.cod as codGrupo from ProcessDefinitionEntity pd");
+        hql.setCacheable(true);
+        hql.setResultTransformer(Transformers.aliasToBean(DefinitionDTO.class));
+        return hql.list();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess) {
         if(processCodeWithAccess.isEmpty()){
             return Collections.emptyList();

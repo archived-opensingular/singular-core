@@ -1,11 +1,12 @@
 package br.net.mirante.singular.view.page.showcase;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.BelverBasePanel;
+import br.net.mirante.singular.form.wicket.panel.BelverPanel;
 import br.net.mirante.singular.showcase.CaseBase;
 import br.net.mirante.singular.showcase.ResourceRef;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -46,7 +47,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private final BSModalBorder viewXmlModal = new BSModalBorder("viewXmlModal");
     private final IModel<CaseBase> caseBase;
 
-    private BelverBasePanel belverBasePanel = null;
+    private BelverPanel belverPanel = null;
     private ViewMode viewMode = ViewMode.EDITION;
 
     @Inject
@@ -63,7 +64,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         add(buildHeaderText());
 
         Form form = new Form("form");
-        form.add(buildBelverFormBasePanel());
+        form.add(buildBelverBasePanel());
         form.add(buildButtons());
         form.add(viewXmlModal);
 
@@ -103,15 +104,19 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
 
-    private BelverBasePanel buildBelverFormBasePanel() {
-        belverBasePanel = new BelverBasePanel("belverPanel", springServiceRegistry, caseBase.getObject().getPackage(),
-                "testForm") {
+    private BelverPanel buildBelverBasePanel() {
+        belverPanel = new BelverPanel("belverPanel", springServiceRegistry) {
+            @Override
+            protected MTipo<?> getTipo() {
+                return caseBase.getObject().getCaseType();
+            }
+
             @Override
             public ViewMode getViewMode() {
                 return viewMode;
             }
         };
-        return belverBasePanel;
+        return belverPanel;
     }
 
     private MarkupContainer buildButtons() {
@@ -120,7 +125,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         return new ListView<ItemCaseButton>("buttons", botoes) {
             @Override
             protected void populateItem(ListItem<ItemCaseButton> item) {
-                item.add(item.getModelObject().buildButton("button", belverBasePanel.getRootInstance()));
+                item.add(item.getModelObject().buildButton("button", belverPanel.getRootInstance()));
             }
         };
     }
@@ -158,7 +163,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildValidateButton() {
         return (id, ci) -> {
-            final BelverValidationButton bsb = new BelverValidationButton(id, ci) {
+            final BelverValidationButton bsb = new BelverValidationButton(id) {
                 @Override
                 public boolean isVisible() {
                     return caseBase.getObject().showValidateButton();
@@ -167,6 +172,11 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 @Override
                 protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
                                                    IModel<? extends MInstancia> instanceModel) {
+                }
+
+                @Override
+                public IModel<? extends MInstancia> getCurrentInstance() {
+                    return ci;
                 }
             };
 
@@ -183,7 +193,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     viewMode = ViewMode.VISUALIZATION;
-                    belverBasePanel.updateContainer();
+                    belverPanel.updateContainer();
                     target.add(form);
                 }
 
@@ -202,7 +212,13 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildSaveButton() {
         return (id, ci) -> {
-            final BelverSaveButton bsb = new BelverSaveButton(id, ci) {
+            final BelverSaveButton bsb = new BelverSaveButton(id) {
+
+                @Override
+                public IModel<? extends MInstancia> getCurrentInstance() {
+                    return ci;
+                }
+
                 @Override
                 protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                     viewXml(target, xml);
@@ -222,7 +238,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     viewMode = ViewMode.EDITION;
-                    belverBasePanel.updateContainer();
+                    belverPanel.updateContainer();
                     target.add(form);
                 }
 

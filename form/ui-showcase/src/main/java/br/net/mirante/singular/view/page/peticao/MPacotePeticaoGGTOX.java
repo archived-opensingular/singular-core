@@ -1,23 +1,15 @@
 package br.net.mirante.singular.view.page.peticao;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
+import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 import br.net.mirante.singular.form.wicket.AtrWicket;
+
+import java.util.Optional;
 
 public class MPacotePeticaoGGTOX extends MPacote {
 
@@ -77,8 +69,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
     private void addDadosResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
         dadosResponsavel = peticionamento.addCampoComposto("dadosResponsavel");
 
-        dadosResponsavel.as(AtrBasic::new).label("Dados do Responsável")
-            .as(AtrWicket::new).larguraPref(4);
+        dadosResponsavel.as(AtrBasic::new).label("Dados do Responsável");
 
         //TODO Como fazer a seleção para um objeto composto/enum ?
         //TODO a recuperação de valores deve ser dinamica
@@ -86,11 +77,13 @@ public class MPacotePeticaoGGTOX extends MPacote {
         dadosResponsavel_responsavelTecnico
             .withSelectionOf(getResponsaveis())
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Responsável Técnico");
+            .as(AtrBasic::new).label("Responsável Técnico")
+                .as(AtrWicket::new).larguraPref(3);
         dadosResponsavel.addCampoString("representanteLegal", true)
             .withSelectionOf(getResponsaveis())
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Representante Legal");
+            .as(AtrBasic::new).label("Representante Legal")
+                .as(AtrWicket::new).larguraPref(3);
 
         // TODO preciso de um campo boolean mas as labels devem ser as descritas abaixo
         //TODO deve ser possivel alinhar o texto: text-left text-right text-justify text-nowrap
@@ -112,16 +105,21 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         componentes
             .withView(MPanelListaView::new)
-            .withExists(ins -> "Concordo".equals(ins.findNearestValue(dadosResponsavel_concordo).orElse(null)))
             .as(AtrBasic::new)
             .label("Componente")
+            .enabled((ins) -> {
+                Optional<Object> agreed = ins.findNearestValue(dadosResponsavel_concordo);
+                if(agreed.isPresent()) return "Concordo".equals(agreed.get());
+                return false;
+            })
             .dependsOn(dadosResponsavel_concordo);
 
         componente.as(AtrBasic::new).label("Registro de Componente");
 
         MTipoComposto<MIComposto> identificacaoComponente = componente.addCampoComposto("identificacaoComponente");
 
-        identificacaoComponente.as(AtrBasic::new).label("Identificação de Componente");
+        identificacaoComponente.as(AtrBasic::new).label("Identificação de Componente")
+                .as(AtrWicket::new).larguraPref(4);
 
         identificacaoComponente.addCampoString("tipoComponente", true)
             .withSelectionOf("Substância", "Mistura")
@@ -130,7 +128,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         MTipoComposto<MIComposto> restricoesComponente = componente.addCampoComposto("restricoesComponente");
 
-        restricoesComponente.as(AtrBasic::new).label("Restrições");
+        restricoesComponente.as(AtrBasic::new).label("Restrições")
+                .as(AtrWicket::new).larguraPref(4);
 
         //TODO caso eu marque sem restrições os outros campos devem ser desabilitados
         restricoesComponente.addCampoListaOf("restricoes", pb.createTipo("restricao", MTipoString.class)
@@ -168,7 +167,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         MTipoComposto<MIComposto> finalidadesComponente = componente.addCampoComposto("finalidadesComponente");
 
-        finalidadesComponente.as(AtrBasic::new).label("Finalidades");
+        finalidadesComponente.as(AtrBasic::new).label("Finalidades")
+                .as(AtrWicket::new).larguraPref(4);
 
         finalidadesComponente.addCampoListaOf("finalidades", pb.createTipo("finalidade", MTipoString.class)
             .withSelectionOf("Produção",
@@ -181,7 +181,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
         //TODO falta criar modal para cadastrar novo uso pretendido
         MTipoComposto<MIComposto> usosPretendidosComponente = componente.addCampoComposto("usosPretendidosComponente");
 
-        usosPretendidosComponente.as(AtrBasic::new).label("Uso pretendido");
+        usosPretendidosComponente.as(AtrBasic::new).label("Uso pretendido")
+                .as(AtrWicket::new).larguraPref(4);
 
         usosPretendidosComponente.addCampoListaOf("usosPretendidos", pb.createTipo("usoPretendido", MTipoString.class)
             .withSelectionOf("Uso 1",
@@ -201,10 +202,10 @@ public class MPacotePeticaoGGTOX extends MPacote {
         //TODO Fabricante deve ser uma pesquisa
         MTipoComposto<MIComposto> fabricante = fabricantes.getTipoElementos();
         //TODO como usar o tipo cnpj
-        fabricante.addCampo("cnpj", MTipoCNPJ.class).as(AtrBasic::new).label("CNPJ");
-        fabricante.addCampoString("razaoSocial").as(AtrBasic::new).label("Razão social");
-        fabricante.addCampoString("cidade").as(AtrBasic::new).label("Cidade");
-        fabricante.addCampoString("pais").as(AtrBasic::new).label("País");
+        fabricante.addCampo("cnpj", MTipoCNPJ.class).as(AtrBasic::new).label("CNPJ").as(AtrWicket::new).larguraPref(4);
+        fabricante.addCampoString("razaoSocial").as(AtrBasic::new).label("Razão social").as(AtrWicket::new).larguraPref(4);
+        fabricante.addCampoString("cidade").as(AtrBasic::new).label("Cidade").as(AtrWicket::new).larguraPref(2);
+        fabricante.addCampoString("pais").as(AtrBasic::new).label("País").as(AtrWicket::new).larguraPref(2);
 
         fabricantes
             .withView(MPanelListaView::new)
@@ -221,7 +222,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
         embalagem.addCampoString("produtoExterior", true)
             .withSelectionOf("Sim", "Não")
             .withView(MSelecaoPorRadioView::new)
-            .as(AtrBasic::new).label("Produto formulado no exterior?");
+            .as(AtrBasic::new).label("Produto formulado no exterior?")
+                .as(AtrWicket::new).larguraPref(2);
 
         embalagem.addCampoString("tipo", true)
             .withSelectionOf(getTiposEmbalagem())
@@ -245,7 +247,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
             .withSelectionOf(getUnidadesMedida())
             .withView(MSelecaoPorSelectView::new)
             .as(AtrBasic::new).label("Unidade medida")
-            .as(AtrWicket::new).larguraPref(3);
+            .as(AtrWicket::new).larguraPref(1);
 
         embalagens
             .withView(MTableListaView::new)
@@ -259,12 +261,14 @@ public class MPacotePeticaoGGTOX extends MPacote {
             .as(AtrBasic::new).label("Anexos");
 
         MTipoAttachment arquivo = anexo.addCampo("arquivo", MTipoAttachment.class);
-        arquivo.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo");
+        arquivo.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
+                .as(AtrWicket::new).larguraPref(3);
 
         anexo.addCampoString("tipoArquivo")
             .withSelectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Tipo do arquivo a ser anexado");
+            .as(AtrBasic::new).label("Tipo do arquivo a ser anexado")
+                .as(AtrWicket::new).larguraPref(3);
 
         addTestes(pb, componente);
     }
@@ -314,115 +318,144 @@ public class MPacotePeticaoGGTOX extends MPacote {
         MTipoComposto<MIComposto> teste = testes.getTipoElementos();
 
         testes
-            .withView(MPanelListaView::new)
+//            .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Testes Características fisíco-químicas");
 
-        teste.as(AtrBasic::new).label("Características fisíco-químicas")
-            .as(AtrWicket::new).larguraPref(4);
+        teste.as(AtrBasic::new).label("Características fisíco-químicas");
 
-        teste.addCampoString("estadoFisico", true)
-            .withSelectionOf("Líquido", "Sólido", "Gasoso")
+        MTipoString estadoFisico = teste.addCampoString("estadoFisico", true);
+        estadoFisico.withSelectionOf("Líquido", "Sólido", "Gasoso")
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Estado físico");
+            .as(AtrBasic::new).label("Estado físico")
+                .as(AtrWicket::new).larguraPref(2);
 
-        teste.addCampoString("aspecto", true)
-            .as(AtrBasic::new).label("Aspecto")
-            .tamanhoMaximo(50);
+        MTipoString aspecto = teste.addCampoString("aspecto", true);
+        aspecto.as(AtrBasic::new).label("Aspecto")
+            .tamanhoMaximo(50)
+                .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("cor", true)
-            .as(AtrBasic::new).label("Cor")
-            .tamanhoMaximo(40);
+        MTipoString cor = teste.addCampoString("cor", true);
+        cor.as(AtrBasic::new).label("Cor")
+            .tamanhoMaximo(40)
+                .as(AtrWicket::new).larguraPref(3);
 
-        teste.addCampoString("odor")
-            .as(AtrBasic::new).label("Odor")
-            .tamanhoMaximo(40);
+        MTipoString odor = teste.addCampoString("odor");
+        odor.as(AtrBasic::new).label("Odor")
+            .tamanhoMaximo(40)
+                .as(AtrWicket::new).larguraPref(3);
 
-        teste.addCampoString("pontoFusao")
-            .as(AtrBasic::new).label("Ponto de fusão (ºC)");
+        testes.withView(new MListMasterDetailView()
+                .col(estadoFisico)
+                .col(aspecto)
+                .col(cor)
+                .col(odor)
+        );
 
         MTipoComposto<MIComposto> faixaFusao = teste.addCampoComposto("faixaFusao");
+        faixaFusao.as(AtrWicket::new).larguraPref(6);
 
         //TODO cade as mascaras para campos decimais
-        faixaFusao.as(AtrBasic::new).label("Faixa de fusão (ºC)");
+        faixaFusao.as(AtrBasic::new).label("Fusão");
+
+        faixaFusao.addCampoDecimal("pontoFusao")
+                .as(AtrBasic::new).label("Ponto de fusão").subtitle("ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
         //TODO o campo faixa de fusao precisa de um tipo intervalo
         // Exemplo: Faixa De 10 a 20
-        faixaFusao.addCampoString("faixaFusaoDe")
-            .as(AtrBasic::new).label("De")
-            .as(AtrWicket::new).larguraPref(3);
+        faixaFusao.addCampoDecimal("faixaFusaoDe")
+            .as(AtrBasic::new).label("Início").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
-        faixaFusao.addCampoString("faixaFusaoA")
-            .as(AtrBasic::new).label("A")
-            .as(AtrWicket::new).larguraPref(3);
-
-        teste.addCampoString("pontoEbulicao")
-            .as(AtrBasic::new).label("Ponto de ebulição (ºC)");
+        faixaFusao.addCampoDecimal("faixaFusaoA")
+            .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
         MTipoComposto<MIComposto> faixaEbulicao = teste.addCampoComposto("faixaEbulicao");
 
-        faixaEbulicao.as(AtrBasic::new).label("Faixa de ebulição (ºC)");
+        faixaEbulicao.as(AtrBasic::new).label("Ebulição")
+                .as(AtrWicket::new).larguraPref(6);
 
-        faixaEbulicao.addCampoString("faixaEbulicaoDe")
-            .as(AtrBasic::new).label("De")
-            .as(AtrWicket::new).larguraPref(3);
+        faixaEbulicao.addCampoDecimal("pontoEbulicao")
+                .as(AtrBasic::new).label("Ebulição").subtitle("ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
-        faixaEbulicao.addCampoString("faixaEbulicaoA")
-            .as(AtrBasic::new).label("A")
-            .as(AtrWicket::new).larguraPref(3);
+        faixaEbulicao.addCampoDecimal("faixaEbulicaoDe")
+            .as(AtrBasic::new).label("Início").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("pressaoVapor")
-            .as(AtrBasic::new).label("Pressão do vapor (mmHg/Pa/mPa)");
+        faixaEbulicao.addCampoDecimal("faixaEbulicaoA")
+            .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
+            .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("tipoPressaoVapor")
+        MTipoComposto<MIComposto> pressaoVapor = teste.addCampoComposto("pressaoVapor");
+        pressaoVapor.as(AtrBasic::new).label("Pressão do vapor")
+                .as(AtrWicket::new).larguraPref(6);
+
+        pressaoVapor.addCampoDecimal("valor")
+            .as(AtrBasic::new).label("Valor")
+                .as(AtrWicket::new).larguraPref(6);
+
+        pressaoVapor.addCampoString("unidade")
             .withSelectionOf("mmHg", "Pa", "mPa")
             .withView(MSelecaoPorSelectView::new)
-            .as(AtrBasic::new).label("Tipo de Pressão do vapor");
+            .as(AtrBasic::new).label("Unidade")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoString("solubilidadeAgua")
-            .as(AtrBasic::new).label("Solubilidade em água (mg/L a 20 ou 25 ºC)");
+        MTipoComposto<MIComposto> solubilidade = teste.addCampoComposto("solubilidade");
+        solubilidade.as(AtrBasic::new).label("Solubilidade")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoString("solubilidadeOutrosSolventes")
-            .as(AtrBasic::new).label("Solubilidade em outros solventes (mg/L a 20 ou 25 ºC)");
+        solubilidade.addCampoDecimal("solubilidadeAgua")
+            .as(AtrBasic::new).label("em água").subtitle("mg/L a 20 ou 25 ºC")
+                .as(AtrWicket::new).larguraPref(6);
+
+        solubilidade.addCampoDecimal("solubilidadeOutrosSolventes")
+            .as(AtrBasic::new).label("em outros solventes").subtitle("mg/L a 20 ou 25 ºC")
+                .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoString("hidrolise")
-            .as(AtrBasic::new).label("Hidrólise");
+            .as(AtrBasic::new).label("Hidrólise")
+                .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoString("estabilidade")
-            .as(AtrBasic::new).label("Estabilidade às temperaturas normal e elevada");
+            .as(AtrBasic::new).label("Estabilidade às temperaturas normal e elevada")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoString("pontoFulgor")
-            .as(AtrBasic::new).label("Ponto de fulgor (ºC)");
+        teste.addCampoDecimal("pontoFulgor")
+            .as(AtrBasic::new).label("Ponto de fulgor").subtitle("ºC")
+                .as(AtrWicket::new).larguraPref(3);
 
-        teste.addCampoString("constanteDissociacao")
-            .as(AtrBasic::new).label("Constante de dissociação");
+        teste.addCampoDecimal("constanteDissociacao")
+            .as(AtrBasic::new).label("Constante de dissociação")
+                .as(AtrWicket::new).larguraPref(3);
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> phs = teste.addCampoListaOfComposto("phs", "ph");
         MTipoComposto<MIComposto> ph = phs.getTipoElementos();
 
-        ph.addCampoInteger("valorPh", true)
+        ph.addCampoDecimal("valorPh", true)
             .as(AtrBasic::new).label("pH")
-            .tamanhoMaximo(7)
             .as(AtrWicket::new).larguraPref(4);
 
-        ph.addCampoInteger("solucao", true)
-            .as(AtrBasic::new).label("Solução (%)")
-            .tamanhoMaximo(7)
+        ph.addCampoDecimal("solucao", true)
+            .as(AtrBasic::new).label("Solução").subtitle("%")
             .as(AtrWicket::new).larguraPref(4);
 
-        ph.addCampoString("temperatura", true)
-            .as(AtrBasic::new).label("Temperatura (ºC)")
-            .tamanhoMaximo(8)
+        ph.addCampoDecimal("temperatura", true)
+            .as(AtrBasic::new).label("Temperatura").subtitle("ºC")
             .as(AtrWicket::new).larguraPref(4);
 
         phs
             .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Embalagem");
 
-        teste.addCampoString("coeficienteParticao")
-            .as(AtrBasic::new).label("Coeficiente de partição octanol/Água a 20-25 ºC");
+        teste.addCampoDecimal("coeficienteParticao")
+            .as(AtrBasic::new).label("Coeficiente de partição octanol/Água").subtitle("a 20-25 ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoInteger("densidade")
-            .as(AtrBasic::new).label("Densidade (g/cm³ a 20ºC)");
+        teste.addCampoDecimal("densidade")
+            .as(AtrBasic::new).label("Densidade").subtitle("g/cm³ a 20ºC")
+                .as(AtrWicket::new).larguraPref(4);
 
         teste.addCampoString("observacoes")
             .withView(MTextAreaView::new)
@@ -437,32 +470,43 @@ public class MPacotePeticaoGGTOX extends MPacote {
         //TODO criar regra para pelo menos um campo preenchido
 
         testes
-            .withView(MPanelListaView::new)
+//            .withView(MPanelListaView::new)
             .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
 
         teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
             .as(AtrWicket::new).larguraPref(4);
 
-        teste.addCampoString("laboratorio")
-            .as(AtrBasic::new).label("Laboratório")
+        MTipoString laboratorio = teste.addCampoString("laboratorio");
+        laboratorio.as(AtrBasic::new).label("Laboratório")
             .tamanhoMaximo(50);
 
-        teste.addCampoString("protocoloReferencia")
-            .as(AtrBasic::new).label("Protocolo de referência")
+        MTipoString protocolo = teste.addCampoString("protocoloReferencia");
+        protocolo.as(AtrBasic::new).label("Protocolo de referência")
             .tamanhoMaximo(50);
 
-        teste.addCampoData("dataInicioEstudo")
-            .as(AtrBasic::new).label("Data de início do estudo");
+        MTipoData inicio = teste.addCampoData("dataInicioEstudo");
+        inicio.as(AtrBasic::new).label("Data de início do estudo")
+                .as(AtrWicket::new).larguraPref(3);
 
-        teste.addCampoData("dataFimEstudo")
-            .as(AtrBasic::new).label("Data final do estudo");
+        MTipoData fim = teste.addCampoData("dataFimEstudo");
+        fim.as(AtrBasic::new).label("Data final do estudo")
+                .as(AtrWicket::new).larguraPref(3);
+
+        testes.withView(new MListMasterDetailView()
+                .col(laboratorio)
+                .col(protocolo)
+                .col(inicio)
+                .col(fim)
+        );
 
         teste.addCampoString("purezaProdutoTestado")
-            .as(AtrBasic::new).label("Pureza do produto testado");
+            .as(AtrBasic::new).label("Pureza do produto testado")
+                .as(AtrWicket::new).larguraPref(6);
 
         teste.addCampoString("unidadeMedida")
             .withSelectionOf("g/Kg", "g/L")
-            .as(AtrBasic::new).label("Unidade de medida");
+            .as(AtrBasic::new).label("Unidade de medida")
+                .as(AtrWicket::new).larguraPref(2);
 
         teste.addCampoString("especies")
             .withSelectionOf("Càes",
@@ -474,29 +518,35 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 "Peixe",
                 "Primatas",
                 "Rato")
-            .as(AtrBasic::new).label("Espécies");
+            .as(AtrBasic::new).label("Espécies")
+                .as(AtrWicket::new).larguraPref(4);
 
         teste.addCampoString("linhagem")
-            .as(AtrBasic::new).label("Linhagem");
+            .as(AtrBasic::new).label("Linhagem")
+                .as(AtrWicket::new).larguraPref(6);
 
-        teste.addCampoString("numeroAnimais")
-            .as(AtrBasic::new).label("Número de animais");
+        teste.addCampoDecimal("numeroAnimais")
+            .as(AtrBasic::new).label("Número de animais")
+                .as(AtrWicket::new).larguraPref(3);
 
         teste.addCampoString("veiculo")
-            .as(AtrBasic::new).label("Veículo");
+            .as(AtrBasic::new).label("Veículo")
+                .as(AtrWicket::new).larguraPref(3);
 
         teste.addCampoString("fluoresceina")
             .withSelectionOf("Sim", "Não")
-            .as(AtrBasic::new).label("Fluoresceína");
+            .as(AtrBasic::new).label("Fluoresceína")
+                .as(AtrWicket::new).larguraPref(3);
 
         teste.addCampoString("testeRealizado")
             .withSelectionOf("Com lavagem", "Sem lavagem")
-            .as(AtrBasic::new).label("Teste realizado");
+            .as(AtrBasic::new).label("Teste realizado")
+                .as(AtrWicket::new).larguraPref(3);
 
         MTipoComposto<MIComposto> alteracoes = teste.addCampoComposto("alteracoes");
 
         alteracoes.as(AtrBasic::new).label("Alterações")
-            .as(AtrWicket::new).larguraPref(7);
+            .as(AtrWicket::new);
 
         alteracoes.addCampoString("cornea")
             .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")

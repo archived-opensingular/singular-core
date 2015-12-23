@@ -11,6 +11,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import java.io.IOException;
+import java.io.OutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -21,9 +23,6 @@ import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
-
-import java.io.IOException;
-import java.io.OutputStream;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -59,9 +58,10 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
         final BSWellBorder outputBorder = BSWellBorder.small("outputBorder");
         final MIAttachment attachment = (MIAttachment) model.getObject();
         final String fileId = attachment.getFileId();
+        final IAttachmentRef attachmentRef;
 
-        if (fileId != null) {
-            final IAttachmentRef attachmentRef = getAttachmentRef(attachment.getDocument(), fileId);
+        if (fileId != null
+            && (attachmentRef = getAttachmentRef(attachment.getDocument(), fileId)) !=null) {
 
             final byte[] content = attachmentRef.getContentAsByteArray();
             final String fileName = attachment.getFileName();
