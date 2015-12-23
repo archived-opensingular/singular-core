@@ -127,6 +127,16 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
 
+    @Test public void respondsWithTemporaryIfSet(){
+        IAttachmentRef r = setupTemporaryDummyFile("abacate.txt", new byte[]{1,2,3,4,5,6});
+        instance.setTemporary();
+        b.onResourceRequested();
+
+        response.addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
+        byte[] byteResponse = response.getBinaryResponse();
+        assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
+    }
+
     
 
 }

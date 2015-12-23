@@ -17,8 +17,12 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
     static final String         FIELD_HASH_SHA1   = "hashSHA1";
     private static final String FIELD_ORIGINAL_ID = "originalId";
 
-    static final AtrRef<MTipoString, MIString, String> REF_ORIGINAL_ID = new AtrRef<>(MPacoteCore.class, FIELD_ORIGINAL_ID,
-        MTipoString.class, MIString.class, String.class);
+    static final AtrRef<MTipoString, MIString, String> REF_ORIGINAL_ID =
+            new AtrRef<>(MPacoteCore.class, FIELD_ORIGINAL_ID,
+                            MTipoString.class, MIString.class, String.class);
+    static final AtrRef<MTipoString, MIString, String> IS_TEMPORARY =
+            new AtrRef<>(MPacoteCore.class, "IS_TEMPORARY",
+                MTipoString.class, MIString.class, String.class);
 
     public MTipoAttachment() {
         super(MIAttachment.class);
@@ -28,10 +32,9 @@ public class MTipoAttachment extends MTipoComposto<MIAttachment> {
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
 
-        // tb.createTipoAtributo(FIELD_ORIGINAL_ID, MTipoString.class);
         tb.createTipoAtributo(REF_ORIGINAL_ID);
+        tb.createTipoAtributo(IS_TEMPORARY);
         addCampoString(FIELD_FILE_ID);
-        // addCampoString(FIELD_ORIGINAL_ID);
         addCampoString(FIELD_NAME);
         addCampoString(FIELD_HASH_SHA1);
         addCampoInteger(FIELD_SIZE);

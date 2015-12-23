@@ -22,6 +22,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import br.net.mirante.singular.wicket.UIAdminSession;
+
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
 
@@ -52,6 +54,10 @@ public abstract class Template extends WebPage {
         }
     }
 
+    protected String getUserId() {
+        return UIAdminSession.get().getUserId();
+    }
+    
     protected boolean withTopAction() {
         return false;
     }

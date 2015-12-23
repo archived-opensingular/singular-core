@@ -62,6 +62,10 @@ table.dataTable thead th > a {
     margin-left: -120px;
 }
 
+.feedbackPanelERROR{
+	color: red;
+}
+
 /* Cubic Bezier Transition */
 .todo-main-header {
   margin-top: -20px; }

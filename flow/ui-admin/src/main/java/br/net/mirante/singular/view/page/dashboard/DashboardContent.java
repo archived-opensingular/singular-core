@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -20,8 +18,6 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
-import br.net.mirante.singular.service.FlowAuthorizationFacade;
-import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.view.page.processo.MetadadosPage;
@@ -30,12 +26,6 @@ import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
-
-    @Inject
-    private UIAdminFacade uiAdminFacade;
-
-    @Inject
-    private FlowAuthorizationFacade authorizationFacade;
 
     private String processDefinitionCode;
 
@@ -98,8 +88,8 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         add(rows = new RepeatingView("rows"));
-        if(processDefinitionCode == null || authorizationFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)){
-            Set<String> processCodeWithAccess = authorizationFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
+        if(processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)){
+            Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
             if(!processCodeWithAccess.isEmpty()){
                 addStatusesPanel(processCodeWithAccess);
                 addWelcomeChart(processCodeWithAccess);

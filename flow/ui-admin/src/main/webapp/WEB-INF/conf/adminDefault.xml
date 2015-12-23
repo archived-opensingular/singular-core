@@ -12,8 +12,10 @@
 
     <util:properties id="singularAdmin" location="classpath:/admin-config.properties"/>
     <context:property-placeholder properties-ref="singularAdmin" local-override="true"/>
+    
     <import resource="database.xml"/>
     <import resource="cache.xml"/>
+    
     <context:component-scan base-package="br.net.mirante.singular"/>
 
 </beans>

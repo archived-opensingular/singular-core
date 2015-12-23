@@ -5,8 +5,6 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.NonCachingImage;
@@ -17,49 +15,51 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.DynamicImageResource;
 
+import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.dto.MetaDataDTO;
-import br.net.mirante.singular.flow.core.dto.IDefinitionDTO;
+import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IMetaDataDTO;
 import br.net.mirante.singular.flow.core.dto.IParameterDTO;
 import br.net.mirante.singular.flow.core.dto.ITransactionDTO;
 import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.view.template.Content;
 
 public class MetadadosContent extends Content implements SingularWicketContainer<MetadadosContent, Void> {
 
-    @Inject
-    private UIAdminFacade uiAdminFacade;
-
-    private IDefinitionDTO processDefinition;
+    private DefinitionDTO processDefinition;
 
     public MetadadosContent(String id, boolean withSideBar, String processDefinitionCode) {
         super(id, false, withSideBar, false, true);
-        processDefinition = uiAdminFacade.retrieveDefinitionById(Integer.valueOf(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode)));
+        processDefinition = uiAdminFacade.retrieveDefinitionByKey(processDefinitionCode);
     }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
-
-        final AbstractReadOnlyModel<DynamicImageResource> imageModel =
+        if(flowMetadataFacade.hasAccessToProcessDefinition(processDefinition.getSigla(), getUserId(), AccessLevel.LIST)){
+            final AbstractReadOnlyModel<DynamicImageResource> imageModel =
                 new AbstractReadOnlyModel<DynamicImageResource>() {
-                    @Override
-                    public DynamicImageResource getObject() {
-                        DynamicImageResource dir = new DynamicImageResource() {
-                            @Override
-                            protected byte[] getImageData(Attributes attributes) {
-                                return uiAdminFacade.retrieveProcessDiagram(processDefinition.getSigla());
-                            }
-                        };
-                        dir.setFormat("image/png");
-                        return dir;
-                    }
-                };
-        queue(new NonCachingImage("tabImage", imageModel));
-        queue(mountMetadatas());
+                @Override
+                public DynamicImageResource getObject() {
+                    DynamicImageResource dir = new DynamicImageResource() {
+                        @Override
+                        protected byte[] getImageData(Attributes attributes) {
+                            return flowMetadataFacade.processDefinitionDiagram(processDefinition);
+                        }
+                    };
+                    dir.setFormat("image/png");
+                    return dir;
+                }
+            };
+            queue(new NonCachingImage("tabImage", imageModel));
+            queue(mountMetadatas());
+        } else {
+            queue(new WebMarkupContainer("tabImage").setVisible(false));
+            queue(new WebMarkupContainer("metadatasRow").setVisible(false));
+            error(getString("error.user.without.access.to.process"));
+        }
     }
 
     private RepeatingView mountMetadatas() {
