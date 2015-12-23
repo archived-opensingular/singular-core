@@ -3,8 +3,6 @@ package br.net.mirante.singular.service;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -14,7 +12,6 @@ import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataProvider;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataService;
 
-@Service
 public class FlowMetadataProvider implements IFlowMetadataProvider {
 
     @Override

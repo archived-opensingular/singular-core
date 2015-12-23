@@ -9,8 +9,12 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import br.net.mirante.singular.form.mform.core.MIBoolean;
+import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 
 /**
  * Métodos utilitários para manipulação de MInstance.
@@ -163,7 +167,7 @@ public abstract class MInstances {
             .flatMap(ancestor -> ancestor.findDescendant(targetType))
             .map(targetNode -> (A) targetNode);
     }
-    
+
     /**
      * Lista os ancestrais de <code>node</code>.
      * @param node instância inicial da busca
@@ -283,5 +287,24 @@ public abstract class MInstances {
             result.addAll(((ICompositeInstance) node).getAllChildren());
         }
         return result;
+    }
+
+    public static void updateBooleanAttribute(
+        MInstancia instance,
+        AtrRef<MTipoBoolean, MIBoolean, Boolean> valueAttribute,
+        AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> predicateAttribute) {
+
+        Predicate<MInstancia> pred = instance.getValorAtributo(predicateAttribute);
+        if (pred != null)
+            instance.setValorAtributo(valueAttribute, pred.test(instance));
+    }
+
+    public static <V> V attributeValue(MInstancia instance, AtrRef<?, ?, V> attribute, V defaultValue) {
+        V value = instance.getValorAtributo(attribute);
+        return (value != null) ? value : defaultValue;
+    }
+    public static <V> boolean hasAttributeValue(MInstancia instance, AtrRef<?, ?, V> attribute) {
+        V value = instance.getValorAtributo(attribute);
+        return (value != null);
     }
 }

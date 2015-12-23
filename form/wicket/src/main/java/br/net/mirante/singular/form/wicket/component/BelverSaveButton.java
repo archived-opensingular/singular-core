@@ -9,8 +9,8 @@ import org.apache.wicket.model.IModel;
 
 public abstract class BelverSaveButton extends BelverValidationButton {
 
-    public BelverSaveButton(String id, IModel<? extends MInstancia>  currentInstance) {
-        super(id, currentInstance);
+    public BelverSaveButton(String id) {
+        super(id);
     }
 
     @Override

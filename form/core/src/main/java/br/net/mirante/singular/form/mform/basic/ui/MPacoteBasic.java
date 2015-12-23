@@ -72,8 +72,8 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_LABEL);
         pb.createTipoAtributo(MTipo.class, ATR_SUBTITLE);
         pb.createTipoAtributo(MTipo.class, ATR_BASIC_MASK);
-        pb.createTipoAtributo(MTipo.class, ATR_VISIVEL).withDefaultValueIfNull(true);
-        pb.createTipoAtributo(MTipo.class, ATR_ENABLED).withDefaultValueIfNull(true);
+        pb.createTipoAtributo(MTipo.class, ATR_VISIVEL);
+        pb.createTipoAtributo(MTipo.class, ATR_ENABLED);
         pb.createTipoAtributo(MTipo.class, ATR_VISIBLE_FUNCTION);
         pb.createTipoAtributo(MTipo.class, ATR_ENABLED_FUNCTION);
         pb.createTipoAtributo(MTipo.class, ATR_DEPENDS_ON_FUNCTION);

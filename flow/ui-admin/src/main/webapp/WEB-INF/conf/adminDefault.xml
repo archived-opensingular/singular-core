@@ -10,12 +10,20 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <util:properties id="singularAdmin" location="classpath:/admin-config.properties"/>
-    <context:property-placeholder properties-ref="singularAdmin" local-override="true"/>
+	<beans profile="production,development">
+	    <util:properties id="singularAdmin" location="classpath:/admin-config.properties"/>
+	    <context:property-placeholder properties-ref="singularAdmin" local-override="true"/>
+	    
+	    <import resource="database.xml"/>
+	    <import resource="cache.xml"/>
     
-    <import resource="database.xml"/>
-    <import resource="cache.xml"/>
-    
-    <context:component-scan base-package="br.net.mirante.singular"/>
-
+    	<context:component-scan base-package="br.net.mirante.singular"/>
+	</beans>
+	
+	<beans profile="production">
+		<bean class="br.net.mirante.singular.service.FlowMetadataProvider"/>
+	</beans>
+	<beans profile="development">
+		<bean class="br.net.mirante.singular.util.FlowMetadataProviderMock"/>
+	</beans>
 </beans>

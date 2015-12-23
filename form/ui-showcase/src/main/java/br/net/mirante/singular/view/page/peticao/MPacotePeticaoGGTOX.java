@@ -460,8 +460,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
         teste.addCampoString("observacoes")
             .withView(MTextAreaView::new)
             .as(AtrBasic::new).label("Observações");
-
-
     }
 
     private void addTesteIrritacaoOcular(PacoteBuilder pb, MTipoComposto<?> componente) {

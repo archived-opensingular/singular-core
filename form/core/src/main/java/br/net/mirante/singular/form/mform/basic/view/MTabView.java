@@ -15,7 +15,7 @@ public class MTabView extends MView {
     }
 
     public MTab addTab(String titulo) {
-        MTab tab = new MTab(titulo);
+        MTab tab = new MTab(this, titulo);
         if (tabDefault == null) {
             tabDefault = tab;
         }
@@ -27,9 +27,11 @@ public class MTabView extends MView {
             .add(tipo);
     }
 
-    public final class MTab implements Serializable {
-        private final String titulo;
-        private MTab(String titulo) {
+    public final static class MTab implements Serializable {
+        private final MTabView tabView;
+        private final String   titulo;
+        private MTab(MTabView tabView, String titulo) {
+            this.tabView = tabView;
             this.titulo = titulo;
         }
         public MTab add(MTipo<?> campo) {
@@ -39,7 +41,7 @@ public class MTabView extends MView {
             return titulo;
         }
         public MTab setDefault() {
-            MTabView.this.tabDefault = this;
+            tabView.tabDefault = this;
             return this;
         }
     }
