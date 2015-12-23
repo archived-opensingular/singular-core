@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.panel.BelverBasePanel;
+import br.net.mirante.singular.form.wicket.panel.BelverPanel;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.view.template.Content;
@@ -48,7 +48,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private ViewMode viewMode = ViewMode.EDITION;
 
     private ExampleDataDTO currentModel;
-    private BelverBasePanel belverBasePanel;
+    private BelverPanel belverPanel;
 
     @Inject
     private ExampleDataDAO dao;
@@ -92,8 +92,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return form;
     }
 
-    private BelverBasePanel buildBelverBasePanel() {
-        belverBasePanel = new BelverBasePanel("belver-panel", serviceRegistry) {
+    private BelverPanel buildBelverBasePanel() {
+        belverPanel = new BelverPanel("belver-panel", serviceRegistry) {
 
             @Override
             protected MTipo<?> getTipo() {
@@ -124,7 +124,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
         };
 
-        return belverBasePanel;
+        return belverPanel;
     }
 
     private void loadOrbuildModel() {
@@ -146,7 +146,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final Component button = new BelverSaveButton("save-btn") {
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverBasePanel.getRootInstance();
+                return belverPanel.getRootInstance();
             }
 
             @Override
@@ -164,7 +164,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                final MInstancia instancia = belverBasePanel.getRootInstance().getObject();
+                final MInstancia instancia = belverPanel.getRootInstance().getObject();
 
                 instancia.getDocument().persistFiles();
                 Optional<String> rootXml = MformPersistenciaXML.toStringXML(instancia);
@@ -198,7 +198,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverBasePanel.getRootInstance();
+                return belverPanel.getRootInstance();
             }
         };
 
