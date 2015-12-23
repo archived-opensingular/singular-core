@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -329,6 +330,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MTipo<I> withExists(Boolean valor) {
         return with(MPacoteCore.ATR_EXISTS, valor);
     }
+    public MTipo<I> withExists(Predicate<I> predicate) {
+        return with(MPacoteCore.ATR_EXISTS_FUNCTION, predicate);
+    }
     public final boolean exists() {
         return !Boolean.FALSE.equals(getValorAtributo(MPacoteCore.ATR_EXISTS));
     }
@@ -350,13 +354,13 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
-            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo<MTipo<I>>>) classeAlvo);
+            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
     }
 
-    public AtrBasic<MTipo<I>> asAtrBasic() {
-        return as(i -> new AtrBasic<>(i));
+    public AtrBasic asAtrBasic() {
+        return as(i -> new AtrBasic(i));
     }
 
     public <T> T as(Function<? super MTipo<I>, T> aspectFactory) {

@@ -303,4 +303,8 @@ public abstract class MInstances {
         V value = instance.getValorAtributo(attribute);
         return (value != null) ? value : defaultValue;
     }
+    public static <V> boolean hasAttributeValue(MInstancia instance, AtrRef<?, ?, V> attribute) {
+        V value = instance.getValorAtributo(attribute);
+        return (value != null);
+    }
 }

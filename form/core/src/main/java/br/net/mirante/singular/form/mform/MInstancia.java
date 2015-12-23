@@ -270,7 +270,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
-            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo<MInstancia>>) classeAlvo);
+            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
         throw new RuntimeException(
             "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
@@ -296,7 +296,11 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
     public void updateExists() {
         MInstances.updateBooleanAttribute(this, MPacoteCore.ATR_EXISTS, MPacoteCore.ATR_EXISTS_FUNCTION);
+        if (!exists())
+            MInstances.visitAll(this, true, ins -> ins.resetValue());
     }
+
+    protected void resetValue() {}
 
     public String getNome() {
         return getMTipo().getNomeSimples();
