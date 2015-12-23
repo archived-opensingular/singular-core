@@ -51,7 +51,7 @@ public class CaseBase implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public Class<? extends MPacote> getPackage() {
+    private Class<? extends MPacote> getPackage() {
         String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);

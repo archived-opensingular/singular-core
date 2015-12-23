@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.wicket.panel;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -17,25 +19,21 @@ import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-public class BelverBasePanel extends Panel {
+public abstract class BelverBasePanel extends Panel {
 
     private final ServiceRegistry serviceRegistry;
-    private final Class<? extends MPacote> mPacoteClass;
-    private final String rootPath;
 
     private BSGrid container = new BSGrid("generated");
 
     private MInstanceRootModel<? extends MInstancia> rootInstance;
 
     public BelverBasePanel(final String id,
-                           final ServiceRegistry serviceRegistry,
-                           final Class<? extends MPacote> mPacoteClass,
-                           final String rootPath) {
+                           final ServiceRegistry serviceRegistry) {
         super(id);
         this.serviceRegistry = serviceRegistry;
-        this.mPacoteClass = mPacoteClass;
-        this.rootPath = rootPath;
     }
+
+    protected abstract MTipo<?> getTipo();
 
     @Override
     protected void onInitialize() {
@@ -45,11 +43,13 @@ public class BelverBasePanel extends Panel {
         add(buildFeedbackPanel());
     }
 
+    protected MInstanceRootModel<MInstancia> populateInstance(final MTipo<?> tipo) {
+        return new MInstanceRootModel<>(tipo.novaInstancia());
+    }
+
     private void createInstance() {
-        final MDicionario dicionario = MDicionario.create();
-        final MPacote pacote = dicionario.carregarPacote(mPacoteClass);
-        MTipo<?> tipo = pacote.getTipoLocal(rootPath);
-        rootInstance = new MInstanceRootModel<>(tipo.novaInstancia());
+        MTipo<?> tipo = getTipo();
+        rootInstance = populateInstance(tipo);
         bindDefaultServices(getRootInstance().getObject().getDocument());
     }
 
