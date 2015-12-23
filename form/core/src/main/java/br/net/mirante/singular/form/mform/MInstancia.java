@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -277,6 +278,29 @@ public abstract class MInstancia implements MAtributoEnabled {
     public <T> T as(Function<? super MInstancia, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
+
+    public boolean isObrigatorio() {
+        return MInstances.attributeValue(this, MPacoteCore.ATR_OBRIGATORIO, false);
+    }
+    public void setObrigatorio(Boolean value) {
+        setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, value);
+    }
+    public void updateObrigatorio() {
+        MInstances.updateBooleanAttribute(this, MPacoteCore.ATR_OBRIGATORIO, MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
+    }
+    public boolean exists() {
+        return MInstances.attributeValue(this, MPacoteCore.ATR_EXISTS, true);
+    }
+    public void setExists(Boolean value) {
+        setValorAtributo(MPacoteCore.ATR_EXISTS, value);
+    }
+    public void updateExists() {
+        MInstances.updateBooleanAttribute(this, MPacoteCore.ATR_EXISTS, MPacoteCore.ATR_EXISTS_FUNCTION);
+        if (!exists())
+            MInstances.visitAll(this, true, ins -> ins.resetValue());
+    }
+
+    protected void resetValue() {}
 
     public String getNome() {
         return getMTipo().getNomeSimples();

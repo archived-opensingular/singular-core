@@ -9,12 +9,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
@@ -325,6 +327,15 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public final Boolean isObrigatorio() {
         return getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
     }
+    public MTipo<I> withExists(Boolean valor) {
+        return with(MPacoteCore.ATR_EXISTS, valor);
+    }
+    public MTipo<I> withExists(Predicate<I> predicate) {
+        return with(MPacoteCore.ATR_EXISTS_FUNCTION, predicate);
+    }
+    public final boolean exists() {
+        return !Boolean.FALSE.equals(getValorAtributo(MPacoteCore.ATR_EXISTS));
+    }
 
     //    public MTipo<I> withOnChange(IBehavior<I> behavior) {
     //        return as
@@ -348,10 +359,14 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
     }
 
+    public AtrBasic asAtrBasic() {
+        return as(i -> new AtrBasic(i));
+    }
+
     public <T> T as(Function<? super MTipo<I>, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
-
+    
     public MTipo<I> withView(Supplier<MView> factory) {
         this.view = factory.get();
         return this;

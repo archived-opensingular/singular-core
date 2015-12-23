@@ -10,11 +10,8 @@ import org.apache.wicket.model.IModel;
 
 public abstract class BelverValidationButton extends AjaxButton {
 
-    private final IModel<? extends MInstancia>  currentInstance;
-
-    public BelverValidationButton(String id, IModel<? extends MInstancia>  currentInstance) {
+    public BelverValidationButton(String id) {
         super(id);
-        this.currentInstance = currentInstance;
     }
 
     protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia>  instanceModel);
@@ -23,10 +20,10 @@ public abstract class BelverValidationButton extends AjaxButton {
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);
-        if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), currentInstance.getObject(), true)) {
-            onValidationSuccess(target, form, currentInstance);
+        if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), getCurrentInstance().getObject(), true)) {
+            onValidationSuccess(target, form, getCurrentInstance());
         } else {
-            onValidationError(target, form, currentInstance);
+            onValidationError(target, form, getCurrentInstance());
         }
         target.add(form);
     }
@@ -34,10 +31,8 @@ public abstract class BelverValidationButton extends AjaxButton {
     @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance.getObject());
+        WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance().getObject());
     }
 
-    public IModel<? extends MInstancia>  getCurrentInstance() {
-        return currentInstance;
-    }
+    public abstract IModel<? extends MInstancia>  getCurrentInstance();
 }
