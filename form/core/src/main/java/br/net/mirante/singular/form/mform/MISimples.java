@@ -32,6 +32,11 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
         return getValorWithDefault(classeDestino);
     }
 
+    @Override
+    protected void resetValue() {
+        setValor(null);
+    }
+    
     /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
         return getValor() == null;

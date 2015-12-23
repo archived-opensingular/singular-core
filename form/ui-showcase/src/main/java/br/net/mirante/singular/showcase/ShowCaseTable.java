@@ -8,6 +8,7 @@ import br.net.mirante.singular.showcase.input.core.multiselect.*;
 import br.net.mirante.singular.showcase.input.core.select.*;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionDependsOnOptions;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionEnabled;
+import br.net.mirante.singular.showcase.interaction.CaseInteractionExists;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionRequired;
 import br.net.mirante.singular.showcase.interaction.CaseInteractionVisible;
 import br.net.mirante.singular.showcase.layout.*;
@@ -68,6 +69,7 @@ public class ShowCaseTable {
             .addCase(CaseValidationBetweenFields.class)
             .addCase(CaseValidationPartial.class);
         group("Interaction", Icone.ROCKET)
+            .addCase(CaseInteractionExists.class)
             .addCase(CaseInteractionEnabled.class)
             .addCase(CaseInteractionVisible.class)
             .addCase(CaseInteractionRequired.class)
