@@ -45,6 +45,12 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
             tag.put("class", appendAtributeValue(tag.getAttribute("class"), "required", " "));
         if (!isInstanceEnabled(component))
             tag.put("disabled", "disabled");
+        
+        MInstancia instance = resolveInstance(component);
+        if (instance != null) {
+            tag.put("data-instance-id", instance.getId());
+            tag.put("data-instance-path", instance.getPathFull());
+        }
     }
 
     protected static String appendAtributeValue(String currentValue, String appendValue, String separator) {

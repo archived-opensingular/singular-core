@@ -11,6 +11,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.Behavior;
@@ -104,15 +105,10 @@ public class WicketBuildContext implements Serializable {
             component.add(new AjaxUpdateChoiceBehavior(model, listener));
 
         } else if (component.getMetaData(BSDatepickerConstants.KEY_CONTAINER) != null) {
-            component.add(new AjaxUpdateInputBehavior(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener) {
-                @Override
-                public void beforeRender(Component component) {
-                    super.beforeRender(component);
-                    System.out.println(getCallbackScript());
-                }
-            });
+            component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
             MarkupContainer container = component.getMetaData(BSDatepickerConstants.KEY_CONTAINER);
-            container.add(WicketUtils.$b.onReadyScript(c -> JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
+            container.add(WicketUtils.$b.onReadyScript(c -> ""
+                + JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
 
         } else if (!(component instanceof FormComponentPanel<?>)) {
             component.add(new AjaxUpdateInputBehavior("change", model, listener));
@@ -226,6 +222,28 @@ public class WicketBuildContext implements Serializable {
         @Override
         public void onConfigure(Component component) {
             instanceModel.getObject().getDocument().updateAttributes(null);
+        }
+    }
+
+    private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
+        private transient boolean flag;
+        private BSDatepickerAjaxUpdateBehavior(IModel<MInstancia> model, IAjaxUpdateListener listener) {
+            super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
+        }
+        @Override
+        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            if (flag)
+                attributes.setEventNames();
+        }
+        @Override
+        protected CharSequence getCallbackScript(Component component) {
+            flag = true;
+            try {
+                return JQuery.on(component, super.getEvent(), super.getCallbackScript(component));
+            } finally {
+                flag = false;
+            }
         }
     }
 

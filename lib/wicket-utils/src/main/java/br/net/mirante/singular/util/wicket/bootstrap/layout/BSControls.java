@@ -1,9 +1,10 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import static org.apache.commons.lang3.StringUtils.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -16,10 +17,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
+import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSControls> {
 
@@ -78,21 +79,24 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
     }
 
     public BSControls appendDatepicker(Component datepicker) {
-        return this.appendDatepicker(datepicker, new HashMap<String, String>() {
-            {
-                put("data-date-format", "dd/mm/yyyy");
-                put("data-date-start-view", "days");
-                put("data-date-min-view-mode", "days");
-            }
-        });
+        return this.appendDatepicker(datepicker, null);
     }
 
     public BSControls appendDatepicker(Component datepicker, Map<String, String> extraAttributes) {
+        Map<String, String> attrs = new HashMap<String, String>();
+        attrs.put("data-date-format", "dd/mm/yyyy");
+        attrs.put("data-date-start-date", "01/01/1900");
+        attrs.put("data-date-end-date", "31/12/2999");
+        attrs.put("data-date-start-view", "days");
+        attrs.put("data-date-min-view-mode", "days");
+        if (extraAttributes != null)
+            attrs.putAll(extraAttributes);
+
         this.appendInputGroup(componentId -> {
             BSInputGroup inputGroup = newInputGroup();
             return inputGroup
                 .appendExtraClasses(" date date-picker ")
-                .appendExtraAttributes(extraAttributes)
+                .appendExtraAttributes(attrs)
                 .appendInputText(datepicker
                     .setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
                 .appendButtonAddon(Icone.CALENDAR);

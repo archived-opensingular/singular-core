@@ -144,7 +144,7 @@ public interface IBehaviorsMixin extends Serializable {
     default <C extends Component> IAjaxUpdateConfiguration<C> addAjaxUpdate(C component) {
         return addAjaxUpdate(component, null);
     }
-    
+
     @SuppressWarnings("unchecked")
     default <C extends Component> IAjaxUpdateConfiguration<C> addAjaxUpdate(C component, IBiConsumer<AjaxRequestTarget, Component> onUpdate) {
 
@@ -154,36 +154,41 @@ public interface IBehaviorsMixin extends Serializable {
             behavior = new FormChoiceAjaxUpdateBehavior(onUpdate);
             component.add(behavior);
 
-//        } else if (component instanceof TypeaheadField<?>) {
-//            TypeaheadField<?> tf = (TypeaheadField<?>) component;
-//            behavior = new TypeaheadAjaxUpdateBehavior(tf, onUpdate);
-//            tf.addToValueField(behavior);
+            //        } else if (component instanceof TypeaheadField<?>) {
+            //            TypeaheadField<?> tf = (TypeaheadField<?>) component;
+            //            behavior = new TypeaheadAjaxUpdateBehavior(tf, onUpdate);
+            //            tf.addToValueField(behavior);
 
-//        } else if (component instanceof MontrealSwitcher) {
-//            behavior = new FormComponentAjaxUpdateBehavior("montrealswitcher.change", onUpdate);
-//            component.add(behavior);
+            //        } else if (component instanceof MontrealSwitcher) {
+            //            behavior = new FormComponentAjaxUpdateBehavior("montrealswitcher.change", onUpdate);
+            //            component.add(behavior);
 
-//        } else if (component instanceof LocalDateField) {
-//            behavior = new FormComponentAjaxUpdateBehavior("changedate", onUpdate);
-//            component.add(behavior);
+            //        } else if (component instanceof LocalDateField) {
+            //            behavior = new FormComponentAjaxUpdateBehavior("changedate", onUpdate);
+            //            component.add(behavior);
 
-//        } else if (component instanceof TextField && component.getParent() instanceof LocalDateRangePanel) {
-//            behavior = new FormComponentAjaxUpdateBehavior(LocalDateRangePanel.JS_EVENT_CHANGEDATE, onUpdate);
-//            component.add(behavior);
+            //        } else if (component instanceof TextField && component.getParent() instanceof LocalDateRangePanel) {
+            //            behavior = new FormComponentAjaxUpdateBehavior(LocalDateRangePanel.JS_EVENT_CHANGEDATE, onUpdate);
+            //            component.add(behavior);
 
         } else if (component instanceof FormComponent<?>) {
             behavior = new FormComponentAjaxUpdateBehavior("change", onUpdate);
             component.add(behavior);
 
-//        } else if (component instanceof IOnAfterPopulateItemConfigurable) {
-//            behavior = new DynamicContainerAjaxUpdateBehavior(onUpdate);
-//            component.add(behavior);
+            //        } else if (component instanceof IOnAfterPopulateItemConfigurable) {
+            //            behavior = new DynamicContainerAjaxUpdateBehavior(onUpdate);
+            //            component.add(behavior);
 
         } else {
             return null;
         }
 
         return (IAjaxUpdateConfiguration<C>) behavior;
+    }
+
+    default Behavior on(String event, IFunction<Component, CharSequence> scriptFunction) {
+        return onReadyScript(comp -> String.format("Wicket.Event.add('%s', '%s', function(event) { %s; });",
+            comp.getMarkupId(), event, scriptFunction.apply(comp)));
     }
 
     default Behavior onReadyScript(ISupplier<CharSequence> scriptSupplier) {
