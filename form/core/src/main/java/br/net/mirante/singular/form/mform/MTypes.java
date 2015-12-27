@@ -95,11 +95,11 @@ public abstract class MTypes {
         if (includeRoot)
             list.add(root);
 
-        MTipo<?> tipo = (MTipo<?>) root.getEscopoPai();
+        MEscopo tipo = root.getEscopoPai();
         while (tipo != null) {
-            list.add(tipo);
-            MEscopo pai = tipo.getEscopoPai();
-            tipo = (pai instanceof MTipo<?>) ? (MTipo<?>) pai : null;
+            if (tipo instanceof MTipo<?>)
+                list.add((MTipo<?>) tipo);
+            tipo = tipo.getEscopoPai();
         }
         return list;
     }
