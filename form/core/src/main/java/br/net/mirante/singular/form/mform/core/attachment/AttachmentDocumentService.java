@@ -1,15 +1,13 @@
 package br.net.mirante.singular.form.mform.core.attachment;
 
-import java.io.InputStream;
-
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import java.io.InputStream;
 
 /**
  * Faz a gestão da referência a anexos mantidos por um documento. Se entender
@@ -56,14 +54,13 @@ class AttachmentDocumentService {
     }
 
     private static AttachmentDocumentService lookup(SDocument document) {
-        AttachmentDocumentService aService = document.lookupService(ATTACHMENT_DOCUMENT_SERVICE,
-            AttachmentDocumentService.class);
-        if (aService == null) {
-            aService = new AttachmentDocumentService(document);
-            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, 
-                ServiceRef.ofToBeDescartedIfSerialized(aService));
+        if(document.getServices().containsKey(ATTACHMENT_DOCUMENT_SERVICE)){
+            return document.lookupService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
+        } else {
+            final AttachmentDocumentService service = new AttachmentDocumentService(document);
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, ServiceRef.ofToBeDescartedIfSerialized(service));
+            return service;
         }
-        return aService;
     }
 
     public IAttachmentRef addContent(String oldReferenceId, byte[] content) {
