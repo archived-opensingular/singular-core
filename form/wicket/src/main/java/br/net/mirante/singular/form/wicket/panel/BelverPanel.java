@@ -122,8 +122,8 @@ public abstract class BelverPanel extends Panel {
      * Chama o builder wicket para construção do formulário
      */
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        getSingularFormContext().getUIBuilder().build(ctx, getRootInstance(), getViewMode());
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
+        getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
     /**

@@ -16,11 +16,10 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -34,9 +33,10 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
 
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final MIComposto instance = (MIComposto) model.getObject();
+        final IModel<? extends MInstancia> model = ctx.getModel();
+        final MIComposto instance =  ctx.getCurrenttInstance();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
         final BSContainer<?> parentCol = ctx.getContainer();
@@ -71,9 +71,9 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         if (iCampo instanceof MIComposto) {
             final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
         } else {
-            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true, mCampo), viewMode);
         }
     }
 

@@ -19,8 +19,9 @@ import org.apache.wicket.model.IModel;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
+        final IModel<? extends MInstancia> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
         final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
 

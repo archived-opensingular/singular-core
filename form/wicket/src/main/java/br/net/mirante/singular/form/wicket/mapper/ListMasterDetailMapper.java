@@ -23,16 +23,15 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Strings;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
@@ -42,8 +41,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class ListMasterDetailMapper implements IWicketComponentMapper {
 
 
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
+        final IModel<? extends MInstancia> model = ctx.getModel();
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
 
@@ -330,7 +330,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 viewModeModal = ViewMode.VISUALIZATION;
             }
 
-            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true), currentInstance, viewModeModal);
+            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance), viewModeModal);
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
             this.show(target);

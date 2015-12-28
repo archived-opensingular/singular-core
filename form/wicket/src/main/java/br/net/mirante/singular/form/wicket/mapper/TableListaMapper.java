@@ -10,7 +10,6 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.AtributoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -32,9 +31,9 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 public class TableListaMapper extends AbstractListaMapper {
 
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final IModel<MILista<MInstancia>> mLista = $m.get(() -> (MILista<MInstancia>) model.getObject());
+        final IModel<MILista<MInstancia>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
         String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
         final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
@@ -173,10 +172,10 @@ public class TableListaMapper extends AbstractListaMapper {
                 for (MTipo<?> tCampo : tComposto.getFields()) {
                     final MInstanciaCampoModel<MInstancia> mCampo =
                             new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
-                    wicketBuilder.build(ctx.createChild(tr.newCol(), true), mCampo, viewMode);
+                    wicketBuilder.build(ctx.createChild(tr.newCol(), true, mCampo), viewMode);
                 }
             } else {
-                wicketBuilder.build(ctx.createChild(tr.newCol(), true), itemModel, viewMode);
+                wicketBuilder.build(ctx.createChild(tr.newCol(), true, itemModel), viewMode);
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
