@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import java.util.function.Function;
 
 public enum MInstanceViewState {
     EDITABLE, READONLY, HIDDEN;
@@ -36,11 +35,9 @@ public enum MInstanceViewState {
         if (instance == null)
             return MInstanceViewState.HIDDEN;
 
-        final Function<Boolean, Boolean> intern = b -> (b == null) ? null : b;
-
         final boolean exists = instance.exists();
-        final Boolean visible = intern.apply(MInstances.attributeValue(instance, MPacoteBasic.ATR_VISIVEL, null));
-        final Boolean enabled = intern.apply(MInstances.attributeValue(instance, MPacoteBasic.ATR_ENABLED, null));
+        final Boolean visible = MInstances.attributeValue(instance, MPacoteBasic.ATR_VISIVEL, null);
+        final Boolean enabled = MInstances.attributeValue(instance, MPacoteBasic.ATR_ENABLED, null);
 
         if (exists) {
             if (visible != null && !visible) {
