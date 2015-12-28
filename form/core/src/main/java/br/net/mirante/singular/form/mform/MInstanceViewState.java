@@ -36,22 +36,22 @@ public enum MInstanceViewState {
         if (instance == null)
             return MInstanceViewState.HIDDEN;
 
-        final Function<Boolean, Boolean> intern = b -> (b == null) ? null : b.booleanValue();
+        final Function<Boolean, Boolean> intern = b -> (b == null) ? null : b;
 
         final boolean exists = instance.exists();
         final Boolean visible = intern.apply(MInstances.attributeValue(instance, MPacoteBasic.ATR_VISIVEL, null));
         final Boolean enabled = intern.apply(MInstances.attributeValue(instance, MPacoteBasic.ATR_ENABLED, null));
 
         if (exists) {
-            if (!visible) {
+            if (visible != null && !visible) {
                 return MInstanceViewState.HIDDEN;
-            } else if (!enabled) {
+            } else if (enabled != null && !enabled) {
                 return MInstanceViewState.READONLY;
             } else {
                 return MInstanceViewState.EDITABLE;
             }
         } else {
-            if (visible) {
+            if (visible != null && visible) {
                 return MInstanceViewState.READONLY;
             } else {
                 return MInstanceViewState.HIDDEN;
