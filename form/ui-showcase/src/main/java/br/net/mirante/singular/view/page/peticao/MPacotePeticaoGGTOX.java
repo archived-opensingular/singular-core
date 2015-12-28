@@ -50,11 +50,16 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         addTipoDocumento(pb, peticionamento);
         addDadosRequerente(pb, peticionamento);
-        addDadosResponsavel(pb, peticionamento);
-        addComponentes(pb, peticionamento);
+        MTipoComposto<MIComposto> dadosResponsavel = addDadosResponsavel(pb, peticionamento);
+        MTipoLista<MTipoComposto<MIComposto>, MIComposto> componentes = addComponentes(pb, peticionamento);
         addValidacaoResponsavel(pb, peticionamento);
         addResponsavelTransacao(pb, peticionamento);
         addImpressaoPeticao(pb, peticionamento);
+
+        MTabView tabbed = new MTabView();
+        tabbed.addTab(dadosResponsavel);
+        tabbed.addTab(componentes);
+        peticionamento.withView(tabbed);
 
     }
 
@@ -66,7 +71,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
     }
 
-    private void addDadosResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+    private MTipoComposto<MIComposto> addDadosResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
         dadosResponsavel = peticionamento.addCampoComposto("dadosResponsavel");
 
         dadosResponsavel.as(AtrBasic::new).label("Dados do Responsável");
@@ -90,13 +95,15 @@ public class MPacotePeticaoGGTOX extends MPacote {
         (dadosResponsavel_concordo = dadosResponsavel.addCampoString("concordo", true))
             .withSelectionOf("Concordo", "Não Concordo")
             .withView(MSelecaoPorRadioView::new);
+
+        return dadosResponsavel;
     }
 
     private String[] getResponsaveis() {
         return new String[] { "Daniel", "Delfino", "Fabrício", "Lucas", "Tetsuo", "Vinícius" };
     }
 
-    private void addComponentes(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
+    private MTipoLista<MTipoComposto<MIComposto>, MIComposto> addComponentes(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
         // TODO como fazer uma tabela de componentes, com botao novo (aguardando mestre-detalhe)
         // e mostrar os campos de inserção apenas se clicar no botao novo
 
@@ -271,6 +278,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrWicket::new).larguraPref(3);
 
         addTestes(pb, componente);
+
+        return componentes;
     }
 
     private String[] getTiposEmbalagem() {

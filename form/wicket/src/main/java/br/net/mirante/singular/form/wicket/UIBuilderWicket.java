@@ -41,6 +41,7 @@ import br.net.mirante.singular.form.wicket.mapper.ListMasterDetailMapper;
 import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
+import br.net.mirante.singular.form.wicket.mapper.TabMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
@@ -112,7 +113,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
                 .register(MTipoLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
                 .register(MTipoComposto.class,                                          DefaultCompostoMapper::new)
-                .register(MTipoComposto.class,   MTabView.class,                        DefaultCompostoMapper::new)
+                .register(MTipoComposto.class,   MTabView.class,                        TabMapper::new)
                 .register(MTipoLista.class,                                             TableListaMapper::new)
                 .register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new)
                 .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)

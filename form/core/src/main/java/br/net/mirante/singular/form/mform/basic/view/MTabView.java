@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -28,18 +30,26 @@ public class MTabView extends MView {
     }
 
     public final static class MTab implements Serializable {
+
         private final MTabView tabView;
         private final String   titulo;
+        private final List<MTipo<?>> tipos;
+
         private MTab(MTabView tabView, String titulo) {
             this.tabView = tabView;
             this.titulo = titulo;
+            tipos = new ArrayList<>();
         }
+
         public MTab add(MTipo<?> campo) {
+            tipos.add(campo);
             return this;
         }
+
         public String getTitulo() {
             return titulo;
         }
+
         public MTab setDefault() {
             tabView.tabDefault = this;
             return this;

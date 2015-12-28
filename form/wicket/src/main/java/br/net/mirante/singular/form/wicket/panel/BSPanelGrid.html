@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<wicket:head xmlns:wicket="http://wicket.apache.org">
+
+    <style type="text/css">
+
+        .row.equalheights {
+            overflow: hidden;
+        }
+
+        .row.equalheights > [class*="col-"] {
+            margin-bottom: -99999px;
+            padding-bottom: 99999px;
+        }
+
+        .row.equalheights > div > ul.nav {
+            margin-bottom: inherit;
+            padding-bottom: inherit;
+        }
+
+    </style>
+
+</wicket:head>
+
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <form wicket:id="panel-form">
+        <div class="row equalheights">
+            <div class="col-md-3 col-sm-3 col-xs-3">
+                <ul class="nav nav-tabs tabs-left">
+                    <li role="presentation" wicket:id="tab">
+                        <a wicket:id="tabAnchor" role="tab">
+                            <span wicket:id="header-text"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9 col-sm-9 col-xs-9">
+                <div class="tab-content">
+                    <div class="tab-pane active in">
+                        <div class="form-body" wicket:id="grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</wicket:panel>
