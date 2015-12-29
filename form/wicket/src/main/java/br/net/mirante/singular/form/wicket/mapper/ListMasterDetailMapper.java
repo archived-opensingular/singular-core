@@ -196,7 +196,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                                       ViewMode viewMode,
                                       MListMasterDetailView view) {
 
-        builder.appendActionColumn($m.ofValue("Ações"), actionColumn -> {
+        builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
                 actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
                 (target, rowModel) -> {
@@ -208,7 +208,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             Icone iconeBotaoAbrirModal = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
 
-            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)),
+            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)).buttonModel(Model.of("blue-madison")),
                     (target, rowModel) -> {
                         modal.showExisting(target, rowModel, ctx);
                     }
