@@ -112,7 +112,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     @SuppressWarnings("unchecked")
     private BSDataTable buildTable(String id, IModel<? extends MInstancia> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
-        BSDataTableBuilder builder = new BSDataTableBuilder<>(newDataProvider(model));
+        BSDataTableBuilder builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
 
         configureColumns(view.getColumns(), builder, model, modal, ctx, viewMode, view);
 
