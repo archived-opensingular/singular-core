@@ -4,8 +4,7 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseGridPackage extends MPacote {
 
@@ -15,13 +14,13 @@ public class CaseGridPackage extends MPacote {
 
         testForm.addCampoString("nome")
                 .as(AtrBasic.class).label("Nome")
-                .as(AtrWicket::new).larguraPref(6);
+                .as(AtrBootstrap::new).colLg(5).colMd(7).colSm(9).colXs(12);
         testForm.addCampoInteger("idade")
                 .as(AtrBasic.class).label("Idade")
-                .as(AtrWicket::new).larguraPref(2);
+                .as(AtrBootstrap::new).colPreference(2);
         testForm.addCampoEmail("email")
                 .as(AtrBasic.class).label("E-mail")
-                .as(AtrWicket::new).larguraPref(8);
+                .as(AtrBootstrap::new).colPreference(8);
 
     }
 }

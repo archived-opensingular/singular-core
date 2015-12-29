@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -18,6 +18,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -83,16 +84,25 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
         * parametrizado ou transoformado em uma configuracao
         */
-        final int colspanLG = (hintColWidths.containsKey(tCampo.getNome()))
-                ? hintColWidths.get(tCampo.getNome())
-                : iCampo.as(AtrWicket::new).getLarguraPref(BSCol.MAX_COLS);
-        final int colspanMD = Integer.min(colspanLG * 2, BSCol.MAX_COLS);
-        final int colspanSM = Integer.min(colspanLG * 3, BSCol.MAX_COLS);
+        final int colPref;
 
-        col.lg(colspanLG);
-        col.md(colspanMD);
-        col.sm(colspanSM);
+        if (hintColWidths.containsKey(tCampo.getNome())) {
+            colPref = hintColWidths.get(tCampo.getNome());
+        } else {
+            colPref = iCampo.as(AtrBootstrap::new).getColPreference(BSCol.MAX_COLS);
+        }
+
+        final Optional<Integer> colXs = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColXs());
+        final Optional<Integer> colSm = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColSm());
+        final Optional<Integer> colMd = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColMd());
+        final Optional<Integer> colLg = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColLg());
+
+        col.xs(colXs.orElse(Integer.min(colPref * 4, BSCol.MAX_COLS)));
+        col.sm(colSm.orElse(Integer.min(colPref * 3, BSCol.MAX_COLS)));
+        col.md(colMd.orElse(Integer.min(colPref * 2, BSCol.MAX_COLS)));
+        col.lg(colLg.orElse(Integer.min(colPref, BSCol.MAX_COLS)));
 
         return col;
+
     }
 }

@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -94,11 +94,11 @@ public class TableListaMapper extends AbstractListaMapper {
             }
 
             int sumWidthPref = tComposto.getFields().stream()
-                                    .mapToInt((x) -> x.as(AtrWicket::new).getLarguraPref(1))
+                                    .mapToInt((x) -> x.as(AtrBootstrap::new).getColPreference(1))
                                     .sum();
 
             for (MTipo<?> tCampo : tComposto.getFields()) {
-                Integer preferentialWidth = tCampo.as(AtrWicket::new).getLarguraPref(1);
+                Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
                 BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
                 String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
                 cell.setInnerStyle(width);
