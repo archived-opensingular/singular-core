@@ -106,7 +106,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> stripeModel;
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
-        protected boolean withText;
+        protected boolean withText = true;
 
         public ActionConfig labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
