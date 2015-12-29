@@ -19,6 +19,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -32,6 +33,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
@@ -196,7 +198,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         builder.appendActionColumn($m.ofValue("Ações"), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction($m.ofValue("Remover"), Icone.MINUS, (target, rowModel) -> {
+                actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
+                (target, rowModel) -> {
                     MILista miLista = ((MILista) model.getObject());
                     miLista.remove(miLista.indexOf(rowModel.getObject()));
                     target.add(ctx.getContainer());
@@ -204,10 +207,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             Icone iconeBotaoAbrirModal = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
-            IModel<String> labelBotaoAbrirModal = viewMode.isEdition() && view.isDeleteElementsEnabled() ? $m.ofValue("Editar") : $m.ofValue("Visualizar");
 
-            actionColumn.appendAction(labelBotaoAbrirModal, iconeBotaoAbrirModal, (target, rowModel) -> {
-                        modal.showExisting(target, rowModel);
+            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)),
+                    (target, rowModel) -> {
+                        modal.showExisting(target, rowModel, ctx);
                     }
             );
         });
@@ -310,10 +313,11 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             });
         }
 
-        protected void showExisting(AjaxRequestTarget target, IModel<MInstancia> forEdit) {
+        protected void showExisting(AjaxRequestTarget target, IModel<MInstancia> forEdit, WicketBuildContext ctx) {
+            String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
-            this.configureNewContent("Editar", target);
+            this.configureNewContent(prefix, target);
         }
 
         private void revert(AjaxRequestTarget target) {
@@ -321,7 +325,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
         private void configureNewContent(String prefix, AjaxRequestTarget target) {
-            this.setTitleText($m.ofValue(prefix + " " + listaLabel.getObject()));
+            this.setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
             BSContainer modalBody = new BSContainer("bogoMips");
             this.setBody(modalBody);
 

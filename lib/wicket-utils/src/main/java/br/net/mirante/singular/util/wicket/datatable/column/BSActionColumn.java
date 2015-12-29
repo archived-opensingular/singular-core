@@ -1,16 +1,16 @@
 package br.net.mirante.singular.util.wicket.datatable.column;
 
-import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
+import static br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
@@ -43,20 +43,24 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
 
     protected void onPopulateActions(IModel<T> rowModel, BSActionPanel<T> actionPanel) {
         for (ActionItem<T> item : actions)
-            actionPanel.appendAction(item.label, item.icone, item.action, rowModel);
+            actionPanel.appendAction(item.actionConfig, item.action, rowModel);
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, Icone icone, IBSAction<T> action) {
         return appendAction(labelModel, $m.ofValue(icone), action);
     }
 
-
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IBSAction<T> action) {
         return appendAction(labelModel, (IModel<Icone>) null, action);
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
-        actions.add(new ActionItem<>(labelModel, iconeModel, action));
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel), action));
+        return this;
+    }
+
+    public final BSActionColumn<T, S> appendAction(ActionConfig config, IBSAction<T> action) {
+        actions.add(new ActionItem<>(config, action));
         return this;
     }
 
@@ -66,13 +70,11 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     private static class ActionItem<T> implements Serializable {
-        final IModel<?> label;
-        final IModel<Icone> icone;
+        final ActionConfig actionConfig;
         final IBSAction<T> action;
 
-        public ActionItem(IModel<?> label, IModel<Icone> icone, IBSAction<T> action) {
-            this.label = label;
-            this.icone = icone;
+        public ActionItem(ActionConfig actionConfig, IBSAction<T> action) {
+            this.actionConfig  = actionConfig;
             this.action = action;
         }
     }
