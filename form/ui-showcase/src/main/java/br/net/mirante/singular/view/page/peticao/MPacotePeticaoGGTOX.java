@@ -18,7 +18,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
     private MTipoComposto<MIComposto> dadosResponsavel;
     private MTipoString               dadosResponsavel_responsavelTecnico;
-    private MTipoString               dadosResponsavel_concordo;
 
     public MPacotePeticaoGGTOX() {
         super(PACOTE);
@@ -92,7 +91,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         // TODO preciso de um campo boolean mas as labels devem ser as descritas abaixo
         //TODO deve ser possivel alinhar o texto: text-left text-right text-justify text-nowrap
-        (dadosResponsavel_concordo = dadosResponsavel.addCampoString("concordo", true))
+        dadosResponsavel.addCampoString("concordo", true)
             .withSelectionOf("Concordo", "Não Concordo")
             .withView(MSelecaoPorRadioView::new);
 
@@ -113,8 +112,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
         componentes
             .withView(MPanelListaView::new)
             .as(AtrBasic::new)
-            .label("Componente")
-            .dependsOn(dadosResponsavel_concordo);
+            .label("Componente");
 
         componente.as(AtrBasic::new).label("Registro de Componente");
 

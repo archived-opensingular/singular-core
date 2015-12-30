@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class WicketBuildContext implements Serializable {
 
     private final WicketBuildContext                parent;
-    private BSContainer<?>                    container;
+    private final BSContainer<?>                    container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean                           hintsInherited;
     private final BSContainer                       externalContainer;
@@ -307,10 +307,6 @@ public class WicketBuildContext implements Serializable {
 
     public void setModel(IModel<? extends MInstancia> model) {
         this.model = model;
-    }
-
-    public void setContainer(BSContainer<?> container) {
-        this.container = container;
     }
 
     public <T extends MInstancia> T getCurrenttInstance(){
