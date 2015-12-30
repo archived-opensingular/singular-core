@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttribu
 import br.net.mirante.singular.form.wicket.behavior.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
@@ -37,13 +38,13 @@ import org.slf4j.LoggerFactory;
 public class WicketBuildContext implements Serializable {
 
     private final WicketBuildContext                parent;
-    private final BSContainer<?>                    container;
+    private BSContainer<?>                    container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean                           hintsInherited;
     private final BSContainer                       externalContainer;
     private final BSContainer                       rootContainer;
-    private final IModel<? extends MInstancia>      model;
 
+    private IModel<? extends MInstancia>      model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode        viewMode;
     private MView           view;
@@ -205,6 +206,18 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
+    public void rebuild(List<String> nomesTipo) {
+        IModel<? extends MInstancia> originalModel = getModel();
+        for (String nomeTipo : nomesTipo) {
+            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(originalModel, nomeTipo);
+            setModel(subtree);
+            getUiBuilderWicket().build(this, viewMode);
+        }
+
+        setModel(originalModel);
+
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends MInstancia> instanceModel;
         public InitRootContainerBehavior(IModel<? extends MInstancia> instanceModel) {
@@ -290,6 +303,14 @@ public class WicketBuildContext implements Serializable {
 
     public IModel<? extends MInstancia> getModel() {
         return model;
+    }
+
+    public void setModel(IModel<? extends MInstancia> model) {
+        this.model = model;
+    }
+
+    public void setContainer(BSContainer<?> container) {
+        this.container = container;
     }
 
     public <T extends MInstancia> T getCurrenttInstance(){

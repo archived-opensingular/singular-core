@@ -56,6 +56,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
         addImpressaoPeticao(pb, peticionamento);
 
         MTabView tabbed = new MTabView();
+        tabbed.addTab("Tudo").add(dadosResponsavel).add(componentes);
         tabbed.addTab(dadosResponsavel);
         tabbed.addTab(componentes);
         peticionamento.withView(tabbed);

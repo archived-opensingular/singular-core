@@ -16,9 +16,9 @@ import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
 public class TabMapper extends DefaultCompostoMapper {
 
     @Override
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final MIComposto instance = (MIComposto) model.getObject();
+        final MIComposto instance = (MIComposto) ctx.getModel().getObject();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
         MTabView tabView = (MTabView) tComposto.getView();
 
@@ -32,21 +32,19 @@ public class TabMapper extends DefaultCompostoMapper {
 
         MTabView.MTab tabDefault = tabView.getTabDefault();
 
-        WicketBuildContext child = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true);
-        child.init(model, ctx.getUiBuilderWicket(), ctx.getViewMode());
+        panel.setCtx(ctx);
 
-        Consumer<List<String>> callback = tab -> renderTab(model, tab, child);
-
-        panel.registerOnTabChange(callback);
-
-        renderTab(model, tabDefault.getNomesTipo(), child);
+        renderTab(tabDefault.getNomesTipo(), panel);
 
     }
 
-    private void renderTab(IModel<? extends MInstancia> model, List<String> nomesTipo, WicketBuildContext ctx) {
+    private void renderTab(List<String> nomesTipo, BSPanelGrid panel) {
+        WicketBuildContext ctx = panel.getCtx();
         for (String nomeTipo : nomesTipo) {
-            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(model, nomeTipo);
-            super.buildView(ctx, subtree);
+            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(ctx.getModel(), nomeTipo);
+            WicketBuildContext child = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
+            child.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
+            child.getUiBuilderWicket().build(child, child.getViewMode());
         }
     }
 }
