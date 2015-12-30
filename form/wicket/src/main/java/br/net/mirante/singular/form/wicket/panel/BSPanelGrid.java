@@ -6,7 +6,6 @@ import java.text.Normalizer;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
@@ -17,24 +16,16 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.DefaultCompostoMapper;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
-public class BSPanelGrid extends Panel {
+public abstract class BSPanelGrid extends Panel {
 
     private Form<?> form = new Form<>("panel-form");
     private BSGrid container = new BSGrid("grid");
     private Map<String, List<String>> tabMap = new LinkedHashMap<>();
-
-    private SingularFormContextWicket singularFormContextWicket;
-    private WicketBuildContext ctx;
 
     public BSPanelGrid(String id) {
         super(id);
@@ -75,12 +66,7 @@ public class BSPanelGrid extends Panel {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         buildTabContent();
-                        for (String nomeTipo : subtree) {
-                            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(ctx.getModel(), nomeTipo);
-                            WicketBuildContext child = ctx.createChild(getContainer().newGrid().newColInRow(), true, subtree);
-                            child.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
-                            child.getUiBuilderWicket().build(child, child.getViewMode());
-                        }
+                        updateTab(subtree);
 
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + tabName + "\"]').addClass('active');");
@@ -96,6 +82,8 @@ public class BSPanelGrid extends Panel {
             }
         };
     }
+
+    public abstract void updateTab(List<String> subtree);
 
     public static String convertToJavaIdentity(String original) {
         return convertToJavaIdentity(original, false, true);
@@ -133,7 +121,7 @@ public class BSPanelGrid extends Panel {
         return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 
-    private void buildTabContent() {
+    public void buildTabContent() {
         form.remove(container);
         container = new BSGrid("grid");
         form.add(container);
@@ -142,21 +130,5 @@ public class BSPanelGrid extends Panel {
 
     public BSGrid getContainer() {
         return container;
-    }
-
-    public SingularFormContextWicket getSingularFormContextWicket() {
-        return singularFormContextWicket;
-    }
-
-    public void setSingularFormContextWicket(SingularFormContextWicket singularFormContextWicket) {
-        this.singularFormContextWicket = singularFormContextWicket;
-    }
-
-    public WicketBuildContext getCtx() {
-        return ctx;
-    }
-
-    public void setCtx(WicketBuildContext ctx) {
-        this.ctx = ctx;
     }
 }
