@@ -27,7 +27,7 @@ public class TabMapper extends DefaultCompostoMapper {
         };
 
         for (MTabView.MTab tab : tabView.getTabs()) {
-            panel.addTab(tab.getTitulo(), tab.getNomesTipo());
+            panel.addTab(tab.getId(), tab.getTitulo(), tab.getNomesTipo());
         }
 
         ctx.getContainer().newTag("div", panel);

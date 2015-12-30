@@ -184,8 +184,11 @@ public class MPacoteCurriculo extends MPacote {
         // Formatação
         // ---------------------------------------------------------------------------------------------
         MTabView tabbed = curriculo.setView(MTabView::new);
-        tabbed.addTab("Dados");
-        tabbed.addTab("Formacção e Curso")
+        tabbed.addTab("dados", "Dados")
+                .add(informacoesPessoais)
+                .add(referencia)
+                .add(informacoesAdicionais);
+        tabbed.addTab("formacaoCurso", "Formacção e Curso")
             .add(formacao)
             .add(certificacoes);
         tabbed.addTab(experiencias);
