@@ -1,10 +1,6 @@
 package br.net.mirante.singular.showcase.layout;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
@@ -12,7 +8,7 @@ import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseMasterDetailNestedPackage extends MPacote {
 
@@ -50,26 +46,26 @@ public class CaseMasterDetailNestedPackage extends MPacote {
             //@destacar:fim
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             dtFimExperiencia
                     .as(AtrBasic::new).label("Data final")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             empresa
                     .as(AtrBasic::new).label("Empresa")
-                    .as(AtrWicket::new).larguraPref(8);
+                    .as(AtrBootstrap::new).colPreference(8);
             //@destacar:bloco
             cargos
                     .withView(MListMasterDetailView::new)
                     .as(AtrBasic::new).label("Cargos na empresa");
             dtInicioCargo
                     .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             dtFimCargo
                     .as(AtrBasic::new).label("Data final")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             nome
                     .as(AtrBasic::new).label("Nome")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             pets
                     .withView(new MListMasterDetailView()
                             .col(nomeDoPet)
@@ -77,14 +73,14 @@ public class CaseMasterDetailNestedPackage extends MPacote {
                     .as(AtrBasic::new).label("Animais de estimação no trabalho");
             nomeDoPet
                     .as(AtrBasic::new).label("Nome")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             tipoDoPet
                     .withView(MSelecaoPorSelectView::new)
                     .as(AtrBasic::new).label("Tipo")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             idadePet
                     .as(AtrBasic::new).label("Idade")
-                    .as(AtrWicket::new).larguraPref(4);
+                    .as(AtrBootstrap::new).colPreference(4);
             //@destacar:fim
             atividades
                     .withView(MTextAreaView::new)

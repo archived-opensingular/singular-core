@@ -59,8 +59,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         return comp;
     }
 
-    default void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    default void buildView(WicketBuildContext ctx) {
 
+        final IModel<? extends MInstancia> model = ctx.getModel();
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);

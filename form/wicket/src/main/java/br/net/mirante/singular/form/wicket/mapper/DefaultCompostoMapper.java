@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -16,11 +16,11 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -34,9 +34,10 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
 
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final MIComposto instance = (MIComposto) model.getObject();
+        final IModel<? extends MInstancia> model = ctx.getModel();
+        final MIComposto instance =  ctx.getCurrenttInstance();
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
         final BSContainer<?> parentCol = ctx.getContainer();
@@ -71,9 +72,9 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         if (iCampo instanceof MIComposto) {
             final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
         } else {
-            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
+            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true, mCampo), viewMode);
         }
     }
 
@@ -83,16 +84,25 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
         * parametrizado ou transoformado em uma configuracao
         */
-        final int colspanLG = (hintColWidths.containsKey(tCampo.getNome()))
-                ? hintColWidths.get(tCampo.getNome())
-                : iCampo.as(AtrWicket::new).getLarguraPref(BSCol.MAX_COLS);
-        final int colspanMD = Integer.min(colspanLG * 2, BSCol.MAX_COLS);
-        final int colspanSM = Integer.min(colspanLG * 3, BSCol.MAX_COLS);
+        final int colPref;
 
-        col.lg(colspanLG);
-        col.md(colspanMD);
-        col.sm(colspanSM);
+        if (hintColWidths.containsKey(tCampo.getNome())) {
+            colPref = hintColWidths.get(tCampo.getNome());
+        } else {
+            colPref = iCampo.as(AtrBootstrap::new).getColPreference(BSCol.MAX_COLS);
+        }
+
+        final Optional<Integer> colXs = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColXs());
+        final Optional<Integer> colSm = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColSm());
+        final Optional<Integer> colMd = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColMd());
+        final Optional<Integer> colLg = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColLg());
+
+        col.xs(colXs.orElse(Integer.min(colPref * 4, BSCol.MAX_COLS)));
+        col.sm(colSm.orElse(Integer.min(colPref * 3, BSCol.MAX_COLS)));
+        col.md(colMd.orElse(Integer.min(colPref * 2, BSCol.MAX_COLS)));
+        col.lg(colLg.orElse(Integer.min(colPref, BSCol.MAX_COLS)));
 
         return col;
+
     }
 }

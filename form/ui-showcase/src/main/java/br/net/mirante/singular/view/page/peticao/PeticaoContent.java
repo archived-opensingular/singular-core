@@ -19,6 +19,10 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.view.SingularWicketContainer;
 import br.net.mirante.singular.view.template.Content;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Optional;
+import javax.inject.Inject;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -27,11 +31,6 @@ import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-
-import javax.inject.Inject;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Optional;
 
 public class PeticaoContent extends Content
         implements SingularWicketContainer<PeticaoContent, Void> {
@@ -68,8 +67,8 @@ public class PeticaoContent extends Content
     }
 
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        singularFormContext.getUIBuilder().build(ctx, currentInstance, ViewMode.EDITION);
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), currentInstance);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
     }
 
     private BSContainer<?> buildBodyContainer(){

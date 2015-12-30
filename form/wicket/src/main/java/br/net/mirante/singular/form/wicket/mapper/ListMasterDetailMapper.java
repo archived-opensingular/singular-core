@@ -19,20 +19,21 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import com.google.common.base.Strings;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.apache.wicket.model.Model;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
@@ -42,8 +43,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class ListMasterDetailMapper implements IWicketComponentMapper {
 
 
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
+        final IModel<? extends MInstancia> model = ctx.getModel();
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
 
@@ -110,7 +112,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     @SuppressWarnings("unchecked")
     private BSDataTable buildTable(String id, IModel<? extends MInstancia> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
-        BSDataTableBuilder builder = new BSDataTableBuilder<>(newDataProvider(model));
+        BSDataTableBuilder builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
 
         configureColumns(view.getColumns(), builder, model, modal, ctx, viewMode, view);
 
@@ -194,9 +196,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                                       ViewMode viewMode,
                                       MListMasterDetailView view) {
 
-        builder.appendActionColumn($m.ofValue("Ações"), actionColumn -> {
+        builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction($m.ofValue("Remover"), Icone.MINUS, (target, rowModel) -> {
+                actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
+                (target, rowModel) -> {
                     MILista miLista = ((MILista) model.getObject());
                     miLista.remove(miLista.indexOf(rowModel.getObject()));
                     target.add(ctx.getContainer());
@@ -204,10 +207,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             Icone iconeBotaoAbrirModal = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
-            IModel<String> labelBotaoAbrirModal = viewMode.isEdition() && view.isDeleteElementsEnabled() ? $m.ofValue("Editar") : $m.ofValue("Visualizar");
 
-            actionColumn.appendAction(labelBotaoAbrirModal, iconeBotaoAbrirModal, (target, rowModel) -> {
-                        modal.showExisting(target, rowModel);
+            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)).buttonModel(Model.of("blue-madison")),
+                    (target, rowModel) -> {
+                        modal.showExisting(target, rowModel, ctx);
                     }
             );
         });
@@ -310,10 +313,11 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             });
         }
 
-        protected void showExisting(AjaxRequestTarget target, IModel<MInstancia> forEdit) {
+        protected void showExisting(AjaxRequestTarget target, IModel<MInstancia> forEdit, WicketBuildContext ctx) {
+            String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
-            this.configureNewContent("Editar", target);
+            this.configureNewContent(prefix, target);
         }
 
         private void revert(AjaxRequestTarget target) {
@@ -321,7 +325,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
         private void configureNewContent(String prefix, AjaxRequestTarget target) {
-            this.setTitleText($m.ofValue(prefix + " " + listaLabel.getObject()));
+            this.setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
             BSContainer modalBody = new BSContainer("bogoMips");
             this.setBody(modalBody);
 
@@ -330,11 +334,33 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 viewModeModal = ViewMode.VISUALIZATION;
             }
 
-            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true), currentInstance, viewModeModal);
+            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance), viewModeModal);
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
             this.show(target);
         }
+
+        @Override
+        public void show(AjaxRequestTarget target) {
+            super.show(target);
+            target.appendJavaScript(getConfigureBackdropScript());
+        }
+
+        private String getConfigureBackdropScript(){
+            String js = "";
+            js +=" (function (zindex){ ";
+            js +="     $('.modal-backdrop').each(function(index) { ";
+            js +="         var zIndex = $(this).css('z-index'); ";
+            js +="         $(this).css('z-index', zindex-1+index); ";
+            js +="     }); ";
+            js +="     $('.modal').each(function(index) { ";
+            js +="         var zIndex = $(this).css('z-index'); ";
+            js +="         $(this).css('z-index', zindex+index); ";
+            js +="     }); ";
+            js +=" })(10050); ";
+            return js;
+        }
+
     }
 
 

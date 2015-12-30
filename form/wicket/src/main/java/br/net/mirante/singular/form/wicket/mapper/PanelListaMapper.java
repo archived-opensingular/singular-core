@@ -26,9 +26,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class PanelListaMapper extends AbstractListaMapper {
 
     @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
-        final IModel<MILista<MInstancia>> listaModel = $m.get(() -> (MILista<MInstancia>) model.getObject());
+        final IModel<MILista<MInstancia>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
         final MILista<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(MPacoteBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
@@ -92,7 +92,7 @@ public class PanelListaMapper extends AbstractListaMapper {
             final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();
 
-            wicketBuilder.build(ctx.createChild(row.newCol(11), true), item.getModel(), viewMode);
+            wicketBuilder.build(ctx.createChild(row.newCol(11), true, item.getModel()), viewMode);
 
             final BSGrid btnGrid = row.newCol(1).newGrid();
 

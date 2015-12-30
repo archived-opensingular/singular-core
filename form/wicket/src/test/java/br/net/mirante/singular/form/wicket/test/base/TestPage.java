@@ -71,8 +71,8 @@ public class TestPage extends WebPage {
         BSGrid container = new BSGrid("generated-content");
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer);
-        singularFormContext.getUIBuilder().build(ctx, createTipoModel(dicionario), viewMode);
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, createTipoModel(dicionario));
+        singularFormContext.getUIBuilder().build(ctx, viewMode);
         return container;
     }
 

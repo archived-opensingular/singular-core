@@ -46,7 +46,6 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
             @Override
             protected MTipoString load() {
@@ -59,7 +58,8 @@ public class TestFormWicketBuild extends TestCase {
         };
         IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
         mCidade.getObject().setValor("Brasilia");
-        singularFormContext.getUIBuilder().build(ctx, mCidade, ViewMode.EDITION);
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
         assertEquals("Brasilia", mCidade.getObject().getValor());
@@ -75,7 +75,6 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
             @Override
             @SuppressWarnings("unchecked")
@@ -86,6 +85,7 @@ public class TestFormWicketBuild extends TestCase {
             }
         };
         IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
 

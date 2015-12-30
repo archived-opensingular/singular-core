@@ -18,10 +18,11 @@ import org.apache.wicket.model.Model;
 public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
     @Override
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
+        final IModel<? extends MInstancia> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final MInstancia mi = model.getObject();
+        final MInstancia mi = ctx.getCurrenttInstance();
         final BSLabel label = new BSLabel("label", new AtributoModel<>(model, MPacoteBasic.ATR_LABEL));
 
         if(ctx.getViewMode().isVisualization()){

@@ -30,10 +30,10 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     }
 
     @Override
-    public void buildView(WicketBuildContext ctx, IModel<? extends MInstancia> model) {
+    public void buildView(WicketBuildContext ctx) {
 
         final BSControls formGroup = createFormGroup(ctx);
-        final MIComposto rootInstance = (MIComposto) model.getObject();
+        final MIComposto rootInstance = ctx.getCurrenttInstance();
 
         final IModel<? extends MInstancia> miInicial = resolveModel(rootInstance, valorInicialPath);
         final IModel<? extends MInstancia> miFinal = resolveModel(rootInstance, valorFinalPath);
@@ -46,7 +46,7 @@ public class RangeSliderMapper implements IWicketComponentMapper {
         final String initScript = String.format("RangeSliderMapper.init(%s,%s,%s,%s)", formGroup.getMarkupId(true),
                 valorInicial.getMarkupId(true), valorFinal.getMarkupId(true), disable);
 
-        formGroup.appendLabel(buildLabel(model));
+        formGroup.appendLabel(buildLabel(ctx.getModel()));
         formGroup.appendInputHidden(valorInicial);
         formGroup.appendInputHidden(valorFinal);
         formGroup.add(buildIonRangeScriptBehaviour(initScript));
