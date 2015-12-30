@@ -6,7 +6,6 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
@@ -132,21 +131,14 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
     }
 
     public BSDataTable<T, S> build(String id) {
-        return new BSDataTable<T, S>(id, new ArrayList<>(columns), dataProvider) {
-            @Override
-            protected AbstractToolbar newNoRecordsToolbar() {
-                if (showNoRecordsToolbar) {
-                    return super.newNoRecordsToolbar();
-                } else {
-                    return null;
-                }
-            }
-        }.setRowsPerPage(rowsPerPage)
+        return new BSDataTable<>(id, new ArrayList<>(columns), dataProvider)
+                .setRowsPerPage(rowsPerPage)
                 .setStripedRows(stripedRows)
                 .setHoverRows(hoverRows)
                 .setAdvanceTable(advanceTable)
                 .setBorderedTable(borderedTable)
-                .setCondensedTable(condensedTable);
+                .setCondensedTable(condensedTable)
+                .setShowNoRecordsToolbar(showNoRecordsToolbar);
     }
 
     public BSFlexDataTable<T, S> buildFlex(String id) {
