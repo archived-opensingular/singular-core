@@ -339,6 +339,28 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             target.add(containerExterno);
             this.show(target);
         }
+
+        @Override
+        public void show(AjaxRequestTarget target) {
+            super.show(target);
+            target.appendJavaScript(getConfigureBackdropScript());
+        }
+
+        private String getConfigureBackdropScript(){
+            String js = "";
+            js +=" (function (zindex){ ";
+            js +="     $('.modal-backdrop').each(function(index) { ";
+            js +="         var zIndex = $(this).css('z-index'); ";
+            js +="         $(this).css('z-index', zindex-1+index); ";
+            js +="     }); ";
+            js +="     $('.modal').each(function(index) { ";
+            js +="         var zIndex = $(this).css('z-index'); ";
+            js +="         $(this).css('z-index', zindex+index); ";
+            js +="     }); ";
+            js +=" })(10050); ";
+            return js;
+        }
+
     }
 
 
