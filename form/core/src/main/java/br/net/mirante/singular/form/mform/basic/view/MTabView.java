@@ -11,9 +11,19 @@ public class MTabView extends MView {
 
     private MTab tabDefault;
 
+    private List<MTab> tabs = new ArrayList<>();
+
     @Override
     public boolean aplicavelEm(MTipo<?> tipo) {
         return true;
+    }
+
+    public List<MTab> getTabs() {
+        return tabs;
+    }
+
+    public MTab getTabDefault() {
+        return tabDefault;
     }
 
     public MTab addTab(String titulo) {
@@ -21,6 +31,8 @@ public class MTabView extends MView {
         if (tabDefault == null) {
             tabDefault = tab;
         }
+
+        tabs.add(tab);
         return tab;
     }
 
@@ -33,21 +45,25 @@ public class MTabView extends MView {
 
         private final MTabView tabView;
         private final String   titulo;
-        private final List<MTipo<?>> tipos;
+        private final List<String> nomesTipo;
 
         private MTab(MTabView tabView, String titulo) {
             this.tabView = tabView;
             this.titulo = titulo;
-            tipos = new ArrayList<>();
+            nomesTipo = new ArrayList<>();
         }
 
         public MTab add(MTipo<?> campo) {
-            tipos.add(campo);
+            nomesTipo.add(campo.getNomeSimples());
             return this;
         }
 
         public String getTitulo() {
             return titulo;
+        }
+
+        public List<String> getNomesTipo() {
+            return nomesTipo;
         }
 
         public MTab setDefault() {

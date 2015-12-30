@@ -2,8 +2,11 @@ package br.net.mirante.singular.form.wicket.panel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+import java.text.Normalizer;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
@@ -17,36 +20,33 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.context.SingularFormContext;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 
 public class BSPanelGrid extends Panel {
 
     private Form<?> form = new Form<>("panel-form");
     private BSGrid container = new BSGrid("grid");
-    private Map<String, String> tabMap = new LinkedHashMap<>();
+    private Map<String, List<String>> tabMap = new LinkedHashMap<>();
+    private Consumer<List<String>> callback;
     private String selectedSubtree;
 
-    private SingularFormContext<UIBuilderWicket, IWicketComponentMapper> singularFormContext;
     private ViewMode viewMode;
 
-    public BSPanelGrid(String id, IModel<MInstancia> model, SingularFormContext<UIBuilderWicket, IWicketComponentMapper> singularFormContext, ViewMode viewMode) {
+    public BSPanelGrid(String id) {
+        super(id);
+    }
+
+    public BSPanelGrid(String id, IModel<MInstancia> model, ViewMode viewMode) {
         super(id, model);
-        this.singularFormContext = singularFormContext;
         this.viewMode = viewMode;
         form.setOutputMarkupId(true);
         add(form.add(container));
     }
 
-    public void addTab(String headerText, String subtree) {
+    public void addTab(String headerText, List<String> subtree) {
         if (tabMap.isEmpty()) {
-            selectedSubtree = subtree;
+            selectedSubtree = subtree.get(0);
         }
         tabMap.put(headerText, subtree);
     }
@@ -60,7 +60,7 @@ public class BSPanelGrid extends Panel {
     private void rebuildForm() {
         add(form
                 .add(buildTabControl()));
-//        buildTabContent();
+        buildTabContent();
     }
 
     private Component buildTabControl() {
@@ -69,23 +69,26 @@ public class BSPanelGrid extends Panel {
             @Override
             protected void populateItem(ListItem<String> item) {
 
-                final String subtree = tabMap.get(item.getModelObject());
+                final List<String> subtree = tabMap.get(item.getModelObject());
+                String tabName = convertToJavaIdentity(item.getModelObject());
 
                 if(item.getIndex() == 0){
                     item.add($b.classAppender("active"));
                 }
 
-                item.add($b.attr("data-tab-name", subtree));
+                item.add($b.attr("data-tab-name", tabName));
 
                 AjaxSubmitLink link = new AjaxSubmitLink("tabAnchor") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        selectedSubtree = subtree;
+                        selectedSubtree = tabName;
                         buildTabContent();
 
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
-                        target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + subtree + "\"]').addClass('active');");
+                        target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + tabName + "\"]').addClass('active');");
                         target.add(form);
+
+                        callback.accept(subtree);
                     }
 
                 };
@@ -97,19 +100,53 @@ public class BSPanelGrid extends Panel {
         };
     }
 
+    public static String convertToJavaIdentity(String original) {
+        return convertToJavaIdentity(original, false, true);
+    }
+
+    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
+        if (normalize) {
+            original = normalize(original);
+        }
+        StringBuilder sb = new StringBuilder(original.length());
+        boolean nextUpper = false;
+        for (char c : original.toCharArray()) {
+            if (sb.length() == 0) {
+                if (Character.isJavaIdentifierStart(c)) {
+                    if (firstCharacterUpperCase) {
+                        sb.append(Character.toUpperCase(c));
+                    } else {
+                        sb.append(Character.toLowerCase(c));
+                    }
+                }
+            } else if (Character.isJavaIdentifierPart(c)) {
+                if (nextUpper) {
+                    c = Character.toUpperCase(c);
+                    nextUpper = false;
+                }
+                sb.append(c);
+            } else if (Character.isWhitespace(c)) {
+                nextUpper = true;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String normalize(String original) {
+        return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
     private void buildTabContent() {
         form.remove(container);
         container = new BSGrid("grid");
         form.add(container);
-        WicketBuildContext ctx = new WicketBuildContext(getContainer().newColInRow(), buildBodyContainer());
-        singularFormContext.getUIBuilder().build(ctx, new MInstanciaCampoModel<>(getDefaultModel(), selectedSubtree), viewMode);
-    }
-
-    private BSContainer buildBodyContainer() {
-        return (BSContainer) getParent().getParent().get("body-container");
     }
 
     public BSGrid getContainer() {
         return container;
+    }
+
+    public void registerOnTabChange(Consumer<List<String>> callback) {
+        this.callback = callback;
     }
 }

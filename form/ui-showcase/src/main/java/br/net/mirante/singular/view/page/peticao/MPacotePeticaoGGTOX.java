@@ -114,11 +114,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
             .withView(MPanelListaView::new)
             .as(AtrBasic::new)
             .label("Componente")
-            .enabled((ins) -> {
-                Optional<Object> agreed = ins.findNearestValue(dadosResponsavel_concordo);
-                if(agreed.isPresent()) return "Concordo".equals(agreed.get());
-                return false;
-            })
             .dependsOn(dadosResponsavel_concordo);
 
         componente.as(AtrBasic::new).label("Registro de Componente");
