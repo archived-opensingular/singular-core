@@ -44,9 +44,7 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(map);
-        add(lat);
-        add(lng);
+        add(map).add(lat).add(lng);
     }
 
     @Override

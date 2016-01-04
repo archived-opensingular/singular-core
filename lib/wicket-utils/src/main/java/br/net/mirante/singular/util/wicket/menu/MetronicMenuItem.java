@@ -29,6 +29,10 @@ public class MetronicMenuItem extends AbstractMenuItem {
         add(buildMenuItem());
     }
 
+    public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass) {
+        this(icon, title, responsePageClass, null);
+    }
+
     public MetronicMenuItem(Icone icon, String title, String href) {
         this(icon, title);
         this.href = href;

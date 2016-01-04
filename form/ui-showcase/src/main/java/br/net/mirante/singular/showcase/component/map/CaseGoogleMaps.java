@@ -9,6 +9,6 @@ public class CaseGoogleMaps extends CaseBase {
 
     public CaseGoogleMaps() {
         super("Google Maps");
-        setDescriptionHtml("Para adicionar um marcador basta clickar no posição do mapa.");
+        setDescriptionHtml("Para adicionar um marcador basta clicar no posição do mapa.");
     }
 }
