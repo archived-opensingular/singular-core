@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
@@ -116,6 +117,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
         final Finalidade finalidade;
         final UsoPretendido usoPretendido;
         final NomeComercial nomeComercial;
+        final Embalagem embalagem;
+
 
         Componente(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
             root = peticionamento.addCampoListaOfComposto("componentes", "componente");
@@ -129,45 +132,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
             finalidade = new Finalidade(pb);
             usoPretendido =  new UsoPretendido(pb);
             nomeComercial = new NomeComercial(pb);
-
-
-            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> embalagens = rootType.addCampoListaOfComposto("embalagens", "embalagem");
-            MTipoComposto<MIComposto> embalagem = embalagens.getTipoElementos();
-
-            //TODO converter sim nao para true false
-            embalagem.addCampoString("produtoExterior", true)
-                    .withSelectionOf("Sim", "Não")
-                    .withView(MSelecaoPorRadioView::new)
-                    .as(AtrBasic::new).label("Produto formulado no exterior?")
-                    .as(AtrBootstrap::new).colPreference(12);
-
-            embalagem.addCampoString("tipo", true)
-                    .withSelectionOf(getTiposEmbalagem())
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Tipo")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            embalagem.addCampoString("material", true)
-                    .withSelectionOf(getMateriais())
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Material")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            embalagem.addCampoInteger("capacidade", true)
-                    .as(AtrBasic::new).label("Capacidade")
-                    .tamanhoMaximo(15)
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            //TODO caso o array tenha uma string vazia, ocorre um NPE
-            embalagem.addCampoString("unidadeMedida", true)
-                    .withSelectionOf(getUnidadesMedida())
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Unidade medida")
-                    .as(AtrBootstrap::new).colPreference(1);
-
-            embalagens
-                    .withView(MTableListaView::new)
-                    .as(AtrBasic::new).label("Embalagem");
+            embalagem = new Embalagem(pb);
 
             final MTipoLista<MTipoComposto<MIComposto>, MIComposto> anexos = rootType.addCampoListaOfComposto("anexos", "anexo");
             MTipoComposto<MIComposto> anexo = anexos.getTipoElementos();
@@ -193,38 +158,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
                     .col(identificacao.tipoComponente)
                     .col(sinonimia.sugerida)
             );
-        }
-
-        private String[] getTiposEmbalagem() {
-            return new String[] {
-                    "Balde",
-                    "Barrica",
-                    "Bombona",
-                    "Caixa",
-                    "Carro tanque",
-                    "Cilindro",
-                    "Container",
-                    "Frasco",
-                    "Galão",
-                    "Garrafa",
-                    "Lata",
-                    "Saco",
-                    "Tambor"
-            };
-
-        }
-
-        private String[] getMateriais() {
-            return new String[] {
-                    "Papel",
-                    "Alumínio",
-                    "Ferro",
-                    "Madeira"
-            };
-        }
-
-        private String[] getUnidadesMedida() {
-            return new String[] { "cm" };
         }
 
         private void addTestes(PacoteBuilder pb, MTipoComposto<?> componente) {
@@ -640,6 +573,78 @@ public class MPacotePeticaoGGTOX extends MPacote {
                             .as(AtrBasic::new).label("Fabricante(s)");
                 }
             }
+        }
+        class Embalagem {
+            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+            final MTipoComposto<MIComposto> type;
+            final MTipoString produtoExterior;
+            final MTipoString tipo;
+            MTipoString material;
+            final MTipoString unidadeMedida;
+            final MTipoInteger capacidade;
+            private final String[]
+                    tiposDisponiveis = new String[]{
+                    "Balde", "Barrica", "Bombona", "Caixa", "Carro tanque", "Cilindro",
+                    "Container", "Frasco", "Galão", "Garrafa", "Lata", "Saco", "Tambor"
+            },
+                    materiaisDisponiveis = new String[]{"Papel", "Alumínio", "Ferro", "Madeira"
+                    };
+            Embalagem(PacoteBuilder pb){
+                root = rootType.addCampoListaOfComposto("embalagens", "embalagem");
+                root.withView(MTableListaView::new).as(AtrBasic::new).label("Embalagem");
+                type = root.getTipoElementos();
+                produtoExterior = createFieldProdutoExterior();
+                tipo = createFieldTipo();
+                material = createFieldMaterial();
+                capacidade = createFieldCapacidade();
+                unidadeMedida = createFieldUnidadeDeMedida();
+            }
+
+            private MTipoString createFieldProdutoExterior() {
+                //TODO converter sim nao para true false
+                MTipoString field = type.addCampoString("produtoExterior", true);
+                field.withSelectionOf("Sim", "Não")
+                        .withView(MSelecaoPorRadioView::new)
+                        .as(AtrBasic::new).label("Produto formulado no exterior?")
+                        .as(AtrBootstrap::new).colPreference(12);
+                return field;
+            }
+
+            private MTipoString createFieldTipo() {
+                MTipoString field = type.addCampoString("tipo", true);
+                field.withSelectionOf(tiposDisponiveis)
+                        .withView(MSelecaoPorSelectView::new)
+                        .as(AtrBasic::new).label("Tipo")
+                        .as(AtrBootstrap::new).colPreference(4);
+                return field;
+            }
+
+            private MTipoString createFieldMaterial() {
+                MTipoString field = type.addCampoString("material", true);
+                field.withSelectionOf(materiaisDisponiveis)
+                        .withView(MSelecaoPorSelectView::new)
+                        .as(AtrBasic::new).label("Material")
+                        .as(AtrBootstrap::new).colPreference(4);
+                return field;
+            }
+
+            private MTipoInteger createFieldCapacidade() {
+                MTipoInteger field = type.addCampoInteger("capacidade", true);
+                field.as(AtrBasic::new).label("Capacidade")
+                        .tamanhoMaximo(15)
+                        .as(AtrBootstrap::new).colPreference(4);
+                return field;
+            }
+
+            private MTipoString createFieldUnidadeDeMedida() {
+                //TODO caso o array tenha uma string vazia, ocorre um NPE
+                MTipoString field = type.addCampoString("unidadeMedida", true);
+                field.withSelectionOf(new String[]{"cm"}).withView(MSelecaoPorSelectView::new)
+                        .as(AtrBasic::new).label("Unidade medida")
+                        .as(AtrBootstrap::new).colPreference(1);
+                return field;
+            }
+
         }
     }
 }
