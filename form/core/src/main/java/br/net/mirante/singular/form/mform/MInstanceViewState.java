@@ -13,10 +13,11 @@ public enum MInstanceViewState {
     }
 
     /*
-    +-----------------------+       
-    |        Enabled        |       
-    +-------+-------+-------+       
-    | TRUE  | FALSE | NULL  |       
+    
+    +-----------+-----------------------+
+    |           |        Enabled        |
+    |           +-------+-------+-------+
+    |           | TRUE  | FALSE | NULL  |
     +---+-------+-------+-------+-------+--------+
     | V |  NULL |   E   |   R   |   E   | Exists |
     | i |  TRUE |   E   |   R   |   E   | TRUE   |
