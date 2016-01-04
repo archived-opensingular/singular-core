@@ -24,7 +24,7 @@ var Page = function () {
 
     var handleSlimScroll = function () {
         $('.scroller').slimScroll({});
-    }
+    };
 
     return {
         init: function () {

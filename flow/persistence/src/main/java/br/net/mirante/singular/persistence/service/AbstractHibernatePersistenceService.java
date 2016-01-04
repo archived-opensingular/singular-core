@@ -354,6 +354,8 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         if (states != null && !states.isEmpty()) {
             DetachedCriteria sub = DetachedCriteria.forClass(getClassTaskInstance(), "T");
             sub.add(Restrictions.eqProperty("T.processInstance.cod", "PI.cod"));
+            sub.createAlias("T.task", "TV");
+            sub.add(Restrictions.in("TV.taskDefinition", states));
             sub.add(Restrictions.isNull("T.endDate"));
             sub.setProjection(Projections.id());
             

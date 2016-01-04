@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -36,8 +37,7 @@ public class TextAreaMapper extends StringMapper {
 
             if (maxSize.isPresent()) {
                 textArea.add(StringValidator.maximumLength(maxSize.get()));
-                //TODO Conforme solicitado pelo Daniel, o contador devera ser evoluido apos upgrade do Metronic
-                //textArea.add(new CountDownBehaviour(maxSize.get()));
+                textArea.add(new CountDownBehaviour());
             }
 
             return textArea;

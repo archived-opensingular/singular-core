@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseGridTablePackage extends MPacote {
 
@@ -16,6 +16,7 @@ public class CaseGridTablePackage extends MPacote {
         MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
+        certificacoes.as(AtrBasic::new).label("Certificações");
         final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
         final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
         final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);
@@ -29,16 +30,16 @@ public class CaseGridTablePackage extends MPacote {
                     .as(AtrBasic::new).label("Certificação");
             dataCertificacao
                     .as(AtrBasic::new).label("Data")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             entidadeCertificacao
                     .as(AtrBasic::new).label("Entidade")
-                    .as(AtrWicket::new).larguraPref(10);
+                    .as(AtrBootstrap::new).colPreference(10);
             validadeCertificacao
                     .as(AtrBasic::new).label("Validade")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             nomeCertificacao
                     .as(AtrBasic::new).label("Nome")
-                    .as(AtrWicket::new).larguraPref(10);
+                    .as(AtrBootstrap::new).colPreference(10);
         }
     }
 }

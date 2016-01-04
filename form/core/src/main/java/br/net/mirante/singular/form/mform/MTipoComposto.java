@@ -9,24 +9,32 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoDecimal;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoMonetario;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
-public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO_INSTANCIA> implements ICompositeType {
+public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
+        extends MTipo<TIPO_INSTANCIA>
+        implements ICompositeType, MSelectionableType {
 
     private Map<String, MTipo<?>> fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
+
+
+    //TODO: Fabs : Check why this is not working
+    // SELECTION ATRIBUTES
+//    static final public AtrRef<MTipoString, MIString, String>
+//            ID_FIELD = new AtrRef<>(MPacoteCore.class, "ID_FIELD",
+//            MTipoString.class, MIString.class, String.class),
+//            VALUE_FIELD = new AtrRef<>(MPacoteCore.class, "VALUE_FIELD",
+//                    MTipoString.class, MIString.class, String.class);
+    private MOptionsProvider optionsProvider;
 
     @SuppressWarnings("unchecked")
     public MTipoComposto() {
@@ -35,6 +43,14 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
 
     protected MTipoComposto(Class<TIPO_INSTANCIA> classeInstancia) {
         super(classeInstancia);
+    }
+
+    @Override
+    protected void onCargaTipo(TipoBuilder tb) {
+        super.onCargaTipo(tb);
+
+//        if(!ID_FIELD.isBinded()) tb.createTipoAtributo(ID_FIELD);
+//        if(!VALUE_FIELD.isBinded()) tb.createTipoAtributo(VALUE_FIELD);
     }
 
     @Override
@@ -186,12 +202,71 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto> extends MTipo<TIPO
         return addCampo(nomeCampo, MTipoInteger.class, obrigatorio);
     }
 
+    public MTipoDecimal addCampoDecimal(String nomeCampo, boolean obrigatorio) {
+        return addCampo(nomeCampo, MTipoDecimal.class, obrigatorio);
+    }
+
     public MTipoDecimal addCampoDecimal(String nomeCampo) {
-        return addCampo(nomeCampo, MTipoDecimal.class);
+        return addCampoDecimal(nomeCampo, false);
     }
 
     public MTipoMonetario addCampoMonetario(String nomeCampo) {
         return addCampo(nomeCampo, MTipoMonetario.class);
+    }
+
+    @Override
+    public void setProviderOpcoes(MOptionsProvider p) {
+        optionsProvider = p;
+    }
+
+    @Override
+    public MOptionsProvider getProviderOpcoes() {
+        return optionsProvider;
+    }
+
+    /**
+     * Configures default key, value fields with names "key" and "value".
+     * You can override this method if you want to define your own fields for
+     * your instance.
+     *
+     * @return <code>this</code>
+     */
+    public MTipoComposto configureKeyValueFields(){
+        return withKeyValueField("id", "value");
+    }
+
+    /**
+     * Configures key, value fields with names informed.
+     * If you are specializing a {@link MTipoComposto} you can use this
+     * method to define your own fields.
+     *
+     * @return <code>this</code>
+     */
+    public MTipoComposto withKeyValueField(String key, String value){
+        return withIdField(key).withValueField(value);
+    }
+
+    protected String id_sel, val_sel;
+
+    private MTipoComposto withIdField(String fieldName){
+//        setValorAtributo(ID_FIELD, fieldName);
+        id_sel = fieldName;
+        addCampoString(fieldName);
+        return this;
+    }
+
+    private MTipoComposto withValueField(String fieldName){
+//        setValorAtributo(VALUE_FIELD, fieldName);
+        val_sel = fieldName;
+        addCampoString(fieldName);
+        return this;
+    }
+
+    public MIComposto create(Object key, Object value){
+        MIComposto instance = this.novaInstancia();
+        instance.setFieldId(key);
+        instance.setFieldValue(value);
+        return instance;
     }
 
     /**

@@ -33,6 +33,8 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     private static MDicionario dicionario;
     private static TestPackage tpackage;
 
+    private MIAttachment instance;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     private UploadBehavior b;
@@ -59,7 +61,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     }
 
     private MIAttachment setupInstance() {
-        return tpackage.attachmentFileField.novaInstancia();
+        return instance = tpackage.attachmentFileField.novaInstancia();
     }
 
     private WebWrapper createWebWrapper() throws FileUploadException {
@@ -72,10 +74,10 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     }
 
     @Test public void rejectsNonMultipartRequests() {
-        when(containerRequest.getContentType()).thenReturn("text/html");
-        thrown.expect(AbortWithHttpErrorCodeException.class);
-        thrown.expectMessage("Request is not Multipart as Expected");
-        b.onResourceRequested();
+//        when(containerRequest.getContentType()).thenReturn("text/html");
+//        thrown.expect(AbortWithHttpErrorCodeException.class);
+//        thrown.expectMessage("Request is not Multipart as Expected");
+//        b.onResourceRequested();
     }
 
     @Test public void wicketDemandsToCallParseToWork() throws Exception {
@@ -102,6 +104,29 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
         expected.put(jsonFile);
         answer.put("files", expected);
         assertThat(result).isEqualsToByComparingFields(answer);
+    }
+
+    @Test public void updatesFileInstanceInformation() throws Exception {
+        FileItem file = file("my.file.ext", new byte[] { 0 });
+
+        when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(file));
+
+        b.onResourceRequested();
+
+        assertThat(instance.getFileName()).isEqualTo("my.file.ext");
+        assertThat(instance.getFileId()).isEqualTo("5ba93c9db0cff93f52b521d7420e43f6eda2784f");
+        assertThat(instance.getFileHashSHA1()).isEqualTo("5ba93c9db0cff93f52b521d7420e43f6eda2784f");
+        assertThat(instance.getFileSize()).isEqualTo(1);
+    }
+
+    @Test public void marksFileInstanceAsTemporary() throws Exception {
+        FileItem file = file("my.file.ext", new byte[] { 0 });
+
+        when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(file));
+
+        b.onResourceRequested();
+
+        assertThat(instance.isTemporary()).isTrue();
     }
     
     @Test public void storesInTheTemporaryServiceHandler() throws Exception {

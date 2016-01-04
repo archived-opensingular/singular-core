@@ -69,17 +69,14 @@ public interface MOptionsProvider extends Serializable {
 
     public default boolean containsValue(
             MILista<? extends MInstancia> defaultOptions, MInstancia value) {
-        if(value instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) value;
+        if(value instanceof MSelectionableInstance){
+            MSelectionableInstance item = (MSelectionableInstance) value;
             if(item.getFieldId() == null){
                 return true;
             }
         }
         for(MInstancia c : defaultOptions.getAllChildren()){
-            if(value instanceof MISimples){
-                if (value.getValor().equals(c.getValor())) return true;
-            }
-            else if (value.equals(c)) return true;
+           if (value.equals(c)) return true;
         }
         return false;
     }
@@ -87,14 +84,7 @@ public interface MOptionsProvider extends Serializable {
     public default void addNewValueUpfront(
         MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         MInstancia newValue = defaultOptions.addNovoAt(0);
-        //TODO [Fabs] : This is becoming very anoying
-        if(newValue instanceof MISimples){
-            newValue.setValor(value.getValor());
-        }else if(newValue instanceof MISelectItem){
-            MISelectItem item = (MISelectItem) value;
-            ((MISelectItem) newValue).setFieldId(item.getFieldId());
-            ((MISelectItem) newValue).setFieldValue(item.getFieldValue());
-        }
+        newValue.setValor(value.getValor());
     }
     
     /**

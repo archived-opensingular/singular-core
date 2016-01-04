@@ -1,11 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -28,7 +27,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,7 +83,7 @@ public class SelectInputModalContainer extends BSContainer {
 
         final BSModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
-        panel.appendTag("a", true, "class=\"btn btn-default\"", new AjaxLink("link") {
+        panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("link") {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 searchModal.show(target);
@@ -128,10 +126,11 @@ public class SelectInputModalContainer extends BSContainer {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();
-        if(type instanceof MTipoSelectItem){
-            MTipoSelectItem selectType = (MTipoSelectItem) type;
+        if(type instanceof MTipoComposto){
+            MTipoComposto selectType = (MTipoComposto) type;
             for(String field: view.searchFields()){
-                String label = selectType.getCampo(field).as(AtrBasic::new).getLabel();
+                MTipo<?> fieldType = selectType.getCampo(field);
+                String label = fieldType.as(AtrBasic::new).getLabel();
                 builder.appendPropertyColumn(Model.of(label),
                         o -> {
                             return ((SelectOption) o).getOtherField(field);

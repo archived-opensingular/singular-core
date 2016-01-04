@@ -11,4 +11,5 @@ import br.net.mirante.singular.form.mform.MInstancia;
 public interface IAjaxUpdateListener extends Serializable {
 
     void onUpdate(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel);
+    void onError(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel);
 }

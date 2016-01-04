@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform.document;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
@@ -14,7 +13,6 @@ import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
@@ -182,17 +180,10 @@ public class SDocument {
 
         try {
             MInstances.visitAll(getRoot(), true, instance -> {
-                Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
-                if (requiredFunc != null)
-                    instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
-
-                Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
-                if (enabledFunc != null)
-                    instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
-
-                Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
-                if (visibleFunc != null)
-                    instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
+                instance.updateExists();
+                instance.updateObrigatorio();
+                MInstances.updateBooleanAttribute(instance, MPacoteBasic.ATR_ENABLED, MPacoteBasic.ATR_ENABLED_FUNCTION);
+                MInstances.updateBooleanAttribute(instance, MPacoteBasic.ATR_VISIVEL, MPacoteBasic.ATR_VISIBLE_FUNCTION);
             });
         } finally {
             getInstanceListeners().remove(MInstanceEventType.ATTRIBUTE_CHANGED, listener);

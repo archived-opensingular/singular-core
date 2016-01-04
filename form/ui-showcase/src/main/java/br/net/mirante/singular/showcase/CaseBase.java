@@ -1,14 +1,14 @@
 package br.net.mirante.singular.showcase;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.view.page.showcase.ItemCasePanel;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Representa um exemplo de um componente ou solução junto com os respectivo
@@ -19,6 +19,8 @@ public class CaseBase implements Serializable {
     private final String componentName;
     private final String subCaseName;
     private String descriptionHtml;
+    private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
+    private final List<ResourceRef> aditionalSources = new ArrayList<>();
 
     public CaseBase(String componentName) {
         this(componentName, null);
@@ -45,7 +47,7 @@ public class CaseBase implements Serializable {
         if (descriptionHtml != null) {
             return Optional.of(descriptionHtml);
         }
-        return getDescriptionResourceName().map(ref -> ref.getContent());
+        return getDescriptionResourceName().map(ResourceRef::getContent);
     }
 
     @SuppressWarnings("unchecked")
@@ -80,6 +82,14 @@ public class CaseBase implements Serializable {
     }
 
     public List<ResourceRef> getAditionalSources() {
-        return Collections.emptyList();
+        return aditionalSources;
+    }
+
+    public List<ItemCasePanel.ItemCaseButton> getBotoes() {
+        return botoes;
+    }
+
+    public boolean showValidateButton(){
+        return getCaseType().hasAnyValidation();
     }
 }

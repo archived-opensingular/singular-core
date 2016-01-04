@@ -1,5 +1,19 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.ConversionException;
+import org.apache.wicket.util.convert.IConverter;
+
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -8,19 +22,6 @@ import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.ConversionException;
-import org.apache.wicket.util.convert.IConverter;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 public class DateMapper implements ControlsFieldComponentMapper {
@@ -30,8 +31,9 @@ public class DateMapper implements ControlsFieldComponentMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
-        @SuppressWarnings("unchecked") TextField<?> comp = new TextField<Date>(model.getObject().getNome(),
-                new MInstanciaValorModel<>(model), Date.class) {
+        @SuppressWarnings("unchecked")
+        TextField<?> comp = new TextField<Date>(model.getObject().getNome(),
+            new MInstanciaValorModel<>(model), Date.class) {
             @Override
             public <C> IConverter<C> getConverter(Class<C> type) {
                 return (IConverter<C>) (new IConverter<Date>() {
@@ -43,8 +45,8 @@ public class DateMapper implements ControlsFieldComponentMapper {
                             return sdf.parse(date);
                         } catch (ParseException e) {
                             String msg = String.format(
-                                    "Can't parse value '%s' with format '%s'.",
-                                    date, MTipoData.FORMAT);
+                                "Can't parse value '%s' with format '%s'.",
+                                date, MTipoData.FORMAT);
                             LOGGER.log(Level.WARNING, msg, e);
                             throw new ConversionException(e);
                         }
@@ -58,11 +60,11 @@ public class DateMapper implements ControlsFieldComponentMapper {
             }
         };
         formGroup.appendDatepicker(comp.setLabel(labelModel)
-                .setOutputMarkupId(true).add(new InputMaskBehavior(Masks.FULL_DATE)));
+            .setOutputMarkupId(true)
+            .add(new InputMaskBehavior(Masks.FULL_DATE)));
         return comp;
     }
 
-    @Override
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         if ((model != null) && (model.getObject() != null)) {
             MInstancia instancia = model.getObject();
@@ -74,5 +76,4 @@ public class DateMapper implements ControlsFieldComponentMapper {
         }
         return StringUtils.EMPTY;
     }
-
 }

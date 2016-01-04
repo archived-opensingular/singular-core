@@ -4,20 +4,29 @@ import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MTipo;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public interface MSelectionableType<BASE extends MTipo> {
     public MOptionsProvider getProviderOpcoes();
-    
+
     public void setProviderOpcoes(MOptionsProvider p);
 
-    default public MOptionsProvider selectionOf(Collection<MISelectItem> opcoes) {
+    default public boolean hasProviderOpcoes() {
+        return getProviderOpcoes() != null;
+    }
+
+    default public MOptionsProvider selectionOf(Collection<MSelectionableInstance> opcoes) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, opcoes));
         return getProviderOpcoes();
     }
 
-    default public MOptionsProvider selectionOf(MISelectItem ... opcoes) {
+    default public MOptionsProvider selectionOf(MSelectionableInstance... opcoes) {
         setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, opcoes));
         return getProviderOpcoes();
+    }
+
+    default public MFixedOptionsSimpleProvider withSelection() {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, (Collection) null));
+        return (MFixedOptionsSimpleProvider) getProviderOpcoes();
     }
 
     /**
@@ -27,11 +36,11 @@ public interface MSelectionableType<BASE extends MTipo> {
      * @param options Collection of values to be used.
      * @return <code>this</code>
      */
-    default public BASE withSelectionOf(Collection<MISelectItem> options) {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((MTipo<?>)this, options));
+    default public BASE withSelectionOf(Collection<MSelectionableInstance> options) {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((MTipo<?>) this, options));
         return (BASE) this;
     }
-    
+
     /**
      * Register a collection of options to be selected for this field.
      * Also restricts the range of values available for the field.
@@ -39,11 +48,11 @@ public interface MSelectionableType<BASE extends MTipo> {
      * @param options Collection of values to be used.
      * @return <code>this</code>
      */
-    default public BASE withSelectionOf(MISelectItem ... opcoes) {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE)this, opcoes));
+    default public BASE withSelectionOf(MSelectionableInstance... options) {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, options));
         return (BASE) this;
     }
-    
+
     /**
      * Registers the name of the provider used to load options for this type.
      * This provider will be loaded from the SDocument attached to the Minstance
@@ -56,7 +65,7 @@ public interface MSelectionableType<BASE extends MTipo> {
         setProviderOpcoes(new LookupOptionsProvider(providerName));
         return (BASE) this;
     }
-    
+
     /**
      * Registers the class of the provider used to load options for this type.
      * This provider will be loaded from the SDocument attached to the Minstance

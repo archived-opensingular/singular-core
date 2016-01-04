@@ -39,6 +39,23 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         assertThat(extractProperty("value").from(choices.getChoices()))
             .containsExactly("strawberry","apple","orange","banana");
     }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Test public void hasADefaultProvider(){
+        setupPage();
+        selectType.withSelection().add("strawberry").add("apple").add("orange").add("banana");
+        buildPage();
+
+        driver.assertEnabled(formField(form, "favoriteFruit"));
+        form.submit("save-btn");
+        List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
+        assertThat(options).hasSize(1);
+        DropDownChoice choices = options.get(0);
+        assertThat(extractProperty("key").from(choices.getChoices()))
+                .containsExactly("strawberry","apple","orange","banana");
+        assertThat(extractProperty("value").from(choices.getChoices()))
+                .containsExactly("strawberry","apple","orange","banana");
+    }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test public void rendersAnDropDownWithDanglingOptions(){

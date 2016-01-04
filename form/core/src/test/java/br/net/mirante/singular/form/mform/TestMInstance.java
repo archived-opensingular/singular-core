@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,8 +10,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
 
 public class TestMInstance {
 
-    @Test
-    public void testIncrementoId() {
+    @Test public void testIncrementoId() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
@@ -46,7 +46,7 @@ public class TestMInstance {
 //        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
-        MIComposto pedido2 = MformPersistenciaXML.fromXML(tipoPedido, xml);
+        MIComposto pedido2 = (MIComposto) MformPersistenciaXML.fromXML(tipoPedido, xml);
         assertId(pedido2, 1, 12);
         assertId(pedido2.getCampo("nome"), 13, 13);
         assertId(pedido2.getCampo("prioridade"), 8, 13);
@@ -57,6 +57,20 @@ public class TestMInstance {
     private static void assertId(MInstancia pedido, int idInstancia, int lastId) {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
+    }
+
+    @Test public void testSerialializeEmptyObject() {
+        MDicionario dicionario = MDicionario.create();
+        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+
+        MTipoComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        tipoPedido.addCampoString("nome");
+        tipoPedido.addCampoString("descr");
+        tipoPedido.addCampoString("prioridade");
+        tipoPedido.addCampoListaOf("clientes", MTipoString.class);
+
+        MIComposto instance = tipoPedido.novaInstancia();
+        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
     }
 
 }

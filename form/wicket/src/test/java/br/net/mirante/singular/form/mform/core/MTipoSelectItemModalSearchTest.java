@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.mform.core;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.MISelectItem;
-import br.net.mirante.singular.form.mform.options.MTipoSelectItem;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
@@ -18,19 +18,19 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
 
     //    MTipoSelectItem selectType;
-    protected MTipoSelectItem selectType;
+    protected MTipoComposto selectType;
     protected MSelecaoPorModalBuscaView view;
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
-        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
-        selectType.configureKeyValueFields();
+        selectType = group.addCampoComposto("originUF");
+//        selectType.configureKeyValueFields(); TODO: Fabs
         selectType.addCampoInteger("population").as(AtrBasic::new).label("População");;;
         selectType.addCampoInteger("areasqrkm").as(AtrBasic::new).label("Área");;;
         selectType.addCampoInteger("phonecode").as(AtrBasic::new).label("DDD");;;
         selectType.addCampoDecimal("gdp").as(AtrBasic::new).label("PIB");;;
         selectType.addCampoDecimal("hdi").as(AtrBasic::new).label("IDH");;;
-        view = selectType.setView(MSelecaoPorModalBuscaView::new);
+        view = (MSelecaoPorModalBuscaView) selectType.setView(MSelecaoPorModalBuscaView::new);
         return selectType;
     }
 
@@ -72,8 +72,8 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         driver.assertContains("62");
     }
 
-    private MISelectItem federaldistrict() {
-        MISelectItem df = selectType.create("DF", "Distrito Federal");
+    private MSelectionableInstance federaldistrict() {
+        MIComposto df = selectType.create("DF", "Distrito Federal");
         df.setValor("population",2852372);
         df.setValor("areasqrkm",5802);
         df.setValor("phonecode",61);
@@ -82,8 +82,8 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
         return df;
     }
 
-    private MISelectItem goias() {
-        MISelectItem go = selectType.create("Go", "Goiás");
+    private MSelectionableInstance goias() {
+        MIComposto go = selectType.create("Go", "Goiás");
         go.setValor("population",6155998);
         go.setValor("areasqrkm", 340086);
         go.setValor("phonecode",62);

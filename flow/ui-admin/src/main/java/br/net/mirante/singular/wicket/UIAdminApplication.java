@@ -9,6 +9,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
@@ -31,6 +32,8 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);
+        getExceptionSettings().setAjaxErrorHandlingStrategy(ExceptionSettings.AjaxErrorStrategy.REDIRECT_TO_ERROR_PAGE);
+        getExceptionSettings().setUnexpectedExceptionDisplay(ExceptionSettings.SHOW_EXCEPTION_PAGE);
 
         getMarkupSettings().setStripWicketTags(true);
         getMarkupSettings().setStripComments(true);

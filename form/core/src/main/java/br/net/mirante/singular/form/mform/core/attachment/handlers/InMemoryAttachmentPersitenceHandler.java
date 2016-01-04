@@ -1,5 +1,10 @@
 package br.net.mirante.singular.form.mform.core.attachment.handlers;
 
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.io.HashUtil;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CountingInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
@@ -7,13 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CountingInputStream;
-
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.io.HashUtil;
 
 /**
  * <p>
@@ -30,7 +28,7 @@ import br.net.mirante.singular.form.mform.io.HashUtil;
 @SuppressWarnings("serial")
 public class InMemoryAttachmentPersitenceHandler extends AbstractAttachmentPersistenceHandler {
 
-    private Map<String, InMemoryAttachmentRef> attachments;
+    private Map<String, InMemoryAttachmentRef> attachments = new HashMap<>();
 
     @Override
     protected IAttachmentRef addAttachmentCompressed(InputStream deflateInputStream, String hashSHA16Hex, int originalLength) {
@@ -46,9 +44,6 @@ public class InMemoryAttachmentPersitenceHandler extends AbstractAttachmentPersi
     }
 
     private IAttachmentRef add(InMemoryAttachmentRef novo) {
-        if (attachments == null) {
-            attachments = new HashMap<>();
-        }
         attachments.put(novo.getHashSHA1(), novo);
         return novo;
     }

@@ -9,10 +9,8 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.MInstanceViewState;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
@@ -47,6 +45,12 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
             tag.put("class", appendAtributeValue(tag.getAttribute("class"), "required", " "));
         if (!isInstanceEnabled(component))
             tag.put("disabled", "disabled");
+        
+        MInstancia instance = resolveInstance(component);
+        if (instance != null) {
+            tag.put("data-instance-id", instance.getId());
+            tag.put("data-instance-path", instance.getPathFull());
+        }
     }
 
     protected static String appendAtributeValue(String currentValue, String appendValue, String separator) {
@@ -62,27 +66,21 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         return sb.toString();
     }
 
-    protected static boolean isInstanceRequired(Component component) {
-        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteCore.ATR_OBRIGATORIO));
+    protected boolean isInstanceRequired(Component component) {
+        return MInstanceViewState.isInstanceRequired(resolveInstance(component));
+    }
+    protected boolean isInstanceEnabled(Component component) {
+        return MInstanceViewState.get(resolveInstance(component)).isEnabled();
+    }
+    protected boolean isInstanceVisible(Component component) {
+        return MInstanceViewState.get(resolveInstance(component)).isVisible();
     }
 
-    protected static boolean isInstanceEnabled(Component component) {
-        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteBasic.ATR_ENABLED));
-    }
-
-    protected static boolean isInstanceVisible(Component component) {
-        return !Boolean.FALSE.equals(getValorAtributo(component, MPacoteBasic.ATR_VISIVEL));
-    }
-
-    private static <V extends Object> V getValorAtributo(Component component, AtrRef<?, ?, V> atr) {
+    private static MInstancia resolveInstance(Component component) {
         if (component != null) {
             IModel<?> model = component.getDefaultModel();
-            if (model != null) {
-                MInstancia instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-                if (instance != null) {
-                    return instance.getValorAtributo(atr);
-                }
-            }
+            if (model != null)
+                return ((IMInstanciaAwareModel<?>) model).getMInstancia();
         }
         return null;
     }

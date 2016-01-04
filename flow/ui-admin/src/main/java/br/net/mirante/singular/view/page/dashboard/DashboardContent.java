@@ -1,13 +1,10 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -17,31 +14,25 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
-import br.net.mirante.singular.service.FlowAuthorizationFacade;
-import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.view.page.processo.MetadadosPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
 
-    @Inject
-    private UIAdminFacade uiAdminFacade;
-
-    @Inject
-    private FlowAuthorizationFacade authorizationFacade;
-
     private String processDefinitionCode;
 
     private RepeatingView rows;
     
     public DashboardContent(String id, String processDefinitionCode) {
-        super(id, false, false, processDefinitionCode != null, false);
+        super(id, false, false, false, true);
         this.processDefinitionCode = processDefinitionCode;
     }
 
@@ -59,15 +50,27 @@ public class DashboardContent extends Content {
         return new ResourceModel("label.content.subtitle");
     }
 
-    @Override
-    protected WebMarkupContainer getInfoLink(String id) {
-        WebMarkupContainer infoLink = new WebMarkupContainer(id);
-        infoLink.add($b.attr("data-original-title",
-                getString("label.content.info.title")));
-        infoLink.add($b.attr("href", "process"
-                .concat("?").concat(ProcessosPage.PROCESS_DEFINITION_ID_PARAM)
-                .concat("=").concat(uiAdminFacade.retrieveProcessDefinitionId(processDefinitionCode))));
-        return infoLink;
+    protected WebMarkupContainer getBreadcrumbLinks(String id) {
+        RepeatingView breadCrumb = new RepeatingView(id);
+        if(processDefinitionCode == null){
+            breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
+                urlFor(ProcessosPage.class, new PageParameters()),
+                getString("breadcrumb.flow.process")));
+        } else {
+            PageParameters pageParameters = new PageParameters().set(Content.PROCESS_DEFINITION_COD_PARAM, processDefinitionCode);
+            
+            breadCrumb.add(createActiveBreadCrumbLink(breadCrumb.newChildId(), 
+                urlFor(DashboardPage.class, pageParameters).toString(),
+                getString("breadcrumb.dashboard")));
+            breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
+                urlFor(ProcessosPage.class, pageParameters).toString(),
+                getString("breadcrumb.instances")));
+            breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
+                urlFor(MetadadosPage.class, pageParameters).toString(),
+                getString("breadcrumb.metadata")));
+            return breadCrumb;
+        }
+        return breadCrumb;
     }
 
     @Override
@@ -85,8 +88,8 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         add(rows = new RepeatingView("rows"));
-        if(processDefinitionCode == null || authorizationFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)){
-            Set<String> processCodeWithAccess = authorizationFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
+        if(processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)){
+            Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
             if(!processCodeWithAccess.isEmpty()){
                 addStatusesPanel(processCodeWithAccess);
                 addWelcomeChart(processCodeWithAccess);
@@ -133,7 +136,6 @@ public class DashboardContent extends Content {
         IStatusDTO statusDTO = uiAdminFacade.retrieveActiveInstanceStatus(processDefinitionCode, processCodeWithAccess);
         
         DashboardRow row = addDashboardRow();
-        row.add($b.classAppender("margin-top-10"));
         row.addSmallColumn(new StatusPanel("active-instances-status-panel", "label.active.instances.status", statusDTO.getAmount())
                 .setIcon(Icone.SPEEDOMETER).setColor(Color.GREEN_SHARP));
         row.addSmallColumn(new StatusPanel("active-average-status-panel", "label.active.average.status",

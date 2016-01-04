@@ -1,5 +1,6 @@
 <html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <wicket:extend>
+	<div wicket:id="feedback" class="row" />
     <div class="row">
         <div class="col-md-12">
             <div class="portlet light">
@@ -30,16 +31,8 @@
             </div>
         </div>
     </form>
-
-    <wicket:fragment wicket:id="breadcrumbProcess">
-        <li>
-            <a href="#">
-                <wicket:message key="breadcrumb.flow"/>
-            </a><i class="fa fa-circle"></i>
-        </li>
-        <li class="active">
-            <wicket:message key="breadcrumb.flow.process"/>
-        </li>
-    </wicket:fragment>
+    <wicket:fragment wicket:id="todoBreadcrumb">
+		<li><a wicket:id="breadcrumbLink"></a></li>
+	</wicket:fragment>
 </wicket:extend>
 </html>

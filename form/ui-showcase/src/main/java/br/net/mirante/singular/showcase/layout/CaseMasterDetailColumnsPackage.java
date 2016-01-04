@@ -1,16 +1,12 @@
 package br.net.mirante.singular.showcase.layout;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseMasterDetailColumnsPackage extends MPacote {
 
@@ -37,13 +33,13 @@ public class CaseMasterDetailColumnsPackage extends MPacote {
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             dtFimExperiencia
                     .as(AtrBasic::new).label("Data final")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             empresa
                     .as(AtrBasic::new).label("Empresa")
-                    .as(AtrWicket::new).larguraPref(8);
+                    .as(AtrBootstrap::new).colPreference(8);
             cargo
                     .as(AtrBasic::new).label("Cargo");
             atividades

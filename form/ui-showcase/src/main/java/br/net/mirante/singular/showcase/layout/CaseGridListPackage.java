@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseGridListPackage extends MPacote {
 
@@ -28,13 +28,13 @@ public class CaseGridListPackage extends MPacote {
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             dtFimExperiencia
                     .as(AtrBasic::new).label("Data final")
-                    .as(AtrWicket::new).larguraPref(2);
+                    .as(AtrBootstrap::new).colPreference(2);
             empresa
                     .as(AtrBasic::new).label("Empresa")
-                    .as(AtrWicket::new).larguraPref(8);
+                    .as(AtrBootstrap::new).colPreference(8);
             cargo
                     .as(AtrBasic::new).label("Cargo");
             atividades

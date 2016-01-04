@@ -1,22 +1,5 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
-
-import br.net.mirante.singular.form.mform.context.SingularFormConfig;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
-import br.net.mirante.singular.form.wicket.SingularFormConfigWicket;
-import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
-import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-
 import br.net.mirante.singular.form.curriculo.mform.MPacoteCurriculo;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -25,13 +8,25 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
 import junit.framework.TestCase;
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
 public class TestFormWicketBuild extends TestCase {
 
@@ -51,7 +46,6 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
             @Override
             protected MTipoString load() {
@@ -64,7 +58,8 @@ public class TestFormWicketBuild extends TestCase {
         };
         IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
         mCidade.getObject().setValor("Brasilia");
-        singularFormContext.getUIBuilder(). buildForEdit(ctx, mCidade);
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
         assertEquals("Brasilia", mCidade.getObject().getValor());
@@ -80,7 +75,6 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
         IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
             @Override
             @SuppressWarnings("unchecked")
@@ -91,6 +85,7 @@ public class TestFormWicketBuild extends TestCase {
             }
         };
         IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
 

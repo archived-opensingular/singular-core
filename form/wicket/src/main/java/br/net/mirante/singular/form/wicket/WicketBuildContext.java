@@ -1,40 +1,38 @@
 package br.net.mirante.singular.form.wicket;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
-import org.apache.wicket.markup.html.form.CheckGroup;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.FormComponentPanel;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.string.Strings;
-import org.slf4j.LoggerFactory;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
 import br.net.mirante.singular.form.wicket.behavior.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.io.Serializable;
+import java.util.*;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
+import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.*;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.string.Strings;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings({ "serial", "rawtypes" })
 public class WicketBuildContext implements Serializable {
@@ -46,30 +44,48 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer                       externalContainer;
     private final BSContainer                       rootContainer;
 
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
-        this(null, container, bodyContainer, false);
+    private IModel<? extends MInstancia>      model;
+    private UIBuilderWicket uiBuilderWicket;
+    private ViewMode        viewMode;
+    private MView           view;
+
+    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends MInstancia> model) {
+        this(null, container, bodyContainer, false, model);
     }
 
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer, boolean hintsInherited) {
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
+        boolean hintsInherited, IModel<? extends MInstancia>      model) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
         this.rootContainer = ObjectUtils.defaultIfNull((parent == null) ? null : parent.getRootContainer(), container);
+        this.model = model;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
 
-    public void init(IModel<? extends MInstancia> instanceModel) {
-        MInstancia instance = instanceModel.getObject();
+    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket,
+        ViewMode viewMode) {
+
+        final MInstancia instance = getCurrenttInstance();
+
+        this.view = ViewResolver.resolve(instance);
+        this.uiBuilderWicket = uiBuilderWicket;
+        this.viewMode = viewMode;
+
         if (isRootContext()) {
-            getContainer().add(new InitRootContainerBehavior(instanceModel));
+            getContainer().add(new InitRootContainerBehavior(getModel()));
         }
+
         if (getContainer().getDefaultModel() == null) {
-            getContainer().setDefaultModel(instanceModel);
+            getContainer().setDefaultModel(getModel());
         }
+
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+
+        return this;
     }
 
     // TODO refatorar este método para ele ser estensível e configurável de forma global
@@ -80,8 +96,15 @@ public class WicketBuildContext implements Serializable {
             (component instanceof CheckGroup)) {
             component.add(new AjaxUpdateChoiceBehavior(model, listener));
 
+        } else if (component.getMetaData(BSDatepickerConstants.KEY_CONTAINER) != null) {
+            component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
+            MarkupContainer container = component.getMetaData(BSDatepickerConstants.KEY_CONTAINER);
+            container.add(WicketUtils.$b.onReadyScript(c -> ""
+                + JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
+
         } else if (!(component instanceof FormComponentPanel<?>)) {
             component.add(new AjaxUpdateInputBehavior("change", model, listener));
+
         } else {
             LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
         }
@@ -97,7 +120,7 @@ public class WicketBuildContext implements Serializable {
 
         IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
         MTipo<?> tipo = model.getMInstancia().getMTipo();
-        if (tipo.hasDependentTypes()) {
+        if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
             addAjaxUpdateToComponent(
                 formComponent,
                 IMInstanciaAwareModel.getInstanceModel(model),
@@ -106,9 +129,10 @@ public class WicketBuildContext implements Serializable {
 
         return formComponent;
     }
-    
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
+
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends MInstancia> model) {
+        return new WicketBuildContext(this, childContainer, getExternalContainer(),
+            hintsInherited, model);
     }
 
     protected static <T> String getLabel(FormComponent<?> formComponent) {
@@ -182,6 +206,18 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
+    public void rebuild(List<String> nomesTipo) {
+        IModel<? extends MInstancia> originalModel = getModel();
+        for (String nomeTipo : nomesTipo) {
+            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(originalModel, nomeTipo);
+            setModel(subtree);
+            getUiBuilderWicket().build(this, viewMode);
+        }
+
+        setModel(originalModel);
+
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends MInstancia> instanceModel;
         public InitRootContainerBehavior(IModel<? extends MInstancia> instanceModel) {
@@ -190,6 +226,28 @@ public class WicketBuildContext implements Serializable {
         @Override
         public void onConfigure(Component component) {
             instanceModel.getObject().getDocument().updateAttributes(null);
+        }
+    }
+
+    private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
+        private transient boolean flag;
+        private BSDatepickerAjaxUpdateBehavior(IModel<MInstancia> model, IAjaxUpdateListener listener) {
+            super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
+        }
+        @Override
+        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            if (flag)
+                attributes.setEventNames();
+        }
+        @Override
+        protected CharSequence getCallbackScript(Component component) {
+            flag = true;
+            try {
+                return JQuery.on(component, super.getEvent(), super.getCallbackScript(component));
+            } finally {
+                flag = false;
+            }
         }
     }
 
@@ -206,7 +264,7 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
-    private static final class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
+    private static class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
         private final IAjaxUpdateListener listener;
         private final IModel<MInstancia>  model;
         private AjaxUpdateInputBehavior(String event, IModel<MInstancia> model, IAjaxUpdateListener listener) {
@@ -225,6 +283,33 @@ public class WicketBuildContext implements Serializable {
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
             WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m.getObject());
         }
+        @Override
+        public void onError(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel) {
+            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel.getObject());
+        }
     }
 
+    public UIBuilderWicket getUiBuilderWicket() {
+        return uiBuilderWicket;
+    }
+
+    public ViewMode getViewMode() {
+        return viewMode;
+    }
+
+    public MView getView() {
+        return view;
+    }
+
+    public IModel<? extends MInstancia> getModel() {
+        return model;
+    }
+
+    public void setModel(IModel<? extends MInstancia> model) {
+        this.model = model;
+    }
+
+    public <T extends MInstancia> T getCurrenttInstance(){
+        return (T) getModel().getObject();
+    }
 }

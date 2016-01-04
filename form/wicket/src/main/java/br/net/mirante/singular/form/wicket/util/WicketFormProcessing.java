@@ -11,39 +11,57 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisitor;
 import org.apache.wicket.util.visit.Visits;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
+/*
+ * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
+ *  análogo ao RequestCycle do Wicket.
+ * @author ronaldtm
+ */
 public class WicketFormProcessing {
 
-    public static boolean onFormSubmit(Form<?> form, Optional<AjaxRequestTarget> target, MInstancia instance) {
-        if (instance == null)
+    public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, MInstancia baseInstance) {
+        container.visitChildren((c, v) -> {
+            if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage())
+                target.ifPresent(t -> t.add(c));
+            else if (c.hasFeedbackMessage())
+                refresh(target, c);
+        });
+    }
+
+    public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, MInstancia baseInstance, boolean validate) {
+        if (baseInstance == null)
             return false;
 
         // Validação do valor do componente
-        InstanceValidationContext validationContext = new InstanceValidationContext(instance);
-        validationContext.validateAll();
-        if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-            associateErrorsToComponents(validationContext, form);
-            refresh(target, form);
-            return false;
+        if (validate) {
+            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstance);
+            validationContext.validateAll();
+            if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
+                associateErrorsToComponents(validationContext, container);
+                refresh(target, container);
+                return false;
+            }
         }
 
         // atualizar documento e recuperar instancias com atributos alterados
-        instance.getDocument().updateAttributes(null);
+        baseInstance.getDocument().updateAttributes(null);
 
         // re-renderizar form
-        refresh(target, form);
+        refresh(target, container);
         return true;
     }
 
@@ -64,6 +82,7 @@ public class WicketFormProcessing {
         final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
         fieldInstance.getDocument().updateAttributes(eventCollector);
 
+        refresh(target, formComponent);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
@@ -72,8 +91,12 @@ public class WicketFormProcessing {
                 .collect(toSet());
 
             final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
-                return (ins.getMTipo().hasProviderOpcoes() && fieldInstance.getMTipo().getDependentTypes().contains(ins.getMTipo()))
-                    || (updatedInstanceIds.contains(ins.getId()));
+                MTipo<?> insTipo = ins.getMTipo();
+                boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
+                boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
+                boolean dependsOnField = fieldInstance.getMTipo().getDependentTypes().contains(insTipo);
+                boolean result = wasUpdated || (hasOptions && dependsOnField);
+                return result;
             };
 
             // re-renderizar componentes
@@ -111,7 +134,7 @@ public class WicketFormProcessing {
         }
     }
 
-    protected static void associateErrorsToComponent(Component component, Set<IValidationError> errors) {
+    private static void associateErrorsToComponent(Component component, Set<IValidationError> errors) {
         for (IValidationError error : errors) {
             switch (error.getErrorLevel()) {
                 case ERROR:
@@ -126,7 +149,7 @@ public class WicketFormProcessing {
         }
     }
 
-    protected static Optional<MInstancia> resolveInstance(final IModel<?> model) {
+    private static Optional<MInstancia> resolveInstance(final IModel<?> model) {
         //        if ((model != null) && (model.getObject() instanceof MInstancia)) {
         //            return Optional.of((MInstancia) model.getObject());
         //

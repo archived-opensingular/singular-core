@@ -1,10 +1,28 @@
 package br.net.mirante.singular.view.page.peticao;
 
+import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.context.SingularFormContext;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
+import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
+import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.view.SingularWicketContainer;
+import br.net.mirante.singular.view.template.Content;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import br.net.mirante.singular.form.mform.context.SingularFormContext;
-import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
+import java.util.Optional;
+import javax.inject.Inject;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -13,24 +31,6 @@ import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.validation.InstanceValidationContext;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.view.SingularWicketContainer;
-import br.net.mirante.singular.view.template.Content;
-
-import javax.inject.Inject;
 
 public class PeticaoContent extends Content
         implements SingularWicketContainer<PeticaoContent, Void> {
@@ -67,8 +67,8 @@ public class PeticaoContent extends Content
     }
 
     private void buildContainer() {
-        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer());
-        singularFormContext.getUIBuilder().buildForEdit(ctx, currentInstance);
+        WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), currentInstance);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
     }
 
     private BSContainer<?> buildBodyContainer(){
@@ -115,6 +115,12 @@ public class PeticaoContent extends Content
                 return;
             }
             System.out.println(printXml(rootXml));
+        }
+        
+        @Override
+        protected void onError(AjaxRequestTarget target, Form<?> form) {
+            super.onError(target, form);
+            WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance.getObject());
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,

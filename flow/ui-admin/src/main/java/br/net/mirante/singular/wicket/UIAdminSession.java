@@ -1,32 +1,21 @@
 package br.net.mirante.singular.wicket;
 
-import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import br.net.mirante.singular.flow.core.MUser;
 
 public class UIAdminSession extends AuthenticatedWebSession {
 
-    private String name;
-    private String avatar;
-    private String logout;
-    private String userId;
-    
-    private Roles roles;
+    private Roles roles = new Roles();
 
     public UIAdminSession(Request request, Response response) {
         super(request);
-        this.name = request.getRequestParameters().getParameterValue("name").toString("Admin");
-        this.avatar = request.getRequestParameters().getParameterValue("avatar").toString(null);
-        this.logout = request.getRequestParameters().getParameterValue("logout").toString(null);
-        this.roles = new Roles();
         this.roles.add(Roles.USER);
-
-        if (RuntimeConfigurationType.DEVELOPMENT.equals(UIAdminApplication.get().getConfigurationType())) {
-            this.roles.add(Roles.ADMIN);
-        }
     }
 
     public static UIAdminSession get() {
@@ -47,39 +36,11 @@ public class UIAdminSession extends AuthenticatedWebSession {
         roles.add(roleKey);
     }
 
-    public boolean hasAdminRole() {
-        return roles.hasRole(Roles.ADMIN);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getLogout() {
-        return logout;
-    }
-
-    public void setLogout(String logout) {
-        this.logout = logout;
+    public String getUserId(){
+        return getUser().getCod().toString();
     }
     
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-    
-    public String getUserId() {
-        return userId;
+    public MUser getUser(){
+        return (MUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
