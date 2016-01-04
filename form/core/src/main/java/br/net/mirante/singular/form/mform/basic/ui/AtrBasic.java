@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.mform.basic.ui;
 
-import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import br.net.mirante.singular.form.mform.MAtributoEnabled;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
 public class AtrBasic extends MTranslatorParaAtributo {
 

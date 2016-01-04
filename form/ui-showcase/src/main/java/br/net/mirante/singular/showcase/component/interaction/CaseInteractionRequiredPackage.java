@@ -12,11 +12,11 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 
 public class CaseInteractionRequiredPackage extends MPacote {
 
-    public MTipoComposto<?> testForm;
-    public MTipoBoolean required;
+    public MTipoComposto<?>          testForm;
+    public MTipoBoolean              required;
     public MTipoComposto<MIComposto> record;
-    public MTipoString recordText;
-    public MTipoData recordDate;
+    public MTipoString               recordText;
+    public MTipoData                 recordDate;
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
@@ -33,11 +33,12 @@ public class CaseInteractionRequiredPackage extends MPacote {
         required.as(MPacoteBasic.aspect()).label("Required");
 
         recordText.as(MPacoteBasic.aspect())
-                .label("Text")
-                .dependsOn(required)
-                .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
+            .label("Text")
+            .dependsOn(required)
+            .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
 
         recordDate.as(MPacoteBasic.aspect())
-                .label("Date");
+            .label("Date").dependsOn(required)
+            .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
     }
 }
