@@ -1,6 +1,6 @@
-package br.net.mirante.singular.showcase.layout;
+package br.net.mirante.singular.showcase.component.map;
 
-import br.net.mirante.singular.showcase.CaseBase;
+import br.net.mirante.singular.showcase.component.CaseBase;
 
 /**
  * Created by danilo.mesquita on 04/01/2016.

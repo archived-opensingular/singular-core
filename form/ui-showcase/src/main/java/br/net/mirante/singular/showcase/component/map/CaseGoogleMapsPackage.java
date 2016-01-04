@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.layout;
+package br.net.mirante.singular.showcase.component.map;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
