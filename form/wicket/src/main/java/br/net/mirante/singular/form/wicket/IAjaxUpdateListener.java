@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.behavior;
+package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
 

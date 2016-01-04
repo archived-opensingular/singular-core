@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
@@ -17,11 +19,16 @@ import org.apache.wicket.util.convert.IConverter;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @SuppressWarnings("serial")
 public class DateMapper implements ControlsFieldComponentMapper {
@@ -64,6 +71,14 @@ public class DateMapper implements ControlsFieldComponentMapper {
             .add(new InputMaskBehavior(Masks.FULL_DATE)));
         return comp;
     }
+    
+    @Override
+    public void addAjaxUpdate(Component component, IModel<MInstancia> model, IAjaxUpdateListener listener) {
+        component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
+        MarkupContainer container = component.getMetaData(BSDatepickerConstants.KEY_CONTAINER);
+        container.add(WicketUtils.$b.onReadyScript(c -> ""
+            + JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
+    }
 
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         if ((model != null) && (model.getObject() != null)) {
@@ -75,5 +90,27 @@ public class DateMapper implements ControlsFieldComponentMapper {
             }
         }
         return StringUtils.EMPTY;
+    }
+
+    private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
+        private transient boolean flag;
+        private BSDatepickerAjaxUpdateBehavior(IModel<MInstancia> model, IAjaxUpdateListener listener) {
+            super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
+        }
+        @Override
+        protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+            super.updateAjaxAttributes(attributes);
+            if (flag)
+                attributes.setEventNames();
+        }
+        @Override
+        protected CharSequence getCallbackScript(Component component) {
+            flag = true;
+            try {
+                return JQuery.on(component, super.getEvent(), super.getCallbackScript(component));
+            } finally {
+                flag = false;
+            }
+        }
     }
 }
