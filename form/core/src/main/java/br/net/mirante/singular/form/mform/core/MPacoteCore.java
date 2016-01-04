@@ -79,6 +79,7 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
+        pb.createTipo(MTipoLatitudeLongitude.class);
     }
 
     public static Function<MAtributoEnabled, AtrCore> aspect() {

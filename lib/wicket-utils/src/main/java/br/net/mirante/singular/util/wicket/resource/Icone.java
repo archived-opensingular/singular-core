@@ -54,7 +54,8 @@ public enum Icone {
     WALLET /*           */("icon-wallet"),
     PUZZLE /*           */("icon-puzzle"),
     FOLDER /*           */("icon-folder"),
-    WRENCH /*           */(" icon-wrench");
+    WRENCH /*           */("icon-wrench"),
+    MAP /*              */("icon-map");
 
     private final String cssClass;
 

@@ -57,7 +57,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
                 .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new)
+                .register(MTipoSimples.class, MSelecaoPorSelectView.class, SelectMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
@@ -79,7 +79,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
                 .register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new)
                 .register(MTipoDecimal.class,                                           DecimalMapper::new)
-                .register(MTipoMonetario.class,                                         MonetarioMapper::new);
+                .register(MTipoMonetario.class,                                         MonetarioMapper::new)
+                .register(MTipoLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new);
         //@formatter:on
     }
 }

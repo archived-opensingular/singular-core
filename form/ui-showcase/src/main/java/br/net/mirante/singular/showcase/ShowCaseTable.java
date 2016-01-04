@@ -79,6 +79,9 @@ public class ShowCaseTable {
                 .addCase(CaseCustomStringMapper.class)
                 .addCase(CaseCustonRangeMapper.class)
         ;
+        group("Maps", Icone.MAP)
+                .addCase(CaseGoogleMaps.class)
+        ;
         //@formatter:on
     }
 

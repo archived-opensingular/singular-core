@@ -219,4 +219,8 @@ public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSC
     protected FeedbackPanel newFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
         return new BSFeedbackPanel(id, fence, filter);
     }
+
+    public BSControls appendDiv(Component typeahead) {
+        return super.appendTag("div", typeahead);
+    }
 }
