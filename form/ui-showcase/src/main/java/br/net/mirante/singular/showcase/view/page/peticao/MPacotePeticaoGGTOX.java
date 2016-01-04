@@ -109,10 +109,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> componentes = peticionamento.addCampoListaOfComposto("componentes", "componente");
         MTipoComposto<MIComposto> componente = componentes.getTipoElementos();
 
-        componentes
-            .withView(MPanelListaView::new)
-            .as(AtrBasic::new)
-            .label("Componente");
+        componentes.as(AtrBasic::new).label("Componente");
 
         componente.as(AtrBasic::new).label("Registro de Componente");
 
@@ -121,10 +118,10 @@ public class MPacotePeticaoGGTOX extends MPacote {
         identificacaoComponente.as(AtrBasic::new).label("Identificação de Componente")
                 .as(AtrBootstrap::new).colPreference(4);
 
-        identificacaoComponente.addCampoString("tipoComponente", true)
-            .withSelectionOf("Substância", "Mistura")
-            .withView(MSelecaoPorRadioView::new)
-            .as(AtrBasic::new).label("Tipo componente");
+        MTipoString tipoComponente = identificacaoComponente.addCampoString("tipoComponente", true);
+        tipoComponente.withSelectionOf("Substância", "Mistura")
+                .withView(MSelecaoPorRadioView::new)
+                .as(AtrBasic::new).label("Tipo componente");
 
         MTipoComposto<MIComposto> restricoesComponente = componente.addCampoComposto("restricoesComponente");
 
@@ -157,8 +154,9 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> sinonimias = sinonimiaComponente.addCampoListaOfComposto("sinonimias", "sinonimia");
         final MTipoComposto<?> sinonimia = sinonimias.getTipoElementos();
-        sinonimia.addCampoString("nomeSinonimia", true)
-            .as(AtrBasic::new).label("Sinonímia sugerida")
+        MTipoString sinonimiaSugerida = sinonimia.addCampoString("nomeSinonimia", true);
+
+        sinonimiaSugerida.as(AtrBasic::new).label("Sinonímia sugerida")
             .tamanhoMaximo(100);
 
         sinonimias
@@ -208,7 +206,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
         fabricante.addCampoString("pais").as(AtrBasic::new).label("País").as(AtrBootstrap::new).colPreference(2);
 
         fabricantes
-            .withView(MPanelListaView::new)
+                .withView(MListMasterDetailView::new)
             .as(AtrBasic::new).label("Fabricante(s)");
 
         nomesComerciais
@@ -223,24 +221,24 @@ public class MPacotePeticaoGGTOX extends MPacote {
             .withSelectionOf("Sim", "Não")
             .withView(MSelecaoPorRadioView::new)
             .as(AtrBasic::new).label("Produto formulado no exterior?")
-                .as(AtrBootstrap::new).colPreference(2);
+                .as(AtrBootstrap::new).colPreference(12);
 
         embalagem.addCampoString("tipo", true)
             .withSelectionOf(getTiposEmbalagem())
             .withView(MSelecaoPorSelectView::new)
             .as(AtrBasic::new).label("Tipo")
-            .as(AtrBootstrap::new).colPreference(3);
+            .as(AtrBootstrap::new).colPreference(4);
 
         embalagem.addCampoString("material", true)
             .withSelectionOf(getMateriais())
             .withView(MSelecaoPorSelectView::new)
             .as(AtrBasic::new).label("Material")
-            .as(AtrBootstrap::new).colPreference(3);
+            .as(AtrBootstrap::new).colPreference(4);
 
         embalagem.addCampoInteger("capacidade", true)
             .as(AtrBasic::new).label("Capacidade")
             .tamanhoMaximo(15)
-            .as(AtrBootstrap::new).colPreference(3);
+            .as(AtrBootstrap::new).colPreference(4);
 
         //TODO caso o array tenha uma string vazia, ocorre um NPE
         embalagem.addCampoString("unidadeMedida", true)
@@ -271,6 +269,12 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 .as(AtrBootstrap::new).colPreference(3);
 
         addTestes(pb, componente);
+
+
+        componentes.withView(new MListMasterDetailView()
+                .col(tipoComponente)
+                .col(sinonimiaSugerida)
+        );
 
         return componentes;
     }
@@ -436,7 +440,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
         MTipoComposto<MIComposto> ph = phs.getTipoElementos();
 
         ph.addCampoDecimal("valorPh", true)
-            .as(AtrBasic::new).label("pH")
+            .as(AtrBasic::new).label("pH").subtitle(".")
             .as(AtrBootstrap::new).colPreference(4);
 
         ph.addCampoDecimal("solucao", true)
@@ -449,7 +453,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
         phs
             .withView(MPanelListaView::new)
-            .as(AtrBasic::new).label("Embalagem");
+            .as(AtrBasic::new).label("Lista de pH");
 
         teste.addCampoDecimal("coeficienteParticao")
             .as(AtrBasic::new).label("Coeficiente de partição octanol/Água").subtitle("a 20-25 ºC")
