@@ -120,7 +120,7 @@ public class WicketFormProcessing {
         IVisitor<Component, Object> visitor = (component, visit) -> associateErrorsToComponent(component, instanceErrors);
         Visits.visitPostOrder(container, visitor);
         instanceErrors.values().stream()
-            .forEach(it -> associateErrorsToComponent(container, it));
+            .forEach(it -> associateErrorsTo(container, true, it));
     }
 
     private static void associateErrorsToComponent(Component component, final Map<Integer, Set<IValidationError>> instanceErrors) {
@@ -130,22 +130,21 @@ public class WicketFormProcessing {
 
         Set<IValidationError> errors = instanceErrors.remove(instance.get().getId());
         if (errors != null) {
-            associateErrorsToComponent(component, errors);
+            associateErrorsTo(component, false, errors);
         }
     }
 
-    private static void associateErrorsToComponent(Component component, Set<IValidationError> errors) {
+    private static void associateErrorsTo(Component component, boolean prependFullPathLabel, Set<IValidationError> errors) {
         for (IValidationError error : errors) {
-            switch (error.getErrorLevel()) {
-                case ERROR:
-                    component.error(error.getMessage());
-                    return;
-                case WARNING:
-                    component.warn(error.getMessage());
-                    return;
-                default:
-                    throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
-            }
+            final String message = (prependFullPathLabel)
+                ? error.getMessage()
+                : error.getMessage();
+            if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
+                component.error(message);
+            else if (error.getErrorLevel() == ValidationErrorLevel.WARNING) {
+                component.warn(message);
+            } else
+                throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
         }
     }
 
