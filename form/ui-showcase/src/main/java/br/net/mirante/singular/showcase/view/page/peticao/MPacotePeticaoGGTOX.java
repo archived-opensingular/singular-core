@@ -607,123 +607,111 @@ public class MPacotePeticaoGGTOX extends MPacote {
         }
 
         class TesteIrritacaoOcular{
+            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+            final MTipoComposto<MIComposto> type;
+            final MTipoString laboratorio, protocolo, purezaProdutoTestado, unidadeMedida, especies,
+                                linhagem, veiculo, fluoresceina, testeRealizado;
+            final MTipoData inicio, fim;
+            final Alteracao alteracao;
+
+            class Alteracao {
+                final MTipoComposto<MIComposto> root;
+                final MTipoString cornea, tempoReversibilidadeCornea, conjuntiva, tempoReversibilidadeConjuntiva,
+                                    iris, tempoReversibilidadeIris;
+
+                Alteracao(PacoteBuilder pb){
+                    root = type.addCampoComposto("alteracoes");
+                    root.as(AtrBasic::new).label("Alterações");
+
+                    cornea = createStringField("cornea", "Córnea", 6);
+                    cornea.withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
+
+                    tempoReversibilidadeCornea = createStringField("tempoReversibilidadeCornea", "Tempo de reversibilidade", 6);
+
+                    conjuntiva = createStringField("conjuntiva", "Conjuntiva", 6);
+                    conjuntiva.withSelectionOf("Sem alterações", "Opacidade persistente",
+                                                "Opacidade reversível em...");
+
+                    tempoReversibilidadeConjuntiva = createStringField("tempoReversibilidadeConjuntiva", "Tempo de reversibilidade", 6);
+
+                    iris = createStringField("iris", "Íris", 6);
+                    iris.withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...");
+
+                    tempoReversibilidadeIris = createStringField("tempoReversibilidadeIris", "Tempo de reversibilidade", 6);
+                }
+
+                private MTipoString createStringField(String fieldname, String label,
+                                                      int colPreference) {
+                    MTipoString f = root.addCampoString(fieldname);
+                    f.as(AtrBasic::new).label(label)
+                            .as(AtrBootstrap::new).colPreference(colPreference);
+                    return f;
+                }
+            }
+
             private TesteIrritacaoOcular(PacoteBuilder pb) {
-
-                final MTipoLista<MTipoComposto<MIComposto>, MIComposto> testes = rootType.addCampoListaOfComposto("testesIrritacaoOcular", "irritacaoOcular");
-                MTipoComposto<MIComposto> teste = testes.getTipoElementos();
-
                 //TODO criar regra para pelo menos um campo preenchido
-
-                testes
-//            .withView(MPanelListaView::new)
-                        .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
-
-                teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
+                root = rootType.addCampoListaOfComposto("testesIrritacaoOcular", "irritacaoOcular");
+                root.as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
+                type = root.getTipoElementos();
+                type.as(AtrBasic::new).label("Irritação / Corrosão ocular")
                         .as(AtrBootstrap::new).colPreference(4);
 
-                MTipoString laboratorio = teste.addCampoString("laboratorio");
-                laboratorio.as(AtrBasic::new).label("Laboratório")
-                        .tamanhoMaximo(50);
+                laboratorio = createStringField("laboratorio", "Laboratório", 50, 12);
+                protocolo = createStringField("protocoloReferencia", "Protocolo de referência", 50, 12);
+                inicio = createDateField("dataInicioEstudo", "Data de início do estudo", 3);
+                fim = createDateField("dataFimEstudo", "Data final do estudo", 3);
 
-                MTipoString protocolo = teste.addCampoString("protocoloReferencia");
-                protocolo.as(AtrBasic::new).label("Protocolo de referência")
-                        .tamanhoMaximo(50);
-
-                MTipoData inicio = teste.addCampoData("dataInicioEstudo");
-                inicio.as(AtrBasic::new).label("Data de início do estudo")
-                        .as(AtrBootstrap::new).colPreference(3);
-
-                MTipoData fim = teste.addCampoData("dataFimEstudo");
-                fim.as(AtrBasic::new).label("Data final do estudo")
-                        .as(AtrBootstrap::new).colPreference(3);
-
-                testes.withView(new MListMasterDetailView()
+                root.withView(new MListMasterDetailView()
                         .col(laboratorio)
                         .col(protocolo)
                         .col(inicio)
                         .col(fim)
                 );
 
-                teste.addCampoString("purezaProdutoTestado")
-                        .as(AtrBasic::new).label("Pureza do produto testado")
-                        .as(AtrBootstrap::new).colPreference(6);
+                purezaProdutoTestado = createStringField("purezaProdutoTestado", "Pureza do produto testado", null, 6);
 
-                teste.addCampoString("unidadeMedida")
-                        .withSelectionOf("g/Kg", "g/L")
-                        .as(AtrBasic::new).label("Unidade de medida")
-                        .as(AtrBootstrap::new).colPreference(2);
+                unidadeMedida = createStringField("unidadeMedida", "Unidade de medida", null, 2);
+                unidadeMedida.withSelectionOf("g/Kg", "g/L");
 
-                teste.addCampoString("especies")
-                        .withSelectionOf("Càes",
-                                "Camundongos",
-                                "Cobaia",
-                                "Coelho",
-                                "Galinha",
-                                "Informação não disponível",
-                                "Peixe",
-                                "Primatas",
-                                "Rato")
-                        .as(AtrBasic::new).label("Espécies")
-                        .as(AtrBootstrap::new).colPreference(4);
+                especies = createStringField("especies", "Espécies", null, 4);
+                especies.withSelectionOf(   "Càes","Camundongos","Cobaia","Coelho","Galinha",
+                                            "Informação não disponível","Peixe","Primatas","Rato");
 
-                teste.addCampoString("linhagem")
-                        .as(AtrBasic::new).label("Linhagem")
-                        .as(AtrBootstrap::new).colPreference(6);
+                linhagem = createStringField("linhagem", "Linhagem", null, 6);
 
-                teste.addCampoDecimal("numeroAnimais")
+                type.addCampoDecimal("numeroAnimais")
                         .as(AtrBasic::new).label("Número de animais")
                         .as(AtrBootstrap::new).colPreference(3);
 
-                teste.addCampoString("veiculo")
-                        .as(AtrBasic::new).label("Veículo")
-                        .as(AtrBootstrap::new).colPreference(3);
+                veiculo = createStringField("veiculo", "Veículo", null, 3);
 
-                teste.addCampoString("fluoresceina")
-                        .withSelectionOf("Sim", "Não")
-                        .as(AtrBasic::new).label("Fluoresceína")
-                        .as(AtrBootstrap::new).colPreference(3);
+                fluoresceina = createStringField("fluoresceina", "Fluoresceína", null, 3);
+                fluoresceina.withView(new MSelecaoPorRadioView());
+                fluoresceina.withSelectionOf("Sim", "Não");
 
-                teste.addCampoString("testeRealizado")
-                        .withSelectionOf("Com lavagem", "Sem lavagem")
-                        .as(AtrBasic::new).label("Teste realizado")
-                        .as(AtrBootstrap::new).colPreference(3);
+                testeRealizado = createStringField("testeRealizado", "Teste realizado", null, 3);
+                testeRealizado.withSelectionOf("Com lavagem", "Sem lavagem");
 
-                MTipoComposto<MIComposto> alteracoes = teste.addCampoComposto("alteracoes");
+                alteracao = new Alteracao(pb);
 
-                alteracoes.as(AtrBasic::new).label("Alterações")
-                        .as(AtrBootstrap::new);
-
-                alteracoes.addCampoString("cornea")
-                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                        .as(AtrBasic::new).label("Córnea")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                alteracoes.addCampoString("tempoReversibilidadeCornea")
-                        .as(AtrBasic::new).label("Tempo de reversibilidade")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                alteracoes.addCampoString("conjuntiva")
-                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                        .as(AtrBasic::new).label("Conjuntiva")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                alteracoes.addCampoString("tempoReversibilidadeConjuntiva")
-                        .as(AtrBasic::new).label("Tempo de reversibilidade")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                alteracoes.addCampoString("iris")
-                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                        .as(AtrBasic::new).label("Íris")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                alteracoes.addCampoString("tempoReversibilidadeIris")
-                        .as(AtrBasic::new).label("Tempo de reversibilidade")
-                        .as(AtrBootstrap::new).colPreference(6);
-
-                teste.addCampoString("observacoes")
+                type.addCampoString("observacoes")
                         .withView(MTextAreaView::new)
                         .as(AtrBasic::new).label("Observações");
 
+            }
+
+            private MTipoString createStringField(String fieldname, String label, Integer maxSize, Integer colPreference) {
+                MTipoString f = type.addCampoString(fieldname);
+                f.as(AtrBasic::new).label(label).tamanhoMaximo(maxSize)
+                        .as(AtrBootstrap::new).colPreference(colPreference);
+                return f;
+            }
+
+            private MTipoData createDateField(String fieldName, String label, int colPreference) {
+                MTipoData f = type.addCampoData(fieldName);
+                f.as(AtrBasic::new).label(label).as(AtrBootstrap::new).colPreference(colPreference);
+                return f;
             }
         }
     }
