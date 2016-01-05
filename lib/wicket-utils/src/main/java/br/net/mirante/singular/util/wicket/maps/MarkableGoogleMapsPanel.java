@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
@@ -20,17 +21,18 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     private final WebMarkupContainer map = new WebMarkupContainer("map");
     private final HiddenField<T> lat = new HiddenField<>("lat");
     private final HiddenField<T> lng = new HiddenField<>("lng");
+    private final HiddenField<Integer> zoom = new HiddenField<>("zoom", Model.of(4));
 
     @Override
     public void renderHead(IHeaderResponse response) {
 
         final PackageResourceReference apiJS = new PackageResourceReference(MarkableGoogleMapsPanel.class, "GoogleMapsApi.js");
         final PackageResourceReference customJS = new PackageResourceReference(MarkableGoogleMapsPanel.class, "MarkableGoogleMapsPanel.js");
-        final String initScript = "createBelverMap(%s,%s,%s);";
+        final String initScript = "createBelverMap(%s,%s,%s,%s);";
 
         response.render(JavaScriptReferenceHeaderItem.forReference(apiJS, true));
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript(String.format(initScript, stringfyId(map), stringfyId(lat), stringfyId(lng))));
+        response.render(OnDomReadyHeaderItem.forScript(String.format(initScript, stringfyId(map), stringfyId(lat), stringfyId(lng), stringfyId(zoom))));
 
         super.renderHead(response);
     }
@@ -44,7 +46,7 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(map).add(lat).add(lng);
+        add(map).add(lat).add(lng).add(zoom);
     }
 
     @Override
