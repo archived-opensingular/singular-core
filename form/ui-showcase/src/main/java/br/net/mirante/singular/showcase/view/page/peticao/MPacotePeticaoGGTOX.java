@@ -56,52 +56,40 @@ public class MPacotePeticaoGGTOX extends MPacote {
     }
 
     class DadosResponsavel {
-        public final MTipoComposto<MIComposto> root;
-        public final MTipoString responsavelTecnico, representanteLegal, concordo;
+        final String[] responsaveis = new String[] { "Daniel", "Delfino", "Fabrício", "Lucas", "Tetsuo", "Vinícius" };
+
+        final MTipoComposto<MIComposto> root;
+        final MTipoString responsavelTecnico, representanteLegal, concordo;
 
         DadosResponsavel(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
             root = peticionamento.addCampoComposto("dadosResponsavel");
 
             root.as(AtrBasic::new).label("Dados do Responsável");
-            responsavelTecnico = createResponsavelTecnicoField();
-            representanteLegal = createRepresentanteLegalField();
-            concordo = createConcordoField();
-
-
-        }
-
-        private MTipoString createResponsavelTecnicoField() {
             //TODO Como fazer a seleção para um objeto composto/enum ?
             //TODO a recuperação de valores deve ser dinamica
-            MTipoString field = root.addCampoString("responsavelTecnico", true);
-            field.withSelectionOf(getResponsaveis())
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Responsável Técnico")
-                    .as(AtrBootstrap::new).colPreference(3);
-            return field;
+
+            responsavelTecnico = addPersonField("responsavelTecnico", "Responsável Técnico", 3);
+            representanteLegal = addPersonField("representanteLegal", "Representante Legal", 3);
+            concordo = createConcordoField();
         }
 
-        private MTipoString createRepresentanteLegalField() {
-            MTipoString field = root.addCampoString("representanteLegal", true);
-            field.withSelectionOf(getResponsaveis())
+        private MTipoString addPersonField(String fieldname, String label, int colPreference) {
+            MTipoString f = root.addCampoString(fieldname, true);
+            f.withSelectionOf(responsaveis)
                     .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Representante Legal")
-                    .as(AtrBootstrap::new).colPreference(3);
-            return field;
+                    .as(AtrBasic::new).label(label)
+                    .as(AtrBootstrap::new).colPreference(colPreference);
+            return f;
         }
 
         private MTipoString createConcordoField() {
             // TODO preciso de um campo boolean mas as labels devem ser as descritas abaixo
             //TODO deve ser possivel alinhar o texto: text-left text-right text-justify text-nowrap
             MTipoString field = root.addCampoString("concordo", true);
-            field.withSelectionOf("Concordo", "Não Concordo")
-                    .withView(MSelecaoPorRadioView::new);
+            field.withSelectionOf("Concordo", "Não Concordo").withView(MSelecaoPorRadioView::new);
             return field;
         }
 
-        private String[] getResponsaveis() {
-            return new String[] { "Daniel", "Delfino", "Fabrício", "Lucas", "Tetsuo", "Vinícius" };
-        }
     }
 
 
@@ -256,7 +244,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
             NomeComercial(PacoteBuilder pb){
                 root = rootType.addCampoListaOfComposto("nomesComerciais", "nomeComercial");
                 root.withView(MPanelListaView::new).as(AtrBasic::new).label("Nome comercial");
-
                 type = root.getTipoElementos();
 
                 nome = type.addCampoString("nome", true);
@@ -267,19 +254,29 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
             class Fabricante{
                 final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+                final MTipoComposto<MIComposto> type;
+                final MTipoCNPJ cnpj;
+                final MTipoString razaoSocial, cidade, pais;
+
                 Fabricante(PacoteBuilder pb){
-                    root = type.addCampoListaOfComposto("fabricantes", "fabricante");
+                    root = NomeComercial.this.type.addCampoListaOfComposto("fabricantes", "fabricante");
+                    root.withView(MListMasterDetailView::new).as(AtrBasic::new).label("Fabricante(s)");
 
                     //TODO Fabricante deve ser uma pesquisa
-                    MTipoComposto<MIComposto> fabricante = root.getTipoElementos();
+                    type = root.getTipoElementos();
                     //TODO como usar o tipo cnpj
-                    fabricante.addCampo("cnpj", MTipoCNPJ.class).as(AtrBasic::new).label("CNPJ").as(AtrBootstrap::new).colPreference(4);
-                    fabricante.addCampoString("razaoSocial").as(AtrBasic::new).label("Razão social").as(AtrBootstrap::new).colPreference(4);
-                    fabricante.addCampoString("cidade").as(AtrBasic::new).label("Cidade").as(AtrBootstrap::new).colPreference(2);
-                    fabricante.addCampoString("pais").as(AtrBasic::new).label("País").as(AtrBootstrap::new).colPreference(2);
+                    cnpj = type.addCampo("cnpj", MTipoCNPJ.class);
+                    cnpj.as(AtrBasic::new).label("CNPJ").as(AtrBootstrap::new).colPreference(4);
+                    razaoSocial = createStringField(type, "razaoSocial", "Razão social", 4);
+                    cidade = createStringField(type, "cidade", "Cidade", 2);
+                    pais = createStringField(type, "pais", "País", 2);
 
-                    root.withView(MListMasterDetailView::new)
-                            .as(AtrBasic::new).label("Fabricante(s)");
+                }
+
+                private MTipoString createStringField(MTipoComposto<MIComposto> fabricante, String fieldname, String label, int colPreference) {
+                    MTipoString f = fabricante.addCampoString(fieldname);
+                    f.as(AtrBasic::new).label(label).as(AtrBootstrap::new).colPreference(colPreference);
+                    return f;
                 }
             }
         }
