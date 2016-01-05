@@ -3,10 +3,7 @@ package br.net.mirante.singular.showcase.view.page.peticao;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.*;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
@@ -118,7 +115,9 @@ public class MPacotePeticaoGGTOX extends MPacote {
         final UsoPretendido usoPretendido;
         final NomeComercial nomeComercial;
         final Embalagem embalagem;
-
+        final Anexo anexo;
+        final TesteCaracteristicasFisicoQuimicas caracteristicasFisicoQuimicas;
+        final TesteIrritacaoOcular irritacaoOcular;
 
         Componente(PacoteBuilder pb, MTipoComposto<?> peticionamento) {
             root = peticionamento.addCampoListaOfComposto("componentes", "componente");
@@ -133,305 +132,15 @@ public class MPacotePeticaoGGTOX extends MPacote {
             usoPretendido =  new UsoPretendido(pb);
             nomeComercial = new NomeComercial(pb);
             embalagem = new Embalagem(pb);
+            anexo = new Anexo(pb);
 
-            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> anexos = rootType.addCampoListaOfComposto("anexos", "anexo");
-            MTipoComposto<MIComposto> anexo = anexos.getTipoElementos();
-
-            anexos
-                    .withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Anexos");
-
-            MTipoAttachment arquivo = anexo.addCampo("arquivo", MTipoAttachment.class);
-            arquivo.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            anexo.addCampoString("tipoArquivo")
-                    .withSelectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Tipo do arquivo a ser anexado")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            addTestes(pb, rootType);
-
+            caracteristicasFisicoQuimicas = new TesteCaracteristicasFisicoQuimicas(pb);
+            irritacaoOcular = new TesteIrritacaoOcular(pb);
 
             root.withView(new MListMasterDetailView()
                     .col(identificacao.tipoComponente)
                     .col(sinonimia.sugerida)
             );
-        }
-
-        private void addTestes(PacoteBuilder pb, MTipoComposto<?> componente) {
-            //TODO deve ser encontrado uma maneira de vincular o teste ao componente
-            addTesteCaracteristicasFisicoQuimicas(pb, componente);
-            addTesteIrritacaoOcular(pb, componente);
-        }
-
-        private void addTesteCaracteristicasFisicoQuimicas(PacoteBuilder pb, MTipoComposto<?> componente) {
-            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> testes = componente.addCampoListaOfComposto("testesCaracteristicasFisicoQuimicas", "caracteristicasFisicoQuimicas");
-            MTipoComposto<MIComposto> teste = testes.getTipoElementos();
-
-            testes
-//            .withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Testes Características fisíco-químicas");
-
-            teste.as(AtrBasic::new).label("Características fisíco-químicas");
-
-            MTipoString estadoFisico = teste.addCampoString("estadoFisico", true);
-            estadoFisico.withSelectionOf("Líquido", "Sólido", "Gasoso")
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Estado físico")
-                    .as(AtrBootstrap::new).colPreference(2);
-
-            MTipoString aspecto = teste.addCampoString("aspecto", true);
-            aspecto.as(AtrBasic::new).label("Aspecto")
-                    .tamanhoMaximo(50)
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            MTipoString cor = teste.addCampoString("cor", true);
-            cor.as(AtrBasic::new).label("Cor")
-                    .tamanhoMaximo(40)
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            MTipoString odor = teste.addCampoString("odor");
-            odor.as(AtrBasic::new).label("Odor")
-                    .tamanhoMaximo(40)
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            testes.withView(new MListMasterDetailView()
-                    .col(estadoFisico)
-                    .col(aspecto)
-                    .col(cor)
-                    .col(odor)
-            );
-
-            MTipoComposto<MIComposto> faixaFusao = teste.addCampoComposto("faixaFusao");
-            faixaFusao.as(AtrBootstrap::new).colPreference(6);
-
-            //TODO cade as mascaras para campos decimais
-            faixaFusao.as(AtrBasic::new).label("Fusão");
-
-            faixaFusao.addCampoDecimal("pontoFusao")
-                    .as(AtrBasic::new).label("Ponto de fusão").subtitle("ºC")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            //TODO o campo faixa de fusao precisa de um tipo intervalo
-            // Exemplo: Faixa De 10 a 20
-            faixaFusao.addCampoDecimal("faixaFusaoDe")
-                    .as(AtrBasic::new).label("Início").subtitle("da Faixa")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            faixaFusao.addCampoDecimal("faixaFusaoA")
-                    .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            MTipoComposto<MIComposto> faixaEbulicao = teste.addCampoComposto("faixaEbulicao");
-
-            faixaEbulicao.as(AtrBasic::new).label("Ebulição")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            faixaEbulicao.addCampoDecimal("pontoEbulicao")
-                    .as(AtrBasic::new).label("Ebulição").subtitle("ºC")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            faixaEbulicao.addCampoDecimal("faixaEbulicaoDe")
-                    .as(AtrBasic::new).label("Início").subtitle("da Faixa")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            faixaEbulicao.addCampoDecimal("faixaEbulicaoA")
-                    .as(AtrBasic::new).label("Fim").subtitle("da Faixa")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            MTipoComposto<MIComposto> pressaoVapor = teste.addCampoComposto("pressaoVapor");
-            pressaoVapor.as(AtrBasic::new).label("Pressão do vapor")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            pressaoVapor.addCampoDecimal("valor")
-                    .as(AtrBasic::new).label("Valor")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            pressaoVapor.addCampoString("unidade")
-                    .withSelectionOf("mmHg", "Pa", "mPa")
-                    .withView(MSelecaoPorSelectView::new)
-                    .as(AtrBasic::new).label("Unidade")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            MTipoComposto<MIComposto> solubilidade = teste.addCampoComposto("solubilidade");
-            solubilidade.as(AtrBasic::new).label("Solubilidade")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            solubilidade.addCampoDecimal("solubilidadeAgua")
-                    .as(AtrBasic::new).label("em água").subtitle("mg/L a 20 ou 25 ºC")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            solubilidade.addCampoDecimal("solubilidadeOutrosSolventes")
-                    .as(AtrBasic::new).label("em outros solventes").subtitle("mg/L a 20 ou 25 ºC")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoString("hidrolise")
-                    .as(AtrBasic::new).label("Hidrólise")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoString("estabilidade")
-                    .as(AtrBasic::new).label("Estabilidade às temperaturas normal e elevada")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoDecimal("pontoFulgor")
-                    .as(AtrBasic::new).label("Ponto de fulgor").subtitle("ºC")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            teste.addCampoDecimal("constanteDissociacao")
-                    .as(AtrBasic::new).label("Constante de dissociação")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> phs = teste.addCampoListaOfComposto("phs", "ph");
-            MTipoComposto<MIComposto> ph = phs.getTipoElementos();
-
-            ph.addCampoDecimal("valorPh", true)
-                    .as(AtrBasic::new).label("pH").subtitle(".")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            ph.addCampoDecimal("solucao", true)
-                    .as(AtrBasic::new).label("Solução").subtitle("%")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            ph.addCampoDecimal("temperatura", true)
-                    .as(AtrBasic::new).label("Temperatura").subtitle("ºC")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            phs
-                    .withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Lista de pH");
-
-            teste.addCampoDecimal("coeficienteParticao")
-                    .as(AtrBasic::new).label("Coeficiente de partição octanol/Água").subtitle("a 20-25 ºC")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            teste.addCampoDecimal("densidade")
-                    .as(AtrBasic::new).label("Densidade").subtitle("g/cm³ a 20ºC")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            teste.addCampoString("observacoes")
-                    .withView(MTextAreaView::new)
-                    .as(AtrBasic::new).label("Observações");
-        }
-
-        private void addTesteIrritacaoOcular(PacoteBuilder pb, MTipoComposto<?> componente) {
-
-            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> testes = componente.addCampoListaOfComposto("testesIrritacaoOcular", "irritacaoOcular");
-            MTipoComposto<MIComposto> teste = testes.getTipoElementos();
-
-            //TODO criar regra para pelo menos um campo preenchido
-
-            testes
-//            .withView(MPanelListaView::new)
-                    .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
-
-            teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            MTipoString laboratorio = teste.addCampoString("laboratorio");
-            laboratorio.as(AtrBasic::new).label("Laboratório")
-                    .tamanhoMaximo(50);
-
-            MTipoString protocolo = teste.addCampoString("protocoloReferencia");
-            protocolo.as(AtrBasic::new).label("Protocolo de referência")
-                    .tamanhoMaximo(50);
-
-            MTipoData inicio = teste.addCampoData("dataInicioEstudo");
-            inicio.as(AtrBasic::new).label("Data de início do estudo")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            MTipoData fim = teste.addCampoData("dataFimEstudo");
-            fim.as(AtrBasic::new).label("Data final do estudo")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            testes.withView(new MListMasterDetailView()
-                    .col(laboratorio)
-                    .col(protocolo)
-                    .col(inicio)
-                    .col(fim)
-            );
-
-            teste.addCampoString("purezaProdutoTestado")
-                    .as(AtrBasic::new).label("Pureza do produto testado")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoString("unidadeMedida")
-                    .withSelectionOf("g/Kg", "g/L")
-                    .as(AtrBasic::new).label("Unidade de medida")
-                    .as(AtrBootstrap::new).colPreference(2);
-
-            teste.addCampoString("especies")
-                    .withSelectionOf("Càes",
-                            "Camundongos",
-                            "Cobaia",
-                            "Coelho",
-                            "Galinha",
-                            "Informação não disponível",
-                            "Peixe",
-                            "Primatas",
-                            "Rato")
-                    .as(AtrBasic::new).label("Espécies")
-                    .as(AtrBootstrap::new).colPreference(4);
-
-            teste.addCampoString("linhagem")
-                    .as(AtrBasic::new).label("Linhagem")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoDecimal("numeroAnimais")
-                    .as(AtrBasic::new).label("Número de animais")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            teste.addCampoString("veiculo")
-                    .as(AtrBasic::new).label("Veículo")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            teste.addCampoString("fluoresceina")
-                    .withSelectionOf("Sim", "Não")
-                    .as(AtrBasic::new).label("Fluoresceína")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            teste.addCampoString("testeRealizado")
-                    .withSelectionOf("Com lavagem", "Sem lavagem")
-                    .as(AtrBasic::new).label("Teste realizado")
-                    .as(AtrBootstrap::new).colPreference(3);
-
-            MTipoComposto<MIComposto> alteracoes = teste.addCampoComposto("alteracoes");
-
-            alteracoes.as(AtrBasic::new).label("Alterações")
-                    .as(AtrBootstrap::new);
-
-            alteracoes.addCampoString("cornea")
-                    .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                    .as(AtrBasic::new).label("Córnea")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            alteracoes.addCampoString("tempoReversibilidadeCornea")
-                    .as(AtrBasic::new).label("Tempo de reversibilidade")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            alteracoes.addCampoString("conjuntiva")
-                    .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                    .as(AtrBasic::new).label("Conjuntiva")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            alteracoes.addCampoString("tempoReversibilidadeConjuntiva")
-                    .as(AtrBasic::new).label("Tempo de reversibilidade")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            alteracoes.addCampoString("iris")
-                    .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
-                    .as(AtrBasic::new).label("Íris")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            alteracoes.addCampoString("tempoReversibilidadeIris")
-                    .as(AtrBasic::new).label("Tempo de reversibilidade")
-                    .as(AtrBootstrap::new).colPreference(6);
-
-            teste.addCampoString("observacoes")
-                    .withView(MTextAreaView::new)
-                    .as(AtrBasic::new).label("Observações");
-
         }
 
         class Identificacao {
@@ -574,6 +283,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 }
             }
         }
+
         class Embalagem {
             final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
             final MTipoComposto<MIComposto> type;
@@ -645,6 +355,376 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 return field;
             }
 
+        }
+
+        class Anexo {
+            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+            final MTipoComposto<MIComposto> type;
+            final MTipoAttachment arquivo;
+            final MTipoString tipo;
+            Anexo(PacoteBuilder pb){
+                root = rootType.addCampoListaOfComposto("anexos", "anexo");
+                root.as(AtrBasic::new).label("Anexos");
+                type = root.getTipoElementos();
+
+                arquivo = createArquivoField();
+                tipo = createTipoField();
+
+                MTipo<?> nomeArquivo = (MTipoSimples) arquivo.getCampo(arquivo.FIELD_NAME);
+                nomeArquivo.as(AtrBasic::new).label("Nome do Arquivo");
+                root.withView(new MListMasterDetailView()
+                        .col((MTipoSimples) nomeArquivo)
+                        .col(tipo)
+                );
+            }
+
+            private MTipoAttachment createArquivoField() {
+                MTipoAttachment f = type.addCampo("arquivo", MTipoAttachment.class);
+                f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
+                        .as(AtrBootstrap::new).colPreference(3);
+                return f;
+            }
+
+            private MTipoString createTipoField() {
+                MTipoString t = type.addCampoString("tipoArquivo");
+                t.withSelectionOf("Ficha de emergência", "Ficha de segurança", "Outros")
+                        .withView(MSelecaoPorSelectView::new)
+                        .as(AtrBasic::new).label("Tipo do arquivo a ser anexado")
+                        .as(AtrBootstrap::new).colPreference(3);
+                return t;
+            }
+        }
+
+        class TesteCaracteristicasFisicoQuimicas {
+            final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+            final MTipoComposto<MIComposto> type;
+            final MTipoString estadoFisico,aspecto,cor,odor, hidrolise, estabilidade, observacoes;
+            final MTipoDecimal pontoFulgor,constanteDissociacao, coeficienteParticao, densidade;
+            final Faixa fusao, ebulicao;
+            final PressaoDeValor pressaoDeVapor;
+            final Solubilidade solubilidade;
+            final PotenciaDeHidrogenio ph;
+
+            private TesteCaracteristicasFisicoQuimicas(PacoteBuilder pb) {
+                root = rootType.addCampoListaOfComposto("testesCaracteristicasFisicoQuimicas", "caracteristicasFisicoQuimicas");
+                root.as(AtrBasic::new).label("Testes Características fisíco-químicas");
+                type = root.getTipoElementos();
+                type.as(AtrBasic::new).label("Características fisíco-químicas");
+
+                estadoFisico = createEstadoFísicoField();
+                aspecto = createAspectoField();
+                cor = createCorField();
+                odor = createOdorField();
+
+                root.withView(new MListMasterDetailView()
+                        .col(estadoFisico)
+                        .col(aspecto)
+                        .col(cor)
+                        .col(odor)
+                );
+
+                fusao = new Faixa(pb,"Fusao","Fusão");
+                ebulicao = new Faixa(pb,"Ebulicao","Ebulição");
+                pressaoDeVapor = new PressaoDeValor(pb);
+                solubilidade = new Solubilidade(pb);
+
+                hidrolise = createHidroliseField();
+                estabilidade = createEstabilidadeField();
+                pontoFulgor = createPontoFulgorField();
+                constanteDissociacao = createConstanteDissociacaoField();
+                ph = new PotenciaDeHidrogenio(pb);
+
+                coeficienteParticao = createDecimalField("coeficienteParticao", "Coeficiente de partição octanol/Água", "a 20-25 ºC", 4);
+                densidade = createDecimalField("densidade", "Densidade", "g/cm³ a 20ºC", 4);
+
+                observacoes = type.addCampoString("observacoes");
+                observacoes.withView(MTextAreaView::new).as(AtrBasic::new).label("Observações");
+            }
+
+            private MTipoDecimal createDecimalField(String fieldname, String label, String subtitle, int colPreference) {
+                MTipoDecimal f = type.addCampoDecimal(fieldname);
+                f.as(AtrBasic::new).label(label).subtitle(subtitle)
+                        .as(AtrBootstrap::new).colPreference(colPreference);
+                return f;
+            }
+
+            private MTipoString createEstadoFísicoField() {
+                MTipoString f = type.addCampoString("estadoFisico", true);
+                f.withSelectionOf("Líquido", "Sólido", "Gasoso")
+                        .withView(MSelecaoPorSelectView::new)
+                        .as(AtrBasic::new).label("Estado físico")
+                        .as(AtrBootstrap::new).colPreference(2);
+                return f;
+            }
+
+            private MTipoString createAspectoField() {
+                MTipoString f = type.addCampoString("aspecto", true);
+                f.as(AtrBasic::new).label("Aspecto")
+                        .tamanhoMaximo(50)
+                        .as(AtrBootstrap::new).colPreference(4);
+                return f;
+            }
+
+            private MTipoString createCorField() {
+                MTipoString f = type.addCampoString("cor", true);
+                f.as(AtrBasic::new).label("Cor")
+                        .tamanhoMaximo(40)
+                        .as(AtrBootstrap::new).colPreference(3);
+                return f;
+            }
+
+            private MTipoString createOdorField() {
+                MTipoString f = type.addCampoString("odor");
+                f.as(AtrBasic::new).label("Odor")
+                        .tamanhoMaximo(40)
+                        .as(AtrBootstrap::new).colPreference(3);
+                return f;
+            }
+
+            private MTipoString createHidroliseField() {
+                MTipoString f = type.addCampoString("hidrolise");
+                f.as(AtrBasic::new).label("Hidrólise")
+                        .as(AtrBootstrap::new).colPreference(6);
+                return f;
+            }
+
+            private MTipoString createEstabilidadeField() {
+                MTipoString f = type.addCampoString("estabilidade");
+                f.as(AtrBasic::new).label("Estabilidade às temperaturas normal e elevada")
+                        .as(AtrBootstrap::new).colPreference(6);
+                return f;
+            }
+
+            private MTipoDecimal createPontoFulgorField() {
+                MTipoDecimal f = createDecimalField("pontoFulgor", "Ponto de fulgor", "ºC", 3);
+                return f;
+            }
+
+            private MTipoDecimal createConstanteDissociacaoField() {
+                MTipoDecimal f = type.addCampoDecimal("constanteDissociacao");
+                f.as(AtrBasic::new).label("Constante de dissociação")
+                        .as(AtrBootstrap::new).colPreference(3);
+                return f;
+            }
+
+            class Faixa {
+                final MTipoComposto<MIComposto> root;
+                final MTipoDecimal pontoFusao, faixaFusaoDe, faixaFusaoA;
+                Faixa(PacoteBuilder pb, String prefix, String nome){
+                    root = type.addCampoComposto("faixa"+prefix);
+                    root.as(AtrBootstrap::new).colPreference(6).as(AtrBasic::new).label(nome);
+
+                    pontoFusao = createDecimalField("ponto"+prefix, "Ponto de "+nome, "ºC");
+                    //TODO o campo faixa de fusao precisa de um tipo intervalo
+                    // Exemplo: Faixa De 10 a 20
+                    faixaFusaoDe = createDecimalField("faixa"+prefix+"De", "Início", "da Faixa");
+                    faixaFusaoA = createDecimalField("faixa"+prefix+"A", "Fim", "da Faixa");
+                }
+
+                private MTipoDecimal createDecimalField(String fieldname, String label, String subtitle) {
+                    MTipo<?> f = root.addCampoDecimal(fieldname);
+                    f.as(AtrBasic::new).label(label).subtitle(subtitle)
+                            .as(AtrBootstrap::new).colPreference(4);
+                    return (MTipoDecimal) f;
+                }
+            }
+
+            class PressaoDeValor {
+                final MTipoComposto<MIComposto> root;
+                final MTipoDecimal valor;
+                final MTipoString unidade;
+                PressaoDeValor(PacoteBuilder pb){
+                    root = type.addCampoComposto("pressaoVapor");
+                    root.as(AtrBasic::new).label("Pressão do vapor")
+                            .as(AtrBootstrap::new).colPreference(6);
+
+                    valor = createValorField();
+                    unidade = createUnidadeField();
+
+                }
+
+                private MTipoDecimal createValorField() {
+                    MTipoDecimal f = root.addCampoDecimal("valor");
+                    f.as(AtrBasic::new).label("Valor")
+                            .as(AtrBootstrap::new).colPreference(6);
+                    return f;
+                }
+
+                private MTipoString createUnidadeField() {
+                    MTipoString f = root.addCampoString("unidade");
+                    f.withSelectionOf("mmHg", "Pa", "mPa")
+                            .withView(MSelecaoPorSelectView::new)
+                            .as(AtrBasic::new).label("Unidade")
+                            .as(AtrBootstrap::new).colPreference(6);
+                    return f;
+                }
+            }
+
+            class Solubilidade {
+                final MTipoComposto<MIComposto> root;
+                final MTipoDecimal agua, outrosSolventes;
+
+                Solubilidade (PacoteBuilder pb){
+                    root = type.addCampoComposto("solubilidade");
+                    root.as(AtrBasic::new).label("Solubilidade")
+                            .as(AtrBootstrap::new).colPreference(6);
+
+                    agua = createDecimalField("solubilidadeAgua", "em água", "mg/L a 20 ou 25 ºC");
+                    outrosSolventes = createDecimalField("solubilidadeOutrosSolventes",
+                            "em outros solventes", "mg/L a 20 ou 25 ºC");
+                }
+
+                private MTipoDecimal createDecimalField(String fieldName, String label, String subtitle) {
+                    MTipoDecimal f = root.addCampoDecimal(fieldName);
+                    f.as(AtrBasic::new).label(label).subtitle(subtitle)
+                            .as(AtrBootstrap::new).colPreference(6);
+                    return f;
+                }
+            }
+
+            class PotenciaDeHidrogenio {
+                final MTipoLista<MTipoComposto<MIComposto>, MIComposto> root;
+                final MTipoComposto<MIComposto> type;
+                final MTipoDecimal valorPh, solucao, temperatura;
+
+                PotenciaDeHidrogenio(PacoteBuilder pb){
+                    root = TesteCaracteristicasFisicoQuimicas.this.type.addCampoListaOfComposto("phs", "ph");
+                    root.withView(MPanelListaView::new).as(AtrBasic::new).label("Lista de pH");
+                    type = root.getTipoElementos();
+
+                    valorPh = createDecimalField("valorPh", "pH", ".");
+                    solucao = createDecimalField("solucao", "Solução", "%");
+                    temperatura = createDecimalField("temperatura", "Temperatura", "ºC");
+                }
+
+                private MTipoDecimal createDecimalField(String fieldname, String label, String subtitle) {
+                    MTipoDecimal valorPh = type.addCampoDecimal(fieldname, true);
+                    valorPh.as(AtrBasic::new).label(label).subtitle(subtitle)
+                            .as(AtrBootstrap::new).colPreference(4);
+                    return valorPh;
+                }
+            }
+        }
+
+        class TesteIrritacaoOcular{
+            private TesteIrritacaoOcular(PacoteBuilder pb) {
+
+                final MTipoLista<MTipoComposto<MIComposto>, MIComposto> testes = rootType.addCampoListaOfComposto("testesIrritacaoOcular", "irritacaoOcular");
+                MTipoComposto<MIComposto> teste = testes.getTipoElementos();
+
+                //TODO criar regra para pelo menos um campo preenchido
+
+                testes
+//            .withView(MPanelListaView::new)
+                        .as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");
+
+                teste.as(AtrBasic::new).label("Irritação / Corrosão ocular")
+                        .as(AtrBootstrap::new).colPreference(4);
+
+                MTipoString laboratorio = teste.addCampoString("laboratorio");
+                laboratorio.as(AtrBasic::new).label("Laboratório")
+                        .tamanhoMaximo(50);
+
+                MTipoString protocolo = teste.addCampoString("protocoloReferencia");
+                protocolo.as(AtrBasic::new).label("Protocolo de referência")
+                        .tamanhoMaximo(50);
+
+                MTipoData inicio = teste.addCampoData("dataInicioEstudo");
+                inicio.as(AtrBasic::new).label("Data de início do estudo")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                MTipoData fim = teste.addCampoData("dataFimEstudo");
+                fim.as(AtrBasic::new).label("Data final do estudo")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                testes.withView(new MListMasterDetailView()
+                        .col(laboratorio)
+                        .col(protocolo)
+                        .col(inicio)
+                        .col(fim)
+                );
+
+                teste.addCampoString("purezaProdutoTestado")
+                        .as(AtrBasic::new).label("Pureza do produto testado")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                teste.addCampoString("unidadeMedida")
+                        .withSelectionOf("g/Kg", "g/L")
+                        .as(AtrBasic::new).label("Unidade de medida")
+                        .as(AtrBootstrap::new).colPreference(2);
+
+                teste.addCampoString("especies")
+                        .withSelectionOf("Càes",
+                                "Camundongos",
+                                "Cobaia",
+                                "Coelho",
+                                "Galinha",
+                                "Informação não disponível",
+                                "Peixe",
+                                "Primatas",
+                                "Rato")
+                        .as(AtrBasic::new).label("Espécies")
+                        .as(AtrBootstrap::new).colPreference(4);
+
+                teste.addCampoString("linhagem")
+                        .as(AtrBasic::new).label("Linhagem")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                teste.addCampoDecimal("numeroAnimais")
+                        .as(AtrBasic::new).label("Número de animais")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                teste.addCampoString("veiculo")
+                        .as(AtrBasic::new).label("Veículo")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                teste.addCampoString("fluoresceina")
+                        .withSelectionOf("Sim", "Não")
+                        .as(AtrBasic::new).label("Fluoresceína")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                teste.addCampoString("testeRealizado")
+                        .withSelectionOf("Com lavagem", "Sem lavagem")
+                        .as(AtrBasic::new).label("Teste realizado")
+                        .as(AtrBootstrap::new).colPreference(3);
+
+                MTipoComposto<MIComposto> alteracoes = teste.addCampoComposto("alteracoes");
+
+                alteracoes.as(AtrBasic::new).label("Alterações")
+                        .as(AtrBootstrap::new);
+
+                alteracoes.addCampoString("cornea")
+                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
+                        .as(AtrBasic::new).label("Córnea")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                alteracoes.addCampoString("tempoReversibilidadeCornea")
+                        .as(AtrBasic::new).label("Tempo de reversibilidade")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                alteracoes.addCampoString("conjuntiva")
+                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
+                        .as(AtrBasic::new).label("Conjuntiva")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                alteracoes.addCampoString("tempoReversibilidadeConjuntiva")
+                        .as(AtrBasic::new).label("Tempo de reversibilidade")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                alteracoes.addCampoString("iris")
+                        .withSelectionOf("Sem alterações", "Opacidade persistente", "Opacidade reversível em...")
+                        .as(AtrBasic::new).label("Íris")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                alteracoes.addCampoString("tempoReversibilidadeIris")
+                        .as(AtrBasic::new).label("Tempo de reversibilidade")
+                        .as(AtrBootstrap::new).colPreference(6);
+
+                teste.addCampoString("observacoes")
+                        .withView(MTextAreaView::new)
+                        .as(AtrBasic::new).label("Observações");
+
+            }
         }
     }
 }
