@@ -8,6 +8,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -17,9 +18,6 @@ import org.apache.wicket.util.template.PackageTextTemplate;
 
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
-/**
- * Created by danilo.mesquita on 04/01/2016.
- */
 public class MarkableGoogleMapsPanel<T> extends Panel {
 
     private static final String GOOGLE_API = "GoogleMapsApi.js";
@@ -75,17 +73,13 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         popularMetadados();
-        add(map).add(lat).add(lng).add(metadados);
+        add(map, lat, lng, metadados);
     }
 
     @Override
     protected void onConfigure() {
         super.onConfigure();
-        final boolean enabled = !isReadOnly();
-        map.setEnabled(enabled);
-        lat.setEnabled(enabled);
-        lng.setEnabled(enabled);
-        metadados.setEnabled(enabled);
+        visitChildren(FormComponent.class, (comp, visit) -> comp.setEnabled( !isReadOnly()));
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
     }
 
