@@ -1,5 +1,8 @@
 package br.net.mirante.singular.util.wicket.maps;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -8,7 +11,9 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.util.template.PackageTextTemplate;
 
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
@@ -17,20 +22,29 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
  */
 public class MarkableGoogleMapsPanel<T> extends Panel {
 
+    private static final String GOOGLE_API = "GoogleMapsApi.js";
+    private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
+    private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
+    private static final Integer DEFAULT_ZOOM = 4;
+
+    private final IModel<String> metadadosModel = new Model<>();
+    private final IModel<Boolean> readOnly = Model.of(false);
+
     private final WebMarkupContainer map = new WebMarkupContainer("map");
+    private final HiddenField<String> metadados = new HiddenField<>("metadados", metadadosModel);
+
     private final HiddenField<T> lat = new HiddenField<>("lat");
     private final HiddenField<T> lng = new HiddenField<>("lng");
 
     @Override
     public void renderHead(IHeaderResponse response) {
 
-        final PackageResourceReference apiJS = new PackageResourceReference(MarkableGoogleMapsPanel.class, "GoogleMapsApi.js");
-        final PackageResourceReference customJS = new PackageResourceReference(MarkableGoogleMapsPanel.class, "MarkableGoogleMapsPanel.js");
-        final String initScript = "createBelverMap(%s,%s,%s);";
+        final PackageResourceReference apiJS = new PackageResourceReference(getClass(), GOOGLE_API);
+        final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
         response.render(JavaScriptReferenceHeaderItem.forReference(apiJS, true));
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-        response.render(OnDomReadyHeaderItem.forScript(String.format(initScript, stringfyId(map), stringfyId(lat), stringfyId(lng))));
+        response.render(OnDomReadyHeaderItem.forScript("createBelverMap(" + stringfyId(metadados) + ");"));
 
         super.renderHead(response);
     }
@@ -41,15 +55,37 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
         lng.setModel(lngModel);
     }
 
+    private void popularMetadados() {
+
+        final Map<String, Object> properties = new HashMap<>();
+        final PackageTextTemplate metadataJSON = new PackageTextTemplate(getClass(), METADATA_JSON);
+
+        properties.put("idMap", map.getMarkupId(true));
+        properties.put("idLat", lat.getMarkupId(true));
+        properties.put("idLng", lng.getMarkupId(true));
+        properties.put("zoom", DEFAULT_ZOOM);
+        properties.put("readOnly", isReadOnly());
+
+        metadataJSON.interpolate(properties);
+
+        metadadosModel.setObject(metadataJSON.getString());
+    }
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(map).add(lat).add(lng);
+        popularMetadados();
+        add(map).add(lat).add(lng).add(metadados);
     }
 
     @Override
     protected void onConfigure() {
         super.onConfigure();
+        final boolean enabled = !isReadOnly();
+        map.setEnabled(enabled);
+        lat.setEnabled(enabled);
+        lng.setEnabled(enabled);
+        metadados.setEnabled(enabled);
         this.add(WicketUtils.$b.attrAppender("style", "height: " + getHeight() + "px;", ""));
     }
 
@@ -61,4 +97,12 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
         return "'" + c.getMarkupId(true) + "'";
     }
 
+    public MarkableGoogleMapsPanel<T> setReadOnly(boolean readOnly){
+        this.readOnly.setObject(readOnly);
+        return this;
+    }
+
+    protected boolean isReadOnly(){
+        return readOnly.getObject();
+    }
 }

@@ -20,7 +20,7 @@ public abstract class BelverValidationButton extends AjaxButton {
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
         super.onSubmit(target, form);
-        if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), getCurrentInstance().getObject(), true)) {
+        if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), getCurrentInstance(), true)) {
             onValidationSuccess(target, form, getCurrentInstance());
         } else {
             onValidationError(target, form, getCurrentInstance());
@@ -31,7 +31,7 @@ public abstract class BelverValidationButton extends AjaxButton {
     @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance().getObject());
+        WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
     }
 
     public abstract IModel<? extends MInstancia>  getCurrentInstance();

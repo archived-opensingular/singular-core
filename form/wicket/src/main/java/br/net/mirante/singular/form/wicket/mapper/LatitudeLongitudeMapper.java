@@ -26,7 +26,7 @@ public class LatitudeLongitudeMapper implements IWicketComponentMapper {
         final MInstanciaValorModel<MInstancia> latModel = createModel(ctx.getModel(), MTipoLatitudeLongitude.FIELD_LATITUDE);
         final MInstanciaValorModel<MInstancia> lngModel = createModel(ctx.getModel(), MTipoLatitudeLongitude.FIELD_LONGITUDE);
 
-        formGroup.appendDiv(new MarkableGoogleMapsPanel<>("googleMapsPanel", latModel, lngModel));
+        formGroup.appendDiv(new MarkableGoogleMapsPanel<>("googleMapsPanel", latModel, lngModel).setReadOnly(ctx.getViewMode().isVisualization()));
     }
 
     private MInstanciaValorModel<MInstancia> createModel(IModel<? extends MInstancia> root, String path) {

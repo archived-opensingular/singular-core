@@ -11,17 +11,17 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import br.net.mirante.singular.form.wicket.feedback.BFFeedbackPanel;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
+import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
-import br.net.mirante.singular.showcase.view.template.Content;
 
 @SuppressWarnings("serial")
 class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
@@ -40,7 +40,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     protected void onInitialize() {
         super.onInitialize();
 
-        queue(new BSFeedbackPanel("feedback"));
+        queue(new BFFeedbackPanel("feedback", this));
         queue(buildFormDataTable());
     }
 

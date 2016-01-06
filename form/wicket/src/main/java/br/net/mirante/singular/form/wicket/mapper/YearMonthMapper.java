@@ -25,6 +25,8 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
                     put("data-date-format", "mm/yyyy");
                     put("data-date-start-view", "months");
                     put("data-date-min-view-mode", "months");
+                    put("data-date-start-date", "01/1900");
+                    put("data-date-end-date", "12/2999");
                 }});
         return comp;
     }

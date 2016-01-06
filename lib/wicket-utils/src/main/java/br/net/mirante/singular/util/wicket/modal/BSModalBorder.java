@@ -66,39 +66,33 @@ public class BSModalBorder extends Border {
         }
     }
 
-    private static final String DIALOG = "dialog";
-    private static final String CLOSE_ICON = "closeIcon";
+    private static final String DIALOG        = "dialog";
+    private static final String CLOSE_ICON    = "closeIcon";
     private static final String COMPRESS_ICON = "compressIcon";
-    private static final String EXPAND_ICON = "expandIcon";
-    private static final String TITLE = "title";
-    private static final String HEADER = "header";
-    private static final String BODY = "body";
-    private static final String FOOTER = "footer";
+    private static final String EXPAND_ICON   = "expandIcon";
+    private static final String TITLE         = "title";
+    private static final String HEADER        = "header";
+    private static final String BODY          = "body";
+    private static final String FOOTER        = "footer";
 
-    private Size size = Size.NORMAL;
+    private Size    size        = Size.NORMAL;
     private boolean dismissible = false;
 
     private final RepeatingView buttonsContainer = new RepeatingView("buttons");
-    protected BSFeedbackPanel feedbackGeral = newFeedbackPanel();
+    protected BSFeedbackPanel   feedbackGeral    = newFeedbackPanel("feedbackGeral", this, newIFeedbackMessageFilter());
 
-    protected BSFeedbackPanel newFeedbackPanel() {
-        return new BSFeedbackPanel("feedbackGeral", newIFeedbackMessageFilter()) {
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setVisible(BSModalBorder.this.anyMessage());
-            }
-        };
+    protected BSFeedbackPanel newFeedbackPanel(String id, BSModalBorder fence, IFeedbackMessageFilter messageFilter) {
+        return new BSFeedbackPanel(id, fence, messageFilter);
     }
 
     protected IFeedbackMessageFilter newIFeedbackMessageFilter() {
         return new NotContainedFeedbackMessageFilter(getBodyContainer());
     }
 
-    private final Component closeIcon;
-    private final Component compressIcon;
-    private final Component expandIcon;
-    private  IConsumer<AjaxRequestTarget> closeIconCallBack;
+    private final Component              closeIcon;
+    private final Component              compressIcon;
+    private final Component              expandIcon;
+    private IConsumer<AjaxRequestTarget> closeIconCallBack;
 
     public BSModalBorder(String id) {
         this(id, null);
@@ -217,8 +211,8 @@ public class BSModalBorder extends Border {
 
     public BSModalBorder addLink(ButtonStyle style, IModel<String> label, AjaxLink<?> button) {
         buttonsContainer.addOrReplace(button
-                .add(newLinkLabel(BUTTON_LABEL, button, label))
-                .add(new AttributeAppender("class", style.cssClassModel(), " ")));
+            .add(newLinkLabel(BUTTON_LABEL, button, label))
+            .add(new AttributeAppender("class", style.cssClassModel(), " ")));
         return this;
     }
 
@@ -286,7 +280,7 @@ public class BSModalBorder extends Border {
         return closeIcon.isVisible();
     }
 
-    public BSModalBorder setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallBack){
+    public BSModalBorder setCloseIconCallback(IConsumer<AjaxRequestTarget> closeIconCallBack) {
         this.closeIconCallBack = closeIconCallBack;
         return this;
     }
@@ -410,17 +404,15 @@ public class BSModalBorder extends Border {
 
     protected Component newCompressIcon(String id) {
         return new WebMarkupContainer(id)
-            .add($b.onReadyScript(comp ->
-                JQuery.$(comp) + ""
-                    + ".on('click', function() {"
-                    + JQuery.$(expandIcon) + ".show();"
-                    + JQuery.$(compressIcon) + ".hide();"
-                    + JQuery.$(getModalBody()) + ".slideUp();"
-                    + JQuery.$(getModalFooter()) + ".slideUp();"
-                    + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
-                    + "})"
-                    + ";"
-                ))
+            .add($b.onReadyScript(comp -> JQuery.$(comp) + ""
+                + ".on('click', function() {"
+                + JQuery.$(expandIcon) + ".show();"
+                + JQuery.$(compressIcon) + ".hide();"
+                + JQuery.$(getModalBody()) + ".slideUp();"
+                + JQuery.$(getModalFooter()) + ".slideUp();"
+                + " $('.modal-backdrop.fade.in').css('opacity',0.2);"
+                + "})"
+                + ";"))
             .add(new Behavior() {
                 @Override
                 public void renderHead(Component component, IHeaderResponse response) {
@@ -447,18 +439,16 @@ public class BSModalBorder extends Border {
     }
 
     protected Component newExpandIcon(String id) {
-        return new WebMarkupContainer(id).add($b.onReadyScript(comp ->
-            JQuery.$(comp) + ""
-                + ".on('click', function() {"
-                + JQuery.$(expandIcon) + ".hide();"
-                + JQuery.$(compressIcon) + ".show();"
-                + JQuery.$(getModalBody()) + ".slideDown();"
-                + JQuery.$(getModalFooter()) + ".slideDown();"
-                + " $('.modal-backdrop.fade.in').css('opacity','');"
-                + "})"
-                + ".css('display','none')"
-                + ";"
-            ));
+        return new WebMarkupContainer(id).add($b.onReadyScript(comp -> JQuery.$(comp) + ""
+            + ".on('click', function() {"
+            + JQuery.$(expandIcon) + ".hide();"
+            + JQuery.$(compressIcon) + ".show();"
+            + JQuery.$(getModalBody()) + ".slideDown();"
+            + JQuery.$(getModalFooter()) + ".slideDown();"
+            + " $('.modal-backdrop.fade.in').css('opacity','');"
+            + "})"
+            + ".css('display','none')"
+            + ";"));
     }
 
     protected Component newTitle(String id, IModel<String> titleModel) {
@@ -466,7 +456,7 @@ public class BSModalBorder extends Border {
     }
 
     protected void onCloseClicked(AjaxRequestTarget target) {
-        if (closeIconCallBack != null){
+        if (closeIconCallBack != null) {
             closeIconCallBack.accept(target);
         }
         hide(target);

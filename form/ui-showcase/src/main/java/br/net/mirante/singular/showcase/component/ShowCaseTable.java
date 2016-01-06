@@ -47,6 +47,7 @@ import br.net.mirante.singular.showcase.component.layout.CaseMasterDetail;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailButtons;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailColumns;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.component.layout.CaseTabs;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationBetweenFields;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationCustom;
@@ -95,6 +96,7 @@ public class ShowCaseTable {
             .addCase(CaseMasterDetailColumns.class)
             .addCase(CaseMasterDetailButtons.class)
             .addCase(CaseMasterDetailNested.class)
+            .addCase(CaseTabs.class)
         ;
         group("Validation", Icone.BAN)
             .addCase(CaseValidationRequired.class)

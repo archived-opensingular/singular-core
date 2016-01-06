@@ -39,6 +39,6 @@ public class PartialValidationButton extends AjaxButton {
     @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance.getObject());
+        WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance);
     }
 }
