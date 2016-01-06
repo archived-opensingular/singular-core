@@ -22,7 +22,7 @@ import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 
-public class BSControls extends BSContainer<BSControls>implements IBSGridCol<BSControls> {
+public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
     public BSControls(String id) {
         this(id, true);
