@@ -54,7 +54,7 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
-        new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
+        new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.showcase.view.page.**").mount(this);
     }
 
     @Override

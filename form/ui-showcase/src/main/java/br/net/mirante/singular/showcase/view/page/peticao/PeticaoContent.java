@@ -120,7 +120,7 @@ public class PeticaoContent extends Content
         @Override
         protected void onError(AjaxRequestTarget target, Form<?> form) {
             super.onError(target, form);
-            WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance.getObject());
+            WicketFormProcessing.onFormError(form, Optional.of(target), currentInstance);
         }
 
         private void addValidationErrors(AjaxRequestTarget target, Form<?> form, MInstancia trueInstance,

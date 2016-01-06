@@ -208,11 +208,11 @@ public class WicketBuildContext implements Serializable {
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
         @Override
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m.getObject());
+            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
         }
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel) {
-            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel.getObject());
+            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
     }
 
