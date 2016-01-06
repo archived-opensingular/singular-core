@@ -100,7 +100,7 @@ public final class MFormUtil {
     }
     public static String generateUserFriendlyPath(MInstancia instance, MInstancia parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        for (MInstancia node = instance; (node != null) && (node != parentContext); node = node.getPai()) {
+        for (MInstancia node = instance; node != null && !node.equals(parentContext); node = node.getPai()) {
             String label = node.as(MPacoteBasic.aspect()).getLabel();
             if (StringUtils.isNotBlank(label))
                 labels.add(label);
