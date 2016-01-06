@@ -1,17 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.modal.BSModalWindow;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -27,12 +22,18 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 
 /**
  * This component is used to represent a selection placed in a modal search.
@@ -81,7 +82,7 @@ public class SelectInputModalContainer extends BSContainer {
         BSContainer panel = new BSContainer(id);
 
 
-        final BSModalWindow searchModal = buildModal(id + "__modal", filterModel);
+        final BFModalWindow searchModal = buildModal(id + "__modal", filterModel);
 
         panel.appendTag("a", true, "class=\"btn default\"", new AjaxLink("link") {
             @Override
@@ -103,14 +104,14 @@ public class SelectInputModalContainer extends BSContainer {
         return panel;
     }
 
-    public BSModalWindow buildModal(String id, IModel<String> filterModel) {
-        BSModalWindow searchModal = new BSModalWindow(id, true);
+    public BFModalWindow buildModal(String id, IModel<String> filterModel) {
+        BFModalWindow searchModal = new BFModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
         searchModal.setBody(buildConteudoModal(id, filterModel, searchModal));
         return searchModal;
     }
 
-    public BSGrid buildConteudoModal(String id, IModel<String> filterModel, BSModalWindow modal) {
+    public BSGrid buildConteudoModal(String id, IModel<String> filterModel, BFModalWindow modal) {
         BSGrid grid = new BSGrid(id + "_modalBody");
 
         Component table = buildResultTable(id + "_resultTable", filterModel, modal);
@@ -122,7 +123,7 @@ public class SelectInputModalContainer extends BSContainer {
         return grid;
     }
 
-    private Component buildResultTable(String id, IModel<String> filterModel, final BSModalWindow modal) {
+    private Component buildResultTable(String id, IModel<String> filterModel, final BFModalWindow modal) {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "value");
         MTipo<?> type = model.getObject().getMTipo();

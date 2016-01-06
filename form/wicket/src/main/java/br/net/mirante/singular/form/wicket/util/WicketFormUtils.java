@@ -136,4 +136,16 @@ public abstract class WicketFormUtils {
             }
         });
     }
+
+    public static Optional<MInstancia> resolveInstance(Component component) {
+        return (component != null)
+            ? resolveInstance(component.getDefaultModel())
+            : Optional.empty();
+    }
+
+    public static Optional<MInstancia> resolveInstance(final IModel<?> model) {
+        return (model instanceof IMInstanciaAwareModel<?>)
+            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+            : Optional.empty();
+    }
 }

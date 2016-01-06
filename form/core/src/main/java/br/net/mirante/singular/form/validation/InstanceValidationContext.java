@@ -50,7 +50,7 @@ public class InstanceValidationContext {
         final I instance = validatable.getInstance();
 
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
-            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Obrigatório"));
+            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Campo obrigatório"));
             return;
         }
 
