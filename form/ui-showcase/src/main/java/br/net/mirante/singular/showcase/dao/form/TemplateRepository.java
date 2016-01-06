@@ -15,7 +15,7 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.MPacoteCurriculo;
-import br.net.mirante.singular.showcase.view.page.peticao.MPacotePeticaoGGTOX;
+import br.net.mirante.singular.showcase.view.page.form.examples.MPacotePeticaoGGTOX;
 
 public class TemplateRepository extends MDicionarioResolver {
 

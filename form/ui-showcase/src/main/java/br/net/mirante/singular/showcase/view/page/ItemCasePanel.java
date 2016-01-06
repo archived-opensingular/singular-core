@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.showcase;
+package br.net.mirante.singular.showcase.view.page;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 

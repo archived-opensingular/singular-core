@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.showcase.view.page.showcase.ItemCasePanel;
+import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 
 import java.io.Serializable;
 import java.util.ArrayList;

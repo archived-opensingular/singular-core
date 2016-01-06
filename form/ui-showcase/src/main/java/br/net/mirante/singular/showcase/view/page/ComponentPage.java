@@ -1,7 +1,5 @@
-package br.net.mirante.singular.showcase.view.page.showcase;
+package br.net.mirante.singular.showcase.view.page;
 
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.showcase.view.template.Template;
 import org.apache.wicket.RestartResponseAtInterceptPageException;

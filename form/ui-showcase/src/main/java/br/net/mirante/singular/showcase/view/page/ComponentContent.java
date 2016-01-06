@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.showcase;
+package br.net.mirante.singular.showcase.view.page;
 
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;

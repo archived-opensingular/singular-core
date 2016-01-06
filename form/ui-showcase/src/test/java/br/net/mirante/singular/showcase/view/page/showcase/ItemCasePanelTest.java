@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.view.page.showcase;
 
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
-import br.net.mirante.singular.showcase.view.page.showcase.ItemCasePanel;
+import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 import br.net.mirante.singular.showcase.wicket.ShowcaseApplication;
 import javax.inject.Inject;
 import junit.framework.TestCase;

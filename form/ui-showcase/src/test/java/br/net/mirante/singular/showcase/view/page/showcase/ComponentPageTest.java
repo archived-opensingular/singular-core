@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
-import br.net.mirante.singular.showcase.view.page.showcase.ComponentPage;
+import br.net.mirante.singular.showcase.view.page.ComponentPage;
 import br.net.mirante.singular.showcase.wicket.ShowcaseApplication;
 import junit.framework.TestCase;
 import org.apache.wicket.request.mapper.parameter.PageParameters;

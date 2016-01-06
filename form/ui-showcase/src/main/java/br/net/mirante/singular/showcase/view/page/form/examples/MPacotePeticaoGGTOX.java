@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.peticao;
+package br.net.mirante.singular.showcase.view.page.form.examples;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;

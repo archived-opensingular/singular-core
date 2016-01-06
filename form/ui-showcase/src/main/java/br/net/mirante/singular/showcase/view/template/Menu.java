@@ -7,7 +7,7 @@ import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.showcase.view.page.showcase.ComponentPage;
+import br.net.mirante.singular.showcase.view.page.ComponentPage;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
