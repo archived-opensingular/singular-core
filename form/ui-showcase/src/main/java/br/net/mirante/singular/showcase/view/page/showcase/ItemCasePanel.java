@@ -1,26 +1,16 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
-import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.BelverPanel;
-import br.net.mirante.singular.showcase.component.CaseBase;
-import br.net.mirante.singular.showcase.component.ResourceRef;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -33,8 +23,20 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
+import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.panel.BelverPanel;
+import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.ResourceRef;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -44,7 +46,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
      */
     private static final long serialVersionUID = 3200319871613673285L;
 
-    private final BSModalBorder viewXmlModal = new BSModalBorder("viewXmlModal");
+    private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
     private final IModel<CaseBase> caseBase;
 
     private BelverPanel belverPanel = null;
@@ -63,7 +65,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         super.onInitialize();
         add(buildHeaderText());
 
-        Form form = new Form("form");
+        Form<Void> form = new Form<>("form");
         form.add(buildBelverBasePanel());
         form.add(buildButtons());
         form.add(viewXmlModal);

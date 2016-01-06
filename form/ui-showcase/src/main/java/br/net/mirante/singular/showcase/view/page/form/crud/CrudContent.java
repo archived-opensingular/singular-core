@@ -1,27 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.FileDao;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository.TemplateEntry;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.FormVO;
-import br.net.mirante.singular.showcase.view.template.Content;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,7 +9,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -47,22 +29,42 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.feedback.BFFeedbackPanel;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.dao.form.FileDao;
+import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
+import br.net.mirante.singular.showcase.dao.form.TemplateRepository.TemplateEntry;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.FormVO;
+import br.net.mirante.singular.showcase.view.template.Content;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
 @SuppressWarnings("serial")
 public class CrudContent extends Content
-        implements SingularWicketContainer<CrudContent, Void> {
-
+    implements SingularWicketContainer<CrudContent, Void> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CrudContent.class);
 
     private BSDataTable<ExampleDataDTO, String> listTable;
-    private List<ExampleDataDTO> dataList = new LinkedList<>();
-    private FormVO selectedTemplate;
+    private List<ExampleDataDTO>                dataList = new LinkedList<>();
+    private FormVO                              selectedTemplate;
 
-    private final BSModalBorder deleteModal = new BSModalBorder("deleteModal");
-    private final BSModalBorder viewXmlModal = new BSModalBorder("viewXmlModal");
-    private Form<?> deleteForm = new Form<>("delete-form");
+    private final BFModalBorder deleteModal  = new BFModalBorder("deleteModal");
+    private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
+    private Form<?>             deleteForm   = new Form<>("delete-form");
 
     @Inject
     ExampleDataDAO dao;
@@ -90,7 +92,7 @@ public class CrudContent extends Content
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        queue(new BSFeedbackPanel("feedback"));
+        queue(new BFFeedbackPanel("feedback", this));
         Form<Object> optionsForm = new Form<>("optionsForm");
         optionsForm.queue(setUpTemplatesOptions());
         queue(optionsForm);
@@ -110,16 +112,16 @@ public class CrudContent extends Content
         queue(viewXmlModal);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private DropDownChoice setUpTemplatesOptions() {
         List<SelectOption> options = TemplateRepository.get().getEntries().stream()
-                .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
-                .collect(Collectors.toList());
+            .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
+            .collect(Collectors.toList());
 
         ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
         return new DropDownChoice<SelectOption>("options",
-                new SelectOption(selectedTemplate.getKey(), selectedTemplate),
-                options, choiceRenderer) {
+            new SelectOption(selectedTemplate.getKey(), selectedTemplate),
+            options, choiceRenderer) {
             @Override
             protected boolean wantOnSelectionChangedNotifications() {
                 return true;
@@ -144,7 +146,7 @@ public class CrudContent extends Content
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 PageParameters params = new PageParameters().add(
-                        FormPage.TYPE_NAME, selectedTemplate.getTypeName());
+                    FormPage.TYPE_NAME, selectedTemplate.getTypeName());
                 setResponsePage(FormPage.class, params);
             }
 
@@ -159,46 +161,36 @@ public class CrudContent extends Content
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
         updateDataList();
         return new BSDataTableBuilder<>(createDataProvider())
-                .appendPropertyColumn(getMessage("label.table.column.key"),
-                        "key", ExampleDataDTO::getKey)
-                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                                .appendAction(getMessage("label.table.column.edit"),
-                                        Icone.PENCIL_SQUARE,
-                                        (target, model) -> {
-                                            setResponsePage(FormPage.class,
-                                                    new PageParameters()
-                                                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
-                                                            .add(FormPage.VIEW_MODE, ViewMode.EDITION)
-                                            );
-                                        }
-                                )
-                )
-                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                                .appendAction(getMessage("label.table.column.visualizar"),
-                                        Icone.EYE,
-                                        (target, model) -> {
-                                            setResponsePage(FormPage.class,
-                                                    new PageParameters()
-                                                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
-                                                            .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
-                                            );
-                                        }
-                                )
-                )
-                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                                .appendAction(getMessage("label.table.column.delete"),
-                                        Icone.MINUS, this::deleteSelected
-                                )
-                )
-                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                                .appendAction(getMessage("label.table.column.visualizar.xml"),
-                                        Icone.EYE, this::viewXml
-                                )
-                )
-                .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
-                .build("data-list");
+            .appendPropertyColumn(getMessage("label.table.column.key"),
+                "key", ExampleDataDTO::getKey)
+            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.edit"),
+                    Icone.PENCIL_SQUARE,
+                    (target, model) -> {
+                        setResponsePage(FormPage.class,
+                            new PageParameters()
+                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                .add(FormPage.VIEW_MODE, ViewMode.EDITION));
+                    }))
+            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.visualizar"),
+                    Icone.EYE,
+                    (target, model) -> {
+                        setResponsePage(FormPage.class,
+                            new PageParameters()
+                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
+                    }))
+            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.delete"),
+                    Icone.MINUS, this::deleteSelected))
+            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.visualizar.xml"),
+                    Icone.EYE, this::viewXml))
+            .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
+            .build("data-list");
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
@@ -211,7 +203,7 @@ public class CrudContent extends Content
 
             @Override
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
-                                                               String sortProperty, boolean ascending) {
+                String sortProperty, boolean ascending) {
                 return dataList.iterator();
             }
         };
@@ -235,11 +227,11 @@ public class CrudContent extends Content
 
         viewXmlModal.addOrReplace(xmlTabs);
         viewXmlModal.show(target);
-        viewXmlModal.setSize(BSModalBorder.Size.LARGE);
+        viewXmlModal.setSize(BFModalBorder.Size.LARGE);
     }
 
     private String getXmlTabulado(String xmlString) {
-        if(!xmlString.isEmpty()) {
+        if (!xmlString.isEmpty()) {
             try {
                 final MElement xml = MParser.parse(xmlString);
                 final StringWriter sw = new StringWriter();

@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,9 +13,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang3.StringUtils;
-
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MIBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 
@@ -310,18 +306,5 @@ public abstract class MInstances {
     public static <V> boolean hasAttributeValue(MInstancia instance, AtrRef<?, ?, V> attribute) {
         V value = instance.getValorAtributo(attribute);
         return (value != null);
-    }
-
-    public static String getFullPathLabel(MInstancia instance) {
-        List<String> labels = new ArrayList<>();
-        for (MInstancia node = instance; node != null; node = node.getPai()) {
-            String label = node.as(MPacoteBasic.aspect()).getLabel();
-            if (StringUtils.isNotBlank(label))
-                labels.add(label);
-        }
-        Collections.reverse(labels);
-        if (!labels.isEmpty())
-            return StringUtils.join(" > ", labels);
-        return "[" + instance.getNome() + "]";
     }
 }

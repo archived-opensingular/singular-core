@@ -1,12 +1,18 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import javax.lang.model.SourceVersion;
 
-final class MFormUtil {
+import org.apache.commons.lang3.StringUtils;
+
+import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+
+public final class MFormUtil {
 
     public static boolean isNomeSimplesValido(String nome) {
         return SourceVersion.isIdentifier(nome);
@@ -87,5 +93,23 @@ final class MFormUtil {
             return sb.toString();
         }
         return null;
+    }
+
+    public static String generateUserFriendlyPath(MInstancia instance) {
+        return generateUserFriendlyPath(instance, null);
+    }
+    public static String generateUserFriendlyPath(MInstancia instance, MInstancia parentContext) {
+        LinkedList<String> labels = new LinkedList<>();
+        for (MInstancia node = instance; (node != null) && (node != parentContext); node = node.getPai()) {
+            String label = node.as(MPacoteBasic.aspect()).getLabel();
+            if (StringUtils.isNotBlank(label))
+                labels.add(label);
+        }
+        Collections.reverse(labels);
+
+        if (!labels.isEmpty())
+            return StringUtils.join(labels, " > ");
+        else
+            return "[" + instance.getNome() + "]";
     }
 }
