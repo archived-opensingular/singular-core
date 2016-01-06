@@ -127,7 +127,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
             root.withView(new MListMasterDetailView()
                     .col(identificacao.tipoComponente)
-                    .col(sinonimia.sugerida)
+//                    .col(sinonimia.sugerida)
             );
         }
 
@@ -695,7 +695,6 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 type.addCampoString("observacoes")
                         .withView(MTextAreaView::new)
                         .as(AtrBasic::new).label("Observações");
-
             }
 
             private MTipoString createStringField(String fieldname, String label, Integer maxSize, Integer colPreference) {
