@@ -510,7 +510,7 @@ public class ProcessInstance implements Serializable {
      * @param task a tarefa especificada.
      */
     public final void forceStateUpdate(MTask<?> task) {
-        final TaskInstance tarefaOrigem = getCurrentTask();
+        final TaskInstance tarefaOrigem = getLatestTask();
         List<MUser> pessoasAnteriores = getResponsaveisDiretos();
         final Date agora = new Date();
         TaskInstance tarefaNova = updateState(tarefaOrigem, null, task, agora);

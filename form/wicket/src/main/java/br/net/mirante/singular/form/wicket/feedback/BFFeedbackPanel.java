@@ -1,11 +1,13 @@
 package br.net.mirante.singular.form.wicket.feedback;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
 
 import br.net.mirante.singular.form.mform.MFormUtil;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 
@@ -33,9 +35,11 @@ public class BFFeedbackPanel extends BSFeedbackPanel {
             if (message instanceof BFeedbackMessage) {
                 final BFeedbackMessage bfm = (BFeedbackMessage) message;
 
-                final String labelPath = MFormUtil.generateUserFriendlyPath(
-                    bfm.getInstanceModel().getObject(),
-                    WicketFormUtils.resolveInstance(getFence()).orElse(null));
+                final MInstancia instance = bfm.getInstanceModel().getObject();
+                final MInstancia parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
+                final String labelPath = StringUtils.defaultString(
+                    MFormUtil.generateUserFriendlyPath(instance, parentContext),
+                    MFormUtil.generatePath(instance, it -> it == parentContext));
 
                 label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
             }
