@@ -1,61 +1,70 @@
 package br.net.mirante.singular.bamclient.builder;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
-public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractAmChartBuilder {
+
+public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractAmChartBuilder<T> {
 
     public AmChartBuilder(AmChartBuilderContext context) {
         super(context);
     }
 
-    public T setCategoryField(String categoryField) {
-        try {
-            context.getjGen().writeStringField("categoryField", categoryField);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (T) this;
+    public T categoryField(String value) {
+        return writeField("categoryField", value);
     }
 
-    public T setTheme(String theme) {
-        try {
-            context.getjGen().writeStringField("theme", theme);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (T) this;
+    public T startDuration(Number value) {
+        return writeField("startDuration", value);
     }
 
-    public T setDataProvider(AmChartDataProvider dataProvider) {
-        try {
-            context.getjGen().writeArrayFieldStart("dataProvider");
-            for (Map<String, String> map : dataProvider.getDataList()) {
-                context.getjGen().writeStartObject();
-                for (Map.Entry<String, String> entrySet : map.entrySet()) {
-                    context.getjGen().writeStringField(entrySet.getKey(), entrySet.getValue());
-                }
-                context.getjGen().writeEndObject();
+    public T theme(String value) {
+        return writeField("theme", value);
+    }
+
+    public T gridAboveGraphs(boolean value) {
+        return writeField("gridAboveGraphs", value);
+    }
+
+    public T graphs(Collection<AmChartGraph> graphs) {
+        return writeArray("graphs", graphs);
+    }
+
+    public T categoryAxis(AmChartCategoryAxis value) {
+        return writeNamedObject("categoryAxis", value);
+    }
+
+    public T legend(AmChartLegend value) {
+        return writeNamedObject("legend", value);
+    }
+
+    public T chartCursor(AmChartCursor value) {
+        return writeNamedObject("chartCursor", value);
+    }
+
+    public T valueAxes(Collection<AmChartValueAxes> value) {
+        return writeArray("valueAxes", value);
+    }
+
+    public T titles(Collection<String> titles) {
+        context.getjWriter().key("titles").array();
+        titles.forEach(t -> context.getjWriter().value(t));
+        context.getjWriter().endArray();
+        return self();
+    }
+
+    public T dataProvider(ChartDataProvider dataProvider) {
+        context.getjWriter().key("danilo").value("(function(){alert('ola mundo!');})();");
+        context.getjWriter().key("dataProvider").array();
+        for (Map<String, String> map : dataProvider.getDataList()) {
+            context.getjWriter().object();
+            for (Map.Entry<String, String> entrySet : map.entrySet()) {
+                context.getjWriter().key(entrySet.getKey()).value(entrySet.getValue());
             }
-            context.getjGen().writeEndArray();
-        } catch (IOException e) {
-            e.printStackTrace();
+            context.getjWriter().endObject();
         }
-        return (T) this;
+        context.getjWriter().endArray();
+        return self();
     }
 
-    public T setGraph(AmChartGraph amChartGraph) {
-        try {
-            context.getjGen().writeArrayFieldStart("graphs");
-            context.getjGen().writeStartObject();
-            for (Map.Entry<String, String> entrySet : amChartGraph.getProperties().entrySet()) {
-                context.getjGen().writeStringField(entrySet.getKey(), entrySet.getValue());
-            }
-            context.getjGen().writeEndObject();
-            context.getjGen().writeEndArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return (T) this;
-    }
 }

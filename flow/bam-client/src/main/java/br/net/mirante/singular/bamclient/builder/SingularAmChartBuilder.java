@@ -1,21 +1,19 @@
 package br.net.mirante.singular.bamclient.builder;
 
 
-import java.io.IOException;
-
-public class SingularAmChartBuilder extends AbstractAmChartBuilder {
+public class SingularAmChartBuilder extends AbstractAmChartBuilder<SingularAmChartBuilder> {
 
     public SingularAmChartBuilder() {
         super(new AmChartBuilderContext());
     }
 
     public AmSerialChartBuilder newSerialChart() {
-        try {
-            context.getjGen().writeStartObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        context.getjWriter().object();
         return new AmSerialChartBuilder(context);
     }
 
+    @Override
+    public SingularAmChartBuilder self() {
+        return this;
+    }
 }

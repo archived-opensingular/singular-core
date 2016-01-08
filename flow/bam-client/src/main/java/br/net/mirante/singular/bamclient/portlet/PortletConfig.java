@@ -8,7 +8,6 @@ import java.util.Map;
 public abstract class PortletConfig implements Serializable {
 
     private PortletSize portletSize = PortletSize.MEDIUM;
-    private Map<String, String> quickFilterOptionsValues;
     private String title;
     private String subtitle;
 
@@ -27,11 +26,6 @@ public abstract class PortletConfig implements Serializable {
         return this;
     }
 
-    public PortletConfig setQuickFilterOptionsValues(Map<String, String> quickFilterOptionsValues) {
-        this.quickFilterOptionsValues = quickFilterOptionsValues;
-        return this;
-    }
-
     public PortletSize getPortletSize() {
         return portletSize;
     }
@@ -43,9 +37,5 @@ public abstract class PortletConfig implements Serializable {
     public String getSubtitle() {
         return subtitle;
     }
-
-    public Map<String, String> getQuickFilterOptionsValues() {
-        return quickFilterOptionsValues;
-    }
-
+    
 }

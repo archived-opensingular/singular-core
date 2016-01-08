@@ -1,12 +1,15 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import br.net.mirante.singular.bamclient.builder.AmChartDataProvider;
-import br.net.mirante.singular.bamclient.builder.AmChartGraph;
-import br.net.mirante.singular.bamclient.builder.SingularAmChartBuilder;
+import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
+import br.net.mirante.singular.bamclient.chart.AbstractSerialChart;
+import br.net.mirante.singular.bamclient.chart.ChartValueField;
+import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
+import br.net.mirante.singular.bamclient.chart.LineSerialChart;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,6 +123,23 @@ public class DashboardContent extends Content {
 
     private void addDefaultCharts(Set<String> processCodeWithAccess) {
         DashboardRow row = addDashboardRow();
+
+
+        final List<Map<String, String>> graphData =  uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
+        final ChartDataProvider provider = new ChartDataProvider().addAll(graphData);
+        final ChartValueField novas  = new ChartValueField("QTD_NEW", "Novas", "");
+        final ChartValueField concluidas  = new ChartValueField("QTD_CLS", "Concluidas", "");
+
+        final List<ChartValueField> values = Arrays.asList(novas, concluidas);
+
+        final LineSerialChart serialChart = new LineSerialChart(provider, values, "MES");
+        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig();
+
+        serialChart.withLegend();
+        amChartPortletConfig.setDefinition(serialChart.getDefinition());
+
+        row.addMediumColumn(new PortletView<>("mySerialChart2", amChartPortletConfig));
+
         row.addMediumColumn(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
                 "label.chart.new.instance.quantity.title", ImmutablePair.of("QTD_NEW", getString("label.chart.new.instance.quantity.new")),
                 "MES", "smoothedLine") {
@@ -157,32 +177,23 @@ public class DashboardContent extends Content {
     private void addWelcomeChart(Set<String> processCodeWithAccess) {
 
 
-        String json = new SingularAmChartBuilder()
-                .newSerialChart()
-                .setDataProvider(new AmChartDataProvider().addAll(uiAdminFacade.retrieveMeanTimeByProcess(PeriodType.YEARLY.getPeriod(), null, processCodeWithAccess)))
-                .setCategoryField("NOME")
-                .setGraph(new AmChartGraph().setType("column").setValueField("MEAN").setFillAlphas("0.9").setLineAlpha("0.2"))
-                .finish();
+        final List<Map<String, String>> graphData = uiAdminFacade.retrieveMeanTimeByProcess(PeriodType.YEARLY.getPeriod(), null, processCodeWithAccess);
 
-        AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig();
-        amChartPortletConfig.setDefinition(json);
+        final ChartDataProvider provider = new ChartDataProvider().addAll(graphData);
+        final ColumnSerialChart serialChart = new ColumnSerialChart(provider,
+                Collections.singletonList(new ChartValueField("MEAN", "", "dia(s)")), "NOME");
 
-        addDashboardRow().addMediumColumn(new PortletView<>("danilo", amChartPortletConfig));
+        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig();
+        amChartPortletConfig.setDefinition(serialChart.getDefinition());
+
+        addDashboardRow().addMediumColumn(new PortletView<>("mySerialChart", amChartPortletConfig));
 
         if (processDefinitionCode == null) {
             addDashboardRow().addMediumColumn(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null, processCodeWithAccess);
-                }
-            });
-
-            addDashboardRow().addMediumColumn(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
-                    "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
-                @Override
-                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null, processCodeWithAccess);
+                    return graphData;
                 }
             });
         } else {

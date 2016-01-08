@@ -1,27 +1,21 @@
 package br.net.mirante.singular.bamclient.builder;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
+import org.json.JSONWriter;
+
 
 public class AmChartBuilderContext {
 
-    private final JsonGenerator jGen;
+    private final JSONWriter jWriter;
     private final StringWriter writer = new StringWriter();
 
     public AmChartBuilderContext() {
-        try {
-            final JsonFactory jsonFactory = new JsonFactory();
-            jGen = jsonFactory.createGenerator(writer);
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao criar JSON Generator");
-        }
+        jWriter = new JSONWriter(writer);
     }
 
-    public JsonGenerator getjGen() {
-        return jGen;
+    public JSONWriter getjWriter() {
+        return jWriter;
     }
 
     public StringWriter getWriter() {

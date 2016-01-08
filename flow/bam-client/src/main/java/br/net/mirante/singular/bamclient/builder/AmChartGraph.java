@@ -3,36 +3,37 @@ package br.net.mirante.singular.bamclient.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AmChartGraph {
+public class AmChartGraph extends AmChartObject<AmChartGraph> {
 
-    private final Map<String, String> properties = new HashMap<>();
-
-    public AmChartGraph setFillAlphas(String fillAlphas) {
-        properties.put("fillAlphas", fillAlphas);
-        return this;
+    public AmChartGraph fillAlphas(Number value) {
+        return put("fillAlphas", value);
     }
 
-    public AmChartGraph setLineAlpha(String lineAlpha) {
-        properties.put("lineAlpha", lineAlpha);
-        return this;
+    public AmChartGraph lineAlpha(Number value) {
+        return put("lineAlpha", value);
     }
 
-    public AmChartGraph setType(String type) {
-        properties.put("type", type);
-        return this;
+    public AmChartGraph type(String value) {
+        return put("type", value);
     }
 
-    public AmChartGraph setValueField(String valueField) {
-        properties.put("valueField", valueField);
-        return this;
+    public AmChartGraph valueField(String value) {
+        return put("valueField", value);
     }
 
-    public AmChartGraph setBalloonText(String balloonText) {
-        properties.put("balloonText", balloonText);
-        return this;
+    public AmChartGraph balloonText(String value) {
+        return put("balloonText", value);
     }
 
-    public Map<String, String> getProperties() {
-        return properties;
+    public AmChartGraph bullet(String value) {
+        return put("bullet", value);
+    }
+
+    public AmChartGraph title(String value) {
+        return put("title", value);
+    }
+    @Override
+    public AmChartGraph self() {
+        return this;
     }
 }

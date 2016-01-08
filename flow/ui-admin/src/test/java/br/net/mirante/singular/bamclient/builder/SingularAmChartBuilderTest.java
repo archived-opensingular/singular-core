@@ -24,12 +24,12 @@ public class SingularAmChartBuilderTest extends TestCase {
         map2.put("nome", "rodrigo");
         map2.put("idade", "26");
 
-        AmChartDataProvider provider = new AmChartDataProvider();
+        ChartDataProvider provider = new ChartDataProvider();
         provider.addData(map1);
         provider.addData(map2);
 
         String json = new SingularAmChartBuilder().newSerialChart()
-                .setDataProvider(provider).finish();
+                .dataProvider(provider).finish();
 
         assertEquals("{\"type\":\"serial\",\"dataProvider\":[{\"idade\":\"24\",\"nome\":\"danilo\"},{\"idade\":\"26\",\"nome\":\"rodrigo\"}]}", json);
 
