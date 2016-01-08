@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestMInstances {
@@ -13,6 +14,9 @@ public class TestMInstances {
 
         MInstances.getDescendant(contato, pacote.nome).getValor();
         MInstances.listDescendants(contato, pacote.enderecoEstado).stream();
-    }
 
+        Assert.assertTrue(MInstances.findCommonAncestor(contato, pacote.contato)
+            .filter(it -> it.getMTipo() == pacote.contato)
+            .isPresent());
+    }
 }
