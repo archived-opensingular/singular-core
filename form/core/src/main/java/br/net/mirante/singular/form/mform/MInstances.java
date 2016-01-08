@@ -147,7 +147,7 @@ public abstract class MInstances {
     @SuppressWarnings("unchecked")
     public static <CA extends MInstancia & ICompositeInstance> Optional<CA> findCommonAncestor(MInstancia node, MTipo<?> targetType) {
         for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
-            for (MInstancia ancestor = node.getPai(); ancestor != null; ancestor = ancestor.getPai()) {
+            for (MInstancia ancestor = node; ancestor != null; ancestor = ancestor.getPai()) {
                 if (ancestor.getMTipo() == type) {
                     return Optional.of((CA) ancestor);
                 }
