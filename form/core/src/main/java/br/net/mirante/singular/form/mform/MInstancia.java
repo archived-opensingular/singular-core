@@ -136,7 +136,7 @@ public abstract class MInstancia implements MAtributoEnabled {
     public abstract boolean isEmptyOfData();
 
     public Object getValorWithDefault() {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+        return getValorWithDefault(null);
     }
 
     @SuppressWarnings("unchecked")
