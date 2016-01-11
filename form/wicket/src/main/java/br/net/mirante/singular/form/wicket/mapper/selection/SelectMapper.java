@@ -53,7 +53,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         final MInstancia mi = model.getObject();
         if (mi != null){
             if(mi instanceof MSelectionableInstance) {
-                return ((MSelectionableInstance)mi).getFieldValue();
+                return ((MSelectionableInstance)mi).getFieldId();
             }
         }
         return StringUtils.EMPTY;

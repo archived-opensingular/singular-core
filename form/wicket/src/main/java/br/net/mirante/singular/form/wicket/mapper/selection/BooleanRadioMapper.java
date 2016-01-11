@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -25,5 +26,19 @@ public class BooleanRadioMapper extends RadioMapper {
                 return opcoesValue;
             }
         };
+    }
+    
+    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+        final MInstancia mi = model.getObject();
+        Boolean valor = mi.getValor(Boolean.class);
+        if(valor != null) {
+            MBooleanRadioView booleanRadioView = (MBooleanRadioView) mi.getMTipo().getView();
+            if(valor){
+                return booleanRadioView.labelTrue();
+            } else {
+                return booleanRadioView.labelFalse();
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }

@@ -3,7 +3,9 @@ package br.net.mirante.singular.form.mform.basic.view;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 
-@SuppressWarnings("serial")
+/**
+ * View para renderização do {@link MTipoBoolean} em forma de input radio.
+ */
 public class MBooleanRadioView extends MView {
 
     private String labelTrue = "Sim";
