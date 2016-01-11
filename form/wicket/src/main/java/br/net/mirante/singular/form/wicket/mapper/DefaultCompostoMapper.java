@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.mapper.comment.CommentComponent;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -41,17 +42,27 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
 
         final BSContainer<?> parentCol = ctx.getContainer();
-        final BSGrid grid = parentCol.newGrid();
 
-        addLabelIfNeeded(instance, grid);
+        BSRow superRow = parentCol.newGrid().newRow();
 
-        final BSRow row = grid.newRow();
+        {
+//            final BSGrid grid = parentCol.newGrid();
+            final BSGrid grid = superRow.newCol(9).setCssClass("col-sm-9").newGrid();
 
-        grid.add(DisabledClassBehavior.getInstance());
-        grid.setDefaultModel(model);
+            addLabelIfNeeded(instance, grid);
 
-        for (MTipo<?> tCampo : tComposto.getFields()) {
-            buildField(ctx.getUiBuilderWicket(), ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()));
+            final BSRow row = grid.newRow();
+
+            grid.add(DisabledClassBehavior.getInstance());
+            grid.setDefaultModel(model);
+
+            for (MTipo<?> tCampo : tComposto.getFields()) {
+                buildField(ctx.getUiBuilderWicket(), ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()));
+            }
+        }
+        {
+            final BSGrid grid = superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
+            final BSRow row = grid.newRow();
         }
     }
 
@@ -72,9 +83,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         if (iCampo instanceof MIComposto) {
             final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
+            WicketBuildContext childCtx = ctx.createChild(col.newGrid().newColInRow(), true, mCampo);
+            wicketBuilder.build(childCtx, viewMode);
         } else {
-            wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true, mCampo), viewMode);
+            BSCol col = row.newCol();
+            col.appendTag("div",true, "style=\"float: right;\"", (id) -> new CommentComponent(id, iCampo));
+            WicketBuildContext childCtx = ctx.createChild(configureColspan(ctx, type, iCampo, col), true, mCampo);
+            wicketBuilder.build(childCtx, viewMode);
         }
     }
 
