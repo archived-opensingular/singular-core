@@ -1,9 +1,8 @@
-package br.net.mirante.singular.bamclient.builder;
+package br.net.mirante.singular.bamclient.builder.amchart;
 
-import java.util.HashMap;
-import java.util.Map;
+import br.net.mirante.singular.bamclient.builder.JSONObjectMappper;
 
-public class AmChartGraph extends AmChartObject<AmChartGraph> {
+public class AmChartGraph extends JSONObjectMappper<AmChartGraph> {
 
     public AmChartGraph fillAlphas(Number value) {
         return put("fillAlphas", value);

@@ -1,6 +1,8 @@
-package br.net.mirante.singular.bamclient.builder;
+package br.net.mirante.singular.bamclient.builder.amchart;
 
-public class AmChartCategoryAxis extends AmChartObject<AmChartCategoryAxis> {
+import br.net.mirante.singular.bamclient.builder.JSONObjectMappper;
+
+public class AmChartCategoryAxis extends JSONObjectMappper<AmChartCategoryAxis> {
 
     public AmChartCategoryAxis gridPosition(String value) {
         return put("gridPosition", value);

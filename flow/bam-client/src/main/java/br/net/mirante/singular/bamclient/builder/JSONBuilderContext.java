@@ -5,12 +5,12 @@ import java.io.StringWriter;
 import org.json.JSONWriter;
 
 
-public class AmChartBuilderContext {
+public class JSONBuilderContext {
 
     private final JSONWriter jWriter;
     private final StringWriter writer = new StringWriter();
 
-    public AmChartBuilderContext() {
+    public JSONBuilderContext() {
         jWriter = new JSONWriter(writer);
     }
 

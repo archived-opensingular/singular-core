@@ -2,15 +2,14 @@ package br.net.mirante.singular.bamclient.chart;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-import br.net.mirante.singular.bamclient.builder.AmChartGraph;
-import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartGraph;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
 
 public class LineSerialChart extends AbstractSerialChart {
 
-    public LineSerialChart(ChartDataProvider dataProvider, List<ChartValueField> values, String category) {
+    public LineSerialChart(ChartDataProvider dataProvider, List<AmChartValueField> values, String category) {
         super(dataProvider, values, category);
     }
 

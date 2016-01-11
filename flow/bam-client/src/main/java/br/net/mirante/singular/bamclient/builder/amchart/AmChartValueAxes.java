@@ -1,6 +1,8 @@
-package br.net.mirante.singular.bamclient.builder;
+package br.net.mirante.singular.bamclient.builder.amchart;
 
-public class AmChartValueAxes extends AmChartObject<AmChartValueAxes> {
+import br.net.mirante.singular.bamclient.builder.JSONObjectMappper;
+
+public class AmChartValueAxes extends JSONObjectMappper<AmChartValueAxes> {
 
     public AmChartValueAxes gridColor(String value) {
         return put("gridColor", value);

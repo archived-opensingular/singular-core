@@ -1,6 +1,8 @@
-package br.net.mirante.singular.bamclient.builder;
+package br.net.mirante.singular.bamclient.builder.amchart;
 
-public class AmChartCursor extends AmChartObject<AmChartCursor> {
+import br.net.mirante.singular.bamclient.builder.JSONObjectMappper;
+
+public class AmChartCursor extends JSONObjectMappper<AmChartCursor> {
 
     public AmChartCursor categoryBalloonEnabled(boolean value) {
         return put("categoryBalloonEnabled", value);

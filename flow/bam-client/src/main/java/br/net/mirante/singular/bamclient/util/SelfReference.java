@@ -1,4 +1,4 @@
-package br.net.mirante.singular.bamclient.builder;
+package br.net.mirante.singular.bamclient.util;
 
 public interface SelfReference<T> {
     T self();

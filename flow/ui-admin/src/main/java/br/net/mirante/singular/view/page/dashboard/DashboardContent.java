@@ -17,10 +17,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
-import br.net.mirante.singular.bamclient.chart.ChartValueField;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
+import br.net.mirante.singular.bamclient.chart.ChartDataProvider;
 import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
 import br.net.mirante.singular.bamclient.chart.LineSerialChart;
+import br.net.mirante.singular.bamclient.chart.StalessChartDataProvider;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
@@ -123,12 +124,16 @@ public class DashboardContent extends Content {
     }
 
     private void addDefaultCharts(Set<String> processCodeWithAccess) {
-        DashboardRow row = addDashboardRow();
 
-        final List<Map<String, String>> graphData = uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
+        final DashboardRow row = addDashboardRow();
 
-        final ChartDataProvider provider = new ChartDataProvider().addAll(graphData);
-        final List<ChartValueField> valuesField = Arrays.asList(new ChartValueField("QTD_NEW", "Novas", ""), new ChartValueField("QTD_CLS", "Concluidas", ""));
+        final ChartDataProvider provider = new StalessChartDataProvider() {
+            @Override
+            public List<Map<String, String>> loadData(PortletFilterContext filterContext) {
+                return uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
+            }
+        };
+        final List<AmChartValueField> valuesField = Arrays.asList(new AmChartValueField("QTD_NEW", "Novas", ""), new AmChartValueField("QTD_CLS", "Concluidas", ""));
         final LineSerialChart serialChart = new LineSerialChart(provider, valuesField, "MES");
 
         serialChart.withLegend();
@@ -171,10 +176,10 @@ public class DashboardContent extends Content {
 
     private void addWelcomeChart(Set<String> processCodeWithAccess) {
 
-        final List<ChartValueField> valueFields = Collections.singletonList(new ChartValueField("MEAN", "", "dia(s)"));
-        final ChartDataProvider provider = new ChartDataProvider() {
+        final List<AmChartValueField> valueFields = Collections.singletonList(new AmChartValueField("MEAN", "", "dia(s)"));
+        final ChartDataProvider provider = new StalessChartDataProvider() {
             @Override
-            public List<Map<String, String>> getData(PortletFilterContext filter) {
+            public List<Map<String, String>> loadData(PortletFilterContext filter) {
                 Period period = PeriodType.YEARLY.getPeriod();
                 if (filter.getQuickFilter() != null && filter.getQuickFilter().getObject() != null) {
                     period = (Period) filter.getQuickFilter().getObject();
@@ -186,9 +191,9 @@ public class DashboardContent extends Content {
         final ColumnSerialChart serialChart = new ColumnSerialChart(provider, valueFields, "NOME");
         final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig(serialChart);
 
-        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Ano", PeriodType.YEARLY.getPeriod()));
-        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Mês", PeriodType.MONTHLY.getPeriod()));
         amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Semana", PeriodType.WEEKLY.getPeriod()));
+        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Mês", PeriodType.MONTHLY.getPeriod()));
+        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Ano", PeriodType.YEARLY.getPeriod()));
 
         addDashboardRow().addMediumColumn(new PortletView<>("mySerialChart", amChartPortletConfig));
 

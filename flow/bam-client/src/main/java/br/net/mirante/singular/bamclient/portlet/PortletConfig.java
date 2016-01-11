@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.net.mirante.singular.bamclient.builder.SelfReference;
+import br.net.mirante.singular.bamclient.util.SelfReference;
 
 
 public abstract class PortletConfig<T extends PortletConfig> implements Serializable, SelfReference<T> {

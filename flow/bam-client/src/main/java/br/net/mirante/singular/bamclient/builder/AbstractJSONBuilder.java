@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-public abstract class AbstractAmChartBuilder<T extends AbstractAmChartBuilder> implements SelfReference<T> {
+import br.net.mirante.singular.bamclient.util.SelfReference;
 
-    protected AmChartBuilderContext context;
+public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> implements SelfReference<T> {
 
-    public AbstractAmChartBuilder(AmChartBuilderContext context) {
+    protected JSONBuilderContext context;
+
+    public AbstractJSONBuilder(JSONBuilderContext context) {
         this.context = context;
     }
 
@@ -18,7 +20,7 @@ public abstract class AbstractAmChartBuilder<T extends AbstractAmChartBuilder> i
         return self();
     }
 
-    protected <X extends AmChartObject<?>> T writeObject(X value) {
+    protected <X extends JSONObjectMappper<?>> T writeObject(X value) {
         context.getjWriter().object();
         for (Map.Entry<String, Object> entry : value.getObjectMap().entrySet()) {
             context.getjWriter().key(entry.getKey()).value(entry.getValue());
@@ -27,15 +29,15 @@ public abstract class AbstractAmChartBuilder<T extends AbstractAmChartBuilder> i
         return self();
     }
 
-    protected <X extends AmChartObject<?>> T writeNamedObject(String name, X value) {
+    protected <X extends JSONObjectMappper<?>> T writeNamedObject(String name, X value) {
         context.getjWriter().key(name);
         return writeObject(value);
     }
 
-    protected <X extends AmChartObject<?>> T writeArray(String name, Collection<X> amChartObjects) {
+    protected <X extends JSONObjectMappper<?>> T writeArray(String name, Collection<X> amChartObjects) {
         context.getjWriter().key(name).array();
-        for (AmChartObject<?> amChartObject : amChartObjects) {
-            writeObject(amChartObject);
+        for (JSONObjectMappper<?> JSONObjectMappper : amChartObjects) {
+            writeObject(JSONObjectMappper);
         }
         context.getjWriter().endArray();
         return self();

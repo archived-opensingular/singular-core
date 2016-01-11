@@ -1,14 +1,14 @@
-package br.net.mirante.singular.bamclient.chart;
+package br.net.mirante.singular.bamclient.builder.amchart;
 
 import java.io.Serializable;
 
-public class ChartValueField implements Serializable {
+public class AmChartValueField implements Serializable {
 
     private String propertyName;
     private String title;
     private String suffix;
 
-    public ChartValueField(String propertyName, String title, String suffix) {
+    public AmChartValueField(String propertyName, String title, String suffix) {
         this.propertyName = propertyName;
         this.title = title;
         this.suffix = suffix;

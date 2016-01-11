@@ -4,25 +4,25 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import br.net.mirante.singular.bamclient.builder.AmChartCategoryAxis;
-import br.net.mirante.singular.bamclient.builder.AmChartCursor;
-import br.net.mirante.singular.bamclient.builder.AmChartGraph;
-import br.net.mirante.singular.bamclient.builder.AmChartLegend;
-import br.net.mirante.singular.bamclient.builder.AmChartValueAxes;
-import br.net.mirante.singular.bamclient.builder.AmSerialChartBuilder;
-import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
-import br.net.mirante.singular.bamclient.builder.SingularAmChartBuilder;
+import br.net.mirante.singular.bamclient.builder.SingularChartBuilder;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartCategoryAxis;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartCursor;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartGraph;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartLegend;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueAxes;
+import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
+import br.net.mirante.singular.bamclient.builder.amchart.AmSerialChartBuilder;
 import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
 
 public abstract class AbstractSerialChart implements SingularChart {
 
     final protected ChartDataProvider dataProvider;
     final protected String category;
-    final protected List<ChartValueField> values;
+    final protected List<AmChartValueField> values;
 
     protected boolean withLegend = false;
 
-    public AbstractSerialChart(ChartDataProvider dataProvider, List<ChartValueField> values, String category) {
+    public AbstractSerialChart(ChartDataProvider dataProvider, List<AmChartValueField> values, String category) {
         this.dataProvider = dataProvider;
         this.values = values;
         this.category = category;
@@ -30,7 +30,7 @@ public abstract class AbstractSerialChart implements SingularChart {
 
     @Override
     public String getDefinition(PortletFilterContext filter) {
-        final AmSerialChartBuilder chartBuilder = new SingularAmChartBuilder()
+        final AmSerialChartBuilder chartBuilder = new SingularChartBuilder()
                 .newSerialChart()
                 .theme("light")
                 .dataProvider(dataProvider, filter)

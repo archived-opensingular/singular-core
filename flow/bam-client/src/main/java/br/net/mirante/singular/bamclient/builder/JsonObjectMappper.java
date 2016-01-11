@@ -3,7 +3,9 @@ package br.net.mirante.singular.bamclient.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AmChartObject<T extends AmChartObject> implements SelfReference<T> {
+import br.net.mirante.singular.bamclient.util.SelfReference;
+
+public abstract class JSONObjectMappper<T extends JSONObjectMappper> implements SelfReference<T> {
 
     final private Map<String, Object> objectMap = new HashMap<>();
 
