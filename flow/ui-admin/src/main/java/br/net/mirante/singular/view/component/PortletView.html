@@ -9,10 +9,11 @@
             </div>
             <div class="actions">
                 <div class="btn-group btn-group-devided" data-toggle="buttons">
-                    <label class="btn btn-transparent dark btn-outline btn-circle btn-sm active">
-                        <input type="radio" name="options" class="toggle" id="option1">Actions</label>
-                    <label class="btn btn-transparent dark btn-outline btn-circle btn-sm">
-                        <input type="radio" name="options" class="toggle" id="option2">Settings</label>
+                    <label wicket:id="quickFilterOptions"
+                           class="btn btn-transparent dark btn-outline btn-circle btn-sm">
+                        <input type="radio" name="options" class="toggle">
+                        <span wicket:id="filterLabel"></span>
+                    </label>
                 </div>
             </div>
         </div>

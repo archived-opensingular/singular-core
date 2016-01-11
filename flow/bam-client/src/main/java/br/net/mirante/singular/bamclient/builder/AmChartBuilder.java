@@ -3,6 +3,8 @@ package br.net.mirante.singular.bamclient.builder;
 import java.util.Collection;
 import java.util.Map;
 
+import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
+
 
 public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractAmChartBuilder<T> {
 
@@ -53,10 +55,9 @@ public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractA
         return self();
     }
 
-    public T dataProvider(ChartDataProvider dataProvider) {
-        context.getjWriter().key("danilo").value("(function(){alert('ola mundo!');})();");
+    public T dataProvider(ChartDataProvider dataProvider, PortletFilterContext filterContext) {
         context.getjWriter().key("dataProvider").array();
-        for (Map<String, String> map : dataProvider.getDataList()) {
+        for (Map<String, String> map : dataProvider.getData(filterContext)) {
             context.getjWriter().object();
             for (Map.Entry<String, String> entrySet : map.entrySet()) {
                 context.getjWriter().key(entrySet.getKey()).value(entrySet.getValue());

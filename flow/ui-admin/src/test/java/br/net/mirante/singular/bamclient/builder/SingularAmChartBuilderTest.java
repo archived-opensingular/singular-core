@@ -3,6 +3,7 @@ package br.net.mirante.singular.bamclient.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
 import junit.framework.TestCase;
 
 public class SingularAmChartBuilderTest extends TestCase {
@@ -29,7 +30,7 @@ public class SingularAmChartBuilderTest extends TestCase {
         provider.addData(map2);
 
         String json = new SingularAmChartBuilder().newSerialChart()
-                .dataProvider(provider).finish();
+                .dataProvider(provider, new PortletFilterContext()).finish();
 
         assertEquals("{\"type\":\"serial\",\"dataProvider\":[{\"idade\":\"24\",\"nome\":\"danilo\"},{\"idade\":\"26\",\"nome\":\"rodrigo\"}]}", json);
 

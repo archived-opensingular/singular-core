@@ -1,6 +1,8 @@
 package br.net.mirante.singular.bamclient.chart;
 
-public class ChartValueField {
+import java.io.Serializable;
+
+public class ChartValueField implements Serializable {
 
     private String propertyName;
     private String title;

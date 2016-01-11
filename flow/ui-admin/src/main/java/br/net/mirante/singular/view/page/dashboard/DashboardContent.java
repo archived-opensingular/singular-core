@@ -1,13 +1,6 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
-import br.net.mirante.singular.bamclient.chart.AbstractSerialChart;
-import br.net.mirante.singular.bamclient.chart.ChartValueField;
-import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
-import br.net.mirante.singular.bamclient.chart.LineSerialChart;
-import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-
+import java.time.Period;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -24,10 +17,18 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
+import br.net.mirante.singular.bamclient.builder.ChartDataProvider;
+import br.net.mirante.singular.bamclient.chart.ChartValueField;
+import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
+import br.net.mirante.singular.bamclient.chart.LineSerialChart;
+import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
+import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
+import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import br.net.mirante.singular.view.component.PortletView;
 import br.net.mirante.singular.view.page.processo.MetadadosPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
@@ -124,21 +125,15 @@ public class DashboardContent extends Content {
     private void addDefaultCharts(Set<String> processCodeWithAccess) {
         DashboardRow row = addDashboardRow();
 
+        final List<Map<String, String>> graphData = uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
 
-        final List<Map<String, String>> graphData =  uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
         final ChartDataProvider provider = new ChartDataProvider().addAll(graphData);
-        final ChartValueField novas  = new ChartValueField("QTD_NEW", "Novas", "");
-        final ChartValueField concluidas  = new ChartValueField("QTD_CLS", "Concluidas", "");
-
-        final List<ChartValueField> values = Arrays.asList(novas, concluidas);
-
-        final LineSerialChart serialChart = new LineSerialChart(provider, values, "MES");
-        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig();
+        final List<ChartValueField> valuesField = Arrays.asList(new ChartValueField("QTD_NEW", "Novas", ""), new ChartValueField("QTD_CLS", "Concluidas", ""));
+        final LineSerialChart serialChart = new LineSerialChart(provider, valuesField, "MES");
 
         serialChart.withLegend();
-        amChartPortletConfig.setDefinition(serialChart.getDefinition());
 
-        row.addMediumColumn(new PortletView<>("mySerialChart2", amChartPortletConfig));
+        row.addMediumColumn(new PortletView<>("mySerialChart2", new AmChartPortletConfig(serialChart)));
 
         row.addMediumColumn(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
                 "label.chart.new.instance.quantity.title", ImmutablePair.of("QTD_NEW", getString("label.chart.new.instance.quantity.new")),
@@ -176,15 +171,24 @@ public class DashboardContent extends Content {
 
     private void addWelcomeChart(Set<String> processCodeWithAccess) {
 
+        final List<ChartValueField> valueFields = Collections.singletonList(new ChartValueField("MEAN", "", "dia(s)"));
+        final ChartDataProvider provider = new ChartDataProvider() {
+            @Override
+            public List<Map<String, String>> getData(PortletFilterContext filter) {
+                Period period = PeriodType.YEARLY.getPeriod();
+                if (filter.getQuickFilter() != null && filter.getQuickFilter().getObject() != null) {
+                    period = (Period) filter.getQuickFilter().getObject();
+                }
+                return uiAdminFacade.retrieveMeanTimeByProcess(period, null, processCodeWithAccess);
+            }
+        };
 
-        final List<Map<String, String>> graphData = uiAdminFacade.retrieveMeanTimeByProcess(PeriodType.YEARLY.getPeriod(), null, processCodeWithAccess);
+        final ColumnSerialChart serialChart = new ColumnSerialChart(provider, valueFields, "NOME");
+        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig(serialChart);
 
-        final ChartDataProvider provider = new ChartDataProvider().addAll(graphData);
-        final ColumnSerialChart serialChart = new ColumnSerialChart(provider,
-                Collections.singletonList(new ChartValueField("MEAN", "", "dia(s)")), "NOME");
-
-        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig();
-        amChartPortletConfig.setDefinition(serialChart.getDefinition());
+        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Ano", PeriodType.YEARLY.getPeriod()));
+        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Mês", PeriodType.MONTHLY.getPeriod()));
+        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Semana", PeriodType.WEEKLY.getPeriod()));
 
         addDashboardRow().addMediumColumn(new PortletView<>("mySerialChart", amChartPortletConfig));
 
@@ -193,7 +197,7 @@ public class DashboardContent extends Content {
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
                 @Override
                 protected List<Map<String, String>> retrieveData(PeriodType periodType) {
-                    return graphData;
+                    return uiAdminFacade.retrieveMeanTimeByProcess(periodType.getPeriod(), null, processCodeWithAccess);
                 }
             });
         } else {

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
+
 public class ChartDataProvider implements Serializable {
 
     private final List<Map<String, String>> dataList = new ArrayList<>();
@@ -19,7 +21,7 @@ public class ChartDataProvider implements Serializable {
         return this;
     }
 
-    public List<Map<String, String>> getDataList() {
+    public List<Map<String, String>> getData(PortletFilterContext filterContext) {
         return dataList;
     }
 }

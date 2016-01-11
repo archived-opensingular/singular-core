@@ -1,14 +1,21 @@
 package br.net.mirante.singular.bamclient.portlet;
 
-public class AmChartPortletConfig extends ChartPortletConfig {
+import br.net.mirante.singular.bamclient.chart.SingularChart;
 
-    private String chartDefinition;
+public class AmChartPortletConfig extends ChartPortletConfig<AmChartPortletConfig> {
 
-    public void setDefinition(String chartDefinition) {
-        this.chartDefinition = chartDefinition;
+    private final SingularChart chart;
+
+    public AmChartPortletConfig(SingularChart chart) {
+        this.chart = chart;
     }
 
-    public String getChartDefinition() {
-        return chartDefinition;
+    public SingularChart getChart() {
+        return chart;
+    }
+
+    @Override
+    public AmChartPortletConfig self() {
+        return this;
     }
 }

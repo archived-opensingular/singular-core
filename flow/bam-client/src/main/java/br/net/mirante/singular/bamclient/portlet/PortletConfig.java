@@ -2,28 +2,37 @@ package br.net.mirante.singular.bamclient.portlet;
 
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import br.net.mirante.singular.bamclient.builder.SelfReference;
 
 
-public abstract class PortletConfig implements Serializable {
+public abstract class PortletConfig<T extends PortletConfig> implements Serializable, SelfReference<T> {
 
     private PortletSize portletSize = PortletSize.MEDIUM;
     private String title;
     private String subtitle;
+    private List<PortletQuickFilter> quickFilter = new ArrayList<>();
 
-    public PortletConfig setPortletSize(PortletSize portletSize) {
+    public T setPortletSize(PortletSize portletSize) {
         this.portletSize = portletSize;
-        return this;
+        return self();
     }
 
-    public PortletConfig setTitle(String title) {
+    public T setTitle(String title) {
         this.title = title;
-        return this;
+        return self();
     }
 
-    public PortletConfig setSubtitle(String subtitle) {
+    public T setSubtitle(String subtitle) {
         this.subtitle = subtitle;
-        return this;
+        return self();
+    }
+
+    public T setQuickFilter(List<PortletQuickFilter> quickFilter) {
+        this.quickFilter = quickFilter;
+        return self();
     }
 
     public PortletSize getPortletSize() {
@@ -37,5 +46,9 @@ public abstract class PortletConfig implements Serializable {
     public String getSubtitle() {
         return subtitle;
     }
-    
+
+    public List<PortletQuickFilter> getQuickFilter() {
+        return quickFilter;
+    }
+
 }
