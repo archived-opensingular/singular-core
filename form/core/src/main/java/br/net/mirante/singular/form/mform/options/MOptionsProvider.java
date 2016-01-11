@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 

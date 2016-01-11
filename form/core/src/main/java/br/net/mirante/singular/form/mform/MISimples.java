@@ -49,7 +49,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
 
     @Override
     public void setFieldId(Object value) {
-        setValor(value);
+//        setFieldId(value);TODO - LL: verificar
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
 
     @Override
     public void setFieldValue(Object value) {
-        setFieldId(value);
+        setValor(value);
     }
 
     @Override
