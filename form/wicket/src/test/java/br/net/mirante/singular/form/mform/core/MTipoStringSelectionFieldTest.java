@@ -34,9 +34,9 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("strawberry","apple","orange","banana");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("strawberry","apple","orange","banana");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("strawberry","apple","orange","banana");
     }
 
@@ -51,9 +51,9 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-                .containsExactly("strawberry","apple","orange","banana");
         assertThat(extractProperty("value").from(choices.getChoices()))
+                .containsExactly("strawberry","apple","orange","banana");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
                 .containsExactly("strawberry","apple","orange","banana");
     }
     
@@ -70,9 +70,9 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("avocado","strawberry","apple","orange","banana");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("avocado","strawberry","apple","orange","banana");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("avocado","strawberry","apple","orange","banana");
     }
     

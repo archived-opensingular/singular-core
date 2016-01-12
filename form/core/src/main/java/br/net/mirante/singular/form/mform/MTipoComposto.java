@@ -32,6 +32,9 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 
     private transient FieldMapOfRecordType fieldsConsolidated;
 
+    private String valueFieldName;
+    private String descriptionFieldName;
+
 
     //TODO: Fabs : Check why this is not working
     // SELECTION ATRIBUTES
@@ -140,7 +143,8 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 
     @Deprecated
     public Set<String> getCampos() {
-        return getFields().stream().map(f -> f.getNome()).collect(Collectors.toSet());
+        return getFields().stream().map(f ->
+                f.getNome()).collect(Collectors.toSet());
     }
 
     // --------------------------------------------------------------------------
@@ -223,14 +227,17 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     }
 
     /**
-     * Configures default key, value fields with names "key" and "value".
+     * Configures default key, value fields with names "value" and "selectLabel".
      * You can override this method if you want to define your own fields for
      * your instance.
      *
      * @return <code>this</code>
      */
-    public MTipoComposto configureKeyValueFields(){
-        return withKeyValueField("id", "value");
+    private MTipoComposto configureSelectValueLabelFields(){
+        if (valueFieldName == null && descriptionFieldName == null) {
+            return withSelectValueLabelFields("value", "selectLabel");
+        }
+        return this;
     }
 
     /**
@@ -240,30 +247,28 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      *
      * @return <code>this</code>
      */
-    public MTipoComposto withKeyValueField(String key, String value){
-        return withIdField(key).withValueField(value);
-    }
-
-    protected String id_sel, val_sel;
-
-    private MTipoComposto withIdField(String fieldName){
-//        setValorAtributo(ID_FIELD, fieldName);
-        id_sel = fieldName;
-        addCampoString(fieldName);
-        return this;
+    public MTipoComposto withSelectValueLabelFields(String valor, String descricao){
+        if (descriptionFieldName != null && valueFieldName != null){
+            throw new SingularFormException("MTipoComposto value and description fields can not be changed after MOptionsProvider definition.");
+        }
+        return withValueField(valor).withSelectLabelField(descricao);
     }
 
     private MTipoComposto withValueField(String fieldName){
-//        setValorAtributo(VALUE_FIELD, fieldName);
-        val_sel = fieldName;
+        valueFieldName = fieldName;
         addCampoString(fieldName);
         return this;
     }
 
-    public MIComposto create(Object key, Object value){
+    private MTipoComposto withSelectLabelField(String fieldName){
+        descriptionFieldName = fieldName;
+        addCampoString(fieldName);
+        return this;
+    }
+
+    public MIComposto create(Object value, String selectLabel){
         MIComposto instance = this.novaInstancia();
-        instance.setFieldId(key);
-        instance.setFieldValue(value);
+        instance.setValueSelectLabel(value, selectLabel);
         return instance;
     }
 
@@ -368,5 +373,15 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         public MTipo<?> getField() {
             return field;
         }
+    }
+
+    String getDescriptionFieldName() {
+        configureSelectValueLabelFields();
+        return descriptionFieldName;
+    }
+
+    String getValueFieldName() {
+        configureSelectValueLabelFields();
+        return valueFieldName;
     }
 }

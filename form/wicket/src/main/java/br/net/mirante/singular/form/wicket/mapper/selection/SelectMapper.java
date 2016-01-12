@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
@@ -53,7 +54,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         final MInstancia mi = model.getObject();
         if (mi != null){
             if(mi instanceof MSelectionableInstance) {
-                return ((MSelectionableInstance)mi).getFieldId();
+                return ((MSelectionableInstance)mi).getSelectLabel();
             }
         }
         return StringUtils.EMPTY;
@@ -72,6 +73,6 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     }
 
     protected ChoiceRenderer rendererer() {
-        return new ChoiceRenderer("key","value");
+        return new ChoiceRenderer("selectLabel", "value");
     }
 }

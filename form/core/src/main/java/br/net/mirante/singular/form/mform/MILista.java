@@ -80,6 +80,13 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
         return addInterno(element);
     }
 
+    public E addElementAt(int index, Object e) {
+        E element = (E) e;
+        element.setDocument(getDocument());
+        addAtInterno(index, element);
+        return element;
+    }
+
     public E addNovoAt(int index) {
         E instancia = getTipoElementos().newInstance(getDocument());
         addAtInterno(index, instancia);
