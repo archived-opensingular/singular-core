@@ -15,14 +15,22 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Collection<? extends Object> lista) {
         this.opcoes = tipoOpcoes.novaLista();
-        if(lista != null) { lista.forEach(o -> opcoes.addValor(o)); }
+        if (lista != null) {
+            init(tipoOpcoes, lista.toArray(new Object[0]));
+        }
     }
 
     public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Object[] lista) {
+        this.opcoes = tipoOpcoes.novaLista();
+        if (lista != null) {
+            init(tipoOpcoes, lista);
+        }
+    }
+
+    private void init(MTipo<?> tipoOpcoes, Object[] lista){
         if (lista.length == 0) {
             throwEmpryListError();
         }
-        this.opcoes = tipoOpcoes.novaLista();
         if(tipoOpcoes instanceof MTipoSimples){
             Arrays.stream(lista).forEach(o -> {
                 if (o instanceof MInstancia) {
