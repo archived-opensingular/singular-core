@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.mapper.comment.CommentComponent;
+import br.net.mirante.singular.form.wicket.mapper.comment.AnnotationComponent;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -87,7 +87,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             wicketBuilder.build(childCtx, viewMode);
         } else {
             BSCol col = row.newCol();
-            col.appendTag("div",true, "style=\"float: right;\"", (id) -> new CommentComponent(id, iCampo));
+            col.appendTag("div",true, "style=\"float: right;\"", (id) -> new AnnotationComponent(id, iCampo, iCampo));
             WicketBuildContext childCtx = ctx.createChild(configureColspan(ctx, type, iCampo, col), true, mCampo);
             wicketBuilder.build(childCtx, viewMode);
         }

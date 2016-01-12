@@ -19,14 +19,14 @@
             <!-- Content for Popover #1 -->
             <div class="hidden" wicket:id="popover_modal" >
                 <div class="popover-heading">
-                    Comentários sobre o <wicket:container wicket:id="title" />
+                    Comentários sobre o <wicket:container wicket:id="target_label" />
                 </div>
 
                 <div class="popover-body">
                     <div style="width: 100%;padding: 20px;">
                         <div class="row">
                             <div class="can-have-error form-group form-group-sm">
-                                <textarea class="form-control" cols="15" rows="3"/>
+                                <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
                             </div>
                         </div>
                         <div class="row">
@@ -40,7 +40,6 @@
             <script type="application/javascript">
                 $(function(){
                     var _id = "<wicket:container wicket:id='_popover_id' />";
-//                    $('[data-toggle="popover"]').popover({
                     $('#'+_id).popover({
                         html : true,
                         content: function() {
