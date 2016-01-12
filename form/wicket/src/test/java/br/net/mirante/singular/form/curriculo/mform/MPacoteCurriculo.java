@@ -1,17 +1,27 @@
 package br.net.mirante.singular.form.curriculo.mform;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.*;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.validation.validator.MCNPJValidator;
-import br.net.mirante.singular.form.validation.validator.MCPFValidator;
-import br.net.mirante.singular.form.validation.validator.MEmailValidator;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class MPacoteCurriculo extends MPacote {
@@ -42,7 +52,6 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Nome").subtitle("nome completo").tamanhoMaximo(50)
                 .as(AtrBootstrap::new).colPreference(7);
             cpf
-                .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
                 .as(AtrBootstrap::new).colPreference(3);
             dtNasc
                 .as(AtrBasic::new).label("Dt.Nasc.")
@@ -58,7 +67,6 @@ public class MPacoteCurriculo extends MPacote {
             contatos
                 .as(AtrBasic::new).label("Contatos");
             email
-                .addInstanceValidator(MEmailValidator.getInstance())
                 .as(AtrBasic::new).label("e-Mail")
                 .as(AtrBootstrap::new).colPreference(6);
             telFixo
@@ -113,7 +121,6 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Instituição")
                 .as(AtrBootstrap::new).colPreference(3);
             academicoCNPJ
-                .addInstanceValidator(MCNPJValidator.getInstance())
                 .as(AtrBootstrap::new).colPreference(3);
             academicoCargaHoraria
                 .as(AtrBasic::new).label("Carga Horária (h)")

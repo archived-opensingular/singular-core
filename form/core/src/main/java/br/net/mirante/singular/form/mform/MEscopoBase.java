@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform;
 
-import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.base.Preconditions;
 
 public abstract class MEscopoBase implements MEscopo {
 
@@ -58,22 +58,22 @@ public abstract class MEscopoBase implements MEscopo {
         return getDicionario().registrarTipo(this, novo, classeDeRegistro);
     }
 
-    final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
-        if (getDicionario() != tipoPai.getDicionario()) {
-            throw new SingularFormException(
-                    "O tipo " + tipoPai.getNome() + " foi criado dentro de outro dicionário, que não o atual de " + getNome());
-        }
-        T novo = tipoPai.extender(nomeSimplesNovoTipo);
-        return registrarTipo(novo, null);
+    final <T extends MTipo<?>> T registrarTipo(TipoBuilder tb, Class<T> classeDeRegistro) {
+        getDicionario().registrarTipo(this, (T)tb.getTipo(), classeDeRegistro);
+        return (T) tb.configure();
     }
 
-    @SuppressWarnings("unchecked")
+    final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
+        if (getDicionario() != tipoPai.getDicionario()) {
+            throw new SingularFormException("O tipo " + tipoPai.getNome() + " foi criado dentro de outro dicionário, que não o atual de " + getNome());
+        }
+        TipoBuilder tb = tipoPai.extender(nomeSimplesNovoTipo);
+        return registrarTipo(tb, null);
+    }
+
     final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, Class<T> classePai) {
-        MTipo<?> tipoPai = resolverTipo((Class<MTipo<MInstancia>>) classePai);
-
-        T novo = tipoPai.extender(nomeSimplesNovoTipo, classePai);
-
-        return registrarTipo(novo, null);
+        T tipoPai = resolverTipo(classePai);
+        return extenderTipo(nomeSimplesNovoTipo, tipoPai);
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +91,7 @@ public abstract class MEscopoBase implements MEscopo {
         return tipoLista;
     }
 
-    final <I extends MInstancia, T extends MTipo<I>> T resolverTipo(Class<T> classeTipo) {
+    final <T extends MTipo<?>> T resolverTipo(Class<T> classeTipo) {
         return getDicionario().getTipo(classeTipo);
     }
 

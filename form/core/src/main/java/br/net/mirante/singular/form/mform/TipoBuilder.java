@@ -2,22 +2,33 @@ package br.net.mirante.singular.form.mform;
 
 public class TipoBuilder {
 
-    private final PacoteBuilder pacoteBuilder;
-    private final MTipo<?> targetType;
-    private final Class<? extends MTipo> targetTypeClass;
-
-    public TipoBuilder(MTipo<?> targetType, Class<? extends MTipo> targetTypeClass, PacoteBuilder pacoteBuilder) {
-        this.pacoteBuilder = pacoteBuilder;
-        this.targetType = targetType;
-        this.targetTypeClass = targetTypeClass;
+    private final MTipo<?> tipoAlvo;
+    private final Class<? extends MTipo<?>> classeAlvo;
+    private boolean carregar;
+    public <X extends MTipo<?>>TipoBuilder(Class<X> classeAlvo, X tipo) {
+        this.classeAlvo = classeAlvo;
+        this.tipoAlvo = tipo;
+    }
+    
+    public <X extends MTipo<?>>TipoBuilder(Class<X> classeAlvo) {
+        this.classeAlvo = classeAlvo;
+        this.tipoAlvo = MapaNomeClasseValor.instanciar(classeAlvo);
+        this.carregar = true;
     }
 
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
-        return pacoteBuilder.createTipoAtributo(targetTypeClass, atr);
+    public MTipo<?> getTipo() {
+        return tipoAlvo;
     }
-
-    public <T extends MTipo<?>> MAtributo createTipoAtributo(String nomeSimplesAtributo, Class<T> classeTipoAtributo) {
-        return pacoteBuilder.createTipoAtributo(targetType, nomeSimplesAtributo, classeTipoAtributo);
+    
+    public Class<? extends MTipo<?>> getClasseAlvo() {
+        return classeAlvo;
     }
-
+    
+    public MTipo<?> configure() {
+        if(carregar){
+            tipoAlvo.onCargaTipo(this);
+        }
+        return tipoAlvo;
+    }
+    
 }

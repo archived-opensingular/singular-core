@@ -9,7 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.core.MTipoBoolean;
+import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
@@ -46,14 +52,6 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 
     protected MTipoComposto(Class<TIPO_INSTANCIA> classeInstancia) {
         super(classeInstancia);
-    }
-
-    @Override
-    protected void onCargaTipo(TipoBuilder tb) {
-        super.onCargaTipo(tb);
-
-//        if(!ID_FIELD.isBinded()) tb.createTipoAtributo(ID_FIELD);
-//        if(!VALUE_FIELD.isBinded()) tb.createTipoAtributo(VALUE_FIELD);
     }
 
     @Override

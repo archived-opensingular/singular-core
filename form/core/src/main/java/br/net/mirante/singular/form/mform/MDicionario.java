@@ -55,7 +55,8 @@ public class MDicionario implements IContextoTipo {
         }
         T novo = pacotes.get(classePacote);
         if (novo == null) {
-            novo = pacotes.vericaNaoDeveEstarPresente(classePacote);
+            pacotes.vericaNaoDeveEstarPresente(classePacote);
+            novo = MapaNomeClasseValor.instanciar(classePacote);
             pacotes.vericaNaoDeveEstarPresente(novo);
             carregarInterno(novo);
         }
@@ -67,7 +68,7 @@ public class MDicionario implements IContextoTipo {
         MPacote novo = new MPacote(nome);
         novo.setDicionario(this);
         pacotes.add(novo);
-        return new PacoteBuilder(this, novo);
+        return new PacoteBuilder(novo);
     }
 
     final static MInfoTipo getAnotacaoMFormTipo(Class<?> classeAlvo) {
@@ -141,9 +142,9 @@ public class MDicionario implements IContextoTipo {
     }
 
     private void carregarInterno(MPacote novo) {
-        PacoteBuilder pb = new PacoteBuilder(this, novo);
-        pacotes.add(novo);
+        PacoteBuilder pb = new PacoteBuilder(novo);
         novo.setDicionario(this);
+        pacotes.add(novo);
         novo.carregarDefinicoes(pb);
     }
 

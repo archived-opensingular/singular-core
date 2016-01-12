@@ -1,6 +1,11 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
@@ -11,11 +16,7 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
-import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.validation.validator.AllOrNothingInstanceValidator;
-import br.net.mirante.singular.form.validation.validator.MCPFValidator;
-
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import br.net.mirante.singular.form.validation.validator.InstanceValidators;
 
 public class ExamplePackage extends MPacote {
 
@@ -77,7 +78,6 @@ public class ExamplePackage extends MPacote {
         this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
 
         this.buyerCpf
-            .addInstanceValidator(ValidationErrorLevel.WARNING, MCPFValidator.getInstance())
             .as(MPacoteBasic.aspect())
             .dependsOn(this.buyerNome)
         //TODO: Fabs : I'm commenting since this is causing some compilation errros, and I must revisit later.
@@ -94,7 +94,7 @@ public class ExamplePackage extends MPacote {
         this.addressState = addField(address, "state", "Estado", MTipoString.class);
         this.addressZipcode = addField(address, "Zipcode", "CEP", MTipoCEP.class);
 
-        this.address.addInstanceValidator(new AllOrNothingInstanceValidator());
+        this.address.addInstanceValidator(InstanceValidators.allOrNothing());
     }
 
     private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,
