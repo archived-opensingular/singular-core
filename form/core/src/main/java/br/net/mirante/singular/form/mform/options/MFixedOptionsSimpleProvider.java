@@ -13,11 +13,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private final MILista<? extends MInstancia> opcoes;
 
-    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, 
-                            Collection<? extends Object> lista) {
-//        if (lista.isEmpty()) {
-//            throwEmpryListError();
-//        }
+    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Collection<? extends Object> lista) {
         this.opcoes = tipoOpcoes.novaLista();
         if(lista != null) { lista.forEach(o -> opcoes.addValor(o)); }
     }
@@ -28,8 +24,14 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         }
         this.opcoes = tipoOpcoes.novaLista();
         if(tipoOpcoes instanceof MTipoSimples){
-            Arrays.stream(lista).forEach(o -> opcoes.addValor(o));
-        }else if(tipoOpcoes instanceof MSelectionableType){
+            Arrays.stream(lista).forEach(o -> {
+                if (o instanceof MInstancia) {
+                    opcoes.addElement(o);
+                } else {
+                    opcoes.addValor(o);
+                }
+            });
+        } else if(tipoOpcoes instanceof MSelectionableType){
             Arrays.stream(lista).forEach(o -> opcoes.addElement(o)); //TODO: Fabs : also for collections
         }
     }
@@ -51,13 +53,13 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     /**
      * Add a new element to the Provider optionlist with the key values informed.
-     * @param key to be set (MSelectionableInstance.setValue) on the element
-     * @param value
+     * @param value to be set (MSelectionableInstance.setValue) on the element
+     * @param selectLabel
      * @return this
      */
-    public MFixedOptionsSimpleProvider add(Object key, Object value){
+    public MFixedOptionsSimpleProvider add(Object value, String selectLabel){
         MSelectionableInstance e = (MSelectionableInstance) opcoes.addNovo();
-        e.setValue(key, value);
+        e.setValueSelectLabel(value, selectLabel);
         return this;
     }
 

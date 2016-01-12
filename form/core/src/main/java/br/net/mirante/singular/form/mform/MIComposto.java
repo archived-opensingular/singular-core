@@ -9,15 +9,37 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 
-public class MIComposto
-        extends MInstancia
-        implements ICompositeInstance, MSelectionableInstance {
+public class MIComposto extends MInstancia implements ICompositeInstance, MSelectionableInstance<Object> {
 
     private FieldMapOfRecordInstance fields;
+
+    @Override
+    public void setSelectLabel(String description) {
+        this.setValor(this.getMTipo().getDescriptionFieldName(), description);
+    }
+
+    @Override
+    public String getSelectLabel() {
+        return String.valueOf(this.getValor(this.getMTipo().getDescriptionFieldName()));
+    }
+
+    @Override
+    public void setSelectValue(Object o) {
+        this.setValor(this.getMTipo().getValueFieldName(), o);
+    }
+
+    @Override
+    public Object getSelectValue() {
+        return this.getValor(this.getMTipo().getValueFieldName());
+    }
+
+    @Override
+    public void setValueSelectLabel(Object valor, String selectLabel) {
+        this.setSelectLabel(selectLabel);
+        this.setSelectValue(valor);
+    }
 
     @Override
     public MTipoComposto<?> getMTipo() {
@@ -238,81 +260,7 @@ public class MIComposto
         if (!getMTipo().equals(other.getMTipo())) {
             return false;
         }
-        if(getFieldId() != null){
-            return getFieldId().equals(other.getFieldId());
-        }
         return Objects.equals(fields, other.fields);
-    }
-
-    @Override
-    public void setFieldId(Object value) {
-        if(getMTipo().id_sel == null ){
-            getMTipo().configureKeyValueFields();
-        }
-        setValor(key(), value);
-    }
-
-    public void setFieldValue(Object value) {
-        if(getMTipo().val_sel == null ){
-            getMTipo().configureKeyValueFields();
-        }
-        setValor(value(), value);
-    }
-
-    private String value() {
-//        return getAndCheckKeyValueAttributes(getMTipo().VALUE_FIELD);
-        if(getMTipo().val_sel == null ){
-            getMTipo().configureKeyValueFields();
-        }
-//        return (String) getCampo(getMTipo().val_sel).getValor();
-        return getMTipo().val_sel;
-    }
-
-    public String getFieldId() {
-        return getValorString(key());
-    }
-
-    public String getFieldValue() {
-        return getValorString(value());
-    }
-
-    private String key() {
-//        return getAndCheckKeyValueAttributes(getMTipo().ID_FIELD);
-        if(getMTipo().id_sel == null ){
-            getMTipo().configureKeyValueFields();
-        }
-//        return (String) getCampo(getMTipo().id_sel).getValor();
-        return getMTipo().id_sel;
-    }
-
-
-    private String getAndCheckKeyValueAttributes(AtrRef<MTipoString, MIString, String> attr) {
-        String value = getValorAtributo(attr);
-        if(value == null){
-            ((MTipoComposto)getMTipo()).configureKeyValueFields();
-            value = getValorAtributo(attr);
-        }
-        return value;
-    }
-
-    @Override
-    public void setValor(Object value) {
-        if(value instanceof MIComposto) { setValue((MIComposto) value);
-        }else if(value instanceof List){    setValue((List) value);
-        }else{                              super.setValor(value);
-        }
-    }
-
-    private void setValue(List<MInstancia> values) {
-        this.setValue(valueOf(values.get(0)), valueOf(values.get(1)));
-    }
-
-    private void setValue(MIComposto item) {
-        this.setValue(item.getFieldId(),item.getFieldValue());
-    }
-
-    private Object valueOf(MInstancia instance) {
-        return instance.getValor();
     }
 
 }

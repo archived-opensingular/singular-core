@@ -68,6 +68,12 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
         return converterNaoNativoNaoString(valor);
     }
 
+    public MISimples<TIPO_NATIVO> create(TIPO_NATIVO value, String selectLabel){
+        MISimples<TIPO_NATIVO> instance = this.novaInstancia();
+        instance.setValueSelectLabel(value, selectLabel);
+        return instance;
+    }
+
     protected TIPO_NATIVO converterNaoNativoNaoString(Object valor) {
         return converterUsandoApache(valor);
     }

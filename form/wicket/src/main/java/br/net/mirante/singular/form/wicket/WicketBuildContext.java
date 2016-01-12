@@ -91,7 +91,7 @@ public class WicketBuildContext implements Serializable {
         formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
 
         if (formComponent.getLabel() == null) {
-            // formComponent.setLabel(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+            // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
             formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
         }
 

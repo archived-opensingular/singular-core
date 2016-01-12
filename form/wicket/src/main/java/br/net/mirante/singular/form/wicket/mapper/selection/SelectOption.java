@@ -16,36 +16,25 @@ import static org.apache.wicket.util.lang.Generics.newHashMap;
  */
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption<T> implements IModel {
-    private String key;
+
     private T value;
-//    private FormSerializationUtil.FormSerialized target;
-//    private MInstancia target;
+    private String selectLabel;
+
     private Map<String, Object> otherFields = newHashMap();
 
-    public SelectOption(String key, T value) {
-        this(key, value, null);
+    public SelectOption(String selectLabel, T value) {
+        this(selectLabel, value, null);
     }
 
-    public SelectOption(String key, T value, MInstancia target) {
-        this.key = key;
+    public SelectOption(String selectLabel, T value, MInstancia target) {
+        this.selectLabel = selectLabel;
         this.value = value;
-//        this.target = null;
-//        if(target != null) {this.target = FormSerializationUtil.toSerializedObject(target);}
-//        this.target = target;
         if(target instanceof MIComposto){
             MIComposto item = (MIComposto) target;
             for(MInstancia i :item.getAllChildren()){
                 otherFields.put(i.getNome(), i.getValor());
             }
         }
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public T getValue() {
@@ -56,10 +45,13 @@ public class SelectOption<T> implements IModel {
         this.value = value;
     }
 
-//    public MInstancia getTarget(){
-//        if(target != null) return FormSerializationUtil.toInstance(target);
-//        return target;
-//    }
+    public String getSelectLabel() {
+        return selectLabel;
+    }
+
+    public void setSelectLabel(String selectLabel) {
+        this.selectLabel = selectLabel;
+    }
 
     public Object getOtherField(String key){
         return otherFields.get(key);
@@ -67,7 +59,6 @@ public class SelectOption<T> implements IModel {
 
     @Override
     public void detach() {
-//        target = null;
     }
 
     @Override
@@ -78,17 +69,17 @@ public class SelectOption<T> implements IModel {
     @Override
     @SuppressWarnings("unchecked")
     public void setObject(Object o) {
-        SelectOption s = (SelectOption) o;
+        SelectOption<T> s = (SelectOption) o;
         if(o != null){
-            this.setKey(s.getKey());
-            this.setValue((T) s.getValue());
-//            this.target = s.target;
+            this.setValue(s.getValue());
+            this.setSelectLabel(s.getSelectLabel());
+            this.otherFields.putAll(s.otherFields);
         }
     }
     
     @Override
     public String toString() {
-        return String.format("SelectOption('%s','%s')", key,value);
+        return String.format("SelectOption('%s','%s')", value, selectLabel);
     }
     
     @Override
@@ -97,7 +88,7 @@ public class SelectOption<T> implements IModel {
         
         boolean eq = true;
         SelectOption op = (SelectOption) obj;
-        eq &= key != null && key.equals(op.key);
+        eq &= value != null && value.equals(op.value);
         
         return eq;
     }
@@ -105,7 +96,7 @@ public class SelectOption<T> implements IModel {
     @Override
     public int hashCode() {
         int hash = 1;
-        if(key != null) hash += key.hashCode();
+        if(value != null) hash += value.hashCode();
         return hash;
     }
 }

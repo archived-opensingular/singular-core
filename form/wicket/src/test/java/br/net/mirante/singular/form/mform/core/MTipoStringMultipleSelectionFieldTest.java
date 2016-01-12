@@ -40,9 +40,9 @@ public class MTipoStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         List<CheckBoxMultipleChoice> options = (List)findTag(form.getForm(), CheckBoxMultipleChoice.class);
         assertThat(options).hasSize(1);
         CheckBoxMultipleChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("strawberry","apple","orange");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("strawberry","apple","orange");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("strawberry","apple","orange");
     }
     
@@ -62,9 +62,9 @@ public class MTipoStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         List<CheckBoxMultipleChoice> options = (List)findTag(form.getForm(), CheckBoxMultipleChoice.class);
         assertThat(options).hasSize(1);
         CheckBoxMultipleChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("avocado","strawberry","apple");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("avocado","strawberry","apple");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("avocado","strawberry","apple");
     }
     

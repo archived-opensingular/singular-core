@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -40,7 +39,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
         final MInstancia mi = model.getObject();
         if (mi != null){
             if(mi instanceof MSelectionableInstance) {
-                return ((MSelectionableInstance)mi).getFieldValue();
+                return ((MSelectionableInstance)mi).getSelectLabel();
             }
         }
         return StringUtils.EMPTY;

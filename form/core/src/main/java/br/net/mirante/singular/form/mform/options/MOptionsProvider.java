@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 
@@ -71,20 +70,24 @@ public interface MOptionsProvider extends Serializable {
             MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         if(value instanceof MSelectionableInstance){
             MSelectionableInstance item = (MSelectionableInstance) value;
-            if(item.getFieldId() == null){
+            if(((MSelectionableInstance) value).getSelectValue() == null){
                 return true;
             }
         }
         for(MInstancia c : defaultOptions.getAllChildren()){
-           if (value.equals(c)) return true;
+           if (value.equals(c)){
+               return true;
+           }
         }
         return false;
     }
     
-    public default void addNewValueUpfront(
-        MILista<? extends MInstancia> defaultOptions, MInstancia value) {
-        MInstancia newValue = defaultOptions.addNovoAt(0);
-        newValue.setValor(value.getValor());
+    public default void addNewValueUpfront(MILista<? extends MInstancia> defaultOptions, MInstancia value) {
+        defaultOptions.addElementAt(0, value);
+//        MSelectionableInstance newValue = (MSelectionableInstance)defaultOptions.addNovoAt(0);
+//        MSelectionableInstance currentValue = (MSelectionableInstance)value;
+//        newValue.set
+//        ((MSelectionableInstance)newValue).setValueSelectLabel(value.getSelectValue(), value.getDescricao);
     }
     
     /**
