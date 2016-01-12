@@ -9,7 +9,8 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 
-public final class AllOrNothingInstanceValidator implements IInstanceValidator<MIComposto> {
+public enum AllOrNothingInstanceValidator implements IInstanceValidator<MIComposto> {
+    INSTANCE;
     @Override
     public void validate(IInstanceValidatable<MIComposto> v) {
         Set<Boolean> nullValues = v.getInstance().streamDescendants(false)

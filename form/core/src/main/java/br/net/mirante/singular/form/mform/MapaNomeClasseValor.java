@@ -52,12 +52,11 @@ class MapaNomeClasseValor<K> implements Iterable<K> {
         return porNome.values();
     }
 
-    final <T extends K> T vericaNaoDeveEstarPresente(Class<T> classeAlvo) {
+    final <T extends K> void vericaNaoDeveEstarPresente(Class<T> classeAlvo) {
         T valor = get(classeAlvo);
         if (valor != null) {
             throw new RuntimeException("A definição '" + getNome(valor) + "' já está carregada");
         }
-        return instanciar(classeAlvo);
     }
 
     final <T extends K> T getOrInstanciar(Class<T> classeAlvo) {
