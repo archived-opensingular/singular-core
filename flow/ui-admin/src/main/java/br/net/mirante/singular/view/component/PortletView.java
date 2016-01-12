@@ -36,11 +36,13 @@ public class PortletView<C extends PortletConfig> extends Panel {
 
     @Override
     protected void onInitialize() {
+        final PortletConfig config = this.config.getObject();
         super.onInitialize();
         add(buildQuickFilters());
-        add(new Label("title", Model.of(config.getObject().getTitle())));
+        add(new Label("title", Model.of(config.getTitle())));
+        add(new Label("subtitle", Model.of(config.getSubtitle())));
         add(buildViewResult());
-        add($b.classAppender(String.format("col-md-%s", config.getObject().getPortletSize().getSize())));
+        add($b.classAppender(config.getPortletSize().getBootstrapSize()));
         setOutputMarkupId(true);
     }
 

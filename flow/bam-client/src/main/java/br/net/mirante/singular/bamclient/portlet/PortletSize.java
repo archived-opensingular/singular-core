@@ -15,6 +15,11 @@ public enum PortletSize {
         this.size = size;
     }
 
+    public String getBootstrapSize() {
+        String template = "col-md-size col-sm-size";
+        return template.replace("size", String.valueOf(size));
+    }
+
     public int getSize() {
         return size;
     }

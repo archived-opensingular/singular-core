@@ -1,12 +1,12 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import javax.inject.Inject;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -19,7 +19,6 @@ import org.apache.wicket.model.util.ListModel;
 import br.net.mirante.singular.dto.FeedDTO;
 import br.net.mirante.singular.flow.core.dto.IFeedDTO;
 import br.net.mirante.singular.service.UIAdminFacade;
-
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -121,5 +120,10 @@ public class FeedPanel extends Panel {
 
     private String getTimeDesc(IFeedDTO feed) {
         return String.format(" + %s dias ", feed.getTempoDecorrido().subtract(feed.getMedia()));
+    }
+
+    @Override
+    public boolean isVisible() {
+        return !feeds.getObject().isEmpty();
     }
 }
