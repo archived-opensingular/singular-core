@@ -85,7 +85,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
 
     @Override
     public void setValueSelectLabel(TIPO_NATIVO valor, String selectLabel) {
-        this.descricao = selectLabel;
+        this.selectLabel = selectLabel;
         this.setValor(valor);
     }
 

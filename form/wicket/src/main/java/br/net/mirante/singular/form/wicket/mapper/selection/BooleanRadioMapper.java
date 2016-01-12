@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 
@@ -16,6 +17,9 @@ public class BooleanRadioMapper extends RadioMapper {
     @SuppressWarnings("rawtypes")
     @Override
     public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends MInstancia> model) {
+        if (!(view instanceof MBooleanRadioView)){
+            throw new SingularFormException("Radio mapper requires a MBooleanRadioView configuration.");
+        }
         MBooleanRadioView booleanRadioView = (MBooleanRadioView) view;
         return new IReadOnlyModel<List<SelectOption>>() {
             @Override
