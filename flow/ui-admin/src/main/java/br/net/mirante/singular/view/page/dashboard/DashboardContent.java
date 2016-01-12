@@ -29,22 +29,20 @@ import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import br.net.mirante.singular.view.component.PortletView;
 import br.net.mirante.singular.view.page.processo.MetadadosPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
-import br.net.mirante.singular.wicket.UIAdminSession;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
 
     private String processDefinitionCode;
-
     private RepeatingView rows;
-
-    private RepeatingView newView;
+    private RepeatingView portlets;
+    private List<PortletConfig<?>> configs = new ArrayList<>();
 
     public DashboardContent(String id, String processDefinitionCode) {
         super(id, false, false, false, true);
@@ -103,28 +101,32 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         add(rows = new RepeatingView("rows"));
-        add(newView = new RepeatingView("newView"));
+        add(portlets = new RepeatingView("portlets"));
+
         if (processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)) {
             Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
             if (!processCodeWithAccess.isEmpty()) {
                 addStatusesPanel(processCodeWithAccess);
-                addWelcomeChart();
-                addDefaultCharts();
-                addSpecificCharts();
+                populateConfigs();
+                buildDashboard(processCodeWithAccess);
             }
         } else {
             error(getString("error.user.without.access.to.process"));
         }
+
+    }
+
+    protected void buildDashboard(Set<String> processCodeWithAccess) {
+        configs.forEach(c -> portlets.add(new PortletView<>(portlets.newChildId(), c, processDefinitionCode)));
+        final FeedPanel feed = new FeedPanel("feed", processDefinitionCode, processCodeWithAccess);
+        feed.add($b.classAppender(PortletSize.LARGE.getBootstrapSize()));
+        portlets.add(feed);
     }
 
     protected DashboardRow addDashboardRow() {
         DashboardRow dashboardRow = new DashboardRow(rows.newChildId());
         rows.add(dashboardRow);
         return dashboardRow;
-    }
-
-    protected DashboardRow getLastRow() {
-        return (DashboardRow) rows.get(String.valueOf(rows.size() - 1));
     }
 
     private void addStatusesPanel(Set<String> processCodeWithAccess) {
@@ -143,37 +145,22 @@ public class DashboardContent extends Content {
                 statusDTO.getFinishedInstancesLast30Days()).setColor(Color.RED_SUNGLO));
     }
 
-    public void addWelcomeChart() {
+    public void populateConfigs() {
         if (processDefinitionCode == null) {
-            newView.add(new PortletView<>("instances-mean-time-chart", buildPortletConfigMeanTimeByProcess(), processDefinitionCode));
-        } else {
-            newView.add(new PortletView<>("active-instances-mean-time-chart", buildPortletConfigMeanTimeActiveInstances(), processDefinitionCode));
-            newView.add(new PortletView<>("task-count-chart", buildPortletConfigStatsByActiveTask(), processDefinitionCode));
+            configs.add(buildPortletConfigMeanTimeByProcess());
         }
-    }
 
-    private void addDefaultCharts() {
-        newView.add(new PortletView<>("new-instances-quantity-chart", buildPortletConfigNewInstancesQuantityLastYear(), processDefinitionCode));
-        newView.add(new PortletView<>("active-instances-quantity-chart", buildPortletConfigCounterActiveInstances(), processDefinitionCode));
-    }
+        configs.add(buildPortletConfigNewInstancesQuantityLastYear());
+        configs.add(buildPortletConfigCounterActiveInstances());
 
-    private void addSpecificCharts() {
-        final Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(UIAdminSession.get().getUserId(), AccessLevel.LIST);
         if (processDefinitionCode != null) {
-            newView.add(new PortletView<>("label.chart.mean.time.task.subtitle", buildPortletConfigMeanTimeByTask(), processDefinitionCode));
-
-            final FeedPanel feed = new FeedPanel("feed", processDefinitionCode, processCodeWithAccess);
-            feed.add(WicketUtils.$b.classAppender(PortletSize.LARGE.getBootstrapSize()));
-            newView.add(feed);
-            newView.add(new PortletView<>("finished-instances-mean-time-chart", buildPortletConfigMeanTimeFinishedInstances(), processDefinitionCode));
-            newView.add(new PortletView<>("status-hours-quantity-chart", buildPortletConfigEndStatusQuantityByPeriod(), processDefinitionCode));
-            newView.add(new PortletView<>("active-instances-average-time-chart", buildPortletConfigAverageTimesActiveInstances(), processDefinitionCode));
-            newView.add(new PortletView<>("active-task-mean-time-chart", buildPortletConfigStatsTimeByActiveTask(), processDefinitionCode));
-
-        } else {
-            final FeedPanel feed = new FeedPanel("feed", null, processCodeWithAccess);
-            feed.add(WicketUtils.$b.classAppender(PortletSize.LARGE.getBootstrapSize()));
-            newView.add(feed);
+            configs.add(buildPortletConfigMeanTimeActiveInstances());
+            configs.add(buildPortletConfigStatsByActiveTask());
+            configs.add(buildPortletConfigMeanTimeByTask());
+            configs.add(buildPortletConfigMeanTimeFinishedInstances());
+            configs.add(buildPortletConfigEndStatusQuantityByPeriod());
+            configs.add(buildPortletConfigAverageTimesActiveInstances());
+            configs.add(buildPortletConfigStatsTimeByActiveTask());
         }
     }
 
@@ -295,7 +282,7 @@ public class DashboardContent extends Content {
                 .setSubtitle(getString("label.chart.active.task.mean.time.subtitle"));
     }
 
-    private PortletConfig<?>  buildPortletConfigAverageTimesActiveInstances() {
+    private PortletConfig<?> buildPortletConfigAverageTimesActiveInstances() {
 
         final SingularChart chart = new AreaChart("DATA", "TEMPO", "TEMPO2").
                 labels(getString("label.chart.active.instances.average.time.3"), getString("label.chart.active.instances.average.time.6"));
