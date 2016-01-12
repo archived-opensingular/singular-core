@@ -38,6 +38,7 @@ public class PortletView<C extends PortletConfig> extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         add(buildQuickFilters());
+        add(new Label("title", Model.of(config.getObject().getTitle())));
         add(buildViewResult());
         add($b.classAppender(String.format("col-md-%s", config.getObject().getPortletSize().getSize())));
         setOutputMarkupId(true);

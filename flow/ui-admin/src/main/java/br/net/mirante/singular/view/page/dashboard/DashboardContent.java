@@ -99,15 +99,17 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
         add(rows = new RepeatingView("rows"));
+        add(newView = new RepeatingView("newView"));
         if (processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)) {
             Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
             if (!processCodeWithAccess.isEmpty()) {
                 addStatusesPanel(processCodeWithAccess);
                 addWelcomeChart(processCodeWithAccess);
                 addDefaultCharts(processCodeWithAccess);
-
                 addSpecificCharts(processCodeWithAccess);
-                addNewView(processCodeWithAccess);
+
+                addWelcomeChart();
+                addDefaultCharts();
             }
         } else {
             error(getString("error.user.without.access.to.process"));
@@ -243,37 +245,34 @@ public class DashboardContent extends Content {
         }
     }
 
-    public void addNewView(Set<String> processCodeWithAccess) {
+    public void addWelcomeChart(){
+        if (processDefinitionCode == null) {
+            newView.add(new PortletView<>("instances-mean-time-chart", buildPortletConfigMeanTimeByProcess(), processDefinitionCode));
+        } else {
+            newView.add(new PortletView<>("active-instances-mean-time-chart", buildPortletConfigMeanTimeActiveInstances(), processDefinitionCode));
 
-        newView = new RepeatingView("newView");
-
-        final PortletConfig<?> mySerialChartConfig = buildPortletConfigMeanTimeByProcess(null, processCodeWithAccess);
-        newView.add(new PortletView<>("mySerialChart", mySerialChartConfig, processDefinitionCode));
-
-        final PortletConfig<?> mySerialChart2Config = buildPortletConfigNewInstancesQuantityLastYear(null, processCodeWithAccess);
-        newView.add(new PortletView<>("mySerialChart2", mySerialChart2Config, processDefinitionCode));
-
-        add(newView);
+//            row.addMediumColumn(new PieChartPanel("task-count-chart", "label.chart.count.task.title",
+//                    "label.chart.count.task.subtitle", null, "QUANTIDADE", "NOME", false, false) {
+//                @Override
+//                protected List<Map<String, String>> retrieveData(PeriodType periodType) {
+//                    return uiAdminFacade.retrieveStatsByActiveTask(processDefinitionCode);
+//                }
+//            });
+        }
     }
 
-    public PortletConfig<?> buildPortletConfigNewInstancesQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
-
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("QTD_NEW", "Novas"));
-        valueFields.add(new AmChartValueField("QTD_CLS", "Concluidas"));
-
-        final SingularChart chart = new LineSerialChart(valueFields, "MES");
-
-        return new AmChartPortletConfig("/rest/newInstancesQuantityLastYear", chart).setPortletSize(PortletSize.MEDIUM);
+    private void addDefaultCharts() {
+        newView.add(new PortletView<>("new-instances-quantity-chart", buildPortletConfigNewInstancesQuantityLastYear(), processDefinitionCode));
+        newView.add(new PortletView<>("active-instances-quantity-chart", buildPortletConfigCounterActiveInstances(), processDefinitionCode));
     }
 
-    public PortletConfig<?> buildPortletConfigMeanTimeByProcess(String processCode, Set<String> processCodeWithAccess) {
+    public PortletConfig<?> buildPortletConfigMeanTimeByProcess() {
 
         final List<AmChartValueField> valueFields = new ArrayList<>();
         valueFields.add(new AmChartValueField("MEAN", "", "dia(s)"));
 
         final SingularChart chart = new ColumnSerialChart(valueFields, "NOME");
-        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/portletConfigMeanTimeByProcess", chart);
+        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/meanTimeByProcess", chart);
 
         config.getQuickFilter().add(new PortletQuickFilter("1 Semana", String.valueOf(PeriodType.WEEKLY)));
         config.getQuickFilter().add(new PortletQuickFilter("1 Mês", String.valueOf(PeriodType.MONTHLY)));
@@ -283,4 +282,46 @@ public class DashboardContent extends Content {
 
         return config;
     }
+
+    public PortletConfig<?> buildPortletConfigMeanTimeActiveInstances() {
+
+        final List<AmChartValueField> valueFields = new ArrayList<>();
+        valueFields.add(new AmChartValueField("TEMPO", ""));
+
+        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+
+        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/meanTimeActiveInstances", chart);
+        config.setPortletSize(PortletSize.MEDIUM);
+        config.setTitle(getString("label.chart.active.instances.mean.time.title"));
+
+        return config;
+    }
+
+    public PortletConfig<?> buildPortletConfigNewInstancesQuantityLastYear() {
+
+        final List<AmChartValueField> valueFields = new ArrayList<>();
+        valueFields.add(new AmChartValueField("QTD_NEW", getString("label.chart.new.instance.quantity.new")));
+        valueFields.add(new AmChartValueField("QTD_CLS", getString("label.chart.new.instance.quantity.finished")));
+
+        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+
+        return new AmChartPortletConfig("/rest/newInstancesQuantityLastYear", chart)
+                .setPortletSize(PortletSize.MEDIUM)
+                .setTitle(getString("label.chart.new.instance.quantity.title"))
+                .setSubtitle(getString("label.chart.new.instance.quantity.title"));
+    }
+
+    public PortletConfig<?> buildPortletConfigCounterActiveInstances() {
+
+        final List<AmChartValueField> valueFields = new ArrayList<>();
+        valueFields.add(new AmChartValueField("QUANTIDADE", ""));
+
+        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+
+        return new AmChartPortletConfig("/rest/counterActiveInstances", chart)
+                .setPortletSize(PortletSize.MEDIUM)
+                .setTitle(getString("label.chart.active.instance.quantity.title"))
+                .setSubtitle(getString("label.chart.active.instance.quantity.subtitle"));
+    }
+
 }

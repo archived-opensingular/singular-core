@@ -38,11 +38,27 @@ public class BamChartsDataProviderController {
         return uiAdminFacade.retrieveNewInstancesQuantityLastYear(context.getProcessDefinitionCode(), getProcesseDefinitionsKeysWithAcess());
     }
 
-    @RequestMapping(value = "/portletConfigMeanTimeByProcess",
+    @RequestMapping(value = "/meanTimeActiveInstances",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<Map<String, String>> PortletConfigMeanTimeByProcess(@RequestBody PortletContext context) {
+    public List<Map<String, String>> meanTimeActiveInstances(@RequestBody PortletContext context) {
+        return uiAdminFacade.retrieveMeanTimeActiveInstances(context.getProcessDefinitionCode(), getProcesseDefinitionsKeysWithAcess());
+    }
+
+    @RequestMapping(value = "/counterActiveInstances",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Map<String, String>> counterActiveInstances(@RequestBody PortletContext context) {
+        return uiAdminFacade.retrieveCounterActiveInstances(context.getProcessDefinitionCode(), getProcesseDefinitionsKeysWithAcess());
+    }
+
+    @RequestMapping(value = "/meanTimeByProcess",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Map<String, String>> meanTimeByProcess(@RequestBody PortletContext context) {
         PeriodType pt = PeriodType.YEARLY;
         PortletQuickFilter quickFilter = context.getQuickFilter();
         if (quickFilter != null) {
