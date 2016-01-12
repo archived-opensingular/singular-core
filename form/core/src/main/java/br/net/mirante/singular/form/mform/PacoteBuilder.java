@@ -61,7 +61,7 @@ public class PacoteBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    public <T extends MTipo<?>> void addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, ?> atr, Object valorAtributo) {
+    public <T extends MTipo<?>, V extends Object> void addAtributo(Class<? extends MTipo> classeTipo, AtrRef<T, ?, V> atr, V valorAtributo) {
         MAtributo atributo = addAtributoInterno(classeTipo, atr);
         MTipo<?> tipoAlvo = dicionario.getTipo(classeTipo);
         tipoAlvo.setValorAtributo(atributo, valorAtributo);

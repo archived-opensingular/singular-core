@@ -73,6 +73,7 @@ public class MPacoteCurriculo extends MPacote {
         }
 
         final MTipoComposto<?> referencia = curriculo.addCampoComposto("referencia");
+        final MTipoBoolean foiIndicado = referencia.addCampoBoolean("foiIndicado");
         final MTipoBoolean refTemNaEmpresa = referencia.addCampoBoolean("conheceColaboradorNaEmpresa");
         final MTipoString refQuemNaEmpresa = referencia.addCampoString("colaboradorContato");
         {
@@ -81,9 +82,13 @@ public class MPacoteCurriculo extends MPacote {
             refTemNaEmpresa
                 .as(AtrBasic::new).label("Conhece colaborador na empresa")
                 .as(AtrBootstrap::new).colPreference(4);
+            foiIndicado.setView(MBooleanRadioView::new);
+            foiIndicado
+                .as(AtrBasic::new).label("Foi indicado")
+                .as(AtrBootstrap::new).colPreference(3);
             refQuemNaEmpresa
                 .as(AtrBasic::new).label("Colaborador")
-                .as(AtrBootstrap::new).colPreference(8);
+                .as(AtrBootstrap::new).colPreference(5);
         }
 
         final MTipoLista<MTipoComposto<MIComposto>, MIComposto> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");

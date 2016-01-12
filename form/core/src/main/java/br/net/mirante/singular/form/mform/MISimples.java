@@ -8,7 +8,7 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
 
     private TIPO_NATIVO valor;
 
-    private String descricao;
+    private String selectLabel;
 
     protected MISimples() {}
 
@@ -49,15 +49,14 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
         return getValor() == null;
     }
 
-
     @Override
-    public void setSelectLabel(String description) {
-        this.descricao = description;
+    public void setSelectLabel(String selectLabel) {
+        this.selectLabel = selectLabel;
     }
 
     @Override
     public String getSelectLabel() {
-        return descricao;
+        return selectLabel;
     }
 
     @Override
