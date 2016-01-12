@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -216,6 +217,13 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     */
+    public MTipo<TIPO_INSTANCIA> withSelectView() {
+        return super.withView(MSelecaoPorSelectView::new);
+    }
+    
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;

@@ -11,7 +11,6 @@ import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
@@ -154,7 +153,7 @@ public class MPacoteCurriculo extends MPacote {
             cargo
                 .as(AtrBasic::new).label("Cargo");
             atividades
-                .withView(MTextAreaView::new)
+                .withTextAreaView()
                 .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
@@ -187,7 +186,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
         {
             informacoesAdicionais
-                    .withView(MTextAreaView::new)
+                    .withTextAreaView()
                     .as(AtrBasic::new).label("Informações adicionais");
         }
 

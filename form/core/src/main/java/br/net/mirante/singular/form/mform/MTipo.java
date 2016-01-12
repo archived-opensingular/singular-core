@@ -158,7 +158,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     @Override
     public MEscopo getEscopoPai() {
         if (escopo == null) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                 "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
                     + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
@@ -205,7 +205,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
-            throw new RuntimeException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
+            throw new SingularFormException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
                 + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
@@ -223,7 +223,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
                 return att;
             }
         }
-        throw new RuntimeException("Não existe atributo '" + nomeCompleto + "' em " + getNome());
+        throw new SingularFormException("Não existe atributo '" + nomeCompleto + "' em " + getNome());
     }
 
     public <MI extends MInstancia> MI getInstanciaAtributo(AtrRef<?, MI, ?> atr) {
@@ -356,7 +356,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
             return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
         }
-        throw new RuntimeException("Classe '" + classeAlvo + "' não funciona como aspecto");
+        throw new SingularFormException("Classe '" + classeAlvo + "' não funciona como aspecto");
     }
 
     public AtrBasic asAtrBasic() {
@@ -368,19 +368,27 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     public MTipo<I> withView(Supplier<MView> factory) {
-        this.view = factory.get();
+        setView(factory.get());
         return this;
     }
 
     public MTipo<I> withView(MView mView) {
-        this.view = mView;
+        setView(mView);
         return this;
     }
 
     public <T extends MView> T setView(Supplier<T> factory) {
         T v = factory.get();
-        this.view = v;
+        setView(v);
         return v;
+    }
+    
+    private void setView(MView view) {
+        if(view.aplicavelEm(this)){
+            this.view = view;
+        } else {
+            throw new SingularFormException("A view '"+view.getClass().getName()+"' não é aplicável ao tipo: '"+getClass().getName()+"'");
+        }
     }
 
     public MView getView() {
@@ -454,7 +462,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             return superTipo.newInstance(original, owner);
         }
         if (classeInstancia == null) {
-            throw new RuntimeException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
+            throw new SingularFormException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
                 + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
@@ -469,7 +477,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             }
             return novo;
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException("Erro instanciando o tipo '" + getNome() + "' para o tipo '" + original.getNome() + "'", e);
+            throw new SingularFormException("Erro instanciando o tipo '" + getNome() + "' para o tipo '" + original.getNome() + "'", e);
         }
     }
 

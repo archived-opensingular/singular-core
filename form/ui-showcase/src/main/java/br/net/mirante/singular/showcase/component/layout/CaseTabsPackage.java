@@ -8,7 +8,6 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
@@ -54,7 +53,7 @@ public class CaseTabsPackage extends MPacote {
             cargo
                     .as(AtrBasic::new).label("Cargo");
             atividades
-                    .withView(MTextAreaView::new)
+                    .withTextAreaView()
                     .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 

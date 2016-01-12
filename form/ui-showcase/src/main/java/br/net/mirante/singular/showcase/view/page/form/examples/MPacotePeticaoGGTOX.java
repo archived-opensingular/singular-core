@@ -1,9 +1,27 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.*;
-import br.net.mirante.singular.form.mform.core.*;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
@@ -198,8 +216,8 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
                 field.as(AtrBasic::new).label("Sinonímia sugerida").tamanhoMaximo(100);
 
-                field.withView(MTableListaView::new)
-                        .as(AtrBasic::new)
+//                field.withView(MTableListaView::new) TODO: Esta view não pode ser utilizada pelo tipo MTipoString
+                field.as(AtrBasic::new)
                         .label("Lista de sinonímias sugeridas para esta substância/mistura");
                 return field;
             }
@@ -435,7 +453,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 densidade = createDecimalField("densidade", "Densidade", "g/cm³ a 20ºC", 4);
 
                 observacoes = type.addCampoString("observacoes");
-                observacoes.withView(MTextAreaView::new).as(AtrBasic::new).label("Observações");
+                observacoes.withTextAreaView().as(AtrBasic::new).label("Observações");
             }
 
             private MTipoDecimal createDecimalField(String fieldname, String label, String subtitle, int colPreference) {
@@ -693,7 +711,7 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 alteracao = new Alteracao(pb);
 
                 type.addCampoString("observacoes")
-                        .withView(MTextAreaView::new)
+                        .withTextAreaView()
                         .as(AtrBasic::new).label("Observações");
             }
 

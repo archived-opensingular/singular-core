@@ -10,10 +10,8 @@ import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -50,6 +48,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
             .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
+        
         final MTipoLista<MTipoString, MIString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
                 pb.createTipo("tipoContato", MTipoString.class)
                         .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax"));
@@ -66,7 +65,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Dt.Nasc.").subtitle("dd/mm/aaaa")
                 .as(AtrBootstrap::new).colPreference(2);
             estadoCivil
-                .withView(MSelecaoPorSelectView::new)
+                .withSelectView()
                 .as(AtrBasic::new).label("Estado Civil")
                 .as(AtrBootstrap::new).colPreference(2);
             infoPub
@@ -171,7 +170,7 @@ public class MPacoteCurriculo extends MPacote {
             cargo
                 .as(AtrBasic::new).label("Cargo");
             atividades
-                .withView(MTextAreaView::new)
+                .withTextAreaView()
                 .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
@@ -204,7 +203,7 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
         {
             informacoesAdicionais
-                    .withView(MTextAreaView::new)
+                    .withTextAreaView()
                     .as(AtrBasic::new).label("Informações adicionais");
         }
 

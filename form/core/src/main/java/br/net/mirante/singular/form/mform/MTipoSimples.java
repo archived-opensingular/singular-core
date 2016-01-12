@@ -3,7 +3,10 @@ package br.net.mirante.singular.form.mform;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
+import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
+import br.net.mirante.singular.form.mform.core.MIBoolean;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -51,6 +54,13 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
         optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return this;
+    }
+    
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     */
+    public MTipo<I> withSelectView() {
+        return super.withView(MSelecaoPorSelectView::new);
     }
     
     public AtrFormula asFormula() {
