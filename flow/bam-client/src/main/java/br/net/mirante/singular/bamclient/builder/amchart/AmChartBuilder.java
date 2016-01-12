@@ -1,12 +1,9 @@
 package br.net.mirante.singular.bamclient.builder.amchart;
 
 import java.util.Collection;
-import java.util.Map;
 
 import br.net.mirante.singular.bamclient.builder.AbstractJSONBuilder;
 import br.net.mirante.singular.bamclient.builder.JSONBuilderContext;
-import br.net.mirante.singular.bamclient.chart.ChartDataProvider;
-import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
 
 
 public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractJSONBuilder<T> {
@@ -54,19 +51,6 @@ public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractJ
     public T titles(Collection<String> titles) {
         context.getjWriter().key("titles").array();
         titles.forEach(t -> context.getjWriter().value(t));
-        context.getjWriter().endArray();
-        return self();
-    }
-
-    public T dataProvider(ChartDataProvider dataProvider, PortletFilterContext filterContext) {
-        context.getjWriter().key("dataProvider").array();
-        for (Map<String, String> map : dataProvider.loadData(filterContext)) {
-            context.getjWriter().object();
-            for (Map.Entry<String, String> entrySet : map.entrySet()) {
-                context.getjWriter().key(entrySet.getKey()).value(entrySet.getValue());
-            }
-            context.getjWriter().endObject();
-        }
         context.getjWriter().endArray();
         return self();
     }

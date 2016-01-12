@@ -12,28 +12,24 @@ import br.net.mirante.singular.bamclient.builder.amchart.AmChartLegend;
 import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueAxes;
 import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
 import br.net.mirante.singular.bamclient.builder.amchart.AmSerialChartBuilder;
-import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
 
 public abstract class AbstractSerialChart implements SingularChart {
 
-    final protected ChartDataProvider dataProvider;
     final protected String category;
     final protected List<AmChartValueField> values;
 
     protected boolean withLegend = false;
 
-    public AbstractSerialChart(ChartDataProvider dataProvider, List<AmChartValueField> values, String category) {
-        this.dataProvider = dataProvider;
+    public AbstractSerialChart(List<AmChartValueField> values, String category) {
         this.values = values;
         this.category = category;
     }
 
     @Override
-    public String getDefinition(PortletFilterContext filter) {
+    public String getDefinition() {
         final AmSerialChartBuilder chartBuilder = new SingularChartBuilder()
                 .newSerialChart()
                 .theme("light")
-                .dataProvider(dataProvider, filter)
                 .valueAxes(Collections.singletonList(new AmChartValueAxes()
                         .gridColor("#FFFFFF")
                         .gridAlpha(0.2)
@@ -60,8 +56,9 @@ public abstract class AbstractSerialChart implements SingularChart {
         return chartBuilder.finish();
     }
 
-    public void withLegend() {
+    public AbstractSerialChart withLegend() {
         withLegend = true;
+        return this;
     }
 
     protected abstract Collection<AmChartGraph> getGraphs();

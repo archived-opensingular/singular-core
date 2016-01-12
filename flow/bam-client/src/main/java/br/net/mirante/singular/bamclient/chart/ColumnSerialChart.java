@@ -9,8 +9,8 @@ import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
 
 public class ColumnSerialChart extends AbstractSerialChart {
 
-    public ColumnSerialChart(ChartDataProvider dataProvider, List<AmChartValueField> values, String category) {
-        super(dataProvider, values, category);
+    public ColumnSerialChart(List<AmChartValueField> values, String category) {
+        super(values, category);
     }
 
     @Override

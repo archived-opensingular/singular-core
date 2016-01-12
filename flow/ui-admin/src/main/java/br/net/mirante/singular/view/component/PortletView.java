@@ -15,21 +15,23 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
-import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
+import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class PortletView<C extends PortletConfig> extends Panel {
 
     private final IModel<C> config;
-    private final IModel<PortletFilterContext> filter = Model.of(new PortletFilterContext());
+    private final IModel<PortletContext> context = Model.of(new PortletContext());
 
-    public PortletView(String id, C config) {
+    public PortletView(String id, C config, String processDefinitionCode) {
         super(id);
         this.config = Model.of(config);
+        context.getObject().setProcessDefinitionCode(processDefinitionCode);
     }
 
     protected ViewResult buildViewResult() {
-        return PortletViewConfigResolver.newViewResult("portletContent", config, filter);
+        return PortletViewConfigResolver.newViewResult("portletContent", config, context);
     }
 
     @Override
@@ -37,6 +39,7 @@ public class PortletView<C extends PortletConfig> extends Panel {
         super.onInitialize();
         add(buildQuickFilters());
         add(buildViewResult());
+        add($b.classAppender(String.format("col-md-%s", config.getObject().getPortletSize().getSize())));
         setOutputMarkupId(true);
     }
 
@@ -48,7 +51,7 @@ public class PortletView<C extends PortletConfig> extends Panel {
                     @Override
                     protected void onEvent(AjaxRequestTarget target) {
                         target.add(getParent());
-                        filter.getObject().setQuickFilter(item.getModelObject());
+                        context.getObject().setQuickFilter(item.getModelObject());
                     }
                 });
                 item.add(new Behavior() {
@@ -57,7 +60,7 @@ public class PortletView<C extends PortletConfig> extends Panel {
                         component.add(new ClassAttributeModifier() {
                             @Override
                             protected Set<String> update(Set<String> oldClasses) {
-                                if (item.getModelObject().equals(filter.getObject().getQuickFilter())) {
+                                if (item.getModelObject().equals(context.getObject().getQuickFilter())) {
                                     oldClasses.add("active");
                                 } else {
                                     oldClasses.remove("active");

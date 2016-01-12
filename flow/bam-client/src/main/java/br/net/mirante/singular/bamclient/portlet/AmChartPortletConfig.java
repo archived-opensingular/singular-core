@@ -6,7 +6,8 @@ public class AmChartPortletConfig extends ChartPortletConfig<AmChartPortletConfi
 
     private final SingularChart chart;
 
-    public AmChartPortletConfig(SingularChart chart) {
+    public AmChartPortletConfig(String restEndpointURL, SingularChart chart) {
+        super(restEndpointURL);
         this.chart = chart;
     }
 

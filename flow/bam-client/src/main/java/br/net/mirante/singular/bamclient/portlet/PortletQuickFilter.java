@@ -5,18 +5,29 @@ import java.io.Serializable;
 public class PortletQuickFilter implements Serializable {
 
     private String label;
-    private Serializable object;
+    private String value;
 
-    public PortletQuickFilter(String label, Serializable object) {
+    public PortletQuickFilter() {
+    }
+
+    public PortletQuickFilter(String label, String value) {
         this.label = label;
-        this.object = object;
+        this.value = value;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public Serializable getObject() {
-        return object;
+    public String getValue() {
+        return value;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }

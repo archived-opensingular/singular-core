@@ -1,11 +1,11 @@
 package br.net.mirante.singular.service;
 
+import javax.inject.Inject;
+
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,12 +35,12 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Inject
     private MenuService menuService;
 
-    @Value("#{singularAdmin['user.avatar.url']}") 
+    @Value("#{singularAdmin['user.avatar.url']}")
     private String userAvatar;
-    
+
     @Value("#{singularAdmin['springsecurity.logout']}")
     private String logoutUrl;
-    
+
     @Override
     public DefinitionDTO retrieveDefinitionById(Integer processDefinitionCod) {
         return processDefinitionService.retrieveById(processDefinitionCod);
@@ -50,7 +50,7 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     public DefinitionDTO retrieveDefinitionByKey(String processDefinitionKey) {
         return processDefinitionService.retrieveByKey(processDefinitionKey);
     }
-    
+
     @Override
     public List<DefinitionDTO> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess) {
         return processDefinitionService.retrieveAll(first, size, orderByProperty, asc, processCodeWithAccess);
@@ -150,7 +150,7 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
         return menuService.retrieveAllCategoriesWithAcces(userId);
     }
-    
+
     @Override
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
         return menuService.retrieveCategoryDefinitionIdsByCode(code);
@@ -163,5 +163,5 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     public String getLogoutUrl() {
         return logoutUrl;
     }
-    
+
 }

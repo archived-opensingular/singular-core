@@ -8,6 +8,10 @@ public class AmChartValueField implements Serializable {
     private String title;
     private String suffix;
 
+    public AmChartValueField(String propertyName, String title) {
+        this(propertyName, title, "");
+    }
+
     public AmChartValueField(String propertyName, String title, String suffix) {
         this.propertyName = propertyName;
         this.title = title;

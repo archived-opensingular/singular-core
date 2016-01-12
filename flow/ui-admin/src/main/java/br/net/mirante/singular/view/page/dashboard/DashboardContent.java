@@ -1,8 +1,6 @@
 package br.net.mirante.singular.view.page.dashboard;
 
-import java.time.Period;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,13 +16,13 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
-import br.net.mirante.singular.bamclient.chart.ChartDataProvider;
 import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
 import br.net.mirante.singular.bamclient.chart.LineSerialChart;
-import br.net.mirante.singular.bamclient.chart.StalessChartDataProvider;
+import br.net.mirante.singular.bamclient.chart.SingularChart;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
-import br.net.mirante.singular.bamclient.portlet.PortletFilterContext;
+import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
+import br.net.mirante.singular.bamclient.portlet.PortletSize;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.util.wicket.resource.Color;
@@ -41,6 +39,8 @@ public class DashboardContent extends Content {
     private String processDefinitionCode;
 
     private RepeatingView rows;
+
+    private RepeatingView newView;
 
     public DashboardContent(String id, String processDefinitionCode) {
         super(id, false, false, false, true);
@@ -107,6 +107,7 @@ public class DashboardContent extends Content {
                 addDefaultCharts(processCodeWithAccess);
 
                 addSpecificCharts(processCodeWithAccess);
+                addNewView(processCodeWithAccess);
             }
         } else {
             error(getString("error.user.without.access.to.process"));
@@ -126,19 +127,6 @@ public class DashboardContent extends Content {
     private void addDefaultCharts(Set<String> processCodeWithAccess) {
 
         final DashboardRow row = addDashboardRow();
-
-        final ChartDataProvider provider = new StalessChartDataProvider() {
-            @Override
-            public List<Map<String, String>> loadData(PortletFilterContext filterContext) {
-                return uiAdminFacade.retrieveNewInstancesQuantityLastYear(processDefinitionCode, processCodeWithAccess);
-            }
-        };
-        final List<AmChartValueField> valuesField = Arrays.asList(new AmChartValueField("QTD_NEW", "Novas", ""), new AmChartValueField("QTD_CLS", "Concluidas", ""));
-        final LineSerialChart serialChart = new LineSerialChart(provider, valuesField, "MES");
-
-        serialChart.withLegend();
-
-        row.addMediumColumn(new PortletView<>("mySerialChart2", new AmChartPortletConfig(serialChart)));
 
         row.addMediumColumn(new SerialChartPanel("new-instances-quantity-chart", "label.chart.new.instance.quantity.title",
                 "label.chart.new.instance.quantity.title", ImmutablePair.of("QTD_NEW", getString("label.chart.new.instance.quantity.new")),
@@ -175,28 +163,6 @@ public class DashboardContent extends Content {
     }
 
     private void addWelcomeChart(Set<String> processCodeWithAccess) {
-
-        final List<AmChartValueField> valueFields = Collections.singletonList(new AmChartValueField("MEAN", "", "dia(s)"));
-        final ChartDataProvider provider = new StalessChartDataProvider() {
-            @Override
-            public List<Map<String, String>> loadData(PortletFilterContext filter) {
-                Period period = PeriodType.YEARLY.getPeriod();
-                if (filter.getQuickFilter() != null && filter.getQuickFilter().getObject() != null) {
-                    period = (Period) filter.getQuickFilter().getObject();
-                }
-                return uiAdminFacade.retrieveMeanTimeByProcess(period, null, processCodeWithAccess);
-            }
-        };
-
-        final ColumnSerialChart serialChart = new ColumnSerialChart(provider, valueFields, "NOME");
-        final AmChartPortletConfig amChartPortletConfig = new AmChartPortletConfig(serialChart);
-
-        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Semana", PeriodType.WEEKLY.getPeriod()));
-        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Mês", PeriodType.MONTHLY.getPeriod()));
-        amChartPortletConfig.getQuickFilter().add(new PortletQuickFilter("1 Ano", PeriodType.YEARLY.getPeriod()));
-
-        addDashboardRow().addMediumColumn(new PortletView<>("mySerialChart", amChartPortletConfig));
-
         if (processDefinitionCode == null) {
             addDashboardRow().addMediumColumn(new SerialChartPanel("instances-mean-time-chart", "label.chart.mean.time.process.title",
                     "label.chart.mean.time.process.subtitle", "MEAN", "NOME", " dia(s)", true) {
@@ -275,5 +241,46 @@ public class DashboardContent extends Content {
         } else {
             addDashboardRow().addMediumColumn(new FeedPanel("feed", processDefinitionCode, processCodeWithAccess));
         }
+    }
+
+    public void addNewView(Set<String> processCodeWithAccess) {
+
+        newView = new RepeatingView("newView");
+
+        final PortletConfig<?> mySerialChartConfig = buildPortletConfigMeanTimeByProcess(null, processCodeWithAccess);
+        newView.add(new PortletView<>("mySerialChart", mySerialChartConfig, processDefinitionCode));
+
+        final PortletConfig<?> mySerialChart2Config = buildPortletConfigNewInstancesQuantityLastYear(null, processCodeWithAccess);
+        newView.add(new PortletView<>("mySerialChart2", mySerialChart2Config, processDefinitionCode));
+
+        add(newView);
+    }
+
+    public PortletConfig<?> buildPortletConfigNewInstancesQuantityLastYear(String processCode, Set<String> processCodeWithAccess) {
+
+        final List<AmChartValueField> valueFields = new ArrayList<>();
+        valueFields.add(new AmChartValueField("QTD_NEW", "Novas"));
+        valueFields.add(new AmChartValueField("QTD_CLS", "Concluidas"));
+
+        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+
+        return new AmChartPortletConfig("/rest/newInstancesQuantityLastYear", chart).setPortletSize(PortletSize.MEDIUM);
+    }
+
+    public PortletConfig<?> buildPortletConfigMeanTimeByProcess(String processCode, Set<String> processCodeWithAccess) {
+
+        final List<AmChartValueField> valueFields = new ArrayList<>();
+        valueFields.add(new AmChartValueField("MEAN", "", "dia(s)"));
+
+        final SingularChart chart = new ColumnSerialChart(valueFields, "NOME");
+        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/portletConfigMeanTimeByProcess", chart);
+
+        config.getQuickFilter().add(new PortletQuickFilter("1 Semana", String.valueOf(PeriodType.WEEKLY)));
+        config.getQuickFilter().add(new PortletQuickFilter("1 Mês", String.valueOf(PeriodType.MONTHLY)));
+        config.getQuickFilter().add(new PortletQuickFilter("1 Ano", String.valueOf(PeriodType.YEARLY)));
+        config.setPortletSize(PortletSize.LARGE);
+        config.setTitle(getString("label.chart.mean.time.process.title"));
+
+        return config;
     }
 }
