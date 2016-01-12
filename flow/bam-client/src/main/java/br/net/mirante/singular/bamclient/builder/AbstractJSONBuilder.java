@@ -20,6 +20,15 @@ public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> impleme
         return self();
     }
 
+    protected T writeArray(String property, Object... values) {
+        context.getjWriter().key(property).array();
+        for(Object o : values){
+            context.getjWriter().value(o);
+        }
+        context.getjWriter().endArray();
+        return self();
+    }
+
     protected <X extends JSONObjectMappper<?>> T writeObject(X value) {
         context.getjWriter().object();
         for (Map.Entry<String, Object> entry : value.getObjectMap().entrySet()) {

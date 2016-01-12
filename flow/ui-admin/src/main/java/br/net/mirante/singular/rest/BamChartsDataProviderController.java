@@ -74,6 +74,15 @@ public class BamChartsDataProviderController {
                 getProcesseDefinitionsKeysWithAcess());
     }
 
+    @RequestMapping(value = "/averageTimesActiveInstances",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Map<String, String>> averageTimesActiveInstances(@RequestBody PortletContext context) {
+        return uiAdminFacade.retrieveAverageTimesActiveInstances(context.getProcessDefinitionCode(),
+                getProcesseDefinitionsKeysWithAcess());
+    }
+
     @RequestMapping(value = "/meanTimeByTask",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE,

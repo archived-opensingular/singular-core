@@ -16,12 +16,14 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
+import br.net.mirante.singular.bamclient.chart.AreaChart;
 import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
 import br.net.mirante.singular.bamclient.chart.DonutPieChart;
 import br.net.mirante.singular.bamclient.chart.LineSerialChart;
 import br.net.mirante.singular.bamclient.chart.PieChart;
 import br.net.mirante.singular.bamclient.chart.SingularChart;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
+import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
@@ -109,9 +111,9 @@ public class DashboardContent extends Content {
             if (!processCodeWithAccess.isEmpty()) {
                 addStatusesPanel(processCodeWithAccess);
 
-                addWelcomeChart(processCodeWithAccess);
-                addDefaultCharts(processCodeWithAccess);
-                addSpecificCharts(processCodeWithAccess);
+//                addWelcomeChart(processCodeWithAccess);
+//                addDefaultCharts(processCodeWithAccess);
+//                addSpecificCharts(processCodeWithAccess);
 
                 addWelcomeChart();
                 addDefaultCharts();
@@ -277,6 +279,8 @@ public class DashboardContent extends Content {
             newView.add(new PortletView<>("finished-instances-mean-time-chart", buildPortletConfigMeanTimeFinishedInstances(), processDefinitionCode));
             newView.add(new PortletView<>("status-hours-quantity-chart", buildPortletConfigEndStatusQuantityByPeriod(), processDefinitionCode));
 
+            newView.add(new PortletView<>("active-instances-average-time-chart", buildPortletConfigAverageTimesActiveInstances(), processDefinitionCode));
+
 //            row.addMediumColumn(new AreaChartPanel("active-instances-average-time-chart",
 //                    "label.chart.active.instances.average.time.title",
 //                    "label.chart.active.instances.average.time.subtitle",
@@ -413,6 +417,18 @@ public class DashboardContent extends Content {
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.active.task.mean.time.title"))
                 .setSubtitle(getString("label.chart.active.task.mean.time.subtitle"));
+    }
+
+
+    private PortletConfig<?>  buildPortletConfigAverageTimesActiveInstances() {
+
+        final SingularChart chart = new AreaChart("DATA", "TEMPO", "TEMPO2").
+                labels(getString("label.chart.active.instances.average.time.3"), getString("label.chart.active.instances.average.time.6"));
+
+        return new MorrisChartPortletConfig("/rest/averageTimesActiveInstances", chart)
+                .setPortletSize(PortletSize.MEDIUM)
+                .setTitle(getString("label.chart.active.instances.average.time.title"))
+                .setSubtitle(getString("label.chart.active.instances.average.time.subtitle"));
     }
 
 }

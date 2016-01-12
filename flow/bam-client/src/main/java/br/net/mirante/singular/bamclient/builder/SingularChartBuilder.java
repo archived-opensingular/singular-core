@@ -3,6 +3,7 @@ package br.net.mirante.singular.bamclient.builder;
 
 import br.net.mirante.singular.bamclient.builder.amchart.AmPieChartBuilder;
 import br.net.mirante.singular.bamclient.builder.amchart.AmSerialChartBuilder;
+import br.net.mirante.singular.bamclient.builder.morris.MorrisAreaChart;
 
 public class SingularChartBuilder extends AbstractJSONBuilder<SingularChartBuilder> {
 
@@ -18,6 +19,11 @@ public class SingularChartBuilder extends AbstractJSONBuilder<SingularChartBuild
     public AmPieChartBuilder newPieChart() {
         context.getjWriter().object();
         return new AmPieChartBuilder(context);
+    }
+
+    public MorrisAreaChart newAreaChart() {
+        context.getjWriter().object();
+        return new MorrisAreaChart(context);
     }
 
     @Override
