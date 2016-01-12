@@ -1,76 +1,61 @@
 <html xmlns:wicket="http://wicket.apache.org">
-<wicket:panel xmlns:wicket="http://wicket.apache.org">
-    <div class="page-toolbar">
-        <style type="text/css">
-            .popover{
-                max-width: 100%; /* Max Width of the popover (depending on the container!) */
-                width:34%;
-            }
-            .bottom-right { margin-top:   -2px; }
-        </style>
+    <wicket:panel xmlns:wicket="http://wicket.apache.org">
+        <div class="page-toolbar">
+            <style type="text/css">
+                .popover{
+                    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+                    width:34%;
+                }
+                .bottom-right { margin-top:   -2px; }
+            </style>
 
-        <!-- Popover #1 -->
-        <a class="btn btn-circle btn-default btn-sm" data-placement="bottom-right"
-           data-popover-content="#_popover_id"
-           data-toggle="popover" href="#" tabindex="0">
-            <i class="fa fa-comment-o"></i> <span> </span> <i class="fa fa-angle-down"></i>
-        </a>
+            <!-- Popover #1 -->
+            <a class="btn btn-circle btn-default btn-sm" data-placement="bottom-right"
+               data-popover-content="#_popover_id"
+               data-toggle="popover" href="#" tabindex="0" wicket:id="comment_link" >
+                <i class="fa fa-comment-o"></i> <span> </span> <i class="fa fa-angle-down"></i>
+            </a>
 
-        <!-- Content for Popover #1 -->
-        <div class="hidden" id="_popover_id" >
-            <div class="popover-heading">
-                Commentários sobre o <wicket:container wicket:id="title" />
-            </div>
+            <!-- Content for Popover #1 -->
+            <div class="hidden" wicket:id="popover_modal" >
+                <div class="popover-heading">
+                    Comentários sobre o <wicket:container wicket:id="title" />
+                </div>
 
-            <div class="popover-body">
-                <ul >
-                    <li>
-                        <a href="javascript:;"><i class="fa fa-comment-o"></i> Comment 1 </a>
-                    </li>
-                    <li>
-                        <a href="javascript:;"><i class="fa fa-comment-o"></i> Comment 2 </a>
-                    </li>
-                    <li>
-                        <a href="javascript:;"><i class="fa fa-comment-o"></i> Comment 3 </a>
-                    </li>
-                    <li class="divider">
-                    </li>
-                    <li>
-                        <div style="width: 100%;padding: 20px;">
-                            <div class="row">
-                                <div lass="can-have-error form-group form-group-sm">
-                                    <label id="label10a" class="control-label" >Comentário</label>
-                                    <textarea class="form-control" cols="15" rows="3"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <button type="button" class="btn blue" name="save-btn" id="save_btn6">
-                                    Comentar
-                                </button>
+                <div class="popover-body">
+                    <div style="width: 100%;padding: 20px;">
+                        <div class="row">
+                            <div class="can-have-error form-group form-group-sm">
+                                <textarea class="form-control" cols="15" rows="3"/>
                             </div>
                         </div>
-                    </li>
-                </ul>
+                        <div class="row">
+                            <button type="button" class="btn blue" name="save-btn" id="save_btn6">
+                                Comentar
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <script type="application/javascript">
-            $(function(){
-                var _id = "<wicket:container wicket:id='_popover_id' />";
-                $('[data-toggle="popover"]').popover({
-                    html : true,
-                    content: function() {
-                        var content = $(this).attr("data-popover-content");
-                        return $(content).children(".popover-body").html();
-                    },
-                    title: function() {
-                        var title = $(this).attr("data-popover-content");
-                        return $(title).children(".popover-heading").html();
-                    }
+            <script type="application/javascript">
+                $(function(){
+                    var _id = "<wicket:container wicket:id='_popover_id' />";
+//                    $('[data-toggle="popover"]').popover({
+                    $('#'+_id).popover({
+                        html : true,
+                        content: function() {
+                            var content = $(this).attr("data-popover-content");
+                            return $(content).children(".popover-body").html();
+                        },
+                        title: function() {
+                            var title = $(this).attr("data-popover-content");
+                            return $(title).children(".popover-heading").html();
+                        }
+                    });
                 });
-            });
 
-        </script>
+            </script>
 
-    </div>
-</wicket:panel>
+        </div>
+    </wicket:panel>
 </html>
