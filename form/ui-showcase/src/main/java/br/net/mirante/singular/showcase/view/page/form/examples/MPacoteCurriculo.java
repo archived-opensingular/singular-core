@@ -63,7 +63,7 @@ public class MPacoteCurriculo extends MPacote {
                 .as(AtrBasic::new).label("Dt.Nasc.").subtitle("dd/mm/aaaa")
                 .as(AtrBootstrap::new).colPreference(2);
             estadoCivil
-                .withSelectView()
+                .withRadioView()
                 .as(AtrBasic::new).label("Estado Civil")
                 .as(AtrBootstrap::new).colPreference(2);
             infoPub
