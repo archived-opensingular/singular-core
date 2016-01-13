@@ -49,6 +49,8 @@ public class RadioMapper extends SelectMapper {
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue) {
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);
+        choices.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
+        choices.setSuffix("</span>");
         formGroup.appendRadioChoice(choices);
         return choices;
     }

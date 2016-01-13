@@ -1,12 +1,14 @@
 package br.net.mirante.singular.bamclient.portlet;
 
 import java.io.Serializable;
+import java.util.Set;
 
 public class PortletContext implements Serializable {
 
     private String restEndpoint;
     private PortletQuickFilter quickFilter;
     private String processDefinitionCode;
+    private Set<String> processDefinitionKeysWithAccess;
 
     public PortletQuickFilter getQuickFilter() {
         return quickFilter;
@@ -30,5 +32,13 @@ public class PortletContext implements Serializable {
 
     public void setProcessDefinitionCode(String processDefinitionCode) {
         this.processDefinitionCode = processDefinitionCode;
+    }
+
+    public Set<String> getProcessDefinitionKeysWithAccess() {
+        return processDefinitionKeysWithAccess;
+    }
+
+    public void setProcessDefinitionKeysWithAccess(Set<String> processDefinitionKeysWithAccess) {
+        this.processDefinitionKeysWithAccess = processDefinitionKeysWithAccess;
     }
 }

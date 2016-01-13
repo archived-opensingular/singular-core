@@ -6,7 +6,7 @@ AmChartViewResult = (function () {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: portletContext.restEndpoint,
+            url: "/rest/delegate",
             data: JSON.stringify(portletContext),
             type: "POST",
             success: function (data) {

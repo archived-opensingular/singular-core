@@ -1,10 +1,12 @@
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
@@ -75,7 +77,7 @@ public class CaseMasterDetailNestedPackage extends MPacote {
                     .as(AtrBasic::new).label("Nome")
                     .as(AtrBootstrap::new).colPreference(4);
             tipoDoPet
-                    .withView(MSelecaoPorSelectView::new)
+                    .withSelectView()
                     .as(AtrBasic::new).label("Tipo")
                     .as(AtrBootstrap::new).colPreference(4);
             idadePet
@@ -83,7 +85,7 @@ public class CaseMasterDetailNestedPackage extends MPacote {
                     .as(AtrBootstrap::new).colPreference(4);
             //@destacar:fim
             atividades
-                    .withView(MTextAreaView::new)
+                    .withTextAreaView()
                     .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
