@@ -3,10 +3,9 @@ package br.net.mirante.singular.form.mform;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
-import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
-import br.net.mirante.singular.form.mform.core.MIBoolean;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -59,9 +58,19 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
     /**
      * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
      */
-    public MTipo<I> withSelectView() {
-        return super.withView(MSelecaoPorSelectView::new);
+    @SuppressWarnings("unchecked")
+	public MTipoSimples<I, TIPO_NATIVO> withSelectView() {
+        return (MTipoSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorSelectView::new);
     }
+
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     */
+    @SuppressWarnings("unchecked")
+	public MTipoSimples<I, TIPO_NATIVO> withRadioView() {
+    	return (MTipoSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorRadioView::new);
+    }
+
     
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());

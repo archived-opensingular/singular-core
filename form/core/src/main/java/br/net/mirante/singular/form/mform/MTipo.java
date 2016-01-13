@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -367,17 +368,21 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return aspectFactory.apply(this);
     }
 
-    public MTipo<I> withView(Supplier<MView> factory) {
-        setView(factory.get());
+    public final <T extends MView> MTipo<I> withView(Supplier<T> factory) {
+    	withView(factory.get());
         return this;
     }
 
-    public MTipo<I> withView(MView mView) {
+    @SafeVarargs
+    public final <T extends MView> MTipo<I> withView(T mView, Consumer<T>...initializers) {
+    	for (Consumer<T> initializer : initializers) {
+			initializer.accept(mView);
+		}
         setView(mView);
         return this;
     }
 
-    public <T extends MView> T setView(Supplier<T> factory) {
+    public final <T extends MView> T setView(Supplier<T> factory) {
         T v = factory.get();
         setView(v);
         return v;

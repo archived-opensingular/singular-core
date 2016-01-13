@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.mform.core;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 
@@ -47,7 +46,7 @@ public class MTipoBoolean extends MTipoSimples<MIBoolean, Boolean> {
     /**
      * Configura o tipo para utilizar a view {@link MBooleanRadioView}
      */
-    public MTipo<MIBoolean> withRadioView() {
-        return super.withView(MBooleanRadioView::new);
+    public MTipoBoolean withRadioView() {
+        return (MTipoBoolean) super.withView(MBooleanRadioView::new);
     }
 }

@@ -1,12 +1,10 @@
 package br.net.mirante.singular.form.mform.core;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -52,15 +50,10 @@ public class MTipoString extends MTipoSimples<MIString, String> {
     /**
      * Configura o tipo para utilizar a view {@link MTextAreaView} e invoca o initializer 
      */
-    public MTipo<MIString> withTextAreaView(Consumer<MTextAreaView> initializer) {
-        initializer.accept(setView(MTextAreaView::new));
+    @SafeVarargs
+    public final MTipoString withTextAreaView(Consumer<MTextAreaView>...initializers) {
+        withView(new MTextAreaView(), initializers);
         return this;
-    }
-    /**
-     * Configura o tipo para utilizar a view {@link MTextAreaView}
-     */
-    public MTipo<MIString> withTextAreaView() {
-        return super.withView(MTextAreaView::new);
     }
     
     @Override
