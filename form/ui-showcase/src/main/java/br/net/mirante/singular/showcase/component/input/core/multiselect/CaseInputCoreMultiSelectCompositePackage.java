@@ -28,7 +28,7 @@ public class CaseInputCoreMultiSelectCompositePackage extends MPacote {
          * "sku" e "nome".
          */
         MTipoComposto productType =  pb.createTipoComposto("product");
-        productType.withKeyValueField("sku","nome");
+        productType.withSelectValueLabelFields("sku", "nome");
         productType.withSelectionOf(
                 productType.create("SKU123456", "Bola"),
                 productType.create("SKU654321", "Cubo"),

@@ -125,7 +125,7 @@ public class SelectInputModalContainer extends BSContainer {
 
     private Component buildResultTable(String id, IModel<String> filterModel, final BFModalWindow modal) {
         BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
-        builder.appendPropertyColumn(Model.of(""), "value");
+        builder.appendPropertyColumn(Model.of(""), "selectLabel");
         MTipo<?> type = model.getObject().getMTipo();
         if(type instanceof MTipoComposto){
             MTipoComposto selectType = (MTipoComposto) type;

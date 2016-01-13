@@ -100,19 +100,19 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         return MDicionario.getAnotacaoMFormTipo(getClass());
     }
 
-    final <TT extends MTipo<?>> TT extender(String nomeSimples, Class<TT> classePai) {
+    private final <TT extends MTipo<I>> TipoBuilder extender(String nomeSimples, Class<TT> classePai) {
         MFormUtil.checkNomeSimplesValido(nomeSimples);
         if (!classePai.equals(getClass())) {
             throw new RuntimeException("Erro Interno");
         }
-        TT novo = MapaNomeClasseValor.instanciar(classePai);
-        ((MTipo<I>) novo).nomeSimples = nomeSimples;
-        ((MTipo<I>) novo).superTipo = this;
-        return novo;
+        TipoBuilder tb = new TipoBuilder(classePai);
+        ((MTipo<I>) tb.getTipo()).nomeSimples = nomeSimples;
+        ((MTipo<I>) tb.getTipo()).superTipo = this;
+        return tb;
     }
 
-    final <TT extends MTipo<?>> TT extender(String nomeSimples) {
-        return (TT) extender(nomeSimples, getClass());
+    final <TT extends MTipo<?>> TipoBuilder extender(String nomeSimples) {
+        return (TipoBuilder) extender(nomeSimples, getClass());
     }
 
     @SuppressWarnings("unchecked")
@@ -158,7 +158,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     @Override
     public MEscopo getEscopoPai() {
         if (escopo == null) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                 "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
                     + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }

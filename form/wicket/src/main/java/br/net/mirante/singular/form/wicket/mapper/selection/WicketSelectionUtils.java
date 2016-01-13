@@ -18,35 +18,31 @@ public class WicketSelectionUtils {
         if(type instanceof MSelectionableType ){
             MOptionsProvider provider = ((MSelectionableType) type).getProviderOpcoes();
             if(provider != null){
-                if (type instanceof MTipoSimples ){
-                    return createStringOptions(model, provider);
-                }else{
-                    return createSelectOptions(model, provider);
-                }
+                return createSelectOptions(model, provider);
             }
         }
         return newArrayList();
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static List<SelectOption> createStringOptions(IModel<? extends MInstancia> model, MOptionsProvider provider) {
-        MInstancia instance = model.getObject();
-        MILista<? extends MInstancia> options = provider.listAvailableOptions(instance);
-        return options.getValor().stream()
-                .map((x) -> new SelectOption(x.toString(), x))
-                .collect(Collectors.toList());
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static List<SelectOption> createSelectOptions(IModel<? extends MInstancia> model, MOptionsProvider provider) {
         List<SelectOption> opcoesValue;
-        MILista<MIComposto> rawOptions = (MILista<MIComposto>) provider.listAvailableOptions(model.getObject());
+        MILista<MInstancia> rawOptions = (MILista<MInstancia>) provider.listAvailableOptions(model.getObject());
         opcoesValue = rawOptions.getValores().stream()
                 .map((o) -> {
                     MSelectionableInstance x = (MSelectionableInstance) o;
-                    return new SelectOption<>(x.getFieldId(), x.getFieldValue(), (MInstancia) x);
+                    return newSelectionOption(x);
                 }
                 ).collect(Collectors.toList());
         return opcoesValue;
+    }
+
+    private static SelectOption<?> newSelectionOption(MSelectionableInstance selectionableInstance){
+        String description = selectionableInstance.getSelectLabel();
+        Object value = selectionableInstance.getSelectValue();
+        if (description == null){
+            description = String.valueOf(value);
+        }
+        return new SelectOption<>(description, value, (MInstancia) selectionableInstance);
     }
 }

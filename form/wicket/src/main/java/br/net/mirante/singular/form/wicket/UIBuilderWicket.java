@@ -57,11 +57,12 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
                 .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSimples.class, MSelecaoPorSelectView.class, SelectMapper::new)
+                .register(MTipoSimples.class,    MSelecaoPorSelectView.class,           SelectMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
                 .register(MTipoBoolean.class,                                           BooleanMapper::new)
+                .register(MTipoBoolean.class,    MBooleanRadioView.class,               BooleanRadioMapper::new)
                 .register(MTipoInteger.class,                                           IntegerMapper::new)
                 .register(MTipoString.class,                                            StringMapper::new)
                 .register(MTipoData.class,                                              DateMapper::new)

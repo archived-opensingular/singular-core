@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.options;
 import java.io.Serializable;
 import java.util.Collection;
 
+import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -71,20 +72,32 @@ public interface MOptionsProvider extends Serializable {
             MILista<? extends MInstancia> defaultOptions, MInstancia value) {
         if(value instanceof MSelectionableInstance){
             MSelectionableInstance item = (MSelectionableInstance) value;
-            if(item.getFieldId() == null){
+            if(((MSelectionableInstance) value).getSelectValue() == null){
                 return true;
             }
         }
         for(MInstancia c : defaultOptions.getAllChildren()){
-           if (value.equals(c)) return true;
+           if (value.equals(c)){
+               return true;
+           }
         }
         return false;
     }
     
-    public default void addNewValueUpfront(
-        MILista<? extends MInstancia> defaultOptions, MInstancia value) {
-        MInstancia newValue = defaultOptions.addNovoAt(0);
-        newValue.setValor(value.getValor());
+    public default void addNewValueUpfront(MILista<? extends MInstancia> defaultOptions, MInstancia value) {
+        MSelectionableInstance newValue = (MSelectionableInstance)defaultOptions.addNovoAt(0);
+        MSelectionableInstance currentValue = (MSelectionableInstance)value;
+        if (currentValue instanceof MIComposto){
+            MIComposto newComposto = (MIComposto)newValue;
+            MIComposto currentComposto = (MIComposto)currentValue;
+            currentComposto.getCampos().forEach( c ->
+                    newComposto.getCampo(c.getNome()).setValor(c.getValor())
+            );
+        } else if (currentValue instanceof MISimples){
+            MISimples newComposto = (MISimples)newValue;
+            MISimples currentComposto = (MISimples)currentValue;
+            newComposto.setValor(currentComposto.getValor());
+        }
     }
     
     /**

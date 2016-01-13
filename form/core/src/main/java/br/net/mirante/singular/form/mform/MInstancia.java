@@ -97,6 +97,17 @@ public abstract class MInstancia implements MAtributoEnabled {
     }
 
     final void setPai(MInstancia pai) {
+        /* exceção adicionada por vinicius nunes, para adicionar uma instancia a outra hierarquia deveria haver
+        * uma chamada para 'destacar' a minstancia da sua hierarquia atual*/
+        if (this.pai != null && pai != null){
+            throw new SingularFormException(
+                    String.format(
+                            " Não é possível adicionar uma MIstancia criada em uma hierarquia à outra." +
+                            " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia." +
+                            " O pai atual é do tipo %s. ",
+                            this.getClass().getName(),
+                            this.pai.getClass().getName()));
+        }
         this.pai = pai;
         if (pai != null && pai.isAttribute()) {
             setAsAttribute(pai.getAttributeOwner());

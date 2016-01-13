@@ -36,6 +36,9 @@ public class MPacoteCore extends MPacote {
     public static final AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> ATR_EXISTS_FUNCTION      = new AtrRef(MPacoteCore.class, "existsFunction", MTipoPredicate.class, MIPredicate.class, Predicate.class);
     
     public static final AtrRef<MTipoFormula, MIComposto, Object> ATR_FORMULA         = new AtrRef<>(MPacoteCore.class, "formula", MTipoFormula.class, MIComposto.class, Object.class);
+    
+    
+    
     //@formatter:on
 
     public MPacoteCore() {
@@ -79,6 +82,9 @@ public class MPacoteCore extends MPacote {
         pb.createTipoAtributo(MTipoSimples.class, ATR_FORMULA);
 
         pb.createTipo(MTipoAttachment.class);
+        pb.createTipoAtributo(MTipoAttachment.class, MTipoAttachment.ATR_ORIGINAL_ID);
+        pb.createTipoAtributo(MTipoAttachment.class, MTipoAttachment.ATR_IS_TEMPORARY);
+        
         pb.createTipo(MTipoLatitudeLongitude.class);
     }
 

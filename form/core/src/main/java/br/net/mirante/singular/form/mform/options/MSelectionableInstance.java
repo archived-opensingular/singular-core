@@ -3,24 +3,22 @@ package br.net.mirante.singular.form.mform.options;
 /**
  * Represents an MInstancia that is of a kind of MSelectionableType.
  * It allows specific types to establish their own strategy for defining their key (id)
- * and value (visible description) of the instance.
+ * and value (visible selectLabel) of the instance.
  */
-public interface MSelectionableInstance {
+public interface MSelectionableInstance<TIPO_NATIVO> {
 
-    public void setFieldId(Object value);
+    public void setSelectLabel(String selectLabel);
 
-    public String getFieldId();
+    public String getSelectLabel();
 
-    public void setFieldValue(Object value);
+    public void setSelectValue(TIPO_NATIVO o);
 
-    public String getFieldValue();
+    public TIPO_NATIVO getSelectValue();
 
-    public void setValor(Object o);
-
-    default public void setValue(Object key, Object value)  {
-        setFieldId(key);
-        setFieldValue(value);
-    };
+    default public void setValueSelectLabel(TIPO_NATIVO value, String selectLabel)  {
+        setSelectLabel(selectLabel);
+        setSelectValue(value);
+    }
 
     public MSelectionableType getMTipo();
 }
