@@ -4,6 +4,9 @@ import br.net.mirante.singular.bamclient.builder.amchart.AmPieChartBuilder;
 
 public class DonutPieChart extends PieChart {
 
+    public DonutPieChart() {
+    }
+
     public DonutPieChart(String valueProperty, String categoryProperty) {
         super(valueProperty, categoryProperty);
     }

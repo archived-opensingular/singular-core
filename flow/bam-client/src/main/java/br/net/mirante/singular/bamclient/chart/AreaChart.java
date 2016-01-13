@@ -8,6 +8,9 @@ public class AreaChart implements SingularChart {
     private String[] valueProperties;
     private String[] labels;
 
+    public AreaChart() {
+    }
+
     public AreaChart(String categoryProperty, String... valueProperties) {
         this.categoryProperty = categoryProperty;
         this.valueProperties = valueProperties;
@@ -39,4 +42,27 @@ public class AreaChart implements SingularChart {
                 .finish();
     }
 
+    public String getCategoryProperty() {
+        return categoryProperty;
+    }
+
+    public void setCategoryProperty(String categoryProperty) {
+        this.categoryProperty = categoryProperty;
+    }
+
+    public String[] getValueProperties() {
+        return valueProperties;
+    }
+
+    public void setValueProperties(String[] valueProperties) {
+        this.valueProperties = valueProperties;
+    }
+
+    public String[] getLabels() {
+        return labels;
+    }
+
+    public void setLabels(String[] labels) {
+        this.labels = labels;
+    }
 }

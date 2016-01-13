@@ -5,15 +5,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import br.net.mirante.singular.bamclient.util.SelfReference;
 
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = AmChartPortletConfig.class, name = "AmChartPortletConfig"),
+        @JsonSubTypes.Type(value = MorrisChartPortletConfig.class, name = "MorrisChartPortletConfig")
+})
 public abstract class PortletConfig<T extends PortletConfig> implements Serializable, SelfReference<T> {
 
     private PortletSize portletSize = PortletSize.MEDIUM;
     private String title;
     private String subtitle;
     private List<PortletQuickFilter> quickFilter = new ArrayList<>();
+
+    public PortletConfig() {
+    }
 
     public T setPortletSize(PortletSize portletSize) {
         this.portletSize = portletSize;

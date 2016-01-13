@@ -7,6 +7,9 @@ public abstract class ChartPortletConfig<T extends ChartPortletConfig> extends P
     private String restEndpointURL;
     private SingularChart chart;
 
+    public ChartPortletConfig() {
+    }
+
     public ChartPortletConfig(String restEndpointURL, SingularChart chart) {
         this.restEndpointURL = restEndpointURL;
         this.chart = chart;

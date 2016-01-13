@@ -5,9 +5,11 @@ import br.net.mirante.singular.bamclient.builder.amchart.AmPieChartBuilder;
 
 public class PieChart implements SingularChart {
 
+    private String valueProperty;
+    private String categoryProperty;
 
-    final private String valueProperty;
-    final private String categoryProperty;
+    public PieChart() {
+    }
 
     public PieChart(String valueProperty, String categoryProperty) {
         this.valueProperty = valueProperty;
@@ -18,6 +20,8 @@ public class PieChart implements SingularChart {
     public String getDefinition() {
         final AmPieChartBuilder chartBuilder = new SingularChartBuilder()
                 .newPieChart()
+                .startDuration(0.5)
+                .startEffect("easeOutSine")
                 .angle(12)
                 .marginTop(-50)
                 .balloonText("[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>")
@@ -32,5 +36,22 @@ public class PieChart implements SingularChart {
     }
 
 
-    protected void addOthersConfigs(AmPieChartBuilder chartBuilder){}
+    protected void addOthersConfigs(AmPieChartBuilder chartBuilder) {
+    }
+
+    public String getValueProperty() {
+        return valueProperty;
+    }
+
+    public void setValueProperty(String valueProperty) {
+        this.valueProperty = valueProperty;
+    }
+
+    public String getCategoryProperty() {
+        return categoryProperty;
+    }
+
+    public void setCategoryProperty(String categoryProperty) {
+        this.categoryProperty = categoryProperty;
+    }
 }

@@ -8,6 +8,9 @@ public class AmChartValueField implements Serializable {
     private String title;
     private String suffix;
 
+    public AmChartValueField() {
+    }
+
     public AmChartValueField(String propertyName, String title) {
         this(propertyName, title, "");
     }
@@ -28,5 +31,17 @@ public class AmChartValueField implements Serializable {
 
     public String getSuffix() {
         return suffix;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 }

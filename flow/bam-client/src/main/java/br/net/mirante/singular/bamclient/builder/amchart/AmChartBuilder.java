@@ -12,6 +12,10 @@ public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractJ
         super(context);
     }
 
+    public T startEffect(String value) {
+        return writeField("startEffect", value);
+    }
+
     public T categoryField(String value) {
         return writeField("categoryField", value);
     }

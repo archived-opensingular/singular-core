@@ -166,10 +166,7 @@ public class DashboardContent extends Content {
 
     public PortletConfig<?> buildPortletConfigMeanTimeByProcess() {
 
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("MEAN", "", "dia(s)"));
-
-        final SingularChart chart = new ColumnSerialChart(valueFields, "NOME");
+        final SingularChart chart = new ColumnSerialChart("NOME", new AmChartValueField("MEAN", "", "dia(s)"));
         final AmChartPortletConfig config = new AmChartPortletConfig("/rest/meanTimeByProcess", chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
@@ -183,10 +180,7 @@ public class DashboardContent extends Content {
 
     public PortletConfig<?> buildPortletConfigMeanTimeActiveInstances() {
 
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("TEMPO", ""));
-
-        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
 
         return new AmChartPortletConfig("/rest/meanTimeActiveInstances", chart)
                 .setPortletSize(PortletSize.MEDIUM)
@@ -200,7 +194,7 @@ public class DashboardContent extends Content {
         valueFields.add(new AmChartValueField("QTD_NEW", getString("label.chart.new.instance.quantity.new")));
         valueFields.add(new AmChartValueField("QTD_CLS", getString("label.chart.new.instance.quantity.finished")));
 
-        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+        final SingularChart chart = new LineSerialChart("MES", valueFields);
 
         return new AmChartPortletConfig("/rest/newInstancesQuantityLastYear", chart)
                 .setPortletSize(PortletSize.MEDIUM)
@@ -210,10 +204,7 @@ public class DashboardContent extends Content {
 
     public PortletConfig<?> buildPortletConfigCounterActiveInstances() {
 
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("QUANTIDADE", ""));
-
-        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("QUANTIDADE", ""));
 
         return new AmChartPortletConfig("/rest/counterActiveInstances", chart)
                 .setPortletSize(PortletSize.MEDIUM)
@@ -250,10 +241,8 @@ public class DashboardContent extends Content {
     }
 
     private PortletConfig<?> buildPortletConfigMeanTimeFinishedInstances() {
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("TEMPO", ""));
 
-        final SingularChart chart = new LineSerialChart(valueFields, "MES");
+        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
 
         return new AmChartPortletConfig("/rest/meanTimeFinishedInstances", chart)
                 .setPortletSize(PortletSize.MEDIUM)

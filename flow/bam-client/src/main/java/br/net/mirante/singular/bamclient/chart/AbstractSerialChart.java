@@ -1,5 +1,6 @@
 package br.net.mirante.singular.bamclient.chart;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -15,12 +16,19 @@ import br.net.mirante.singular.bamclient.builder.amchart.AmSerialChartBuilder;
 
 public abstract class AbstractSerialChart implements SingularChart {
 
-    final protected String category;
-    final protected List<AmChartValueField> values;
+    protected String category;
+    protected List<AmChartValueField> values;
 
     protected boolean withLegend = false;
 
-    public AbstractSerialChart(List<AmChartValueField> values, String category) {
+    public AbstractSerialChart() {
+    }
+
+    public AbstractSerialChart(String category, AmChartValueField... values) {
+        this(category, Arrays.asList(values));
+    }
+
+    public AbstractSerialChart(String category, List<AmChartValueField> values) {
         this.values = values;
         this.category = category;
     }
@@ -30,12 +38,13 @@ public abstract class AbstractSerialChart implements SingularChart {
         final AmSerialChartBuilder chartBuilder = new SingularChartBuilder()
                 .newSerialChart()
                 .theme("light")
+                .startEffect("easeOutSine")
+                .startDuration(0.5)
                 .valueAxes(Collections.singletonList(new AmChartValueAxes()
                         .gridColor("#FFFFFF")
                         .gridAlpha(0.2)
                         .dashLength(0)))
                 .gridAboveGraphs(true)
-                .startDuration(1)
                 .graphs(getGraphs())
                 .chartCursor(new AmChartCursor()
                         .categoryBalloonEnabled(false)
@@ -56,11 +65,29 @@ public abstract class AbstractSerialChart implements SingularChart {
         return chartBuilder.finish();
     }
 
-    public AbstractSerialChart withLegend() {
-        withLegend = true;
-        return this;
-    }
-
     protected abstract Collection<AmChartGraph> getGraphs();
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public List<AmChartValueField> getValues() {
+        return values;
+    }
+
+    public void setValues(List<AmChartValueField> values) {
+        this.values = values;
+    }
+
+    public boolean isWithLegend() {
+        return withLegend;
+    }
+
+    public void setWithLegend(boolean withLegend) {
+        this.withLegend = withLegend;
+    }
 }
