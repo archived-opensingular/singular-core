@@ -1,9 +1,6 @@
 AmChartViewResult = (function () {
 
     function createChart(idChartDiv, definition, portletContext) {
-
-        var chart = AmCharts.makeChart(idChartDiv, definition);
-
         $.ajax({
             headers: {
                 'Accept': 'application/json',
@@ -13,8 +10,8 @@ AmChartViewResult = (function () {
             data: JSON.stringify(portletContext),
             type: "POST",
             success: function (data) {
-                chart.dataProvider = data;
-                chart.validateData();
+                definition.dataProvider = data;
+                AmCharts.makeChart(idChartDiv, definition);
             }
         });
     }
