@@ -5,7 +5,6 @@ import javax.inject.Inject;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,14 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
-import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.view.page.dashboard.PeriodType;
-import br.net.mirante.singular.wicket.UIAdminSession;
 
 @RestController
-public class BamChartsDataProviderController {
+public class DefaultChartsDataProviderController {
 
     @Inject
     protected UIAdminFacade uiAdminFacade;
@@ -36,7 +33,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> newInstancesQuantityLastYear(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveNewInstancesQuantityLastYear(context.getProcessDefinitionCode(),
-                getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/meanTimeActiveInstances",
@@ -45,7 +42,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> meanTimeActiveInstances(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveMeanTimeActiveInstances(context.getProcessDefinitionCode(),
-                getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/counterActiveInstances",
@@ -54,7 +51,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> counterActiveInstances(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveCounterActiveInstances(context.getProcessDefinitionCode(),
-                getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/statsByActiveTask",
@@ -71,7 +68,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> meanTimeFinishedInstances(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveMeanTimeFinishedInstances(context.getProcessDefinitionCode(),
-                getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/averageTimesActiveInstances",
@@ -80,7 +77,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> averageTimesActiveInstances(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveAverageTimesActiveInstances(context.getProcessDefinitionCode(),
-                getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/meanTimeByTask",
@@ -98,7 +95,7 @@ public class BamChartsDataProviderController {
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Map<String, String>> meanTimeByProcess(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveMeanTimeByProcess(resolvePeriodType(context.getQuickFilter()).getPeriod(),
-                context.getProcessDefinitionCode(), getProcesseDefinitionsKeysWithAcess());
+                context.getProcessDefinitionCode(), context.getProcessDefinitionKeysWithAccess());
     }
 
     @RequestMapping(value = "/endStatusQuantityByPeriod",
@@ -108,11 +105,6 @@ public class BamChartsDataProviderController {
     public List<Map<String, String>> endStatusQuantityByPeriod(@RequestBody PortletContext context) {
         return uiAdminFacade.retrieveEndStatusQuantityByPeriod(resolvePeriodType(context.getQuickFilter()).getPeriod(),
                 context.getProcessDefinitionCode());
-    }
-
-    private Set<String> getProcesseDefinitionsKeysWithAcess() {
-        return flowMetadataFacade.listProcessDefinitionKeysWithAccess(UIAdminSession.get().getUserId(),
-                AccessLevel.LIST);
     }
 
     private PeriodType resolvePeriodType(PortletQuickFilter quickFilter) {

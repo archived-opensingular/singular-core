@@ -1,5 +1,7 @@
 package br.net.mirante.singular.view.component;
 
+import javax.inject.Inject;
+
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -17,9 +19,15 @@ import org.apache.wicket.model.Model;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
+import br.net.mirante.singular.flow.core.authorization.AccessLevel;
+import br.net.mirante.singular.service.FlowMetadataFacade;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletView<C extends PortletConfig> extends Panel {
+
+    @Inject
+    private FlowMetadataFacade flowMetadataFacade;
 
     private final IModel<C> config;
     private final IModel<PortletContext> context = Model.of(new PortletContext());
@@ -28,10 +36,16 @@ public class PortletView<C extends PortletConfig> extends Panel {
         super(id);
         this.config = Model.of(config);
         context.getObject().setProcessDefinitionCode(processDefinitionCode);
+        context.getObject().setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());
     }
 
     protected ViewResult buildViewResult() {
         return PortletViewConfigResolver.newViewResult("portletContent", config, context);
+    }
+
+    private Set<String> getProcesseDefinitionsKeysWithAcess() {
+        return flowMetadataFacade.listProcessDefinitionKeysWithAccess(UIAdminSession.get().getUserId(),
+                AccessLevel.LIST);
     }
 
     @Override

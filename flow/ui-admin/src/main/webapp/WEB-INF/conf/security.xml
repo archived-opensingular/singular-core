@@ -2,11 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
                            http://www.springframework.org/schema/security
-                           http://www.springframework.org/schema/security/spring-security-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+                           http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 	
 	<security:authentication-manager alias="authenticationManager">
         <security:authentication-provider user-service-ref="userDetailsService"/>
@@ -15,6 +14,7 @@
     <security:http auto-config="false">
         <security:csrf disabled="true"/>
         <security:intercept-url pattern="/login*" access="permitAll"/>
+        <security:intercept-url pattern="/rest/**" access="permitAll"/>
         <security:intercept-url pattern="/resources/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
         <security:form-login login-page="/login" always-use-default-target="false" default-target-url="/dashboard" authentication-failure-url="/login?error=true"/>
