@@ -4,8 +4,6 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 
 public class CaseInputCoreSelectComboRadioPackage extends MPacote {
@@ -22,7 +20,7 @@ public class CaseInputCoreSelectComboRadioPackage extends MPacote {
         //@destacar:fim
 
         tipoContato1
-                .withView(MSelecaoPorSelectView::new)
+                .withSelectView()
                 .as(AtrBasic::new).label("Tipo Contato (Combo)");
 
         //@destacar:bloco
@@ -32,7 +30,7 @@ public class CaseInputCoreSelectComboRadioPackage extends MPacote {
         //@destacar:fim
 
         tipoContato2
-                .withView(MSelecaoPorRadioView::new)
+                .withRadioView()
                 .as(AtrBasic::new).label("Tipo Contato (Radio)");
     }
 }

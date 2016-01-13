@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
@@ -226,6 +228,20 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     */
+    public MTipoComposto<TIPO_INSTANCIA> withSelectView() {
+        return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorSelectView::new);
+    }
+
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     */
+    public MTipoComposto<TIPO_INSTANCIA> withRadioView() {
+    	return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
+    }
+    
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;
