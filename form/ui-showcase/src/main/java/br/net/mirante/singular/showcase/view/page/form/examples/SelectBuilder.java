@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
@@ -68,6 +69,11 @@ public class SelectBuilder {
                 .stream()
                 .filter(i -> uf.equals(((MIComposto) i).getValor("UF")))
                 .collect(Collectors.toList());
+    }
+
+    public static MILista<? extends MInstancia> buildMunicipiosFiltrado(MTipoComposto<?> tipoOpcoes, String uf, MILista<? extends MInstancia> lista) {
+        buildMunicipiosFiltrado(tipoOpcoes, uf).forEach(si -> lista.addElement(si));
+        return lista;
     }
 
     private static void cidades1(MTipoComposto<?> select, List<MSelectionableInstance<?>> cidades) {

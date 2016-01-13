@@ -7,8 +7,9 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import org.apache.commons.lang3.BooleanUtils;
 
-public class MPacotePeticaoCanabidiol extends MPacote {
+public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil {
 
     public static final String PACOTE = "mform.peticao.canabidiol";
     public static final String TIPO = "PeticionamentoCanabidiol";
@@ -42,36 +43,50 @@ public class MPacotePeticaoCanabidiol extends MPacote {
             responsavelLegal
                     .as(AtrBasic::new)
                     .label("Responsável Legal")
-                    .visivel(instancia -> instancia.findNearestValue(possuiResponsavelLegal, Boolean.class).orElse(false))
+                    .visivel(instancia -> BooleanUtils.isTrue(getValue(instancia, possuiResponsavelLegal)))
                     .dependsOn(possuiResponsavelLegal);
 
-            MTipoComposto<?> anexos = responsavelLegal
+            final MTipoComposto<?> anexos = canabis
                     .addCampoComposto("anexos");
             anexos
                     .as(AtrBasic::new)
-                    .label("Anexos");
+                    .label("Anexos")
+                    .dependsOn(paciente.getTipoDocumento(), responsavelLegal.getTipoDocumento())
+                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()) || hasValue(instancia, paciente.getTipoDocumento())
+                    );
 
-            //Não temo como configurar tamanho inicial? antes tinha
-            MTipoAttachment anexo = responsavelLegal
+            MTipoAttachment anexoPaciente = anexos
+                    .addCampo("documentoPaciente", MTipoAttachment.class);
+            anexoPaciente
+                    .as(AtrBasic::new)
+                    .label("Documento do Paciente")
+                    .subtitle(String.format("Conforme documento informado no campo \"%s\" do paciente", MTipoPessoa.LABEL_TIPO_DOCUMENTO))
+                    .dependsOn(anexos, paciente.getTipoDocumento())
+                    .visivel(instancia -> hasValue(instancia, paciente.getTipoDocumento()));
+
+            MTipoAttachment anexoResponsavelLegal = anexos
                     .addCampo("documentoResponsavel", MTipoAttachment.class);
-
-            anexo
+            anexoResponsavelLegal
                     .as(AtrBasic::new)
                     .label("Documento do Responsável Legal")
-                    .subtitle(String.format("Conforme documento informado no campo \"%s\"", MTipoPessoa.LABEL_TIPO_DOCUMENTO));
+                    .subtitle(String.format("Conforme documento informado no campo \"%s\" do responsável legal", MTipoPessoa.LABEL_TIPO_DOCUMENTO))
+                    .dependsOn(anexos, responsavelLegal.getTipoDocumento())
+                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()));
 
+
+            // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
             tabbed.addTab("dados", "Solicitante")
                     .add(paciente)
                     .add(possuiResponsavelLegal)
-                    .add(responsavelLegal);
+                    .add(responsavelLegal)
+                    .add(anexos);
             tabbed.addTab("solicitação", "Medicação");
-
-
 
 
         }
     }
+
 
 }
 

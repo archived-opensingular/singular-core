@@ -1,18 +1,15 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoEndereco", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoEndereco extends MTipoComposto<MIComposto> {
+public class MTipoEndereco extends MTipoComposto<MIComposto> implements CanabidiolUtil {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
@@ -62,26 +59,16 @@ public class MTipoEndereco extends MTipoComposto<MIComposto> {
         cidade
                 .as(AtrBasic::new)
                 .label("Cidade")
-                .visivel(inst -> {
-                    MSelectionableInstance<Object> estadoInstancia = inst.findNearest(estado).orElse(null);
-                    return estadoInstancia != null && estadoInstancia.getSelectValue() != null;
-                })
+                .visivel(inst -> hasValue(inst, estado))
                 .dependsOn(estado)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
         cidade.
-                setProviderOpcoes(inst -> {
-                    MSelectionableInstance<Object> estadoInstancia = inst.findNearest(estado).orElse(null);
-                    MILista<? extends MInstancia> lista = inst
-                            .getMTipo()
-                            .novaLista();
-                    if (estadoInstancia != null) {
-                        SelectBuilder
-                                .buildMunicipiosFiltrado(cidade,
-                                        String.valueOf(estadoInstancia.getSelectValue()))
-                                .forEach(si -> lista.addElement(si));
-                    }
-                    return lista;
-                });
+                setProviderOpcoes(inst ->
+                                SelectBuilder
+                                        .buildMunicipiosFiltrado(
+                                                cidade,
+                                                getValue(inst, estado),
+                                                inst.getMTipo().novaLista()));
     }
 }

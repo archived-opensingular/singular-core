@@ -5,13 +5,14 @@ import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
+import org.apache.commons.lang3.StringUtils;
 
 @MInfoTipo(nome = "MTipoPaciente", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoPessoa extends MTipoComposto<MIComposto> {
+public class MTipoPessoa extends MTipoComposto<MIComposto> implements CanabidiolUtil {
 
     public static final String LABEL_TIPO_DOCUMENTO = "Documento de Identificação Oficial";
+    private MTipoDocumentoSelect tipoDocumento;
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
@@ -33,8 +34,7 @@ public class MTipoPessoa extends MTipoComposto<MIComposto> {
 
         //ruim: Para  adicionar atributos não é possivel adicionar selection
         //ruim: Para manter a referencia não pode acionar atributos:
-        final MTipoDocumentoSelect tipoDocumento = this.addCampo("tipoDocumento", MTipoDocumentoSelect.class);
-
+        tipoDocumento = this.addCampo("tipoDocumento", MTipoDocumentoSelect.class);
         tipoDocumento.as(AtrBasic::new)
                 .label(LABEL_TIPO_DOCUMENTO)
                 .as(AtrBootstrap::new)
@@ -44,13 +44,7 @@ public class MTipoPessoa extends MTipoComposto<MIComposto> {
                 .addCampoString("nomeNoDocumento")
                 .as(AtrBasic::new)
                 .label("Nome")
-                .visivel(ins -> {
-                    MSelectionableInstance<Object> tipoDocumentoInstancia = ins.findNearest(tipoDocumento).orElse(null);
-                    if (tipoDocumentoInstancia != null) {
-                        return "55358729".equals(String.valueOf(tipoDocumentoInstancia.getSelectValue()));
-                    }
-                    return false;
-                })
+                .visivel(ins -> "55358729".equals(getValue(ins, tipoDocumento)))
                 .dependsOn(tipoDocumento)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
@@ -81,5 +75,9 @@ public class MTipoPessoa extends MTipoComposto<MIComposto> {
                 .label("Endereço");
 
         this.addCampo("contato", MTipoContato.class);
+    }
+
+    public MTipoDocumentoSelect getTipoDocumento() {
+        return tipoDocumento;
     }
 }
