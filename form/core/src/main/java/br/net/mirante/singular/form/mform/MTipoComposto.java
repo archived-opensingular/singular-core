@@ -91,9 +91,19 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return fieldsConsolidated;
     }
 
+    /**
+     * Remover essa chamada pois ela é confusa.
+     * Adicionar um campo apenas pelo tipo sem passar um nome impede que a mesma chamada para o mesmo tipo
+     * seja feita novamente pois nesse caso definiria um tipo com o nome repetido.
+     * @param classeTipo
+     * @param <I>
+     * @param <T>
+     * @return
+     */
+    @Deprecated
     public <I extends MInstancia, T extends MTipo<I>> T addCampo(Class<T> classeTipo) {
         T tipo = resolverTipo(classeTipo);
-        return extenderTipo(tipo.getNomeSimples(), tipo);
+        return addCampo(tipo.getNomeSimples(), classeTipo);
     }
 
     public <I extends MInstancia, T extends MTipo<I>> T addCampo(String nomeCampo, Class<T> tipo, boolean obrigatorio) {

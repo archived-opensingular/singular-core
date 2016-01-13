@@ -15,7 +15,7 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.MPacoteCurriculo;
-import br.net.mirante.singular.showcase.view.page.form.examples.MPacotePeticaoCanabidiol;
+import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.MPacotePeticaoCanabidiol;
 import br.net.mirante.singular.showcase.view.page.form.examples.MPacotePeticaoGGTOX;
 
 public class TemplateRepository extends MDicionarioResolver {
