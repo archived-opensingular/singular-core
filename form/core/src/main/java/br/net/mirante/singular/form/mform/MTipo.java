@@ -158,7 +158,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     @Override
     public MEscopo getEscopoPai() {
         if (escopo == null) {
-            throw new RuntimeException(
+            throw new SingularFormException(
                 "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
                     + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
