@@ -24,7 +24,7 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
-public class PortletView<C extends PortletConfig> extends Panel {
+public class PortletPanel<C extends PortletConfig> extends Panel {
 
     @Inject
     private FlowMetadataFacade flowMetadataFacade;
@@ -32,14 +32,14 @@ public class PortletView<C extends PortletConfig> extends Panel {
     private final IModel<C> config;
     private final IModel<PortletContext> context = Model.of(new PortletContext());
 
-    public PortletView(String id, C config, String processDefinitionCode) {
+    public PortletPanel(String id, C config, String processDefinitionCode) {
         super(id);
         this.config = Model.of(config);
         context.getObject().setProcessDefinitionCode(processDefinitionCode);
         context.getObject().setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());
     }
 
-    protected ViewResult buildViewResult() {
+    protected ViewResultPanel buildViewResult() {
         return PortletViewConfigResolver.newViewResult("portletContent", config, context);
     }
 
