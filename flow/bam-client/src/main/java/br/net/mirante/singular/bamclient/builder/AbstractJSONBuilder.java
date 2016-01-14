@@ -5,25 +5,30 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.net.mirante.singular.bamclient.util.SelfReference;
 
 public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> implements SelfReference<T> {
 
     protected JSONBuilderContext context;
 
+    protected Logger logger = LoggerFactory.getLogger(AbstractJSONBuilder.class);
+
     public AbstractJSONBuilder(JSONBuilderContext context) {
         this.context = context;
     }
 
     protected T writeField(String key, Object value) {
-        if(value != null) {
+        if (value != null) {
             context.getjWriter().key(key).value(value);
         }
         return self();
     }
 
     protected T writeArray(String property, Object... values) {
-        if(values != null) {
+        if (values != null) {
             context.getjWriter().key(property).array();
             for (Object o : values) {
                 context.getjWriter().value(o);
@@ -34,7 +39,7 @@ public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> impleme
     }
 
     protected <X extends JSONObjectMappper<?>> T writeObject(X value) {
-        if(value != null) {
+        if (value != null) {
             context.getjWriter().object();
             for (Map.Entry<String, Object> entry : value.getObjectMap().entrySet()) {
                 context.getjWriter().key(entry.getKey()).value(entry.getValue());
@@ -45,14 +50,14 @@ public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> impleme
     }
 
     protected <X extends JSONObjectMappper<?>> T writeNamedObject(String name, X value) {
-        if(value != null) {
+        if (value != null) {
             context.getjWriter().key(name);
         }
         return writeObject(value);
     }
 
     protected <X extends JSONObjectMappper<?>> T writeArray(String name, Collection<X> amChartObjects) {
-        if(amChartObjects != null) {
+        if (amChartObjects != null) {
             context.getjWriter().key(name).array();
             for (JSONObjectMappper<?> JSONObjectMappper : amChartObjects) {
                 writeObject(JSONObjectMappper);
@@ -69,7 +74,7 @@ public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> impleme
             context.getWriter().close();
             return context.getWriter().toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         throw new RuntimeException("Erro ao criar JSON Generator");
     }

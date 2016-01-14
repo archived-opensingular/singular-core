@@ -47,7 +47,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     //    private Map<IValueValidator<?>, ValidationErrorLevel> valueValidators = new LinkedHashMap<>();
     private Map<IInstanceValidator<I>, ValidationErrorLevel> instanceValidators = new LinkedHashMap<>();
-    private Set<MTipo<?>>                                    dependentTypes;
+    private Set<MTipo<?>> dependentTypes;
 
     /**
      * Se true, representa um campo sem criar um tipo para ser reutilizado em
@@ -95,7 +95,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         this.superTipo = superTipo;
     }
 
-    protected void onCargaTipo(TipoBuilder tb) {}
+    protected void onCargaTipo(TipoBuilder tb) {
+    }
 
     final MInfoTipo getAnotacaoMFormTipo() {
         return MDicionario.getAnotacaoMFormTipo(getClass());
@@ -160,8 +161,8 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public MEscopo getEscopoPai() {
         if (escopo == null) {
             throw new SingularFormException(
-                "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
-                    + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
+                    "O escopo do tipo ainda não foi configurado. \n" + "Se você estiver tentando configurar o tipo no construtor do mesmo, "
+                            + "dê override no método onCargaTipo() e mova as chamada de configuração para ele.");
         }
         return escopo;
     }
@@ -207,7 +208,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
             throw new SingularFormException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
         }
 
         atributosDefinidos.add(atributo);
@@ -328,12 +329,15 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public final Boolean isObrigatorio() {
         return getValorAtributo(MPacoteCore.ATR_OBRIGATORIO);
     }
+
     public MTipo<I> withExists(Boolean valor) {
         return with(MPacoteCore.ATR_EXISTS, valor);
     }
+
     public MTipo<I> withExists(Predicate<I> predicate) {
         return with(MPacoteCore.ATR_EXISTS_FUNCTION, predicate);
     }
+
     public final boolean exists() {
         return !Boolean.FALSE.equals(getValorAtributo(MPacoteCore.ATR_EXISTS));
     }
@@ -369,15 +373,15 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     }
 
     public final <T extends MView> MTipo<I> withView(Supplier<T> factory) {
-    	withView(factory.get());
+        withView(factory.get());
         return this;
     }
 
     @SafeVarargs
-    public final <T extends MView> MTipo<I> withView(T mView, Consumer<T>...initializers) {
-    	for (Consumer<T> initializer : initializers) {
-			initializer.accept(mView);
-		}
+    public final <T extends MView> MTipo<I> withView(T mView, Consumer<T>... initializers) {
+        for (Consumer<T> initializer : initializers) {
+            initializer.accept(mView);
+        }
         setView(mView);
         return this;
     }
@@ -387,12 +391,12 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         setView(v);
         return v;
     }
-    
+
     private void setView(MView view) {
-        if(view.aplicavelEm(this)){
+        if (view.aplicavelEm(this)) {
             this.view = view;
         } else {
-            throw new SingularFormException("A view '"+view.getClass().getName()+"' não é aplicável ao tipo: '"+getClass().getName()+"'");
+            throw new SingularFormException("A view '" + view.getClass().getName() + "' não é aplicável ao tipo: '" + getClass().getName() + "'");
         }
     }
 
@@ -405,18 +409,21 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             dependentTypes = new LinkedHashSet<>();
         return dependentTypes;
     }
+
     public boolean hasDependentTypes() {
         return (dependentTypes != null) && (!dependentTypes.isEmpty());
     }
+
     public boolean dependsOnAnyType() {
         return Optional.ofNullable(getValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION))
-            .map(it -> it.get())
-            .map(it -> !it.isEmpty())
-            .orElse(false);
+                .map(it -> it.get())
+                .map(it -> !it.isEmpty())
+                .orElse(false);
     }
+
     public boolean dependsOnAnyTypeInHierarchy() {
         return MTypes.listAscendants(this, true).stream()
-            .anyMatch(it -> it.dependsOnAnyType());
+                .anyMatch(it -> it.dependsOnAnyType());
     }
 
     public MTipo<I> addInstanceValidator(IInstanceValidator<I> validador) {
@@ -431,6 +438,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public Collection<IInstanceValidator<I>> getValidators() {
         return instanceValidators.keySet();
     }
+
     public ValidationErrorLevel getValidatorErrorLevel(IInstanceValidator<I> validator) {
         return instanceValidators.get(validator);
     }
@@ -468,7 +476,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
         }
         if (classeInstancia == null) {
             throw new SingularFormException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
-                + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
+                    + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
@@ -530,22 +538,22 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
             }
 
             atributosDefinidos
-                .getAtributos()
-                .stream()
-                .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
-                .forEach(att -> {
-                    try {
-                        pad(appendable, nivel + 1)
-                            .append("att ")
-                            .append("\n")
-                            .append(suprimirPacote(att.getNome()))
-                            .append(":")
-                            .append(suprimirPacote(att.getSuperTipo().getNome()))
-                            .append(att.isSelfReference() ? " SELF" : "");
-                    } catch (IOException ex) {
-                        LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
-                    }
-                });
+                    .getAtributos()
+                    .stream()
+                    .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
+                    .forEach(att -> {
+                        try {
+                            pad(appendable, nivel + 1)
+                                    .append("att ")
+                                    .append("\n")
+                                    .append(suprimirPacote(att.getNome()))
+                                    .append(":")
+                                    .append(suprimirPacote(att.getSuperTipo().getNome()))
+                                    .append(att.isSelfReference() ? " SELF" : "");
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
+                        }
+                    });
 
             super.debug(appendable, nivel + 1);
         } catch (IOException ex) {
@@ -561,9 +569,9 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
                 vals.entrySet().stream().forEach(e -> {
                     try {
                         appendable.append(suprimirPacote(e.getKey(), true))
-                            .append("=")
-                            .append(e.getValue().getDisplayString())
-                            .append("; ");
+                                .append("=")
+                                .append(e.getValue().getDisplayString())
+                                .append("; ");
                     } catch (IOException ex) {
                         LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
                     }

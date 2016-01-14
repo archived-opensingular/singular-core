@@ -60,7 +60,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     public Collection<MTipo<?>> getContainedTypes() {
         return getFields();
     }
-    
+
     private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -96,6 +96,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      * Remover essa chamada pois ela é confusa.
      * Adicionar um campo apenas pelo tipo sem passar um nome impede que a mesma chamada para o mesmo tipo
      * seja feita novamente pois nesse caso definiria um tipo com o nome repetido.
+     *
      * @param classeTipo
      * @param <I>
      * @param <T>
@@ -239,9 +240,9 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
      */
     public MTipoComposto<TIPO_INSTANCIA> withRadioView() {
-    	return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
+        return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
     }
-    
+
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;
@@ -259,7 +260,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      *
      * @return <code>this</code>
      */
-    private MTipoComposto configureSelectValueLabelFields(){
+    private MTipoComposto configureSelectValueLabelFields() {
         if (valueFieldName == null && descriptionFieldName == null) {
             return withSelectValueLabelFields("value", "selectLabel");
         }
@@ -273,26 +274,26 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      *
      * @return <code>this</code>
      */
-    public MTipoComposto withSelectValueLabelFields(String valor, String descricao){
-        if (descriptionFieldName != null && valueFieldName != null){
+    public MTipoComposto withSelectValueLabelFields(String valor, String descricao) {
+        if (descriptionFieldName != null && valueFieldName != null) {
             throw new SingularFormException("MTipoComposto value and description fields can not be changed after MOptionsProvider definition.");
         }
         return withValueField(valor).withSelectLabelField(descricao);
     }
 
-    private MTipoComposto withValueField(String fieldName){
+    private MTipoComposto withValueField(String fieldName) {
         valueFieldName = fieldName;
         addCampoString(fieldName);
         return this;
     }
 
-    private MTipoComposto withSelectLabelField(String fieldName){
+    private MTipoComposto withSelectLabelField(String fieldName) {
         descriptionFieldName = fieldName;
         addCampoString(fieldName);
         return this;
     }
 
-    public MIComposto create(Object value, String selectLabel){
+    public MIComposto create(Object value, String selectLabel) {
         MIComposto instance = this.novaInstancia();
         instance.setValueSelectLabel(value, selectLabel);
         return instance;
@@ -382,7 +383,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 
     private static final class FieldRef {
         private final MTipo<?> field;
-        private int            index = -1;
+        private int index = -1;
 
         public FieldRef(MTipo<?> field) {
             this.field = field;
