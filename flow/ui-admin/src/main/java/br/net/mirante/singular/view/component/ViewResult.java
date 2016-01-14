@@ -9,8 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 public abstract class ViewResult<T extends PortletConfig> extends Panel {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewResult.class);
 
     private IModel<T> config;
 
@@ -34,7 +40,7 @@ public abstract class ViewResult<T extends PortletConfig> extends Panel {
         try {
             return new ObjectMapper().writeValueAsString(context.getObject());
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
