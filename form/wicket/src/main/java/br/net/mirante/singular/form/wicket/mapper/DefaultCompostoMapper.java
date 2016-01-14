@@ -45,24 +45,24 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         BSRow superRow = parentCol.newGrid().newRow();
 
-        {
-//            final BSGrid grid = parentCol.newGrid();
-            final BSGrid grid = superRow.newCol(9).setCssClass("col-sm-9").newGrid();
+        final BSGrid grid ;
+        if(ctx.getViewMode().isEdition()) grid = parentCol.newGrid();
+        else grid = superRow.newCol(9).setCssClass("col-sm-9").newGrid();
 
-            addLabelIfNeeded(instance, grid);
+        addLabelIfNeeded(instance, grid);
 
-            final BSRow row = grid.newRow();
+        final BSRow row = grid.newRow();
 
-            grid.add(DisabledClassBehavior.getInstance());
-            grid.setDefaultModel(model);
+        grid.add(DisabledClassBehavior.getInstance());
+        grid.setDefaultModel(model);
 
-            for (MTipo<?> tCampo : tComposto.getFields()) {
-                buildField(ctx.getUiBuilderWicket(), ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()));
-            }
+        for (MTipo<?> tCampo : tComposto.getFields()) {
+            buildField(ctx.getUiBuilderWicket(), ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()));
         }
-        {
-            final BSGrid grid = superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
-            final BSRow row = grid.newRow();
+
+        if(!ctx.getViewMode().isEdition()){
+            final BSGrid ngrid = superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
+            final BSRow nrow = ngrid.newRow();
         }
     }
 
@@ -87,7 +87,9 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             wicketBuilder.build(childCtx, viewMode);
         } else {
             BSCol col = row.newCol();
-            col.appendTag("div",true, "style=\"float: right;\"", (id) -> new AnnotationComponent(id, iCampo, iCampo));
+            if(!ctx.getViewMode().isEdition()) {
+                col.appendTag("div", true, "style=\"float: right;\"", (id) -> new AnnotationComponent(id, iCampo, iCampo));
+            }
             WicketBuildContext childCtx = ctx.createChild(configureColspan(ctx, type, iCampo, col), true, mCampo);
             wicketBuilder.build(childCtx, viewMode);
         }
