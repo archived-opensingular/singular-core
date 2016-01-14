@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.mapper.comment;
+package br.net.mirante.singular.form.wicket.mapper.annotation;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 

@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.*;
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationDefaultMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
 import br.net.mirante.singular.form.wicket.mapper.selection.*;
 
@@ -75,6 +76,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoComposto.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
                 .register(MTipoComposto.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
+                .register(MTipoComposto.class,   MAnnotationView.class,                 AnnotationDefaultMapper::new)
                 .register(MTipoLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
                 .register(MTipoLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
                 .register(MTipoLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
