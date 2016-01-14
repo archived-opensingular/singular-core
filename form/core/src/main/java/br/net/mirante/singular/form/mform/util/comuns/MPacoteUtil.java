@@ -5,7 +5,6 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 
 public class MPacoteUtil extends MPacote {
 

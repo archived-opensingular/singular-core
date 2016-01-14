@@ -64,7 +64,7 @@ public final class MFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    final static String generatePath(MInstancia atual, Predicate<MInstancia> condicaoDeParada) {
+    public final static String generatePath(MInstancia atual, Predicate<MInstancia> condicaoDeParada) {
         List<MInstancia> sequencia = null;
         while (!condicaoDeParada.test(atual)) {
             if (sequencia == null) {
@@ -110,6 +110,6 @@ public final class MFormUtil {
         if (!labels.isEmpty())
             return StringUtils.join(labels, " > ");
         else
-            return "[" + instance.getNome() + "]";
+            return null;
     }
 }

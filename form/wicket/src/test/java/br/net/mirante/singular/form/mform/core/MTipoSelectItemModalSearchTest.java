@@ -25,11 +25,11 @@ public class MTipoSelectItemModalSearchTest extends SelectionFieldBaseTest {
     MTipo createSelectionType(MTipoComposto group) {
         selectType = group.addCampoComposto("originUF");
 //        selectType.configureKeyValueFields(); TODO: Fabs
-        selectType.addCampoInteger("population").as(AtrBasic::new).label("População");;;
-        selectType.addCampoInteger("areasqrkm").as(AtrBasic::new).label("Área");;;
-        selectType.addCampoInteger("phonecode").as(AtrBasic::new).label("DDD");;;
-        selectType.addCampoDecimal("gdp").as(AtrBasic::new).label("PIB");;;
-        selectType.addCampoDecimal("hdi").as(AtrBasic::new).label("IDH");;;
+        selectType.addCampoInteger("population").as(AtrBasic::new).label("População");
+        selectType.addCampoInteger("areasqrkm").as(AtrBasic::new).label("Área");
+        selectType.addCampoInteger("phonecode").as(AtrBasic::new).label("DDD");
+        selectType.addCampoDecimal("gdp").as(AtrBasic::new).label("PIB");
+        selectType.addCampoDecimal("hdi").as(AtrBasic::new).label("IDH");
         view = (MSelecaoPorModalBuscaView) selectType.setView(MSelecaoPorModalBuscaView::new);
         return selectType;
     }

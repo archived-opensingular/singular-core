@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -136,9 +137,12 @@ public class WicketFormProcessing {
 
     private static void associateErrorsTo(Component component, IModel<? extends MInstancia> baseInstance, boolean prependFullPathLabel, Set<IValidationError> errors) {
         for (IValidationError error : errors) {
-            final String message = (prependFullPathLabel)
-                ? MFormUtil.generateUserFriendlyPath(error.getInstance(), baseInstance.getObject()) + " : " + error.getMessage()
-                : error.getMessage();
+            String message = error.getMessage();
+            if (prependFullPathLabel) {
+                final String labelPath = MFormUtil.generateUserFriendlyPath(error.getInstance(), baseInstance.getObject());
+                if (StringUtils.isNotBlank(labelPath))
+                    message = labelPath + " : " + message;
+            }
             Integer instanceId = error.getInstance().getId();
 
             final IModel<? extends MInstancia> instanceModel = new IReadOnlyModel<MInstancia>() {

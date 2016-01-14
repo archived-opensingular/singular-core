@@ -43,8 +43,8 @@ public class MIAttachment extends MIComposto {
         setValor(MTipoAttachment.FIELD_HASH_SHA1, null);
         setValor(MTipoAttachment.FIELD_SIZE, null);
         setValor(MTipoAttachment.FIELD_NAME, null);
-        setValorAtributo(MTipoAttachment.REF_ORIGINAL_ID, null);
-        setValorAtributo(MTipoAttachment.IS_TEMPORARY, null);
+        setValorAtributo(MTipoAttachment.ATR_ORIGINAL_ID, null);
+        setValorAtributo(MTipoAttachment.ATR_IS_TEMPORARY, null);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MIAttachment extends MIComposto {
     }
     
     public void setOriginalFileId(String id) {
-        setValorAtributo(MTipoAttachment.REF_ORIGINAL_ID, id);
+        setValorAtributo(MTipoAttachment.ATR_ORIGINAL_ID, id);
     }
 
     public void setFileSize(Integer size) {
@@ -106,7 +106,7 @@ public class MIAttachment extends MIComposto {
     }
     
     public String getOriginalFileId() {
-        return (String) getValorAtributo(MTipoAttachment.REF_ORIGINAL_ID);
+        return (String) getValorAtributo(MTipoAttachment.ATR_ORIGINAL_ID);
     }
 
     public String getFileHashSHA1() {
@@ -124,12 +124,12 @@ public class MIAttachment extends MIComposto {
     }
 
     public void setTemporary() {
-        setValorAtributo(MTipoAttachment.IS_TEMPORARY, "true");
+        setValorAtributo(MTipoAttachment.ATR_IS_TEMPORARY, "true");
     }
 
 
     public boolean isTemporary() {
-        return getValorAtributo(MTipoAttachment.IS_TEMPORARY) != null;
+        return getValorAtributo(MTipoAttachment.ATR_IS_TEMPORARY) != null;
     }
 
 

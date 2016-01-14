@@ -3,6 +3,8 @@ package br.net.mirante.singular.form.mform;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
@@ -11,9 +13,9 @@ import br.net.mirante.singular.form.mform.options.MSelectionableType;
 
 @SuppressWarnings("rawtypes")
 @MInfoTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
-public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO> 
-    extends MTipo<I> 
-    implements MSelectionableType<MTipoSimples>{
+public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
+        extends MTipo<I>
+        implements MSelectionableType<MTipoSimples> {
 
     private final Class<TIPO_NATIVO> classeTipoNativo;
 
@@ -31,11 +33,12 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
     }
 
     // SELECTION OF BEGIN
-    
+
     @Override
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
+
     @Override
     public void setProviderOpcoes(MOptionsProvider p) {
         optionsProvider = p;
@@ -46,13 +49,30 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
         optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return optionsProvider;
     }
-    
+
     @SuppressWarnings("unchecked")
     public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
         optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
         return this;
     }
-    
+
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     */
+    @SuppressWarnings("unchecked")
+    public MTipoSimples<I, TIPO_NATIVO> withSelectView() {
+        return (MTipoSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorSelectView::new);
+    }
+
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     */
+    @SuppressWarnings("unchecked")
+    public MTipoSimples<I, TIPO_NATIVO> withRadioView() {
+        return (MTipoSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorRadioView::new);
+    }
+
+
     public AtrFormula asFormula() {
         return MTranslatorParaAtributo.of(this, new AtrFormula());
     }
@@ -66,6 +86,12 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
             return fromString((String) valor);
         }
         return converterNaoNativoNaoString(valor);
+    }
+
+    public MISimples<TIPO_NATIVO> create(TIPO_NATIVO value, String selectLabel) {
+        MISimples<TIPO_NATIVO> instance = this.novaInstancia();
+        instance.setValueSelectLabel(value, selectLabel);
+        return instance;
     }
 
     protected TIPO_NATIVO converterNaoNativoNaoString(Object valor) {
@@ -138,7 +164,7 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
 
     protected final RuntimeException createErroConversao(Object valor, Class<?> tipoDestino, String complemento, Exception e) {
         String msg = "O tipo '" + getClass().getName() + "' não consegue converter o valor '" + valor + "' do tipo "
-            + valor.getClass().getName();
+                + valor.getClass().getName();
         if (tipoDestino != null) {
             msg += " para o tipo '" + tipoDestino.getName() + "'";
         }

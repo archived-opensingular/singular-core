@@ -56,7 +56,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings("rawtypes")
     protected ChoiceRenderer renderer() {
-        return new ChoiceRenderer("value", "key");
+        return new ChoiceRenderer("selectLabel", "value");
     }
 
     @Override

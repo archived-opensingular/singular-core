@@ -15,6 +15,7 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.MPacoteCurriculo;
+import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.MPacotePeticaoCanabidiol;
 import br.net.mirante.singular.showcase.view.page.form.examples.MPacotePeticaoGGTOX;
 
 public class TemplateRepository extends MDicionarioResolver {
@@ -34,6 +35,7 @@ public class TemplateRepository extends MDicionarioResolver {
         novo.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
         novo.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
         novo.add(MPacotePeticaoGGTOX.class, MPacotePeticaoGGTOX.NOME_COMPLETO);
+        novo.add(MPacotePeticaoCanabidiol.class, MPacotePeticaoCanabidiol.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {

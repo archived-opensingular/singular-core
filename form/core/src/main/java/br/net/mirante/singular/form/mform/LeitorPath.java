@@ -12,6 +12,9 @@ class LeitorPath {
     }
 
     private LeitorPath(String path, int inicio) {
+        if (path == null){
+            throw new SingularFormException("O path do campo não pode ser nulo.");
+        }
         this.path = path;
         if (inicio >= path.length()) {
             fim = inicio;

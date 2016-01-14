@@ -8,7 +8,6 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 import java.util.List;
 
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -23,7 +22,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
         selectType = (MTipoComposto) group.addCampoComposto("originUF");
-        selectType.withKeyValueField("chave","valor");
+        selectType.withSelectValueLabelFields("chave", "valor");
         return selectType;
     }
 
@@ -45,9 +44,9 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("DF","SP");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("DF","SP");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Distrito Federal","São Paulo");
     }
 
@@ -62,9 +61,9 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-                .containsExactly("DF","SP");
         assertThat(extractProperty("value").from(choices.getChoices()))
+                .containsExactly("DF","SP");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
                 .containsExactly("Distrito Federal","São Paulo");
     }
     
@@ -72,7 +71,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     public void rendersAnDropDownWithDanglingOptions() {
         setupPage();
         MIComposto value = currentSelectionInstance();
-        value.setValue("GO", "Goias");
+        value.setValueSelectLabel("GO", "Goias");
         selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
             newSelectItem("SP", "São Paulo"));
         buildPage();
@@ -81,9 +80,9 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
-        assertThat(extractProperty("key").from(choices.getChoices()))
-            .containsExactly("GO","DF","SP");
         assertThat(extractProperty("value").from(choices.getChoices()))
+            .containsExactly("GO","DF","SP");
+        assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Goias","Distrito Federal","São Paulo");
     }
     
@@ -95,7 +94,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         MIComposto value = currentSelectionInstance();
-        assertThat(value.getFieldId()).isEqualTo("DF");
+        assertThat(value.getSelectValue()).isEqualTo("DF");
     }
     
     @Test public void alsoWorksWhenFieldIsMandatory(){
@@ -107,7 +106,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         MIComposto value = currentSelectionInstance();
-        assertThat(value.getFieldId()).isEqualTo("DF");
+        assertThat(value.getSelectValue()).isEqualTo("DF");
     }
 
 

@@ -289,6 +289,8 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
             MTipoComposto<? extends MIComposto> grouper = pb.createTipoComposto("Grouper");
             fieldOfTipoComAtributoInterno1 = grouper.addCampo("TipoComAtributoInterno1", TipoComAtributoInterno1.class);
 
+            pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID3);
+            pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_KEY_ID4, MTipoString.class);
         }
 
         @MInfoTipo(nome = "TipoCAI1", pacote = TestPacoteCAI.class)
@@ -296,8 +298,6 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
             @Override
             protected void onCargaTipo(TipoBuilder tb) {
-                tb.createTipoAtributo(ATR_REF_ID3);
-                tb.createTipoAtributo(ATR_KEY_ID4, MTipoString.class);
                 addCampoString("nome");
             }
         }

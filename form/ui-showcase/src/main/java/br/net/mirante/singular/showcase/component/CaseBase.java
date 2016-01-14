@@ -23,6 +23,8 @@ public class CaseBase implements Serializable {
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
 
+    private transient MTipo<?> caseType;
+    
     public CaseBase(String componentName) {
         this(componentName, null);
     }
@@ -67,11 +69,14 @@ public class CaseBase implements Serializable {
     }
 
     public MTipo<?> getCaseType() {
-        MDicionario dicionario = MDicionario.create();
-        MPacote p = dicionario.carregarPacote(getPackage());
-
-        return p.getTipoLocalOpcional("testForm")
+        if(caseType == null){
+            MDicionario dicionario = MDicionario.create();
+            MPacote p = dicionario.carregarPacote(getPackage());
+            
+            caseType = p.getTipoLocalOpcional("testForm")
                 .orElseThrow(() -> new SingularFormException("O pacote " + p.getNome() + " não define o tipo para exibição 'testForm'"));
+        }
+        return caseType;
     }
 
     public Optional<ResourceRef> getDescriptionResourceName() {

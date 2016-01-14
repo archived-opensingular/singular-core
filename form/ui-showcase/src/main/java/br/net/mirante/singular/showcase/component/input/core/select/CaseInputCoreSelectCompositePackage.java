@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 
 public class CaseInputCoreSelectCompositePackage extends MPacote {
 
@@ -14,7 +15,7 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        MTipoComposto<?> ingredienteQuimico = tipoMyForm.addCampoComposto("ingredienteQuimico");
+        MTipoString ingredienteQuimico = tipoMyForm.addCampoString("ingredienteQuimico");
         ingredienteQuimico.withSelectionOf(
                 ingredienteQuimico.create("h2o", "Água"),
                 ingredienteQuimico.create("h2o2", "Água Oxigenada"),
@@ -22,6 +23,12 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
                 ingredienteQuimico.create("C12H22O11", "Açúcar")
         );
         ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
+
+        MTipoString ingredienteQuimicoSemChave = tipoMyForm.addCampoString("ingredienteQuimicoSemChave");
+        ingredienteQuimicoSemChave.withSelectionOf(
+                "Água", "Água Oxigenada", "Gás Oxigênio", "Açúcar"
+        );
+        ingredienteQuimicoSemChave.as(AtrBasic::new).label("Seleção de Componentes Químicos - Sem chave, apenas valor");
 
         /**
          * Outra forma de se adicionar elementos é através do provedor padrão.
@@ -43,7 +50,7 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
          * "abreviado" e "descricao".
          */
         MTipoComposto<?> sexo = tipoMyForm.addCampoComposto("sexo");
-        sexo.withKeyValueField("abreviado","descricao");
+        sexo.withSelectValueLabelFields("abreviado", "descricao");
         sexo.withSelectionOf(
                 sexo.create("N", "Não Informado"),
                 sexo.create("M", "Masculino"),

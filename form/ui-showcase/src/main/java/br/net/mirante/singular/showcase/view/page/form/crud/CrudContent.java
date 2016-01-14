@@ -118,7 +118,7 @@ public class CrudContent extends Content
             .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
             .collect(Collectors.toList());
 
-        ChoiceRenderer choiceRenderer = new ChoiceRenderer("key", "key");
+        ChoiceRenderer choiceRenderer = new ChoiceRenderer("selectLabel", "value");
         return new DropDownChoice<SelectOption>("options",
             new SelectOption(selectedTemplate.getKey(), selectedTemplate),
             options, choiceRenderer) {
