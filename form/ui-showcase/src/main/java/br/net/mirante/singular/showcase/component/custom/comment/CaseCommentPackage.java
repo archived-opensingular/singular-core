@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 
 public class CaseCommentPackage extends MPacote {
 
@@ -18,6 +19,8 @@ public class CaseCommentPackage extends MPacote {
                 .as(AtrBasic.class).label("E-Mail");
         targetForm.addCampoString("request")
                 .as(AtrBasic.class).label("Pedido");
+
+        targetForm.setView(MAnnotationView::new);
         super.carregarDefinicoes(pb);
     }
 }
