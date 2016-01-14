@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import br.net.mirante.singular.showcase.component.custom.comment.CaseComment;
+import br.net.mirante.singular.showcase.component.custom.comment.CaseAnnotation;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.showcase.component.custom.CaseCustomStringMapper;
@@ -114,7 +114,7 @@ public class ShowCaseTable {
         group("Custom", Icone.WRENCH)
                 .addCase(CaseCustomStringMapper.class)
                 .addCase(CaseCustonRangeMapper.class)
-                .addCase(CaseComment.class)
+                .addCase(CaseAnnotation.class)
         ;
         group("Maps", Icone.MAP)
                 .addCase(CaseGoogleMaps.class)

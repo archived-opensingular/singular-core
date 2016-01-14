@@ -11,6 +11,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -40,13 +41,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
     public static class CompostoViewBuilder {
 
         protected WicketBuildContext ctx;
-        protected IModel<? extends MInstancia> model;
+        protected AbstractMInstanciaModel<? extends MInstancia> model;
         protected MIComposto instance;
         protected MTipoComposto<MIComposto> type;
 
         public CompostoViewBuilder(WicketBuildContext ctx){
             this.ctx = ctx;
-            model = this.ctx.getModel();
+            model = (AbstractMInstanciaModel<? extends MInstancia>) this.ctx.getModel();
             instance = ctx.getCurrenttInstance();
             type = (MTipoComposto<MIComposto>) instance.getMTipo();
         }
@@ -79,12 +80,14 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
 
-        protected void addLabelIfNeeded(final BSGrid grid) {
+        protected BSCol addLabelIfNeeded(final BSGrid grid) {
             IModel<String> label = $m.ofValue(trimToEmpty(instance.as(AtrBasic::new).getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h3", new Label("_title", label));
+                return column;
             }
+            return null;
         }
 
         protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,
