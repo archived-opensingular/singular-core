@@ -4,17 +4,20 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 
 public class AnnotationComponent extends Panel {
-    private final AbstractMInstanciaModel referenced, target;
+    private final AbstractMInstanciaModel referenced;
+    private final IModel target;
 
-    public AnnotationComponent(String id, AbstractMInstanciaModel referenced, AbstractMInstanciaModel target) {
+    public AnnotationComponent(String id, AbstractMInstanciaModel referenced, IModel target) {
         super(id);
         this.referenced = referenced;
         this.target = target;
@@ -29,7 +32,7 @@ public class AnnotationComponent extends Panel {
             protected void onInitialize() {
                 super.onInitialize();
                 this.queue(new Label("target_label",$m.ofValue(labelOf(referenced))));
-                this.queue(new TextArea<>("comment_field",$m.ofValue()));
+                this.queue(new TextArea<>("comment_field",target));
             }
 
             private String labelOf(AbstractMInstanciaModel target) {
@@ -37,7 +40,7 @@ public class AnnotationComponent extends Panel {
             }
         };
         this.queue(popover_modal);
-        Link popover_link = new Link("comment_link") {
+        /*Link popover_link = new Link("comment_link") {
             public void onClick() {
             }
 
@@ -52,8 +55,8 @@ public class AnnotationComponent extends Panel {
                 return "#";
             }
         };
-        this.queue(popover_link);
-        this.add(new Label("_popover_id",$m.ofValue(popover_link.getMarkupId())));
+        this.queue(popover_link);*/
+//        this.add(new Label("_popover_id",$m.ofValue(popover_link.getMarkupId())));
 
     }
 }

@@ -1,66 +1,31 @@
 <html xmlns:wicket="http://wicket.apache.org">
-    <wicket:panel xmlns:wicket="http://wicket.apache.org">
-        <div class="page-toolbar">
-            <style type="text/css">
-                .popover{
-                    max-width: 100%; /* Max Width of the popover (depending on the container!) */
-                    width:34%;
-                }
-                .bottom-right {
-                    margin-top: -15px;
-                    margin-left: 3px;
-                }
-            </style>
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <div class="page-toolbar">
+        <!-- Content for Popover #1 -->
+        <div  wicket:id="popover_modal" >
+            <div class="popover-heading">
+                <i class="fa fa-comment-o"></i> Comentários sobre o <wicket:container wicket:id="target_label" />
+            </div>
 
-            <!-- Popover #1 -->
-            <a class="btn btn-circle btn-default btn-sm" data-placement="bottom-right"
-               data-popover-content="#_popover_id"
-               data-toggle="popover" href="#" tabindex="0" wicket:id="comment_link" >
-                <i class="fa fa-comment-o"></i> <span> </span> <i class="fa fa-angle-down"></i>
-            </a>
-
-            <!-- Content for Popover #1 -->
-            <div class="hidden" wicket:id="popover_modal" >
-                <div class="popover-heading">
-                    Comentários sobre o <wicket:container wicket:id="target_label" />
-                </div>
-
-                <div class="popover-body">
-                    <div style="width: 100%;padding: 20px;">
-                        <div class="row">
-                            <div class="can-have-error form-group form-group-sm">
-                                <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
-                            </div>
+            <div class="popover-body">
+                <div style="width: 100%;padding: 20px;">
+                    <div class="row">
+                        <div class="can-have-error form-group form-group-sm">
+                            <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
                         </div>
-                        <div class="row">
-                            <button type="button" class="btn green" name="save-btn" >
-                                Aprovar
-                            </button>
-                            <button type="button" class="btn red" name="save-btn" >
-                                Rejeitar
-                            </button>
-                        </div>
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn green"  >
+                            Aprovar
+                        </button>
+                        <button type="button" class="btn red" >
+                            Rejeitar
+                        </button>
                     </div>
                 </div>
             </div>
-            <script type="application/javascript">
-                $(function(){
-                    var _id = "<wicket:container wicket:id='_popover_id' />";
-                    $('#'+_id).popover({
-                        html : true,
-                        content: function() {
-                            var content = $(this).attr("data-popover-content");
-                            return $(content).children(".popover-body").html();
-                        },
-                        title: function() {
-                            var title = $(this).attr("data-popover-content");
-                            return $(title).children(".popover-heading").html();
-                        }
-                    });
-                });
-
-            </script>
-
         </div>
-    </wicket:panel>
+
+    </div>
+</wicket:panel>
 </html>

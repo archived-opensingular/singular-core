@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
@@ -210,9 +211,16 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
-                component.setVisible(viewMode.isEdition());
+
+                component.setVisible(viewMode.isEdition() || isInAnnotationMode());
             }
         };
+    }
+
+    private boolean isInAnnotationMode() {
+        MTipo<?> mTipo = TemplateRepository.get().loadType(typeName);
+        boolean isAnnotated = mTipo.getView() instanceof MAnnotationView;
+        return viewMode.isVisualization() && isAnnotated;
     }
 
 }
