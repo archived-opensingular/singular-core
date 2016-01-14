@@ -6,7 +6,6 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
-import org.apache.commons.lang3.StringUtils;
 
 @MInfoTipo(nome = "MTipoPaciente", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoPessoa extends MTipoComposto<MIComposto> implements CanabidiolUtil {

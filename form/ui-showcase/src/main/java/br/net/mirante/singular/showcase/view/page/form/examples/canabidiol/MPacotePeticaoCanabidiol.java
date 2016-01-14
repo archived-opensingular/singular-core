@@ -52,8 +52,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .as(AtrBasic::new)
                     .label("Anexos")
                     .dependsOn(paciente.getTipoDocumento(), responsavelLegal.getTipoDocumento())
-                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()) || hasValue(instancia, paciente.getTipoDocumento())
-                    );
+                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()) || hasValue(instancia, paciente.getTipoDocumento()));
 
             MTipoAttachment anexoPaciente = anexos
                     .addCampo("documentoPaciente", MTipoAttachment.class);

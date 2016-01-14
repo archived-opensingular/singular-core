@@ -14,6 +14,8 @@ import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 @MInfoTipo(nome = "MTipoContato", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoContato extends MTipoComposto<MIComposto> {
 
+
+
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         super.onCargaTipo(tb);
