@@ -25,8 +25,9 @@ public class AnnotationComponent extends Panel {
 
     @Override
     protected void onInitialize() {
-        final String popoverId = "_popover_id_" + getId();
         super.onInitialize();
+        /*
+        final String popoverId = "_popover_id_" + getId();
         WebMarkupContainer popover_modal = new WebMarkupContainer("popover_modal") {
             @Override
             protected void onInitialize() {
@@ -35,12 +36,9 @@ public class AnnotationComponent extends Panel {
                 this.queue(new TextArea<>("comment_field",target));
             }
 
-            private String labelOf(AbstractMInstanciaModel target) {
-                return target.getMInstancia().as(AtrBasic::new).getLabel();
-            }
         };
         this.queue(popover_modal);
-        /*Link popover_link = new Link("comment_link") {
+        Link popover_link = new Link("comment_link") {
             public void onClick() {
             }
 
@@ -55,8 +53,14 @@ public class AnnotationComponent extends Panel {
                 return "#";
             }
         };
-        this.queue(popover_link);*/
-//        this.add(new Label("_popover_id",$m.ofValue(popover_link.getMarkupId())));
+        this.queue(popover_link);
+        this.add(new Label("_popover_id",$m.ofValue(popover_link.getMarkupId())));
+        */
+        this.queue(new Label("target_label",$m.ofValue(labelOf(referenced))));
+        this.queue(new TextArea<>("comment_field",target));
+    }
 
+    private static String labelOf(AbstractMInstanciaModel target) {
+        return target.getMInstancia().as(AtrBasic::new).getLabel();
     }
 }

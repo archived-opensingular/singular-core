@@ -1,31 +1,24 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-    <div class="page-toolbar">
         <!-- Content for Popover #1 -->
-        <div  wicket:id="popover_modal" >
-            <div class="popover-heading">
-                <i class="fa fa-comment-o"></i> Comentários sobre o <wicket:container wicket:id="target_label" />
-            </div>
+        <label class="control-label">
+            <i class="fa fa-comment-o"></i> Comentários sobre <wicket:container wicket:id="target_label" />
+        </label>
 
-            <div class="popover-body">
-                <div style="width: 100%;padding: 20px;">
-                    <div class="row">
-                        <div class="can-have-error form-group form-group-sm">
-                            <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <button type="button" class="btn green"  >
-                            Aprovar
-                        </button>
-                        <button type="button" class="btn red" >
-                            Rejeitar
-                        </button>
-                    </div>
+        <div class="panel">
+            <div class="col-md-12 col-sm-12">
+                <div class="can-have-error form-group form-group-sm">
+                    <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
                 </div>
             </div>
+            <div class="col-md-12 col-sm-12">
+                <button type="button" class="btn green"  >
+                        Aprovar
+                    </button>
+                <button type="button" class="btn red" >
+                        Rejeitar
+                </button>
+            </div>
         </div>
-
-    </div>
 </wicket:panel>
 </html>
