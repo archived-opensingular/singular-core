@@ -13,7 +13,6 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -25,7 +24,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
 
-        return formGroupAppender(formGroup, model, getOpcoesValue(view, model));
+        return formGroupAppender(formGroup, model, getOpcoesValue(view, model), view);
     }
 
     public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends MInstancia> model) {
@@ -39,8 +38,8 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         };
     }
 
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final IModel<? extends List<SelectOption>> opcoesValue) {
-        final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model, final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
+        final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue, view);
         formGroup.appendSelect(choices.setNullValid(true), isMultiple(model), isBSSelect(model));
         return choices;
     }
@@ -66,10 +65,10 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings({ "unchecked" })
     protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
-                                    IModel<? extends MInstancia> model, 
-                                    final IModel<? extends List<SelectOption>> opcoesModel) {
+            IModel<? extends MInstancia> model,
+            final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         String id = model.getObject().getNome();
-        return new DropDownChoice<>(id, new MSelectionInstanceModel<SelectOption>(model), opcoesModel, rendererer());
+        return new DropDownChoice<>(id, new MSelectionInstanceModel<SelectOption>(model), opcoesValue, rendererer());
     }
 
     protected ChoiceRenderer rendererer() {
