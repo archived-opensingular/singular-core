@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.annotation;
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.MIString;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
@@ -49,49 +50,34 @@ public class AnnotationDefaultMapper extends DefaultCompostoMapper {
             final BSContainer<?> parentCol = ctx.getContainer();
             BSRow superRow = parentCol.newGrid().newRow();
 
-            final BSGrid grid = superRow.newCol(9).setCssClass("col-sm-9").newGrid();
+            final BSGrid formGrid = superRow.newCol(9).setCssClass("col-sm-9").newGrid();
 
-            final BSGrid ngrid = superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
-            ngrid.newRow().appendTag("div", true, "style=\"float: right;\"",
-                    (id) -> {
-                        /*MTipoString stringType = model.getMInstancia().getDicionario().getTipo(MTipoString.class);
+            addCommentColumn(superRow);
+            configureLabel(formGrid);
 
-                        MInstanceRootModel target = new MInstanceRootModel(stringType.novaInstancia()){
-                            @Override
-                            public void setObject(MInstancia object) {
-                                super.setObject(object);
-                            }
-                        };
-                        MInstanciaValorModel target1 = new MInstanciaValorModel(target);*/
-                        IModel target1 = new Model<String>(){
-                            @Override
-                            public void setObject(String object) {
-                                annotatedInstance().text(object);
-                            }
+            formGrid.add(DisabledClassBehavior.getInstance());
+            formGrid.setDefaultModel(model);
+            return formGrid;
+        }
 
-                            @Override
-                            public String getObject() {
-                                return annotatedInstance().text();
-                            }
-
-                            private AtrAnnotation annotatedInstance() {
-                                return model.getMInstancia().as(AtrAnnotation::new);
-                            }
-                        };
-                        AnnotationComponent components = new AnnotationComponent(id, model, target1);
-                        return components;
-                    });;
-
-            BSCol titleColumn = addLabelIfNeeded(grid);
+        private void configureLabel(BSGrid formGrid) {
+            BSCol titleColumn = addLabelIfNeeded(formGrid);
 //            if(titleColumn == null) {
 //                titleColumn = grid.newColInRow();
 //            }
 //            titleColumn.appendTag("div", true, "style=\"float: right;\"",
 //                    (id) -> new AnnotationComponent(id, model, new MInstanceRootModel(model.getObject())));
+        }
 
-            grid.add(DisabledClassBehavior.getInstance());
-            grid.setDefaultModel(model);
-            return grid;
+        private void addCommentColumn(BSRow superRow) {
+            final BSGrid ngrid = superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
+            ngrid.newRow().appendTag("div", true, "style=\"float: right;\"",
+                    (id) -> {
+                        AnnotationComponent components =
+                                new AnnotationComponent(id, (MAnnotationView) ctx.getView(),model);
+                        return components;
+                    });
+            ;
         }
 
         /*protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,

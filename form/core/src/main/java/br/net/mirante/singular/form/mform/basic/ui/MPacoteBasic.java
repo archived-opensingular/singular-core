@@ -24,6 +24,8 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
 
 public class MPacoteBasic extends MPacote {
 
@@ -50,7 +52,7 @@ public class MPacoteBasic extends MPacote {
     //    @SuppressWarnings({ "unchecked", "rawtypes" })
     //    public static final AtrRef<MTipoBehavior, MIBehavior, IBehavior<MInstancia>>   ATR_ONCHANGE_BEHAVIOR = new AtrRef(MPacoteBasic.class, "onchangeBehavior", MTipoBehavior.class, MIBehavior.class, IBehavior.class);
 
-    public static final AtrRef<MTipoString, MIString, String>                      ATR_ANNOTATION_TEXT          = new AtrRef<>(MPacoteBasic.class, "annotationText", MTipoString.class, MIString.class, String.class);
+    public static final AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation>                      ATR_ANNOTATION_TEXT          = new AtrRef<>(MPacoteBasic.class, "annotationText", MTipoAnnotation.class, MIAnnotation.class, MIAnnotation.class);
 
     //@formatter:on
 
