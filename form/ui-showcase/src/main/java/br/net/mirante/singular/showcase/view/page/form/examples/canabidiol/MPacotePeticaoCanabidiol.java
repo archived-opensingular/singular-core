@@ -22,11 +22,13 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
         //Para que anotar com MTIPOInfo se depois tem que fazer isso:
-        pb.createTipo(MTipoImportacao.class);
         pb.createTipo(MTipoContato.class);
         pb.createTipo(MTipoDocumentoSelect.class);
         pb.createTipo(MTipoEndereco.class);
+        pb.createTipo(MTipoImportacao.class);
         pb.createTipo(MTipoPessoa.class);
+        pb.createTipo(MTipoPrescricao.class);
+        pb.createTipo(MTipoProdutos.class);
 
         final MTipoComposto<?> canabis = pb.createTipoComposto(TIPO);
         {
@@ -75,10 +77,23 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
 
             MTipoImportacao modalidadeImportacao = canabis
                     .addCampo("importacao", MTipoImportacao.class);
-
             modalidadeImportacao
                     .as(AtrBasic::new)
                     .label("Importação");
+
+
+            MTipoProdutos produtos = canabis
+                    .addCampo("produtos", MTipoProdutos.class);
+            produtos
+                    .as(AtrBasic::new)
+                    .label("Produtos");
+
+
+            MTipoPrescricao prescricao = canabis
+                    .addCampo("prescricao", MTipoPrescricao.class);
+            prescricao
+                    .as(AtrBasic::new)
+                    .label("Prescrição Médica");
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
@@ -87,8 +102,13 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .add(possuiResponsavelLegal)
                     .add(responsavelLegal)
                     .add(anexos);
-            tabbed.addTab("solicitação", "Medicação")
+            tabbed.addTab("importacao", "Importação")
                     .add(modalidadeImportacao);
+            tabbed.addTab("produtos", "Produtos")
+                    .add(produtos);
+            tabbed.addTab("prescricao", "Prescrição")
+                    .add(prescricao);
+            tabbed.addTab("prescricao", "Termo de Responsabilidade");
 
 
         }
