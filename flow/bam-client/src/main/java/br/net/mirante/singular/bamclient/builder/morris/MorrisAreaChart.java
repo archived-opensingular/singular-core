@@ -7,7 +7,8 @@ public class MorrisAreaChart extends AbstractJSONBuilder<MorrisAreaChart> {
 
     public MorrisAreaChart(JSONBuilderContext context) {
         super(context);
-        context.getjWriter().key("type").value("Area");
+        context.getJsonWriter().object();
+        context.getJsonWriter().key("type").value("Area");
     }
 
     public MorrisAreaChart padding(Integer value) {

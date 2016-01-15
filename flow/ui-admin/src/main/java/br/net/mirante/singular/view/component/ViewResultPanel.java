@@ -3,26 +3,24 @@ package br.net.mirante.singular.view.component;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+public abstract class ViewResultPanel<T extends PortletConfig> extends Panel {
 
-
-public abstract class ViewResult<T extends PortletConfig> extends Panel {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ViewResult.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewResultPanel.class);
 
     private IModel<T> config;
 
     private IModel<PortletContext> context;
 
-    public ViewResult(String id, IModel<T> config, IModel<PortletContext> context) {
+    public ViewResultPanel(String id, IModel<T> config, IModel<PortletContext> context) {
         super(id);
         this.config = config;
         this.context = context;
