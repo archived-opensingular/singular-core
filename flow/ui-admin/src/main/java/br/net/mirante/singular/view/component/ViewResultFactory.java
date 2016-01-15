@@ -5,7 +5,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 
-public interface ViewResultFactory<C extends PortletConfig> {
+public interface ViewResultFactory<C extends PortletConfig<C>> {
 
     ViewResultPanel create(String id, IModel<C> config, IModel<PortletContext> filter);
 }

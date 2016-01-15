@@ -6,7 +6,7 @@ public class AmSerialChartBuilder extends AmChartBuilder<AmSerialChartBuilder> {
 
     public AmSerialChartBuilder(JSONBuilderContext JSONBuilderContext) {
         super(JSONBuilderContext);
-        context.getjWriter().key("type").value("serial");
+        context.getJsonWriter().key("type").value("serial");
     }
 
     @Override

@@ -6,10 +6,11 @@ import br.net.mirante.singular.bamclient.builder.AbstractJSONBuilder;
 import br.net.mirante.singular.bamclient.builder.JSONBuilderContext;
 
 
-public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractJSONBuilder<T> {
+public abstract class AmChartBuilder<T extends AmChartBuilder<T>> extends AbstractJSONBuilder<T> {
 
     public AmChartBuilder(JSONBuilderContext context) {
         super(context);
+        context.getJsonWriter().object();
     }
 
     public T startEffect(String value) {
@@ -52,11 +53,8 @@ public abstract class AmChartBuilder<T extends AmChartBuilder> extends AbstractJ
         return writeArray("valueAxes", value);
     }
 
-    public T titles(Collection<String> titles) {
-        context.getjWriter().key("titles").array();
-        titles.forEach(t -> context.getjWriter().value(t));
-        context.getjWriter().endArray();
-        return self();
+    public T titles(String... titles) {
+        return writeArray("titles", titles);
     }
 
 }

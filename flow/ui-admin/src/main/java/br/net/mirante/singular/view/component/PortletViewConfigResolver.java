@@ -31,7 +31,7 @@ public class PortletViewConfigResolver {
         });
     }
 
-    public static <C extends PortletConfig> ViewResultPanel newViewResult(String id, IModel<C> config, IModel<PortletContext> context) {
+    public static <C extends PortletConfig<C>> ViewResultPanel newViewResult(String id, IModel<C> config, IModel<PortletContext> context) {
         return map.get(config.getObject().getClass()).create(id, config, context);
     }
 

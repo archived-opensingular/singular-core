@@ -6,7 +6,7 @@ public class AmPieChartBuilder extends AmChartBuilder<AmPieChartBuilder> {
 
     public AmPieChartBuilder(JSONBuilderContext context) {
         super(context);
-        context.getjWriter().key("type").value("pie");
+        context.getJsonWriter().key("type").value("pie");
     }
 
     @Override
