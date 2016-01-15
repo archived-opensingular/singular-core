@@ -22,6 +22,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
         //Para que anotar com MTIPOInfo se depois tem que fazer isso:
+        pb.createTipo(MTipoImportacao.class);
         pb.createTipo(MTipoContato.class);
         pb.createTipo(MTipoDocumentoSelect.class);
         pb.createTipo(MTipoEndereco.class);
@@ -72,6 +73,12 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .dependsOn(anexos, responsavelLegal.getTipoDocumento())
                     .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()));
 
+            MTipoImportacao modalidadeImportacao = canabis
+                    .addCampo("importacao", MTipoImportacao.class);
+
+            modalidadeImportacao
+                    .as(AtrBasic::new)
+                    .label("Importação");
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
@@ -80,7 +87,8 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .add(possuiResponsavelLegal)
                     .add(responsavelLegal)
                     .add(anexos);
-            tabbed.addTab("solicitação", "Medicação");
+            tabbed.addTab("solicitação", "Medicação")
+                    .add(modalidadeImportacao);
 
 
         }
