@@ -26,8 +26,10 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
         pb.createTipo(MTipoDocumentoSelect.class);
         pb.createTipo(MTipoEndereco.class);
         pb.createTipo(MTipoImportacao.class);
+        pb.createTipo(MTipoMedico.class);
         pb.createTipo(MTipoPessoa.class);
         pb.createTipo(MTipoPrescricao.class);
+        pb.createTipo(MTipoDescricaoProduto.class);
         pb.createTipo(MTipoProdutos.class);
 
         final MTipoComposto<?> canabis = pb.createTipoComposto(TIPO);
