@@ -1,25 +1,25 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-import java.util.List;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
+    protected RadioChoice<SelectOption> retrieveChoices(IModel<? extends MInstancia> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue) {
-        MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
+        MSelectionInstanceModel<SelectOption> opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
         String id = model.getObject().getNome();
-        return new RadioChoice<SelectOption>(id,
-                (IModel) opcoesModel, opcoesValue, rendererer()) {
+        return new RadioChoice<SelectOption>(id, opcoesModel, opcoesValue, rendererer()) {
             @Override
             protected IValueMap getAdditionalAttributesForLabel(int index,
                                                                 SelectOption choice) {
@@ -45,10 +45,10 @@ public class RadioMapper extends SelectMapper {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes"})
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue) {
-        final RadioChoice<String> choices = retrieveChoices(model, opcoesValue);
+        final RadioChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
         choices.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
         choices.setSuffix("</span>");
         formGroup.appendRadioChoice(choices);
