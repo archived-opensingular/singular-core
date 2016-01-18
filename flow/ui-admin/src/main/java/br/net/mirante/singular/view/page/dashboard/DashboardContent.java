@@ -31,7 +31,7 @@ import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
-import br.net.mirante.singular.view.component.PortletView;
+import br.net.mirante.singular.view.component.PortletPanel;
 import br.net.mirante.singular.view.page.processo.MetadadosPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;
 import br.net.mirante.singular.view.template.Content;
@@ -117,7 +117,7 @@ public class DashboardContent extends Content {
     }
 
     protected void buildDashboard(Set<String> processCodeWithAccess) {
-        configs.forEach(c -> portlets.add(new PortletView<>(portlets.newChildId(), c, processDefinitionCode)));
+        configs.forEach(c -> portlets.add(new PortletPanel<>(portlets.newChildId(), c, processDefinitionCode)));
         final FeedPanel feed = new FeedPanel("feed", processDefinitionCode, processCodeWithAccess);
         feed.add($b.classAppender(PortletSize.LARGE.getBootstrapSize()));
         portlets.add(feed);

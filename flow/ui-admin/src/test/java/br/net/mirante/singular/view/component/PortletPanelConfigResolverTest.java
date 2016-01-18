@@ -8,7 +8,7 @@ import static br.net.mirante.singular.view.component.PortletViewConfigResolver.n
 import junit.framework.TestCase;
 import static org.apache.wicket.model.Model.of;
 
-public class PortletViewConfigResolverTest extends TestCase {
+public class PortletPanelConfigResolverTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
@@ -17,7 +17,7 @@ public class PortletViewConfigResolverTest extends TestCase {
     }
 
     public void testResolve() throws Exception {
-        ViewResult viewResult = newViewResult("test", of(new AmChartPortletConfig(null, null)), of(new PortletContext()));
-        assertTrue(viewResult instanceof AmChartViewResult);
+        ViewResultPanel viewResultPanel = newViewResult("test", of(new AmChartPortletConfig(null, null)), of(new PortletContext()));
+        assertTrue(viewResultPanel instanceof AmChartViewResultPanel);
     }
 }

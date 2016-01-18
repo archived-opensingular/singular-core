@@ -6,9 +6,9 @@ import br.net.mirante.singular.bamclient.portlet.ChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
-public abstract class AbstractChartViewResult<C extends ChartPortletConfig> extends ViewResult<C> {
+public abstract class AbstractChartViewResultPanel<C extends ChartPortletConfig> extends ViewResultPanel<C> {
 
-    public AbstractChartViewResult(String id, IModel<C> config, IModel<PortletContext> context) {
+    public AbstractChartViewResultPanel(String id, IModel<C> config, IModel<PortletContext> context) {
         super(id, config, context);
         context.getObject().setRestEndpoint(config.getObject().getRestEndpointURL());
     }

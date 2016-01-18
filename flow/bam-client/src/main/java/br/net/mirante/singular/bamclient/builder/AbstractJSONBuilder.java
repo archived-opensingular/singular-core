@@ -10,66 +10,67 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.bamclient.util.SelfReference;
 
-public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder> implements SelfReference<T> {
+public abstract class AbstractJSONBuilder<T extends AbstractJSONBuilder<T>> implements SelfReference<T> {
 
-    protected JSONBuilderContext context;
+    protected final JSONBuilderContext context;
 
-    protected Logger logger = LoggerFactory.getLogger(AbstractJSONBuilder.class);
+    protected final Logger logger = LoggerFactory.getLogger(AbstractJSONBuilder.class);
 
     public AbstractJSONBuilder(JSONBuilderContext context) {
         this.context = context;
     }
 
-    protected T writeField(String key, Object value) {
+    protected final T writeField(String key, Object value) {
         if (value != null) {
-            context.getjWriter().key(key).value(value);
+            context.getJsonWriter().key(key).value(value);
         }
         return self();
     }
 
-    protected T writeArray(String property, Object... values) {
+    @SafeVarargs
+    protected final <O> T writeArray(String property, O... values) {
         if (values != null) {
-            context.getjWriter().key(property).array();
-            for (Object o : values) {
-                context.getjWriter().value(o);
+            context.getJsonWriter().key(property).array();
+            for (O o : values) {
+                context.getJsonWriter().value(o);
             }
-            context.getjWriter().endArray();
+            context.getJsonWriter().endArray();
         }
         return self();
     }
 
-    protected <X extends JSONObjectMappper<?>> T writeObject(X value) {
-        if (value != null) {
-            context.getjWriter().object();
-            for (Map.Entry<String, Object> entry : value.getObjectMap().entrySet()) {
-                context.getjWriter().key(entry.getKey()).value(entry.getValue());
+    protected final <M extends JSONObjectMappper<M>> T writeObject(M mapper) {
+        if (mapper != null) {
+            context.getJsonWriter().object();
+            for (Map.Entry<String, Object> entry : mapper.getObjectMap().entrySet()) {
+                context.getJsonWriter().key(entry.getKey()).value(entry.getValue());
             }
-            context.getjWriter().endObject();
+            context.getJsonWriter().endObject();
         }
         return self();
     }
 
-    protected <X extends JSONObjectMappper<?>> T writeNamedObject(String name, X value) {
-        if (value != null) {
-            context.getjWriter().key(name);
+    protected final <M extends JSONObjectMappper<M>> T writeNamedObject(String name, M mapper) {
+        if (mapper != null) {
+            context.getJsonWriter().key(name);
         }
-        return writeObject(value);
+        return writeObject(mapper);
     }
 
-    protected <X extends JSONObjectMappper<?>> T writeArray(String name, Collection<X> amChartObjects) {
-        if (amChartObjects != null) {
-            context.getjWriter().key(name).array();
-            for (JSONObjectMappper<?> JSONObjectMappper : amChartObjects) {
-                writeObject(JSONObjectMappper);
+    protected final <M extends JSONObjectMappper<M>> T writeArray(String name, Collection<M> mappers) {
+        if (mappers != null) {
+            context.getJsonWriter().key(name).array();
+            for (M mapper : mappers) {
+                writeObject(mapper);
             }
-            context.getjWriter().endArray();
+            context.getJsonWriter().endArray();
         }
         return self();
     }
 
-    public String finish() {
+    public final String finish() {
         try {
-            context.getjWriter().endObject();
+            context.getJsonWriter().endObject();
             context.getWriter().flush();
             context.getWriter().close();
             return context.getWriter().toString();
