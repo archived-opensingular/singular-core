@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 import java.util.stream.Stream;
 
@@ -55,7 +55,6 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
 
         letter.as(MPacoteBasic.aspect())
             .label("Letter");
-        //TODO: Fabs : I'm commenting since this is causing some compilation errros, and I must revisit later.
         letter.withSelectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
 
         word.as(MPacoteBasic.aspect())

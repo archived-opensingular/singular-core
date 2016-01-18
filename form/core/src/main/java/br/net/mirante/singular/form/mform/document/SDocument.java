@@ -115,16 +115,19 @@ public class SDocument {
 
     /**
      * Stablishes a new registry where to look for services, which is chained
-     *  to the default one. 
+     *  to the default one.
      */
     public void addServiceRegistry(ServiceRegistry registry) {
         this.registry.addRegistry(registry);
     }
 
     /**
-     * @see  ServiceRegistry#services()
+     * USO INTERNO APENAS. Retorna os serviços registrados diretamente no
+     * documento.
+     *
+     * @see ServiceRegistry#services()
      */
-    public Map<String, Pair> getServices() {
+    public Map<String, Pair> getLocalServices() {
         return registry.services();
     }
 
@@ -140,13 +143,24 @@ public class SDocument {
 
     /**
      * Tenta encontrar um serviço registrado com o nome informado. Se o
-     * resultado náo for null e náo implementar a classe solicitada, dispara
+     * resultado não for null e não implementar a classe solicitada, dispara
      * exception.
      *
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
     public <T> T lookupService(String name, Class<T> targetClass) {
         return registry.lookupService(name, targetClass);
+    }
+
+    /**
+     * Tenta encontrar um serviço registrado <u>diretamente no documento</u> com
+     * o nome informado. Se o resultado não for null e não implementar a classe
+     * solicitada, dispara exception.
+     *
+     * @return Null se não encontrado ou se o conteúdo do registro for null.
+     */
+    public <T> T lookupLocalService(String name, Class<T> targetClass) {
+        return registry.lookupLocalService(name, targetClass);
     }
 
     /**
@@ -160,7 +174,7 @@ public class SDocument {
     /**
      * Registar um serviço com o nome informado.
      */
-    public void bindLocalService(String serviceName, Class<?> registerClass, ServiceRef<?> provider) {
+    public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<? extends T> provider) {
         registry.bindLocalService(serviceName, registerClass, provider);
     }
 
@@ -171,7 +185,7 @@ public class SDocument {
     }
 
     /**
-     * 
+     *
      * @return eventos coletados
      */
     public void updateAttributes(IMInstanceListener listener) {
@@ -190,7 +204,7 @@ public class SDocument {
         }
     }
 
-    //TODO: Review how this method works. It'd be better if the developer did 
+    //TODO: Review how this method works. It'd be better if the developer did
     //  not had to remember to call this before saving in the database.
     //  Maybe if the document worked as an Active Record, we'd be able to
     //  intercept the persist call and do this job before the model
@@ -206,7 +220,7 @@ public class SDocument {
 
 /**
  * Responsible for moving files from temporary state to persistent.
- * 
+ *
  * @author Fabricio Buzeto
  *
  */

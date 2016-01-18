@@ -3,15 +3,16 @@ package br.net.mirante.singular.form.mform.io;
 import java.io.Serializable;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import org.apache.commons.lang3.StringUtils;
 
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
-
-import static com.google.common.collect.Maps.newHashMap;
 
 /**
  * <p>
@@ -70,9 +71,10 @@ public class FormSerializationUtil {
      * Não serializa a definição do tipo (dicionário). Guarda apenas o nome do
      * tipo.
      *
-     * @param dicionarioResolverSerializable Pode ser null. Se for passado também serializa o dicionário
-     *                                       resolver para facilitar a recuperação.
-     *                                       </p>
+     * @param dicionarioResolverSerializable
+     *            Pode ser null. Se for passado também serializa o dicionário
+     *            resolver para facilitar a recuperação.
+     *            </p>
      */
     public static FormSerialized toSerializedObject(MInstancia instance,
                                                     MDicionarioResolverSerializable dicionarioResolverSerializable) {
@@ -112,7 +114,7 @@ public class FormSerializationUtil {
     }
 
     private static void serializeServices(SDocument document, FormSerialized fs) {
-        Map<String, Pair> services = document.getServices();
+        Map<String, Pair> services = document.getLocalServices();
         if (!services.isEmpty()) {
             if (!(services instanceof Serializable)) {
                 throw new SingularFormException("The Document service map is not Serializable.");
@@ -185,7 +187,7 @@ public class FormSerializationUtil {
 
     private static void bindService(SDocument document, Map.Entry<String, Pair> entry) {
         Pair p = entry.getValue();
-        document.bindLocalService(entry.getKey(), p.type, p.provider);
+        document.bindLocalService(entry.getKey(), (Class<Object>) p.type, p.provider);
     }
 
     private static MInstancia defineRoot(FormSerialized fs, MInstancia root) {
