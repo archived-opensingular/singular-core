@@ -12,8 +12,9 @@ public class CountDownBehaviour extends Behavior {
 
         String js = "";
 
-        js += " $('#"+component.getMarkupId(true)+"').maxlength({ ";
-        js += "     alwaysShow: true";
+        js += " $('#" + component.getMarkupId(true) + "').maxlength({ ";
+        js += "     alwaysShow: true,";
+        js += "     validate: true";
         js += " }); ";
 
         response.render(OnDomReadyHeaderItem.forScript(js));
