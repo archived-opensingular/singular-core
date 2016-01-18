@@ -21,8 +21,13 @@ public class MTipoProdutos extends MTipoComposto<MIComposto> implements Canabidi
 
         final MTipoLista<MTipoDescricaoProduto, MIComposto> experiencias = this.addCampoListaOf("produtos", MTipoDescricaoProduto.class);
 
+        MTipoDescricaoProduto desc = experiencias.getTipoElementos();
+
         experiencias
-                .withView(MListMasterDetailView::new)
+                .withView(new MListMasterDetailView()
+                        .col(desc.getNomeComercial())
+                        .col(desc.getComposicao())
+                        .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
                 .as(AtrBasic::new)
                 .label("Descrição do Produto");
 
