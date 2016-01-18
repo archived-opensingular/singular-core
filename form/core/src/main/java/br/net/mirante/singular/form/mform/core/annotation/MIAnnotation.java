@@ -9,9 +9,11 @@ public class MIAnnotation extends MIComposto {
     public void setText(String text) {
         setValor(MTipoAnnotation.FIELD_TEXT, text);
     }
-    public String getText() {
-        return getValorString(MTipoAnnotation.FIELD_TEXT);
+    public String getText() {   return getValorString(MTipoAnnotation.FIELD_TEXT);}
+    public void setTargetId(Integer id) {
+        setValor(MTipoAnnotation.FIELD_TARGET_ID, id);
     }
+    public Integer getTargetId() {  return getValorInteger(MTipoAnnotation.FIELD_TARGET_ID);    }
 
     @Override
     public void setValor(Object valor) {

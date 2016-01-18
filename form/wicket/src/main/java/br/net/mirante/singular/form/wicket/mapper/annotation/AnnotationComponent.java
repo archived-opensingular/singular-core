@@ -28,6 +28,7 @@ public class AnnotationComponent extends Panel {
         this.view = view;
         this.referenced = referenced;
         this.target = referenced.getMInstancia().as(AtrAnnotation::new).annotation();
+        target.setTargetId(referenced.getMInstancia().getId());
     }
 
     @Override
