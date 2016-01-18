@@ -6,12 +6,12 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
+import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 
-public class MorrisChartViewResult extends AbstractChartViewResult<MorrisChartPortletConfig> {
+public class AmChartViewResultPanel extends AbstractChartViewResultPanel<AmChartPortletConfig> {
 
-    public MorrisChartViewResult(String id, IModel<MorrisChartPortletConfig> config, IModel<PortletContext> context) {
+    public AmChartViewResultPanel(String id, IModel<AmChartPortletConfig> config, IModel<PortletContext> context) {
         super(id, config, context);
     }
 
@@ -19,9 +19,9 @@ public class MorrisChartViewResult extends AbstractChartViewResult<MorrisChartPo
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
 
-        final PackageResourceReference prr = new PackageResourceReference(AmChartViewResult.class, "MorrisChartViewResult.js");
+        final PackageResourceReference prr = new PackageResourceReference(AmChartViewResultPanel.class, getClass().getSimpleName()+".js");
 
-        final String template = "MorrisChartViewResult.createChart('%s', %s, %s)";
+        final String template = "AmChartViewResultPanel.createChart('%s', %s, %s)";
         final String chartScript = String.format(template, this.getMarkupId(true),
                 getConfig().getObject().getChart().getDefinition(), getSerializedContext());
 

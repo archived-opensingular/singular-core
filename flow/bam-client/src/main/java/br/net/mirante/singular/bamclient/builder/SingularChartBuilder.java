@@ -12,17 +12,14 @@ public class SingularChartBuilder extends AbstractJSONBuilder<SingularChartBuild
     }
 
     public AmSerialChartBuilder newSerialChart() {
-        context.getjWriter().object();
         return new AmSerialChartBuilder(context);
     }
 
     public AmPieChartBuilder newPieChart() {
-        context.getjWriter().object();
         return new AmPieChartBuilder(context);
     }
 
     public MorrisAreaChart newAreaChart() {
-        context.getjWriter().object();
         return new MorrisAreaChart(context);
     }
 

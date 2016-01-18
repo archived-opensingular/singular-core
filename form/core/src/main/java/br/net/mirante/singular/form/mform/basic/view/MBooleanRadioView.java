@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 /**
  * View para renderização do {@link MTipoBoolean} em forma de input radio.
  */
-public class MBooleanRadioView extends MView {
+public class MBooleanRadioView extends MSelecaoPorRadioView {
 
     private String labelTrue = "Sim";
     

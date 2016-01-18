@@ -20,7 +20,6 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class MarkableGoogleMapsPanel<T> extends Panel {
 
-    private static final String GOOGLE_API = "GoogleMapsApi.js";
     private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
     private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
     private static final Integer DEFAULT_ZOOM = 4;
@@ -37,10 +36,8 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
     @Override
     public void renderHead(IHeaderResponse response) {
 
-        final PackageResourceReference apiJS = new PackageResourceReference(getClass(), GOOGLE_API);
         final PackageResourceReference customJS = new PackageResourceReference(getClass(), PANEL_SCRIPT);
 
-        response.render(JavaScriptReferenceHeaderItem.forReference(apiJS, true));
         response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
         response.render(OnDomReadyHeaderItem.forScript("createBelverMap(" + stringfyId(metadados) + ");"));
 

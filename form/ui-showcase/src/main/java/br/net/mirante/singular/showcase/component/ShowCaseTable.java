@@ -18,6 +18,7 @@ import br.net.mirante.singular.showcase.component.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBasic;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBoolean;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDate;
+import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDateTime;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreDecimal;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreInteger;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreMonetario;
@@ -85,6 +86,7 @@ public class ShowCaseTable {
             .addCase(CaseInputCoreTextArea.class)
             .addCase(CaseInputCoreDecimal.class)
             .addCase(CaseInputCoreMonetario.class)
+            .addCase(CaseInputCoreDateTime.class)
         ;
         group("File", Icone.FOLDER)
             .addCase(CaseFileAttachment.class)

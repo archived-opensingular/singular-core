@@ -61,6 +61,7 @@ public class MPacoteCore extends MPacote {
         pb.createTipo(MTipoData.class);
         pb.createTipo(MTipoDecimal.class);
         pb.createTipo(MTipoMonetario.class);
+        pb.createTipo(MTipoDataHora.class);
 
         pb.createTipo(MTipoComposto.class);
         pb.createTipo(MTipoAnnotation.class);
