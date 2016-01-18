@@ -1,11 +1,14 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
@@ -18,9 +21,13 @@ import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.showcase.view.template.Content;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -105,14 +112,27 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected MInstanceRootModel<MInstancia> populateInstance(MTipo<?> tipo) {
                 try {
                     loadOrbuildModel();
+
                     final String xml = currentModel.getXml();
                     if (xml == null || xml.isEmpty()) {
                         return super.populateInstance(tipo);
                     } else {
                         MElement xmlElement = MParser.parse(xml);
                         MInstancia instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
+
+                        final String annotations = currentModel.getAnnnotations();
+                        if(StringUtils.isNotBlank(annotations)){
+                            MElement xmlAnnotations = MParser.parse(annotations);
+                            MTipoAnnotationList tipoAnnotation = tipo.getDicionario().getTipo(MTipoAnnotationList.class);
+
+                            MILista iAnnotations =
+                                    (MILista) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);
+                            instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
+                        }
+
                         return new MInstanceRootModel<>(instance);
                     }
+
                 } catch (SAXException | IOException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -171,6 +191,16 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 Optional<String> rootXml = MformPersistenciaXML.toStringXML(instancia);
 
                 currentModel.setXml(rootXml.orElse(""));
+                List<MIAnnotation> allAnnotations = instancia.as(AtrAnnotation::new).allAnnotatations();
+                if(!allAnnotations.isEmpty()){
+                    MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
+                    for(MIAnnotation a: allAnnotations){
+                        pLista.addElement(a);
+                    }
+                    Optional<String> annXml = MformPersistenciaXML.toStringXML(pLista);
+
+                    currentModel.setAnnotations(annXml.orElse(""));
+                }
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -219,8 +249,23 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     private boolean isInAnnotationMode() {
         MTipo<?> mTipo = TemplateRepository.get().loadType(typeName);
-        boolean isAnnotated = mTipo.getView() instanceof MAnnotationView;
-        return viewMode.isVisualization() && isAnnotated;
+        return viewMode.isVisualization() && isAnnotated(mTipo);
+    }
+
+    private boolean isAnnotated(MTipo<?> mTipo) {
+        if(mTipo.getView() instanceof MAnnotationView){
+            return true;
+        }
+        if(mTipo instanceof MTipoComposto){
+            MTipoComposto composto = (MTipoComposto) mTipo;
+            Collection<MTipo> fields = composto.getFields();
+            for(MTipo child: fields){
+                if(isAnnotated(child)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

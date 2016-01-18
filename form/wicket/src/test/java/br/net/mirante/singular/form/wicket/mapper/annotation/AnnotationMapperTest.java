@@ -183,6 +183,15 @@ public class AnnotationMapperTest {
 
     }
 
+    @Test public void aNewInstanceHasNoAnnotations(){
+        setupPage();
+
+        MIComposto current = page.getCurrentInstance();
+        assertThat(current.as(AtrAnnotation::new).allAnnotatations()).isEmpty();
+
+
+    }
+
     private MIAnnotation newAnnotation(Integer targetId, String text) {
         MTipoAnnotation type = dicionario.getTipo(MTipoAnnotation.class);
         MIAnnotation annotation = type.novaInstancia();
