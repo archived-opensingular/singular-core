@@ -319,7 +319,7 @@ public class TesteFormSerializationUtil {
         assertNotSame(original, novo);
         assertEquals(original.getLastId(), novo.getLastId());
 
-        for (Entry<String, Pair> service : original.getServices().entrySet()) {
+        for (Entry<String, Pair> service : original.getLocalServices().entrySet()) {
             Object originalService = original.lookupService(service.getKey(), Object.class);
             Object novoService = novo.lookupService(service.getKey(), Object.class);
             if (originalService == null) {
