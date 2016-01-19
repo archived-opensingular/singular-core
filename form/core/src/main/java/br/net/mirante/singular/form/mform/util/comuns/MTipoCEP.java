@@ -13,6 +13,6 @@ public class MTipoCEP extends MTipoString {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cep());
-        as(AtrBasic.class).label("CEP").basicMask("CEP");
+        as(AtrBasic.class).label("CEP").basicMask("CEP").tamanhoMaximo(null);
     }
 }

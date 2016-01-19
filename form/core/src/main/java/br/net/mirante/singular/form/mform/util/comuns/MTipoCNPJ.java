@@ -13,6 +13,6 @@ public class MTipoCNPJ extends MTipoString {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cnpj());
-        as(AtrBasic.class).label("CNPJ").basicMask("CNPJ");
+        as(AtrBasic.class).label("CNPJ").basicMask("CNPJ").tamanhoMaximo(null);
     }
 }
