@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.view.page;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import javax.inject.Inject;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -8,8 +8,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
@@ -37,6 +35,8 @@ import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -79,7 +79,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         WebMarkupContainer headerContainer = new WebMarkupContainer("header");
         String description = caseBase.getObject().getDescriptionHtml().orElse("");
 
-        headerContainer.add(new Label("description", $m.ofValue(description)));
+        headerContainer.add(new Label("description", $m.ofValue(description)).setEscapeModelStrings(false));
         headerContainer.setVisible(!description.isEmpty());
 
         return headerContainer;

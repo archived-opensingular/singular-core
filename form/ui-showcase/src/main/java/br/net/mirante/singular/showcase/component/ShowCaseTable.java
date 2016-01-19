@@ -41,13 +41,14 @@ import br.net.mirante.singular.showcase.component.interaction.CaseInteractionEna
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionExists;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionRequired;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionVisible;
-import br.net.mirante.singular.showcase.component.layout.CaseGrid;
+import br.net.mirante.singular.showcase.component.layout.CaseFineTunningGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseGridList;
 import br.net.mirante.singular.showcase.component.layout.CaseGridTable;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetail;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailButtons;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailColumns;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.component.layout.CaseSimpleGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseTabs;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
 import br.net.mirante.singular.showcase.component.validation.CaseValidationBetweenFields;
@@ -91,7 +92,8 @@ public class ShowCaseTable {
             .addCase(CaseFileAttachment.class)
         ;
         group("Layout", Icone.GRID)
-            .addCase(CaseGrid.class)
+            .addCase(CaseSimpleGrid.class)
+            .addCase(CaseFineTunningGrid.class)
             .addCase(CaseGridList.class)
             .addCase(CaseGridTable.class)
             .addCase(CaseMasterDetail.class)

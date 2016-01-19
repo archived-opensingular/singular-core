@@ -6,15 +6,15 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
-public class CaseGridPackage extends MPacote {
+public class CaseSimpleGridPackage extends MPacote {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        final MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
 
         testForm.addCampoString("nome")
                 .as(AtrBasic.class).label("Nome")
-                .as(AtrBootstrap::new).colLg(5).colMd(7).colSm(9).colXs(12);
+                .as(AtrBootstrap::new).colPreference(6);
         testForm.addCampoInteger("idade")
                 .as(AtrBasic.class).label("Idade")
                 .as(AtrBootstrap::new).colPreference(2);
