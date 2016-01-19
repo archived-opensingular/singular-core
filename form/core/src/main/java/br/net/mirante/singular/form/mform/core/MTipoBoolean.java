@@ -42,11 +42,22 @@ public class MTipoBoolean extends MTipoSimples<MIBoolean, Boolean> {
         }
         throw createErroConversao(valor, Boolean.class);
     }
-    
+
     /**
      * Configura o tipo para utilizar a view {@link MBooleanRadioView}
      */
+    @Override
     public MTipoBoolean withRadioView() {
         return (MTipoBoolean) super.withView(MBooleanRadioView::new);
+    }
+
+    /**
+     * Configura o tipo para utilizar a view {@link MBooleanRadioView}
+     */
+    public MTipoBoolean withRadioView(String labelTrue, String labelFalse) {
+        MBooleanRadioView v = new MBooleanRadioView();
+        v.labelFalse(labelFalse);
+        v.labelTrue(labelTrue);
+        return (MTipoBoolean) super.withView(v);
     }
 }

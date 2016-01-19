@@ -16,10 +16,9 @@ public class ExampleDataDTO implements IModel {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
     private String key, type;
-    @Lob private String xml;
+    @Lob private String xml, annotations;
 
-    public ExampleDataDTO() {
-    }
+    public ExampleDataDTO() {}
 
     public ExampleDataDTO(String key) {
         this.key = key;
@@ -47,6 +46,14 @@ public class ExampleDataDTO implements IModel {
 
     public void setXml(String xml) {
         this.xml = xml;
+    }
+
+    public String getAnnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(String annotations) {
+        this.annotations = annotations;
     }
 
     public String getType() {

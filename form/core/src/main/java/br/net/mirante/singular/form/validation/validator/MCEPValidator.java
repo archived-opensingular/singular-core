@@ -11,7 +11,7 @@ public enum MCEPValidator implements IInstanceValueValidator<MIString, String> {
 
     @Override
     public void validate(IInstanceValidatable<MIString> validatable, String value) {
-        if (!Pattern.matches("[0-9]{2}.[0-9]{3}-[0-9]{3}", value)) {
+        if (!Pattern.matches("[0-9]{2}.[0-9]{3}-[0-9]{3}", value) || "00.000-000".equals(value)) {
             validatable.error("CEP inválido");
         }
     }

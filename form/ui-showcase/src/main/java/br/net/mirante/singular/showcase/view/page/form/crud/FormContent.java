@@ -1,5 +1,11 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
@@ -17,13 +23,16 @@ import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.showcase.view.template.Content;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.inject.Inject;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -104,14 +113,27 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected MInstanceRootModel<MInstancia> populateInstance(MTipo<?> tipo) {
                 try {
                     loadOrbuildModel();
+
                     final String xml = currentModel.getXml();
                     if (xml == null || xml.isEmpty()) {
                         return super.populateInstance(tipo);
                     } else {
                         MElement xmlElement = MParser.parse(xml);
                         MInstancia instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
+
+                        final String annotations = currentModel.getAnnnotations();
+                        if(StringUtils.isNotBlank(annotations)){
+                            MElement xmlAnnotations = MParser.parse(annotations);
+                            MTipoAnnotationList tipoAnnotation = tipo.getDicionario().getTipo(MTipoAnnotationList.class);
+
+                            MILista iAnnotations =
+                                    (MILista) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);
+                            instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
+                        }
+
                         return new MInstanceRootModel<>(instance);
                     }
+
                 } catch (SAXException | IOException e) {
                     logger.error(e.getMessage(), e);
                 }
@@ -151,7 +173,9 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
+                getCurrentInstance().getObject().getDocument().persistFiles();
                 currentModel.setXml(xml.toStringExato());
+                addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -159,19 +183,48 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return button.add(visibleOnlyInEditionBehaviour());
     }
 
+    private void addAnnotationsToModel(MInstancia instancia) {
+        AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
+        List<MIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
+        if(!allAnnotations.isEmpty()){
+            Optional<String> annXml = annotationsToXml(instancia, annotatedInstance, allAnnotations);
+            currentModel.setAnnotations(annXml.orElse(""));
+        }
+    }
+
+    private Optional<String> annotationsToXml(MInstancia instancia, AtrAnnotation annotatedInstance, List<MIAnnotation> allAnnotations) {
+        MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
+        for(MIAnnotation a: allAnnotations){
+            pLista.addElement(a);
+        }
+        return MformPersistenciaXML.toStringXML(
+                annotatedInstance.persistentAnnotations());
+    }
+
     private Component buildSaveWithoutValidateButton() {
-        final Component button = new AjaxButton("save-whitout-validate-btn") {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                final MInstancia instancia = belverPanel.getRootInstance().getObject();
-
-                instancia.getDocument().persistFiles();
-                Optional<String> rootXml = MformPersistenciaXML.toStringXML(instancia);
-
-                currentModel.setXml(rootXml.orElse(""));
+        final Component button = new BelverValidationButton("save-whitout-validate-btn") {
+            protected void save() {
+                MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
+                getCurrentInstance().getObject().getDocument().persistFiles();
+                currentModel.setXml(rootXml.toStringExato());
+				addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
+            }
+
+            @Override
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+
+            @Override
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+
+            @Override
+            public IModel<? extends MInstancia> getCurrentInstance() {
+                return belverPanel.getRootInstance();
             }
 
         };
@@ -210,9 +263,31 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
-                component.setVisible(viewMode.isEdition());
+
+                component.setVisible(viewMode.isEdition() || isInAnnotationMode());
             }
         };
+    }
+
+    private boolean isInAnnotationMode() {
+        MTipo<?> mTipo = TemplateRepository.get().loadType(typeName);
+        return viewMode.isVisualization() && isAnnotated(mTipo);
+    }
+
+    private boolean isAnnotated(MTipo<?> mTipo) {
+        if(mTipo.getView() instanceof MAnnotationView){
+            return true;
+        }
+        if(mTipo instanceof MTipoComposto){
+            MTipoComposto composto = (MTipoComposto) mTipo;
+            Collection<MTipo> fields = composto.getFields();
+            for(MTipo child: fields){
+                if(isAnnotated(child)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }
