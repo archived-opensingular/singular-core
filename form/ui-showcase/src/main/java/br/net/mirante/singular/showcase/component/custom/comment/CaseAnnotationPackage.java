@@ -27,7 +27,7 @@ public class CaseAnnotationPackage extends MPacote {
         cliente.addCampoCPF("cpf").as(AtrBasic.class).label("CPF");
         cliente.addCampoEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
-        cliente.setView(MAnnotationView::new);
+        cliente.setView(MAnnotationView::new); // Usará o rótulo do campo para a anotação
 
         endereco = pedido.addCampoComposto("Endereco");
         endereco.asAtrBasic().label("Endereco do Cliente");
@@ -40,7 +40,7 @@ public class CaseAnnotationPackage extends MPacote {
         request.addCampoString("obs").asAtrBasic().label("Observações");
 
         //@destacar
-        request.setView(MAnnotationView::new);
+        request.withView(new MAnnotationView().title("Observações Finais")); //Permite definir seu pŕoprio rótulo
         super.carregarDefinicoes(pb);
     }
 }
