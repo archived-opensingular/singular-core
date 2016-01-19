@@ -11,24 +11,30 @@ import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 
 public class CaseAnnotationPackage extends MPacote {
 
+    public MTipoComposto<?> pedido, cliente, endereco, request;
+
+    /*
+     * Observe que as anotações só estão disponíveis em modo de somente leitura (visualização)
+     */
+
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> targetForm = pb.createTipoComposto("testForm");
-        targetForm.as(AtrBasic::new).label("Pedido");
+        pedido = pb.createTipoComposto("testForm");
+        pedido.as(AtrBasic::new).label("Pedido");
 
-        MTipoComposto<MIComposto> cliente = targetForm.addCampoComposto("Cliente");
+        cliente = pedido.addCampoComposto("Cliente");
         cliente.asAtrBasic().label("Dados do Cliente");
         cliente.addCampoCPF("cpf").as(AtrBasic.class).label("CPF");
         cliente.addCampoEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
         cliente.setView(MAnnotationView::new);
 
-        MTipoComposto<MIComposto> endereco = targetForm.addCampoComposto("Endereco");
+        endereco = pedido.addCampoComposto("Endereco");
         endereco.asAtrBasic().label("Endereco do Cliente");
         endereco.addCampoCEP("cep").as(AtrBasic.class).label("CEP");
         endereco.addCampoCEP("Logradouro").as(AtrBasic.class).label("Logradouro");
 
-        MTipoComposto<MIComposto> request = targetForm.addCampoComposto("request");
+        request = pedido.addCampoComposto("request");
         request.asAtrBasic().label("Pedido");
         request.addCampoString("itens").asAtrBasic().label("Itens");
         request.addCampoString("obs").asAtrBasic().label("Observações");
