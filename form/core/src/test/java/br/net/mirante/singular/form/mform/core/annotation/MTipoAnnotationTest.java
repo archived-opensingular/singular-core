@@ -66,11 +66,22 @@ public class MTipoAnnotationTest {
         asAnnotation(instance, annotated2).annotation().setText("Avocado");
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
-        MILista persistent = instance.as(AtrAnnotation::new).persistentAnnotatations();
+        MILista persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(persistent.getMTipo()).isInstanceOf(MTipoAnnotationList.class);
         assertThat(persistent.getTipoElementos()).isInstanceOf(MTipoAnnotation.class);
         assertThat(extractProperty("text").from(persistent.getValores()))
                 .containsOnly("Abacate","Avocado","ukwatapheya");
+    }
+
+    @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
+        MIComposto instance = baseCompositeField.novaInstancia();
+
+        asAnnotation(instance, annotated1).annotation().setText("Abacate");
+
+        MILista persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+//        instance.as(AtrAnnotation::new).loadAnnotations(persistent);
+        MILista anotherPersistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
     }
 
     private AtrAnnotation asAnnotation(MIComposto instance, MTipoComposto<? extends MIComposto> field) {

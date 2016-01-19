@@ -20,7 +20,7 @@ public class PageWithAnnotation {
         /**
          * As anotações pordem ser persistidas separadamente ou de forma conjunta.
          */
-        MILista anotacoes = instanciaCampoCliente.as(AtrAnnotation::new).persistentAnnotatations();
+        MILista anotacoes = instanciaCampoCliente.as(AtrAnnotation::new).persistentAnnotations();
     }
 
     public void loadAnnotations(MIComposto pedido, MILista<MIAnnotation> annotations){

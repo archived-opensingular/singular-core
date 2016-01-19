@@ -1,10 +1,8 @@
 package br.net.mirante.singular.showcase.dao.form;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import javax.inject.Inject;
 
 import java.io.ByteArrayInputStream;
-
-import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -45,7 +44,7 @@ public class TestCaseDatabasePersistenceHandler {
     @Test public void savesToDatabaseOnAdding(){
         byte[] content = "1234".getBytes();
         IAttachmentRef ref = dao.addAttachment(new ByteArrayInputStream(content));
-        assertThat(dao.find(ref.getId())).isNotNull()
+        assertThat(dao.find(ref.getHashSHA1())).isNotNull()
             .isEqualsToByComparingFields((ExampleFile) ref);
     }
 
@@ -62,7 +61,7 @@ public class TestCaseDatabasePersistenceHandler {
         IAttachmentRef ref2 = dao.addAttachment("1234".getBytes());
         dao.addAttachment("123456".getBytes());
         
-        assertThat(dao.getAttachment(ref2.getId()))
+        assertThat(dao.getAttachment(ref2.getHashSHA1()))
             .isEqualTo((ExampleFile)ref2);
     }
     

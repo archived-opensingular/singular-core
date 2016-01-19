@@ -127,7 +127,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public void loadAnnotations(Iterable<MIAnnotation> annotations) {
         ImmutableMap<Integer, MIAnnotation> annotationmap = Maps.uniqueIndex(annotations, (x) -> x.getTargetId());
-        loadAnnotations(annotationmap, (MInstancia) getAlvo());
+        loadAnnotations(annotationmap, target());
     }
 
     private void loadAnnotations(ImmutableMap<Integer, MIAnnotation> annotationmap, MInstancia target) {
@@ -150,11 +150,20 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public MILista persistentAnnotatations() {
-        MILista miLista = newAnnotationList();
-        for(MIAnnotation a: allAnnotations()){
-            miLista.addElement(a);
+    public MILista persistentAnnotations() {
+        List<MIAnnotation> all = allAnnotations();
+        MILista miLista;
+        if(!all.isEmpty() && all.get(0).getPai() != null){
+            miLista = (MILista) all.get(0).getPai();
+        }else {
+            miLista = newAnnotationList();
         }
+        for(MIAnnotation a: all){
+            if(!miLista.getValor().contains(a)){
+                miLista.addElement(a);
+            }
+        }
+
         return miLista;
     }
 
@@ -167,6 +176,10 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private MDicionario dictionary() {
-        return ((MInstancia) getAlvo()).getMTipo().getDicionario();
+        return target().getMTipo().getDicionario();
+    }
+
+    private MInstancia target() {
+        return (MInstancia) getAlvo();
     }
 }

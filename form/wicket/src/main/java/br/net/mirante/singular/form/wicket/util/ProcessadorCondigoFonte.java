@@ -40,15 +40,15 @@ public class ProcessadorCondigoFonte {
     }
 
     private boolean isBloco(String candidato) {
-        return candidato.contains("//@destacar:bloco");
+        return candidato.contains("//@destacar:bloco") || candidato.contains("// @destacar:bloco");
     }
 
     private boolean isFimBloco(String candidato) {
-        return candidato.contains("//@destacar:fim");
+        return candidato.contains("//@destacar:fim") || candidato.contains("// @destacar:fim");
     }
 
     private boolean isLinha(String candidato) {
-        return candidato.contains("//@destacar");
+        return candidato.contains("//@destacar") || candidato.contains("// @destacar");
     }
 
     private boolean isLixo(String canditato){
