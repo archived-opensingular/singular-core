@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -67,6 +68,7 @@ public class AnnotationComponent extends Panel {
         //TODO: Fabs: Label must be configurable
         this.queue(new Label("target_label",$m.ofValue(title())));
         this.queue(new TextArea<>("comment_field", new PropertyModel(target, "text")));
+        this.queue(new CheckBox("approval_field", new PropertyModel<Boolean>(target, "approved")));
     }
 
     private String title() {

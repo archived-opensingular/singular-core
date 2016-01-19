@@ -15,9 +15,9 @@ import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 @MInfoTipo(nome = "Annotation", pacote = MPacoteCore.class)
 public class MTipoAnnotation extends MTipoComposto<MIAnnotation> {
 
-    public static final String          FIELD_TEXT        = "text",
-                                        FIELD_ACCEPTED     = "accepted",
-                                        FIELD_TARGET_ID     = "targetId";
+    public static final String          FIELD_TEXT          = "text",
+                                        FIELD_TARGET_ID     = "targetId",
+                                        FIELD_APPROVED      = "isApproved";
 
     public MTipoAnnotation() {
         super(MIAnnotation.class);
@@ -28,7 +28,7 @@ public class MTipoAnnotation extends MTipoComposto<MIAnnotation> {
         super.onCargaTipo(tb);
 
         addCampoString(FIELD_TEXT);
-        addCampoBoolean(FIELD_ACCEPTED);
+        addCampoBoolean(FIELD_APPROVED);
         addCampoInteger(FIELD_TARGET_ID);
     }
 

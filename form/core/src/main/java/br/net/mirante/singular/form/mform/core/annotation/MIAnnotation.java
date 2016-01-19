@@ -14,12 +14,22 @@ public class MIAnnotation extends MIComposto {
         setValor(MTipoAnnotation.FIELD_TARGET_ID, id);
     }
     public Integer getTargetId() {  return getValorInteger(MTipoAnnotation.FIELD_TARGET_ID);    }
+    public void setApproved(Boolean isApproved) {
+//        setValor(MTipoAnnotation.FIELD_APPROVED, Boolean.toString(isApproved));
+        setValor(MTipoAnnotation.FIELD_APPROVED, isApproved);
+    }
+    public Boolean getApproved() {
+//        return Boolean.valueOf(getValorString(MTipoAnnotation.FIELD_APPROVED));
+        return getValorBoolean(MTipoAnnotation.FIELD_APPROVED);
+    }
 
     @Override
     public void setValor(Object valor) {
         if(valor instanceof MIAnnotation){
             MIAnnotation other = (MIAnnotation) valor;
             this.setText(other.getText());
+            this.setTargetId(other.getTargetId());
+            this.setApproved(other.getApproved());
         }
     }
 

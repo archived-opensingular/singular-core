@@ -27,6 +27,15 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         return annotation().getText();
     }
 
+    public AtrAnnotation approved(Boolean isApproved) {
+        annotation().setApproved(isApproved);
+        return this;
+    }
+
+    public Boolean approved() {
+        return annotation().getApproved();
+    }
+
     public MIAnnotation annotation() {
         createAttributeIfNeeded();
         return atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);

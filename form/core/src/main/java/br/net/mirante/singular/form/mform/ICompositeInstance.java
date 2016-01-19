@@ -109,9 +109,9 @@ public interface ICompositeInstance {
         return getValor(pathCampo, String.class);
     }
 
-    public default Integer getValorInteger(String pathCampo) {
-        return getValor(pathCampo, Integer.class);
-    }
+    public default Integer getValorInteger(String pathCampo) { return getValor(pathCampo, Integer.class);}
+
+    public default Boolean getValorBoolean(String pathCampo) { return getValor(pathCampo, Boolean.class);}
 
     public default <T extends Enum<T>> T getValorEnum(String pathCampo, Class<T> enumType) {
         // TODO (de Daniel) Esse metodo precisa ser repensado

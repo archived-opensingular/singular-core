@@ -12,12 +12,12 @@
                 </div>
             </div>
             <div class="col-md-12 col-sm-12">
-                <button type="button" class="btn green"  >
-                        Aprovar
-                    </button>
-                <button type="button" class="btn red" >
-                        Rejeitar
-                </button>
+                <input wicket:id="approval_field"  type="checkbox" class="make-switch"
+                               data-on-color="success" data-on-text="Aprovado"
+                               data-off-color="danger" data-off-text="Rejeitado" />
+                <script type="application/javascript">
+                    $(".make-switch").bootstrapSwitch();
+                </script>
             </div>
         </div>
 </wicket:panel>

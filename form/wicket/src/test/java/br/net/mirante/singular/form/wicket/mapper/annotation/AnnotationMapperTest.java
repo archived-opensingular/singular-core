@@ -8,6 +8,8 @@ import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import com.google.common.collect.Lists;
+import org.apache.wicket.markup.html.form.Check;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -124,6 +126,32 @@ public class AnnotationMapperTest {
                 .isEqualTo("Something very very very important, but I forgot what.");
     }
 
+    @Test public void annotationsHaveAnApprovalField(){
+        setupPage();
+        buildPage();
+
+        driver.assertEnabled(formField(form, "approval_field"));
+
+        form.submit("save-btn");
+        List<CheckBox> options = (List)findTag(form.getForm(), CheckBox.class);
+        assertThat(options).hasSize(3);
+        CheckBox opt1 = options.get(0), opt2 = options.get(1);
+
+        assertThat(currentAnnotation(annotated1).approved()).isFalse();
+        assertThat(currentAnnotation(annotated2).approved()).isFalse();
+
+        form.setValue(opt1, "false");
+        form.setValue(opt2, "true");
+
+        assertThat(currentAnnotation(annotated1).approved()).isFalse();
+        assertThat(currentAnnotation(annotated2).approved()).isFalse();
+
+        form.submit("save-btn");
+
+        assertThat(currentAnnotation(annotated1).approved()).isFalse();
+        assertThat(currentAnnotation(annotated2).approved()).isTrue();
+    }
+
     @Test public void returnsAllAnnotationsForPersistence(){
         setupPage();
         buildPage();
@@ -163,20 +191,26 @@ public class AnnotationMapperTest {
         System.out.println(iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId());
         MIAnnotation annotation2 = newAnnotation(
                             current.getCampo(annotated1.getNomeSimples()).getId(),
-                            "It is funny how hard it is to come up with these texts"),
+                            "It is funny how hard it is to come up with these texts",
+                            false),
                     annotation4 = newAnnotation(
                             iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId(),
-                            "But I never give up. I keep on trying.");
+                            "But I never give up. I keep on trying.",
+                            true);
 
         current.as(AtrAnnotation::new).loadAnnotations(Lists.newArrayList(annotation2, annotation4));
 
         buildPage();
 
-        List<TextArea> options = (List)findTag(form.getForm(), TextArea.class);
-        TextArea text1 = options.get(0), text2 = options.get(1), text4 = options.get(2);
+        List<TextArea> texts = (List)findTag(form.getForm(), TextArea.class);
+        TextArea text1 = texts.get(0), text2 = texts.get(1), text4 = texts.get(2);
+        List<CheckBox> checks = (List)findTag(form.getForm(), CheckBox.class);
+        CheckBox check1 = checks.get(0), check2 = checks.get(1), check4 = checks.get(2);
 
+        assertThat(check1.getValue()).isEqualTo("false");
         assertThat(text1.getValue())
                 .isEqualTo("It is funny how hard it is to come up with these texts");
+        assertThat(check4.getValue()).isEqualTo("true");
         assertThat(text4.getValue())
                 .isEqualTo("But I never give up. I keep on trying.");
 
@@ -192,11 +226,12 @@ public class AnnotationMapperTest {
 
     }
 
-    private MIAnnotation newAnnotation(Integer targetId, String text) {
+    private MIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
         MTipoAnnotation type = dicionario.getTipo(MTipoAnnotation.class);
         MIAnnotation annotation = type.novaInstancia();
         annotation.setTargetId(targetId);
         annotation.setText(text);
+        annotation.setApproved(isApproved);
         return annotation;
     }
 
