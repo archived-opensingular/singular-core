@@ -68,7 +68,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(ref);
     }
 
-    public List<MIAnnotation> allAnnotatations() {
+    public List<MIAnnotation> allAnnotations() {
         HashSet<MIAnnotation> result = new HashSet<>();
         if(hasAnnotation()){
             result.add(annotation());
@@ -89,7 +89,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     private void gatterAnnotationsFromChild(HashSet<MIAnnotation> result, MInstancia child) {
         AtrAnnotation childAs = child.as(AtrAnnotation::new);
         if(child instanceof MIComposto){
-            result.addAll(childAs.allAnnotatations());
+            result.addAll(childAs.allAnnotations());
         }
     }
 
@@ -113,5 +113,25 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
                 loadAnnotations(annotationmap, child);
             }
         }
+    }
+
+    public MILista persistentAnnotatations() {
+        MILista miLista = newAnnotationList();
+        for(MIAnnotation a: allAnnotations()){
+            miLista.addElement(a);
+        }
+        return miLista;
+    }
+
+    private MILista newAnnotationList() {
+        return (MILista) annotationListType().novaInstancia();
+    }
+
+    private MTipoAnnotationList annotationListType() {
+        return dictionary().getTipo(MTipoAnnotationList.class);
+    }
+
+    private MDicionario dictionary() {
+        return ((MInstancia) getAlvo()).getMTipo().getDicionario();
     }
 }

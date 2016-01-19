@@ -8,7 +8,6 @@ import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import com.google.common.collect.Lists;
-import org.apache.wicket.markup.html.form.Check;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.util.tester.FormTester;
@@ -166,7 +165,7 @@ public class AnnotationMapperTest {
         form.submit("save-btn");
 
         MIComposto current = page.getCurrentInstance();
-        List<MIAnnotation> all = current.as(AtrAnnotation::new).allAnnotatations();
+        List<MIAnnotation> all = current.as(AtrAnnotation::new).allAnnotations();
 
         assertThat(all).hasSize(3);
 
@@ -213,15 +212,6 @@ public class AnnotationMapperTest {
         assertThat(check4.getValue()).isEqualTo("true");
         assertThat(text4.getValue())
                 .isEqualTo("But I never give up. I keep on trying.");
-
-
-    }
-
-    @Test public void aNewInstanceHasNoAnnotations(){
-        setupPage();
-
-        MIComposto current = page.getCurrentInstance();
-        assertThat(current.as(AtrAnnotation::new).allAnnotatations()).isEmpty();
 
 
     }

@@ -4,7 +4,6 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
@@ -191,18 +190,27 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                 Optional<String> rootXml = MformPersistenciaXML.toStringXML(instancia);
 
                 currentModel.setXml(rootXml.orElse(""));
-                List<MIAnnotation> allAnnotations = instancia.as(AtrAnnotation::new).allAnnotatations();
-                if(!allAnnotations.isEmpty()){
-                    MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
-                    for(MIAnnotation a: allAnnotations){
-                        pLista.addElement(a);
-                    }
-                    Optional<String> annXml = MformPersistenciaXML.toStringXML(pLista);
-
-                    currentModel.setAnnotations(annXml.orElse(""));
-                }
+                addAnnotationsToModel(instancia);
                 dao.save(currentModel);
                 backToCrudPage(this);
+            }
+
+            private void addAnnotationsToModel(MInstancia instancia) {
+                AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
+                List<MIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
+                if(!allAnnotations.isEmpty()){
+                    Optional<String> annXml = annotationsToXml(instancia, annotatedInstance, allAnnotations);
+                    currentModel.setAnnotations(annXml.orElse(""));
+                }
+            }
+
+            private Optional<String> annotationsToXml(MInstancia instancia, AtrAnnotation annotatedInstance, List<MIAnnotation> allAnnotations) {
+                MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
+                for(MIAnnotation a: allAnnotations){
+                    pLista.addElement(a);
+                }
+                return MformPersistenciaXML.toStringXML(
+                                            annotatedInstance.persistentAnnotatations());
             }
 
         };
