@@ -22,9 +22,6 @@ import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-/**
- * Created by nuk on 15/01/16.
- */
 public class AnnotationMapperTest {
     protected static MDicionario dicionario;
     protected PacoteBuilder localPackage;

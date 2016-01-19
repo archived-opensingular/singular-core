@@ -11,9 +11,6 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.groups.Properties.extractProperty;
 
-/**
- * Created by nuk on 19/01/16.
- */
 public class MTipoAnnotationTest {
     protected static MDicionario dicionario;
     protected PacoteBuilder localPackage;

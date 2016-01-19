@@ -26,7 +26,11 @@ import java.io.Serializable;
 import java.util.logging.Logger;
 
 /**
- * Created by nuk on 14/01/16.
+ * This mapper extends a DefaultCompostoMapper for the case where a MAnnotationView is
+ * selected. Its responsibility is to render a grid that a allows a AnnotationComponent
+ * to be proper rendered on screen.
+ *
+ * @author Fabricio Buzeto
  */
 public class AnnotationDefaultMapper extends DefaultCompostoMapper {
     private static final Logger LOGGER = Logger.getLogger(AnnotationDefaultMapper.class.getName());

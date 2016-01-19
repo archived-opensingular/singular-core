@@ -10,7 +10,10 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
 
 /**
- * Created by nuk on 15/01/16.
+ * This type represents an Annotation of a field.
+ * For now only composite fields can be anotated but this type does not enforce such rule.
+ *
+ * @author Fabricio Buzeto
  */
 @MInfoTipo(nome = "Annotation", pacote = MPacoteCore.class)
 public class MTipoAnnotation extends MTipoComposto<MIAnnotation> {

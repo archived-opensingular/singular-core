@@ -10,7 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 
 /**
- * Created by nuk on 14/01/16.
+ * Decorates an Instance as annotated enabling access to its anotations.
+ *
+ * @author Fabricio Buzeto
  */
 public class AtrAnnotation extends MTranslatorParaAtributo {
     public AtrAnnotation() {}
@@ -18,29 +20,50 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         super(alvo);
     }
 
+    /**
+     *
+     * @param valor Text value of the annotation.
+     * @return this
+     */
     public AtrAnnotation text(String valor) {
         annotation().setText(valor);
         return this;
     }
 
+    /**
+     * @return Text value of the annotation.
+     */
     public String text() {
         return annotation().getText();
     }
 
+    /**
+     * @param isApproved Informs if the annotation approves the content of the instance or not.
+     * @return this
+     */
     public AtrAnnotation approved(Boolean isApproved) {
         annotation().setApproved(isApproved);
         return this;
     }
 
+    /**
+     * @return Informs if the annotation approves the content of the instance or not.
+     */
     public Boolean approved() {
         return annotation().getApproved();
     }
 
+    /**
+     * @return Current annotation if this instance, if none is present one is created.
+     */
     public MIAnnotation annotation() {
         createAttributeIfNeeded();
         return atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
     }
 
+    /**
+     * @return True if an anotation was filled for this instance.
+     */
     public boolean hasAnnotation(){
         MIAnnotation atr = atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
         return atr != null && StringUtils.isNotBlank(atr.getText());
@@ -68,6 +91,9 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         return getAlvo().getValorAtributo(ref);
     }
 
+    /**
+     * @return All annotations on this instance and its children.
+     */
     public List<MIAnnotation> allAnnotations() {
         HashSet<MIAnnotation> result = new HashSet<>();
         if(hasAnnotation()){
@@ -93,6 +119,12 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         }
     }
 
+    /**
+     * Loads a collection of annotations onte this instance and its children.
+     * The <code>targetId</code> field of the annotation denotes which field that annotation
+     * is referring to.
+     * @param annotations to be loaded into the instance.
+     */
     public void loadAnnotations(Iterable<MIAnnotation> annotations) {
         ImmutableMap<Integer, MIAnnotation> annotationmap = Maps.uniqueIndex(annotations, (x) -> x.getTargetId());
         loadAnnotations(annotationmap, (MInstancia) getAlvo());
@@ -115,6 +147,9 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         }
     }
 
+    /**
+     * @return A ready to persist object containing all annotations from this instance and its children.
+     */
     public MILista persistentAnnotatations() {
         MILista miLista = newAnnotationList();
         for(MIAnnotation a: allAnnotations()){

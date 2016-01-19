@@ -19,6 +19,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
+/**
+ * This is the visual component of an annotated field on screen.
+ * 
+ * @author Fabricio Buzeto
+ */
 public class AnnotationComponent extends Panel {
     private MAnnotationView view;
     private final AbstractMInstanciaModel referenced;
@@ -36,6 +41,8 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         /*
+        This is here whilst we decide how the annotation will be created.
+
         final String popoverId = "_popover_id_" + getId();
         WebMarkupContainer popover_modal = new WebMarkupContainer("popover_modal") {
             @Override

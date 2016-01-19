@@ -3,7 +3,9 @@ package br.net.mirante.singular.form.mform.core.annotation;
 import br.net.mirante.singular.form.mform.MIComposto;
 
 /**
- * Created by nuk on 15/01/16.
+ * Instance class form the MTipoAnnotation type.
+ *
+ * @author Fabricio Buzeto
  */
 public class MIAnnotation extends MIComposto {
     public void setText(String text) {
@@ -15,11 +17,9 @@ public class MIAnnotation extends MIComposto {
     }
     public Integer getTargetId() {  return getValorInteger(MTipoAnnotation.FIELD_TARGET_ID);    }
     public void setApproved(Boolean isApproved) {
-//        setValor(MTipoAnnotation.FIELD_APPROVED, Boolean.toString(isApproved));
         setValor(MTipoAnnotation.FIELD_APPROVED, isApproved);
     }
     public Boolean getApproved() {
-//        return Boolean.valueOf(getValorString(MTipoAnnotation.FIELD_APPROVED));
         return getValorBoolean(MTipoAnnotation.FIELD_APPROVED);
     }
 

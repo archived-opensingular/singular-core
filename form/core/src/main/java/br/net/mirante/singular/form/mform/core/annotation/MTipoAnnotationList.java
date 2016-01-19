@@ -6,7 +6,10 @@ import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 
 /**
- * Created by nuk on 18/01/16.
+ * This type encloses a MTipoLista of MTipoAnnotation and can be used in order to persist
+ * a set of anotations without much hassle.
+ *
+ * @author Fabricio Buzeto
  */
 @MInfoTipo(nome = "AnnotationList", pacote = MPacoteCore.class)
 public class MTipoAnnotationList extends MTipoLista {
