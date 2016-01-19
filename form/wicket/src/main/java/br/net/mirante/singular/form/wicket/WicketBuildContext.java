@@ -95,7 +95,7 @@ public class WicketBuildContext implements Serializable {
             formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
         }
 
-        if(formComponent.getDefaultModel().getClass().isAssignableFrom(IMInstanciaAwareModel.class)) {
+        if(IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
             IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
             MTipo<?> tipo = model.getMInstancia().getMTipo();
             if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
@@ -104,7 +104,6 @@ public class WicketBuildContext implements Serializable {
                         IMInstanciaAwareModel.getInstanceModel(model),
                         new OnFieldUpdatedListener());
             }
-
         }
 
         return formComponent;
