@@ -1,8 +1,23 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
+import javax.inject.Inject;
+
+import java.io.IOException;
+import java.util.UUID;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
@@ -13,26 +28,12 @@ import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.BelverPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.showcase.view.template.Content;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.UUID;
-import javax.inject.Inject;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -151,6 +152,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
+                getCurrentInstance().getObject().getDocument().persistFiles();
                 currentModel.setXml(xml.toStringExato());
                 dao.save(currentModel);
                 backToCrudPage(this);
@@ -160,18 +162,28 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveWithoutValidateButton() {
-        final Component button = new AjaxButton("save-whitout-validate-btn") {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                final MInstancia instancia = belverPanel.getRootInstance().getObject();
-
-                instancia.getDocument().persistFiles();
-                Optional<String> rootXml = MformPersistenciaXML.toStringXML(instancia);
-
-                currentModel.setXml(rootXml.orElse(""));
+        final Component button = new BelverValidationButton("save-whitout-validate-btn") {
+            protected void save() {
+                MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
+                getCurrentInstance().getObject().getDocument().persistFiles();
+                currentModel.setXml(rootXml.toStringExato());
                 dao.save(currentModel);
                 backToCrudPage(this);
+            }
+
+            @Override
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+
+            @Override
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+
+            @Override
+            public IModel<? extends MInstancia> getCurrentInstance() {
+                return belverPanel.getRootInstance();
             }
 
         };

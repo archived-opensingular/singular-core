@@ -1,15 +1,16 @@
 package br.net.mirante.singular.showcase.dao.form;
 
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Throwables;
@@ -50,8 +51,8 @@ public class FileDao implements IAttachmentPersistenceHandler {
     }
     
     @Transactional
-    public ExampleFile find(String id){
-        return (ExampleFile) session().get(ExampleFile.class, id);
+    public ExampleFile find(String hash){
+        return (ExampleFile) session().createCriteria(ExampleFile.class).add(Restrictions.eq("hashSha1", hash)).setMaxResults(1).uniqueResult();
     }
     
     @Override @Transactional
