@@ -13,6 +13,6 @@ public class MTipoCPF extends MTipoString {
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
         addInstanceValidator(ValidationErrorLevel.ERROR, InstanceValidators.cpf());
-        as(AtrBasic.class).label("CPF").basicMask("CPF");
+        as(AtrBasic.class).label("CPF").basicMask("CPF").tamanhoMaximo(null);
     }
 }
