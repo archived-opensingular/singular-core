@@ -27,6 +27,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
         pb.createTipo(MTipoEndereco.class);
         pb.createTipo(MTipoImportacao.class);
         pb.createTipo(MTipoMedico.class);
+        pb.createTipo(MTipoCID.class);
         pb.createTipo(MTipoPessoa.class);
         pb.createTipo(MTipoPrescricao.class);
         pb.createTipo(MTipoDescricaoProduto.class);
@@ -97,6 +98,23 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .as(AtrBasic::new)
                     .label("Prescrição Médica");
 
+            MTipoBoolean aceitoTudo = canabis.addCampoBoolean("aceitoTudo");
+
+            aceitoTudo
+                    .as(AtrBasic::new)
+                    .label("Eu, paciente/responsável legal, informo que estou ciente que:\n" +
+                            "1- este produto não possui registro no Brasil, portanto não possui a sua segurança e eficácia avaliada e comprovada pela Anvisa, podendo causar reações adversas inesperadas ao paciente.\n" +
+                            "2- este produto é de uso estritamente pessoal e intransferível, sendo proibida a sua entrega a terceiros, doação, venda ou qualquer outra utilização diferente da indicada.\n" +
+                            "3- que a cópia do Ofício emitido pela Anvisa deve ser mantida junto ao PRODUTO, sempre que em trânsito, dentro ou fora do Brasil. ");
+
+            MTipoAttachment termoResponsabilidade = canabis
+                    .addCampo("termoResponsabilidade", MTipoAttachment.class);
+
+            termoResponsabilidade
+                    .as(AtrBasic::new)
+                    .label("Prescritor/Paciente/Responsável Legal")
+                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
+
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
             tabbed.addTab("dados", "Solicitante")
@@ -110,9 +128,9 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .add(produtos);
             tabbed.addTab("prescricao", "Prescrição")
                     .add(prescricao);
-            tabbed.addTab("prescricao", "Termo de Responsabilidade");
-
-
+            tabbed.addTab("termo", "Termo de Responsabilidade")
+                    .add(aceitoTudo)
+                    .add(termoResponsabilidade);
         }
     }
 

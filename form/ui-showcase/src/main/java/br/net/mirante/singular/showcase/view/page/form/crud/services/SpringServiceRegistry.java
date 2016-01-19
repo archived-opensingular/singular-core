@@ -1,12 +1,13 @@
 package br.net.mirante.singular.showcase.view.page.form.crud.services;
 
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
-import com.google.common.collect.Maps;
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.Map;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 /**
  * This class provides a {@link ServiceRegistry} that relays service lookup
@@ -21,7 +22,7 @@ public class SpringServiceRegistry implements ServiceRegistry,
 
     @Override
     public Map<String, Pair> services() {
-        return Maps.newHashMap();
+        return Collections.emptyMap();
     }
 
     @Override

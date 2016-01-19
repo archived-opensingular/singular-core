@@ -19,17 +19,17 @@ public class DefaultServiceRegistry implements ServiceRegistry {
     private Map<String, Pair> servicesByName = newHashMap();
     private Map<Class<?>, List<ServiceRef<?>>> servicesByClass = newHashMap();
     private List<ServiceRegistry> registries = newArrayList();
-    
+
     public void addRegistry(ServiceRegistry r){
         registries.add(r);
     }
-    
+
     @Override
     public Map<String, Pair> services() {
-        return (servicesByName == null) ? Collections.emptyMap() : 
+        return (servicesByName == null) ? Collections.emptyMap() :
                                                 ImmutableMap.copyOf(servicesByName);
     }
-    
+
     @Override
     public <T> T lookupService(Class<T> targetClass) {
         T provider = lookupLocalService(targetClass);
@@ -57,7 +57,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         List<ServiceRef<?>> result = newArrayList();
         for(Map.Entry<Class<?>, List<ServiceRef<?>>> entry : servicesByClass.entrySet()){
             if(targetClass.isAssignableFrom(entry.getKey())){
-                result.addAll(servicesByClass.get(entry.getKey()));
+                result.addAll(entry.getValue());
             }
         }
         return result;
@@ -65,29 +65,18 @@ public class DefaultServiceRegistry implements ServiceRegistry {
 
     private <T> T verifyResultAndReturn(Class<T> targetClass, List<ServiceRef<?>> list) {
         if(list.size() == 1){
-            return handleCompatibleProviderFound(targetClass, list);
+            ServiceRef<?> provider = list.get(0);
+            return targetClass.cast(provider.get());
         }
-        throw createMultipleOptionsError(targetClass, list);
+        String message = String.format("There are %s options of type %s please be more specific", list.size(), targetClass.getName());
+        throw new SingularFormException(message);
     }
 
-    private <T> T handleCompatibleProviderFound(Class<T> targetClass, List<ServiceRef<?>> list) {
-        ServiceRef<?> provider = list.get(0);
-        return targetClass.cast(provider.get());
-    }
-
-    private <T> RuntimeException createMultipleOptionsError(Class<T> targetClass, List<ServiceRef<?>> list) {
-        String message =
-            String.format(
-            "There are %s options of type %s please be more specific",
-            list.size(),  targetClass.getName() );
-        return new RuntimeException(message);
-    }
-    
     @Override
     public Object lookupService(String name) {
         return lookupService(name, Object.class);
     }
-    
+
     @Override
     public <T> T lookupService(String name, Class<T> targetClass) {
         T provider = lookupLocalService(name, targetClass);
@@ -95,7 +84,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         return lookupChainedService(name, targetClass);
     }
 
-    private <T> T lookupLocalService(String name, Class<T> targetClass) {
+    public <T> T lookupLocalService(String name, Class<T> targetClass) {
         Pair ref = servicesByName.get(name);
         if (ref != null) {
             Object value = ref.provider.get();
@@ -111,7 +100,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         }
         return null;
     }
-    
+
     private <T> T lookupChainedService(String name, Class<T> targetClass) {
         for(ServiceRegistry r : registries){
             T provider = r.lookupService(name, targetClass);;
@@ -119,7 +108,7 @@ public class DefaultServiceRegistry implements ServiceRegistry {
         }
         return null;
     }
-    
+
     /**
      * Registers a {@link ServiceRef}
      *  for the specified class
@@ -127,38 +116,32 @@ public class DefaultServiceRegistry implements ServiceRegistry {
      * @param provider provider of the service
      */
     public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
-        bindByName(UUID.randomUUID().toString(), registerClass, provider);
-        bindByClass(registerClass, provider);
+        bindLocalService(UUID.randomUUID().toString(), registerClass, provider);
     }
-    
-    private <T> void bindByClass(Class<T> registerClass, ServiceRef<?> provider) {
-        createClassListIfNeeded(registerClass);
+
+    private <T> void bindByClass(Class<T> registerClass, ServiceRef<? extends T> provider) {
         List<ServiceRef<?>> list = servicesByClass.get(registerClass);
+        if (list == null) {
+            list = newArrayList();
+            servicesByClass.put(registerClass, list);
+        }
         list.add(provider);
     }
 
-    private <T> void createClassListIfNeeded(Class<T> registerClass) {
-        if(!servicesByClass.containsKey(registerClass)){
-            servicesByClass.put(registerClass, newArrayList());
-        }
-    }
-    
     /**
      * Registers a {@link ServiceRef} for the specified class with a unique name.
      * @param serviceName name of the service
      * @param registerClass Class of the service the factory provides
      * @param provider provider of the service
      */
-    public <T> void bindLocalService(String serviceName, Class<T> registerClass, 
-            ServiceRef<?> provider) {
+    public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<? extends T> provider) {
         bindByName(serviceName, registerClass, provider);
         bindByClass(registerClass, provider);
     }
 
-    private <T> void bindByName(String serviceName, Class<T> registerClass, 
-            ServiceRef<?> provider) {
-        servicesByName.put(Objects.requireNonNull(serviceName), 
-            Objects.requireNonNull(new Pair(registerClass, provider)));
+    private <T> void bindByName(String serviceName, Class<T> registerClass, ServiceRef<?> provider) {
+        Objects.requireNonNull(registerClass);
+        Objects.requireNonNull(provider);
+        servicesByName.put(Objects.requireNonNull(serviceName), new Pair(registerClass, provider));
     }
-
 }
