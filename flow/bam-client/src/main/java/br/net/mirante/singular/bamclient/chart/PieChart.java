@@ -11,7 +11,7 @@ public class PieChart implements SingularChart {
     public PieChart() {
     }
 
-    public PieChart(String valueProperty, String categoryProperty) {
+    public PieChart(String categoryProperty, String valueProperty) {
         this.valueProperty = valueProperty;
         this.categoryProperty = categoryProperty;
     }

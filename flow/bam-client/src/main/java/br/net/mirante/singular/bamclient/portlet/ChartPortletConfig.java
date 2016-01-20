@@ -15,19 +15,30 @@ public abstract class ChartPortletConfig<T extends ChartPortletConfig> extends P
         this.chart = chart;
     }
 
+    public ChartPortletConfig(String restEndpointURL, SingularChart chart,
+                              BamDashboardView dashboardView) {
+        this(restEndpointURL, chart);
+        setTitle(dashboardView.getTitle());
+        setSubtitle(dashboardView.getSubtitle());
+        setPortletSize(dashboardView.getPortletSize());
+
+    }
+
     public SingularChart getChart() {
         return chart;
     }
 
-    public void setChart(SingularChart chart) {
+    public T setChart(SingularChart chart) {
         this.chart = chart;
+        return self();
     }
 
     public String getRestEndpointURL() {
         return restEndpointURL;
     }
 
-    public void setRestEndpointURL(String restEndpointURL) {
+    public T setRestEndpointURL(String restEndpointURL) {
         this.restEndpointURL = restEndpointURL;
+        return self();
     }
 }

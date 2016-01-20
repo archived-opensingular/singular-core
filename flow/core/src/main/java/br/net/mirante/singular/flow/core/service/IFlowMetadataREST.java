@@ -14,6 +14,8 @@ public interface IFlowMetadataREST {
     static final String PATH_PROCESS_DEFINITION_HAS_ACCESS = "/process/definition/has-access";
     static final String PATH_PROCESS_DEFINITION_WITH_ACCESS = "/process/definition/with-access";
     static final String PATH_PROCESS_DEFINITION_DIAGRAM = "/process/definition/diagram";
+    static final String PATH_PROCESS_CUSTOM_DASHBOARD = "/process/dashboard/custom";
+    static final String PATH_PROCESS_DASHBOARD_DATA = "/process/dashboard/data";
 
     /**
      * REST path: {@link IFlowMetadataREST#PATH_PROCESS_DEFINITION_WITH_ACCESS}
