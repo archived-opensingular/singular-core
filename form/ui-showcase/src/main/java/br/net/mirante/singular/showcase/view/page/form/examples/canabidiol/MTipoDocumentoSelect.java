@@ -7,13 +7,14 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 import org.apache.wicket.util.string.Strings;
 
 @MInfoTipo(nome = "MTipoDocumentoSelect", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoDocumentoSelect extends MTipoComposto<MIComposto> {
+public class MTipoDocumentoSelect extends MTipoString {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {

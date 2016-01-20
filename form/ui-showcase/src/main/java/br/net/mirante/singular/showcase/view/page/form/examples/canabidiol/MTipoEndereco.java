@@ -1,15 +1,19 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoEndereco", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoEndereco extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoEndereco extends MTipoComposto<MIComposto>  {
 
 
     @Override
@@ -54,22 +58,22 @@ public class MTipoEndereco extends MTipoComposto<MIComposto> implements Canabidi
                 .as(AtrBootstrap::new)
                 .colPreference(3);
         estado
-                .withSelectionOf(SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider("nome", (MOptionsProvider) isnt -> SelectBuilder.buildEstados(estado));
 
         MTipoComposto<?> cidade = this.addCampoComposto("cidade");
         cidade
                 .as(AtrBasic::new)
                 .label("Cidade")
-                .visivel(inst -> hasValue(inst, estado))
+                .visivel(inst -> Val.notNull(inst, (MTipoSimples)estado.getCampo("id")))
                 .dependsOn(estado)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
         cidade.
-                setProviderOpcoes(inst ->
-                                SelectBuilder
-                                        .buildMunicipiosFiltrado(
-                                                cidade,
-                                                getValue(inst, estado),
-                                                inst.getMTipo().novaLista()));
+                withSelectionFromProvider("nome", (MOptionsProvider) inst ->
+                        SelectBuilder
+                                .buildMunicipiosFiltrado(
+                                        cidade,
+                                        (String)Val.of(inst, (MTipoSimples)estado.getCampo("id")),
+                                        inst.getMTipo().novaLista()));
     }
 }

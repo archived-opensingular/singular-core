@@ -4,11 +4,9 @@ import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 
 import java.util.Objects;
 
-public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionableInstance<TIPO_NATIVO> {
+public class MISimples<TIPO_NATIVO> extends MInstancia  {
 
     private TIPO_NATIVO valor;
-
-    private String selectLabel;
 
     protected MISimples() {}
 
@@ -49,25 +47,6 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
         return getValor() == null;
     }
 
-    @Override
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
-    }
-
-    @Override
-    public String getSelectLabel() {
-        return selectLabel;
-    }
-
-    @Override
-    public void setSelectValue(TIPO_NATIVO o) {
-        this.setValor(o);
-    }
-
-    @Override
-    public TIPO_NATIVO getSelectValue() {
-        return getValor();
-    }
 
     @Override
     public final void setValor(Object valor) {
@@ -82,14 +61,6 @@ public class MISimples<TIPO_NATIVO> extends MInstancia implements MSelectionable
             }
         }
     }
-
-    @Override
-    public void setValueSelectLabel(TIPO_NATIVO valor, String selectLabel) {
-        this.selectLabel = selectLabel;
-        this.setValor(valor);
-    }
-
-
 
     protected TIPO_NATIVO onSetValor(TIPO_NATIVO oldValue, TIPO_NATIVO newValue) {
         return newValue;

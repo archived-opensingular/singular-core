@@ -61,13 +61,15 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     /**
      * Add a new element to the Provider optionlist with the key values informed.
-     * @param value to be set (MSelectionableInstance.setValue) on the element
+     * @param value to be set (MSelectionableInstance.hydratate) on the element
      * @param selectLabel
      * @return this
      */
     public MFixedOptionsSimpleProvider add(Object value, String selectLabel){
-        MSelectionableInstance e = (MSelectionableInstance) opcoes.addNovo();
-        e.setValueSelectLabel(value, selectLabel);
+        MInstancia instancia = opcoes.addNovo();
+        MSelectionableInstance e = (MSelectionableInstance)instancia;
+        e.setSelectLabel(selectLabel);
+        instancia.setValor(value);
         return this;
     }
 

@@ -60,7 +60,7 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
         word.as(MPacoteBasic.aspect())
             .label("Word")
             .dependsOn(letter);
-        word.setProviderOpcoes(ins -> {
+        word.withSelectionFromProvider(ins -> {
             String prefix = ins.findNearest(letter).get().getValor();
             return (prefix == null)
                 ? ins.getMTipo().novaLista()

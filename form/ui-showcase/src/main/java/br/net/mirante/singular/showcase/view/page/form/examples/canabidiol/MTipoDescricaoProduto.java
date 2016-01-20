@@ -9,13 +9,14 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @MInfoTipo(nome = "MTipoDescricaoProduto", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
 
 
     private static Map<Integer, String> composicoes = new HashMap<>();
@@ -78,7 +79,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements 
                 .label("Composição")
                 .visivel(false)
                 .visivel(instancia -> {
-                    boolean truth = getValue(instancia, nomeComercial) != null && ((Integer) getValue(instancia, nomeComercial)) < 8;
+                    boolean truth = Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) < 8;
                     return truth;
                 })
                 .dependsOn(nomeComercial)
@@ -88,10 +89,10 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements 
         composicao
                 .withView(new MSelecaoPorRadioView().layoutVertical());
 
-        composicao.setProviderOpcoes(
+        composicao.withSelectionFromProvider(
                 optionsInstance -> {
                     MILista<?> lista = composicao.novaLista();
-                    String value = composicoes.get(getValue(optionsInstance, nomeComercial));
+                    String value = composicoes.get(Val.of(optionsInstance, nomeComercial));
                     if (value != null) {
                         lista.addValor(value);
                     }
@@ -106,7 +107,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements 
                 .as(AtrBasic::new)
                 .label("Endereço do fabricante")
                 .visivel(false)
-                .visivel(instancia -> getValue(instancia, nomeComercial) != null && ((Integer) getValue(instancia, nomeComercial)) < 8)
+                .visivel(instancia -> Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
                 .colPreference(6);
@@ -114,10 +115,10 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements 
         enderecoFabricante
                 .withView(new MSelecaoPorRadioView().layoutVertical());
 
-        enderecoFabricante.setProviderOpcoes(
+        enderecoFabricante.withSelectionFromProvider(
                 optionsInstance -> {
                     MILista<?> lista = enderecoFabricante.novaLista();
-                    String value = enderecos.get(getValue(optionsInstance, nomeComercial));
+                    String value = enderecos.get(Val.of(optionsInstance, nomeComercial));
                     if (value != null) {
                         lista.addValor(value);
                     }
@@ -132,7 +133,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> implements 
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
                 .visivel(false)
-                .visivel(instancia -> getValue(instancia, nomeComercial) != null && ((Integer) getValue(instancia, nomeComercial)) == 8);
+                .visivel(instancia -> Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) == 8);
 
         outroMedicamento
                 .addCampoString("outroNome")

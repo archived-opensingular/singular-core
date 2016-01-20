@@ -32,21 +32,15 @@ public class MTipoString extends MTipoSimples<MIString, String> {
         return (MTipoString) with(MPacoteCore.ATR_TRIM, valor);
     }
 
-    public <T extends Enum<T>> MOptionsProvider selectionOf(Class<T> enumType) {
+    public <T extends Enum<T>> MTipoString withSelectionOf(Class<T> enumType) {
         T[] ops = enumType.getEnumConstants();
         String[] nomes = new String[ops.length];
         for (int i = 0; i < ops.length; i++) {
             nomes[i] = ops[i].toString();
         }
-        return super.selectionOf(nomes);
+        return (MTipoString) super.withSelectionOf(nomes);
     }
-    
-    public MTipoString withSelectionOf(String ... opcoes) {
-//        return (MTipoString) super.withSelectionOf(opcoes);
-        selectionOf(opcoes);
-        return this;
-    }
-    
+
     /**
      * Configura o tipo para utilizar a view {@link MTextAreaView} e invoca o initializer 
      */

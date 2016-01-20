@@ -1,11 +1,15 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.util.transformer.FromPojoList;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.dao.CIDDAO;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CapituloCID;
@@ -16,7 +20,7 @@ import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model
 import javax.inject.Inject;
 
 @MInfoTipo(nome = "MTipoCID", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoCID extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoCID extends MTipoComposto<MIComposto>  {
 
     @Inject // queria injetar :(
     private CIDDAO ciddao = new CIDDAO();
@@ -31,13 +35,21 @@ public class MTipoCID extends MTipoComposto<MIComposto> implements CanabidiolUti
                 .label("Capítulo")
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+
+        MTipoString idCapitulo = capitulo
+                .addCampoString("id");
+        MTipoString descricaoCapitulo = capitulo
+                .addCampoString("descricao");
+        MTipoString descricaoAbreviadaCapitulo = capitulo
+                .addCampoString("descricaoAbreviada");
         capitulo
-                .setProviderOpcoes(instancia -> {
-                    MILista<?> lista = capitulo.novaLista();
+                .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
                     for (CapituloCID cap : ciddao.listCapitulos()) {
-                        lista.addElement(capitulo.create(cap.getId(), cap.getDescricao()));
+                        listBuilder.add()
+                                .set(idCapitulo, cap.getId())
+                                .set(descricaoCapitulo, cap.getDescricao())
+                                .set(descricaoAbreviadaCapitulo, cap.getDescricaoAbreviada());
                     }
-                    return lista;
                 });
 
         MTipoComposto<?> grupo = this.addCampoComposto("grupo");
@@ -45,18 +57,25 @@ public class MTipoCID extends MTipoComposto<MIComposto> implements CanabidiolUti
                 .as(AtrBasic::new)
                 .label("Grupo")
                 .visivel(false)
-                .visivel(inst -> hasValue(inst, capitulo))
+                .visivel(inst -> Val.notNull(inst, (MTipoSimples)capitulo.getCampo("id")))
                 .dependsOn(capitulo)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+
+        MTipoString idGrupo = grupo
+                .addCampoString("id");
+        MTipoString descricaoGrupo = grupo
+                .addCampoString("descricao");
+        MTipoString descricaoAbreviadaGrupo = grupo
+                .addCampoString("descricaoAbreviada");
         grupo
-                .setProviderOpcoes(instancia -> {
-                    String idCapituo = getValue(instancia, capitulo);
-                    MILista<?> lista = grupo.novaLista();
-                    for (GrupoCID grp : ciddao.listGrupoByIdCapitulo(idCapituo)) {
-                        lista.addElement(grupo.create(grp.getId(), grp.getDescricao()));
+                .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
+                    for (GrupoCID g : ciddao.listGrupoByIdCapitulo(Val.of(instancia, idCapitulo))) {
+                        listaBuilder.add()
+                                .set(idGrupo, g.getId())
+                                .set(descricaoGrupo, g.getDescricao())
+                                .set(descricaoAbreviadaGrupo, g.getDescricaoAbreviada());
                     }
-                    return lista;
                 });
 
 
@@ -65,18 +84,26 @@ public class MTipoCID extends MTipoComposto<MIComposto> implements CanabidiolUti
                 .as(AtrBasic::new)
                 .label("Categoria")
                 .visivel(false)
-                .visivel(inst -> hasValue(inst, grupo))
+                .visivel(inst -> Val.notNull(inst, idGrupo))
                 .dependsOn(grupo)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+
+        MTipoString idCategoria = categoria
+                .addCampoString("id");
+        MTipoString descricaoCategoria = categoria
+                .addCampoString("descricao");
+        MTipoString descricaoAbreviadaCategoria = categoria
+                .addCampoString("descricaoAbreviada");
+
         categoria
-                .setProviderOpcoes(instancia -> {
-                    String idGrp = getValue(instancia, grupo);
-                    MILista<?> lista = categoria.novaLista();
-                    for (CategoriaCID cat : ciddao.listCategoriasByIdGrupo(idGrp)) {
-                        lista.addElement(categoria.create(cat.getId(), cat.getDescricao()));
+                .withSelectionFromProvider(descricaoCategoria, (instancia, listaBuilder) -> {
+                    for (CategoriaCID c : ciddao.listCategoriasByIdGrupo(Val.of(instancia, idGrupo))) {
+                        listaBuilder.add()
+                                .set(idCategoria, c.getId())
+                                .set(descricaoCategoria, c.getDescricao())
+                                .set(descricaoAbreviadaCategoria, c.getDescricaoAbreviada());
                     }
-                    return lista;
                 });
 
         MTipoComposto<?> subcategoria = this.addCampoComposto("subcategoria");
@@ -84,25 +111,25 @@ public class MTipoCID extends MTipoComposto<MIComposto> implements CanabidiolUti
                 .as(AtrBasic::new)
                 .label("Sub-Categoria")
                 .visivel(false)
-                .visivel(inst -> {
-                    String idCategoria = getValue(inst, categoria);
-                    return ciddao.listSubCategoriasByIdCategoria(idCategoria).size() > 0;
-                })
+                .visivel(inst -> ciddao.listSubCategoriasByIdCategoria(Val.of(inst, idCategoria)).size() > 0)
                 .dependsOn(categoria)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
 
-        subcategoria
-                .setProviderOpcoes(instancia -> {
-                    String idCategoria = getValue(instancia, categoria);
-                    MILista<?> lista = subcategoria.novaLista();
-                    for (SubCategoriaCID subCat : ciddao.listSubCategoriasByIdCategoria(idCategoria)) {
-                        lista.addElement(subcategoria.create(subCat.getId(), subCat.getDescricao()));
-                    }
-                    return lista;
-                });
+        MTipoString idSubCategoria = subcategoria
+                .addCampoString("id");
+        MTipoString descricaoSubCategoria = subcategoria
+                .addCampoString("descricao");
+        MTipoString descricaoSubAbreviadaCategoria = subcategoria
+                .addCampoString("descricaoAbreviada");
+
+        subcategoria.withSelectionFromProvider(descricaoSubCategoria, (MOptionsProvider) instancia ->
+                new FromPojoList<SubCategoriaCID>(categoria, ciddao.listSubCategoriasByIdCategoria(Val.of(instancia, idCategoria)))
+                        .map(idSubCategoria, c -> c.getId())
+                        .map(descricaoSubCategoria, c -> c.getDescricao())
+                        .map(descricaoSubAbreviadaCategoria, c -> c.getDescricaoAbreviada())
+                        .build());
 
     }
-
 
 }
