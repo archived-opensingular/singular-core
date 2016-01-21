@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -20,10 +21,42 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         super(alvo);
     }
 
-    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não. Ou seja, não tem mais a view
+    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não.
+    // Ou seja, não tem mais a view
 
     /**
-     *
+     * Marks this type as annotated
+     * @return this
+     */
+    public AtrAnnotation setAnnotated() {
+        atrValue(MPacoteBasic.ATR_ANNOTATED,true);
+        return this;
+    }
+
+    /**
+     * Sets the label for this annotation
+     * @return this
+     */
+    public AtrAnnotation label(String label) {
+        atrValue(MPacoteBasic.ATR_ANNOTATION_LABEL,label);
+        return this;
+    }
+
+    /**
+     * @return true if type is annotated
+     */
+    public boolean isAnnotated() {
+        Boolean v = atrValue(MPacoteBasic.ATR_ANNOTATED);
+        return v != null && v ;
+    }
+    /**
+     * @return the label set, if any
+     */
+    public String label() {
+        return atrValue(MPacoteBasic.ATR_ANNOTATION_LABEL);
+    }
+
+    /**
      * @param valor Text value of the annotation.
      * @return this
      */
@@ -60,36 +93,36 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public MIAnnotation annotation() {
         createAttributeIfNeeded();
-        return atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
+        return atrValue(MPacoteBasic.ATR_ANNOTATION);
     }
 
     /**
      * @return True if an anotation was filled for this instance.
      */
     public boolean hasAnnotation(){
-        MIAnnotation atr = atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
+        MIAnnotation atr = atrValue(MPacoteBasic.ATR_ANNOTATION);
         return atr != null && StringUtils.isNotBlank(atr.getText());
     }
 
     private void createAttributeIfNeeded() {
-        if(atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT) == null){
+        if(atrValue(MPacoteBasic.ATR_ANNOTATION) == null){
             setAnnotation(type().novaInstancia());
         }
-    }
-
-    private void setAnnotation(MIAnnotation annotation) {
-        atrValue(annotation, MPacoteBasic.ATR_ANNOTATION_TEXT);
     }
 
     private MTipoAnnotation type() {
         return getAlvo().getDicionario().getTipo(MTipoAnnotation.class);
     }
 
-    private void atrValue(MIAnnotation annotation, AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation> ref) {
-        getAlvo().setValorAtributo(ref, annotation);
+    private void setAnnotation(MIAnnotation annotation) {
+        atrValue(MPacoteBasic.ATR_ANNOTATION, annotation);
     }
 
-    private MIAnnotation atrValue(AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation> ref) {
+    private void atrValue(AtrRef ref, Object value) {
+        getAlvo().setValorAtributo(ref, value);
+    }
+
+    private <T extends Object> T atrValue(AtrRef<?, ?, T > ref) {
         return getAlvo().getValorAtributo(ref);
     }
 

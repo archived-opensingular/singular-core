@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
@@ -27,6 +26,7 @@ import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoLatitudeLongitude;
 import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
@@ -184,7 +184,7 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, MInstancia instance) {
-        if(instance.getMTipo().getView() instanceof MAnnotationView){
+        if(instance.as(AtrAnnotation::new).isAnnotated()){
             addAnnotationComponent(ngrid, instance);
         }
         if(instance instanceof MIComposto){
@@ -195,13 +195,9 @@ class AnnotationBuilder {
     private void addAnnotationComponent(BSGrid ngrid, MInstancia instance) {
         ngrid.newRow().appendTag("div", true, "style=\"float: left;\"",
                 (id) -> {
-                    return new AnnotationComponent(id, view(instance), modelFor(instance));
+                    return new AnnotationComponent(id, modelFor(instance));
                 });
         ;
-    }
-
-    private MAnnotationView view(MInstancia instance) {
-        return (MAnnotationView) instance.getMTipo().getView();
     }
 
     private MInstanceRootModel<MInstancia> modelFor(MInstancia instance) {

@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket.mapper.annotation;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
@@ -25,13 +24,11 @@ import org.apache.wicket.model.PropertyModel;
  * @author Fabricio Buzeto
  */
 public class AnnotationComponent extends Panel {
-    private MAnnotationView view;
     private final AbstractMInstanciaModel referenced;
     private final MIAnnotation target;
 
-    public AnnotationComponent(String id, MAnnotationView view, AbstractMInstanciaModel referenced) {
+    public AnnotationComponent(String id, AbstractMInstanciaModel referenced) {
         super(id);
-        this.view = view;
         this.referenced = referenced;
         this.target = referenced.getMInstancia().as(AtrAnnotation::new).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
@@ -46,10 +43,14 @@ public class AnnotationComponent extends Panel {
     }
 
     private String title() {
-        if(StringUtils.isNoneBlank(view.title())) return view.title();
+        if(StringUtils.isNoneBlank(annotated().label())) return annotated().label();
         String label = labelOf(referenced);
         if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
         return "Comentários";
+    }
+
+    private AtrAnnotation annotated() {
+        return referenced.getMInstancia().as(AtrAnnotation::new);
     }
 
     private static String labelOf(AbstractMInstanciaModel target) {

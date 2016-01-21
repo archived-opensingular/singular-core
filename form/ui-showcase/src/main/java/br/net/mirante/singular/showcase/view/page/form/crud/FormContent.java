@@ -2,7 +2,6 @@ package br.net.mirante.singular.showcase.view.page.form.crud;
 
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
@@ -275,9 +274,10 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private boolean isAnnotated(MTipo<?> mTipo) {
-        if(mTipo.getView() instanceof MAnnotationView){
-            return true;
-        }
+//        if(mTipo.getView() instanceof MAnnotationView){
+//            return true;
+//        }
+        //TODO: FABS: This should be removed
         if(mTipo instanceof MTipoComposto){
             MTipoComposto composto = (MTipoComposto) mTipo;
             Collection<MTipo> fields = composto.getFields();

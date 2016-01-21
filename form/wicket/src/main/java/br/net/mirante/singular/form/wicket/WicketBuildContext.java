@@ -46,7 +46,8 @@ public class WicketBuildContext implements Serializable {
     private IModel<? extends MInstancia> model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
-//TODO: FABS : PaSSAR a anotação como atributo do contexto, aí isso fica como responsabilidade do mapper tratar ou não
+    //TODO: FABS : PaSSAR a anotação como atributo do contexto,
+    // aí isso fica como responsabilidade do mapper tratar ou não
     private MView view;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends MInstancia> model) {

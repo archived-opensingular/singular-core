@@ -5,8 +5,8 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
 
 public class CaseAnnotationPackage extends MPacote {
@@ -27,7 +27,8 @@ public class CaseAnnotationPackage extends MPacote {
         cliente.addCampoCPF("cpf").as(AtrBasic.class).label("CPF");
         cliente.addCampoEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
-        cliente.setView(MAnnotationView::new); // Usará o rótulo do campo para a anotação
+        //TODO: FABS: Update this example
+        cliente.as(AtrAnnotation::new).setAnnotated(); // Usará o rótulo do campo para a anotação
 
         endereco = pedido.addCampoComposto("Endereco");
         endereco.asAtrBasic().label("Endereco do Cliente");
@@ -40,7 +41,7 @@ public class CaseAnnotationPackage extends MPacote {
         request.addCampoString("obs").asAtrBasic().label("Observações");
 
         //@destacar
-        request.withView(new MAnnotationView().title("Observações Finais")); //Permite definir seu pŕoprio rótulo
+        request.as(AtrAnnotation::new).setAnnotated().label("Observações Finais"); //Permite definir seu pŕoprio rótulo
         super.carregarDefinicoes(pb);
     }
 }
