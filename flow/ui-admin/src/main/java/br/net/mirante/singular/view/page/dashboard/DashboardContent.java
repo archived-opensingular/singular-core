@@ -1,6 +1,7 @@
 package br.net.mirante.singular.view.page.dashboard;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,12 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
 import br.net.mirante.singular.bamclient.chart.AreaChart;
@@ -26,9 +33,12 @@ import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
+import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
+import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import br.net.mirante.singular.view.component.PortletPanel;
@@ -38,6 +48,8 @@ import br.net.mirante.singular.view.template.Content;
 
 @SuppressWarnings("serial")
 public class DashboardContent extends Content {
+
+    static final Logger logger = LoggerFactory.getLogger(DashboardContent.class);
 
     private String processDefinitionCode;
     private RepeatingView rows;
@@ -161,7 +173,11 @@ public class DashboardContent extends Content {
             configs.add(buildPortletConfigEndStatusQuantityByPeriod());
             configs.add(buildPortletConfigAverageTimesActiveInstances());
             configs.add(buildPortletConfigStatsTimeByActiveTask());
+
+            configs.addAll(getAvailableDashboards(processDefinitionCode));
+
         }
+
     }
 
     public PortletConfig<?> buildPortletConfigMeanTimeByProcess() {
@@ -214,7 +230,7 @@ public class DashboardContent extends Content {
 
     public PortletConfig<?> buildPortletConfigStatsByActiveTask() {
 
-        final SingularChart chart = new PieChart("QUANTIDADE", "NOME");
+        final SingularChart chart = new PieChart("NOME", "QUANTIDADE");
 
         return new AmChartPortletConfig(appendRelativeURL("/rest/statsByActiveTask"), chart)
                 .setPortletSize(PortletSize.MEDIUM)
@@ -224,8 +240,8 @@ public class DashboardContent extends Content {
 
     public PortletConfig<?> buildPortletConfigMeanTimeByTask() {
 
-        final SingularChart chart = new PieChart("MEAN", "NOME");
-        final AmChartPortletConfig config = new AmChartPortletConfig(appendRelativeURL("/rest/meanTimeByTask"), chart);
+        final SingularChart chart = new PieChart("NOME", "MEAN");
+        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/meanTimeByTask", chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
 
@@ -251,8 +267,8 @@ public class DashboardContent extends Content {
     }
 
     private PortletConfig<?> buildPortletConfigEndStatusQuantityByPeriod() {
-        final SingularChart chart = new DonutPieChart("QUANTIDADE", "SITUACAO");
-        final AmChartPortletConfig config = new AmChartPortletConfig(appendRelativeURL("/rest/endStatusQuantityByPeriod"), chart);
+        final SingularChart chart = new DonutPieChart("SITUACAO", "QUANTIDADE");
+        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/endStatusQuantityByPeriod", chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
 
@@ -263,7 +279,7 @@ public class DashboardContent extends Content {
 
     private PortletConfig<?> buildPortletConfigStatsTimeByActiveTask() {
 
-        final SingularChart chart = new PieChart("TEMPO", "NOME");
+        final SingularChart chart = new PieChart("NOME", "TEMPO");
 
         return new AmChartPortletConfig(appendRelativeURL("/rest/statsByActiveTask"), chart)
                 .setPortletSize(PortletSize.MEDIUM)
@@ -288,5 +304,21 @@ public class DashboardContent extends Content {
         final int beginPath = fullUrl.lastIndexOf(currentPath);
         return fullUrl.substring(0, beginPath - 1) + path;
     }
+    public List<PortletConfig<?>> getAvailableDashboards(String processAbbreviation) {
+        GroupDTO groupDTO = flowMetadataFacade.retrieveGroupByProcess(processAbbreviation);
+        String url = groupDTO.getConnectionURL() + IFlowMetadataREST.PATH_PROCESS_CUSTOM_DASHBOARD + "?processAbbreviation={processAbbreviation}";
+
+        try {
+            ResponseEntity<List<PortletConfig<?>>> response =
+                    new RestTemplate().exchange(url,
+                            HttpMethod.GET, null, new ParameterizedTypeReference<List<PortletConfig<?>>>() {},
+                            processAbbreviation);
+            return response.getBody();
+        } catch (Exception e) {
+            logger.error("Erro ao acessar serviço: " + url, e);
+            return Collections.emptyList();
+        }
+    }
+
 }
 

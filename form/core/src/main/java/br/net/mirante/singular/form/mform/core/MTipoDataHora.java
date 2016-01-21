@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
 @MInfoTipo(nome = "DataHora", pacote = MPacoteCore.class)
 public class MTipoDataHora extends MTipoSimples<MIData, Date> {
 
-    private static final Logger LOGGER = Logger.getLogger(MIData.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MTipoDataHora.class.getName());
 
     public static final String FORMAT = "dd/MM/yyyy HH:mm";
 
