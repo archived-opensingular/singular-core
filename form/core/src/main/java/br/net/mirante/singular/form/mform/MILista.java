@@ -49,6 +49,11 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
+    public void clearInstance() {
+        getValor().clear();
+    }
+
+    @Override
     public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
         return getValor(new LeitorPath(pathCampo), classeDestino);
     }

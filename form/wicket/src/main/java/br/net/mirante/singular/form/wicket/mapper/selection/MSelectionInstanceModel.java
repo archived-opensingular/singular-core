@@ -27,7 +27,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
             MILista list = (MILista) getTarget();
             return (T) list.getAllChildren()
                     .stream()
-                    .map((x) -> getSimpleSelection(x))
+                    .map(this::getSimpleSelection)
                     .collect(Collectors.toList());
         }
         return getSimpleSelection(target);
@@ -61,9 +61,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
 
     private void setValueAt(MInstancia instance, SelectOption object) {
         if (object == null) {
-            instance.setValor(null);
+            instance.clearInstance();
         } else if (instance instanceof MSelectionableInstance) {
-            MSelectionableInstance item = (MSelectionableInstance) instance;
             object.copyValueToInstance(instance);
         }
     }
