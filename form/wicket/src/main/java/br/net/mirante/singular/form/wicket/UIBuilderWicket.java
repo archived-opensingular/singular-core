@@ -32,6 +32,7 @@ import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
@@ -46,6 +47,7 @@ import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TabMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.TelefoneNacionalMapper;
 import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.attachment.AttachmentMapper;
@@ -127,7 +129,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new)
                 .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
                 .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
-                .register(MTipoDataHora.class,                                          DateTimeMapper::new);
+                .register(MTipoDataHora.class,                                          DateTimeMapper::new)
+                .register(MTipoTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }
 }
