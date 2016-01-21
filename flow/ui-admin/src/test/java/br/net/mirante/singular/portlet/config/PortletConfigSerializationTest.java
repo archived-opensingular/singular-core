@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.net.mirante.singular.bamclient.chart.PieChart;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
+import br.net.mirante.singular.bamclient.portlet.DataEndpoint;
 import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.spring.ObjectMapperFactory;
@@ -22,7 +23,7 @@ public class PortletConfigSerializationTest extends TestCase {
     }
 
     public void testAmChartPortletConfig() throws IOException {
-        final PortletConfig<?> config = new AmChartPortletConfig("http://xxx.xx.xx", new PieChart("b", "x"));
+        final PortletConfig<?> config = new AmChartPortletConfig(DataEndpoint.local("http://xxx.xx.xx"), new PieChart("b", "x"));
         final String originalConfigSerialized = mapper.writeValueAsString(config);
         final PortletConfig<?> originalConfigDeserialized = mapper.readValue(originalConfigSerialized, PortletConfig.class);
         final String newConfigSerialized = mapper.writeValueAsString(originalConfigDeserialized);
@@ -30,7 +31,7 @@ public class PortletConfigSerializationTest extends TestCase {
     }
 
     public void testMorrisChartPortletConfig() throws IOException {
-        final PortletConfig<?> config = new MorrisChartPortletConfig("http://xxx.xx.xx", new PieChart("b", "x"));
+        final PortletConfig<?> config = new MorrisChartPortletConfig(DataEndpoint.local("http://xxx.xx.xx"), new PieChart("b", "x"));
         final String originalConfigSerialized = mapper.writeValueAsString(config);
         final PortletConfig<?> originalConfigDeserialized = mapper.readValue(originalConfigSerialized, PortletConfig.class);
         final String newConfigSerialized = mapper.writeValueAsString(originalConfigDeserialized);

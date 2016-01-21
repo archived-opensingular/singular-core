@@ -29,6 +29,7 @@ import br.net.mirante.singular.bamclient.chart.LineSerialChart;
 import br.net.mirante.singular.bamclient.chart.PieChart;
 import br.net.mirante.singular.bamclient.chart.SingularChart;
 import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
+import br.net.mirante.singular.bamclient.portlet.DataEndpoint;
 import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
@@ -183,7 +184,7 @@ public class DashboardContent extends Content {
     public PortletConfig<?> buildPortletConfigMeanTimeByProcess() {
 
         final SingularChart chart = new ColumnSerialChart("NOME", new AmChartValueField("MEAN", "", "dia(s)"));
-        final AmChartPortletConfig config = new AmChartPortletConfig(appendRelativeURL("/rest/meanTimeByProcess"), chart);
+        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByProcess")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
 
@@ -198,7 +199,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/meanTimeActiveInstances"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeActiveInstances")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.active.instances.mean.time.title"))
                 .setSubtitle(getString("label.chart.active.instances.mean.time.subtitle"));
@@ -212,7 +213,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new LineSerialChart("MES", valueFields);
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/newInstancesQuantityLastYear"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/newInstancesQuantityLastYear")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.new.instance.quantity.title"))
                 .setSubtitle(getString("label.chart.new.instance.quantity.title"));
@@ -222,7 +223,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("QUANTIDADE", ""));
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/counterActiveInstances"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/counterActiveInstances")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.active.instance.quantity.title"))
                 .setSubtitle(getString("label.chart.active.instance.quantity.subtitle"));
@@ -232,7 +233,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new PieChart("NOME", "QUANTIDADE");
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/statsByActiveTask"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/statsByActiveTask")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.count.task.title"))
                 .setSubtitle(getString("label.chart.count.task.subtitle"));
@@ -241,7 +242,7 @@ public class DashboardContent extends Content {
     public PortletConfig<?> buildPortletConfigMeanTimeByTask() {
 
         final SingularChart chart = new PieChart("NOME", "MEAN");
-        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/meanTimeByTask", chart);
+        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByTask")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
 
@@ -260,7 +261,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/meanTimeFinishedInstances"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeFinishedInstances")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.finished.instances.mean.time.title"))
                 .setSubtitle(getString("label.chart.finished.instances.mean.time.subtitle"));
@@ -268,7 +269,7 @@ public class DashboardContent extends Content {
 
     private PortletConfig<?> buildPortletConfigEndStatusQuantityByPeriod() {
         final SingularChart chart = new DonutPieChart("SITUACAO", "QUANTIDADE");
-        final AmChartPortletConfig config = new AmChartPortletConfig("/rest/endStatusQuantityByPeriod", chart);
+        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/endStatusQuantityByPeriod")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
 
@@ -281,7 +282,7 @@ public class DashboardContent extends Content {
 
         final SingularChart chart = new PieChart("NOME", "TEMPO");
 
-        return new AmChartPortletConfig(appendRelativeURL("/rest/statsByActiveTask"), chart)
+        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/statsByActiveTask")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.active.task.mean.time.title"))
                 .setSubtitle(getString("label.chart.active.task.mean.time.subtitle"));
@@ -292,7 +293,7 @@ public class DashboardContent extends Content {
         final SingularChart chart = new AreaChart("DATA", "TEMPO", "TEMPO2").
                 labels(getString("label.chart.active.instances.average.time.3"), getString("label.chart.active.instances.average.time.6"));
 
-        return new MorrisChartPortletConfig(appendRelativeURL("/rest/averageTimesActiveInstances"), chart)
+        return new MorrisChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/averageTimesActiveInstances")), chart)
                 .setPortletSize(PortletSize.MEDIUM)
                 .setTitle(getString("label.chart.active.instances.average.time.title"))
                 .setSubtitle(getString("label.chart.active.instances.average.time.subtitle"));
@@ -305,6 +306,7 @@ public class DashboardContent extends Content {
         final Optional<String> contextPath = Optional.ofNullable(getRequestCycle().getRequest().getContextPath());
         return fullUrl.substring(0, beginPath - 1) + contextPath.orElse("") + path;
     }
+
     public List<PortletConfig<?>> getAvailableDashboards(String processAbbreviation) {
         GroupDTO groupDTO = flowMetadataFacade.retrieveGroupByProcess(processAbbreviation);
         String url = groupDTO.getConnectionURL() + IFlowMetadataREST.PATH_PROCESS_CUSTOM_DASHBOARD + "?processAbbreviation={processAbbreviation}";

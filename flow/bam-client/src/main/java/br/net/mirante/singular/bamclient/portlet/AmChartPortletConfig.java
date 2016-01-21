@@ -7,8 +7,8 @@ public class AmChartPortletConfig extends ChartPortletConfig<AmChartPortletConfi
     public AmChartPortletConfig() {
     }
 
-    public AmChartPortletConfig(String restEndpointURL, SingularChart chart) {
-        super(restEndpointURL, chart);
+    public AmChartPortletConfig(DataEndpoint endpoint, SingularChart chart) {
+        super(endpoint, chart);
     }
 
     @Override
