@@ -10,6 +10,9 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
+import java.io.Serializable;
 
 @SuppressWarnings({"serial","rawtypes","unchecked"})
 public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
@@ -29,7 +32,14 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
                                           MSelecaoPorModalBuscaView view) {
         SelectInputModalContainer panel = new SelectInputModalContainer(
                                                 model.getObject().getNome() + "inputGroup",
-                                                formGroup,modalContainer,model,view);
+                                                formGroup,modalContainer,model,view,
+                new Model<String>(){
+                    @Override
+                    public String    getObject() {
+                        return SelectModalBuscaMapper.this.getReadOnlyFormattedText(model);
+                    }
+
+                });
         return panel.build();
     }
 

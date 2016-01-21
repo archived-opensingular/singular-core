@@ -7,8 +7,8 @@ public class DonutPieChart extends PieChart {
     public DonutPieChart() {
     }
 
-    public DonutPieChart(String valueProperty, String categoryProperty) {
-        super(valueProperty, categoryProperty);
+    public DonutPieChart(String categoryProperty, String valueProperty) {
+        super(categoryProperty, valueProperty);
     }
 
     @Override

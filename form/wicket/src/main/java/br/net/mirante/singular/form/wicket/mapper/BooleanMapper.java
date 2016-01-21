@@ -1,5 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -12,10 +17,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.model.IModel;
 
 public class BooleanMapper implements IWicketComponentMapper {
 
@@ -45,7 +46,6 @@ public class BooleanMapper implements IWicketComponentMapper {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, labelModel);
         input.add(DisabledClassBehavior.getInstance());
-        ctx.configure(this, input);
     }
 
     private void buildForVisualization(IModel<? extends MInstancia> model, BSControls formGroup,

@@ -4,8 +4,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
@@ -97,14 +95,6 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         }
 
-        if (input instanceof FormComponent<?>) {
-            ctx.configure(this, (FormComponent<?>) input);
-        } else if (input instanceof WebMarkupContainer) {
-            final ControlsFieldComponentMapper mapper = this;
-            ((WebMarkupContainer) input).visitChildren(FormComponent.class, (object, visit) -> {
-                ctx.configure(mapper, (FormComponent<?>) object);
-            });
-        }
 
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);

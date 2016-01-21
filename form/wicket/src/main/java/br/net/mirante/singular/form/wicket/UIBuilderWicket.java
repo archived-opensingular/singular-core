@@ -5,7 +5,22 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.*;
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
+import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -18,6 +33,7 @@ import br.net.mirante.singular.form.mform.core.MTipoMonetario;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
@@ -32,6 +48,7 @@ import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TabMapper;
 import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.TelefoneNacionalMapper;
 import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationDefaultMapper;
@@ -55,6 +72,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrenttInstance());
         mapper.buildView(ctx.init(this, viewMode));
+        ctx.configure(mapper);
     }
 
     private IWicketComponentMapper resolveMapper(MInstancia instancia) {
@@ -115,7 +133,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new)
                 .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
                 .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
-                .register(MTipoDataHora.class,                                          DateTimeMapper::new);
+                .register(MTipoDataHora.class,                                          DateTimeMapper::new)
+                .register(MTipoTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }
 }

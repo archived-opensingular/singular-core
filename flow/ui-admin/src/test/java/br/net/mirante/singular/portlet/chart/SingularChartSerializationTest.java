@@ -41,7 +41,7 @@ public class SingularChartSerializationTest extends TestCase {
     }
 
     public void testPieChart() throws IOException {
-        final SingularChart originalChart = new PieChart("a", "b");
+        final SingularChart originalChart = new PieChart("b", "a");
         final String originalChartSerialized = mapper.writeValueAsString(originalChart);
         final SingularChart deserializedChart = mapper.readValue(originalChartSerialized, SingularChart.class);
         final String deseriaziledChartSerialized = mapper.writeValueAsString(deserializedChart);
@@ -49,7 +49,7 @@ public class SingularChartSerializationTest extends TestCase {
     }
 
     public void testDonutPieChart() throws IOException {
-        final SingularChart originalChart = new DonutPieChart("a", "b");
+        final SingularChart originalChart = new DonutPieChart("b", "a");
         final String originalChartSerialized = mapper.writeValueAsString(originalChart);
         final SingularChart deserializedChart = mapper.readValue(originalChartSerialized, SingularChart.class);
         final String deseriaziledChartSerialized = mapper.writeValueAsString(deserializedChart);

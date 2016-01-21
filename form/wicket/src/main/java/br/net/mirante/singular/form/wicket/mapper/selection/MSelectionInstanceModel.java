@@ -1,13 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import org.apache.wicket.model.IModel;
-
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareModel<T> {
@@ -40,6 +41,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
             setValueAt(getTarget(), (SelectOption) object);
         } else if (object instanceof Collection) {
             setListValueAt(getTarget(), (Collection) object);
+        } else if (object == null) {
+            setValueAt(getTarget(), null);
         }
     }
 
@@ -57,11 +60,11 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     }
 
     private void setValueAt(MInstancia instance, SelectOption object) {
-        if (instance instanceof MSelectionableInstance) {
+        if (object == null) {
+            instance.setValor(null);
+        } else if (instance instanceof MSelectionableInstance) {
             MSelectionableInstance item = (MSelectionableInstance) instance;
-            if (object != null) {
-                object.copyValueToInstance(instance);
-            }
+            object.copyValueToInstance(instance);
         }
     }
 

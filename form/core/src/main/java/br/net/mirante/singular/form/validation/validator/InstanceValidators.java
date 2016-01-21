@@ -46,6 +46,13 @@ public final class InstanceValidators {
     }
 
     /**
+     * Verifica se o telefone nacional é válido
+     */
+    public static MTelefoneNacionalValidator telefoneNacional(){
+        return MTelefoneNacionalValidator.INSTANCE;
+    }
+
+    /**
      * Verifica se o email é válido. Permite informar endereço local.
      */
     public static MEmailValidator emailLocalAddress(){

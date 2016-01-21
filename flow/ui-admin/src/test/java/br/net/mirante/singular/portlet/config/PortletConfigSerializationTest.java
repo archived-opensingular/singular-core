@@ -22,7 +22,7 @@ public class PortletConfigSerializationTest extends TestCase {
     }
 
     public void testAmChartPortletConfig() throws IOException {
-        final PortletConfig<?> config = new AmChartPortletConfig("http://xxx.xx.xx", new PieChart("x", "b"));
+        final PortletConfig<?> config = new AmChartPortletConfig("http://xxx.xx.xx", new PieChart("b", "x"));
         final String originalConfigSerialized = mapper.writeValueAsString(config);
         final PortletConfig<?> originalConfigDeserialized = mapper.readValue(originalConfigSerialized, PortletConfig.class);
         final String newConfigSerialized = mapper.writeValueAsString(originalConfigDeserialized);
@@ -30,7 +30,7 @@ public class PortletConfigSerializationTest extends TestCase {
     }
 
     public void testMorrisChartPortletConfig() throws IOException {
-        final PortletConfig<?> config = new MorrisChartPortletConfig("http://xxx.xx.xx", new PieChart("x", "b"));
+        final PortletConfig<?> config = new MorrisChartPortletConfig("http://xxx.xx.xx", new PieChart("b", "x"));
         final String originalConfigSerialized = mapper.writeValueAsString(config);
         final PortletConfig<?> originalConfigDeserialized = mapper.readValue(originalConfigSerialized, PortletConfig.class);
         final String newConfigSerialized = mapper.writeValueAsString(originalConfigDeserialized);

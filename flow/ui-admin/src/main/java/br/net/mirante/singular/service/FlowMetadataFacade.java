@@ -76,4 +76,11 @@ public class FlowMetadataFacade {
         return flowMetadataProvider.getMetadataService(groupDTO).hasAccessToProcessDefinition(definitionDTO.getSigla(), userCod, accessLevel);
     }
 
+    @Transactional
+    @Cacheable(value = "retrieveGroupByProcess", cacheManager = "cacheManager")
+    public GroupDTO retrieveGroupByProcess(String processDefinitionKey) {
+        DefinitionDTO definitionDTO = definitionDAO.retrieveByKey(processDefinitionKey);
+        return retrieveGroup(definitionDTO.getCodGrupo());
+    }
+
 }
