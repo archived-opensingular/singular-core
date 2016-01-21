@@ -35,6 +35,12 @@ import java.util.logging.Logger;
 public class AnnotationDefaultMapper extends DefaultCompostoMapper {
     private static final Logger LOGGER = Logger.getLogger(AnnotationDefaultMapper.class.getName());
 
+    //TODO: FABS: Fazer a reserva do espaço no pre passo do belver panel
+    //TODO: FABS: Fazer um modo de edição por modal com um crop de preview do lado
+    //TODO: FABS: Ver como está a serialização [No wicket] de atributos compostos
+    //TODO: FABS: Passar a lógica das anotações, para que elas sejam armazenadas no SDocument da
+    //              instância sendo usada. Um mapa de referências parece ser o melhor caminho.
+
     public void buildView(WicketBuildContext ctx) {
         new AnnotationBuilder(ctx).buildView();
     }

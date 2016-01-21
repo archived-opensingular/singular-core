@@ -20,6 +20,8 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         super(alvo);
     }
 
+    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não. Ou seja, não tem mais a view
+
     /**
      *
      * @param valor Text value of the annotation.
