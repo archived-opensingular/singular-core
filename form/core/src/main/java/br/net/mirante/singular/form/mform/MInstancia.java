@@ -51,7 +51,18 @@ public abstract class MInstancia implements MAtributoEnabled, MSelectionableInst
         if (selectLabel == null) {
             if (getMTipo() instanceof MSelectionableType) {
                 MSelectionableType type = (MSelectionableType) getMTipo();
-                return type.getSelectLabel();
+                String label =  type.getSelectLabel();
+                Object valor = this.getValor();
+                if (valor instanceof Iterable) {
+                    for (MInstancia mi : (Iterable<MInstancia>)valor) {
+                        if (label.equals(mi.getNome())) {
+                            Object valorCampo = mi.getValor();
+                            return valorCampo == null ? "" : valorCampo.toString();
+                        }
+                    }
+                } else {
+                    return valor == null ? "" : valor.toString();
+                }
             }
         }
         return selectLabel;

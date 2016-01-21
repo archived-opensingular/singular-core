@@ -16,16 +16,6 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
     private FieldMapOfRecordInstance fields;
 
     @Override
-    public String getSelectLabel() {
-        if (super.getSelectLabel() != null
-            && this.getCampo(super.getSelectLabel()) != null) {
-            Object value = this.getValor(super.getSelectLabel());
-            return value == null ? "null" : value.toString();
-        }
-        return super.getSelectLabel();
-    }
-
-    @Override
     public MTipoComposto<?> getMTipo() {
         return (MTipoComposto<?>) super.getMTipo();
     }
