@@ -1,0 +1,24 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+        <!-- Content for Popover #1 -->
+        <label class="control-label">
+            <i class="fa fa-comment-o"></i> <wicket:container wicket:id="target_label" />
+        </label>
+
+        <div class="panel">
+            <div class="col-md-12 col-sm-12">
+                <div class="can-have-error form-group form-group-sm">
+                    <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <input wicket:id="approval_field"  type="checkbox" class="make-switch"
+                               data-on-color="success" data-on-text="Aprovado"
+                               data-off-color="danger" data-off-text="Rejeitado" />
+                <script type="application/javascript">
+                    $(".make-switch").bootstrapSwitch();
+                </script>
+            </div>
+        </div>
+</wicket:panel>
+</html>

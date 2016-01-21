@@ -2,7 +2,7 @@ package br.net.mirante.singular.bamclient.portlet;
 
 import br.net.mirante.singular.bamclient.chart.SingularChart;
 
-public abstract class ChartPortletConfig<T extends ChartPortletConfig> extends PortletConfig<T> {
+public abstract class ChartPortletConfig<T extends ChartPortletConfig<T>> extends PortletConfig<T> {
 
     private String restEndpointURL;
     private SingularChart chart;

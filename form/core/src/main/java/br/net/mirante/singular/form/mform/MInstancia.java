@@ -9,9 +9,11 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.util.xml.MElement;
 
-public abstract class MInstancia implements MAtributoEnabled {
+public abstract class MInstancia implements MAtributoEnabled, MSelectionableInstance {
 
     private MInstancia pai;
 
@@ -28,12 +30,31 @@ public abstract class MInstancia implements MAtributoEnabled {
     /** Mapa de bits de flags. Veja {@link FlagsInstancia} */
     private int flags;
 
+    @Override
     public MTipo<?> getMTipo() {
         return mTipo;
     }
 
     public SDocument getDocument() {
         return document;
+    }
+
+    private String selectLabel;
+
+    @Override
+    public void setSelectLabel(String selectLabel) {
+        this.selectLabel = selectLabel;
+    }
+
+    @Override
+    public String getSelectLabel() {
+        if (selectLabel == null) {
+            if (getMTipo() instanceof MSelectionableType) {
+                MSelectionableType type = (MSelectionableType) getMTipo();
+                return type.getSelectLabel();
+            }
+        }
+        return selectLabel;
     }
 
     /**

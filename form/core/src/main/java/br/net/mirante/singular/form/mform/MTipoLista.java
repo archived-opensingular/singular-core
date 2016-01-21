@@ -67,7 +67,7 @@ public class MTipoLista<E extends MTipo<I>, I extends MInstancia> extends MTipo<
         return lista;
     }
 
-    void setTipoElementos(E tipoElementos) {
+    protected void setTipoElementos(E tipoElementos) {
         if (this.tipoElementos != null) {
             throw new RuntimeException("O tipo da lista já está definido");
         }

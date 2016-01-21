@@ -16,7 +16,7 @@ import br.net.mirante.singular.bamclient.util.SelfReference;
         @JsonSubTypes.Type(value = AmChartPortletConfig.class, name = "AmChartPortletConfig"),
         @JsonSubTypes.Type(value = MorrisChartPortletConfig.class, name = "MorrisChartPortletConfig")
 })
-public abstract class PortletConfig<T extends PortletConfig> implements Serializable, SelfReference<T> {
+public abstract class PortletConfig<T extends PortletConfig<T>> implements Serializable, SelfReference<T> {
 
     private PortletSize portletSize = PortletSize.MEDIUM;
     private String title;

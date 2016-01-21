@@ -44,13 +44,21 @@ public class TestPage extends WebPage {
     private ViewMode viewMode;
 
     public TestPage() {
+        setAsEditView();
+    }
+
+    public void setAsEditView() {
         viewMode = ViewMode.EDITION;
+    }
+
+    public void setAsVisualizationView() {
+        viewMode = ViewMode.VISUALIZATION;
     }
 
     public TestPage(final PageParameters parameters) {
         super(parameters);
         if (parameters.get("viewMode").isNull()) {
-            viewMode = ViewMode.EDITION;
+            setAsEditView();
         } else {
             viewMode = ViewMode.valueOf(parameters.get("viewMode").toString());
         }

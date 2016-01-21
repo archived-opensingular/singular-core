@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,37 +11,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-
-public class MIComposto extends MInstancia implements ICompositeInstance, MSelectionableInstance<Object> {
+public class MIComposto extends MInstancia implements ICompositeInstance {
 
     private FieldMapOfRecordInstance fields;
 
     @Override
-    public void setSelectLabel(String description) {
-        this.setValor(this.getMTipo().getDescriptionFieldName(), description);
-    }
-
-    @Override
     public String getSelectLabel() {
-        return String.valueOf(this.getValor(this.getMTipo().getDescriptionFieldName()));
-    }
-
-    @Override
-    public void setSelectValue(Object o) {
-        this.setValor(this.getMTipo().getValueFieldName(), o);
-    }
-
-    @Override
-    public Object getSelectValue() {
-        return this.getValor(this.getMTipo().getValueFieldName());
-    }
-
-    @Override
-    public void setValueSelectLabel(Object valor, String selectLabel) {
-        this.setSelectLabel(selectLabel);
-        this.setSelectValue(valor);
+        if (super.getSelectLabel() != null
+            && this.getCampo(super.getSelectLabel()) != null) {
+            Object value = this.getValor(super.getSelectLabel());
+            return value == null ? "null" : value.toString();
+        }
+        return super.getSelectLabel();
     }
 
     @Override
@@ -80,6 +64,7 @@ public class MIComposto extends MInstancia implements ICompositeInstance, MSelec
     public Collection<MInstancia> getChildren() {
         return getCampos();
     }
+
     @Override
     public Collection<MInstancia> getAllChildren() {
         return getAllFields();
@@ -118,6 +103,31 @@ public class MIComposto extends MInstancia implements ICompositeInstance, MSelec
     @Override
     public final void setValor(String pathCampo, Object valor) {
         setValor(new LeitorPath(pathCampo), valor);
+    }
+
+    /**
+     * Configura o valor de um tipo filho imediato do tipo composto
+     * ao qual essa instancia se refere.
+     * <p>
+     * O Mtipo informado já precisa estar previamente configurado nesse
+     * MtipoComposto
+     *
+     * @param campo Referencia ao mtipo filho do composto
+     * @param valor Valor para o mtipo referenciado.
+     */
+    public final void setValor(MTipo<?> campo, Object valor) {
+        setValor(new LeitorPath(campo.getNomeSimples()), valor);
+    }
+
+    /**
+     * Obtém o valor de um campo a partir do seu tipo
+     * O campo deve ser filho imediato desse MTipo
+     * @param campo
+     *  Tipo do campo filho
+     * @return
+     */
+    public Object getValor(MTipo<?> campo) {
+        return getValor(campo.getNomeSimples());
     }
 
     private FieldMapOfRecordType getFieldsDef() {
@@ -189,6 +199,29 @@ public class MIComposto extends MInstancia implements ICompositeInstance, MSelec
         return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        MIComposto other = (MIComposto) obj;
+        if (!getMTipo().equals(other.getMTipo())) {
+            return false;
+        }
+        return Objects.equals(fields, other.fields);
+    }
+
     private final static class FieldMapOfRecordInstance {
 
         private final MInstancia[] instances;
@@ -238,29 +271,6 @@ public class MIComposto extends MInstancia implements ICompositeInstance, MSelec
                 return false;
             return true;
         }
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fields == null) ? 0 : fields.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MIComposto other = (MIComposto) obj;
-        if (!getMTipo().equals(other.getMTipo())) {
-            return false;
-        }
-        return Objects.equals(fields, other.fields);
     }
 
 }

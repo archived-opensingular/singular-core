@@ -6,8 +6,8 @@ import br.net.mirante.singular.form.mform.context.SingularFormConfigImpl;
 
 import java.util.Map;
 
-public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuilderWicket, IWicketComponentMapper>
-        implements SingularFormConfigWicket, SingularFormContextWicket {
+
+public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuilderWicket, IWicketComponentMapper> implements SingularFormConfigWicket {
 
     private UIBuilderWicket buildContext = new UIBuilderWicket();
 
@@ -30,13 +30,12 @@ public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuild
     }
 
     @Override
-    public UIBuilderWicket getUIBuilder() {
-        return buildContext;
+    public SingularFormContextWicket getContext() {
+        return new SingularFormContextWicketImpl(this);
     }
 
-
     @Override
-    public SingularFormContextWicket getContext() {
-        return (SingularFormContextWicket) super.getContext();
+    public Map<Class<? extends MTipo>, Class<IWicketComponentMapper>> getCustomMappers() {
+        throw new SingularFormException("Método não implementado");
     }
 }

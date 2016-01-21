@@ -95,13 +95,15 @@ public class WicketBuildContext implements Serializable {
             formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
         }
 
-        IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-        MTipo<?> tipo = model.getMInstancia().getMTipo();
-        if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-            mapper.addAjaxUpdate(
-                formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
-                new OnFieldUpdatedListener());
+        if(IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
+            IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
+            MTipo<?> tipo = model.getMInstancia().getMTipo();
+            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
+                mapper.addAjaxUpdate(
+                        formComponent,
+                        IMInstanciaAwareModel.getInstanceModel(model),
+                        new OnFieldUpdatedListener());
+            }
         }
 
         return formComponent;

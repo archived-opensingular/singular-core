@@ -25,8 +25,8 @@ public class BooleanRadioMapper extends RadioMapper {
             @Override
             public List<SelectOption> getObject() {
                 List<SelectOption> opcoesValue = new ArrayList<>(2);
-                opcoesValue.add(new SelectOption<>(booleanRadioView.labelTrue(), true));
-                opcoesValue.add(new SelectOption<>(booleanRadioView.labelFalse(), false));
+                opcoesValue.add(new SelectOption(booleanRadioView.labelTrue(), true));
+                opcoesValue.add(new SelectOption(booleanRadioView.labelFalse(), false));
                 return opcoesValue;
             }
         };

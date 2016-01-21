@@ -1,5 +1,21 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.core.MTipoBoolean;
+import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.MTipoDecimal;
+import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.MTipoMonetario;
+import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.MSelectionableCompositeType;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,32 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoDecimal;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoMonetario;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.mform.options.MSelectionableType;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
-
 @MInfoTipo(nome = "MTipoComposto", pacote = MPacoteCore.class)
 public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         extends MTipo<TIPO_INSTANCIA>
-        implements ICompositeType, MSelectionableType {
+        implements ICompositeType, MSelectionableCompositeType {
 
     private Map<String, MTipo<?>> fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
-
-    private String valueFieldName;
-    private String descriptionFieldName;
-
 
     //TODO: Fabs : Check why this is not working
     // SELECTION ATRIBUTES
@@ -44,6 +42,8 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 //            VALUE_FIELD = new AtrRef<>(MPacoteCore.class, "VALUE_FIELD",
 //                    MTipoString.class, MIString.class, String.class);
     private MOptionsProvider optionsProvider;
+
+    private String selectLabel;
 
     @SuppressWarnings("unchecked")
     public MTipoComposto() {
@@ -58,7 +58,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     public Collection<MTipo<?>> getContainedTypes() {
         return getFields();
     }
-    
+
     private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -94,6 +94,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
      * Remover essa chamada pois ela é confusa.
      * Adicionar um campo apenas pelo tipo sem passar um nome impede que a mesma chamada para o mesmo tipo
      * seja feita novamente pois nesse caso definiria um tipo com o nome repetido.
+     *
      * @param classeTipo
      * @param <I>
      * @param <T>
@@ -226,9 +227,18 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return addCampo(nomeCampo, MTipoMonetario.class);
     }
 
-    @Override
-    public void setProviderOpcoes(MOptionsProvider p) {
-        optionsProvider = p;
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     */
+    public MTipoComposto<TIPO_INSTANCIA> withSelectView() {
+        return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorSelectView::new);
+    }
+
+    /**
+     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     */
+    public MTipoComposto<TIPO_INSTANCIA> withRadioView() {
+        return (MTipoComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
     }
 
     @Override
@@ -236,50 +246,20 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         return optionsProvider;
     }
 
-    /**
-     * Configures default key, value fields with names "value" and "selectLabel".
-     * You can override this method if you want to define your own fields for
-     * your instance.
-     *
-     * @return <code>this</code>
-     */
-    private MTipoComposto configureSelectValueLabelFields(){
-        if (valueFieldName == null && descriptionFieldName == null) {
-            return withSelectValueLabelFields("value", "selectLabel");
-        }
-        return this;
+    @Override
+    public void setProviderOpcoes(MOptionsProvider p) {
+        optionsProvider = p;
     }
 
-    /**
-     * Configures key, value fields with names informed.
-     * If you are specializing a {@link MTipoComposto} you can use this
-     * method to define your own fields.
-     *
-     * @return <code>this</code>
-     */
-    public MTipoComposto withSelectValueLabelFields(String valor, String descricao){
-        if (descriptionFieldName != null && valueFieldName != null){
-            throw new SingularFormException("MTipoComposto value and description fields can not be changed after MOptionsProvider definition.");
-        }
-        return withValueField(valor).withSelectLabelField(descricao);
+
+    @Override
+    public String getSelectLabel() {
+        return this.selectLabel;
     }
 
-    private MTipoComposto withValueField(String fieldName){
-        valueFieldName = fieldName;
-        addCampoString(fieldName);
-        return this;
-    }
-
-    private MTipoComposto withSelectLabelField(String fieldName){
-        descriptionFieldName = fieldName;
-        addCampoString(fieldName);
-        return this;
-    }
-
-    public MIComposto create(Object value, String selectLabel){
-        MIComposto instance = this.novaInstancia();
-        instance.setValueSelectLabel(value, selectLabel);
-        return instance;
+    @Override
+    public void setSelectLabel(String selectLabel) {
+        this.selectLabel = selectLabel;
     }
 
     /**
@@ -366,7 +346,7 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
 
     private static final class FieldRef {
         private final MTipo<?> field;
-        private int            index = -1;
+        private int index = -1;
 
         public FieldRef(MTipo<?> field) {
             this.field = field;
@@ -385,13 +365,4 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
         }
     }
 
-    String getDescriptionFieldName() {
-        configureSelectValueLabelFields();
-        return descriptionFieldName;
-    }
-
-    String getValueFieldName() {
-        configureSelectValueLabelFields();
-        return valueFieldName;
-    }
 }

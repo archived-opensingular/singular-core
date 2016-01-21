@@ -10,8 +10,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "rawtypes"})
-public class MSelectionInstanceModel<T> implements IModel<T>,
-        IMInstanciaAwareModel<T> {
+public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareModel<T> {
 
     private IModel<? extends MInstancia> model;
 
@@ -48,7 +47,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
     protected T getSimpleSelection(MInstancia target) {
         if (target instanceof MSelectionableInstance) {
             MSelectionableInstance item = (MSelectionableInstance) target;
-            return (T) new SelectOption<Object>(item.getSelectLabel(), item.getSelectValue(), target);
+            return (T) new SelectOption(item.getSelectLabel(), target);
         }
         return null;
     }
@@ -61,15 +60,13 @@ public class MSelectionInstanceModel<T> implements IModel<T>,
         if (instance instanceof MSelectionableInstance) {
             MSelectionableInstance item = (MSelectionableInstance) instance;
             if (object != null) {
-                item.setValueSelectLabel(object.getValue(), object.getSelectLabel());
-            } else {
-                item.setValueSelectLabel(null, null);
+                object.copyValueToInstance(instance);
             }
         }
     }
 
     private void setListValueAt(MInstancia instance,
-                                Collection<SelectOption<?>> data) {
+                                Collection<SelectOption> data) {
         if (data != null && instance instanceof MILista) {
             MILista<?> list = (MILista<?>) instance;
             list.clear();

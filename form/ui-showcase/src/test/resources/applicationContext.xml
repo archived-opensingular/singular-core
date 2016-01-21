@@ -17,7 +17,11 @@
         <property name="serviceRegistry" ref="springServiceRegistry"/>
     </bean>
 
+    <bean id="singularFormContext" class="br.net.mirante.singular.form.wicket.SingularFormContextWicketImpl"
+          factory-bean="singularFormConfig" factory-method="getContext"/>
+
     <bean id="springServiceRegistry"
           class="br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry"/>
+
 
 </beans>
