@@ -11,7 +11,6 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -26,6 +25,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -33,6 +33,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,22 +50,24 @@ public class SelectInputModalContainer extends BSContainer {
     private BSContainer modalContainer;
     private IModel<? extends MInstancia> model;
     private MSelecaoPorModalBuscaView view;
-    private TextField<String> valueInput;
+    private Label valueLabel;
+    private IModel<String> valueLabelModel;
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends MInstancia> model, MSelecaoPorModalBuscaView view) {
+                                     IModel<? extends MInstancia> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
         this.model = model;
         this.view = view;
+        this.valueLabelModel = valueLabelModel;
     }
 
     public Component build() {
         MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
-        createValueInput(valueModel);
+        createValueInput();
 
-        this.appendTag("input", true, "class=\"form-control\"", valueInput);
+        this.appendTag("span", true, "class=\"form-control\"", valueLabel);
 
         Model<String> f = Model.of("");
         this.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
@@ -72,41 +75,13 @@ public class SelectInputModalContainer extends BSContainer {
 
         /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", this);
-        return valueInput;
+        return valueLabel;
     }
 
-    private void createValueInput(MSelectionModalInstanceModel valueModel) {
-        valueInput = new TextField<>(model.getObject().getNome() + "selection", valueModel);
-        valueInput.setEnabled(false);
-        valueInput.add($b.attr("readonly", "readonly"));
+    private void createValueInput() {
+        valueLabel = new Label(model.getObject().getNome() + "selection", valueLabelModel);
+        valueLabel.add($b.attr("readonly", "readonly"));
     }
-//
-//    private IMInstanciaAwareModel<String> getInputValue(MSelectionModalInstanceModel valueModel) {
-//        return new IMInstanciaAwareModel<SelectOption>() {
-//            @Override
-//            public void detach() {
-//                valueModel.detach();
-//            }
-//
-//            @Override
-//            public MInstancia getMInstancia() {
-//                return valueModel.getMInstancia();
-//            }
-//
-//            @Override
-//            public String getObject() {
-//                if (valueModel != null && valueModel.getMInstancia() != null) {
-//                    valueModel.getObject();
-//                }
-//                return "asas";
-//            }
-//
-//            @Override
-//            public void setObject(SelectOption object) {
-//                valueModel.setObject(object);
-//            }
-//        };
-//    }
 
     protected Panel buildSearchButton(String id, MSelectionInstanceModel valueModel,
                                       IModel<String> filterModel) {
@@ -160,10 +135,9 @@ public class SelectInputModalContainer extends BSContainer {
         appendAdditionalSearchFields(builder);
         builder.appendColumn(new BSActionColumn<SelectOption, String>(Model.of(""))
                 .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
-                    ((IModel<SelectOption>) valueInput.getDefaultModel())
-                            .setObject(selectedModel.getObject());
+                    selectedModel.getObject().copyValueToInstance(model.getObject());
                     modal.hide(target);
-                    target.add(valueInput);
+                    target.add(valueLabel);
                 }));
 
         BSDataTable<SelectOption, String> table = builder.build("selectionModalTable");

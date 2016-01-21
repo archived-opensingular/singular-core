@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.model.IModel;
 
@@ -32,9 +33,6 @@ public class SelectOption implements IModel {
 
 
     public String getSelectLabel() {
-        if (selectLabel == null) {
-            return String.valueOf(value);
-        }
         return selectLabel;
     }
 
@@ -82,6 +80,9 @@ public class SelectOption implements IModel {
     }
 
     public void copyValueToInstance(MInstancia instance) {
+        if (instance instanceof MSelectionableInstance){
+            ((MSelectionableInstance)instance).setSelectLabel(selectLabel);
+        }
         Val.hydratate(instance, value);
     }
 }
