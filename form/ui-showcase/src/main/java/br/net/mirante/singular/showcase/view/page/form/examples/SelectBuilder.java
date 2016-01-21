@@ -13,55 +13,71 @@ import java.util.stream.Collectors;
 
 public class SelectBuilder {
 
-    public static Collection<MSelectionableInstance<?>> buildEstados(MTipoComposto<?> tipoOpcoes) {
-        if (tipoOpcoes.getCampo("UF") == null) {
-            tipoOpcoes.addCampoString("UF");
+    public static MILista<?> buildEstados(MTipoComposto<?> tipoOpcoes) {
+        if (tipoOpcoes.getCampo("id") == null){
+            tipoOpcoes.addCampoString("id");
+        }
+        if (tipoOpcoes.getCampo("nome") == null){
+            tipoOpcoes.addCampoString("nome");
         }
         return estados(tipoOpcoes);
     }
 
-    private static List<MSelectionableInstance<?>> estados(MTipoComposto<?> select) {
-        List<MSelectionableInstance<?>> estados = new ArrayList<>(5567);
-        estados.add(select.create("AC", "Acre"));
-        estados.add(select.create("AL", "Alagoas"));
-        estados.add(select.create("AP", "Amapá"));
-        estados.add(select.create("AM", "Amazonas"));
-        estados.add(select.create("BA", "Bahia"));
-        estados.add(select.create("CE", "Ceará"));
-        estados.add(select.create("DF", "Distrito Federal"));
-        estados.add(select.create("ES", "Espírito Santo"));
-        estados.add(select.create("GO", "Goiás"));
-        estados.add(select.create("MA", "Maranhão"));
-        estados.add(select.create("MT", "Mato Grosso"));
-        estados.add(select.create("MS", "Mato Grosso do Sul"));
-        estados.add(select.create("MG", "Minas Gerais"));
-        estados.add(select.create("PA", "Pará"));
-        estados.add(select.create("PB", "Paraíba"));
-        estados.add(select.create("PR", "Paraná"));
-        estados.add(select.create("PE", "Pernambuco"));
-        estados.add(select.create("PI", "Piauí"));
-        estados.add(select.create("RJ", "Rio de Janeiro"));
-        estados.add(select.create("RN", "Rio Grande do Norte"));
-        estados.add(select.create("RS", "Rio Grande do Sul"));
-        estados.add(select.create("RO", "Rondônia"));
-        estados.add(select.create("RR", "Roraima"));
-        estados.add(select.create("SC", "Santa Catarina"));
-        estados.add(select.create("SP", "São Paulo"));
-        estados.add(select.create("SE", "Sergipe"));
-        estados.add(select.create("TO", "Tocantins"));
+    private static MILista estados(MTipoComposto<?> select) {
+        MILista estados = select.novaLista();
+        estados.addElement(create(select, "AC", "Acre"));
+        estados.addElement(create(select, "AL", "Alagoas"));
+        estados.addElement(create(select, "AP", "Amapá"));
+        estados.addElement(create(select, "AM", "Amazonas"));
+        estados.addElement(create(select, "BA", "Bahia"));
+        estados.addElement(create(select, "CE", "Ceará"));
+        estados.addElement(create(select, "DF", "Distrito Federal"));
+        estados.addElement(create(select, "ES", "Espírito Santo"));
+        estados.addElement(create(select, "GO", "Goiás"));
+        estados.addElement(create(select, "MA", "Maranhão"));
+        estados.addElement(create(select, "MT", "Mato Grosso"));
+        estados.addElement(create(select, "MS", "Mato Grosso do Sul"));
+        estados.addElement(create(select, "MG", "Minas Gerais"));
+        estados.addElement(create(select, "PA", "Pará"));
+        estados.addElement(create(select, "PB", "Paraíba"));
+        estados.addElement(create(select, "PR", "Paraná"));
+        estados.addElement(create(select, "PE", "Pernambuco"));
+        estados.addElement(create(select, "PI", "Piauí"));
+        estados.addElement(create(select, "RJ", "Rio de Janeiro"));
+        estados.addElement(create(select, "RN", "Rio Grande do Norte"));
+        estados.addElement(create(select, "RS", "Rio Grande do Sul"));
+        estados.addElement(create(select, "RO", "Rondônia"));
+        estados.addElement(create(select, "RR", "Roraima"));
+        estados.addElement(create(select, "SC", "Santa Catarina"));
+        estados.addElement(create(select, "SP", "São Paulo"));
+        estados.addElement(create(select, "SE", "Sergipe"));
+        estados.addElement(create(select, "TO", "Tocantins"));
         return estados;
     }
 
+    private static MIComposto create(MTipoComposto tipo, String id, String label){
+        MIComposto inst = (MIComposto) tipo.novaInstancia();
+        inst.setValor("id", id);
+        inst.setValor("nome", label);
+        return inst;
+    }
 
-    public static Collection<MSelectionableInstance<?>> buildMunicipios(MTipoComposto<?> tipoOpcoes) {
+
+    public static Collection<MSelectionableInstance> buildMunicipios(MTipoComposto<?> tipoOpcoes) {
         if (tipoOpcoes.getCampo("UF") == null) {
             tipoOpcoes.addCampoString("UF");
+        }
+        if (tipoOpcoes.getCampo("id") == null){
+            tipoOpcoes.addCampoString("id");
+        }
+        if (tipoOpcoes.getCampo("nome") == null){
+            tipoOpcoes.addCampoString("nome");
         }
         return cidades(tipoOpcoes);
     }
 
 
-    public static Collection<MSelectionableInstance<?>> buildMunicipiosFiltrado(MTipoComposto<?> tipoOpcoes, String uf) {
+    public static Collection<MSelectionableInstance> buildMunicipiosFiltrado(MTipoComposto<?> tipoOpcoes, String uf) {
         if (uf == null){
             return new ArrayList<>();
         }
@@ -76,7 +92,7 @@ public class SelectBuilder {
         return lista;
     }
 
-    private static void cidades1(MTipoComposto<?> select, List<MSelectionableInstance<?>> cidades) {
+    private static void cidades1(MTipoComposto<?> select, List<MSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 1100015, "Alta Floresta D'Oeste", "RO"));
         cidades.add(novaCidade(select, 1100379, "Alto Alegre dos Parecis", "RO"));
         cidades.add(novaCidade(select, 1100403, "Alto Paraíso", "RO"));
@@ -745,7 +761,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 2114007, "Zé Doca", "MA"));
     }
 
-    private static void cidades2(MTipoComposto<?> select, List<MSelectionableInstance<?>> cidades) {
+    private static void cidades2(MTipoComposto<?> select, List<MSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 2200053, "Acauã", "PI"));
         cidades.add(novaCidade(select, 2200103, "Agricolândia", "PI"));
         cidades.add(novaCidade(select, 2200202, "Água Branca", "PI"));
@@ -2325,7 +2341,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 2933604, "Xique-Xique", "BA"));
     }
 
-    private static void cidades3(MTipoComposto<?> select, List<MSelectionableInstance<?>> cidades) {
+    private static void cidades3(MTipoComposto<?> select, List<MSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 3100104, "Abadia dos Dourados", "MG"));
         cidades.add(novaCidade(select, 3100203, "Abaeté", "MG"));
         cidades.add(novaCidade(select, 3100302, "Abre Campo", "MG"));
@@ -3996,7 +4012,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 3557154, "Zacarias", "SP"));
     }
 
-    private static void cidades4(MTipoComposto<?> select, List<MSelectionableInstance<?>> cidades) {
+    private static void cidades4(MTipoComposto<?> select, List<MSelectionableInstance> cidades) {
 
         cidades.add(novaCidade(select, 4100103, "Abatiá", "PR"));
         cidades.add(novaCidade(select, 4100202, "Adrianópolis", "PR"));
@@ -5655,8 +5671,8 @@ public class SelectBuilder {
     }
 
 
-    private static List<MSelectionableInstance<?>> cidades(MTipoComposto<?> select) {
-        List<MSelectionableInstance<?>> cidades = new ArrayList<>(5567);
+    private static List<MSelectionableInstance> cidades(MTipoComposto<?> select) {
+        List<MSelectionableInstance> cidades = new ArrayList<>(5567);
         cidades1(select, cidades);
         cidades2(select, cidades);
         cidades3(select, cidades);
@@ -5665,7 +5681,9 @@ public class SelectBuilder {
     }
 
     private static MIComposto novaCidade(MTipoComposto<?> select, Integer id, String nome, String uf) {
-        MIComposto instance = select.create(id, nome);
+        MIComposto instance = select.novaInstancia();
+        instance.setValor("id", id);
+        instance.setValor("nome", nome);
         instance.setValor("UF", uf);
         return instance;
     }

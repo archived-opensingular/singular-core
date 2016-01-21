@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoMedico", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoMedico extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoMedico extends MTipoComposto<MIComposto>  {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
@@ -34,7 +34,7 @@ public class MTipoMedico extends MTipoComposto<MIComposto> implements Canabidiol
                 .as(AtrBootstrap::new)
                 .colPreference(3);
         estado
-                .withSelectionOf(SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider("nome", (inst, lb) -> SelectBuilder.buildEstados(estado));
 
         this.addCampoCPF("cpf")
                 .as(AtrBasic::new)

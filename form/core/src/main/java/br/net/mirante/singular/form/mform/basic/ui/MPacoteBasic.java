@@ -24,6 +24,8 @@ import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoDecimal;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
 
 public class MPacoteBasic extends MPacote {
 
@@ -49,6 +51,8 @@ public class MPacoteBasic extends MPacote {
                                                                                    ATR_DEPENDS_ON_FUNCTION      = new AtrRef(MPacoteBasic.class, "dependsOnFunction", MTipoSupplier.class, MISupplier.class, Supplier.class);
     //    @SuppressWarnings({ "unchecked", "rawtypes" })
     //    public static final AtrRef<MTipoBehavior, MIBehavior, IBehavior<MInstancia>>   ATR_ONCHANGE_BEHAVIOR = new AtrRef(MPacoteBasic.class, "onchangeBehavior", MTipoBehavior.class, MIBehavior.class, IBehavior.class);
+
+    public static final AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation>                      ATR_ANNOTATION_TEXT          = new AtrRef<>(MPacoteBasic.class, "annotationText", MTipoAnnotation.class, MIAnnotation.class, MIAnnotation.class);
 
     //@formatter:on
 
@@ -79,6 +83,7 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_DEPENDS_ON_FUNCTION);
         //        pb.createTipoAtributo(MTipo.class, ATR_ONCHANGE_BEHAVIOR);
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
+        pb.createTipoAtributo(MTipo.class, ATR_ANNOTATION_TEXT);
 
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_MAXIMO, 100);
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_EDICAO, 50);

@@ -1,12 +1,23 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MISimples;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
+import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -22,18 +33,12 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
-import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 /**
  * This component is used to represent a selection placed in a modal search.
@@ -47,7 +52,7 @@ public class SelectInputModalContainer extends BSContainer {
     private TextField<String> valueInput;
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends MInstancia> model,MSelecaoPorModalBuscaView view) {
+                                     IModel<? extends MInstancia> model, MSelecaoPorModalBuscaView view) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -55,7 +60,7 @@ public class SelectInputModalContainer extends BSContainer {
         this.view = view;
     }
 
-    public Component build(){
+    public Component build() {
         MSelectionModalInstanceModel valueModel = new MSelectionModalInstanceModel(model);
         createValueInput(valueModel);
 
@@ -71,11 +76,37 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private void createValueInput(MSelectionModalInstanceModel valueModel) {
-        valueInput = new TextField<>(model
-                .getObject().getNome() + "selection", valueModel);
+        valueInput = new TextField<>(model.getObject().getNome() + "selection", valueModel);
         valueInput.setEnabled(false);
         valueInput.add($b.attr("readonly", "readonly"));
     }
+//
+//    private IMInstanciaAwareModel<String> getInputValue(MSelectionModalInstanceModel valueModel) {
+//        return new IMInstanciaAwareModel<SelectOption>() {
+//            @Override
+//            public void detach() {
+//                valueModel.detach();
+//            }
+//
+//            @Override
+//            public MInstancia getMInstancia() {
+//                return valueModel.getMInstancia();
+//            }
+//
+//            @Override
+//            public String getObject() {
+//                if (valueModel != null && valueModel.getMInstancia() != null) {
+//                    valueModel.getObject();
+//                }
+//                return "asas";
+//            }
+//
+//            @Override
+//            public void setObject(SelectOption object) {
+//                valueModel.setObject(object);
+//            }
+//        };
+//    }
 
     protected Panel buildSearchButton(String id, MSelectionInstanceModel valueModel,
                                       IModel<String> filterModel) {
@@ -124,20 +155,9 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private Component buildResultTable(String id, IModel<String> filterModel, final BFModalWindow modal) {
-        BSDataTableBuilder builder  = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
+        BSDataTableBuilder builder = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "selectLabel");
-        MTipo<?> type = model.getObject().getMTipo();
-        if(type instanceof MTipoComposto){
-            MTipoComposto selectType = (MTipoComposto) type;
-            for(String field: view.searchFields()){
-                MTipo<?> fieldType = selectType.getCampo(field);
-                String label = fieldType.as(AtrBasic::new).getLabel();
-                builder.appendPropertyColumn(Model.of(label),
-                        o -> {
-                            return ((SelectOption) o).getOtherField(field);
-                        });
-            }
-        }
+        appendAdditionalSearchFields(builder);
         builder.appendColumn(new BSActionColumn<SelectOption, String>(Model.of(""))
                 .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
                     ((IModel<SelectOption>) valueInput.getDefaultModel())
@@ -156,6 +176,26 @@ public class SelectInputModalContainer extends BSContainer {
         });
         table.setVisible(false);
         return table;
+    }
+
+    private void appendAdditionalSearchFields(BSDataTableBuilder builder) {
+        for (String field : view.searchFields()) {
+            builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
+                MTipoComposto selectType = (MTipoComposto) model.getObject().getMTipo();
+                MTipo<?> fieldType = selectType.getCampo(field);
+                SelectOption select = (SelectOption) m;
+                return Val.of((MInstancia) select.getValue(selectType), (MTipoSimples) fieldType);
+            });
+        }
+    }
+
+    private String getAdditionalSearchFieldLabel(String searchField) {
+        MTipoComposto selectType = (MTipoComposto) model.getObject().getMTipo();
+        MTipo<?> fieldType = selectType.getCampo(searchField);
+        if (!(fieldType instanceof MTipoSimples)) {
+            throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
+        }
+        return fieldType.as(AtrBasic::new).getLabel();
     }
 
     public void buildSearchField(String id, IModel<?> filterModel, BSGrid grid, Component table, Form<?> form) {
@@ -218,10 +258,10 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     public boolean filter(IModel<String> filtro, SelectOption s) {
-        if (filtro != null && filtro.getObject() != null ) {
+        if (filtro != null && filtro.getObject() != null) {
             String termo = filtro.getObject().toLowerCase();
-            String value = s.getValue().toString().toLowerCase();
-            if(value.contains(termo)) return true;
+            String value = s.getSelectLabel().toString().toLowerCase();
+            if (value.contains(termo)) return true;
             if (checkFilterAgainstAditionalFields(s, termo)) return true;
             return false;
         }
@@ -229,9 +269,10 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
-        for (String field : view.searchFields()){
-            Object f = s.getOtherField(field);
-            String nValue = f.toString().toLowerCase();
+        MIComposto composto = (MIComposto) s.getValue(model.getObject().getMTipo());
+        for (String field : view.searchFields()) {
+            Object value = Val.of((MISimples<?>) composto.getCampo(field));
+            String nValue = String.valueOf(value).toLowerCase();
             if(nValue.contains(termo)) return true;
         }
         return false;
@@ -239,7 +280,7 @@ public class SelectInputModalContainer extends BSContainer {
 
 }
 
-class MSelectionModalInstanceModel extends MSelectionInstanceModel{
+class MSelectionModalInstanceModel extends MSelectionInstanceModel {
 
     public MSelectionModalInstanceModel(IModel instanciaModel) {
         super(instanciaModel);
@@ -248,7 +289,7 @@ class MSelectionModalInstanceModel extends MSelectionInstanceModel{
     @Override
     protected Object getSimpleSelection(MInstancia target) {
         SelectOption v = (SelectOption) super.getSimpleSelection(target);
-        if( v.getValue() == null ){
+        if (v.getValue() == null) {
             return null;
         }
         return v.getValue();

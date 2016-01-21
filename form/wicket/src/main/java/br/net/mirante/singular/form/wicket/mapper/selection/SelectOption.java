@@ -1,60 +1,41 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.model.IModel;
-
-import java.util.Map;
-
-import static org.apache.wicket.util.lang.Generics.newHashMap;
 
 /**
  * This class represents a SelectOption used on DropDowns, Chacklists, Radios and etc.
- *
- * @param <T> Type of value used buy this option
- *
  */
 @SuppressWarnings({"serial", "rawtypes"})
-public class SelectOption<T> implements IModel {
+public class SelectOption implements IModel {
 
-    private T value;
     private String selectLabel;
+    private Object value;
 
-    private Map<String, Object> otherFields = newHashMap();
-
-    public SelectOption(String selectLabel, T value) {
-        this(selectLabel, value, null);
-    }
-
-    public SelectOption(String selectLabel, T value, MInstancia target) {
+    public SelectOption(String selectLabel, Object value) {
         this.selectLabel = selectLabel;
-        this.value = value;
-        if(target instanceof MIComposto){
-            MIComposto item = (MIComposto) target;
-            for(MInstancia i :item.getAllChildren()){
-                otherFields.put(i.getNome(), i.getValor());
-            }
-        }
+        this.value = Val.dehydratate(value);
     }
 
-    public T getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(T value) {
-        this.value = value;
+    public Object getValue(MTipo<?> tipo) {
+        MInstancia instancia = tipo.novaInstancia();
+        Val.hydratate(instancia, value);
+        return instancia;
     }
+
 
     public String getSelectLabel() {
+        if (selectLabel == null) {
+            return String.valueOf(value);
+        }
         return selectLabel;
-    }
-
-    public void setSelectLabel(String selectLabel) {
-        this.selectLabel = selectLabel;
-    }
-
-    public Object getOtherField(String key){
-        return otherFields.get(key);
     }
 
     @Override
@@ -69,34 +50,38 @@ public class SelectOption<T> implements IModel {
     @Override
     @SuppressWarnings("unchecked")
     public void setObject(Object o) {
-        SelectOption<T> s = (SelectOption) o;
-        if(o != null){
-            this.setValue(s.getValue());
-            this.setSelectLabel(s.getSelectLabel());
-            this.otherFields.putAll(s.otherFields);
+        if (o instanceof SelectOption) {
+            this.value = ((SelectOption) o).getValue();
+            this.selectLabel = ((SelectOption) o).getSelectLabel();
+        } else {
+            throw new SingularFormException("Não implementado");
         }
     }
-    
+
     @Override
     public String toString() {
         return String.format("SelectOption('%s','%s')", value, selectLabel);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if(obj == null || ! (obj instanceof SelectOption)) return false;
-        
+        if (obj == null || !(obj instanceof SelectOption)) return false;
+
         boolean eq = true;
         SelectOption op = (SelectOption) obj;
         eq &= value != null && value.equals(op.value);
-        
+
         return eq;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 1;
-        if(value != null) hash += value.hashCode();
+        if (value != null) hash += value.hashCode();
         return hash;
+    }
+
+    public void copyValueToInstance(MInstancia instance) {
+        Val.hydratate(instance, value);
     }
 }

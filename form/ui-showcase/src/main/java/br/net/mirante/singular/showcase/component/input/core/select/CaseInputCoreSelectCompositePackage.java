@@ -16,12 +16,12 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
         MTipoString ingredienteQuimico = tipoMyForm.addCampoString("ingredienteQuimico");
-        ingredienteQuimico.withSelectionOf(
-                ingredienteQuimico.create("h2o", "Água"),
-                ingredienteQuimico.create("h2o2", "Água Oxigenada"),
-                ingredienteQuimico.create("o2", "Gás Oxigênio"),
-                ingredienteQuimico.create("C12H22O11", "Açúcar")
-        );
+        ingredienteQuimico.withSelection()
+                .add("h2o", "Água")
+                .add("h2o2", "Água Oxigenada")
+                .add("o2", "Gás Oxigênio")
+                .add("C12H22O11", "Açúcar");
+
         ingredienteQuimico.as(AtrBasic::new).label("Seleção de Componentes Químicos");
 
         MTipoString ingredienteQuimicoSemChave = tipoMyForm.addCampoString("ingredienteQuimicoSemChave");
@@ -33,7 +33,7 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
         /**
          * Outra forma de se adicionar elementos é através do provedor padrão.
          */
-        MTipoComposto<?> conjuntoNumerico = tipoMyForm.addCampoComposto("numberSet");
+        MTipoString conjuntoNumerico = tipoMyForm.addCampoString("numberSet");
         conjuntoNumerico.withSelection()
                 .add("N", "Naturais")
                 .add("Z", "Inteiros")
@@ -49,13 +49,11 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
          * Neste caso os campos de chave e valor utilizados serão os definidos por
          * "abreviado" e "descricao".
          */
-        MTipoComposto<?> sexo = tipoMyForm.addCampoComposto("sexo");
-        sexo.withSelectValueLabelFields("abreviado", "descricao");
-        sexo.withSelectionOf(
-                sexo.create("N", "Não Informado"),
-                sexo.create("M", "Masculino"),
-                sexo.create("F", "Feminido")
-        );
+        MTipoString sexo = tipoMyForm.addCampoString("sexo");
+        sexo.withSelection()
+                .add("N", "Não Informado")
+                .add("M", "Masculino")
+                .add("F", "Feminido");
         sexo.as(AtrBasic::new).label("Sexo");
     }
 }

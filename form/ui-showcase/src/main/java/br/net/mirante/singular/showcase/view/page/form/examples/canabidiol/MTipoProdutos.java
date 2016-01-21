@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 @MInfoTipo(nome = "MTipoProdutos", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoProdutos extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoProdutos extends MTipoComposto<MIComposto>  {
 
 
     @Override

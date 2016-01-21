@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.options.MSelectionableSimpleType;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
@@ -15,13 +16,14 @@ import br.net.mirante.singular.form.mform.options.MSelectionableType;
 @MInfoTipo(nome = "MTipoSimples", pacote = MPacoteCore.class)
 public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
         extends MTipo<I>
-        implements MSelectionableType<MTipoSimples> {
+        implements MSelectionableSimpleType<MTipoSimples, TIPO_NATIVO> {
 
     private final Class<TIPO_NATIVO> classeTipoNativo;
 
     private transient Converter converter;
 
     protected MOptionsProvider optionsProvider;
+    private String selectLabel;
 
     public MTipoSimples() {
         this.classeTipoNativo = null;
@@ -35,6 +37,18 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
     // SELECTION OF BEGIN
 
     @Override
+    public String getSelectLabel() {
+        return selectLabel;
+    }
+
+    @Override
+    public void setSelectLabel(String selectLabel) {
+        this.selectLabel = selectLabel;
+    }
+
+
+
+    @Override
     public MOptionsProvider getProviderOpcoes() {
         return optionsProvider;
     }
@@ -44,17 +58,6 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
         optionsProvider = p;
     }
 
-    @SuppressWarnings("unchecked")
-    protected MOptionsProvider selectionOf(TIPO_NATIVO... opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return optionsProvider;
-    }
-
-    @SuppressWarnings("unchecked")
-    public MTipoSimples<I, TIPO_NATIVO> withSelectionOf(TIPO_NATIVO... opcoes) {
-        optionsProvider = new MFixedOptionsSimpleProvider(this, opcoes);
-        return this;
-    }
 
     /**
      * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
@@ -86,12 +89,6 @@ public class MTipoSimples<I extends MISimples<TIPO_NATIVO>, TIPO_NATIVO>
             return fromString((String) valor);
         }
         return converterNaoNativoNaoString(valor);
-    }
-
-    public MISimples<TIPO_NATIVO> create(TIPO_NATIVO value, String selectLabel) {
-        MISimples<TIPO_NATIVO> instance = this.novaInstancia();
-        instance.setValueSelectLabel(value, selectLabel);
-        return instance;
     }
 
     protected TIPO_NATIVO converterNaoNativoNaoString(Object valor) {

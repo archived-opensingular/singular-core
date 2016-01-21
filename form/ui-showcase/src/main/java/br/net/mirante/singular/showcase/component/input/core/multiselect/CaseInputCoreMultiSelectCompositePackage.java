@@ -1,6 +1,11 @@
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
 public class CaseInputCoreMultiSelectCompositePackage extends MPacote {
@@ -12,12 +17,15 @@ public class CaseInputCoreMultiSelectCompositePackage extends MPacote {
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        MTipoComposto tipoIngrediente = pb.createTipoComposto("tipoIngrediente");
-        tipoIngrediente.withSelectionOf(
-                tipoIngrediente.create("h2o", "Água"),
-                tipoIngrediente.create("h2o2", "Água Oxigenada"),
-                tipoIngrediente.create("o2", "Gás Oxigênio"),
-                tipoIngrediente.create("C12H22O11", "Açúcar")
+        MTipoComposto<MIComposto> tipoIngrediente = (MTipoComposto<MIComposto>) pb.createTipoComposto("tipoIngrediente");
+        tipoIngrediente.addCampoString("id");
+        tipoIngrediente.addCampoString("label");
+        tipoIngrediente.withSelectionFromProvider("label", (inst, lb) ->
+                        lb
+                                .add().set("id", "h2o").set("label", "Água")
+                                .add().set("id", "h2o2").set("label", "Água Oxigenada")
+                                .add().set("id", "o2").set("label", "Gás Oxigênio")
+                                .add().set("id", "C12H22O11").set("label", "Açúcar")
         );
         MTipoLista<MTipoComposto<MIComposto>, MIComposto> ingredienteQuimico =
                 tipoMyForm.addCampoListaOf("ingredientes", tipoIngrediente);
@@ -27,14 +35,15 @@ public class CaseInputCoreMultiSelectCompositePackage extends MPacote {
          * Neste caso os campos de chave e valor utilizados serão os definidos por
          * "sku" e "nome".
          */
-        MTipoComposto productType =  pb.createTipoComposto("product");
-        productType.withSelectValueLabelFields("sku", "nome");
-        productType.withSelectionOf(
-                productType.create("SKU123456", "Bola"),
-                productType.create("SKU654321", "Cubo"),
-                productType.create("SKU987654", "Cilindro"),
-                productType.create("SKU456789", "Pirâmide")
-                );
+        MTipoComposto<MIComposto> productType = (MTipoComposto<MIComposto>) pb.createTipoComposto("product");
+        productType.addCampoString("sku");
+        productType.addCampoString("nome");
+        productType.withSelectionFromProvider("nome", (inst, lb) ->
+                lb
+                        .add().set("sku", "SKU123456").set("nome", "Bola")
+                        .add().set("sku", "SKU654321").set("nome", "Cubo")
+                        .add().set("sku", "SKU987654").set("nome", "Cilindro")
+                        .add().set("sku", "SKU456789").set("nome", "Pirâmide"));
         MTipoLista<MTipoComposto<MIComposto>, MIComposto> produtos =
                 tipoMyForm.addCampoListaOf("products", productType);
         produtos.as(AtrBasic::new).label("Produtos");

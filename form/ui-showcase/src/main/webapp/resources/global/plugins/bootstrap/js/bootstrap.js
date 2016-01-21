@@ -1621,6 +1621,7 @@ if (typeof jQuery === 'undefined') {
     return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2 } :
            placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2 } :
            placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
+           placement == 'bottom-right'   ? { top: pos.top + pos.height, left: pos.left + pos.width } :
         /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width }
 
   }
@@ -1827,7 +1828,7 @@ if (typeof jQuery === 'undefined') {
   Popover.prototype.getContent = function () {
     var $e = this.$element
     var o  = this.options
-
+    this.contentParent = o.content().parent();
     return $e.attr('data-content')
       || (typeof o.content == 'function' ?
             o.content.call($e[0]) :
@@ -1838,6 +1839,92 @@ if (typeof jQuery === 'undefined') {
     return (this.$arrow = this.$arrow || this.tip().find('.arrow'))
   }
 
+  Popover.prototype.hide = function (callback) {
+    var that = this
+    var $tip = $(this.$tip)
+    var e    = $.Event('hide.bs.' + this.type)
+
+    function complete() {
+      //if (that.hoverState != 'in') $tip.detach()
+      that.contentParent.append(that.options.content());
+      that.$element
+          .removeAttr('aria-describedby')
+          .trigger('hidden.bs.' + that.type)
+      callback && callback()
+    }
+
+    this.$element.trigger(e)
+
+    if (e.isDefaultPrevented()) return
+
+    $tip.removeClass('in')
+
+    $.support.transition && $tip.hasClass('fade') ?
+        $tip
+            .one('bsTransitionEnd', complete)
+            .emulateTransitionEnd(Popover.TRANSITION_DURATION) :
+        complete()
+
+    this.hoverState = null
+
+    return this
+  }
+
+  //Popover.prototype.show = function () {
+  //  var e = $.Event('show.bs.' + this.type)
+  //
+  //  if (this.hasContent() && this.enabled) {
+  //    this.$element.trigger(e)
+  //
+  //    var inDom = $.contains(this.$element[0].ownerDocument.documentElement, this.$element[0])
+  //    if (e.isDefaultPrevented() || !inDom) return
+  //    var that = this
+  //
+  //    var $tip = this.tip()
+  //
+  //    var tipId = this.getUID(this.type)
+  //
+  //    this.setContent()
+  //    $tip.attr('id', tipId)
+  //    this.$element.attr('aria-describedby', tipId)
+  //
+  //    if (this.options.animation) $tip.addClass('fade')
+  //
+  //    var placement = typeof this.options.placement == 'function' ?
+  //        this.options.placement.call(this, $tip[0], this.$element[0]) :
+  //        this.options.placement
+  //
+  //    var autoToken = /\s?auto?\s?/i
+  //    var autoPlace = autoToken.test(placement)
+  //    if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
+  //
+  //    $tip
+  //        .detach()
+  //        .css({ top: 0, left: 0, display: 'block' })
+  //        .addClass(placement)
+  //        .data('bs.' + this.type, this)
+  //
+  //    this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
+  //    this.$element.trigger('inserted.bs.' + this.type)
+  //
+  //    var pos          = this.getPosition()
+  //    var actualWidth  = $tip[0].offsetWidth
+  //    var actualHeight = $tip[0].offsetHeight
+  //
+  //    if (autoPlace) {
+  //      var orgPlacement = placement
+  //      var viewportDim = this.getPosition(this.$viewport)
+  //
+  //      placement = placement == 'bottom' && pos.bottom + actualHeight > viewportDim.bottom ? 'top'    :
+  //          placement == 'top'    && pos.top    - actualHeight < viewportDim.top    ? 'bottom' :
+  //              placement == 'right'  && pos.right  + actualWidth  > viewportDim.width  ? 'left'   :
+  //                  placement == 'left'   && pos.left   - actualWidth  < viewportDim.left   ? 'right'  :
+  //                      placement
+  //
+  //      $tip
+  //          .removeClass(orgPlacement)
+  //          .addClass(placement)
+  //    }
 
   // POPOVER PLUGIN DEFINITION
   // =========================

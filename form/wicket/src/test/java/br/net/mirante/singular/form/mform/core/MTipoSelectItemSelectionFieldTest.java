@@ -7,6 +7,11 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
@@ -17,27 +22,48 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
 
     MTipoComposto selectType;
-    
+    MTipoSimples nomeUF;
+    private MTipoString idUF;
+
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     MTipo createSelectionType(MTipoComposto group) {
         selectType = (MTipoComposto) group.addCampoComposto("originUF");
-        selectType.withSelectValueLabelFields("chave", "valor");
+        idUF = selectType.addCampoString("id");
+        nomeUF = selectType.addCampoString("nome");
         return selectType;
     }
 
 
-    private MIComposto newSelectItem(String id, String value) {
-        return selectType.create(id, value);
+    private MIComposto newSelectItem(String id, String descricao) {
+         MIComposto instancia = (MIComposto) selectType.novaInstancia();
+        instancia.setValor("id", id);
+        instancia.setValor("nome", descricao);
+        return instancia;
     }
 
-    
+    private MOptionsProvider newProviderFrom(MIComposto ...compostos){
+        return new MOptionsProvider() {
+            @Override
+            public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
+                MILista lista = selectType.novaLista();
+                for (MIComposto composto : compostos){
+                    MInstancia instancia = lista.addNovo();
+                    Object value = Val.dehydratate(composto);
+                    Val.hydratate(instancia, value);
+                }
+                return lista;
+            }
+        };
+    }
+
+
+
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithSpecifiedOptionsByName() {
         setupPage();
-        
-        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
-            newSelectItem("SP", "São Paulo"));
+
+        selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         driver.assertEnabled(formField(form, "originUF"));
         form.submit("save-btn");
@@ -45,7 +71,9 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly("DF","SP");
+            .containsExactly(
+                    Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
+                    Val.dehydratate(newSelectItem("SP", "São Paulo")));
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Distrito Federal","São Paulo");
     }
@@ -53,8 +81,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void hasADefaultProvider() {
         setupPage();
-
-        selectType.withSelection().add("DF", "Distrito Federal").add("SP", "São Paulo");
+        selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         driver.assertEnabled(formField(form, "originUF"));
         form.submit("save-btn");
@@ -62,18 +89,21 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-                .containsExactly("DF","SP");
+                .containsExactly(
+                        Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
+                        Val.dehydratate(newSelectItem("SP", "São Paulo"))
+                );
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
                 .containsExactly("Distrito Federal","São Paulo");
     }
-    
+
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithDanglingOptions() {
         setupPage();
         MIComposto value = currentSelectionInstance();
-        value.setValueSelectLabel("GO", "Goias");
-        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
-            newSelectItem("SP", "São Paulo"));
+        value.setValor("id","GO");
+        value.setValor("nome", "Goias");
+        selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         driver.assertEnabled(formField(form, "originUF"));
         form.submit("save-btn");
@@ -81,32 +111,33 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly("GO","DF","SP");
+            .containsExactly(
+                    Val.dehydratate(newSelectItem("GO", "Goias")),
+                    Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
+                    Val.dehydratate(newSelectItem("SP", "São Paulo")));
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Goias","Distrito Federal","São Paulo");
     }
-    
+
     @Test public void submitsSelectedValue(){
         setupPage();
-        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
-            newSelectItem("SP", "São Paulo"));
+        selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         MIComposto value = currentSelectionInstance();
-        assertThat(value.getSelectValue()).isEqualTo("DF");
+        assertThat(value.getValor(idUF)).isEqualTo("DF");
     }
-    
+
     @Test public void alsoWorksWhenFieldIsMandatory(){
         setupPage();
-        selectType.withSelectionOf(newSelectItem("DF", "Distrito Federal"),
-            newSelectItem("SP", "São Paulo"));
+        selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         selectType.withObrigatorio(true);
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         MIComposto value = currentSelectionInstance();
-        assertThat(value.getSelectValue()).isEqualTo("DF");
+        assertThat(value.getValor(idUF)).isEqualTo("DF");
     }
 
 

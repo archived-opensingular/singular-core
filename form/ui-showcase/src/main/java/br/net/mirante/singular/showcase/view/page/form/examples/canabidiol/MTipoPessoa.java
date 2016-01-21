@@ -5,10 +5,11 @@ import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 @MInfoTipo(nome = "MTipoPaciente", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoPessoa extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoPessoa extends MTipoComposto<MIComposto>  {
 
     public static final String LABEL_TIPO_DOCUMENTO = "Documento de Identificação Oficial";
     private MTipoDocumentoSelect tipoDocumento;
@@ -43,7 +44,7 @@ public class MTipoPessoa extends MTipoComposto<MIComposto> implements Canabidiol
                 .addCampoString("nomeNoDocumento")
                 .as(AtrBasic::new)
                 .label("Nome")
-                .visivel(ins -> "55358729".equals(getValue(ins, tipoDocumento)))
+                .visivel(ins -> "55358729".equals(Val.of(ins, tipoDocumento)))
                 .dependsOn(tipoDocumento)
                 .as(AtrBootstrap::new)
                 .colPreference(3);

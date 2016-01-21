@@ -18,7 +18,7 @@ public class MTipoFormula extends MTipoComposto<MIFormula> {
     protected void onCargaTipo(TipoBuilder tb) {
         addCampoString(CAMPO_SCRIPT);
         MTipoString tipo = addCampoString(CAMPO_TIPO_SCRIPT);
-        tipo.selectionOf(TipoScript.class);
+        tipo.withSelectionOf(TipoScript.class);
     }
 
     public static enum TipoScript {

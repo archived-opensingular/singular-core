@@ -8,10 +8,11 @@ import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.commons.lang3.BooleanUtils;
 
 @MInfoTipo(nome = "MTipoPrescricao", pacote = MPacotePeticaoCanabidiol.class)
-public class MTipoPrescricao extends MTipoComposto<MIComposto> implements CanabidiolUtil {
+public class MTipoPrescricao extends MTipoComposto<MIComposto>  {
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
@@ -38,7 +39,7 @@ public class MTipoPrescricao extends MTipoComposto<MIComposto> implements Canabi
                 .label("Outros CIDs")
                 .dependsOn(outrosCids)
                 .visivel(false)
-                .visivel(inst -> BooleanUtils.isTrue(getValue(inst, outrosCids)));
+                .visivel(inst -> BooleanUtils.isTrue(Val.of(inst, outrosCids)));
 
         MTipoAttachment receitaMedica = this
                 .addCampo("receitaMedica", MTipoAttachment.class);

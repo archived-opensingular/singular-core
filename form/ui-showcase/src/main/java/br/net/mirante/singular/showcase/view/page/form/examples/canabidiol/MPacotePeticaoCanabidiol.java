@@ -7,9 +7,10 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.commons.lang3.BooleanUtils;
 
-public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil {
+public class MPacotePeticaoCanabidiol extends MPacote {
 
     public static final String PACOTE = "mform.peticao.canabidiol";
     public static final String TIPO = "PeticionamentoCanabidiol";
@@ -49,7 +50,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
             responsavelLegal
                     .as(AtrBasic::new)
                     .label("Responsável Legal")
-                    .visivel(instancia -> BooleanUtils.isTrue(getValue(instancia, possuiResponsavelLegal)))
+                    .visivel(instancia -> BooleanUtils.isTrue(Val.of(instancia, possuiResponsavelLegal)))
                     .dependsOn(possuiResponsavelLegal);
 
             final MTipoComposto<?> anexos = canabis
@@ -58,7 +59,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .as(AtrBasic::new)
                     .label("Anexos")
                     .dependsOn(paciente.getTipoDocumento(), responsavelLegal.getTipoDocumento())
-                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()) || hasValue(instancia, paciente.getTipoDocumento()));
+                    .visivel(instancia -> Val.notNull(instancia, responsavelLegal.getTipoDocumento()) || Val.notNull(instancia, paciente.getTipoDocumento()));
 
             MTipoAttachment anexoPaciente = anexos
                     .addCampo("documentoPaciente", MTipoAttachment.class);
@@ -67,7 +68,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .label("Documento do Paciente")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do paciente", MTipoPessoa.LABEL_TIPO_DOCUMENTO))
                     .dependsOn(anexos, paciente.getTipoDocumento())
-                    .visivel(instancia -> hasValue(instancia, paciente.getTipoDocumento()));
+                    .visivel(instancia -> Val.notNull(instancia, paciente.getTipoDocumento()));
 
             MTipoAttachment anexoResponsavelLegal = anexos
                     .addCampo("documentoResponsavel", MTipoAttachment.class);
@@ -76,7 +77,7 @@ public class MPacotePeticaoCanabidiol extends MPacote implements CanabidiolUtil 
                     .label("Documento do Responsável Legal")
                     .subtitle(String.format("Conforme documento informado no campo \"%s\" do responsável legal", MTipoPessoa.LABEL_TIPO_DOCUMENTO))
                     .dependsOn(anexos, responsavelLegal.getTipoDocumento())
-                    .visivel(instancia -> hasValue(instancia, responsavelLegal.getTipoDocumento()));
+                    .visivel(instancia -> Val.notNull(instancia, responsavelLegal.getTipoDocumento()));
 
             MTipoImportacao modalidadeImportacao = canabis
                     .addCampo("importacao", MTipoImportacao.class);

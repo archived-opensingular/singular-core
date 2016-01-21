@@ -26,18 +26,17 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
         /*
             Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
          */
-        MTipoComposto<?> degreeType = tipoMyForm.addCampoComposto("degree");
+        MTipoString degreeType = tipoMyForm.addCampoString("degree");
         degreeType.as(AtrBasic::new).label("Escolaridade");
-        degreeType.withSelectionOf(
-            degreeType.create("Alfabetizado","Alfabetização"),
-            degreeType.create("1º Grau","Ensino Fundamental"),
-            degreeType.create("2º Grau","Ensino Médio"),
-            degreeType.create("Técnico","Escola Técnica"),
-            degreeType.create("Graduado","Superior"),
-            degreeType.create("Pós","Pós Graduação"),
-            degreeType.create("MsC","Mestrado"),
-            degreeType.create("PhD","Doutorado")
-            );
+        degreeType.withSelection()
+            .add("Alfabetizado","Alfabetização")
+            .add("1º Grau","Ensino Fundamental")
+            .add("2º Grau","Ensino Médio")
+            .add("Técnico","Escola Técnica")
+            .add("Graduado","Superior")
+            .add("Pós","Pós Graduação")
+            .add("MsC","Mestrado")
+            .add("PhD","Doutorado");
         degreeType.withView(MSelecaoPorModalBuscaView::new);
 
         /*
@@ -46,23 +45,20 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
          */
         MTipoComposto<?> planetType = tipoMyForm.addCampoComposto("planet");
         planetType.as(AtrBasic::new).label("Planeta Favorito");
+        MTipoString id = planetType.addCampoString("id");
+        MTipoString nome = planetType.addCampoString("nome");
         planetType.addCampoDecimal("radius").as(AtrBasic::new).label("Raio");;
         planetType.addCampoString("atmosphericComposition").as(AtrBasic::new).label("Composição Atmosférica");;
-        planetType.withSelectionOf(
-                createPlanet(planetType, "1", "Mercury", 2439.64, "He, Na+, P+"),
-                createPlanet(planetType, "2", "Venus", 6051.59, "CO2, N2"),
-                createPlanet(planetType, "3", "Earth", 6378.1, "N2, O2, Ar"),
-                createPlanet(planetType, "4", "Mars", 3397.00, "CO2, N2, Ar")
+        planetType.withSelectionFromProvider("nome", (inst, lb) ->{
+                    lb
+                            .add().set(id, "1").set(nome, "Mercury").set("radius", 2439.64).set("atmosphericComposition", "He, Na+, P+")
+                            .add().set(id, "2").set(nome, "Venus").set("radius", 6051.59).set("atmosphericComposition", "CO2, N2")
+                            .add().set(id, "3").set(nome, "Earth").set("radius", 6378.1).set("atmosphericComposition", "N2, O2, Ar")
+                            .add().set(id, "4").set(nome, "Mars").set("radius", 3397.00).set("atmosphericComposition", "CO2, N2, Ar");
+                }
         );
         planetType.setView(MSelecaoPorModalBuscaView::new)
                 .setAdditionalFields("radius","atmosphericComposition");
     }
 
-    private MIComposto createPlanet(MTipoComposto<?> planetType, String position, String name,
-                                      double radius, String composition) {
-        MIComposto item = planetType.create(position, name);
-        item.setValor("radius", radius);
-        item.setValor("atmosphericComposition", composition);
-        return item;
-    }
 }
