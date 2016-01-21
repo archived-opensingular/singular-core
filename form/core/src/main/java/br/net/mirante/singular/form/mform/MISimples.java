@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-
 import java.util.Objects;
 
 public class MISimples<TIPO_NATIVO> extends MInstancia  {
@@ -13,6 +11,11 @@ public class MISimples<TIPO_NATIVO> extends MInstancia  {
     @Override
     public TIPO_NATIVO getValor() {
         return valor;
+    }
+
+    @Override
+    public void clearInstance() {
+        setValor(null);
     }
 
     @Override

@@ -156,6 +156,8 @@ public abstract class MInstancia implements MAtributoEnabled, MSelectionableInst
 
     public abstract Object getValor();
 
+    public abstract void clearInstance();
+
     /**
      * <p>
      * Retorna true se a instancia não conter nenhuma informação diferente de

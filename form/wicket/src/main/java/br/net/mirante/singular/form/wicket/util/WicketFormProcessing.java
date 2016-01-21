@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.wicket.util;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,12 +24,14 @@ import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.MInstanceEvent;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.feedback.BFeedbackMessage;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
+import static java.util.stream.Collectors.toSet;
 
 /*
  * TODO: depois, acho que esta classe tem que deixar de ter métodos estáticos, e se tornar algo plugável e estendível,
@@ -93,8 +93,8 @@ public class WicketFormProcessing {
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                .map(it -> it.getSource())
-                .map(it -> it.getId())
+                .map(MInstanceEvent::getSource)
+                .map(MInstancia::getId)
                 .collect(toSet());
 
             final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
@@ -102,17 +102,16 @@ public class WicketFormProcessing {
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
                 boolean dependsOnField = fieldInstance.getObject().getMTipo().getDependentTypes().contains(insTipo);
-                boolean result = wasUpdated || (hasOptions && dependsOnField);
-                return result;
+                return wasUpdated || (hasOptions && dependsOnField);
             };
 
             // re-renderizar componentes
             WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-                .map(c -> WicketFormUtils.findCellContainer(c))
-                .filter(c -> c.isPresent())
-                .map(c -> c.get())
+                .map(WicketFormUtils::findCellContainer)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .filter(c -> c != null)
-                .forEach(c -> t.add(c));
+                .forEach(t::add);
         });
     }
 
@@ -145,15 +144,11 @@ public class WicketFormProcessing {
             }
             Integer instanceId = error.getInstance().getId();
 
-            final IModel<? extends MInstancia> instanceModel = new IReadOnlyModel<MInstancia>() {
-                @Override
-                public MInstancia getObject() {
-                    return MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                        .filter(it -> Objects.equals(it.getId(), instanceId))
-                        .findFirst()
-                        .orElse(null);
-                }
-            };
+            final IModel<? extends MInstancia> instanceModel = (IReadOnlyModel<MInstancia>) () ->
+                    MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
+                    .filter(it -> Objects.equals(it.getId(), instanceId))
+                    .findFirst()
+                    .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 

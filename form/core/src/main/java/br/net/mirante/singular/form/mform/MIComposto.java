@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
 
 public class MIComposto extends MInstancia implements ICompositeInstance {
 
@@ -23,6 +22,11 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
     @Override
     public Object getValor() {
         return getCampos();
+    }
+
+    @Override
+    public void clearInstance() {
+        getCampos().clear();
     }
 
     @Override
