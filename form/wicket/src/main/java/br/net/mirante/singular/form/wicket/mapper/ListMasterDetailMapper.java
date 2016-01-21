@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -47,6 +44,9 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
@@ -346,6 +346,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance), viewModeModal);
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
+
             this.show(target);
         }
 

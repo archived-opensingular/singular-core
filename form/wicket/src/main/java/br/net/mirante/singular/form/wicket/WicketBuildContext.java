@@ -14,6 +14,8 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -31,27 +33,27 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
-@SuppressWarnings({ "serial", "rawtypes" })
+@SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
 
-    private final WicketBuildContext                parent;
-    private final BSContainer<?>                    container;
+    private final WicketBuildContext parent;
+    private final BSContainer<?> container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean                           hintsInherited;
-    private final BSContainer                       externalContainer;
-    private final BSContainer                       rootContainer;
+    private final boolean hintsInherited;
+    private final BSContainer externalContainer;
+    private final BSContainer rootContainer;
 
     private IModel<? extends MInstancia> model;
-    private UIBuilderWicket              uiBuilderWicket;
-    private ViewMode                     viewMode;
-    private MView                        view;
+    private UIBuilderWicket uiBuilderWicket;
+    private ViewMode viewMode;
+    private MView view;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends MInstancia> model) {
         this(null, container, bodyContainer, false, model);
     }
 
     public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-        boolean hintsInherited, IModel<? extends MInstancia> model) {
+                              boolean hintsInherited, IModel<? extends MInstancia> model) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
@@ -63,7 +65,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket,
-        ViewMode viewMode) {
+                                   ViewMode viewMode) {
 
         final MInstancia instance = getCurrenttInstance();
 
@@ -85,28 +87,33 @@ public class WicketBuildContext implements Serializable {
         return this;
     }
 
-    public <T, FC extends FormComponent<T>> FC configure(IWicketComponentMapper mapper, FC formComponent) {
-        WicketFormUtils.setCellContainer(formComponent, getContainer());
+    public void configure(IWicketComponentMapper mapper) {
+        container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
+            @Override
+            public void component(FormComponent formComponent, IVisit<Object> visit) {
 
-        formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+                WicketFormUtils.setCellContainer(formComponent, getContainer());
 
-        if (formComponent.getLabel() == null) {
-            // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
-            formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
-        }
+                formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
 
-        if(IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
-            IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-            MTipo<?> tipo = model.getMInstancia().getMTipo();
-            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                mapper.addAjaxUpdate(
-                        formComponent,
-                        IMInstanciaAwareModel.getInstanceModel(model),
-                        new OnFieldUpdatedListener());
+                if (formComponent.getLabel() == null) {
+                    // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+                    formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
+                }
+
+                if (IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
+                    IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
+                    MTipo<?> tipo = model.getMInstancia().getMTipo();
+                    if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
+                        mapper.addAjaxUpdate(
+                                formComponent,
+                                IMInstanciaAwareModel.getInstanceModel(model),
+                                new OnFieldUpdatedListener());
+                    }
+                }
+
             }
-        }
-
-        return formComponent;
+        });
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends MInstancia> model) {
@@ -150,9 +157,11 @@ public class WicketBuildContext implements Serializable {
             ctx = ctx.getParent();
         return ctx;
     }
+
     public boolean isRootContext() {
         return (this.getParent() == null);
     }
+
     public BSContainer getRootContainer() {
         return rootContainer;
     }
@@ -173,6 +182,7 @@ public class WicketBuildContext implements Serializable {
         hints.put(key, value);
         return this;
     }
+
     @SuppressWarnings("unchecked")
     public <T> T getHint(HintKey<T> key) {
         if (hints.containsKey(key)) {
@@ -198,9 +208,11 @@ public class WicketBuildContext implements Serializable {
 
     private static final class InitRootContainerBehavior extends Behavior {
         private final IModel<? extends MInstancia> instanceModel;
+
         public InitRootContainerBehavior(IModel<? extends MInstancia> instanceModel) {
             this.instanceModel = instanceModel;
         }
+
         @Override
         public void onConfigure(Component component) {
             instanceModel.getObject().getDocument().updateAttributes(null);
@@ -212,6 +224,7 @@ public class WicketBuildContext implements Serializable {
         public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
             WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
         }
+
         @Override
         public void onError(Component source, AjaxRequestTarget target, IModel<? extends MInstancia> instanceModel) {
             WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
