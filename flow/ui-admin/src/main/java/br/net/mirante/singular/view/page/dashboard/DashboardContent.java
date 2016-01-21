@@ -3,6 +3,7 @@ package br.net.mirante.singular.view.page.dashboard;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -38,7 +39,6 @@ import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import br.net.mirante.singular.view.component.PortletPanel;
@@ -302,7 +302,8 @@ public class DashboardContent extends Content {
         final String fullUrl = getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl());
         final String currentPath = getRequest().getUrl().toString();
         final int beginPath = fullUrl.lastIndexOf(currentPath);
-        return fullUrl.substring(0, beginPath - 1) + path;
+        final Optional<String> contextPath = Optional.ofNullable(getRequestCycle().getRequest().getContextPath());
+        return fullUrl.substring(0, beginPath - 1) + contextPath.orElse("") + path;
     }
     public List<PortletConfig<?>> getAvailableDashboards(String processAbbreviation) {
         GroupDTO groupDTO = flowMetadataFacade.retrieveGroupByProcess(processAbbreviation);

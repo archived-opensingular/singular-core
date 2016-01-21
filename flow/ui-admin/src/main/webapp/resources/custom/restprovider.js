@@ -6,7 +6,7 @@ restprovider = (function ($) {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                url: "/rest/delegate",
+                url: "rest/delegate",
                 data: JSON.stringify(portletContext),
                 type: "POST",
                 success: function (data) {
