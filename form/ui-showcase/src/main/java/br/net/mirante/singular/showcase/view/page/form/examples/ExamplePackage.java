@@ -80,9 +80,6 @@ public class ExamplePackage extends MPacote {
         this.buyerCpf
             .as(MPacoteBasic.aspect())
             .dependsOn(this.buyerNome)
-        //TODO: Fabs : I'm commenting since this is causing some compilation errros, and I must revisit later.
-//            .visivel(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 3)
-//            .enabled(i -> defaultString(i.findAncestor(buyer).get().findDescendant(buyerNome).get().getValor()).length() > 5)
         ;
     }
 

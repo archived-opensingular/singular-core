@@ -40,39 +40,6 @@ public class AnnotationComponent extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        /*
-        This is here whilst we decide how the annotation will be created.
-
-        final String popoverId = "_popover_id_" + getId();
-        WebMarkupContainer popover_modal = new WebMarkupContainer("popover_modal") {
-            @Override
-            protected void onInitialize() {
-                super.onInitialize();
-                this.queue(new Label("target_label",$m.ofValue(labelOf(referenced))));
-                this.queue(new TextArea<>("comment_field",target));
-            }
-
-        };
-        this.queue(popover_modal);
-        Link popover_link = new Link("comment_link") {
-            public void onClick() {
-            }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                super.onComponentTag(tag);
-                tag.put("data-popover-content", "#" + popover_modal.getMarkupId());
-            }
-
-            @Override
-            protected CharSequence getURL() {
-                return "#";
-            }
-        };
-        this.queue(popover_link);
-        this.add(new Label("_popover_id",$m.ofValue(popover_link.getMarkupId())));
-        */
-        //TODO: Fabs: Label must be configurable
         this.queue(new Label("target_label",$m.ofValue(title())));
         this.queue(new TextArea<>("comment_field", new PropertyModel(target, "text")));
         this.queue(new CheckBox("approval_field", new PropertyModel<Boolean>(target, "approved")));

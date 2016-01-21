@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.model.IModel;
 
 /**
- * This class represents a SelectOption used on DropDowns, Chacklists, Radios and etc.
+ * This class represents a SelectOption used on DropDowns, Checklists, Radios and etc.
  */
 @SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption implements IModel {

@@ -159,6 +159,9 @@ public class WicketBuildContext implements Serializable {
         return ctx;
     }
 
+    /**
+     * @return true if this is the root of a Context tree.
+     */
     public boolean isRootContext() {
         return (this.getParent() == null);
     }
@@ -256,4 +259,5 @@ public class WicketBuildContext implements Serializable {
     public <T extends MInstancia> T getCurrenttInstance() {
         return (T) getModel().getObject();
     }
+
 }
