@@ -91,19 +91,16 @@ public class WicketBuildContext implements Serializable {
         container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
             @Override
             public void component(FormComponent formComponent, IVisit<Object> visit) {
-
-                WicketFormUtils.setCellContainer(formComponent, getContainer());
-
-                formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-
-                if (formComponent.getLabel() == null) {
-                    // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
-                    formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
-                }
-
                 if (IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
-                    IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-                    MTipo<?> tipo = model.getMInstancia().getMTipo();
+
+                    WicketFormUtils.setCellContainer(formComponent, getContainer());
+                    formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+                    if (formComponent.getLabel() == null) {
+                        // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+                        formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
+                    }
+                    final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
+                    final MTipo<?> tipo = model.getMInstancia().getMTipo();
                     if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
                         mapper.addAjaxUpdate(
                                 formComponent,
