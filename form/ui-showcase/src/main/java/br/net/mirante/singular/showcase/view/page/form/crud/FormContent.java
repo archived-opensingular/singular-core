@@ -124,7 +124,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                         MInstancia instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
 
                         final String annotations = currentModel.getAnnnotations();
-                        if(StringUtils.isNotBlank(annotations)){
+                        if (StringUtils.isNotBlank(annotations)) {
                             MElement xmlAnnotations = MParser.parse(annotations);
                             MTipoAnnotationList tipoAnnotation = tipo.getDicionario().getTipo(MTipoAnnotationList.class);
 
@@ -176,7 +176,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                if(xml != null) {
+                if (xml != null) {
                     currentModel.setXml(xml.toStringExato());
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
@@ -192,7 +192,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private void addAnnotationsToModel(MInstancia instancia) {
         AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
         List<MIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
-        if(!allAnnotations.isEmpty()){
+        if (!allAnnotations.isEmpty()) {
             Optional<String> annXml = annotationsToXml(instancia, annotatedInstance, allAnnotations);
             currentModel.setAnnotations(annXml.orElse(""));
         }
@@ -200,7 +200,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     private Optional<String> annotationsToXml(MInstancia instancia, AtrAnnotation annotatedInstance, List<MIAnnotation> allAnnotations) {
         MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
-        for(MIAnnotation a: allAnnotations){
+        for (MIAnnotation a : allAnnotations) {
             pLista.addElement(a);
         }
         return MformPersistenciaXML.toStringXML(
@@ -212,12 +212,12 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected void save() {
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                if(rootXml != null) {
+                if (rootXml != null) {
                     currentModel.setXml(rootXml.toStringExato());
                 } else {
                     currentModel.setXml(StringUtils.EMPTY);
                 }
-				addAnnotationsToModel(getCurrentInstance().getObject());
+                addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -285,14 +285,14 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private boolean isAnnotated(MTipo<?> mTipo) {
-        if(mTipo.getView() instanceof MAnnotationView){
+        if (mTipo.getView() instanceof MAnnotationView) {
             return true;
         }
-        if(mTipo instanceof MTipoComposto){
+        if (mTipo instanceof MTipoComposto) {
             MTipoComposto composto = (MTipoComposto) mTipo;
             Collection<MTipo> fields = composto.getFields();
-            for(MTipo child: fields){
-                if(isAnnotated(child)){
+            for (MTipo child : fields) {
+                if (isAnnotated(child)) {
                     return true;
                 }
             }
