@@ -91,7 +91,9 @@ public class WicketBuildContext implements Serializable {
         container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
             @Override
             public void component(FormComponent formComponent, IVisit<Object> visit) {
-                if (IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
+                final IModel defaultModel = formComponent.getDefaultModel();
+
+                if (defaultModel  != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
 
                     WicketFormUtils.setCellContainer(formComponent, getContainer());
                     formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
@@ -99,13 +101,12 @@ public class WicketBuildContext implements Serializable {
                         // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
                         formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
                     }
-                    final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
+                    final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
                     final MTipo<?> tipo = model.getMInstancia().getMTipo();
                     if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                        mapper.addAjaxUpdate(
-                                formComponent,
-                                IMInstanciaAwareModel.getInstanceModel(model),
-                                new OnFieldUpdatedListener());
+                        mapper.addAjaxUpdate(formComponent,
+                                             IMInstanciaAwareModel.getInstanceModel(model),
+                                             new OnFieldUpdatedListener());
                     }
                 }
 
