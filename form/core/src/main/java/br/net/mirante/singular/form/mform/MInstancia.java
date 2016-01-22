@@ -9,6 +9,7 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
+import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -27,12 +28,26 @@ public abstract class MInstancia implements MAtributoEnabled, MSelectionableInst
 
     private Integer id;
 
+    /**
+     * Configurador de opções da instancia
+     * para o provider de opções do tipo
+     */
+    private MOptionsConfig optionsConfig;
+
     /** Mapa de bits de flags. Veja {@link FlagsInstancia} */
     private int flags;
 
     @Override
     public MTipo<?> getMTipo() {
         return mTipo;
+    }
+
+    @Override
+    public MOptionsConfig getOptionsConfig() {
+        if (optionsConfig == null){
+            optionsConfig = new MOptionsConfig(this);
+        }
+        return optionsConfig;
     }
 
     public SDocument getDocument() {

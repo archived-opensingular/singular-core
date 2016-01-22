@@ -9,6 +9,7 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -33,7 +34,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.Response;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -158,7 +158,9 @@ public class SelectInputModalContainer extends BSContainer {
                 MTipoComposto selectType = (MTipoComposto) model.getObject().getMTipo();
                 MTipo<?> fieldType = selectType.getCampo(field);
                 SelectOption select = (SelectOption) m;
-                return Val.of((MInstancia) select.getValue(selectType), (MTipoSimples) fieldType);
+                MOptionsConfig provider = model.getObject().getOptionsConfig();
+                MInstancia instance = provider.getValueFromKey(String.valueOf(select.getValue()));
+                return Val.of(instance, (MTipoSimples) fieldType);
             });
         }
     }
@@ -243,29 +245,31 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
-        MIComposto composto = (MIComposto) s.getValue(model.getObject().getMTipo());
+        MOptionsConfig miProvider = model.getObject().getOptionsConfig();
+        MIComposto composto = (MIComposto) miProvider.getValueFromKey(String.valueOf(s.getValue()));
         for (String field : view.searchFields()) {
             Object value = Val.of((MISimples<?>) composto.getCampo(field));
             String nValue = String.valueOf(value).toLowerCase();
-            if(nValue.contains(termo)) return true;
+            if (nValue.contains(termo)) return true;
         }
         return false;
     }
 
-}
 
-class MSelectionModalInstanceModel extends MSelectionInstanceModel {
+    static class MSelectionModalInstanceModel extends MSelectionInstanceModel {
 
-    public MSelectionModalInstanceModel(IModel instanciaModel) {
-        super(instanciaModel);
-    }
-
-    @Override
-    protected Object getSimpleSelection(MInstancia target) {
-        SelectOption v = (SelectOption) super.getSimpleSelection(target);
-        if (v.getValue() == null) {
-            return null;
+        public MSelectionModalInstanceModel(IModel instanciaModel) {
+            super(instanciaModel);
         }
-        return v.getValue();
+
+        @Override
+        protected Object getSimpleSelection(MInstancia target, MOptionsConfig provider) {
+            SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
+            if (v.getValue() == null) {
+                return null;
+            }
+            return v.getValue();
+        }
     }
+
 }

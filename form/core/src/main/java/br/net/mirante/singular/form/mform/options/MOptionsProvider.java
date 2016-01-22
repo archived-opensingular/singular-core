@@ -29,9 +29,9 @@ public interface MOptionsProvider extends Serializable {
      * @param selectedValueInstance : Current isntance used to select the options.
      * @return list of options from the expected {@link MInstancia} type.
      */
-    default public MILista<? extends MInstancia> listAvailableOptions(MInstancia selectedValueInstance) {
-        MILista<? extends MInstancia> defaultOptions = listOptions(selectedValueInstance);
-        checkForDanglingValues(selectedValueInstance, defaultOptions);
+    default public MILista<? extends MInstancia> listAvailableOptions(MSelectionableInstance selectedValueInstance) {
+        MILista<? extends MInstancia> defaultOptions = listOptions((MInstancia) selectedValueInstance);
+        checkForDanglingValues((MInstancia) selectedValueInstance, defaultOptions);
         return defaultOptions;
     }
 

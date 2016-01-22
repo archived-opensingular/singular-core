@@ -88,7 +88,14 @@ public class Val {
         return null;
     }
 
-    public static void hydratate(MInstancia instancia, Object value) {
+    /**
+     * Configura os valores contidos em value
+     * na MInstancia passara como parametro recursivamente.
+     * Usualmente value é o retorno do metodo dehydrate.
+     * @param instancia
+     * @param value
+     */
+    public static void hydrate(MInstancia instancia, Object value) {
         if (instancia instanceof MIComposto) {
             fromMap((Map<String, Object>) value, (MIComposto) instancia);
         } else if (instancia instanceof MISimples) {
@@ -96,25 +103,34 @@ public class Val {
         } else if (instancia instanceof MILista) {
             List<Object> list = new ArrayList<>();
             fromList((List<Object>) list, (MILista) value);
-        } else if (instancia instanceof MInstancia) {
+        } else {
             throw new SingularFormException("Tipo de instancia não suportado");
         }
     }
 
     private static void fromMap(Map<String, Object> map, MIComposto instancia) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            hydratate(instancia.getCampo(entry.getKey()), entry.getValue());
+            hydrate(instancia.getCampo(entry.getKey()), entry.getValue());
         }
     }
 
     private static void fromList(List<Object> list, MILista miLista) {
         for (Object o : list) {
             MInstancia novo = miLista.addNovo();
-            hydratate(novo, o);
+            hydrate(novo, o);
         }
     }
 
-    public static Object dehydratate(Object value) {
+    /**
+     * Extrai para objetos serializáveis todos
+     * os dados de uma MIinstancia recursivamente
+     *
+     * @param value
+     *  MIinstancia a partir da qual se deseja extrair os dados
+     * @return
+     *  Objetos serializáveis representando os dados da MInstancia
+     */
+    public static Object dehydrate(MInstancia value) {
         if (value instanceof MIComposto) {
             Map<String, Object> map = new LinkedHashMap<>();
             toMap(map, (MInstancia) value);
@@ -131,11 +147,34 @@ public class Val {
         return value;
     }
 
+    /**
+     * Remove um espiríto maligno (valores serializaveis) de um corpo puro e inocente (MIinstancia)
+     * e de toda sua descendência.
+     * @param innocentVessel
+     * @return
+     */
+    public static Soul exorcize(MInstancia innocentVessel){
+        Soul s = new Soul();
+        s.value = dehydrate(innocentVessel);
+        return s;
+    }
+
+    /**
+     * Realiza um ritual para encarnar um espirito maligno em um pobre corpo inocente.
+     * @param pureVessel
+     *  A pobre vitma do ritual
+     * @param evilSpirit
+     *  A alma do espírito realmente extraída a partir do método exorcize
+     */
+    public static void possess(MInstancia pureVessel, Soul evilSpirit) {
+        hydrate(pureVessel, evilSpirit.value);
+    }
+
     private static void toMap(Map<String, Object> value, MInstancia instancia) {
         if (instancia instanceof MIComposto) {
             MIComposto item = (MIComposto) instancia;
             for (MInstancia i : item.getAllChildren()) {
-                value.put(i.getNome(), dehydratate(i));
+                value.put(i.getNome(), dehydrate(i));
             }
         }
     }
@@ -143,7 +182,7 @@ public class Val {
     private static void toList(List<Object> value, MInstancia instancia) {
         if (instancia instanceof MILista<?>) {
             for (MInstancia i : ((MILista<?>) instancia).getValores()) {
-                value.add(dehydratate(i));
+                value.add(dehydrate(i));
             }
         }
     }
@@ -154,6 +193,10 @@ public class Val {
 
     public <T> boolean notNull(MTipoSimples<? extends MISimples<T>, T> tipo) {
         return Val.notNull(instancia, tipo);
+    }
+
+    public static class Soul {
+        private Object value;
     }
 
 }
