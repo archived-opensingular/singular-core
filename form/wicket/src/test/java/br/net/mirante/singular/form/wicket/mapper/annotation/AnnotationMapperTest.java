@@ -40,6 +40,7 @@ public class AnnotationMapperTest {
         page = new TestPage();
         page.setAsVisualizationView();
         page.setDicionario(dicionario);
+        page.enableAnnotation();
         localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
         baseCompositeField.addCampoString("notAnnotated");

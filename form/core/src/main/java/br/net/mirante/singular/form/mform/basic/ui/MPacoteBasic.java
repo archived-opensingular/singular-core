@@ -54,7 +54,6 @@ public class MPacoteBasic extends MPacote {
 
     public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                   ATR_ANNOTATED                  = new AtrRef<>(MPacoteBasic.class, "anotated", MTipoBoolean.class, MIBoolean.class, Boolean.class);
     public static final AtrRef<MTipoString, MIString, String>                      ATR_ANNOTATION_LABEL           = new AtrRef<>(MPacoteBasic.class, "annotation_label", MTipoString.class, MIString.class, String.class);
-    public static final AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation>        ATR_ANNOTATION = new AtrRef<>(MPacoteBasic.class, "annotation", MTipoAnnotation.class, MIAnnotation.class, MIAnnotation.class);
 
     //@formatter:on
 
@@ -87,7 +86,6 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
         pb.createTipoAtributo(MTipo.class, ATR_ANNOTATED);
         pb.createTipoAtributo(MTipo.class, ATR_ANNOTATION_LABEL);
-        pb.createTipoAtributo(MTipo.class, ATR_ANNOTATION);
 
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_MAXIMO, 100);
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_EDICAO, 50);

@@ -14,7 +14,7 @@ public class CaseAnnotationPackage extends MPacote {
     public MTipoComposto<?> pedido, cliente, endereco, request;
 
     /*
-     * Observe que as anotações só estão disponíveis em modo de somente leitura (visualização)
+     * Observe que as anotações só estão disponíveis quando devidamente configuradas no contexto.
      */
 
     @Override
@@ -27,7 +27,6 @@ public class CaseAnnotationPackage extends MPacote {
         cliente.addCampoCPF("cpf").as(AtrBasic.class).label("CPF");
         cliente.addCampoEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
-        //TODO: FABS: Update this example
         cliente.as(AtrAnnotation::new).setAnnotated(); // Usará o rótulo do campo para a anotação
 
         endereco = pedido.addCampoComposto("Endereco");

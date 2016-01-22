@@ -93,19 +93,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public MIAnnotation annotation() {
         createAttributeIfNeeded();
-        return atrValue(MPacoteBasic.ATR_ANNOTATION);
+        return target().getDocument().annotation(target().getId());
     }
 
     /**
      * @return True if an anotation was filled for this instance.
      */
     public boolean hasAnnotation(){
-        MIAnnotation atr = atrValue(MPacoteBasic.ATR_ANNOTATION);
+        MIAnnotation atr = target().getDocument().annotation(target().getId());
         return atr != null && StringUtils.isNotBlank(atr.getText());
     }
 
     private void createAttributeIfNeeded() {
-        if(atrValue(MPacoteBasic.ATR_ANNOTATION) == null){
+        if(target().getDocument().annotation(target().getId()) == null){
             setAnnotation(type().novaInstancia());
         }
     }
@@ -115,7 +115,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private void setAnnotation(MIAnnotation annotation) {
-        atrValue(MPacoteBasic.ATR_ANNOTATION, annotation);
+        target().getDocument().annotation(target().getId(),annotation);
     }
 
     private void atrValue(AtrRef ref, Object value) {

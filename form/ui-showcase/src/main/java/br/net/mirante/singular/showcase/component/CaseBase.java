@@ -98,4 +98,6 @@ public class CaseBase implements Serializable {
     public boolean showValidateButton(){
         return getCaseType().hasAnyValidation();
     }
+
+    public boolean annotationEnabled() { return false;}
 }
