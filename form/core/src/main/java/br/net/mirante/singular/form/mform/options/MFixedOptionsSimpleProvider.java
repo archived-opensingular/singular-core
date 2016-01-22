@@ -61,7 +61,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     /**
      * Add a new element to the Provider optionlist with the key values informed.
-     * @param value to be set (MSelectionableInstance.hydratate) on the element
+     * @param value to be set (MSelectionableInstance.hydrate) on the element
      * @param selectLabel
      * @return this
      */

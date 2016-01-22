@@ -1,15 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import org.apache.wicket.model.IModel;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareModel<T> {
@@ -50,10 +48,9 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
 
     @SuppressWarnings("unchecked")
     protected T getSimpleSelection(MInstancia target, MOptionsConfig provider) {
-        if (target instanceof MSelectionableInstance) {
+        if (target != null) {
             String key = provider.getKeyFromOptions(target);
             String label = provider.getLabelFromKey(key);
-            MSelectionableInstance item = (MSelectionableInstance) target;
             return (T) new SelectOption(label, key);
         }
         return null;
@@ -66,7 +63,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     private void setValueAt(MInstancia instance, SelectOption object, MOptionsConfig provider) {
         if (object == null) {
             instance.clearInstance();
-        } else if (instance instanceof MSelectionableInstance) {
+        } else if (instance != null) {
             object.copyValueToInstance(instance, provider);
         }
     }

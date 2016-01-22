@@ -14,7 +14,7 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
 
     @Override
     public MView apply(MInstancia instance) {
-        if (instance instanceof MSelectionableInstance) {
+        if (instance != null) {
             MSelectionableInstance simple = (MSelectionableInstance) instance;
             MSelectionableType type = (MSelectionableType) simple.getMTipo();
             if (type.getProviderOpcoes() != null) {

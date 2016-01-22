@@ -7,6 +7,8 @@ import com.google.common.collect.HashBiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigInteger;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,12 +17,16 @@ import java.util.UUID;
  * para uma par de descricao e chave (label e key)
  * É reponsável também por devolver a MIinstancia correspondente a cada
  * chave
+ * As chaves geradas são efêmeras enão devem ser utilizadas para persistir.
+ * O objetivo dessas chaves é mapear um valor na tela para uma MInstancia e memória
+ * no lado do servidor.
  */
 public class MOptionsConfig {
 
+    private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(MOptionsConfig.class);
     private BiMap<String, MInstancia> optionsKeyInstanceMap;
-    private BiMap<String, String> optionsKeylabelMap;
+    private Map<String, String> optionsKeylabelMap;
     private MILista<? extends MInstancia> options;
     private MSelectionableInstance instancia;
 
@@ -53,38 +59,31 @@ public class MOptionsConfig {
         MOptionsProvider provider = getOptionsProvider();
         if (provider != null) {
             MILista<? extends MInstancia> newOptions = provider.listAvailableOptions(instancia);
-            LOGGER.warn("Opções recarregadas para "+toString());
+            LOGGER.warn("Opções recarregadas para " + toString());
             if (newOptions != null && !newOptions.equals(options)) {
                 options = newOptions;
                 optionsKeyInstanceMap = HashBiMap.create(options.size());
-                optionsKeylabelMap = HashBiMap.create(options.size());
+                optionsKeylabelMap = new LinkedHashMap<>(options.size());
                 for (MInstancia mInstancia : options) {
-                    String key = UUID.randomUUID().toString();
-                    optionsKeyInstanceMap.put(key, mInstancia);
-                    optionsKeylabelMap.put(key, mInstancia.getSelectLabel());
+                    /* ignora silenciosamente valores duplicados */
+                    if (!optionsKeyInstanceMap.inverse().containsKey(mInstancia)) {
+                        String key = newUniqueKey();
+                        optionsKeyInstanceMap.put(key, mInstancia);
+                        optionsKeylabelMap.put(key, mInstancia.getSelectLabel());
+                    }
                 }
             }
         } else {
             optionsKeyInstanceMap = HashBiMap.create();
-            optionsKeylabelMap = HashBiMap.create(options.size());
-            options = new MILista<>();
+            optionsKeylabelMap = new LinkedHashMap<>();
         }
     }
 
-    private MILista<? extends MInstancia> getOptionsList() {
-        if (options == null) {
-            return new MILista<>();
-        }
-        return options;
+    private String newUniqueKey(){
+        keySeed = keySeed.add(BigInteger.ONE);
+        return String.valueOf(keySeed);
     }
 
-    public String getLabelFromOption(MInstancia selectedValue) {
-        if (selectedValue == null) {
-            return null;
-        }
-        String key = getOptions().inverse().get(selectedValue);
-        return optionsKeylabelMap.get(key);
-    }
 
     public String getLabelFromKey(String key) {
         if (key == null) {
@@ -100,6 +99,12 @@ public class MOptionsConfig {
         return getOptions().inverse().get(option);
     }
 
+    /**
+     * Obtém a chave efêmera mapeada para o valor
+     *
+     * @param key
+     * @return
+     */
     public MInstancia getValueFromKey(String key) {
         if (key == null) {
             return null;
@@ -108,8 +113,8 @@ public class MOptionsConfig {
     }
 
     /**
-     * @return Um mapa de chave e valor representando as Minstancias disponibilizadas pelo provider do tipo
-     * da instancia.
+     * @return Um mapa de chave e label representando as Minstancias disponibilizadas pelo provider do tipo
+     * da MInstancia.
      */
     public Map<String, String> listSelectOptions() {
         reloadOptionsFromProvider();

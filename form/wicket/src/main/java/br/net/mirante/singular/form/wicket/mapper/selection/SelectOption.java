@@ -74,11 +74,11 @@ public class SelectOption implements IModel {
 
     public void copyValueToInstance(MSelectionableInstance target) {
         MInstancia source = target.getOptionsConfig().getValueFromKey(String.valueOf(value));
-        Val.hydratate((MInstancia) target, Val.dehydratate(source));
+        Val.hydrate((MInstancia) target, Val.dehydrate(source));
     }
 
     public void copyValueToInstance(MSelectionableInstance target, MOptionsConfig provider) {
         MInstancia source = provider.getValueFromKey(String.valueOf(value));
-        Val.hydratate((MInstancia) target, Val.dehydratate(source));
+        Val.hydrate((MInstancia) target, Val.dehydrate(source));
     }
 }

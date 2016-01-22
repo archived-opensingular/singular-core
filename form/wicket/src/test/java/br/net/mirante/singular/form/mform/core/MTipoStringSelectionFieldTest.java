@@ -35,7 +35,11 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly("strawberry","apple","orange","banana");
+            .containsExactly(
+                    getSelectKeyFromValue("strawberry"),
+                    getSelectKeyFromValue("apple"),
+                    getSelectKeyFromValue("orange"),
+                    getSelectKeyFromValue("banana"));
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("strawberry","apple","orange","banana");
     }
@@ -52,7 +56,11 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-                .containsExactly("strawberry","apple","orange","banana");
+                .containsExactly(
+                        getSelectKeyFromValue("strawberry"),
+                        getSelectKeyFromValue("apple"),
+                        getSelectKeyFromValue("orange"),
+                        getSelectKeyFromValue("banana"));
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
                 .containsExactly("strawberry","apple","orange","banana");
     }
@@ -71,7 +79,13 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly("avocado","strawberry","apple","orange","banana");
+            .containsExactly(
+                    getSelectKeyFromValue("avocado"),
+                    getSelectKeyFromValue("strawberry"),
+                    getSelectKeyFromValue("apple"),
+                    getSelectKeyFromValue("orange"),
+                    getSelectKeyFromValue("banana")
+            );
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("avocado","strawberry","apple","orange","banana");
     }
@@ -84,6 +98,12 @@ public class MTipoStringSelectionFieldTest extends SelectionFieldBaseTest{
         form.submit("save-btn");
         Object value = page.getCurrentInstance().getValor(selectType.getNomeSimples());
         assertThat(value).isEqualTo("orange");
+    }
+
+    private Object getSelectKeyFromValue(String value) {
+        MIString mvalue = selectType.novaInstancia();
+        mvalue.setValor(value);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
     }
 
 }
