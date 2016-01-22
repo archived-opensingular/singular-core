@@ -141,10 +141,9 @@ public class Val {
             List<Object> list = new ArrayList<>();
             toList(list, (MInstancia) value);
             return list;
-        } else if (value instanceof MInstancia) {
+        } else  {
             throw new SingularFormException("Tipo de instancia não suportado");
         }
-        return value;
     }
 
     /**
