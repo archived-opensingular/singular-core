@@ -101,8 +101,7 @@ public class Val {
         } else if (instancia instanceof MISimples) {
             ((MISimples) instancia).setValor(value);
         } else if (instancia instanceof MILista) {
-            List<Object> list = new ArrayList<>();
-            fromList((List<Object>) list, (MILista) value);
+            fromList((List<Object>) value, (MILista) instancia);
         } else {
             throw new SingularFormException("Tipo de instancia não suportado");
         }
