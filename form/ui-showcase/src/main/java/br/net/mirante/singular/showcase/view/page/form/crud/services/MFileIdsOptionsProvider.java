@@ -26,12 +26,14 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
     @Override
     // @destacar:bloco
     public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
+        MILista<?> list;
         if (optionsInstance instanceof MILista) {
-            MILista<?> list = ((MILista) optionsInstance).getTipoElementos().novaLista();
-            files().forEach(f -> list.addValor(f.getId()));
-            return list;
+            list = ((MILista) optionsInstance).getTipoElementos().novaLista();
+        } else {
+            list = optionsInstance.getMTipo().novaLista();
         }
-        return null;
+        files().forEach(f -> list.addValor(f.getId()));
+        return list;
     }
     // @destacar:fim
 
