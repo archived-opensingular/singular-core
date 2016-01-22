@@ -172,12 +172,14 @@ public class MPacotePeticaoGGTOX extends MPacote {
                         .as(AtrBootstrap::new).colPreference(4);
 
                 //TODO caso eu marque sem restrições os outros campos devem ser desabilitados
-                root.addCampoListaOf("restricoes", pb.createTipo("restricao", MTipoString.class)
+                MTipoString restricao = pb.createTipo("restricao", MTipoString.class)
                         .withSelectionOf("Impureza relevante presente",
                                 "Controle de impureza determinado",
                                 "Restrição de uso em algum país",
                                 "Restrição de uso em alimentos",
-                                "Sem restrições"))
+                                "Sem restrições");
+
+                root.addCampoListaOf("restricoes", restricao)
                         .withView(MSelecaoMultiplaPorCheckView::new)
                         .as(AtrBasic::new).label("Restrições");
 
@@ -199,9 +201,10 @@ public class MPacotePeticaoGGTOX extends MPacote {
             }
 
             private MTipoLista<MTipoString, MIString> createListaField(PacoteBuilder pb) {
+                MTipoString sinonimia = pb.createTipo("sinonimia", MTipoString.class)
+                        .withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
                 MTipoLista<MTipoString, MIString> field = root.addCampoListaOf("sinonimiaAssociada",
-                        pb.createTipo("sinonimia", MTipoString.class)
-                                .withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3"));
+                        sinonimia);
                 field.withView(MSelecaoMultiplaPorSelectView::new)
                         .as(AtrBasic::new)
                         .label("Sinonímias já associadas a esta substância/mistura")
@@ -231,8 +234,9 @@ public class MPacotePeticaoGGTOX extends MPacote {
                 root.as(AtrBasic::new).label("Finalidades")
                         .as(AtrBootstrap::new).colPreference(4);
 
-                root.addCampoListaOf("finalidades", pb.createTipo("finalidade", MTipoString.class)
-                        .withSelectionOf("Produção","Importação","Exportação","Comercialização","Utilização"))
+                MTipoString finalidade = pb.createTipo("finalidade", MTipoString.class)
+                        .withSelectionOf("Produção", "Importação", "Exportação", "Comercialização", "Utilização");
+                root.addCampoListaOf("finalidades", finalidade)
                         .withView(MSelecaoMultiplaPorCheckView::new);
             }
         }
@@ -245,9 +249,10 @@ public class MPacotePeticaoGGTOX extends MPacote {
 
                 root.as(AtrBasic::new).label("Uso pretendido").as(AtrBootstrap::new).colPreference(4);
 
+                MTipoString usoPretendido = pb.createTipo("usoPretendido", MTipoString.class)
+                        .withSelectionOf("Uso 1", "Uso 2", "Uso 3");
                 root.addCampoListaOf("usosPretendidos",
-                        pb.createTipo("usoPretendido", MTipoString.class)
-                                .withSelectionOf("Uso 1","Uso 2","Uso 3"))
+                        usoPretendido)
                         .withView(MSelecaoMultiplaPorPicklistView::new)
                         .as(AtrBasic::new).label("Lista de uso pretendido/mistura");
             }
