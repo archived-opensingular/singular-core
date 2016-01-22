@@ -1,10 +1,26 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.*;
+import java.util.Set;
+
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import com.google.common.base.Strings;
+
+import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -18,13 +34,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
-import com.google.common.base.Strings;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
@@ -86,27 +95,42 @@ public class TableListaMapper extends AbstractListaMapper {
 
 
         final MTipo<?> tElementos = tipoElementos.getObject();
+
         if (tElementos instanceof MTipoComposto<?>) {
-            MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) tElementos;
-            BSTRow tr = thead.newRow();
+
+            final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) tElementos;
+            final BSTRow tr = thead.newRow();
+
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha())) {
                 tr.newTHeaderCell($m.ofValue(""));
             }
 
-            int sumWidthPref = tComposto.getFields().stream()
-                                    .mapToInt((x) -> x.as(AtrBootstrap::new).getColPreference(1))
-                                    .sum();
+            int sumWidthPref = tComposto.getFields().stream().mapToInt((x) -> x.as(AtrBootstrap::new).getColPreference(1)).sum();
 
             for (MTipo<?> tCampo : tComposto.getFields()) {
-                Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
-                BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
-                String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
+
+                final Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
+                final BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
+                final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
+                final boolean isCampoObrigatorio = tCampo.as(MPacoteCore.aspect()).isObrigatorio();
+
                 cell.setInnerStyle(width);
+                cell.add(new ClassAttributeModifier() {
+                    @Override
+                    protected Set<String> update(Set<String> oldClasses) {
+                        if (isCampoObrigatorio) {
+                            oldClasses.add("required");
+                        } else {
+                            oldClasses.remove("required");
+                        }
+                        return oldClasses;
+                    }
+                });
+
             }
 
-            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()
-                    && viewMode.isEdition()) {
-                AdicionarButton btn = appendAdicionarButton(mLista, form, tr.newTHeaderCell($m.ofValue("")));
+            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha() && viewMode.isEdition()) {
+                final AdicionarButton btn = appendAdicionarButton(mLista, form, tr.newTHeaderCell($m.ofValue("")));
                 if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
                     btn.add($b.classAppender("pull-right"));
                 }
