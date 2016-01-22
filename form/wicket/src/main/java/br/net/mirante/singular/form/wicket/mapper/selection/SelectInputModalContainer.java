@@ -250,25 +250,26 @@ public class SelectInputModalContainer extends BSContainer {
         for (String field : view.searchFields()) {
             Object value = Val.of((MISimples<?>) composto.getCampo(field));
             String nValue = String.valueOf(value).toLowerCase();
-            if(nValue.contains(termo)) return true;
+            if (nValue.contains(termo)) return true;
         }
         return false;
     }
 
-}
 
-class MSelectionModalInstanceModel extends MSelectionInstanceModel {
+    static class MSelectionModalInstanceModel extends MSelectionInstanceModel {
 
-    public MSelectionModalInstanceModel(IModel instanciaModel) {
-        super(instanciaModel);
-    }
-
-    @Override
-    protected Object getSimpleSelection(MInstancia target, MOptionsConfig provider) {
-        SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
-        if (v.getValue() == null) {
-            return null;
+        public MSelectionModalInstanceModel(IModel instanciaModel) {
+            super(instanciaModel);
         }
-        return v.getValue();
+
+        @Override
+        protected Object getSimpleSelection(MInstancia target, MOptionsConfig provider) {
+            SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
+            if (v.getValue() == null) {
+                return null;
+            }
+            return v.getValue();
+        }
     }
+
 }
