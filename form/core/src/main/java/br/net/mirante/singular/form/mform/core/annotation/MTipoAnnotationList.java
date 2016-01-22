@@ -11,8 +11,10 @@ import br.net.mirante.singular.form.mform.core.MPacoteCore;
  *
  * @author Fabricio Buzeto
  */
-@MInfoTipo(nome = "AnnotationList", pacote = MPacoteCore.class)
+@MInfoTipo(nome = MTipoAnnotationList.NAME, pacote = MPacoteCore.class)
 public class MTipoAnnotationList extends MTipoLista {
+
+    public static final String NAME = "AnnotationList";
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {

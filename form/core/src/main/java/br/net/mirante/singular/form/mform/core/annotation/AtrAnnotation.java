@@ -118,6 +118,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private void setAnnotation(MIAnnotation annotation) {
+        annotation.setTargetId(target().getId());
         target().getDocument().annotation(target().getId(),annotation);
     }
 
