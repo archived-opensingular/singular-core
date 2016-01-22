@@ -91,7 +91,7 @@ public class WicketBuildContext implements Serializable {
         container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
             @Override
             public void component(FormComponent formComponent, IVisit<Object> visit) {
-                if (IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
+                if (formComponent.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
 
                     WicketFormUtils.setCellContainer(formComponent, getContainer());
                     formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());

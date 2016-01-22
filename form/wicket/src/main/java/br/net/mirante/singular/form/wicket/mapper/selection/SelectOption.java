@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.model.IModel;
@@ -18,19 +18,12 @@ public class SelectOption implements IModel {
 
     public SelectOption(String selectLabel, Object value) {
         this.selectLabel = selectLabel;
-        this.value = Val.dehydratate(value);
+        this.value = value;
     }
 
     public Object getValue() {
         return value;
     }
-
-    public Object getValue(MTipo<?> tipo) {
-        MInstancia instancia = tipo.novaInstancia();
-        Val.hydratate(instancia, value);
-        return instancia;
-    }
-
 
     public String getSelectLabel() {
         return selectLabel;
@@ -79,10 +72,13 @@ public class SelectOption implements IModel {
         return hash;
     }
 
-    public void copyValueToInstance(MInstancia instance) {
-        if (instance instanceof MSelectionableInstance){
-            ((MSelectionableInstance)instance).setSelectLabel(selectLabel);
-        }
-        Val.hydratate(instance, value);
+    public void copyValueToInstance(MSelectionableInstance target) {
+        MInstancia source = target.getOptionsConfig().getValueFromKey(String.valueOf(value));
+        Val.hydratate((MInstancia) target, Val.dehydratate(source));
+    }
+
+    public void copyValueToInstance(MSelectionableInstance target, MOptionsConfig provider) {
+        MInstancia source = provider.getValueFromKey(String.valueOf(value));
+        Val.hydratate((MInstancia) target, Val.dehydratate(source));
     }
 }

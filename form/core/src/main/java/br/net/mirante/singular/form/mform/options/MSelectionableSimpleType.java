@@ -42,8 +42,9 @@ public interface MSelectionableSimpleType<BASE extends MTipo, TIPO_NATIVO> exten
 
 
     default public MFixedOptionsSimpleProvider withSelection() {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((BASE) this, (Collection) null));
-        return (MFixedOptionsSimpleProvider) getProviderOpcoes();
+        MFixedOptionsSimpleProvider provider = new MFixedOptionsSimpleProvider((BASE) this, (Collection) null);
+        setProviderOpcoes(provider);
+        return (MFixedOptionsSimpleProvider) provider;
     }
 
     default public <T extends MTipo<?>> T withSelectionOf(TIPO_NATIVO... opcoes) {

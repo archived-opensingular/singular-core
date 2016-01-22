@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -28,7 +27,7 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
 
     //TODO: [Fabs] this decision is strange to apply when the value is dynamic
     private MView decideView(MInstancia instance, MInstancia simple, MOptionsProvider provider) {
-        int size = provider.listAvailableOptions(instance).size();
+        int size = instance.getOptionsConfig().listSelectOptions().size();
         if (size <= 3 && simple.getMTipo().isObrigatorio()) {
             return newInstance(MSelecaoPorRadioView.class);
         }

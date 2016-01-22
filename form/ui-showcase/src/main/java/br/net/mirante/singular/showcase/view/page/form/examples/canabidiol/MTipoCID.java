@@ -123,12 +123,14 @@ public class MTipoCID extends MTipoComposto<MIComposto>  {
         MTipoString descricaoSubAbreviadaCategoria = subcategoria
                 .addCampoString("descricaoAbreviada");
 
-        subcategoria.withSelectionFromProvider(descricaoSubCategoria, (MOptionsProvider) instancia ->
-                new FromPojoList<SubCategoriaCID>(categoria, ciddao.listSubCategoriasByIdCategoria(Val.of(instancia, idCategoria)))
-                        .map(idSubCategoria, c -> c.getId())
-                        .map(descricaoSubCategoria, c -> c.getDescricao())
-                        .map(descricaoSubAbreviadaCategoria, c -> c.getDescricaoAbreviada())
-                        .build());
+        subcategoria.withSelectionFromProvider(descricaoSubCategoria,(instancia, listaBuilder) -> {
+            for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Val.of(instancia, idCategoria))) {
+                listaBuilder.add()
+                        .set(idSubCategoria, c.getId())
+                        .set(descricaoSubCategoria, c.getDescricao())
+                        .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
+            }
+        });
 
     }
 

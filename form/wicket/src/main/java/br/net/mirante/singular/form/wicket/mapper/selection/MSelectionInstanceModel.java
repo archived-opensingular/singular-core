@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MILista;
@@ -27,30 +28,33 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
             MILista list = (MILista) getTarget();
             return (T) list.getAllChildren()
                     .stream()
-                    .map(this::getSimpleSelection)
+                    .map(c -> getSimpleSelection(c, list.getOptionsConfig()))
                     .collect(Collectors.toList());
         }
-        return getSimpleSelection(target);
+        return getSimpleSelection(target, target.getOptionsConfig());
 
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public void setObject(T object) {
+        MInstancia target = getTarget();
         if (object instanceof SelectOption) {
-            setValueAt(getTarget(), (SelectOption) object);
+            setValueAt(target, (SelectOption) object, target.getOptionsConfig());
         } else if (object instanceof Collection) {
-            setListValueAt(getTarget(), (Collection) object);
+            setListValueAt(target, (Collection) object);
         } else if (object == null) {
-            setValueAt(getTarget(), null);
+            setValueAt(target, null, null);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected T getSimpleSelection(MInstancia target) {
+    protected T getSimpleSelection(MInstancia target, MOptionsConfig provider) {
         if (target instanceof MSelectionableInstance) {
+            String key = provider.getKeyFromOptions(target);
+            String label = provider.getLabelFromKey(key);
             MSelectionableInstance item = (MSelectionableInstance) target;
-            return (T) new SelectOption(item.getSelectLabel(), target);
+            return (T) new SelectOption(label, key);
         }
         return null;
     }
@@ -59,11 +63,11 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
         return model.getObject();
     }
 
-    private void setValueAt(MInstancia instance, SelectOption object) {
+    private void setValueAt(MInstancia instance, SelectOption object, MOptionsConfig provider) {
         if (object == null) {
             instance.clearInstance();
         } else if (instance instanceof MSelectionableInstance) {
-            object.copyValueToInstance(instance);
+            object.copyValueToInstance(instance, provider);
         }
     }
 
@@ -74,7 +78,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
             list.clear();
             for (SelectOption o : data) {
                 MInstancia element = list.addNovo();
-                setValueAt(element, o);
+                setValueAt(element, o, list.getOptionsConfig());
             }
         }
     }
