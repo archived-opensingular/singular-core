@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 /**
  * Mapeia cada MInstancia fornecida pelo OptionsProvider
@@ -24,14 +23,16 @@ public class MOptionsConfig {
     private BiMap<String, String> optionsKeylabelMap;
     private MILista<? extends MInstancia> options;
     private MSelectionableInstance instancia;
-    private Supplier<MOptionsProvider> providerSupplier;
 
     public MOptionsConfig(MSelectionableInstance instancia) {
         this.instancia = instancia;
     }
 
     protected MOptionsProvider getOptionsProvider() {
-        return providerSupplier.get();
+        if (instancia instanceof MILista) {
+            return ((MILista) instancia).getTipoElementos().getProviderOpcoes();
+        }
+        return instancia.getMTipo().getProviderOpcoes();
     }
 
     private BiMap<String, MInstancia> getOptions() {
