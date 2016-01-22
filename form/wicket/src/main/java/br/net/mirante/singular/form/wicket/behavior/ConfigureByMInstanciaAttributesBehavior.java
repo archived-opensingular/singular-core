@@ -41,8 +41,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
     @Override
     public void onComponentTag(Component component, ComponentTag tag) {
-        if (isInstanceRequired(component))
-            tag.put("class", appendAtributeValue(tag.getAttribute("class"), "required", " "));
+
         if (!isInstanceEnabled(component))
             tag.put("disabled", "disabled");
         
