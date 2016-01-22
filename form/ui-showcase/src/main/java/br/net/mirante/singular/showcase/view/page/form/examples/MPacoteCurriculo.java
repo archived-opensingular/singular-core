@@ -2,6 +2,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
@@ -46,10 +47,11 @@ public class MPacoteCurriculo extends MPacote {
         final MTipoData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
         final MTipoString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
             .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
-        
+
+        MTipoString tipoContato = pb.createTipo("tipoContato", MTipoString.class)
+                .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         final MTipoLista<MTipoString, MIString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
-                pb.createTipo("tipoContato", MTipoString.class)
-                        .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax"));
+                tipoContato);
         {
             informacoesPessoais
                 .as(AtrBasic::new).label("Informações Pessoais");
