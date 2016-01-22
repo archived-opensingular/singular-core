@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.mform.core.annotation;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -106,9 +107,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
 
     private void createAttributeIfNeeded() {
         if(target().getDocument().annotation(target().getId()) == null){
-            setAnnotation(type().novaInstancia());
+            setAnnotation(newAnnotation());
         }
     }
+
+    private MIAnnotation newAnnotation() {  return type().novaInstancia();}
 
     private MTipoAnnotation type() {
         return getAlvo().getDicionario().getTipo(MTipoAnnotation.class);
@@ -187,16 +190,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public MILista persistentAnnotations() {
         List<MIAnnotation> all = allAnnotations();
-        MILista miLista;
-        if(!all.isEmpty() && all.get(0).getPai() != null){
-            miLista = (MILista) all.get(0).getPai();
-        }else {
-            miLista = newAnnotationList();
-        }
+        MILista miLista = newAnnotationList();
         for(MIAnnotation a: all){
-            if(!miLista.getValor().contains(a)){
-                miLista.addElement(a);
-            }
+            MIAnnotation detached = newAnnotation();
+            Val.hydratate(detached,Val.dehydratate(a));
+            miLista.addElement(detached);
         }
 
         return miLista;

@@ -63,12 +63,13 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
     @Inject
     private SpringServiceRegistry serviceRegistry;
+    private boolean enableAnnotation;
 
-    public FormContent(String id, StringValue type, StringValue key, StringValue viewMode) {
+    public FormContent(String id, StringValue type, StringValue key, StringValue viewMode,
+                       StringValue enableAnnotation) {
         super(id, false, true);
-        if (!viewMode.isNull()) {
-            this.viewMode = ViewMode.valueOf(viewMode.toString());
-        }
+        if (!viewMode.isNull()) {   this.viewMode = ViewMode.valueOf(viewMode.toString());  }
+        if (!enableAnnotation.isNull()) {   this.enableAnnotation = Boolean.valueOf(enableAnnotation.toString());  }
         this.typeName = type.toString();
         this.key = key.toString();
     }
@@ -94,6 +95,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         form.setMultiPart(true);
         form.add(buildBelverBasePanel());
         form.add(buildSaveButton());
+        form.add(buildSaveAnnotationButton());
         form.add(buildSaveWithoutValidateButton());
         form.add(buildValidateButton());
         form.add(buildCancelButton());
@@ -143,6 +145,9 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public ViewMode getViewMode() {
                 return viewMode;
             }
+
+            @Override
+            public boolean annotationEnabled() {    return enableAnnotation;    }
         };
 
         return belverPanel;
@@ -174,7 +179,6 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 currentModel.setXml(xml.toStringExato());
-                addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
             }
@@ -182,22 +186,44 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return button.add(visibleOnlyInEditionBehaviour());
     }
 
+    private Component buildSaveAnnotationButton() {
+        final Component button = new BelverValidationButton("save-annotation-btn") {
+            @Override
+            public IModel<? extends MInstancia> getCurrentInstance() {
+                return belverPanel.getRootInstance();
+            }
+
+            protected void save() {
+                getCurrentInstance().getObject().getDocument().persistFiles();
+                addAnnotationsToModel(getCurrentInstance().getObject());
+                dao.save(currentModel);
+                backToCrudPage(this);
+            }
+
+            @Override
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+
+            @Override
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                save();
+            }
+        };
+        return button.add(visibleOnlyInAnnotationBehaviour());
+    }
+
     private void addAnnotationsToModel(MInstancia instancia) {
         AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
         List<MIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
         if(!allAnnotations.isEmpty()){
-            Optional<String> annXml = annotationsToXml(instancia, annotatedInstance, allAnnotations);
+            Optional<String> annXml = annotationsToXml( annotatedInstance );
             currentModel.setAnnotations(annXml.orElse(""));
         }
     }
 
-    private Optional<String> annotationsToXml(MInstancia instancia, AtrAnnotation annotatedInstance, List<MIAnnotation> allAnnotations) {
-        MILista pLista = (MILista) instancia.getDicionario().getTipo(MTipoAnnotationList.class).novaInstancia();
-        for(MIAnnotation a: allAnnotations){
-            pLista.addElement(a);
-        }
-        return MformPersistenciaXML.toStringXML(
-                annotatedInstance.persistentAnnotations());
+    private Optional<String> annotationsToXml(AtrAnnotation annotatedInstance) {
+        return MformPersistenciaXML.toStringXML(annotatedInstance.persistentAnnotations());
     }
 
     private Component buildSaveWithoutValidateButton() {
@@ -263,31 +289,19 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public void onConfigure(Component component) {
                 super.onConfigure(component);
 
-                component.setVisible(viewMode.isEdition() || isInAnnotationMode());
+                component.setVisible(viewMode.isEdition());
             }
         };
     }
 
-    private boolean isInAnnotationMode() {
-        MTipo<?> mTipo = TemplateRepository.get().loadType(typeName);
-        return viewMode.isVisualization() && isAnnotated(mTipo);
-    }
+    private Behavior visibleOnlyInAnnotationBehaviour() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
 
-    private boolean isAnnotated(MTipo<?> mTipo) {
-//        if(mTipo.getView() instanceof MAnnotationView){
-//            return true;
-//        }
-        //TODO: FABS: This should be removed
-        if(mTipo instanceof MTipoComposto){
-            MTipoComposto composto = (MTipoComposto) mTipo;
-            Collection<MTipo> fields = composto.getFields();
-            for(MTipo child: fields){
-                if(isAnnotated(child)){
-                    return true;
-                }
+                component.setVisible(enableAnnotation);
             }
-        }
-        return false;
+        };
     }
-
 }

@@ -12,14 +12,17 @@ import org.wicketstuff.annotation.mount.MountPath;
 public class FormPage extends Template {
     protected static final String TYPE_NAME = "type",
                                   MODEL_KEY = "key",
-                                  VIEW_MODE = "viewMode";
+                                  VIEW_MODE = "viewMode",
+                                  ANNOTATION_ENABLED = "annotation";
 
     @Override
     protected Content getContent(String id) {
         StringValue type = getPageParameters().get(TYPE_NAME),
                     key = getPageParameters().get(MODEL_KEY),
-                    viewMode = getPageParameters().get(VIEW_MODE);
-        return new FormContent(id,type, key, viewMode);
+                    viewMode = getPageParameters().get(VIEW_MODE),
+                    annotationnEnabled = getPageParameters().get(ANNOTATION_ENABLED);
+        ;
+        return new FormContent(id,type, key, viewMode, annotationnEnabled);
     }
 
     @Override
