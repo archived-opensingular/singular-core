@@ -4,14 +4,13 @@ import javax.inject.Inject;
 
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
-import br.net.mirante.singular.showcase.wicket.ShowcaseApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
@@ -21,18 +20,13 @@ public class HomeTest {
             OPTIONS_FORM = ROOT_PATH + ":optionsForm",
             NEW_BUTTON = ROOT_PATH + ":form:insert";
 
-    private WicketTester driver;
-
     @Inject
-    private ShowcaseApplication app;
-
-    @Before
-    public void setup() {
-        driver = new WicketTester(app);
-    }
+    private SpringWicketTester springWicketTester;
 
     @Test
     public void onlyShowTheNewButtonAfterTemplateIsSelected() {
+        final WicketTester driver = springWicketTester.wt();
+
         driver.startPage(CrudPage.class);
         driver.assertRenderedPage(CrudPage.class);
         driver.assertInvisible(NEW_BUTTON);

@@ -7,8 +7,8 @@ public class MorrisChartPortletConfig extends ChartPortletConfig<MorrisChartPort
     public MorrisChartPortletConfig() {
     }
 
-    public MorrisChartPortletConfig(String restEndpointURL, SingularChart chart) {
-        super(restEndpointURL, chart);
+    public MorrisChartPortletConfig(DataEndpoint endpoint, SingularChart chart) {
+        super(endpoint, chart);
     }
 
     @Override

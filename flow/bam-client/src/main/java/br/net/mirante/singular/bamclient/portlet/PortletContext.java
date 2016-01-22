@@ -5,10 +5,11 @@ import java.util.Set;
 
 public class PortletContext implements Serializable {
 
-    private String restEndpoint;
+    private DataEndpoint dataEndpoint;
     private PortletQuickFilter quickFilter;
     private String processDefinitionCode;
     private Set<String> processDefinitionKeysWithAccess;
+
 
     public PortletQuickFilter getQuickFilter() {
         return quickFilter;
@@ -18,12 +19,12 @@ public class PortletContext implements Serializable {
         this.quickFilter = quickFilter;
     }
 
-    public String getRestEndpoint() {
-        return restEndpoint;
+    public DataEndpoint getDataEndpoint() {
+        return dataEndpoint;
     }
 
-    public void setRestEndpoint(String restEndpoint) {
-        this.restEndpoint = restEndpoint;
+    public void setDataEndpoint(DataEndpoint dataEndpoint) {
+        this.dataEndpoint = dataEndpoint;
     }
 
     public String getProcessDefinitionCode() {

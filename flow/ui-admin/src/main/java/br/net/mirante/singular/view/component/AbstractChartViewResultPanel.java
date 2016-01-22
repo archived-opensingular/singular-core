@@ -10,7 +10,7 @@ public abstract class AbstractChartViewResultPanel<C extends ChartPortletConfig>
 
     public AbstractChartViewResultPanel(String id, IModel<C> config, IModel<PortletContext> context) {
         super(id, config, context);
-        context.getObject().setRestEndpoint(config.getObject().getRestEndpointURL());
+        context.getObject().setDataEndpoint(config.getObject().getDataEndpoint());
     }
 
     @Override

@@ -1,33 +1,12 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
-import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
-import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.panel.BelverPanel;
-import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
-import br.net.mirante.singular.showcase.view.template.Content;
+import javax.inject.Inject;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -42,6 +21,29 @@ import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import br.net.mirante.singular.form.mform.MILista;
+import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
+import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
+import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.panel.BelverPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
+import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
+import br.net.mirante.singular.showcase.view.SingularWicketContainer;
+import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
+import br.net.mirante.singular.showcase.view.template.Content;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
 
@@ -174,7 +176,11 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                currentModel.setXml(xml.toStringExato());
+                if(xml != null) {
+                    currentModel.setXml(xml.toStringExato());
+                } else {
+                    currentModel.setXml(StringUtils.EMPTY);
+                }
                 addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
@@ -206,7 +212,11 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             protected void save() {
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                currentModel.setXml(rootXml.toStringExato());
+                if(rootXml != null) {
+                    currentModel.setXml(rootXml.toStringExato());
+                } else {
+                    currentModel.setXml(StringUtils.EMPTY);
+                }
 				addAnnotationsToModel(getCurrentInstance().getObject());
                 dao.save(currentModel);
                 backToCrudPage(this);
