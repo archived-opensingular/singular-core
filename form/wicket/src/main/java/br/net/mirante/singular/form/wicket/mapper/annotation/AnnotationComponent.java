@@ -80,6 +80,7 @@ public class AnnotationComponent extends Panel {
 
     protected void onConfigure() {
         super.onConfigure();
-        this.add(WicketUtils.$b.attrAppender("style", "display: none; background:#f3f5f9;", ""));
+        this.add(WicketUtils.$b.attrAppender("style", "display: none;", ""));
+        this.add(WicketUtils.$b.attrAppender("class", "portlet box border-default", ""));
     }
 }

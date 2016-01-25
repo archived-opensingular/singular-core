@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseAnnotationPackage extends MPacote {
 
@@ -28,11 +29,13 @@ public class CaseAnnotationPackage extends MPacote {
         cliente.addCampoEmail("email").as(AtrBasic.class).label("E-Mail");
         //@destacar
         cliente.as(AtrAnnotation::new).setAnnotated(); // Usará o rótulo do campo para a anotação
+        cliente.as(AtrBootstrap::new).colPreference(6);
 
         endereco = pedido.addCampoComposto("Endereco");
         endereco.asAtrBasic().label("Endereco do Cliente");
         endereco.addCampoCEP("cep").as(AtrBasic.class).label("CEP");
         endereco.addCampoCEP("Logradouro").as(AtrBasic.class).label("Logradouro");
+        endereco.as(AtrBootstrap::new).colPreference(6);
 
         request = pedido.addCampoComposto("request");
         request.asAtrBasic().label("Pedido");

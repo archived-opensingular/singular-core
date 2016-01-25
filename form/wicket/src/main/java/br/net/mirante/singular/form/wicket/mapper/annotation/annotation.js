@@ -11,10 +11,14 @@ if( window.Annotation == undefined){
     window.Annotation.prototype = {
         setup : function(){
             var thiz = this;
-            this.target_component.append(
+            this.target_component.find('h3').append(
                 $('<div>')
-                    .attr('style','position:absolute;top:0px;right: 15px;')
-                    .append('comentar')
+                    .attr('style','position:absolute;top:10px;right: 15px;')
+                    .append($('<a>')
+                        .addClass('btn btn-circle btn-icon-only btn-default')
+                        .attr('href','javascript:;')
+                        .append($('<i>').addClass('fa fa-comment-o'))
+                    )
                     .click(function(){
                         console.log(thiz.this_component, thiz.this_component.is(":visible"));
                         if(!thiz.this_component.is(":visible")){
@@ -29,7 +33,6 @@ if( window.Annotation == undefined){
                 this_offset = thiz.this_component.parent().offset()['top'];
             console.log(thiz, target_offset, this_offset);
             thiz.this_component.css('top',(target_offset-this_offset)+"px");
-            //this.this_component.hide();
 
         }
     }
