@@ -36,5 +36,34 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
 
         ingredienteQuimico.asAtrBasic().label("Seleção de Componentes Químicos");
 
+
+
+        MTipoComposto ingredienteQuimicoComplexo = tipoMyForm.addCampoComposto("ingredienteQuimicoComplexo");
+        MTipoString formulaQuimicaComplexa = ingredienteQuimicoComplexo.addCampoString("formulaQuimica");
+        MTipoString inventor = ingredienteQuimicoComplexo.addCampoString("inventorFormulaQuimica");
+        MTipoString nomeComplexo = ingredienteQuimicoComplexo.addCampoString("nome");
+
+        ingredienteQuimicoComplexo.withSelectionFromProvider(nomeComplexo, (instancia, lb) -> {
+            lb
+                    .add()
+                    .set(formulaQuimicaComplexa, "h2o")
+                    .set(nomeComplexo, "Água")
+                    .set(inventor, "Alan Touring")
+                    .add()
+                    .set(formulaQuimicaComplexa, "h2o2")
+                    .set(nomeComplexo, "Água Oxigenada")
+                    .set(inventor, "Santos Dumont")
+                    .add()
+                    .set(formulaQuimicaComplexa, "o2")
+                    .set(nomeComplexo, "Gás Oxigênio")
+                    .set(inventor, "Thomas Edinson")
+                    .add()
+                    .set(formulaQuimicaComplexa, "C12H22O11")
+                    .set(nomeComplexo, "Açúcar")
+                    .set(inventor, "Rogério Skylab");
+        });
+
+        ingredienteQuimicoComplexo.asAtrBasic().label("Seleção de Componentes Químicos Detalhados");
+
     }
 }
