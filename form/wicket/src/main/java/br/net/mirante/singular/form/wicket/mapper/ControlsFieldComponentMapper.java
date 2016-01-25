@@ -7,6 +7,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
 
@@ -92,6 +93,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final Component input;
 
         if (viewMode.isEdition()) {
+
             input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
             controls.appendFeedback(controls, feedbackMessageFilter);
             input.add(DisabledClassBehavior.getInstance());
@@ -109,6 +111,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                     }
                 });
             }));
+            
+            ctx.configure(this, (FormComponent<?>) input);
 
         } else {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);

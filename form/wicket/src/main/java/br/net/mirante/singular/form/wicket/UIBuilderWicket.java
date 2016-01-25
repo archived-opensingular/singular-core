@@ -73,7 +73,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrenttInstance());
         mapper.buildView(ctx.init(this, viewMode));
-        ctx.configure(mapper);
+
     }
 
     private IWicketComponentMapper resolveMapper(MInstancia instancia) {
