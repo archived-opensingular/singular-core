@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
@@ -107,7 +108,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
                 .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSimples.class,    MSelecaoPorSelectView.class, SelectMapper::new)
+                .register(MTipoSimples.class, MSelecaoPorSelectView.class, SelectMapper::new)
                 .register(MTipoBoolean.class,                                           BooleanMapper::new)
                 .register(MTipoBoolean.class,    MBooleanRadioView.class,               BooleanRadioMapper::new)
                 .register(MTipoInteger.class,                                           IntegerMapper::new)
@@ -134,6 +135,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
                 .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
                 .register(MTipoDataHora.class,                                          DateTimeMapper::new)
+                .register(MTipoDataHora.class,   MDateTimerView.class,                  DateTimeMapper::new)
                 .register(MTipoTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }
