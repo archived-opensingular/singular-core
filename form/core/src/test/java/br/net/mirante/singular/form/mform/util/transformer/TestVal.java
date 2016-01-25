@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoString;
@@ -29,7 +30,7 @@ public class TestVal {
     private static final Date DT_2 = new Date();
     private static final Date DT_3 = new Date();
     private MDicionario _dicionario;
-    private MTipoComposto<? extends MIComposto> raiz;
+    private MTipoComposto<? extends MIComposto> _raiz;
     private MTipoString _descricao;
     private MTipoComposto<MIComposto> _periodo;
     private MTipoData _dataInicial;
@@ -53,16 +54,16 @@ public class TestVal {
         _dicionario = MDicionario.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
-        raiz = pb.createTipoComposto("raiz");
-        _descricao = raiz.addCampo("descricao", MTipoString.class);
-        _periodo = raiz.addCampoComposto("periodo");
+        _raiz = pb.createTipoComposto("_raiz");
+        _descricao = _raiz.addCampo("descricao", MTipoString.class);
+        _periodo = _raiz.addCampoComposto("periodo");
         _dataInicial = _periodo.addCampo("dataInicial", MTipoData.class);
         _dataFinal = _periodo.addCampo("dataFinal", MTipoData.class);
         _alertas = _periodo.addCampoListaOfComposto("alertas", "alerta");
         _alerta = _alertas.getTipoElementos();
         _alerta_data = _alerta.addCampo("data", MTipoData.class);
 
-        raiz.asAtrBasic().label("Evento");
+        _raiz.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");
         // *** período não possui label
         _dataInicial.asAtrBasic().label("Data inicial");
@@ -71,7 +72,7 @@ public class TestVal {
         _alerta.asAtrBasic().label("Alerta");
         _alerta_data.asAtrBasic().label("Data");
 
-        evento = raiz.novaInstancia();
+        evento = _raiz.novaInstancia();
 
 
         // descricao
@@ -134,14 +135,14 @@ public class TestVal {
 
     @Test
     public void testHydrate() {
-        MIComposto novaInstancia = raiz.novaInstancia();
+        MIComposto novaInstancia = _raiz.novaInstancia();
         Val.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
 
     @Test
     public void testHydrateDehydrate() {
-        MIComposto novaInstancia = raiz.novaInstancia();
+        MIComposto novaInstancia = _raiz.novaInstancia();
         Val.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(valorEsperado, Val.dehydrate(novaInstancia));
     }
@@ -150,7 +151,7 @@ public class TestVal {
     @Test
     public void testDehydrateHydrate() {
         Object value = Val.dehydrate(evento);
-        MInstancia novaInstancia = raiz.novaInstancia();
+        MInstancia novaInstancia = _raiz.novaInstancia();
         Val.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
@@ -171,6 +172,18 @@ public class TestVal {
         Assert.assertEquals(null, Val.of(alertaVazio, _alerta_data));
         Assert.assertEquals((Date) null, Val.of(dataVazia));
         Assert.assertEquals(DT_3, Val.of(data3));
+    }
+
+    @Test
+    public void testNullSafe() {
+        Val.of((MISimples)null);
+        Val.of(null, null);
+        Val.notNull((MILista) null);
+        Val.notNull((MInstancia) null, (MTipoSimples) null);
+        Val.notNull((MInstancia) null, (MTipoComposto) null);
+        Val.notNull((MInstancia) null, (MTipoLista) null);
+        Val.dehydrate((MIComposto)null);
+        Val.hydrate((MIComposto)null, null);
     }
 
 }

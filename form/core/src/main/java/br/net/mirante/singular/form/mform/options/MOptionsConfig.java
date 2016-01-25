@@ -26,7 +26,7 @@ public class MOptionsConfig {
     private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(MOptionsConfig.class);
     private BiMap<String, MInstancia> optionsKeyInstanceMap;
-    private Map<String, String> optionsKeylabelMap;
+    private LinkedHashMap<String, String> optionsKeylabelMap;
     private MILista<? extends MInstancia> options;
     private MSelectionableInstance instancia;
 
@@ -116,7 +116,7 @@ public class MOptionsConfig {
      * @return Um mapa de chave e label representando as Minstancias disponibilizadas pelo provider do tipo
      * da MInstancia.
      */
-    public Map<String, String> listSelectOptions() {
+    public LinkedHashMap<String, String> listSelectOptions() {
         reloadOptionsFromProvider();
         return optionsKeylabelMap;
     }
