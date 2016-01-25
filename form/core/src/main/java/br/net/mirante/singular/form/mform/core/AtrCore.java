@@ -13,8 +13,13 @@ public class AtrCore extends MTranslatorParaAtributo {
         super(alvo);
     }
 
-    public AtrCore obrigatorio(Boolean valor) {
-        getAlvo().setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, valor);
+    public AtrCore obrigatorio() {
+        return obrigatorio(true);
+    }
+
+
+    public AtrCore obrigatorio(Boolean value) {
+        getAlvo().setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, value);
         return this;
     }
 

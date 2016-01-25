@@ -75,7 +75,7 @@ public class ExamplePackage extends MPacote {
         this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
         this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
 
-        this.buyerNome.as(MPacoteCore.aspect()).obrigatorio(true);
+        this.buyerNome.as(MPacoteCore.aspect()).obrigatorio();
 
         this.buyerCpf
             .as(MPacoteBasic.aspect())

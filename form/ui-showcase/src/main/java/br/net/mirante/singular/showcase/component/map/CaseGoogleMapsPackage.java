@@ -16,6 +16,6 @@ public class CaseGoogleMapsPackage extends MPacote {
         final MTipoComposto<? extends MIComposto> form = pb.createTipoComposto("testForm");
         final MTipoLatitudeLongitude campoCoordenada = form.addCampo("coordenada", MTipoLatitudeLongitude.class);
 
-        campoCoordenada.as(AtrCore::new).obrigatorio(true);
+        campoCoordenada.as(AtrCore::new).obrigatorio();
     }
 }
