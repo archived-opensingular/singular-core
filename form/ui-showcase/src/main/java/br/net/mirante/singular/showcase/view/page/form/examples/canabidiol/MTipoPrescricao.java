@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
@@ -44,6 +45,8 @@ public class MTipoPrescricao extends MTipoComposto<MIComposto>  {
         MTipoAttachment receitaMedica = this
                 .addCampo("receitaMedica", MTipoAttachment.class);
         receitaMedica
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Receita Médica")
                 .subtitle("Deve conter: nome do paciente, nome comercial do produto, posologia, quantitativo necessário, tempo de tratamento, data, assinatura e carimbo do prescritor (com nº do CRM).");
@@ -51,6 +54,8 @@ public class MTipoPrescricao extends MTipoComposto<MIComposto>  {
         MTipoAttachment laudoMedico = this
                 .addCampo("laudoMedico", MTipoAttachment.class);
         laudoMedico
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Laudo Médico")
                 .subtitle("Deve conter: CID, nome da doença, descrição do caso, tratamentos anteriores e justificativa para a utilização de produto não registrado no Brasil em comparação com as alternativas terapêuticas já existentes e registradas pela Anvisa.");

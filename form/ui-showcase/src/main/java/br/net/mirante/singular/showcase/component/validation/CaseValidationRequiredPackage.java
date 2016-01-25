@@ -15,7 +15,7 @@ public class CaseValidationRequiredPackage extends MPacote {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
         MTipoInteger mTipoInteger = tipoMyForm.addCampoInteger("qtd");
         mTipoInteger.as(AtrBasic::new).label("Quantidade");
-        mTipoInteger.as(AtrCore::new).obrigatorio(true);
+        mTipoInteger.as(AtrCore::new).obrigatorio();
 
     }
 }

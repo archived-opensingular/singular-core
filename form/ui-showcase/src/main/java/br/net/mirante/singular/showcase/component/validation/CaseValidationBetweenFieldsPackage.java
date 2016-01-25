@@ -19,11 +19,11 @@ public class CaseValidationBetweenFieldsPackage extends MPacote {
 
         MTipoInteger valorInicial = tipoMyForm.addCampoInteger("valorInicial");
         valorInicial.as(AtrBasic::new).label("Valor Inicial");
-        valorInicial.as(AtrCore::new).obrigatorio(true);
+        valorInicial.as(AtrCore::new).obrigatorio();
 
         MTipoInteger valorFinal = tipoMyForm.addCampoInteger("valorFinal");
         valorFinal.as(AtrBasic::new).label("Valor Final");
-        valorFinal.as(AtrCore::new).obrigatorio(true);
+        valorFinal.as(AtrCore::new).obrigatorio();
 
         valorFinal.addInstanceValidator(validatable -> {
 

@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
@@ -22,6 +23,8 @@ public class MTipoEndereco extends MTipoComposto<MIComposto>  {
 
 
         this.addCampoString("logradouro")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Logradouro")
                 .as(AtrBootstrap::new)
@@ -53,6 +56,8 @@ public class MTipoEndereco extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> estado = this.addCampoComposto("estado");
         estado
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Estado")
                 .as(AtrBootstrap::new)
@@ -62,6 +67,8 @@ public class MTipoEndereco extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> cidade = this.addCampoComposto("cidade");
         cidade
+                .as(AtrCore::new)
+                .obrigatorio(inst -> Val.notNull(inst, (MTipoSimples) estado.getCampo("id")))
                 .as(AtrBasic::new)
                 .label("Cidade")
                 .visivel(inst -> Val.notNull(inst, (MTipoSimples)estado.getCampo("id")))
