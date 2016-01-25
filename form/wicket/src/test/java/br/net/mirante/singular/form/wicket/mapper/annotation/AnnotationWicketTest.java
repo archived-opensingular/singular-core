@@ -21,7 +21,7 @@ import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class AnnotationMapperTest {
+public class AnnotationWicketTest {
     protected static MDicionario dicionario;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;

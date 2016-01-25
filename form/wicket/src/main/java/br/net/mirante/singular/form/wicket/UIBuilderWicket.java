@@ -61,8 +61,13 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -150,6 +155,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 }
 
 class AnnotationBuilder {
+    private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
     private UIBuilderWicket parent;
 
@@ -185,19 +191,40 @@ class AnnotationBuilder {
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, MInstancia instance) {
         if(instance.as(AtrAnnotation::new).isAnnotated()){
-            addAnnotationComponent(ngrid, instance);
+            BSContainer rootContainer = ctx.getRootContainer();
+            addAnnotationComponent(ngrid, instance, find(rootContainer.getItems(), instance));
         }
         if(instance instanceof MIComposto){
             addAnnotationsFor(ctx, ngrid, ((MIComposto) instance).getAllFields());
         }
     }
 
-    private void addAnnotationComponent(BSGrid ngrid, MInstancia instance) {
-        ngrid.newRow().appendTag("div", true, "style=\"float: left;\"",
-                (id) -> {
-                    return new AnnotationComponent(id, modelFor(instance));
-                });
-        ;
+    private void addAnnotationComponent(BSGrid ngrid, MInstancia instance,
+                                        Optional<Component> targetComponent) {
+        if(targetComponent.isPresent()){
+            ngrid.newRow().appendTag("div", true, "style=\"float: left;\"",
+                    (id) -> {
+                        return new AnnotationComponent(id, modelFor(instance),
+                                targetComponent.get());
+                    });
+            ;
+        }else{
+            LOGGER.warning("Not possible to render Annotation Component since Target Component was not found.");
+        }
+    }
+
+    private Optional<Component> find(RepeatingView children, final MInstancia target) {
+        final Optional<Component>[] result = new Optional[]{Optional.empty()};
+        children.visitChildren((x, y) -> {
+            IModel<?> m = x.getDefaultModel();
+            if(m != null && m.getObject() == target){
+                result[0] = Optional.of(x);
+            }
+            if(!result[0].isPresent() && x instanceof BSContainer){
+                result[0] = find(((BSContainer) x).getItems(), target);
+            }
+        });
+        return result[0];
     }
 
     private MInstanceRootModel<MInstancia> modelFor(MInstancia instance) {

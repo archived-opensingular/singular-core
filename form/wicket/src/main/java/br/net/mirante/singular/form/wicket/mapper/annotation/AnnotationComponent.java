@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
 import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -25,11 +26,13 @@ import org.apache.wicket.model.PropertyModel;
  */
 public class AnnotationComponent extends Panel {
     private final AbstractMInstanciaModel referenced;
+    private final Component referencedComponent;
     private final MIAnnotation target;
 
-    public AnnotationComponent(String id, AbstractMInstanciaModel referenced) {
+    public AnnotationComponent(String id, AbstractMInstanciaModel referenced, Component referencedComponent) {
         super(id);
         this.referenced = referenced;
+        this.referencedComponent = referencedComponent;
         this.target = referenced.getMInstancia().as(AtrAnnotation::new).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
     }
@@ -40,6 +43,9 @@ public class AnnotationComponent extends Panel {
         this.queue(new Label("target_label",$m.ofValue(title())));
         this.queue(new TextArea<>("comment_field", new PropertyModel(target, "text")));
         this.queue(new CheckBox("approval_field", new PropertyModel<Boolean>(target, "approved")));
+        this.add(new Label("referenced_id",$m.ofValue(referencedComponent.getMarkupId())));
+        this.add(new Label("this_id",$m.ofValue(this.getMarkupId())));
+
     }
 
     private String title() {
