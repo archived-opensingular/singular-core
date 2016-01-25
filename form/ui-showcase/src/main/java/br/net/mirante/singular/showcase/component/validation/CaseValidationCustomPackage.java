@@ -15,7 +15,7 @@ public class CaseValidationCustomPackage extends MPacote {
         MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
         MTipoInteger mTipoInteger = tipoMyForm.addCampoInteger("qtd");
         mTipoInteger.as(AtrBasic::new).label("Quantidade");
-        mTipoInteger.as(AtrCore::new).obrigatorio(true);
+        mTipoInteger.as(AtrCore::new).obrigatorio();
         mTipoInteger.addInstanceValidator(validatable -> {
             if(validatable.getInstance().getInteger() > 1000){
                 validatable.error("O Campo deve ser menor que 1000");

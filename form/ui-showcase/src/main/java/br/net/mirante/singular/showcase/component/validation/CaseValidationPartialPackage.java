@@ -16,13 +16,13 @@ public class CaseValidationPartialPackage extends MPacote {
         //@destacar
         testForm.addCampoString("obrigatorio_1")
                 .as(AtrBasic::new).label("Obrigatorio 1")
-                .as(AtrCore::new).obrigatorio(true);
+                .as(AtrCore::new).obrigatorio();
         testForm.addCampoInteger("obrigatorio_2")
                 .as(AtrBasic::new).label("Obrigatorio 2")
-                .as(AtrCore::new).obrigatorio(true);
+                .as(AtrCore::new).obrigatorio();
         testForm.addCampoEmail("obrigatorio_3")
                 .as(AtrBasic::new).label("Obrigatorio 3")
-                .as(AtrCore::new).obrigatorio(true);
+                .as(AtrCore::new).obrigatorio();
 
     }
 }

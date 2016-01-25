@@ -1,21 +1,7 @@
 package br.net.mirante.singular.form.wicket;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
-import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
+import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.MTipoBoolean;
@@ -86,7 +72,6 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         }else{
             mapper.buildView(ctx.init(this, viewMode));
-            ctx.configure(mapper);
         }
 
     }
@@ -149,6 +134,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
                 .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
                 .register(MTipoDataHora.class,                                          DateTimeMapper::new)
+                .register(MTipoDataHora.class,   MDateTimerView.class,                  DateTimeMapper::new)
                 .register(MTipoTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }
@@ -175,7 +161,7 @@ class AnnotationBuilder {
 
     private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
         mapper.buildView(mainCtx.init(parent, viewMode));
-        mainCtx.configure(mapper);
+//        mainCtx.configure(mapper);
     }
 
     private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {

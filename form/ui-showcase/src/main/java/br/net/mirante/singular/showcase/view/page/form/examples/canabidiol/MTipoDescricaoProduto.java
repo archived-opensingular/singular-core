@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
@@ -54,6 +55,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         nomeComercial = this.addCampoInteger("nomeComercial");
 
         nomeComercial
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Nome Comercial");
 
@@ -75,6 +78,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         composicao = this.addCampoString("composicao");
 
         composicao
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Composição")
                 .visivel(false)
@@ -104,6 +109,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         enderecoFabricante = this.addCampoString("enderecoFabricante");
 
         enderecoFabricante
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Endereço do fabricante")
                 .visivel(false)
@@ -129,6 +136,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
 
         MTipoComposto<?> outroMedicamento = this.addCampoComposto("outro");
         outroMedicamento
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
@@ -137,6 +146,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
 
         outroMedicamento
                 .addCampoString("outroNome")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Nome Comercial")
                 .as(AtrBootstrap::new)
@@ -144,6 +155,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
 
         outroMedicamento
                 .addCampoString("outroComposicao")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Composição")
                 .as(AtrBootstrap::new)
@@ -151,6 +164,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
 
         outroMedicamento
                 .addCampoString("outroEndereco")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Endereço do Fabricante")
                 .as(AtrBootstrap::new)
@@ -160,6 +175,8 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         descricaoQuantidade = this.addCampoString("descricaoQuantidade");
 
         descricaoQuantidade
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Quantidade solicitada a ser importada no período de 1 (um) ano")
                 .subtitle("Informar as unidades do produto (ex: quantidade de frascos, tubos, caixas)");

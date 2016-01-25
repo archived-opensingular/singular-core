@@ -28,7 +28,10 @@ public class ViewRuleTypeSimpleSelectionOf extends ViewRule {
     //TODO: [Fabs] this decision is strange to apply when the value is dynamic
     private MView decideView(MInstancia instance, MInstancia simple, MOptionsProvider provider) {
         int size = instance.getOptionsConfig().listSelectOptions().size();
-        if (size <= 3 && simple.getMTipo().isObrigatorio()) {
+        /* Tamanho zero indica uma possivel carga condicional e/ou dinamica. Nesse caso é mais produtente escolher
+        *  combo: MSelecaoPorSelectView
+        * */
+        if (size <= 3 &&  size != 0 && simple.getMTipo().isObrigatorio()) {
             return newInstance(MSelecaoPorRadioView.class);
         }
         return newInstance(MSelecaoPorSelectView.class);

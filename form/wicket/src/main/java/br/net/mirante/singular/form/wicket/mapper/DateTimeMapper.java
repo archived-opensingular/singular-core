@@ -9,6 +9,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.MTipoDataHora;
 import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
@@ -22,7 +23,11 @@ public class DateTimeMapper implements ControlsFieldComponentMapper {
     public Component appendInput(MView view, BSContainer bodyContainer,
                                  BSControls formGroup, IModel<? extends MInstancia> model,
                                  IModel<String> labelModel) {
-        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getNome(), new MInstanciaValorModel<>(model));
+        MDateTimerView dateTimerView = null;
+        if(view instanceof MDateTimerView){
+            dateTimerView = (MDateTimerView) view;
+        }
+        final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getNome(), new MInstanciaValorModel<>(model), dateTimerView);
         formGroup.appendDiv(dateTimeContainer);
         return dateTimeContainer;
     }
