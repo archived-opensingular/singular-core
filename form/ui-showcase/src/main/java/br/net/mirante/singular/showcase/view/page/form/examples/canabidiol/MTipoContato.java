@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
@@ -23,13 +24,13 @@ public class MTipoContato extends MTipoComposto<MIComposto> {
         this.as(AtrBasic::new)
                 .label("Contato");
 
-        this.addCampoString("telefonefixo")
+        this.addCampo("telefonefixo", MTipoTelefoneNacional.class)
                 .as(AtrBasic::new)
                 .label("Telefone Fixo")
                 .as(AtrBootstrap::new)
                 .colPreference(2);
 
-        this.addCampoString("celular")
+        this.addCampo("celular", MTipoTelefoneNacional.class)
                 .as(AtrBasic::new)
                 .label("Celular")
                 .as(AtrBootstrap::new)
