@@ -16,10 +16,11 @@
                                data-on-color="success" data-on-text="Aprovado"
                                data-off-color="danger" data-off-text="Rejeitado" />
                 <script type="application/javascript">
-                    var target = '<wicket:container wicket:id="referenced_id" />';
-                    var thiz = '<wicket:container wicket:id="this_id" />';
-                    $(".make-switch").bootstrapSwitch();
-                    //$('#target').parent().offset()['top'] - $('#this').offset()['top']
+                    $(function(){
+                        var target = '#<wicket:container wicket:id="referenced_id" />';
+                        var thiz = '#<wicket:container wicket:id="this_id" />';
+                        new Annotation(target, thiz).setup();
+                    });
                 </script>
             </div>
         </div>

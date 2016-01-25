@@ -11,6 +11,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
@@ -27,6 +29,7 @@ import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttribu
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
@@ -87,6 +90,16 @@ public class WicketBuildContext implements Serializable {
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
 
+        if (getContainer() != null) {
+            getContainer().add(new Behavior() {
+                @Override
+                public void renderHead(Component component, IHeaderResponse response) {
+                    super.renderHead(component, response);
+                    response.render(CssReferenceHeaderItem.forReference(FormDefaultStyles.RESOURCE_REFERENCE));
+                }
+            });
+        }
+
         return this;
     }
 
@@ -94,22 +107,20 @@ public class WicketBuildContext implements Serializable {
         container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
             @Override
             public void component(FormComponent formComponent, IVisit<Object> visit) {
+                final IModel defaultModel = formComponent.getDefaultModel();
 
-                WicketFormUtils.setCellContainer(formComponent, getContainer());
+                if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
 
-                formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-
-                if (formComponent.getLabel() == null) {
-                    // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
-                    formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
-                }
-
-                if (IMInstanciaAwareModel.class.isAssignableFrom(formComponent.getDefaultModel().getClass())) {
-                    IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-                    MTipo<?> tipo = model.getMInstancia().getMTipo();
+                    WicketFormUtils.setCellContainer(formComponent, getContainer());
+                    formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+                    if (formComponent.getLabel() == null) {
+                        // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+                        formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
+                    }
+                    final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
+                    final MTipo<?> tipo = model.getMInstancia().getMTipo();
                     if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                        mapper.addAjaxUpdate(
-                                formComponent,
+                        mapper.addAjaxUpdate(formComponent,
                                 IMInstanciaAwareModel.getInstanceModel(model),
                                 new OnFieldUpdatedListener());
                     }

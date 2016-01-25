@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
@@ -10,6 +10,7 @@ import java.util.List;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -36,7 +37,7 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
 
 
     private MIComposto newSelectItem(String id, String descricao) {
-         MIComposto instancia = (MIComposto) selectType.novaInstancia();
+        MIComposto instancia = (MIComposto) selectType.novaInstancia();
         instancia.setValor("id", id);
         instancia.setValor("nome", descricao);
         return instancia;
@@ -49,8 +50,8 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
                 MILista lista = selectType.novaLista();
                 for (MIComposto composto : compostos){
                     MInstancia instancia = lista.addNovo();
-                    Object value = Val.dehydratate(composto);
-                    Val.hydratate(instancia, value);
+                    Object value = Val.dehydrate(composto);
+                    Val.hydrate(instancia, value);
                 }
                 return lista;
             }
@@ -62,7 +63,6 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
     public void rendersAnDropDownWithSpecifiedOptionsByName() {
         setupPage();
-
         selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         driver.assertEnabled(formField(form, "originUF"));
@@ -70,10 +70,10 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
+        Object valueDF = getSelectKeyFromMInstancia(newSelectItem("DF", "Distrito Federal"));
+        Object valueSP = getSelectKeyFromMInstancia(newSelectItem("SP", "São Paulo"));
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly(
-                    Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
-                    Val.dehydratate(newSelectItem("SP", "São Paulo")));
+            .containsExactly(valueDF, valueSP);
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Distrito Federal","São Paulo");
     }
@@ -88,10 +88,13 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
+
+        Object valueDF = getSelectKeyFromMInstancia(newSelectItem("DF", "Distrito Federal"));
+        Object valueSP = getSelectKeyFromMInstancia(newSelectItem("SP", "São Paulo"));
         assertThat(extractProperty("value").from(choices.getChoices()))
                 .containsExactly(
-                        Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
-                        Val.dehydratate(newSelectItem("SP", "São Paulo"))
+                        valueDF,
+                        valueSP
                 );
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
                 .containsExactly("Distrito Federal","São Paulo");
@@ -110,11 +113,11 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         List<DropDownChoice> options = (List) findTag(form.getForm(), DropDownChoice.class);
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
+        Object valueGO = getSelectKeyFromMInstancia(newSelectItem("GO", "Goias"));
+        Object valueDF = getSelectKeyFromMInstancia(newSelectItem("DF", "Distrito Federal"));
+        Object valueSP = getSelectKeyFromMInstancia(newSelectItem("SP", "São Paulo"));
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly(
-                    Val.dehydratate(newSelectItem("GO", "Goias")),
-                    Val.dehydratate(newSelectItem("DF", "Distrito Federal")),
-                    Val.dehydratate(newSelectItem("SP", "São Paulo")));
+            .containsExactly(valueGO, valueDF, valueSP);
         assertThat(extractProperty("selectLabel").from(choices.getChoices()))
             .containsExactly("Goias","Distrito Federal","São Paulo");
     }
@@ -145,6 +148,14 @@ public class MTipoSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         MIComposto currentInstance = page.getCurrentInstance();
         MIComposto value = (MIComposto) currentInstance.getAllFields().iterator().next();
         return value;
+    }
+
+    private Object getSelectKeyFromMInstancia(MInstancia instancia){
+        return  getInstanciaSelect().getOptionsConfig().getKeyFromOptions(instancia);
+    }
+
+    private MInstancia getInstanciaSelect(){
+        return page.getCurrentInstance().getCampo("originUF");
     }
     
 }

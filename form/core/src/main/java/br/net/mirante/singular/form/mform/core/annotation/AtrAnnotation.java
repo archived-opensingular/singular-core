@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -10,6 +9,8 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+
+import static br.net.mirante.singular.form.mform.util.transformer.Val.*;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -194,7 +195,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         MILista miLista = newAnnotationList();
         for(MIAnnotation a: all){
             MIAnnotation detached = newAnnotation();
-            Val.hydratate(detached,Val.dehydratate(a));
+            Val.hydrate(detached, Val.dehydrate(a));
             miLista.addElement(detached);
         }
 

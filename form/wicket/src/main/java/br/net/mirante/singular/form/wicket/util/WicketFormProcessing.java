@@ -93,9 +93,9 @@ public class WicketFormProcessing {
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                .map(MInstanceEvent::getSource)
-                .map(MInstancia::getId)
-                .collect(toSet());
+                    .map(MInstanceEvent::getSource)
+                    .map(MInstancia::getId)
+                    .collect(toSet());
 
             final BiPredicate<Component, MInstancia> predicate = (Component c, MInstancia ins) -> {
                 MTipo<?> insTipo = ins.getMTipo();
@@ -107,31 +107,37 @@ public class WicketFormProcessing {
 
             // re-renderizar componentes
             WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-                .map(WicketFormUtils::findCellContainer)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter(c -> c != null)
-                .forEach(t::add);
+                    .map(WicketFormUtils::findCellContainer)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .filter(c -> c != null)
+                    .forEach(t::add);
         });
     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null)
             target.get()
-                .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
     }
 
     private static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends MInstancia> baseInstance) {
         final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
 
         // associate errors to components
-        Visits.visitPostOrder(container, (Component component, IVisit<Object> visit) -> WicketFormUtils.resolveInstance(component.getDefaultModel())
-            .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
-            .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors)));
+        Visits.visitPostOrder(container, (Component component, IVisit<Object> visit) -> {
+            if (!component.isVisibleInHierarchy()) {
+                visit.dontGoDeeper();
+            } else {
+                WicketFormUtils.resolveInstance(component.getDefaultModel())
+                        .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
+                        .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
+            }
+        });
 
         // associate remaining errors to container
         instanceErrors.values().stream()
-            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
+                .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
     private static void associateErrorsTo(Component component, IModel<? extends MInstancia> baseInstance, boolean prependFullPathLabel, Set<IValidationError> errors) {
@@ -146,9 +152,9 @@ public class WicketFormProcessing {
 
             final IModel<? extends MInstancia> instanceModel = (IReadOnlyModel<MInstancia>) () ->
                     MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                    .filter(it -> Objects.equals(it.getId(), instanceId))
-                    .findFirst()
-                    .orElse(null);
+                            .filter(it -> Objects.equals(it.getId(), instanceId))
+                            .findFirst()
+                            .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 

@@ -1,7 +1,5 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -10,6 +8,8 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
+
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 public class BSLabel extends Label implements IBSGridCol<BSLabel> {
 
@@ -43,9 +43,6 @@ public class BSLabel extends Label implements IBSGridCol<BSLabel> {
 
         add(newBSGridColBehavior());
 
-        // adiciona classe 'required' se algum FormComponent do
-        // container é required
-        add($b.classAppender("required", $m.get(() -> findTargetFormComponent().map(it -> it.isRequired()).orElse(false))));
         add($b.attr("for", $m.get(() -> findTargetFormComponent().map(it -> it.getMarkupId()).orElse(""))));
 
         // altera propriedade label dos componentes se com o valor desta

@@ -1,13 +1,5 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
-import org.junit.Test;
-
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -19,8 +11,52 @@ import br.net.mirante.singular.form.mform.core.MTipoBoolean;
 import br.net.mirante.singular.form.mform.core.MTipoData;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestViewResolver {
+
+    private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static MTipoLista<?, ?> createSimpleList(PacoteBuilder pb, String name, Class<? extends MTipoSimples<?, ?>> type, int size,
+                                                     Function<Integer, Object> valueProvider) {
+        MTipoSimples<?, ?> simpleType = pb.createTipo(name, type);
+        simpleType.withSelectionOf((Collection) repeate(valueProvider, size));
+        return pb.createTipoListaOf("list" + name, simpleType);
+    }
+
+    private static <T> Collection<T> repeate(Function<Integer, T> valueSupplier, int size) {
+        ArrayList<T> l = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            l.add(valueSupplier.apply(i));
+        }
+        return l;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void assertView(Class<?> expectedView, Class<?> type) {
+        MDicionario dicionario = MDicionario.create();
+        assertView(expectedView, dicionario.getTipo((Class<MTipo<?>>) type));
+    }
+
+    private static void assertView(Class<?> expectedView, MTipo<?> newInstance) {
+        assertView(expectedView, newInstance.novaInstancia());
+    }
+
+    private static void assertView(Class<?> expectedView, MInstancia instance) {
+        MView view = ViewResolver.resolve(instance);
+        if (expectedView == null && view == MView.DEFAULT) {
+            return;
+        }
+        assertEquals(expectedView, view.getClass());
+    }
 
     @Test
     public void testBasicView() {
@@ -36,10 +72,10 @@ public class TestViewResolver {
     public void testTipoSimplesSelectOf() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoSimples<?, ?> tipoInteger = pb.createTipo("Integer", MTipoInteger.class).withSelectionOf(repeate(1, 2).toArray(new Integer[]{}));
-        MTipoSimples<?, ?> tipoDate = pb.createTipo("Date", MTipoData.class).withSelectionOf(repeate(new Date(), 2).toArray(new Date[]{}));
-        MTipoSimples<?, ?> tipoString = pb.createTipo("String", MTipoString.class).withSelectionOf(repeate("A", 2).toArray(new String[]{}));
-        MTipoSimples<?, ?> tipoStringLarge = pb.createTipo("StringLarge", MTipoString.class).withSelectionOf(repeate("A", 5).toArray(new String[]{}));
+        MTipoSimples<?, ?> tipoInteger = pb.createTipo("Integer", MTipoInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
+        MTipoSimples<?, ?> tipoDate = pb.createTipo("Date", MTipoData.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10 * i), 2).toArray(new Date[]{}));
+        MTipoSimples<?, ?> tipoString = pb.createTipo("String", MTipoString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
+        MTipoSimples<?, ?> tipoStringLarge = pb.createTipo("StringLarge", MTipoString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 5).toArray(new String[]{}));
 
         assertView(MSelecaoPorSelectView.class, tipoInteger);
         assertView(MSelecaoPorSelectView.class, tipoDate);
@@ -61,13 +97,13 @@ public class TestViewResolver {
     public void testListTipoSimplesSelectOf() {
         MDicionario dicionario = MDicionario.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoLista<?, ?> listInteger3 = createSimpleList(pb, "Integer3", MTipoInteger.class, 3, 100);
-        MTipoLista<?, ?> listInteger10 = createSimpleList(pb, "Integer10", MTipoInteger.class, 10, 100);
-        MTipoLista<?, ?> listInteger20 = createSimpleList(pb, "Integer20", MTipoInteger.class, 20, 100);
+        MTipoLista<?, ?> listInteger3 = createSimpleList(pb, "Integer3", MTipoInteger.class, 3, i -> 100 + i);
+        MTipoLista<?, ?> listInteger10 = createSimpleList(pb, "Integer10", MTipoInteger.class, 10, i -> 100 + i);
+        MTipoLista<?, ?> listInteger20 = createSimpleList(pb, "Integer20", MTipoInteger.class, 20, i -> 100 + i);
 
-        MTipoLista<?, ?> listString3 = createSimpleList(pb, "String3", MTipoString.class, 3, "AA");
-        MTipoLista<?, ?> listString10 = createSimpleList(pb, "String10", MTipoString.class, 10, "AA");
-        MTipoLista<?, ?> listString20 = createSimpleList(pb, "String20", MTipoString.class, 20, "AA");
+        MTipoLista<?, ?> listString3 = createSimpleList(pb, "String3", MTipoString.class, 3, i -> textoTeste.substring(i));
+        MTipoLista<?, ?> listString10 = createSimpleList(pb, "String10", MTipoString.class, 10, i -> textoTeste.substring(i));
+        MTipoLista<?, ?> listString20 = createSimpleList(pb, "String20", MTipoString.class, 20, i -> textoTeste.substring(i));
 
         assertView(MSelecaoMultiplaPorCheckView.class, listInteger3);
         assertView(MSelecaoMultiplaPorSelectView.class, listInteger10);
@@ -76,40 +112,6 @@ public class TestViewResolver {
         assertView(MSelecaoMultiplaPorCheckView.class, listString3);
         assertView(MSelecaoMultiplaPorSelectView.class, listString10);
         assertView(MSelecaoMultiplaPorPicklistView.class, listString20);
-    }
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static MTipoLista<?, ?> createSimpleList(PacoteBuilder pb, String name, Class<? extends MTipoSimples<?, ?>> type, int size,
-            Object value) {
-        MTipoSimples<?, ?> simpleType = pb.createTipo(name, type);
-        simpleType.withSelectionOf((Collection) repeate(value, size));
-        return pb.createTipoListaOf("list" + name, simpleType);
-    }
-
-    private static <T> Collection<T> repeate(T value, int size) {
-        ArrayList<T> l = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            l.add(value);
-        }
-        return l;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void assertView(Class<?> expectedView, Class<?> type) {
-        MDicionario dicionario = MDicionario.create();
-        assertView(expectedView, dicionario.getTipo((Class<MTipo<?>>) type));
-    }
-
-    private static void assertView(Class<?> expectedView, MTipo<?> newInstance) {
-        assertView(expectedView, newInstance.novaInstancia());
-    }
-
-    private static void assertView(Class<?> expectedView, MInstancia instance) {
-        MView view = ViewResolver.resolve(instance);
-        if (expectedView == null && view == MView.DEFAULT) {
-            return;
-        }
-        assertEquals(expectedView, view.getClass());
     }
 
 }

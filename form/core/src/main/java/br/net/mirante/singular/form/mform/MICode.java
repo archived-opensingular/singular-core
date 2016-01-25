@@ -12,6 +12,11 @@ public class MICode<T> extends MInstancia {
     }
 
     @Override
+    public void clearInstance() {
+       setValor(null);
+    }
+
+    @Override
     public Object getValorWithDefault() {
         // TODO ??? não sei como implementar isso...
         return getValor();

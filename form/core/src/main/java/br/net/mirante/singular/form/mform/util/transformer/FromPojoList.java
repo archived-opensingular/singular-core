@@ -28,6 +28,7 @@ public class FromPojoList<T> extends FromPojo<T> {
      */
     public FromPojoList(MTipoComposto<? extends MIComposto> target, List<T> pojoList) {
         super(target);
+        this.pojoList = pojoList;
         this.listType = target;
     }
 

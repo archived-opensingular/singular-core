@@ -1,14 +1,15 @@
-package br.net.mirante.singular.form.mform.core;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -42,8 +43,7 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
             }
 
             public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
-                MTipoString s = dicionario.getTipo(MTipoString.class);
-                MILista<?> r = s.novaLista();
+                MILista<?> r = optionsInstance.getMTipo().novaLista();
                 options.forEach((o) -> {r.addValor(o);});
                 return r;
             }
@@ -67,7 +67,7 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-            .containsExactly(referenceOptions.toArray());
+            .containsExactly(getReferenceOptionsKeys().toArray());
     }
     
     @Test @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -86,7 +86,17 @@ public class MTipoStringSelectionFromProviderFieldTest extends SelectionFieldBas
         assertThat(options).hasSize(1);
         DropDownChoice choices = options.get(0);
         assertThat(extractProperty("value").from(choices.getChoices()))
-        .containsExactly(referenceOptions.toArray());
+        .containsExactly(getReferenceOptionsKeys().toArray());
+    }
+
+    List<?> getReferenceOptionsKeys(){
+        return referenceOptions.stream().map(value -> getSelectKeyFromValue(value)).collect(Collectors.toList());
+    }
+
+    private Object getSelectKeyFromValue(String value) {
+        MIString mvalue = selectType.novaInstancia();
+        mvalue.setValor(value);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
     }
 
 }

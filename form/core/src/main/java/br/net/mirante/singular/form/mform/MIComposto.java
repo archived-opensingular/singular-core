@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import br.net.mirante.singular.form.mform.MTipoComposto.FieldMapOfRecordType;
 
 public class MIComposto extends MInstancia implements ICompositeInstance {
 
@@ -25,7 +24,13 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
         return getCampos();
     }
 
-    @Override //TODO: Won't "isEmpty" is enough? the "ofData" seems kind of redundant.
+    @Override
+    public void clearInstance() {
+        getCampos().clear();
+    }
+
+    @Override
+	//TODO: Won't "isEmpty" is enough? the "ofData" seems kind of redundant.
     public boolean isEmptyOfData() {
         return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
     }

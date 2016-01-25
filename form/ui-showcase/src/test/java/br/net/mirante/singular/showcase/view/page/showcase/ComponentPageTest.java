@@ -1,41 +1,32 @@
 package br.net.mirante.singular.showcase.view.page.showcase;
 
-import br.net.mirante.singular.showcase.component.ShowCaseTable;
-import br.net.mirante.singular.showcase.view.page.ComponentPage;
-import br.net.mirante.singular.showcase.wicket.ShowcaseApplication;
-import junit.framework.TestCase;
+import javax.inject.Inject;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Inject;
+import br.net.mirante.singular.showcase.SpringWicketTester;
+import br.net.mirante.singular.showcase.component.ShowCaseTable;
+import br.net.mirante.singular.showcase.view.page.ComponentPage;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/applicationContext.xml"})
-public class ComponentPageTest extends TestCase {
-
-    private WicketTester wt;
+public class ComponentPageTest {
 
     @Inject
-    private ShowcaseApplication app;
-
-    @Before
-    public void setup() {
-        wt = new WicketTester(app, false);
-    }
+    private SpringWicketTester springWicketTester;
 
     @Test
     public void testRendering() {
-        new ShowCaseTable().getGroups().forEach((group -> {
+        new ShowCaseTable().getGroups().forEach(group -> {
             group.getItens().forEach(item -> {
-                wt.startPage(ComponentPage.class, new PageParameters().add("cn", item.getComponentName().toLowerCase()));
-                wt.assertRenderedPage(ComponentPage.class);
+                springWicketTester.wt().startPage(ComponentPage.class, new PageParameters().add("cn", item.getComponentName().toLowerCase()));
+                springWicketTester.wt().assertRenderedPage(ComponentPage.class);
             });
-        }));
+        });
     }
 
 }

@@ -11,4 +11,6 @@ public interface MSelectionableInstance  extends MSelectionable{
 
     MTipo<?> getMTipo();
 
+    MOptionsConfig getOptionsConfig();
+
 }

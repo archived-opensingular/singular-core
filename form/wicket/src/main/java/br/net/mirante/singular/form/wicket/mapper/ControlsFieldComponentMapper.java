@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.util.Set;
+
+import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
@@ -10,6 +13,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
@@ -91,6 +95,21 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input = appendInput(view, ctx.getExternalContainer(), controls, model, labelModel);
             controls.appendFeedback(controls, feedbackMessageFilter);
             input.add(DisabledClassBehavior.getInstance());
+
+            input.add($b.onConfigure(c -> {
+                label.add(new ClassAttributeModifier() {
+                    @Override
+                    protected Set<String> update(Set<String> oldClasses) {
+                        if (model.getObject().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO)) {
+                            oldClasses.add("required");
+                        } else {
+                            oldClasses.remove("required");
+                        }
+                        return oldClasses;
+                    }
+                });
+            }));
+
         } else {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         }

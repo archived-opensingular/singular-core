@@ -49,6 +49,11 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
     }
 
     @Override
+    public void clearInstance() {
+        getValor().clear();
+    }
+
+    @Override
     public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
         return getValor(new LeitorPath(pathCampo), classeDestino);
     }
@@ -261,7 +266,7 @@ public class MILista<E extends MInstancia> extends MInstancia implements Iterabl
             return false;
         } else if (!getMTipo().equals(other.getMTipo())) {
             return false;
-        } else if (!Objects.equals(tipoElementos, other.tipoElementos))
+        } else if (!Objects.equals(getTipoElementos(), other.getTipoElementos()))
             return false;
         for (int i = size() - 1; i != -1; i--) {
             if (!Objects.equals(get(i), other.get(i))) {
