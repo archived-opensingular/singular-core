@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
@@ -7,8 +7,9 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.util.tester.FormTester;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.MTipo;

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
@@ -10,6 +10,7 @@ import java.util.List;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import org.apache.wicket.markup.html.form.DropDownChoice;

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.mform.core;
+package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
@@ -6,6 +6,8 @@ import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
 import org.junit.Test;
 
