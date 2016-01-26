@@ -2,10 +2,14 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.MInstancia;
@@ -16,6 +20,8 @@ import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 public class DateTimeMapper implements ControlsFieldComponentMapper {
 
@@ -30,6 +36,23 @@ public class DateTimeMapper implements ControlsFieldComponentMapper {
         final DateTimeContainer dateTimeContainer = new DateTimeContainer(model.getObject().getNome(), new MInstanciaValorModel<>(model), dateTimerView);
         formGroup.appendDiv(dateTimeContainer);
         return dateTimeContainer;
+    }
+
+
+    @Override
+    public FormComponent[] findAjaxComponents(Component input) {
+        DateTimeContainer dateTimeContainer = (DateTimeContainer) input;
+        List<FormComponent> formComponents = new ArrayList<>();
+        dateTimeContainer.visitChildren(new IVisitor<Component, Object>() {
+            @Override
+            public void component(Component component, IVisit<Object> iVisit) {
+                if (component instanceof FormComponent){
+                    formComponents.add((FormComponent) component);
+                    iVisit.dontGoDeeper();
+                }
+            }
+        });
+        return formComponents.toArray(new FormComponent[0]);
     }
 
     @Override
