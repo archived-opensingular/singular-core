@@ -25,8 +25,8 @@ import br.net.mirante.singular.persistence.entity.Actor;
 @Transactional(readOnly = true)
 public class UserDetailsService extends BaseDAO implements org.springframework.security.core.userdetails.UserDetailsService, UserDetailsContextMapper {
 
-    @Value("#{singularAdmin['springsecurity.username.prefix']}")
-    private String usernamePrefix;
+    @Value("#{singularAdmin['springsecurity.username.suffix']}")
+    private String usernameSuffix;
 
     @Override
     public UIAdminUser loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -53,7 +53,7 @@ public class UserDetailsService extends BaseDAO implements org.springframework.s
     
     private UIAdminUser findUser(String username) {
         Criteria c = getSession().createCriteria(Actor.class);
-        c.add(Restrictions.ilike("email", username + StringUtils.trimToEmpty(usernamePrefix)));
+        c.add(Restrictions.ilike("email", username + StringUtils.trimToEmpty(usernameSuffix)));
         Actor actor = (Actor) c.uniqueResult();
         
         return actor == null ? null : new UIAdminUser(username, actor.getCod(), actor.getSimpleName(), actor.getEmail());
