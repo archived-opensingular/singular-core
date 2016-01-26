@@ -47,6 +47,9 @@ public class WicketBuildContext implements Serializable {
     private IModel<? extends MInstancia> model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
+    private boolean annotationEnabled = false;
+    //TODO: FABS : PaSSAR a anotação como atributo do contexto,
+    // aí isso fica como responsabilidade do mapper tratar ou não
     private MView view;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends MInstancia> model) {
@@ -166,6 +169,9 @@ public class WicketBuildContext implements Serializable {
         return ctx;
     }
 
+    /**
+     * @return true if this is the root of a Context tree.
+     */
     public boolean isRootContext() {
         return (this.getParent() == null);
     }
@@ -263,4 +269,9 @@ public class WicketBuildContext implements Serializable {
     public <T extends MInstancia> T getCurrenttInstance() {
         return (T) getModel().getObject();
     }
+
+    public boolean isAnnotationEnabled() {  return annotationEnabled;   }
+
+    public void enableAnnotation() {   this.annotationEnabled = true;}
+    public void disableAnnotation() {   this.annotationEnabled = false;}
 }

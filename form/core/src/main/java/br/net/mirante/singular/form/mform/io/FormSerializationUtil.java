@@ -3,13 +3,12 @@ package br.net.mirante.singular.form.mform.io;
 import java.io.Serializable;
 import java.util.Map;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotationList;
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -107,8 +106,14 @@ public class FormSerializationUtil {
      */
     private static FormSerialized toSerialized(SDocument document,
                                   MDicionarioResolverSerializable dicionaroResolverSerializable) {
-        MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(document.getRoot());
-        FormSerialized fs = new FormSerialized(document.getRoot().getMTipo().getNome(), xml, dicionaroResolverSerializable);
+        MInstancia root = document.getRoot();
+        MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
+        MElement annotations = null;
+        if(root.as(AtrAnnotation::new).hasAnnotation()){
+            annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
+        }
+        FormSerialized fs = new FormSerialized(root.getMTipo().getNome(), xml, annotations,
+                                                dicionaroResolverSerializable);
         serializeServices(document, fs);
         return fs;
     }
@@ -158,25 +163,31 @@ public class FormSerializationUtil {
      */
     public static MInstancia toInstance(FormSerialized fs, MDicionarioResolver dictionaryResolver) {
         try {
-            MTipo<?> rootType = defineRootType(fs, dictionaryResolver);
+            MTipo<?> rootType = loaType(fs, dictionaryResolver, fs.getRootType());
             MInstancia root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
+
             deserializeServices(fs.getServices(), root.getDocument());
+            if(fs.getAnnotations() != null){
+                MTipo<?> annotationsList = loaType(fs, dictionaryResolver, MPacoteCore.NOME+"."+MTipoAnnotationList.NAME);
+                MILista persisted = (MILista) MformPersistenciaXML.fromXML(annotationsList, fs.getAnnotations());
+                root.as(AtrAnnotation::new).loadAnnotations(persisted);
+            }
             return defineRoot(fs, root);
         } catch (Exception e) {
             throw deserializingError(fs, e);
         }
     }
 
-    private static MTipo<?> defineRootType(FormSerialized fs, MDicionarioResolver dicionaryResolver) {
+    private static MTipo<?> loaType(FormSerialized fs, MDicionarioResolver dicionaryResolver, String rootType) {
         dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
         if (dicionaryResolver == null) {
             if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
-                return dictionaries.get(fs.getDictionaryId()).getTipo(fs.getRootType());
+                return dictionaries.get(fs.getDictionaryId()).getTipo(rootType);
             }else{
                 dicionaryResolver = MDicionarioResolver.getDefault();
             }
         }
-        return dicionaryResolver.loadType(fs.getRootType());
+        return dicionaryResolver.loadType(rootType);
     }
 
     private static void deserializeServices(Map<String, Pair> services, SDocument document) {

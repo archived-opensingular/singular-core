@@ -30,6 +30,7 @@ public class MIComposto extends MInstancia implements ICompositeInstance {
     }
 
     @Override
+	//TODO: Won't "isEmpty" is enough? the "ofData" seems kind of redundant.
     public boolean isEmptyOfData() {
         return fields == null || fields.stream().allMatch(i -> i.isEmptyOfData());
     }

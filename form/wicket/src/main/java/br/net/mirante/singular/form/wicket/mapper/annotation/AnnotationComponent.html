@@ -1,6 +1,6 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-        <!-- Content for Popover #1 -->
+    <div class="">
         <label class="control-label">
             <i class="fa fa-comment-o"></i> <wicket:container wicket:id="target_label" />
         </label>
@@ -16,9 +16,14 @@
                                data-on-color="success" data-on-text="Aprovado"
                                data-off-color="danger" data-off-text="Rejeitado" />
                 <script type="application/javascript">
-                    $(".make-switch").bootstrapSwitch();
+                    $(function(){
+                        var target = '#<wicket:container wicket:id="referenced_id" />';
+                        var thiz = '#<wicket:container wicket:id="this_id" />';
+                        new Annotation(target, thiz).setup();
+                    });
                 </script>
             </div>
         </div>
+    </div>
 </wicket:panel>
 </html>

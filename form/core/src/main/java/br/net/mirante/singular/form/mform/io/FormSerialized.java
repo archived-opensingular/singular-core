@@ -16,16 +16,17 @@ public final class FormSerialized implements Serializable {
 
     private final MDicionarioResolverSerializable dicionarioResolver;
     private final String rootType;
-    private final MElement xml;
+    private final MElement xml, annotations;
     private String focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
     private Integer dictionaryId;
 
-    public FormSerialized(String rootType, MElement xml,
+    public FormSerialized(String rootType, MElement xml, MElement annotations,
                           MDicionarioResolverSerializable dicionarioResolver) {
         this.dicionarioResolver = dicionarioResolver;
         this.rootType = rootType;
         this.xml = xml;
+        this.annotations = annotations;
     }
 
     public String getRootType() {
@@ -35,6 +36,8 @@ public final class FormSerialized implements Serializable {
     public String getFocusFieldPath() {
         return focusFieldPath;
     }
+
+    public MElement getAnnotations() {return annotations;}
 
     public MElement getXml() {
         return xml;
