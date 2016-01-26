@@ -30,11 +30,12 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private FlowMetadataFacade flowMetadataFacade;
 
     private final IModel<C> config;
-    private final IModel<PortletContext> context = Model.of(new PortletContext());
+    private final IModel<PortletContext> context;
 
-    public PortletPanel(String id, C config, String processDefinitionCode) {
+    public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
         super(id);
         this.config = Model.of(config);
+        context = Model.of(new PortletContext(portletIndex));
         context.getObject().setProcessDefinitionCode(processDefinitionCode);
         context.getObject().setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());
     }
