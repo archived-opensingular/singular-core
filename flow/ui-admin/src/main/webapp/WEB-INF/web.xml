@@ -32,6 +32,7 @@
     <context-param>
         <param-name>spring.profiles.default</param-name>
         <param-value>production</param-value>
+        <description>production or development</description>
     </context-param>
     
     <context-param>

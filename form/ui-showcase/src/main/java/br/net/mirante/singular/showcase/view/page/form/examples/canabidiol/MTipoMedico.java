@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
@@ -43,8 +44,10 @@ public class MTipoMedico extends MTipoComposto<MIComposto> {
                 .label("UF do CRM")
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+        estado.addCampoString("sigla");
+        MTipoString nomeUF = estado.addCampoString("nome");
         estado
-                .withSelectionFromProvider("nome", (MOptionsProvider)inst -> SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider(nomeUF, (MOptionsProvider) inst -> SelectBuilder.buildEstados(estado));
 
         this.addCampoCPF("cpf")
                 .as(AtrBasic::new)

@@ -53,6 +53,9 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     }
 
     private <I extends MInstancia, T extends MTipo<I>> T addInterno(String localName, T type) {
+        if (instanceCount > 0){
+            throw new SingularFormException("Esse MTipo já possui instancias associadas, não é seguro alterar sua definição. ");
+        }
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
         }
@@ -253,6 +256,10 @@ public class MTipoComposto<TIPO_INSTANCIA extends MIComposto>
     @Override
     public void setSelectLabel(String selectLabel) {
         this.selectLabel = selectLabel;
+    }
+
+    public MTipo<?> getCampo(MTipoString siglaUF) {
+        return getCampo(siglaUF.getNomeSimples());
     }
 
     /**

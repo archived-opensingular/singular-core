@@ -137,7 +137,6 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         MTipoComposto<?> outroMedicamento = this.addCampoComposto("outro");
         outroMedicamento
                 .as(AtrCore::new)
-                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
@@ -147,7 +146,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         outroMedicamento
                 .addCampoString("outroNome")
                 .as(AtrCore::new)
-                .obrigatorio()
+                .obrigatorio(instancia -> Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) == 8)
                 .as(AtrBasic::new)
                 .label("Nome Comercial")
                 .as(AtrBootstrap::new)
@@ -156,7 +155,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         outroMedicamento
                 .addCampoString("outroComposicao")
                 .as(AtrCore::new)
-                .obrigatorio()
+                .obrigatorio(instancia -> Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) == 8)
                 .as(AtrBasic::new)
                 .label("Composição")
                 .as(AtrBootstrap::new)
@@ -165,7 +164,7 @@ public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
         outroMedicamento
                 .addCampoString("outroEndereco")
                 .as(AtrCore::new)
-                .obrigatorio()
+                .obrigatorio(instancia -> Val.of(instancia, nomeComercial) != null && ((Integer) Val.of(instancia, nomeComercial)) == 8)
                 .as(AtrBasic::new)
                 .label("Endereço do Fabricante")
                 .as(AtrBootstrap::new)

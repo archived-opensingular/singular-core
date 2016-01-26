@@ -14,12 +14,6 @@ import java.util.stream.Collectors;
 public class SelectBuilder {
 
     public static MILista<?> buildEstados(MTipoComposto<?> tipoOpcoes) {
-        if (tipoOpcoes.getCampo("id") == null){
-            tipoOpcoes.addCampoString("id");
-        }
-        if (tipoOpcoes.getCampo("nome") == null){
-            tipoOpcoes.addCampoString("nome");
-        }
         return estados(tipoOpcoes);
     }
 
@@ -57,22 +51,13 @@ public class SelectBuilder {
 
     private static MIComposto create(MTipoComposto tipo, String id, String label){
         MIComposto inst = (MIComposto) tipo.novaInstancia();
-        inst.setValor("id", id);
+        inst.setValor("sigla", id);
         inst.setValor("nome", label);
         return inst;
     }
 
 
     public static Collection<MSelectionableInstance> buildMunicipios(MTipoComposto<?> tipoOpcoes) {
-        if (tipoOpcoes.getCampo("UF") == null) {
-            tipoOpcoes.addCampoString("UF");
-        }
-        if (tipoOpcoes.getCampo("id") == null){
-            tipoOpcoes.addCampoString("id");
-        }
-        if (tipoOpcoes.getCampo("nome") == null){
-            tipoOpcoes.addCampoString("nome");
-        }
         return cidades(tipoOpcoes);
     }
 
