@@ -124,7 +124,7 @@ public class MPacotePeticaoCanabidiol extends MPacote {
                     .as(AtrCore::new)
                     .obrigatorio()
                     .as(AtrBasic::new)
-                    .label("Prescritor/Paciente/Responsável Legal")
+                    .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
                     .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
 
             // config tabs

@@ -1,13 +1,16 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
@@ -62,25 +65,32 @@ public class MTipoEndereco extends MTipoComposto<MIComposto>  {
                 .label("Estado")
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+        MTipoString siglaUF = estado.addCampoString("sigla");
+        MTipoString nomeUF = estado.addCampoString("nome");
         estado
-                .withSelectionFromProvider("nome", (MOptionsProvider) isnt -> SelectBuilder.buildEstados(estado));
+                .withSelectionFromProvider(nomeUF,
+                        (MOptionsProvider) optionsInstance ->SelectBuilder.buildEstados(estado)
+                );
 
         MTipoComposto<?> cidade = this.addCampoComposto("cidade");
         cidade
                 .as(AtrCore::new)
-                .obrigatorio(inst -> Val.notNull(inst, (MTipoSimples) estado.getCampo("id")))
+                .obrigatorio(inst -> Val.notNull(inst, (MTipoSimples) estado.getCampo(siglaUF)))
                 .as(AtrBasic::new)
                 .label("Cidade")
-                .visivel(inst -> Val.notNull(inst, (MTipoSimples)estado.getCampo("id")))
+                .visivel(inst -> Val.notNull(inst, (MTipoSimples) estado.getCampo(siglaUF)))
                 .dependsOn(estado)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
+        cidade.addCampoString("id");
+        MTipoString nomeCidade = cidade.addCampoString("nome");
+        cidade.addCampoString("UF");
         cidade.
-                withSelectionFromProvider("nome", (MOptionsProvider) inst ->
+                withSelectionFromProvider(nomeCidade, (MOptionsProvider) inst ->
                         SelectBuilder
                                 .buildMunicipiosFiltrado(
                                         cidade,
-                                        (String)Val.of(inst, (MTipoSimples)estado.getCampo("id")),
+                                        (String) Val.of(inst, (MTipoSimples) estado.getCampo(siglaUF)),
                                         inst.getMTipo().novaLista()));
     }
 }
