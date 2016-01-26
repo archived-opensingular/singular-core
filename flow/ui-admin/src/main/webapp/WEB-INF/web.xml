@@ -30,9 +30,9 @@
     </servlet-mapping>
 
     <context-param>
+		<description>development or production</description>
 		<param-name>spring.profiles.default</param-name>
 		<param-value>production</param-value>
-		<description>development or production</description>
 	</context-param>
     
     <context-param>
