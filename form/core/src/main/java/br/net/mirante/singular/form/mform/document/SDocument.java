@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform.document;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -13,6 +14,7 @@ import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
@@ -46,6 +48,8 @@ public class SDocument {
     private MInstanceListeners instanceListeners;
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
+
+    private Map<Integer, MIAnnotation> annotationMap = new HashMap<>();
 
     public SDocument() {}
 
@@ -216,6 +220,8 @@ public class SDocument {
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
+    public MIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
+    public void annotation(Integer id, MIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
 }
 
 /**

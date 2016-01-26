@@ -30,8 +30,9 @@
     </servlet-mapping>
 
     <context-param>
-        <param-name>spring.profiles.active</param-name>
-        <param-value>cache</param-value>
+        <param-name>spring.profiles.default</param-name>
+        <param-value>production</param-value>
+        <description>production or development</description>
     </context-param>
     
     <context-param>

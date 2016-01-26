@@ -55,14 +55,14 @@ public class TestMFormUtilUserFriendlyPath {
     @Test
     public void generateUserFriendlyPath_no_parentContext() {
         //@formatter:off
-        Assert.assertEquals("Evento"                            , MFormUtil.generateUserFriendlyPath(evento));
-        Assert.assertEquals("Evento > Descrição"                , MFormUtil.generateUserFriendlyPath(evento.findNearest(_descricao  ).get()));
-        Assert.assertEquals("Evento"                            , MFormUtil.generateUserFriendlyPath(evento.findNearest(_periodo    ).get()));
-        Assert.assertEquals("Evento > Data inicial"             , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataInicial).get()));
-        Assert.assertEquals("Evento > Data final"               , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataFinal  ).get()));
-        Assert.assertEquals("Evento > Alertas"                  , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alertas    ).get()));
-        Assert.assertEquals("Evento > Alertas > Alerta"         , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get()));
-        Assert.assertEquals("Evento > Alertas > Alerta > Data"  , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get()));
+        Assert.assertEquals("Evento"                                , MFormUtil.generateUserFriendlyPath(evento));
+        Assert.assertEquals("Evento > Descrição"                    , MFormUtil.generateUserFriendlyPath(evento.findNearest(_descricao  ).get()));
+        Assert.assertEquals("Evento"                                , MFormUtil.generateUserFriendlyPath(evento.findNearest(_periodo    ).get()));
+        Assert.assertEquals("Evento > Data inicial"                 , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataInicial).get()));
+        Assert.assertEquals("Evento > Data final"                   , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataFinal  ).get()));
+        Assert.assertEquals("Evento > Alertas"                      , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alertas    ).get()));
+        Assert.assertEquals("Evento > Alertas [1] > Alerta"         , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get()));
+        Assert.assertEquals("Evento > Alertas [1] > Alerta > Data"  , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get()));
         //@formatter:on
     }
 
@@ -75,8 +75,8 @@ public class TestMFormUtilUserFriendlyPath {
         Assert.assertEquals("Data inicial"                      , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataInicial).get(), evento));
         Assert.assertEquals("Data final"                        , MFormUtil.generateUserFriendlyPath(evento.findNearest(_dataFinal  ).get(), evento));
         Assert.assertEquals("Alertas"                           , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alertas    ).get(), evento));
-        Assert.assertEquals("Alertas > Alerta"                  , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get(), evento));
-        Assert.assertEquals("Alertas > Alerta > Data"           , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get(), evento));
+        Assert.assertEquals("Alertas [1] > Alerta"              , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get(), evento));
+        Assert.assertEquals("Alertas [1] > Alerta > Data"       , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get(), evento));
         
         Assert.assertEquals("Alerta"                            , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta     ).get(), alertas));
         Assert.assertEquals("Alerta > Data"                     , MFormUtil.generateUserFriendlyPath(evento.findNearest(_alerta_data).get(), alertas));

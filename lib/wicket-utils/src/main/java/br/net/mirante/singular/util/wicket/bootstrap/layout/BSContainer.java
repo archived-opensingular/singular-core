@@ -157,4 +157,6 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     }
 
     public String getInnerStyle() {return innerStyle; }
+
+    public RepeatingView getItems() {return items;}
 }

@@ -1,16 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import java.util.Set;
-
-import org.apache.wicket.ClassAttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
-import org.apache.wicket.feedback.FeedbackMessage;
-import org.apache.wicket.feedback.IFeedbackMessageFilter;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
-import org.apache.wicket.model.IModel;
-
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -25,6 +14,22 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
+import org.apache.wicket.ClassAttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
@@ -111,8 +116,10 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                     }
                 });
             }));
-            
-            ctx.configure(this, (FormComponent<?>) input);
+
+            for (FormComponent fc : findAjaxComponents(input)) {
+                ctx.configure(this, fc);
+            }
 
         } else {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
@@ -122,9 +129,27 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
+    }
 
-//        if (input instanceof TextField<?>) {
-//            input.add($b.attr("size", size, size.emptyModel().not()));
-//        }
+
+    default public FormComponent[] findAjaxComponents(Component input) {
+        if (input instanceof FormComponent) {
+            return new FormComponent[]{(FormComponent) input};
+        } else if (input instanceof MarkupContainer) {
+            List<FormComponent> formComponents = new ArrayList<>();
+            ((MarkupContainer) input).visitChildren(new IVisitor<Component, Object>() {
+                @Override
+                public void component(Component component, IVisit<Object> iVisit) {
+                    if (component instanceof FormComponent) {
+                        formComponents.add((FormComponent) component);
+                        iVisit.dontGoDeeper();
+                    }
+                }
+            });
+            return formComponents.toArray(new FormComponent[0]);
+        } else {
+            return new FormComponent[0];
+        }
+
     }
 }

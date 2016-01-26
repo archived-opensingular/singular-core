@@ -120,7 +120,7 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
 
         this.addCampoString("nomePassageiro")
                 .as(AtrCore::new)
-                .obrigatorio()
+                .obrigatorio(instancia -> bagagemAcompanhada.equals(Val.of(instancia, modalidade)))
                 .as(AtrBasic::new)
                 .label("Nome do Passageiro")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -132,7 +132,7 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
 
         this.addCampoString("passaporte")
                 .as(AtrCore::new)
-                .obrigatorio()
+                .obrigatorio(instancia -> bagagemAcompanhada.equals(Val.of(instancia, modalidade)))
                 .as(AtrBasic::new)
                 .label("Número do passaporte")
                 .visivel(false)// Isso é um bug não sei como descrever

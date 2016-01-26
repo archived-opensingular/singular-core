@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,8 +61,25 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("bairro"), loader);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
+    public void testTipoCompostoComAnotacoes() {
+        MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
+            MTipoComposto<? extends MIComposto> endereco = pacote.createTipoComposto("endereco");
+            endereco.addCampoString("rua");
+            endereco.as(AtrAnnotation::new).setAnnotated();
+        });
+        MIComposto instancia = (MIComposto) loader.loadType("teste.endereco").novaInstancia();
+        instancia.setValor("rua", "rua dos bobos");
+        instancia.as(AtrAnnotation::new).text("numero zero ?");
+
+        assertThat(instancia.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
+        MIComposto r = (MIComposto) testSerializacao(instancia, loader);
+        assertThat(r.getCampo("rua").getValor()).isEqualTo("rua dos bobos");
+        assertThat(r.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
+    }
+
+
+    @Test @SuppressWarnings("unchecked")
     public void testTipoListSimples() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipoListaOf("enderecos", MTipoString.class);
@@ -77,8 +95,8 @@ public class TesteFormSerializationUtil {
         testSerializacao(instancia.getCampo("[1]"), loader);
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
+
+    @Test @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             MTipoComposto<MIComposto> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
