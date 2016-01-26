@@ -18,7 +18,7 @@
         <security:intercept-url pattern="/resources/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="hasRole('ROLE_USER')"/>
         <security:form-login login-page="/login" always-use-default-target="false" default-target-url="/dashboard" authentication-failure-url="/login?error=true"/>
-        <security:logout logout-url="/logout"/>
+        <security:logout logout-url="${springsecurity.logout.url}"/>
     </security:http>
 
 </beans>

@@ -14,7 +14,7 @@
     <import resource="conf/adminDefault.xml"/>
 
     <beans profile="production,development">
-        <import resource="${springsecurity.conf}"/>
+        <import resource="${springsecurity.conf.file}"/>
     </beans>
 
 </beans>

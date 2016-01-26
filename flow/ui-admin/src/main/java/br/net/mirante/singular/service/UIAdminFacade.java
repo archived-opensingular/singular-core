@@ -38,7 +38,7 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Value("#{singularAdmin['user.avatar.url']}")
     private String userAvatar;
 
-    @Value("#{singularAdmin['springsecurity.logout']}")
+    @Value("#{singularAdmin['springsecurity.logout.url']}")
     private String logoutUrl;
 
     @Override
