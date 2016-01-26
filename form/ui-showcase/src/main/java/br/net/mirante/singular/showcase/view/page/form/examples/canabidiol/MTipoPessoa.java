@@ -5,6 +5,7 @@ import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
@@ -12,7 +13,7 @@ import br.net.mirante.singular.form.wicket.AtrBootstrap;
 public class MTipoPessoa extends MTipoComposto<MIComposto>  {
 
     public static final String LABEL_TIPO_DOCUMENTO = "Documento de Identificação Oficial";
-    private MTipoDocumentoSelect tipoDocumento;
+    public MTipoDocumentoSelect tipoDocumento;
 
     @Override
     protected void onCargaTipo(TipoBuilder tb) {
@@ -20,12 +21,16 @@ public class MTipoPessoa extends MTipoComposto<MIComposto>  {
 
         this
                 .addCampoString("nome")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Nome")
                 .as(AtrBootstrap::new).colPreference(6);
 
         this
                 .addCampoData("dataNascimento")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Data de Nascimento")
                 .as(AtrBootstrap::new).colPreference(3);
@@ -35,13 +40,18 @@ public class MTipoPessoa extends MTipoComposto<MIComposto>  {
         //ruim: Para  adicionar atributos não é possivel adicionar selection
         //ruim: Para manter a referencia não pode acionar atributos:
         tipoDocumento = this.addCampo("tipoDocumento", MTipoDocumentoSelect.class);
-        tipoDocumento.as(AtrBasic::new)
+        tipoDocumento
+                .as(AtrCore::new)
+                .obrigatorio()
+                .as(AtrBasic::new)
                 .label(LABEL_TIPO_DOCUMENTO)
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
         this
                 .addCampoString("nomeNoDocumento")
+                .as(AtrCore::new)
+                .obrigatorio(ins -> "55358729".equals(Val.of(ins, tipoDocumento)))
                 .as(AtrBasic::new)
                 .label("Nome")
                 .visivel(ins -> "55358729".equals(Val.of(ins, tipoDocumento)))
@@ -51,6 +61,8 @@ public class MTipoPessoa extends MTipoComposto<MIComposto>  {
 
         this
                 .addCampoString("numeroDocumento")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Número")
                 .visivel(ins -> ins.findNearestValue(tipoDocumento).orElse(null) != null)
@@ -58,6 +70,8 @@ public class MTipoPessoa extends MTipoComposto<MIComposto>  {
                 .as(AtrBootstrap::new).colPreference(2);
 
         this.addCampoCPF("cpf")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("CPF")
                 .as(AtrBootstrap::new)
@@ -77,7 +91,4 @@ public class MTipoPessoa extends MTipoComposto<MIComposto>  {
         this.addCampo("contato", MTipoContato.class);
     }
 
-    public MTipoDocumentoSelect getTipoDocumento() {
-        return tipoDocumento;
-    }
 }

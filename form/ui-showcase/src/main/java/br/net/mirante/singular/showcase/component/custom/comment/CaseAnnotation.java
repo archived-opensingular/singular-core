@@ -18,4 +18,7 @@ public class CaseAnnotation extends CaseBase implements Serializable {
             getAditionalSources().add(pageWithAnnotation.get());
         }
     }
+
+    @Override
+    public boolean annotationEnabled() {    return true;    }
 }

@@ -10,6 +10,7 @@ public enum Icone {
     CHECK /*            */("fa fa-check"),
     CHECK_CIRCLE /*     */("fa-check-circle-o"),
     COGS /*             */("fa fa-cogs"),
+    COMMENT /*          */("fa fa-comment"),
     CREDIT_CARD /*      */("icon-credit-card"),
     CUP /*              */("icon-cup"),
     DIRECTIONS /*       */("icon-directions"),

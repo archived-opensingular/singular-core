@@ -16,8 +16,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
@@ -49,6 +47,9 @@ public class WicketBuildContext implements Serializable {
     private IModel<? extends MInstancia> model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
+    private boolean annotationEnabled = false;
+    //TODO: FABS : PaSSAR a anotação como atributo do contexto,
+    // aí isso fica como responsabilidade do mapper tratar ou não
     private MView view;
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends MInstancia> model) {
@@ -100,31 +101,30 @@ public class WicketBuildContext implements Serializable {
         return this;
     }
 
-    public void configure(IWicketComponentMapper mapper) {
-        container.visitChildren(FormComponent.class, new IVisitor<FormComponent, Object>() {
-            @Override
-            public void component(FormComponent formComponent, IVisit<Object> visit) {
-                final IModel defaultModel = formComponent.getDefaultModel();
-
-                if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
-
-                    WicketFormUtils.setCellContainer(formComponent, getContainer());
-                    formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-                    if (formComponent.getLabel() == null) {
-                        // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
-                        formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
-                    }
-                    final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
-                    final MTipo<?> tipo = model.getMInstancia().getMTipo();
-                    if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
-                        mapper.addAjaxUpdate(formComponent,
-                                IMInstanciaAwareModel.getInstanceModel(model),
-                                new OnFieldUpdatedListener());
-                    }
-                }
-
+    /**
+     * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
+     *
+     * @param mapper o mapper
+     * @param formComponent o componente que tem como model IMInstanciaAwareModel
+     *
+     */
+    public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
+        final IModel defaultModel = formComponent.getDefaultModel();
+        if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
+            WicketFormUtils.setCellContainer(formComponent, getContainer());
+            formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+            if (formComponent.getLabel() == null) {
+                // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+                formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
-        });
+            final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
+            final MTipo<?> tipo = model.getMInstancia().getMTipo();
+            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
+                mapper.addAjaxUpdate(formComponent,
+                        IMInstanciaAwareModel.getInstanceModel(model),
+                        new OnFieldUpdatedListener());
+            }
+        }
     }
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends MInstancia> model) {
@@ -169,6 +169,9 @@ public class WicketBuildContext implements Serializable {
         return ctx;
     }
 
+    /**
+     * @return true if this is the root of a Context tree.
+     */
     public boolean isRootContext() {
         return (this.getParent() == null);
     }
@@ -266,4 +269,9 @@ public class WicketBuildContext implements Serializable {
     public <T extends MInstancia> T getCurrenttInstance() {
         return (T) getModel().getObject();
     }
+
+    public boolean isAnnotationEnabled() {  return annotationEnabled;   }
+
+    public void enableAnnotation() {   this.annotationEnabled = true;}
+    public void disableAnnotation() {   this.annotationEnabled = false;}
 }

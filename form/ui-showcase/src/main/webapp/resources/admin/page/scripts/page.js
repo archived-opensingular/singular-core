@@ -26,20 +26,12 @@ var Page = function() {
         $('.multi-select').multiSelect();
     }
 
-    function handleTimePicker() {
-        $('.timepicker').timepicker({
-            defaultTime : false,
-            showMeridian: false
-        });
-    }
-
     return {
         init: function() {
             handleDatePickers();
             handleBootstrapSelect();
             handleMultiSelect();
             handleSlimScroll();
-            handleTimePicker();
         }
     };
 

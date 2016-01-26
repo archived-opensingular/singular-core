@@ -42,6 +42,7 @@ public class TestPage extends WebPage {
     private MIComposto currentInstance;
     private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().getContext();
     private ViewMode viewMode;
+    private boolean annotationEnabled =false;
 
     public TestPage() {
         setAsEditView();
@@ -50,10 +51,11 @@ public class TestPage extends WebPage {
     public void setAsEditView() {
         viewMode = ViewMode.EDITION;
     }
-
     public void setAsVisualizationView() {
         viewMode = ViewMode.VISUALIZATION;
     }
+    public void enableAnnotation(){ annotationEnabled = true; }
+
 
     public TestPage(final PageParameters parameters) {
         super(parameters);
@@ -80,6 +82,7 @@ public class TestPage extends WebPage {
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, createTipoModel(dicionario));
+        if(annotationEnabled) ctx.enableAnnotation();
         singularFormContext.getUIBuilder().build(ctx, viewMode);
         return container;
     }

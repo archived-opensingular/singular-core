@@ -6,6 +6,8 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.MTipoDataHora;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
 import br.net.mirante.singular.form.wicket.AtrBootstrap;
@@ -21,6 +23,8 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
         MTipoString modalidade = this.addCampoString("modalidadeImportacao");
 
         modalidade
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Modalidade de Importação")
                 .as(AtrBootstrap::new)
@@ -47,6 +51,8 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
         MTipoString naturezaIntermediador = this.addCampoString("naturezaIntermediador");
 
         naturezaIntermediador
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Natureza do intermediador")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -66,6 +72,8 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
 
 
         this.addCampoString("razaoSocialIntermediador")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Razão Social")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -76,6 +84,8 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
 
 
         this.addCampoCNPJ("cnpjIntermediador")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("CNPJ")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -92,17 +102,25 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
                 .visivel(instancia -> aquisicaoIntermediada.equals(Val.of(instancia, modalidade)))
                 .dependsOn(modalidade);
 
-        this.addCampo("contato", MTipoContato.class)
+
+        MTipoContato tipoContato = this.addCampo("contato", MTipoContato.class);
+        tipoContato
                 .as(AtrBasic::new)
                 .label("Contato do Intermediador")
                 .visivel(false)// Isso é um bug não sei como descrever
                 .visivel(instancia -> aquisicaoIntermediada.equals(Val.of(instancia, modalidade)))
                 .dependsOn(modalidade);
+        tipoContato
+                .telefoneFixo
+                .as(AtrCore::new)
+                .obrigatorio();
     }
 
     private void bagagemAcompanhada(MTipoString modalidade, String bagagemAcompanhada) {
 
         this.addCampoString("nomePassageiro")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Nome do Passageiro")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -113,6 +131,8 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
 
 
         this.addCampoString("passaporte")
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Número do passaporte")
                 .visivel(false)// Isso é um bug não sei como descrever
@@ -150,7 +170,7 @@ public class MTipoImportacao extends MTipoComposto<MIComposto>  {
                 .colPreference(4);
 
 
-        this.addCampoData("dataChegada")
+        this.addCampo("dataChegada", MTipoDataHora.class)
                 .as(AtrBasic::new)
                 .label("Data e Hora da chegada ao Brasil")
                 .visivel(false)// Isso é um bug não sei como descrever

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -117,7 +118,10 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             public ViewMode getViewMode() {
                 return viewMode;
             }
+
+            public boolean annotationEnabled(){ return caseBase.getObject().annotationEnabled(); }
         };
+
         return belverPanel;
     }
 
