@@ -40,22 +40,6 @@ public class DateTimeMapper implements ControlsFieldComponentMapper {
 
 
     @Override
-    public FormComponent[] findAjaxComponents(Component input) {
-        DateTimeContainer dateTimeContainer = (DateTimeContainer) input;
-        List<FormComponent> formComponents = new ArrayList<>();
-        dateTimeContainer.visitChildren(new IVisitor<Component, Object>() {
-            @Override
-            public void component(Component component, IVisit<Object> iVisit) {
-                if (component instanceof FormComponent){
-                    formComponents.add((FormComponent) component);
-                    iVisit.dontGoDeeper();
-                }
-            }
-        });
-        return formComponents.toArray(new FormComponent[0]);
-    }
-
-    @Override
     public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
         final SimpleDateFormat format = new SimpleDateFormat(MTipoDataHora.FORMAT);
         if (model.getObject().getValor() instanceof Date) {
