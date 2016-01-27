@@ -7,7 +7,7 @@ Singular.applyTelefoneNacionalMask = function (id) {
 
     var selector = '#' + id;
     var bypassKeys = [8, 9, 37, 39];
-    var numberKeys = [49, 50, 51, 52, 53, 54, 55, 56, 57];
+    var numberKeys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57];
     var removeKeys = [8, 46];
 
     Array.prototype.singularContais = function (value) {

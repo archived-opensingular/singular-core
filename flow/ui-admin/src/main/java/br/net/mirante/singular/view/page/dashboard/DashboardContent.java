@@ -130,7 +130,9 @@ public class DashboardContent extends Content {
     }
 
     protected void buildDashboard(Set<String> processCodeWithAccess) {
-        configs.forEach(c -> portlets.add(new PortletPanel<>(portlets.newChildId(), c, processDefinitionCode)));
+        configs.forEach(c -> {
+            portlets.add(new PortletPanel<>(portlets.newChildId(), c, processDefinitionCode, configs.indexOf(c)));
+        });
         final FeedPanel feed = new FeedPanel("feed", processDefinitionCode, processCodeWithAccess);
         feed.add($b.classAppender(PortletSize.LARGE.getBootstrapSize()));
         portlets.add(feed);

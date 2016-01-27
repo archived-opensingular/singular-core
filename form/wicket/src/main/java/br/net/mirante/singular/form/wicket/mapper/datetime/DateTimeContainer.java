@@ -14,6 +14,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MIDateTimeModel;
+import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
@@ -36,8 +37,9 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
         template.add(buildTimeField());
     }
 
-    protected TextField<String> buildDateField() {
-        return new TextField<>("date", new MIDateTimeModel.DateModel(model));
+    protected Component buildDateField() {
+        return new TextField<>("date", new MIDateTimeModel.DateModel(model))
+                .add(new DatePickerInitBehaviour());
     }
 
     protected TextField<String> buildTimeField() {

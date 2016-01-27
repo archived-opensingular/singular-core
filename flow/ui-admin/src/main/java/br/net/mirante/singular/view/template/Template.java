@@ -1,9 +1,9 @@
 package br.net.mirante.singular.view.template;
 
-import br.net.mirante.singular.wicket.UIAdminSession;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -21,11 +21,12 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.wicket.UIAdminSession;
 
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
 
-    private List<String> initializerJavascripts = Arrays.asList("Metronic.init();", "Page.init();");
+    private List<String> initializerJavascripts = Collections.singletonList("Metronic.init();");
 
     @Override
     protected void onInitialize() {

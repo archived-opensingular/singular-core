@@ -9,7 +9,14 @@ public class PortletContext implements Serializable {
     private PortletQuickFilter quickFilter;
     private String processDefinitionCode;
     private Set<String> processDefinitionKeysWithAccess;
+    private int portletIndex;
 
+    public PortletContext(int portletIndex) {
+        this.portletIndex = portletIndex;
+    }
+
+    public PortletContext() {
+    }
 
     public PortletQuickFilter getQuickFilter() {
         return quickFilter;
@@ -41,5 +48,13 @@ public class PortletContext implements Serializable {
 
     public void setProcessDefinitionKeysWithAccess(Set<String> processDefinitionKeysWithAccess) {
         this.processDefinitionKeysWithAccess = processDefinitionKeysWithAccess;
+    }
+
+    public int getPortletIndex() {
+        return portletIndex;
+    }
+
+    public void setPortletIndex(int portletIndex) {
+        this.portletIndex = portletIndex;
     }
 }
