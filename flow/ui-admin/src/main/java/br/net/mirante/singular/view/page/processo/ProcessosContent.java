@@ -92,7 +92,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
                 .appendAction(getMessage("label.table.column.view"), Icone.EYE, (target, model) -> {
                     getPage().getPageParameters().add("sigla", model.getObject().getSigla());
                     /* FIXME: Verificar como detectar o fim da carga! */
-                    //target.appendJavaScript("Metronic.blockUI({target:'.modal-body',animate:true});");
+                    //target.appendJavaScript("App.blockUI({target:'.modal-body',animate:true});");
                     diagramModal.show(target);
                 })
                 .appendAction(getMessage("label.table.column.detail"), Icone.REDO, (target, model) -> {

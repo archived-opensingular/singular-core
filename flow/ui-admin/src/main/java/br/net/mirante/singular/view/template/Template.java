@@ -25,7 +25,7 @@ import br.net.mirante.singular.wicket.UIAdminSession;
 
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
-
+    
     private List<String> initializerJavascripts = Collections.singletonList("Metronic.init();");
 
     @Override
@@ -84,7 +84,7 @@ public abstract class Template extends WebPage {
     }
 
     private void addQuickSidebar(IHeaderResponse response) {
-        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/layout/scripts/quick-sidebar.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/scripts/quick-sidebar.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    QuickSidebar.init(); // init quick sidebar\n")
