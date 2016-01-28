@@ -5,10 +5,10 @@ import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoEMail;
 import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 @MInfoTipo(nome = "MTipoContato", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoContato extends MTipoComposto<MIComposto> {

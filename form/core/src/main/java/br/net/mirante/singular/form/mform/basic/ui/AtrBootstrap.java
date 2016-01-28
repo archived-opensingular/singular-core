@@ -1,9 +1,12 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.mform.basic.ui;
+
+import java.util.function.Function;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
-import java.util.function.Function;
-import org.apache.commons.lang3.ObjectUtils;
+import br.net.mirante.singular.form.mform.core.MPacoteBootstrap;
 
 public class AtrBootstrap extends MTranslatorParaAtributo {
 

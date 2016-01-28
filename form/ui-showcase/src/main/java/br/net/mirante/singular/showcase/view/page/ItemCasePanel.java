@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,7 +28,7 @@ import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.panel.BelverPanel;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
@@ -50,7 +49,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
     private final IModel<CaseBase> caseBase;
 
-    private BelverPanel belverPanel = null;
+    private SingularFormPanel singularFormPanel = null;
     private ViewMode viewMode = ViewMode.EDITION;
 
     @Inject
@@ -107,8 +106,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
 
-    private BelverPanel buildBelverBasePanel() {
-        belverPanel = new BelverPanel("belverPanel", springServiceRegistry) {
+    private SingularFormPanel buildBelverBasePanel() {
+        singularFormPanel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
             protected MTipo<?> getTipo() {
                 return caseBase.getObject().getCaseType();
@@ -122,7 +121,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             public boolean annotationEnabled(){ return caseBase.getObject().annotationEnabled(); }
         };
 
-        return belverPanel;
+        return singularFormPanel;
     }
 
     private MarkupContainer buildButtons() {
@@ -131,7 +130,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         return new ListView<ItemCaseButton>("buttons", botoes) {
             @Override
             protected void populateItem(ListItem<ItemCaseButton> item) {
-                item.add(item.getModelObject().buildButton("button", belverPanel.getRootInstance()));
+                item.add(item.getModelObject().buildButton("button", singularFormPanel.getRootInstance()));
             }
         };
     }
@@ -199,7 +198,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     viewMode = ViewMode.VISUALIZATION;
-                    belverPanel.updateContainer();
+                    singularFormPanel.updateContainer();
                     target.add(form);
                 }
 
@@ -244,7 +243,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                     viewMode = ViewMode.EDITION;
-                    belverPanel.updateContainer();
+                    singularFormPanel.updateContainer();
                     target.add(form);
                 }
 

@@ -1,13 +1,12 @@
-package br.net.mirante.singular.form.wicket;
+package br.net.mirante.singular.form.mform.core;
+
+import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MIInteger;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import java.util.Optional;
 
 public class MPacoteBootstrap extends MPacote {
 
