@@ -1,6 +1,7 @@
 package br.net.mirante.singular.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,8 @@ import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataProvider;
+import br.net.mirante.singular.persistence.entity.Dashboard;
+import br.net.mirante.singular.persistence.entity.Portlet;
 
 @Service
 public class FlowMetadataFacade {
@@ -67,6 +70,10 @@ public class FlowMetadataFacade {
     @Cacheable(value = "hasAccessToProcessDefinition", cacheManager = "cacheManager")
     public boolean hasAccessToProcessDefinition(String processDefinitionKey, String userCod, AccessLevel accessLevel) {
         DefinitionDTO definitionDTO = definitionDAO.retrieveByKey(processDefinitionKey);
+        if (definitionDTO == null) {
+            return false;
+        }
+
         return hasAccessToProcessDefinition(definitionDTO, userCod, accessLevel);
     }
 
@@ -83,4 +90,10 @@ public class FlowMetadataFacade {
         return retrieveGroup(definitionDTO.getCodGrupo());
     }
 
+    @Transactional
+    public List<Portlet> getAuthorizedPortlets(Dashboard dashboard, String userId) {
+        return dashboard.getPortlets().stream()
+                .filter(portlet -> portlet.getProcessAbbreviation() == null || hasAccessToProcessDefinition(portlet.getProcessAbbreviation(), userId,  AccessLevel.LIST))
+                .collect(Collectors.toList());
+    }
 }

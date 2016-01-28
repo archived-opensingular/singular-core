@@ -2,6 +2,7 @@ package br.net.mirante.singular.view.component;
 
 import javax.inject.Inject;
 
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -34,6 +35,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
     public PortletPanel(String id, C config, String processDefinitionCode) {
         super(id);
+        Objects.requireNonNull(config, "Configuração é obrigatória");
         this.config = Model.of(config);
         context.getObject().setProcessDefinitionCode(processDefinitionCode);
         context.getObject().setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());

@@ -24,7 +24,9 @@
 			<list>
 				<value>br.net.mirante.singular.persistence.entity.Actor</value>
 				<value>br.net.mirante.singular.persistence.entity.CategoryEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Dashboard</value>
 				<value>br.net.mirante.singular.persistence.entity.ExecutionVariableEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Portlet</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessGroupEntity</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessInstanceEntity</value>
