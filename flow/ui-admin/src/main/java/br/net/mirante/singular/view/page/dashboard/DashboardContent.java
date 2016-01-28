@@ -10,6 +10,7 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -34,6 +35,8 @@ import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
+import br.net.mirante.singular.bamclient.portlet.filter.ExampleFilter;
+import br.net.mirante.singular.bamclient.portlet.filter.FilterConfigFactory;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
@@ -51,6 +54,8 @@ import br.net.mirante.singular.view.template.Content;
 public class DashboardContent extends Content {
 
     static final Logger logger = LoggerFactory.getLogger(DashboardContent.class);
+
+    private final Form dashboardForm = new Form("form");
 
     private String processDefinitionCode;
     private RepeatingView rows;
@@ -113,8 +118,9 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(rows = new RepeatingView("rows"));
-        add(portlets = new RepeatingView("portlets"));
+
+        dashboardForm.add(rows = new RepeatingView("rows"));
+        dashboardForm.add(portlets = new RepeatingView("portlets"));
 
         if (processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)) {
             Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
@@ -126,6 +132,8 @@ public class DashboardContent extends Content {
         } else {
             error(getString("error.user.without.access.to.process"));
         }
+
+        add(dashboardForm);
 
     }
 
@@ -189,6 +197,35 @@ public class DashboardContent extends Content {
         final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByProcess")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
+
+//        FilterConfig booleanFilter = new FilterConfig();
+//        booleanFilter.setFieldType(FieldType.BOOLEAN);
+//        booleanFilter.setLabel("Somente Processos Ativos");
+//        booleanFilter.setIdentificador("somenteAtivos");
+//
+//        FilterConfig inteiroFilter = new FilterConfig();
+//        inteiroFilter.setFieldType(FieldType.INTEGER);
+//        inteiroFilter.setLabel("Quantidede minima de processos");
+//        inteiroFilter.setIdentificador("quantidadeMinima");
+//
+//        FilterConfig string = new FilterConfig();
+//        string.setFieldType(FieldType.TEXT);
+//        string.setLabel("Campo String");
+//        string.setIdentificador("string");
+//
+//
+//        FilterConfig area = new FilterConfig();
+//        area.setFieldType(FieldType.TEXTAREA);
+//        area.setLabel("Campo Texto Area");
+//        area.setIdentificador("area");
+//
+//        config.getFilterConfigs().add(booleanFilter);
+//        config.getFilterConfigs().add(inteiroFilter);
+//        config.getFilterConfigs().add(string);
+//        config.getFilterConfigs().add(area);
+
+        config.getFilterConfigs().addAll(FilterConfigFactory.createConfigForClass(ExampleFilter.class));
+        config.setFilterClassName(ExampleFilter.class.getName());
 
         config.setPortletSize(PortletSize.LARGE);
         config.setTitle(getString("label.chart.mean.time.process.title"));
