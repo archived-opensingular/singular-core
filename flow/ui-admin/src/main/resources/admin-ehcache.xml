@@ -200,4 +200,13 @@
         <persistence strategy="none" synchronousWrites="false"/>
     </cache>
 
+    <cache name="retrieveGroupByProcess" eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           transactionalMode="off"
+           memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
 </ehcache>
