@@ -1,11 +1,19 @@
 <html xmlns:wicket="http://wicket.apache.org">
 <wicket:panel xmlns:wicket="http://wicket.apache.org">
-    <div class="">
-        <label class="control-label">
-            <i class="fa fa-comment-o"></i> <wicket:container wicket:id="target_label" />
-        </label>
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-comment-o"></i>
+            <span class="caption-subject font-dark bold uppercase" style="font-size: x-small;">
+                <wicket:container wicket:id="target_label" />
+            </span>
+        </div>
+        <div class="actions">
+            <a class="btn btn-circle btn-icon-only btn-default" wicket:id="open_modal"
+                href="javascript:;" data-original-title="" title=""> </a>
+        </div>
+    </div>
+    <div class="portlet-body" style="height: auto;">
 
-        <div class="panel">
             <div class="col-md-12 col-sm-12">
                 <div class="can-have-error form-group form-group-sm">
                     <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
@@ -23,7 +31,6 @@
                     });
                 </script>
             </div>
-        </div>
     </div>
 </wicket:panel>
 </html>

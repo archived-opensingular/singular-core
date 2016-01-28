@@ -178,7 +178,8 @@ class AnnotationBuilder {
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, MInstancia instance) {
         if(instance.as(AtrAnnotation::new).isAnnotated()){
             BSContainer rootContainer = ctx.getRootContainer();
-            addAnnotationComponent(ngrid, instance, find(rootContainer.getItems(), instance));
+            Optional<Component> referenced = find(rootContainer.getItems(), instance);
+            addAnnotationComponent(ngrid, instance, referenced, ctx);
         }
         if(instance instanceof MIComposto){
             addAnnotationsFor(ctx, ngrid, ((MIComposto) instance).getAllFields());
@@ -186,12 +187,12 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationComponent(BSGrid ngrid, MInstancia instance,
-                                        Optional<Component> targetComponent) {
+                                        Optional<Component> targetComponent, WicketBuildContext ctx) {
         if(targetComponent.isPresent()){
             ngrid.newRow().appendTag("div", true, "style=\"float: left;\"",
                     (id) -> {
                         return new AnnotationComponent(id, modelFor(instance),
-                                targetComponent.get());
+                                targetComponent.get(), ctx);
                     });
             ;
         }else{
