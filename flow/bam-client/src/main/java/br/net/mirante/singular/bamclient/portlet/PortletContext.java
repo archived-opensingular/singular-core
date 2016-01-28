@@ -1,13 +1,14 @@
 package br.net.mirante.singular.bamclient.portlet;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import br.net.mirante.singular.bamclient.portlet.filter.SingularPortletFilter;
+import br.net.mirante.singular.flow.core.DashboardContext;
+import br.net.mirante.singular.flow.core.DashboardFilter;
 
-public class PortletContext implements Serializable {
+public class PortletContext implements DashboardContext {
 
     private DataEndpoint dataEndpoint;
     private PortletQuickFilter quickFilter;
@@ -57,12 +58,13 @@ public class PortletContext implements Serializable {
         this.portletIndex = portletIndex;
     }
 
-    public <T extends SingularPortletFilter> T loadFilter() {
+    public <T extends DashboardFilter> T loadFilter() {
         if (filterClassName != null) {
             try {
                 Class clazz = Class.forName(filterClassName);
-                if (SingularPortletFilter.class.isAssignableFrom(clazz)) {
-                    Gson gson = new Gson();
+                if (DashboardFilter.class.isAssignableFrom(clazz)) {
+                    final GsonBuilder gsonBuilder  = new GsonBuilder().setDateFormat("dd/MM/yyyy");
+                    final Gson gson = gsonBuilder.create();
                     return (T) gson.fromJson(serializedJSONFilter, clazz);
                 }
             } catch (ClassNotFoundException e) {

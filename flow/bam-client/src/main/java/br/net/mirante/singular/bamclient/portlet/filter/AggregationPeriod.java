@@ -1,6 +1,6 @@
 package br.net.mirante.singular.bamclient.portlet.filter;
 
-public enum PeriodAggregation {
+public enum AggregationPeriod {
 
     WEEKLY("Semanal"),
     MONTHLY("Mensal"),
@@ -9,7 +9,7 @@ public enum PeriodAggregation {
 
     private String description;
 
-    PeriodAggregation(String description) {
+    AggregationPeriod(String description) {
         this.description = description;
     }
 

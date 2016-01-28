@@ -10,7 +10,6 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -54,8 +53,6 @@ import br.net.mirante.singular.view.template.Content;
 public class DashboardContent extends Content {
 
     static final Logger logger = LoggerFactory.getLogger(DashboardContent.class);
-
-    private final Form dashboardForm = new Form("form");
 
     private String processDefinitionCode;
     private RepeatingView rows;
@@ -119,8 +116,8 @@ public class DashboardContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
 
-        dashboardForm.add(rows = new RepeatingView("rows"));
-        dashboardForm.add(portlets = new RepeatingView("portlets"));
+        add(rows = new RepeatingView("rows"));
+        add(portlets = new RepeatingView("portlets"));
 
         if (processDefinitionCode == null || flowMetadataFacade.hasAccessToProcessDefinition(processDefinitionCode, getUserId(), AccessLevel.LIST)) {
             Set<String> processCodeWithAccess = flowMetadataFacade.listProcessDefinitionKeysWithAccess(getUserId(), AccessLevel.LIST);
@@ -132,9 +129,6 @@ public class DashboardContent extends Content {
         } else {
             error(getString("error.user.without.access.to.process"));
         }
-
-        add(dashboardForm);
-
     }
 
     protected void buildDashboard(Set<String> processCodeWithAccess) {
@@ -353,7 +347,8 @@ public class DashboardContent extends Content {
         try {
             ResponseEntity<List<PortletConfig<?>>> response =
                     new RestTemplate().exchange(url,
-                            HttpMethod.GET, null, new ParameterizedTypeReference<List<PortletConfig<?>>>() {},
+                            HttpMethod.GET, null, new ParameterizedTypeReference<List<PortletConfig<?>>>() {
+                            },
                             processAbbreviation);
             return response.getBody();
         } catch (Exception e) {

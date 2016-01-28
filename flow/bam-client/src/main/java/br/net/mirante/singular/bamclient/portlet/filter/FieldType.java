@@ -1,6 +1,8 @@
 package br.net.mirante.singular.bamclient.portlet.filter;
 
 
+import java.util.Date;
+
 import br.net.mirante.singular.bamclient.exeptions.BamClientExeption;
 
 public enum FieldType {
@@ -10,8 +12,8 @@ public enum FieldType {
     TEXT(String.class),
     TEXTAREA,
     SELECTION,
-    PERIOD,
-    PERIOD_AGGREGATION(PeriodAggregation.class),
+    DATE(Date.class),
+    AGGREGATION_PERIOD(AggregationPeriod.class),
     DEFAULT;
 
     private Class[] defaultTypeForClasses;

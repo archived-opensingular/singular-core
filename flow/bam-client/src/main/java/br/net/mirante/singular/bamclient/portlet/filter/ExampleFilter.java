@@ -1,7 +1,11 @@
 package br.net.mirante.singular.bamclient.portlet.filter;
 
 
-public class ExampleFilter implements SingularPortletFilter {
+import java.util.Date;
+
+import br.net.mirante.singular.flow.core.DashboardFilter;
+
+public class ExampleFilter implements DashboardFilter {
 
     @FilterField(label = "Quantidade", size = FieldSize.SMALL)
     private Integer quantidade;
@@ -10,7 +14,10 @@ public class ExampleFilter implements SingularPortletFilter {
     private String descricao;
 
     @FilterField(label = "Tipo de agregação")
-    private PeriodAggregation periodAggregation;
+    private AggregationPeriod aggregationPeriod;
+
+    @FilterField(label = "Data")
+    private Date data;
 
     public Integer getQuantidade() {
         return quantidade;
@@ -28,11 +35,19 @@ public class ExampleFilter implements SingularPortletFilter {
         this.descricao = descricao;
     }
 
-    public PeriodAggregation getPeriodAggregation() {
-        return periodAggregation;
+    public AggregationPeriod getAggregationPeriod() {
+        return aggregationPeriod;
     }
 
-    public void setPeriodAggregation(PeriodAggregation periodAggregation) {
-        this.periodAggregation = periodAggregation;
+    public void setAggregationPeriod(AggregationPeriod aggregationPeriod) {
+        this.aggregationPeriod = aggregationPeriod;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
     }
 }

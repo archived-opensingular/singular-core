@@ -23,9 +23,7 @@ import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
-import br.net.mirante.singular.bamclient.portlet.filter.ExampleFilter;
-import br.net.mirante.singular.bamclient.portlet.filter.FilterConfigFactory;
-import br.net.mirante.singular.bamclient.portlet.filter.PeriodAggregation;
+import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.mform.MDicionario;
 import br.net.mirante.singular.form.mform.MIComposto;
@@ -58,20 +56,15 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private final IModel<C> config;
     private final IModel<PortletContext> context;
     private final BSModalBorder modalBorder = new BSModalBorder("filter");
+    private final Form portletForm = new Form("porletForm");
 
     public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
         super(id);
-
         final PortletContext portletContext = new PortletContext();
-
-        config.setFilterConfigs(FilterConfigFactory.createConfigForClass(ExampleFilter.class));
-        config.setFilterClassName(ExampleFilter.class.getName());
-
         portletContext.setPortletIndex(portletIndex);
         portletContext.setProcessDefinitionCode(processDefinitionCode);
         portletContext.setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());
         portletContext.setFilterClassName(config.getFilterClassName());
-
         this.config = Model.of(config);
         this.context = Model.of(portletContext);
     }
@@ -89,20 +82,22 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         final PortletConfig config = this.config.getObject();
         super.onInitialize();
 
-        add(new Label("title", Model.of(config.getTitle())));
-        add(new Label("subtitle", Model.of(config.getSubtitle())));
+        portletForm.add(new Label("title", Model.of(config.getTitle())));
+        portletForm.add(new Label("subtitle", Model.of(config.getSubtitle())));
 
-        add(buildQuickFilters());
-        add(buildOpenFilterButton());
-        add(buildViewResult());
+        portletForm.add(buildQuickFilters());
+        portletForm.add(buildOpenFilterButton());
+        portletForm.add(buildViewResult());
 
         buildFilters();
 
         modalBorder.setTitleText(Model.of(String.format("Filtrar %s", config.getTitle().toLowerCase())));
-        add(modalBorder);
+        portletForm.add(modalBorder);
 
-        add($b.classAppender(config.getPortletSize().getBootstrapSize()));
+        portletForm.add($b.classAppender(config.getPortletSize().getBootstrapSize()));
 
+        add(portletForm);
+        portletForm.setOutputMarkupId(true);
         setOutputMarkupId(true);
     }
 
@@ -126,9 +121,17 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         final BelverSaveButton saveButton = new BelverSaveButton("filterButton") {
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                final JSONObject filtro = new JSONObject(xml.toJSONString()).getJSONObject("filtro");
-                context.getObject().setSerializedJSONFilter(filtro.toString());
-                ExampleFilter exampleFilter = context.getObject().loadFilter();
+                if (xml != null) {
+                    final String jsonSource = xml.toJSONString();
+                    final JSONObject filtro = new JSONObject(jsonSource).getJSONObject("filtro");
+                    if (filtro != null) {
+                        context.getObject().setSerializedJSONFilter(filtro.toString());
+                    } else {
+                        context.getObject().setSerializedJSONFilter(null);
+                    }
+                } else {
+                    context.getObject().setSerializedJSONFilter(null);
+                }
                 modalBorder.hide(target);
             }
 
@@ -139,8 +142,6 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         };
         saveButton.add($b.attr("value", "Filtrar"));
         modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of("Filtrar"), saveButton);
-
-
         modalBorder.add(panel);
     }
 
@@ -150,6 +151,12 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 super.onSubmit(target, form);
                 modalBorder.show(target);
+            }
+
+            @Override
+            protected void onConfigure() {
+                setVisible(!config.getObject().getFilterConfigs().isEmpty());
+                super.onConfigure();
             }
         };
     }
@@ -186,33 +193,36 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
     private void appendFilters(MTipoComposto root, List<FilterConfig> filterConfigs) {
         filterConfigs.forEach(fc -> {
-            MTipoSimples campo = null;
+            MTipoSimples field = null;
             switch (fc.getFieldType()) {
                 case BOOLEAN:
-                    campo = root.addCampoBoolean(fc.getIdentificador());
+                    field = root.addCampoBoolean(fc.getIdentificador());
                     break;
                 case INTEGER:
-                    campo = root.addCampoInteger(fc.getIdentificador());
+                    field = root.addCampoInteger(fc.getIdentificador());
                     break;
                 case TEXT:
-                    campo = root.addCampoString(fc.getIdentificador());
+                    field = root.addCampoString(fc.getIdentificador());
                     break;
                 case TEXTAREA:
-                    campo = root.addCampoString(fc.getIdentificador()).withTextAreaView();
+                    field = root.addCampoString(fc.getIdentificador()).withTextAreaView();
                     break;
-                case PERIOD_AGGREGATION:
-                    campo = root.addCampoString(fc.getIdentificador());
-                    campo.withSelection()
-                            .add(PeriodAggregation.WEEKLY, PeriodAggregation.BIMONTHLY.getDescription())
-                            .add(PeriodAggregation.MONTHLY, PeriodAggregation.MONTHLY.getDescription())
-                            .add(PeriodAggregation.BIMONTHLY, PeriodAggregation.BIMONTHLY.getDescription())
-                            .add(PeriodAggregation.YEARLY, PeriodAggregation.YEARLY.getDescription())
+                case DATE:
+                    field = root.addCampoData(fc.getIdentificador());
+                    break;
+                case AGGREGATION_PERIOD:
+                    field = root.addCampoString(fc.getIdentificador());
+                    field.withSelection()
+                            .add(AggregationPeriod.WEEKLY, AggregationPeriod.BIMONTHLY.getDescription())
+                            .add(AggregationPeriod.MONTHLY, AggregationPeriod.MONTHLY.getDescription())
+                            .add(AggregationPeriod.BIMONTHLY, AggregationPeriod.BIMONTHLY.getDescription())
+                            .add(AggregationPeriod.YEARLY, AggregationPeriod.YEARLY.getDescription())
                     ;
                     break;
             }
-            if (campo != null) {
-                campo.asAtrBasic().label(fc.getLabel());
-                campo.asAtrBootstrap().colPreference(fc.getSize());
+            if (field != null) {
+                field.asAtrBasic().label(fc.getLabel());
+                field.asAtrBootstrap().colPreference(fc.getSize());
             }
         });
     }
