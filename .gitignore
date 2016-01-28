@@ -1,0 +1,53 @@
+# Arquivos H2/HSQL   #
+######################
+**/*.h2.db
+**/*.trace.db
+**/*.tmp
+
+# Arquivos MAVEN     #
+######################
+**/target/
+**/overlays/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db 
+
+# Arquivos IntelliJ  #
+######################
+.idea/
+classes/
+atlassian-ide-plugin.xml
+**/*.iml
+
+# Arquivos Eclipse   #
+######################
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+
+# Arquivos JRebel    #
+######################
+**/rebel.xml
+out/**
