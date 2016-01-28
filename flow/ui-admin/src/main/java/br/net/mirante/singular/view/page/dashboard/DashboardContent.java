@@ -34,8 +34,6 @@ import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
-import br.net.mirante.singular.bamclient.portlet.filter.ExampleFilter;
-import br.net.mirante.singular.bamclient.portlet.filter.FilterConfigFactory;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
 import br.net.mirante.singular.flow.core.dto.IStatusDTO;
@@ -191,36 +189,6 @@ public class DashboardContent extends Content {
         final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByProcess")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
-
-//        FilterConfig booleanFilter = new FilterConfig();
-//        booleanFilter.setFieldType(FieldType.BOOLEAN);
-//        booleanFilter.setLabel("Somente Processos Ativos");
-//        booleanFilter.setIdentificador("somenteAtivos");
-//
-//        FilterConfig inteiroFilter = new FilterConfig();
-//        inteiroFilter.setFieldType(FieldType.INTEGER);
-//        inteiroFilter.setLabel("Quantidede minima de processos");
-//        inteiroFilter.setIdentificador("quantidadeMinima");
-//
-//        FilterConfig string = new FilterConfig();
-//        string.setFieldType(FieldType.TEXT);
-//        string.setLabel("Campo String");
-//        string.setIdentificador("string");
-//
-//
-//        FilterConfig area = new FilterConfig();
-//        area.setFieldType(FieldType.TEXTAREA);
-//        area.setLabel("Campo Texto Area");
-//        area.setIdentificador("area");
-//
-//        config.getFilterConfigs().add(booleanFilter);
-//        config.getFilterConfigs().add(inteiroFilter);
-//        config.getFilterConfigs().add(string);
-//        config.getFilterConfigs().add(area);
-
-        config.getFilterConfigs().addAll(FilterConfigFactory.createConfigForClass(ExampleFilter.class));
-        config.setFilterClassName(ExampleFilter.class.getName());
-
         config.setPortletSize(PortletSize.LARGE);
         config.setTitle(getString("label.chart.mean.time.process.title"));
         config.setSubtitle(getString("label.chart.mean.time.process.subtitle"));

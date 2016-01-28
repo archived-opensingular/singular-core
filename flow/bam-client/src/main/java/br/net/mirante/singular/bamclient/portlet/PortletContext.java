@@ -2,6 +2,9 @@ package br.net.mirante.singular.bamclient.portlet;
 
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -9,6 +12,8 @@ import br.net.mirante.singular.flow.core.DashboardContext;
 import br.net.mirante.singular.flow.core.DashboardFilter;
 
 public class PortletContext implements DashboardContext {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(PortletContext.class);
 
     private DataEndpoint dataEndpoint;
     private PortletQuickFilter quickFilter;
@@ -68,7 +73,7 @@ public class PortletContext implements DashboardContext {
                     return (T) gson.fromJson(serializedJSONFilter, clazz);
                 }
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return null;
