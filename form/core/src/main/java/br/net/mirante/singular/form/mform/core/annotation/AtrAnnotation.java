@@ -2,12 +2,15 @@ package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.util.transformer.Val;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+
+import static br.net.mirante.singular.form.mform.util.transformer.Val.*;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -20,8 +23,42 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         super(alvo);
     }
 
+    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não.
+    // Ou seja, não tem mais a view
+
     /**
-     *
+     * Marks this type as annotated
+     * @return this
+     */
+    public AtrAnnotation setAnnotated() {
+        atrValue(MPacoteBasic.ATR_ANNOTATED,true);
+        return this;
+    }
+
+    /**
+     * Sets the label for this annotation
+     * @return this
+     */
+    public AtrAnnotation label(String label) {
+        atrValue(MPacoteBasic.ATR_ANNOTATION_LABEL,label);
+        return this;
+    }
+
+    /**
+     * @return true if type is annotated
+     */
+    public boolean isAnnotated() {
+        Boolean v = atrValue(MPacoteBasic.ATR_ANNOTATED);
+        return v != null && v ;
+    }
+    /**
+     * @return the label set, if any
+     */
+    public String label() {
+        return atrValue(MPacoteBasic.ATR_ANNOTATION_LABEL);
+    }
+
+    /**
      * @param valor Text value of the annotation.
      * @return this
      */
@@ -58,36 +95,39 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public MIAnnotation annotation() {
         createAttributeIfNeeded();
-        return atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
+        return target().getDocument().annotation(target().getId());
     }
 
     /**
      * @return True if an anotation was filled for this instance.
      */
     public boolean hasAnnotation(){
-        MIAnnotation atr = atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT);
+        MIAnnotation atr = target().getDocument().annotation(target().getId());
         return atr != null && StringUtils.isNotBlank(atr.getText());
     }
 
     private void createAttributeIfNeeded() {
-        if(atrValue(MPacoteBasic.ATR_ANNOTATION_TEXT) == null){
-            setAnnotation(type().novaInstancia());
+        if(target().getDocument().annotation(target().getId()) == null){
+            setAnnotation(newAnnotation());
         }
     }
 
-    private void setAnnotation(MIAnnotation annotation) {
-        atrValue(annotation, MPacoteBasic.ATR_ANNOTATION_TEXT);
-    }
+    private MIAnnotation newAnnotation() {  return type().novaInstancia();}
 
     private MTipoAnnotation type() {
         return getAlvo().getDicionario().getTipo(MTipoAnnotation.class);
     }
 
-    private void atrValue(MIAnnotation annotation, AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation> ref) {
-        getAlvo().setValorAtributo(ref, annotation);
+    private void setAnnotation(MIAnnotation annotation) {
+        annotation.setTargetId(target().getId());
+        target().getDocument().annotation(target().getId(),annotation);
     }
 
-    private MIAnnotation atrValue(AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation> ref) {
+    private void atrValue(AtrRef ref, Object value) {
+        getAlvo().setValorAtributo(ref, value);
+    }
+
+    private <T extends Object> T atrValue(AtrRef<?, ?, T > ref) {
         return getAlvo().getValorAtributo(ref);
     }
 
@@ -152,16 +192,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public MILista persistentAnnotations() {
         List<MIAnnotation> all = allAnnotations();
-        MILista miLista;
-        if(!all.isEmpty() && all.get(0).getPai() != null){
-            miLista = (MILista) all.get(0).getPai();
-        }else {
-            miLista = newAnnotationList();
-        }
+        MILista miLista = newAnnotationList();
         for(MIAnnotation a: all){
-            if(!miLista.getValor().contains(a)){
-                miLista.addElement(a);
-            }
+            MIAnnotation detached = newAnnotation();
+            Val.hydrate(detached, Val.dehydrate(a));
+            miLista.addElement(detached);
         }
 
         return miLista;

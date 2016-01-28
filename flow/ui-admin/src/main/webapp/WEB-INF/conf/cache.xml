@@ -5,8 +5,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
                             http://www.springframework.org/schema/cache
-                            http://www.springframework.org/schema/cache/spring-cache-4.1.xsd"
-       profile="cache">
+                            http://www.springframework.org/schema/cache/spring-cache-4.1.xsd">
 
     <cache:annotation-driven/>
     <bean id="ehCacheManagerFactoryBean" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">

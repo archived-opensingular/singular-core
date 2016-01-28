@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.FromPojoList;
@@ -31,6 +32,8 @@ public class MTipoCID extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> capitulo = this.addCampoComposto("capitulo");
         capitulo
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Capítulo")
                 .as(AtrBootstrap::new)
@@ -54,6 +57,8 @@ public class MTipoCID extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> grupo = this.addCampoComposto("grupo");
         grupo
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Grupo")
                 .visivel(false)
@@ -81,6 +86,8 @@ public class MTipoCID extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> categoria = this.addCampoComposto("categoria");
         categoria
+                .as(AtrCore::new)
+                .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Categoria")
                 .visivel(false)
@@ -108,6 +115,8 @@ public class MTipoCID extends MTipoComposto<MIComposto>  {
 
         MTipoComposto<?> subcategoria = this.addCampoComposto("subcategoria");
         subcategoria
+                .as(AtrCore::new)
+                .obrigatorio(inst -> ciddao.listSubCategoriasByIdCategoria(Val.of(inst, idCategoria)).size() > 0)
                 .as(AtrBasic::new)
                 .label("Sub-Categoria")
                 .visivel(false)

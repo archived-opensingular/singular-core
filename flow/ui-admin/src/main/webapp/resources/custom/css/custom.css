@@ -1,0 +1,102 @@
+/* here you can put your own css to customize and override the theme */
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown-user .dropdown-toggle > img {
+    width: 39px;
+}
+
+.portlet {
+    border-radius: 4px !important;
+}
+
+.portlet .portlet-title {
+    border-radius: 4px 4px 0 0 !important;
+    border-bottom: 1px solid #eee !important;
+    margin-bottom: 10px;
+}
+
+.portlet .portlet-body,
+.portlet .portlet-body .form-actions {
+    border-radius: 0 0 4px 4px !important;
+}
+
+.portlet-fullscreen .portlet-body > .columnLine {
+    height: 90%;
+}
+
+.portlet-fullscreen .portlet-body > .animated-pie-chart {
+    height: 90%;
+}
+
+a.fullscreen {
+    margin-left: 2px;
+}
+
+table.dataTable thead th > a {
+    display: block;
+    width: 100% !important;
+    padding-right: 10px;
+}
+
+.btn.blue-stripe, .btn.green-stripe, .btn.red-stripe, .btn.red-stripe {
+    border-left-width: 3px !important;
+}
+
+/*noinspection CssInvalidPropertyValue*/
+.modal-fit.modal-dialog {
+    width: intrinsic;           /* Safari/WebKit uses a non-standard name */
+    width: -moz-max-content;    /* Firefox/Gecko */
+    width: -webkit-max-content; /* Chrome */
+}
+
+.without-progress-bar > .dashboard-stat2 {
+    padding-bottom: 1px;
+}
+
+.dashboard-stat2 {
+    padding-bottom: 1px;
+    padding: 15px 15px 30px 15px;
+}
+
+.feeds li .col2 {
+    width: 120px;
+    margin-left: -120px;
+}
+
+.feedbackPanelERROR{
+    color: red;
+}
+
+/* Cubic Bezier Transition */
+.todo-main-header {
+    margin-top: -20px; }
+.todo-main-header > h3 {
+    font-weight: 400;
+    font-size: 22px;
+    margin-right: 1em;
+    display: inline-block;
+    color: #3b464f; }
+.todo-main-header > .todo-breadcrumb {
+    border-left: 1px solid;
+    border-color: #dae3eb;
+    padding: 0.5em 2em;
+    display: inline-block;
+    margin-top: 17px; }
+.todo-main-header > .todo-breadcrumb > li {
+    display: inline-block;
+    font-size: 11px; }
+.todo-main-header > .todo-breadcrumb > li > a {
+    color: #77838d;
+    text-transform: uppercase;
+    text-decoration: none; }
+.todo-main-header > .todo-breadcrumb > li > a:hover {
+    color: #337ab7;
+    text-decoration: none; }
+.todo-main-header > .todo-breadcrumb > li > .todo-active {
+    color: #49a7fa; }
+.todo-main-header > .todo-breadcrumb > li:before {
+    content: "\002022";
+    color: #b6c1cb;
+    margin: 0 1em; }
+.todo-main-header > .todo-breadcrumb > li:first-child:before {
+    content: "";
+    margin: 0; }

@@ -5,8 +5,25 @@ import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 
 public class PageWithAnnotation {
+
+    public void buildPage(WicketBuildContext ctx){
+        /**
+         * Deve-se habilitar as anotações no contexto sendo utilizado para montar a página.
+         */
+        ctx.enableAnnotation();
+    }
+
+
+    public void loadAnnotations(MIComposto pedido, MILista<MIAnnotation> annotations){
+        /**
+         * Como as anotações são armazenadas de forma separada da instancia a qual faz referencia
+         * esta deve ser carregada em conjunto para a exibição das anotações para edição.
+         */
+        pedido.as(AtrAnnotation::new).loadAnnotations(annotations);
+    }
 
     public void saveAnnotations(MIComposto pedido){
         CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getMTipo().getPacote();
@@ -23,11 +40,4 @@ public class PageWithAnnotation {
         MILista anotacoes = instanciaCampoCliente.as(AtrAnnotation::new).persistentAnnotations();
     }
 
-    public void loadAnnotations(MIComposto pedido, MILista<MIAnnotation> annotations){
-        /**
-         * Como as anotações são armazenadas de forma separada da instancia a qual faz referencia
-         * esta deve ser carregada em conjunto para a exibição das anotações para edição.
-         */
-        pedido.as(AtrAnnotation::new).loadAnnotations(annotations);
-    }
 }

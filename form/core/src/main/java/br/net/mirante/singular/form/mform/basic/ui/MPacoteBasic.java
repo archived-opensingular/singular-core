@@ -52,7 +52,8 @@ public class MPacoteBasic extends MPacote {
     //    @SuppressWarnings({ "unchecked", "rawtypes" })
     //    public static final AtrRef<MTipoBehavior, MIBehavior, IBehavior<MInstancia>>   ATR_ONCHANGE_BEHAVIOR = new AtrRef(MPacoteBasic.class, "onchangeBehavior", MTipoBehavior.class, MIBehavior.class, IBehavior.class);
 
-    public static final AtrRef<MTipoAnnotation, MIAnnotation, MIAnnotation>                      ATR_ANNOTATION_TEXT          = new AtrRef<>(MPacoteBasic.class, "annotationText", MTipoAnnotation.class, MIAnnotation.class, MIAnnotation.class);
+    public static final AtrRef<MTipoBoolean, MIBoolean, Boolean>                   ATR_ANNOTATED                  = new AtrRef<>(MPacoteBasic.class, "anotated", MTipoBoolean.class, MIBoolean.class, Boolean.class);
+    public static final AtrRef<MTipoString, MIString, String>                      ATR_ANNOTATION_LABEL           = new AtrRef<>(MPacoteBasic.class, "annotation_label", MTipoString.class, MIString.class, String.class);
 
     //@formatter:on
 
@@ -83,7 +84,8 @@ public class MPacoteBasic extends MPacote {
         pb.createTipoAtributo(MTipo.class, ATR_DEPENDS_ON_FUNCTION);
         //        pb.createTipoAtributo(MTipo.class, ATR_ONCHANGE_BEHAVIOR);
         pb.createTipoAtributo(MTipo.class, ATR_ORDEM);
-        pb.createTipoAtributo(MTipo.class, ATR_ANNOTATION_TEXT);
+        pb.createTipoAtributo(MTipo.class, ATR_ANNOTATED);
+        pb.createTipoAtributo(MTipo.class, ATR_ANNOTATION_LABEL);
 
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_MAXIMO, 100);
         pb.addAtributo(MTipoString.class, ATR_TAMANHO_EDICAO, 50);

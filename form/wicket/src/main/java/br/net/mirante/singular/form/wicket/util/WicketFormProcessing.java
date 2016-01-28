@@ -30,6 +30,7 @@ import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 import br.net.mirante.singular.form.wicket.feedback.BFeedbackMessage;
+import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import static java.util.stream.Collectors.toSet;
 
@@ -105,15 +106,24 @@ public class WicketFormProcessing {
                 return wasUpdated || (hasOptions && dependsOnField);
             };
 
-            // re-renderizar componentes
-            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-                    .map(WicketFormUtils::findCellContainer)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .filter(c -> c != null)
-                    .forEach(t::add);
+            //re-renderizar componentes
+            formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
+                if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
+                    if (predicate.test(c, ((IMInstanciaAwareModel) c.getDefaultModel()).getMInstancia())) {
+                        t.add(c);
+                    }
+                }
+            });
+
+//           // re-renderizar componentes
+//            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
+//                    .map(WicketFormUtils::findCellContainer)
+//                    .filter(Optional::isPresent)
+//                    .map(Optional::get)
+//                    .filter(c -> c != null)
+//                    .forEach(t::add);
         });
-    }
+     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null)

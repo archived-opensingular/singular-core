@@ -46,6 +46,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, labelModel);
         input.add(DisabledClassBehavior.getInstance());
+        ctx.configure(this, input);
     }
 
     private void buildForVisualization(IModel<? extends MInstancia> model, BSControls formGroup,

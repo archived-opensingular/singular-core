@@ -42,14 +42,20 @@ public class Val {
     }
 
     public static <T> boolean notNull(MInstancia current, MTipoComposto tipo) {
-        MIComposto targetInstance = (MIComposto) getInstance(current, tipo);
-        return Val.notNull(targetInstance);
+        if (current != null && tipo != null) {
+            MIComposto targetInstance = (MIComposto) getInstance(current, tipo);
+            return Val.notNull(targetInstance);
+        }
+        return false;
     }
 
 
     public static <T> boolean notNull(MInstancia current, MTipoLista tipo) {
-        MILista instanciaLista = (MILista) getInstance(current, tipo);
-        return Val.notNull(instanciaLista);
+        if (current != null && tipo != null) {
+            MILista instanciaLista = (MILista) getInstance(current, tipo);
+            return Val.notNull(instanciaLista);
+        }
+        return false;
     }
 
     public static <T> boolean notNull(MILista instanciaLista) {
@@ -64,8 +70,17 @@ public class Val {
         return instanciaSimples != null && !instanciaSimples.isEmptyOfData();
     }
 
-    public static <T> T of(MISimples<?> instanciaSinmples) {
-        return (T) instanciaSinmples.getValor();
+    /**
+     * Retorna o valor de uma instancia simples
+     * @param instanciaSimples
+     * @param <T>
+     * @return
+     */
+    public static <T> T of(MISimples<?> instanciaSimples) {
+        if (instanciaSimples != null) {
+            return (T) instanciaSimples.getValor();
+        }
+        return null;
     }
 
     public static <T> boolean notNull(MInstancia instancia) {
@@ -80,10 +95,20 @@ public class Val {
         }
     }
 
+    /**
+     * Retorna o valor de uma instancia de um tipo simples que pode ser alcançada a partir
+     * do {@paramref instancia} fornecido
+     * @param instancia
+     * @param tipo
+     * @param <T>
+     * @return
+     */
     public static <T> T of(MInstancia instancia, MTipoSimples<? extends MISimples<T>, T> tipo) {
-        MISimples targetInstance = (MISimples) getInstance(instancia, tipo);
-        if (targetInstance != null) {
-            return (T) Val.of(targetInstance);
+        if (instancia != null && tipo != null) {
+            MISimples targetInstance = (MISimples) getInstance(instancia, tipo);
+            if (targetInstance != null) {
+                return (T) Val.of(targetInstance);
+            }
         }
         return null;
     }
@@ -96,14 +121,16 @@ public class Val {
      * @param value
      */
     public static void hydrate(MInstancia instancia, Object value) {
-        if (instancia instanceof MIComposto) {
-            fromMap((Map<String, Object>) value, (MIComposto) instancia);
-        } else if (instancia instanceof MISimples) {
-            ((MISimples) instancia).setValor(value);
-        } else if (instancia instanceof MILista) {
-            fromList((List<Object>) value, (MILista) instancia);
-        } else {
-            throw new SingularFormException("Tipo de instancia não suportado");
+        if (instancia != null) {
+            if (instancia instanceof MIComposto) {
+                fromMap((Map<String, Object>) value, (MIComposto) instancia);
+            } else if (instancia instanceof MISimples) {
+                ((MISimples) instancia).setValor(value);
+            } else if (instancia instanceof MILista) {
+                fromList((List<Object>) value, (MILista) instancia);
+            } else {
+                throw new SingularFormException("Tipo de instancia não suportado");
+            }
         }
     }
 
@@ -130,19 +157,22 @@ public class Val {
      *  Objetos serializáveis representando os dados da MInstancia
      */
     public static Object dehydrate(MInstancia value) {
-        if (value instanceof MIComposto) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            toMap(map, (MInstancia) value);
-            return map;
-        } else if (value instanceof MISimples) {
-            return ((MISimples) value).getValor();
-        } else if (value instanceof MILista) {
-            List<Object> list = new ArrayList<>();
-            toList(list, (MInstancia) value);
-            return list;
-        } else  {
-            throw new SingularFormException("Tipo de instancia não suportado");
+        if (value != null) {
+            if (value instanceof MIComposto) {
+                Map<String, Object> map = new LinkedHashMap<>();
+                toMap(map, (MInstancia) value);
+                return map;
+            } else if (value instanceof MISimples) {
+                return ((MISimples) value).getValor();
+            } else if (value instanceof MILista) {
+                List<Object> list = new ArrayList<>();
+                toList(list, (MInstancia) value);
+                return list;
+            } else {
+                throw new SingularFormException("Tipo de instancia não suportado");
+            }
         }
+        return null;
     }
 
     /**

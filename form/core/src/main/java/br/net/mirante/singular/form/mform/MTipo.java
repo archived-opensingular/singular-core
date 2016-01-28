@@ -33,6 +33,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     private static final Logger LOGGER = Logger.getLogger(MTipo.class.getName());
 
+    /**
+     * contabiliza a quantidade de instancias desse tipo.
+     */
+    protected long instanceCount;
+
     private String nomeSimples;
 
     private String nomeCompleto;
@@ -488,6 +493,7 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
                     novo.setValor(valorInicial);
                 }
             }
+            instanceCount++;
             return novo;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new SingularFormException("Erro instanciando o tipo '" + getNome() + "' para o tipo '" + original.getNome() + "'", e);

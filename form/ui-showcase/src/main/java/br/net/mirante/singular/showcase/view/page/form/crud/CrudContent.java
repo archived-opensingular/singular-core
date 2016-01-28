@@ -184,6 +184,17 @@ public class CrudContent extends Content
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                     }))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                    .appendAction(getMessage("label.table.column.analisar"),
+                            Icone.COMMENT,
+                            (target, model) -> {
+                                setResponsePage(FormPage.class,
+                                        new PageParameters()
+                                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                                .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
+                                                .add(FormPage.ANNOTATION_ENABLED, true));
+                            }))
+            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.delete"),
                     Icone.MINUS, this::deleteSelected))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))

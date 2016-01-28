@@ -100,10 +100,20 @@ public final class MFormUtil {
     }
     public static String generateUserFriendlyPath(MInstancia instance, MInstancia parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        for (MInstancia node = instance; node != null && !node.equals(parentContext); node = node.getPai()) {
-            String label = node.as(MPacoteBasic.aspect()).getLabel();
-            if (StringUtils.isNotBlank(label))
-                labels.add(label);
+        MInstancia child = null;
+        for (MInstancia node = instance; node != null && !node.equals(parentContext); child = node, node = node.getPai()) {
+
+            final String labelNode = node.as(MPacoteBasic.aspect()).getLabel();
+
+            if (node instanceof MILista<?>) {
+                MILista<?> lista = (MILista<?>) node;
+                String labelLista = lista.as(MPacoteBasic.aspect()).getLabel();
+                int index = lista.indexOf(child) + 1;
+                labels.add(labelLista + ((index > 0) ? " [" + (index) + "]" : ""));
+            } else {
+                if (StringUtils.isNotBlank(labelNode))
+                    labels.add(labelNode);
+            }
         }
         Collections.reverse(labels);
 

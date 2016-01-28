@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.MAnnotationView;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,18 +27,18 @@ public class MTipoAnnotationTest {
 
         annotated1 = baseCompositeField.addCampoComposto("annotatedGroup1");
         field11 = annotated1.addCampoString("field11");
-        annotated1.setView(MAnnotationView::new);
+        annotated1.as(AtrAnnotation::new).setAnnotated();
 
         annotated2 = baseCompositeField.addCampoComposto("annotatedGroup2");
         annotated2.addCampoString("field121");
         annotated2.addCampoString("field122");
-        annotated2.setView(MAnnotationView::new);
+        annotated2.as(AtrAnnotation::new).setAnnotated();
 
         notAnnotated = baseCompositeField.addCampoComposto("notAnnotatedGroup3");
         notAnnotated.addCampoString("field13");
         annotated4 = notAnnotated.addCampoComposto("annotatedSubGroup4");
         annotated4.addCampoString("field341");
-        annotated4.setView(MAnnotationView::new);
+        annotated4.as(AtrAnnotation::new).setAnnotated();
 
     }
 

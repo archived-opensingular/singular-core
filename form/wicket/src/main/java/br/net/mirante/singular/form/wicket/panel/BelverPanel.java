@@ -45,6 +45,11 @@ public abstract class BelverPanel extends Panel {
     private ViewMode viewMode = ViewMode.EDITION;
 
     /**
+     * Permite apresentar anotações em conjunto.
+     */
+    private boolean annotationEnabled = false;
+
+    /**
      * Construtor principal do painel
      * @param id o markup id wicket
      * @param serviceRegistry utilizado para lookup de serviços
@@ -123,8 +128,14 @@ public abstract class BelverPanel extends Panel {
      */
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
+        if(annotationEnabled()){    ctx.enableAnnotation();}
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
+
+    public boolean annotationEnabled(){return annotationEnabled;};
+
+    public void enableAnnotation() {this.annotationEnabled = true;}
+    public void disableAnnotation() {this.annotationEnabled = false;}
 
     /**
      * Constrói o body container

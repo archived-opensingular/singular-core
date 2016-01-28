@@ -1,7 +1,5 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.*;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +15,13 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
+import br.net.mirante.singular.util.wicket.behavior.MultiSelectInitBehaviour;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BSControls> {
 
@@ -45,8 +46,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
         this
             .appendTag("div", true, "class='checkbox'", new BSContainer<>("_" + checkbox.getId())
                 .appendTag("label", new BSContainer<>("_")
-                    .appendTag("input", false, "type='checkbox'", checkbox)
-                    .appendTag("span", label)));
+                        .appendTag("input", false, "type='checkbox'", checkbox)
+                        .appendTag("span", label)));
         return this;
     }
 
@@ -94,12 +95,12 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
         this.appendInputGroup(componentId -> {
             BSInputGroup inputGroup = newInputGroup();
-            return inputGroup
-                .appendExtraClasses(" date date-picker ")
-                .appendExtraAttributes(attrs)
-                .appendInputText(datepicker
-                    .setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
-                .appendButtonAddon(Icone.CALENDAR);
+            return (BSInputGroup) inputGroup
+                    .appendExtraClasses(" date ")
+                    .appendExtraAttributes(attrs)
+                    .appendInputText(datepicker.setMetaData(BSDatepickerConstants.KEY_CONTAINER, inputGroup))
+                    .appendButtonAddon(Icone.CALENDAR)
+                    .add(new DatePickerInitBehaviour());
         });
         return this;
     }
@@ -122,7 +123,8 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendPicklist(Component select) {
-        return super.appendTag("select", true, "class='multi-select' multiple", select);
+        return (BSControls) super.appendTag("select", true, "multiple", select)
+                .add(new MultiSelectInitBehaviour());
     }
 
     public BSControls appendStaticText(Component text) {
@@ -188,21 +190,21 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
                         FeedbackPanel fp = (FeedbackPanel) component;
                         if (fp.anyErrorMessage()) {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"
-                                + ""));
+                                    + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-error');"
+                                    + ""));
                         } else {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
-                                + ""));
+                                    + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
+                                    + ""));
                         }
                         if (fp.anyMessage(FeedbackMessage.WARNING)) {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"
-                                + ""));
+                                    + JQuery.$(fp) + ".closest('.can-have-error').addClass('has-warning');"
+                                    + ""));
                         } else {
                             response.render(OnDomReadyHeaderItem.forScript(""
-                                + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
-                                + ""));
+                                    + JQuery.$(fp) + ".closest('.can-have-error').removeClass('has-error').removeClass('has-warning');"
+                                    + ""));
                         }
                     }
                 }));

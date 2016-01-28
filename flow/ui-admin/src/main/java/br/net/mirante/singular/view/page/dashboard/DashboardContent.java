@@ -102,7 +102,7 @@ public class DashboardContent extends Content {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/settings.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/custom/scripts/settings.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    SettingUI.init(); // init settings features\n")
@@ -130,7 +130,9 @@ public class DashboardContent extends Content {
     }
 
     protected void buildDashboard(Set<String> processCodeWithAccess) {
-        configs.forEach(c -> portlets.add(new PortletPanel<>(portlets.newChildId(), c, processDefinitionCode)));
+        configs.forEach(c -> {
+            portlets.add(new PortletPanel<>(portlets.newChildId(), c, processDefinitionCode, configs.indexOf(c)));
+        });
         final FeedPanel feed = new FeedPanel("feed", processDefinitionCode, processCodeWithAccess);
         feed.add($b.classAppender(PortletSize.LARGE.getBootstrapSize()));
         portlets.add(feed);
