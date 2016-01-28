@@ -102,7 +102,7 @@ public class DashboardContent extends Content {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/settings.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/custom/scripts/settings.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    SettingUI.init(); // init settings features\n")
