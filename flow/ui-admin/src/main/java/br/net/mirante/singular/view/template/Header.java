@@ -38,6 +38,6 @@ public class Header extends Panel {
             add(new WebMarkupContainer("_TopAction"));
         }
         add(new TopMenu("_TopMenu", withSideBar));
-        add(new WebMarkupContainer("brandLogo").add($b.attr("src", UrlUtils.rewriteToContextRelative("resources/admin/page/img/brand.png", getRequestCycle()))));
+        add(new WebMarkupContainer("brandLogo").add($b.attr("src","/singular-static/resources/singular/img/brand.png")));
     }
 }

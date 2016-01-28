@@ -104,7 +104,7 @@ public class DefinitionDAO extends BaseDAO{
     
     public int countAll(Set<String> processCodeWithAccess) {
         return ((Number) getSession().createCriteria(ProcessDefinitionEntity.class)
-            .add(Restrictions.in("cod", processCodeWithAccess))
+            .add(Restrictions.in("key", processCodeWithAccess))
             .setProjection(Projections.rowCount()).uniqueResult()).intValue();
     }
 

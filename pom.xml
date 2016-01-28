@@ -14,18 +14,19 @@
         <module>flow</module>
         <module>form</module>
         <module>lib</module>
+        <module>common</module>
     </modules>
 
     <distributionManagement>
         <repository>
             <id>singular-releases</id>
             <name>singular-releases</name>
-            <url>http://10.0.10.1/nexus/content/repositories/singular-releases</url>
+            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-releases</url>
         </repository>
         <snapshotRepository>
             <id>singular-snapshots</id>
             <name>singular-snapshots</name>
-            <url>http://10.0.10.1/nexus/content/repositories/singular-snapshots</url>
+            <url>http://nexus.mirante.net.br/nexus/content/repositories/singular-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
