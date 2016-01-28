@@ -2,6 +2,7 @@ package br.net.mirante.singular.view.component;
 
 import javax.inject.Inject;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Set;
 
@@ -60,6 +61,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
     public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
         super(id);
+        Objects.requireNonNull(config, "Configuração é obrigatória");
         final PortletContext portletContext = new PortletContext();
         portletContext.setPortletIndex(portletIndex);
         portletContext.setProcessDefinitionCode(processDefinitionCode);

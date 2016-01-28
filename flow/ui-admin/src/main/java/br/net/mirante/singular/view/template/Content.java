@@ -17,6 +17,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.StringValue;
 
+import br.net.mirante.singular.persistence.entity.Dashboard;
 import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.wicket.UIAdminSession;
@@ -24,7 +25,8 @@ import br.net.mirante.singular.wicket.UIAdminSession;
 public abstract class Content extends Panel {
 
     public static final String PROCESS_DEFINITION_COD_PARAM = "pdCod";
-    
+    public static final String CUSTOM_DASHBOARD_COD_PARAM = "cdCod";
+
     private boolean withBreadcrumb;
     private boolean withSettingsMenu;
     private boolean withInfoLink;
@@ -82,8 +84,13 @@ public abstract class Content extends Panel {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        StringValue customDashboardCode = getPage().getPageParameters().get(Content.CUSTOM_DASHBOARD_COD_PARAM);
         StringValue processDefinitionCode = getPage().getPageParameters().get(Content.PROCESS_DEFINITION_COD_PARAM);
-        if (processDefinitionCode.isNull()) {
+        if (!customDashboardCode.isNull()) {
+            Dashboard dashboard = uiAdminFacade.retrieveDashboardById(customDashboardCode.toString());
+                String dashboardId = String.format("_dashboardMenu_%d", dashboard.getCod());
+            response.render(OnDomReadyHeaderItem.forScript("$('#" + dashboardId + "').addClass('active');"));
+        } else if (processDefinitionCode.isNull()) {
             response.render(OnDomReadyHeaderItem.forScript("$('#_menuItemHome').addClass('active');"));
         } else {
             Pair<Long, Long> ids = uiAdminFacade.retrieveCategoryDefinitionIdsByCode(processDefinitionCode.toString());
