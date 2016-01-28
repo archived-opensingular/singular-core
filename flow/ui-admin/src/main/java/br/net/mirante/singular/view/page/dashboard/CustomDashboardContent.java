@@ -88,7 +88,7 @@ public class CustomDashboardContent extends Content {
     }
 
     protected void buildDashboard(Portlet portlet, PortletConfig<?> config) {
-        portlets.add(new PortletPanel<>(portlets.newChildId(), config, portlet.getProcessAbbreviation()));
+        portlets.add(new PortletPanel<>(portlets.newChildId(), config, portlet.getProcessAbbreviation(), portlet.getOrdem().intValue()));
     }
 
     private PortletConfig<?> buildConfig(Portlet portlet) {
