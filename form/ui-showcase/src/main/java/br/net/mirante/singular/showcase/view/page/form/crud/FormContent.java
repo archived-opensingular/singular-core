@@ -3,7 +3,6 @@ package br.net.mirante.singular.showcase.view.page.form.crud;
 import javax.inject.Inject;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -35,7 +34,7 @@ import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.panel.BelverPanel;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
@@ -57,7 +56,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private ViewMode viewMode = ViewMode.EDITION;
 
     private ExampleDataDTO currentModel;
-    private BelverPanel belverPanel;
+    private SingularFormPanel singularFormPanel;
 
     @Inject
     private ExampleDataDAO dao;
@@ -103,8 +102,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return form;
     }
 
-    private BelverPanel buildBelverBasePanel() {
-        belverPanel = new BelverPanel("belver-panel", serviceRegistry) {
+    private SingularFormPanel buildBelverBasePanel() {
+        singularFormPanel = new SingularFormPanel("belver-panel", serviceRegistry) {
 
             @Override
             protected MTipo<?> getTipo() {
@@ -151,7 +150,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public boolean annotationEnabled() {    return enableAnnotation;    }
         };
 
-        return belverPanel;
+        return singularFormPanel;
     }
 
     private void loadOrbuildModel() {
@@ -173,7 +172,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final Component button = new BelverSaveButton("save-btn") {
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverPanel.getRootInstance();
+                return singularFormPanel.getRootInstance();
             }
 
             @Override
@@ -195,7 +194,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         final Component button = new BelverValidationButton("save-annotation-btn") {
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverPanel.getRootInstance();
+                return singularFormPanel.getRootInstance();
             }
 
             protected void save() {
@@ -258,7 +257,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverPanel.getRootInstance();
+                return singularFormPanel.getRootInstance();
             }
 
         };
@@ -285,7 +284,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
-                return belverPanel.getRootInstance();
+                return singularFormPanel.getRootInstance();
             }
         };
 

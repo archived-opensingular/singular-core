@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 import br.net.mirante.singular.bamclient.chart.SingularChart;
 import br.net.mirante.singular.flow.core.DashboardView;
 
-public abstract class BamDashboardView extends DashboardView {
+public abstract class BamDashboardView extends DashboardView<PortletContext> {
 
     private SingularChart chart;
     private PortletSize portletSize = PortletSize.MEDIUM;

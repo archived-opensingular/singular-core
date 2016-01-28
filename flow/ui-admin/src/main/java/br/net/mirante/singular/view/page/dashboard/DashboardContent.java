@@ -113,6 +113,7 @@ public class DashboardContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
         add(rows = new RepeatingView("rows"));
         add(portlets = new RepeatingView("portlets"));
 
@@ -126,7 +127,6 @@ public class DashboardContent extends Content {
         } else {
             error(getString("error.user.without.access.to.process"));
         }
-
     }
 
     protected void buildDashboard(Set<String> processCodeWithAccess) {
@@ -189,7 +189,6 @@ public class DashboardContent extends Content {
         final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByProcess")), chart);
 
         addPeriodQuickFilter(config.getQuickFilter());
-
         config.setPortletSize(PortletSize.LARGE);
         config.setTitle(getString("label.chart.mean.time.process.title"));
         config.setSubtitle(getString("label.chart.mean.time.process.subtitle"));
@@ -316,7 +315,8 @@ public class DashboardContent extends Content {
         try {
             ResponseEntity<List<PortletConfig<?>>> response =
                     new RestTemplate().exchange(url,
-                            HttpMethod.GET, null, new ParameterizedTypeReference<List<PortletConfig<?>>>() {},
+                            HttpMethod.GET, null, new ParameterizedTypeReference<List<PortletConfig<?>>>() {
+                            },
                             processAbbreviation);
             return response.getBody();
         } catch (Exception e) {

@@ -1,17 +1,10 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.TipoBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
-import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 import org.apache.wicket.util.string.Strings;
+
+import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.core.MTipoString;
 
 @MInfoTipo(nome = "MTipoDocumentoSelect", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoDocumentoSelect extends MTipoString {

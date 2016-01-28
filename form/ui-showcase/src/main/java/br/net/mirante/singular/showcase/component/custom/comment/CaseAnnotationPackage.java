@@ -1,14 +1,11 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
-import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseAnnotationPackage extends MPacote {
 

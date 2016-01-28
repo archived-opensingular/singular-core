@@ -22,6 +22,8 @@ public abstract class PortletConfig<T extends PortletConfig<T>> implements Seria
     private String title;
     private String subtitle;
     private List<PortletQuickFilter> quickFilter = new ArrayList<>();
+    private List<FilterConfig> filterConfigs = new ArrayList<>();
+    private String filterClassName;
 
     public PortletConfig() {
     }
@@ -62,4 +64,19 @@ public abstract class PortletConfig<T extends PortletConfig<T>> implements Seria
         return quickFilter;
     }
 
+    public List<FilterConfig> getFilterConfigs() {
+        return filterConfigs;
+    }
+
+    public void setFilterConfigs(List<FilterConfig> filterConfigs) {
+        this.filterConfigs = filterConfigs;
+    }
+
+    public String getFilterClassName() {
+        return filterClassName;
+    }
+
+    public void setFilterClassName(String filterClassName) {
+        this.filterClassName = filterClassName;
+    }
 }

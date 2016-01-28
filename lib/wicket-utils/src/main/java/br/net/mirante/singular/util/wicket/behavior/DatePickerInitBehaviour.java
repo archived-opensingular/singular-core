@@ -1,21 +1,18 @@
 package br.net.mirante.singular.util.wicket.behavior;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.IHeaderResponse;
 
 public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
     @Override
-    public String getScript(Component component, IHeaderResponse response) {
+    public String getScript(Component component) {
         String js = "";
-        js += " if (jQuery().datepicker) { ";
-        js += "     $('#%s').datepicker({ ";
-        js += "         rtl: App.isRTL(), ";
-        js += "         orientation: 'right', ";
-        js += "         autoclose: true, ";
-        js += "         language: 'pt-BR' ";
-        js += "     }); ";
-        js += " } ";
+        js += " $('#%s').datepicker({ ";
+        js += "     rtl: App.isRTL(), ";
+        js += "     orientation: 'right', ";
+        js += "     autoclose: true, ";
+        js += "     language: 'pt-BR' ";
+        js += " }); ";
         return String.format(js, component.getMarkupId(true));
     }
 }

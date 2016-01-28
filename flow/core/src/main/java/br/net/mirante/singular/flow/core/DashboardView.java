@@ -3,11 +3,12 @@ package br.net.mirante.singular.flow.core;
 import java.util.List;
 import java.util.Map;
 
-public abstract class DashboardView {
+public abstract class DashboardView<C extends DashboardContext> {
 
     private String name;
     private String title;
     private String subtitle;
+    private Class<? extends DashboardFilter> dashboardFilterClass;
 
     public DashboardView(String title, String subtitle) {
         this.name = getClass().getSimpleName();
@@ -33,6 +34,14 @@ public abstract class DashboardView {
         return subtitle;
     }
 
-    public abstract List<Map<String, String>> getData(String processAbbreviation);
+    public Class<? extends DashboardFilter> getDashboardFilterClass() {
+        return dashboardFilterClass;
+    }
+
+    public void setDashboardFilterClass(Class<? extends DashboardFilter> dashboardFilterClass) {
+        this.dashboardFilterClass = dashboardFilterClass;
+    }
+
+    public abstract List<Map<String, String>> getData(C context);
 
 }

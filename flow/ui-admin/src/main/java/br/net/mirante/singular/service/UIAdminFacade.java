@@ -1,11 +1,11 @@
 package br.net.mirante.singular.service;
 
-import javax.inject.Inject;
-
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +18,7 @@ import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.service.IUIAdminService;
+import br.net.mirante.singular.persistence.entity.Dashboard;
 
 @Service("uiAdminFacade")
 public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO, MetaDataDTO, StatusDTO,
@@ -34,6 +35,9 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
 
     @Inject
     private MenuService menuService;
+
+    @Inject
+    private DashboardService dashboardService;
 
     @Value("#{singularAdmin['user.avatar.url']}")
     private String userAvatar;
@@ -164,4 +168,11 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
         return logoutUrl;
     }
 
+    public List<Dashboard> retrieveCustomDashboards() {
+        return dashboardService.retrieveCustomDashboards();
+    }
+
+    public Dashboard retrieveDashboardById(String customDashboardCode) {
+        return dashboardService.retrieveDashboardById(customDashboardCode);
+    }
 }

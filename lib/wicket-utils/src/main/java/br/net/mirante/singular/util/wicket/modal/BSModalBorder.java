@@ -1,15 +1,13 @@
 package br.net.mirante.singular.util.wicket.modal;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-
 import java.io.Serializable;
 
-import br.net.mirante.singular.lambda.IConsumer;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
@@ -33,11 +31,12 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.feedback.NotContainedFeedbackMessageFilter;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings({ "serial" })
 public class BSModalBorder extends Border {
@@ -178,7 +177,7 @@ public class BSModalBorder extends Border {
         return feedbackGeral.anyMessage();
     }
 
-    public BSModalBorder addButton(ButtonStyle style, String labelKey, ActionAjaxButton button) {
+    public BSModalBorder addButton(ButtonStyle style, String labelKey, AjaxButton button) {
         IModel<String> model = null;
         if (labelKey != null) {
             model = new ResourceModel(labelKey);
@@ -186,7 +185,7 @@ public class BSModalBorder extends Border {
         return addButton(style, model, button);
     }
 
-    public BSModalBorder addButton(ButtonStyle style, IModel<String> label, ActionAjaxButton button) {
+    public BSModalBorder addButton(ButtonStyle style, IModel<String> label, AjaxButton button) {
         if (label != null) {
             button.setLabel(label);
         }
@@ -197,7 +196,7 @@ public class BSModalBorder extends Border {
         return this;
     }
 
-    public BSModalBorder addButton(ButtonStyle style, ActionAjaxButton button) {
+    public BSModalBorder addButton(ButtonStyle style, AjaxButton button) {
         return addButton(style, (String) null, button);
     }
 

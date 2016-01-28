@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>form-core</artifactId>
+            <artifactId>form-wicket</artifactId>
             <version>0.5.6-SNAPSHOT</version>
         </dependency>
         <dependency>
