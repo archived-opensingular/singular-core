@@ -10,7 +10,7 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
         String js = "";
         js += " if (jQuery().datepicker) { ";
         js += "     $('#%s').datepicker({ ";
-        js += "         rtl: Metronic.isRTL(), ";
+        js += "         rtl: App.isRTL(), ";
         js += "         orientation: 'right', ";
         js += "         autoclose: true, ";
         js += "         language: 'pt-BR' ";

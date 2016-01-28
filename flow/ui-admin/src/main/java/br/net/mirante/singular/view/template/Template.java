@@ -26,7 +26,7 @@ import br.net.mirante.singular.wicket.UIAdminSession;
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
     
-    private List<String> initializerJavascripts = Collections.singletonList("Metronic.init();");
+    private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
     @Override
     protected void onInitialize() {
