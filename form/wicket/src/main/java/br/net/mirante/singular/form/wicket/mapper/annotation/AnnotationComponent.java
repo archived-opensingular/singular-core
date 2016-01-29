@@ -53,7 +53,7 @@ public class AnnotationComponent extends Panel {
     }
 
     private void createModels(AbstractMInstanciaModel referenced) {
-        final MIAnnotation target = referenced.getMInstancia().as(AtrAnnotation::new).annotation();
+        final MIAnnotation target = annotated(referenced).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
         model = new MInstanceRootModel(target);
         setDefaultModel(model);
@@ -69,7 +69,7 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
-        this.queue(new Label("target_label",$m.ofValue(title())));
+        this.queue(new Label("target_label",$m.ofValue(title(referenced))));
         comment_field = new TextArea<>("comment_field");
         approval_field = new CheckBox("approval_field");
         updateModels();
@@ -77,7 +77,7 @@ public class AnnotationComponent extends Panel {
         this.queue(approval_field);
 
         BFModalWindow annotationModal = new AnnotationModalWindow("annotationModal",
-                model, //textModel, approvedModel,
+                model, referenced,
                 context, this);
         context.getExternalContainer().appendTag("div", true, null, annotationModal);
         this.queue(new ActionAjaxButton("open_modal") {
@@ -103,13 +103,16 @@ public class AnnotationComponent extends Panel {
         private MInstanciaValorModel textModel, approvedModel ;
         private WicketBuildContext context;
         private AnnotationComponent parentComponent;
+        private AbstractMInstanciaModel referenced;
 
         public AnnotationModalWindow(String id,
                                      MInstanceRootModel model,
+                                     AbstractMInstanciaModel referenced,
                                      WicketBuildContext context,
                                      AnnotationComponent parentComponent
         ) {
             super(id);
+            this.referenced = referenced;
             setDefaultModel(model);
             textModel = new MInstanciaValorModel<>(new MInstanciaCampoModel<>(model,"text"));
             approvedModel = new MInstanciaValorModel<>(new MInstanciaCampoModel<>(model,"isApproved"));
@@ -124,8 +127,8 @@ public class AnnotationComponent extends Panel {
             modalBody.appendTag("label", true, "class=\"control-label\"",
                     new Label("approvalLabel",$m.ofValue("Aprovado?")));
             modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
-                    "data-on-color=\"success\" data-on-text=\"Aprovado\" "+
-                    "data-off-color=\"danger\" data-off-text=\"Rejeitado\" ",
+                    "data-on-color=\"info\" data-on-text=\"Sim\" "+
+                    "data-off-color=\"danger\" data-off-text=\"Não\" ",
                     new CheckBox("modalApproval",approvedModel));
             this.setBody(modalBody);
             addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
@@ -147,7 +150,7 @@ public class AnnotationComponent extends Panel {
         }
 
         public void show(AjaxRequestTarget target) {
-            this.setTitleText($m.ofValue("Something XXX"));
+            this.setTitleText($m.ofValue(title(referenced)));
 
             super.show(target);
             target.appendJavaScript(getConfigureBackdropScript());
@@ -169,14 +172,14 @@ public class AnnotationComponent extends Panel {
         }
     }
 
-    private String title() {
-        if(StringUtils.isNoneBlank(annotated().label())) return annotated().label();
+    private static String title(AbstractMInstanciaModel referenced) {
+        if(StringUtils.isNoneBlank(annotated(referenced).label())) return annotated(referenced).label();
         String label = labelOf(referenced);
         if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
         return "Comentários";
     }
 
-    private AtrAnnotation annotated() {
+    private static AtrAnnotation annotated(AbstractMInstanciaModel referenced) {
         return referenced.getMInstancia().as(AtrAnnotation::new);
     }
 
