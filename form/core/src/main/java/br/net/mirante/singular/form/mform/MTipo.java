@@ -22,6 +22,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
@@ -376,6 +377,10 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
 
     public AtrBootstrap asAtrBootstrap() {
         return as(i -> new AtrBootstrap(i));
+    }
+
+    public AtrCore asAtrCore() {
+        return as(i -> new AtrCore(i));
     }
 
 

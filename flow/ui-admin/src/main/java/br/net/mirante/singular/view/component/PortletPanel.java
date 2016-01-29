@@ -1,16 +1,11 @@
 package br.net.mirante.singular.view.component;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Map;
-import java.util.Set;
-
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -25,25 +20,18 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.json.JSONObject;
-import org.springframework.web.client.RestTemplate;
 
-import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
-import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
+import br.net.mirante.singular.form.FilterPackageFactory;
+import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -51,6 +39,7 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
@@ -130,10 +119,8 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
             protected MTipo<?> getTipo() {
-                final PacoteBuilder builder = MDicionario.create().criarNovoPacote("pacote");
-                final MTipoComposto<? extends MIComposto> filtro = builder.createTipoComposto("filtro");
-                appendFilters(filtro, config.getObject().getFilterConfigs());
-                return filtro;
+                return new FilterPackageFactory(config.getObject().getFilterConfigs(),
+                        getServiceRegistry(), context.getObject().getProcessDefinitionCode()).createFilterPackage();
             }
 
             @Override
@@ -145,17 +132,11 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
         final BelverSaveButton saveButton = new BelverSaveButton("filterButton") {
             @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                if (xml != null) {
-                    System.out.println(xml);
-                    final String jsonSource = xml.toJSONString();
-                    final JSONObject filtro = new JSONObject(jsonSource).getJSONObject("filtro");
-                    System.out.println(filtro);
-                    if (filtro != null) {
-                        context.getObject().setSerializedJSONFilter(filtro.toString());
-                    } else {
-                        context.getObject().setSerializedJSONFilter(null);
-                    }
+            protected void handleSaveXML(AjaxRequestTarget target, MElement element) {
+                if (element != null) {
+                    final String jsonSource = element.toJSONString();
+                    final Optional<JSONObject> filtro = Optional.ofNullable(new JSONObject(jsonSource).getJSONObject(ROOT));
+                    context.getObject().setSerializedJSONFilter(filtro.map(JSONObject::toString).orElse(null));
                 } else {
                     context.getObject().setSerializedJSONFilter(null);
                 }
@@ -167,8 +148,8 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
                 return panel.getRootInstance();
             }
         };
-        saveButton.add($b.attr("value", "Filtrar"));
-        modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of("Filtrar"), saveButton);
+        saveButton.add($b.attr("value", getString("label.filter")));
+        modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of(getString("label.filter")), saveButton);
         modalBorder.add(panel);
     }
 
@@ -217,78 +198,5 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
         };
     }
-
-    private void appendFilters(MTipoComposto root, List<FilterConfig> filterConfigs) {
-        filterConfigs.forEach(fc -> {
-            MTipoSimples field = null;
-            switch (fc.getFieldType()) {
-                case BOOLEAN:
-                    field = root.addCampoBoolean(fc.getIdentifier());
-                    break;
-                case INTEGER:
-                    field = root.addCampoInteger(fc.getIdentifier());
-                    break;
-                case TEXT:
-                    field = root.addCampoString(fc.getIdentifier());
-                    break;
-                case TEXTAREA:
-                    field = root.addCampoString(fc.getIdentifier()).withTextAreaView();
-                    break;
-                case DATE:
-                    field = root.addCampoData(fc.getIdentifier());
-                    break;
-                case SELECTION:
-                    field = root.addCampoString(fc.getIdentifier());
-                    final MFixedOptionsSimpleProvider selectionProvider = field.withSelection();
-                    if (!StringUtils.isEmpty(fc.getRestEndpoint())) {
-                        final String connectionURL = getGroupConnectionURL(context.getObject().getProcessDefinitionCode());
-                        if (!StringUtils.isEmpty(connectionURL)) {
-                            final String fullConnectionPoint = connectionURL + fc.getRestEndpoint();
-                            switch (fc.getRestReturnType()) {
-                                case VALUE:
-                                    fillValueOptions(selectionProvider, fullConnectionPoint);
-                                    break;
-                                case KEY_VALUE:
-                                    fillKeyValueOptions(selectionProvider, fullConnectionPoint);
-                                    break;
-                            }
-                        }
-                    } else if (fc.getOptions() != null && fc.getOptions().length > 0) {
-                        Arrays.asList(fc.getOptions()).forEach(selectionProvider::add);
-                    }
-                    break;
-                case AGGREGATION_PERIOD:
-                    field = root.addCampoString(fc.getIdentifier());
-                    final MFixedOptionsSimpleProvider aggregationProvider = field.withSelection();
-                    Arrays.asList(AggregationPeriod.values()).forEach(ap -> aggregationProvider.add(ap, ap.getDescription()));
-                    break;
-            }
-            if (field != null) {
-                field.asAtrBasic().label(fc.getLabel());
-                field.asAtrBootstrap().colPreference(fc.getSize());
-            }
-        });
-    }
-
-    public void fillValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final List<String> list = restTemplate.getForObject(endpoint, List.class);
-        if (list != null) {
-            list.forEach(provider::add);
-        }
-    }
-
-    public void fillKeyValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
-        final RestTemplate restTemplate = new RestTemplate();
-        final Map<String, String> map = restTemplate.getForObject(endpoint, Map.class);
-        if (map != null) {
-            map.forEach(provider::add);
-        }
-    }
-
-    private String getGroupConnectionURL(String processAbbreviation) {
-        return flowMetadataFacade.retrieveGroupByProcess(processAbbreviation).getConnectionURL();
-    }
-
 
 }
