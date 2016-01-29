@@ -10,7 +10,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -44,13 +44,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         protected WicketBuildContext ctx;
         protected AbstractSInstanceModel<? extends SInstance> model;
         protected SIComposite instance;
-        protected STypeComposto<SIComposite> type;
+        protected STypeComposite<SIComposite> type;
 
         public CompostoViewBuilder(WicketBuildContext ctx){
             this.ctx = ctx;
             model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
             instance = ctx.getCurrenttInstance();
-            type = (STypeComposto<SIComposite>) instance.getMTipo();
+            type = (STypeComposite<SIComposite>) instance.getMTipo();
         }
 
         @SuppressWarnings("unchecked")

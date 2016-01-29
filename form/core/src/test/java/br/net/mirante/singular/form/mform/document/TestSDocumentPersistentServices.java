@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class TestSDocumentPersistentServices {
     
-    private STypeComposto<?> groupingType;
+    private STypeComposite<?> groupingType;
     private SIAttachment fileFieldInstance;
     private SDocument document;
     private IAttachmentPersistenceHandler tempHandler, persistentHandler;

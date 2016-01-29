@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.core.SPackageCore;
  * @author Fabricio Buzeto
  */
 @MInfoTipo(nome = "Annotation", pacote = SPackageCore.class)
-public class STypeAnnotation extends STypeComposto<SIAnnotation> {
+public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     public static final String          FIELD_TEXT          = "text",
                                         FIELD_TARGET_ID     = "targetId",

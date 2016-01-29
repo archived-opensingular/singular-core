@@ -13,8 +13,8 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.service.FlowMetadataFacade;
@@ -35,14 +35,14 @@ public class FilterPackageFactory {
 
     public SType<?> createFilterPackage() {
         final PacoteBuilder builder = SDictionary.create().criarNovoPacote("FilterPackage");
-        final STypeComposto<? extends SIComposite> filtro = builder.createTipoComposto("filter");
+        final STypeComposite<? extends SIComposite> filtro = builder.createTipoComposto("filter");
         appendFilters(filtro);
         return filtro;
     }
 
-    private void appendFilters(STypeComposto root) {
+    private void appendFilters(STypeComposite root) {
         filterConfigs.forEach(fc -> {
-            STypeSimples field = null;
+            STypeSimple field = null;
             switch (fc.getFieldType()) {
                 case BOOLEAN:
                     field = root.addCampoBoolean(fc.getIdentifier());

@@ -47,7 +47,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            STypeComposto<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
+            STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
@@ -64,7 +64,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoCompostoComAnotacoes() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            STypeComposto<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
+            STypeComposite<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.as(AtrAnnotation::new).setAnnotated();
         });
@@ -99,7 +99,7 @@ public class TesteFormSerializationUtil {
     @Test @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            STypeComposto<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
+            STypeComposite<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
@@ -121,11 +121,11 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoCompostoListCompostoList() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            STypeComposto<? extends SIComposite> tipoCurriculo = pacote.createTipoComposto("curriculo");
+            STypeComposite<? extends SIComposite> tipoCurriculo = pacote.createTipoComposto("curriculo");
             tipoCurriculo.addCampoString("nome");
-            STypeComposto<SIComposite> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
+            STypeComposite<SIComposite> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
             tipoContato.addCampoInteger("prioridade");
-            STypeComposto<SIComposite> endereco = tipoContato.addCampoListaOfComposto("enderecos", "endereco").getTipoElementos();
+            STypeComposite<SIComposite> endereco = tipoContato.addCampoListaOfComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("cidade");
         });
@@ -203,7 +203,7 @@ public class TesteFormSerializationUtil {
     public void testSerializacaoAtributos() {
         MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
             pacote.getDicionario().carregarPacote(SPackageBasic.class);
-            STypeComposto<?> tipoEndereco = pacote.createTipoComposto("endereco");
+            STypeComposite<?> tipoEndereco = pacote.createTipoComposto("endereco");
             tipoEndereco.addCampoString("rua");
             tipoEndereco.addCampoString("cidade");
         });

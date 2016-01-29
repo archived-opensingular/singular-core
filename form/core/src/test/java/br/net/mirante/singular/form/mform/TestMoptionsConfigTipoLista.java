@@ -21,9 +21,9 @@ public class TestMoptionsConfigTipoLista {
     private static final Date DT_5 = new Date();
     private static final Date DT_6 = new Date();
     private SDictionary _dicionario;
-    private STypeComposto<? extends SIComposite> _raiz;
-    private STypeLista<STypeComposto<SIComposite>, SIComposite> _alertas;
-    private STypeComposto<SIComposite> _alerta;
+    private STypeComposite<? extends SIComposite> _raiz;
+    private STypeLista<STypeComposite<SIComposite>, SIComposite> _alertas;
+    private STypeComposite<SIComposite> _alerta;
     private STypeData _alerta_data;
     private SIComposite evento;
     private SList<SIComposite> alertas;
@@ -57,7 +57,7 @@ public class TestMoptionsConfigTipoLista {
 
         _alerta.withSelectionFromProvider(_alerta_data, new MOptionsCompositeProvider() {
             @Override
-            public void listOptions(SInstance instancia, MListaBuilder<STypeComposto> lb) {
+            public void listOptions(SInstance instancia, MListaBuilder<STypeComposite> lb) {
                 lb
                         .add()
                         .set(_alerta_data, DT_1)

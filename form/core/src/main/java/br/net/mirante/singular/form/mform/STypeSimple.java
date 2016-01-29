@@ -12,9 +12,9 @@ import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
 @SuppressWarnings("rawtypes")
 @MInfoTipo(nome = "MTipoSimples", pacote = SPackageCore.class)
-public class STypeSimples<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
+public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         extends SType<I>
-        implements MSelectionableSimpleType<STypeSimples, TIPO_NATIVO> {
+        implements MSelectionableSimpleType<STypeSimple, TIPO_NATIVO> {
 
     private final Class<TIPO_NATIVO> classeTipoNativo;
 
@@ -23,11 +23,11 @@ public class STypeSimples<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
     protected MOptionsProvider optionsProvider;
     private String selectLabel;
 
-    public STypeSimples() {
+    public STypeSimple() {
         this.classeTipoNativo = null;
     }
 
-    protected STypeSimples(Class<? extends I> classeInstancia, Class<TIPO_NATIVO> classeTipoNativo) {
+    protected STypeSimple(Class<? extends I> classeInstancia, Class<TIPO_NATIVO> classeTipoNativo) {
         super(classeInstancia);
         this.classeTipoNativo = classeTipoNativo;
     }
@@ -61,16 +61,16 @@ public class STypeSimples<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
      * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
      */
     @SuppressWarnings("unchecked")
-    public STypeSimples<I, TIPO_NATIVO> withSelectView() {
-        return (STypeSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorSelectView::new);
+    public STypeSimple<I, TIPO_NATIVO> withSelectView() {
+        return (STypeSimple<I, TIPO_NATIVO>) super.withView(MSelecaoPorSelectView::new);
     }
 
     /**
      * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
      */
     @SuppressWarnings("unchecked")
-    public STypeSimples<I, TIPO_NATIVO> withRadioView() {
-        return (STypeSimples<I, TIPO_NATIVO>) super.withView(MSelecaoPorRadioView::new);
+    public STypeSimple<I, TIPO_NATIVO> withRadioView() {
+        return (STypeSimple<I, TIPO_NATIVO>) super.withView(MSelecaoPorRadioView::new);
     }
 
 

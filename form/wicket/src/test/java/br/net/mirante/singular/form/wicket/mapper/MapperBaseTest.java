@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
@@ -19,7 +19,7 @@ public abstract class MapperBaseTest {
     protected WicketTester wicketTester;
     protected SDictionary dicionario;
 
-    protected STypeComposto<? extends SIComposite> form;
+    protected STypeComposite<? extends SIComposite> form;
     protected TestPage testPage;
 
     @Before
@@ -46,7 +46,7 @@ public abstract class MapperBaseTest {
         return wicketTester.newFormTester("test-form");
     }
 
-    public abstract void appendPackageFields(STypeComposto<? extends SIComposite> form);
+    public abstract void appendPackageFields(STypeComposite<? extends SIComposite> form);
 
     public abstract void mockFormValues(SIComposite formInstance);
 

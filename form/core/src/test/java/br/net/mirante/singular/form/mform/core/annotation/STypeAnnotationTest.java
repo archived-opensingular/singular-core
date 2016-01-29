@@ -13,7 +13,7 @@ import static org.fest.assertions.groups.Properties.extractProperty;
 public class STypeAnnotationTest {
     protected static SDictionary dicionario;
     protected PacoteBuilder localPackage;
-    private STypeComposto<? extends SIComposite> baseCompositeField, annotated1, annotated2,
+    private STypeComposite<? extends SIComposite> baseCompositeField, annotated1, annotated2,
             notAnnotated, annotated4;
     private STypeString field11;
 
@@ -83,7 +83,7 @@ public class STypeAnnotationTest {
         assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
     }
 
-    private AtrAnnotation asAnnotation(SIComposite instance, STypeComposto<? extends SIComposite> field) {
+    private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {
         return instance.getDescendant(field).as(AtrAnnotation::new);
     }
 }

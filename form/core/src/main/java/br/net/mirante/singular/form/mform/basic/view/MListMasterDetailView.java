@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,12 +19,12 @@ public class MListMasterDetailView extends MView {
         return tipo instanceof STypeLista;
     }
 
-    public MListMasterDetailView col(STypeSimples tipo) {
+    public MListMasterDetailView col(STypeSimple tipo) {
         columns.put(tipo.getNome(), null);
         return this;
     }
 
-    public MListMasterDetailView col(STypeSimples tipo, String customLabel) {
+    public MListMasterDetailView col(STypeSimple tipo, String customLabel) {
         columns.put(tipo.getNome(), customLabel);
         return this;
     }

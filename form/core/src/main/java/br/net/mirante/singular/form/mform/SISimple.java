@@ -71,8 +71,8 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public STypeSimples<?, TIPO_NATIVO> getMTipo() {
-        return (STypeSimples<?, TIPO_NATIVO>) super.getMTipo();
+    public STypeSimple<?, TIPO_NATIVO> getMTipo() {
+        return (STypeSimple<?, TIPO_NATIVO>) super.getMTipo();
     }
 
     @Override

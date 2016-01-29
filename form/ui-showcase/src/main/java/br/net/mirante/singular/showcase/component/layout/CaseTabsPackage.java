@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.component.layout;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -18,7 +18,7 @@ public class CaseTabsPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        STypeComposto<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
         STypeString nome;
         STypeInteger idade;
@@ -30,8 +30,8 @@ public class CaseTabsPackage extends SPackage {
         (email = testForm.addCampoEmail("email"))
                 .as(AtrBasic.class).label("E-mail");
 
-        final STypeLista<STypeComposto<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
-        final STypeComposto<?> experiencia = experiencias.getTipoElementos();
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
+        final STypeComposite<?> experiencia = experiencias.getTipoElementos();
         final STypeAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", STypeAnoMes.class, true);
         final STypeAnoMes dtFimExperiencia = experiencia.addCampo("fim", STypeAnoMes.class);
         final STypeString empresa = experiencia.addCampoString("empresa", true);

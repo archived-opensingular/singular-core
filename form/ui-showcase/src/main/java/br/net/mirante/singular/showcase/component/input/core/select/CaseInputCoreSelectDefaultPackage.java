@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -10,7 +10,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addSelection(tipoMyForm, 3, true);
         addSelection(tipoMyForm, 3, false);
@@ -25,7 +25,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
     }
 
-    private static void addSelection(STypeComposto<?> tipoMyForm, int sizeOptions, boolean required) {
+    private static void addSelection(STypeComposite<?> tipoMyForm, int sizeOptions, boolean required) {
         STypeString tipoSelection = tipoMyForm.addCampoString("opcoes" + sizeOptions + required);
 
         tipoSelection.withSelectionOf(createOptions(sizeOptions));

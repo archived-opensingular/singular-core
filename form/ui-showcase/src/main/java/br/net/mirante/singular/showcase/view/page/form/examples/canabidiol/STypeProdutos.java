@@ -2,14 +2,14 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 
 @MInfoTipo(nome = "MTipoProdutos", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeProdutos extends STypeComposto<SIComposite> {
+public class STypeProdutos extends STypeComposite<SIComposite> {
 
 
     @Override

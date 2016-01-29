@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 
 @MInfoTipo(nome = "MTipoPrescricao", pacote = SPackagePeticaoCanabidiol.class)
-public class STypePrescricao extends STypeComposto<SIComposite> {
+public class STypePrescricao extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TipoBuilder tb) {

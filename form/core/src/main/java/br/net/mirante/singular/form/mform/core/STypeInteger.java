@@ -3,10 +3,10 @@ package br.net.mirante.singular.form.mform.core;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @MInfoTipo(nome = "Integer", pacote = SPackageCore.class)
-public class STypeInteger extends STypeSimples<SIInteger, Integer> {
+public class STypeInteger extends STypeSimple<SIInteger, Integer> {
 
     public STypeInteger() {
         super(SIInteger.class, Integer.class);

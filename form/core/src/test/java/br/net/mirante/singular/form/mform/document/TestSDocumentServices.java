@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 
 public class TestSDocumentServices {
-    private STypeComposto<?> groupingType;
+    private STypeComposite<?> groupingType;
     private SIAttachment fileFieldInstance;
     private SDocument document;
 

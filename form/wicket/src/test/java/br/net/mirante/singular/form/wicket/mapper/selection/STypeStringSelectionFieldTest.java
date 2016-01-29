@@ -13,14 +13,14 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
     protected STypeString selectType;
     
     @Override
     @SuppressWarnings("rawtypes")
-    SType createSelectionType(STypeComposto group) {
+    SType createSelectionType(STypeComposite group) {
         return selectType = group.addCampoString("favoriteFruit");
     }
     

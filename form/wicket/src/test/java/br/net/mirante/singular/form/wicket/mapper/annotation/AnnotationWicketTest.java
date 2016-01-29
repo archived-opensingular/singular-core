@@ -27,7 +27,7 @@ public class AnnotationWicketTest {
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
-    private STypeComposto<? extends SIComposite> baseCompositeField, annotated1, annotated2,
+    private STypeComposite<? extends SIComposite> baseCompositeField, annotated1, annotated2,
                                                 notAnnotated, annotated4;
 
     @Before

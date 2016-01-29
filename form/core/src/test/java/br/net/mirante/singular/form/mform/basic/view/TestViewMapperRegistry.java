@@ -10,8 +10,8 @@ import com.google.common.base.Throwables;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -30,7 +30,7 @@ public class TestViewMapperRegistry {
 
     @Test
     public void testBuscaHierarquiaTipo() {
-        mapper.register(STypeSimples.class, () -> "A");
+        mapper.register(STypeSimple.class, () -> "A");
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeData.class, () -> "C");
 
@@ -38,12 +38,12 @@ public class TestViewMapperRegistry {
         assertResult("B", STypeString.class, MView.class);
         assertResult("B", STypeCPF.class, MView.class);
         assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposto.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
     }
 
     @Test
     public void testBuscaEspecificoDepoisDefault() {
-        mapper.register(STypeSimples.class, () -> "A");
+        mapper.register(STypeSimple.class, () -> "A");
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeString.class, ViewX.class, () -> "D");
         mapper.register(STypeCNPJ.class, ViewX.class, () -> "E");
@@ -54,26 +54,26 @@ public class TestViewMapperRegistry {
         assertResult("B", STypeCPF.class, MView.class);
         assertResult("B", STypeCNPJ.class, MView.class);
         assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposto.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
         assertResult("D", STypeCPF.class, ViewX.class);
         assertResult("E", STypeCNPJ.class, ViewX.class);
         assertResult("C", STypeData.class, ViewX.class);
-        assertResult(null, STypeComposto.class, ViewX.class);
+        assertResult(null, STypeComposite.class, ViewX.class);
 
         assertResult("A", STypeInteger.class, ViewY.class);
         assertResult("B", STypeString.class, ViewY.class);
         assertResult("B", STypeCPF.class, ViewY.class);
         assertResult("B", STypeCNPJ.class, ViewY.class);
         assertResult("C", STypeData.class, ViewY.class);
-        assertResult(null, STypeComposto.class, ViewY.class);
+        assertResult(null, STypeComposite.class, ViewY.class);
     }
 
     @Test
     public void testAceitarViewDerivada() {
-        mapper.register(STypeSimples.class, () -> "A");
+        mapper.register(STypeSimple.class, () -> "A");
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeString.class, ViewY.class, () -> "D");
         mapper.register(STypeCNPJ.class, ViewY.class, () -> "E");
@@ -84,26 +84,26 @@ public class TestViewMapperRegistry {
         assertResult("B", STypeCPF.class, MView.class);
         assertResult("B", STypeCNPJ.class, MView.class);
         assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposto.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
         assertResult("D", STypeCPF.class, ViewX.class);
         assertResult("E", STypeCNPJ.class, ViewX.class);
         assertResult("C", STypeData.class, ViewX.class);
-        assertResult(null, STypeComposto.class, ViewX.class);
+        assertResult(null, STypeComposite.class, ViewX.class);
 
         assertResult("A", STypeInteger.class, ViewY.class);
         assertResult("D", STypeString.class, ViewY.class);
         assertResult("D", STypeCPF.class, ViewY.class);
         assertResult("E", STypeCNPJ.class, ViewY.class);
         assertResult("C", STypeData.class, ViewY.class);
-        assertResult(null, STypeComposto.class, ViewY.class);
+        assertResult(null, STypeComposite.class, ViewY.class);
     }
 
     @Test
     public void testPrioridadeDeAcordoComDerivacao() {
-        mapper.register(STypeSimples.class, () -> "A");
+        mapper.register(STypeSimple.class, () -> "A");
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeString.class, ViewY.class, () -> "C");
         mapper.register(STypeString.class, ViewX.class, () -> "D");

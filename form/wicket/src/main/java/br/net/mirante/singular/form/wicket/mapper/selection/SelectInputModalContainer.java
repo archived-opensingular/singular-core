@@ -4,8 +4,8 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
@@ -155,20 +155,20 @@ public class SelectInputModalContainer extends BSContainer {
     private void appendAdditionalSearchFields(BSDataTableBuilder builder) {
         for (String field : view.searchFields()) {
             builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
-                STypeComposto selectType = (STypeComposto) model.getObject().getMTipo();
+                STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
                 SType<?> fieldType = selectType.getCampo(field);
                 SelectOption select = (SelectOption) m;
                 MOptionsConfig provider = model.getObject().getOptionsConfig();
                 SInstance instance = provider.getValueFromKey(String.valueOf(select.getValue()));
-                return Value.of(instance, (STypeSimples) fieldType);
+                return Value.of(instance, (STypeSimple) fieldType);
             });
         }
     }
 
     private String getAdditionalSearchFieldLabel(String searchField) {
-        STypeComposto selectType = (STypeComposto) model.getObject().getMTipo();
+        STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
         SType<?> fieldType = selectType.getCampo(searchField);
-        if (!(fieldType instanceof STypeSimples)) {
+        if (!(fieldType instanceof STypeSimple)) {
             throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
         }
         return fieldType.as(AtrBasic::new).getLabel();

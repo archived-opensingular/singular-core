@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -25,7 +25,7 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     protected STypeLista fieldType;
 
     @Override
-    SType createSelectionType(STypeComposto group) {
+    SType createSelectionType(STypeComposite group) {
         selectBaseType = localPackage.createTipo("favoriteFruitType", STypeString.class);
         return fieldType = group.addCampoListaOf("favoriteFruit", selectBaseType);
     }

@@ -11,10 +11,10 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeCode;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypePredicate;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
@@ -50,7 +50,7 @@ public class SPackageCore extends SPackage {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
         pb.createTipo(SType.class);
-        pb.createTipo(STypeSimples.class);
+        pb.createTipo(STypeSimple.class);
 
         pb.createTipo(STypeLista.class);
         pb.createTipo(STypeCode.class);
@@ -64,7 +64,7 @@ public class SPackageCore extends SPackage {
         pb.createTipo(STypeMonetario.class);
         pb.createTipo(STypeDataHora.class);
 
-        pb.createTipo(STypeComposto.class);
+        pb.createTipo(STypeComposite.class);
 
         pb.createTipo(STypeAnnotation.class);
         pb.createTipo(STypeAnnotationList.class);
@@ -75,7 +75,7 @@ public class SPackageCore extends SPackage {
         pb.createTipoAtributo(SType.class, ATR_EXISTS_FUNCTION);
         pb.createTipoAtributo(SType.class, ATR_DEFAULT_IF_NULL);
 
-        pb.createTipoAtributo(STypeSimples.class, ATR_VALOR_INICIAL);
+        pb.createTipoAtributo(STypeSimple.class, ATR_VALOR_INICIAL);
         //pb.createTipoAtributo(MTipoSimples.class, ATR_DEFAULT_IF_NULL);
 
         pb.getAtributo(ATR_OBRIGATORIO).withDefaultValueIfNull(false);
@@ -85,7 +85,7 @@ public class SPackageCore extends SPackage {
         pb.createTipoAtributo(STypeString.class, ATR_EMPTY_TO_NULL).withDefaultValueIfNull(true);
 
         pb.createTipo(STypeFormula.class);
-        pb.createTipoAtributo(STypeSimples.class, ATR_FORMULA);
+        pb.createTipoAtributo(STypeSimple.class, ATR_FORMULA);
 
         pb.createTipo(STypeAttachment.class);
         pb.createTipoAtributo(STypeAttachment.class, STypeAttachment.ATR_ORIGINAL_ID);

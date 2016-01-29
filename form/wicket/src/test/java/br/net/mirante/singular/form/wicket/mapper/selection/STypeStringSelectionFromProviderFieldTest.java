@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -31,7 +31,7 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
     
     @Override
     @SuppressWarnings("rawtypes")
-    SType createSelectionType(STypeComposto group) {
+    SType createSelectionType(STypeComposite group) {
         return selectType = group.addCampoString("favoriteFruit");
     }
     

@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -15,7 +15,7 @@ public class CaseInputCoreMultiSelectCheckboxPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         STypeString tipoContato = pb.createTipo("tipoContato", STypeString.class)
                  .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");

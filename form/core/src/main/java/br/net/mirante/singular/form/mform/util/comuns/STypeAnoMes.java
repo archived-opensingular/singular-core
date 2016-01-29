@@ -10,10 +10,10 @@ import java.util.GregorianCalendar;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @MInfoTipo(nome = "AnoMes", pacote = SPackageUtil.class)
-public class STypeAnoMes extends STypeSimples<SIAnoMes, YearMonth> {
+public class STypeAnoMes extends STypeSimple<SIAnoMes, YearMonth> {
 
     public STypeAnoMes() {
         super(SIAnoMes.class, YearMonth.class);

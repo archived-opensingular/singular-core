@@ -10,10 +10,10 @@ import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @MInfoTipo(nome = "DataHora", pacote = SPackageCore.class)
-public class STypeDataHora extends STypeSimples<SIData, Date> {
+public class STypeDataHora extends STypeSimple<SIData, Date> {
 
     private static final Logger LOGGER = Logger.getLogger(STypeDataHora.class.getName());
 

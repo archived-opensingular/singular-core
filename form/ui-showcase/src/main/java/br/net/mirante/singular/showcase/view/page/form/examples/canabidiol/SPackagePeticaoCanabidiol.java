@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
@@ -35,7 +35,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
         pb.createTipo(STypeDescricaoProduto.class);
         pb.createTipo(STypeProdutos.class);
 
-        final STypeComposto<?> canabis = pb.createTipoComposto(TIPO);
+        final STypeComposite<?> canabis = pb.createTipoComposto(TIPO);
         {
             final STypePessoa paciente = canabis.addCampo("paciente", STypePessoa.class);
             paciente
@@ -56,7 +56,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .visivel(instancia -> BooleanUtils.isTrue(Value.of(instancia, possuiResponsavelLegal)))
                     .dependsOn(possuiResponsavelLegal);
 
-            final STypeComposto<?> anexos = canabis
+            final STypeComposite<?> anexos = canabis
                     .addCampoComposto("anexos");
             anexos
                     .as(AtrBasic::new)

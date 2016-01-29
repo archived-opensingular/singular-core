@@ -5,11 +5,11 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 
 @MInfoTipo(nome = "String", pacote = SPackageCore.class)
-public class STypeString extends STypeSimples<SIString, String> {
+public class STypeString extends STypeSimple<SIString, String> {
 
     public STypeString() {
         super(SIString.class, String.class);

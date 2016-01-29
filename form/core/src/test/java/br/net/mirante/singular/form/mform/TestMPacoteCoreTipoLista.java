@@ -59,7 +59,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        STypeLista<STypeComposto<SIComposite>, SIComposite> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
+        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
         tipoPedidos.getTipoElementos().addCampoString("descricao");
         tipoPedidos.getTipoElementos().addCampoInteger("qtd");
 

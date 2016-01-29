@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface MSelectionableCompositeType<BASE extends SType> extends MSelectionableType<BASE> {
@@ -15,7 +15,7 @@ public interface MSelectionableCompositeType<BASE extends SType> extends MSelect
      * @param provider
      * @return
      */
-    default public BASE withSelectionFromProvider(STypeSimples label, MOptionsCompositeProvider provider) {
+    default public BASE withSelectionFromProvider(STypeSimple label, MOptionsCompositeProvider provider) {
         this.setSelectLabel(label.getNomeSimples());
         this.setProviderOpcoes(provider);
         return (BASE) this;
@@ -36,7 +36,7 @@ public interface MSelectionableCompositeType<BASE extends SType> extends MSelect
         return (BASE) this;
     }
 
-    default public BASE withSelectionFromProvider(STypeSimples label, MOptionsProvider provider) {
+    default public BASE withSelectionFromProvider(STypeSimple label, MOptionsProvider provider) {
         this.setSelectLabel(label.getNomeSimples());
         this.setProviderOpcoes(provider);
         return (BASE) this;

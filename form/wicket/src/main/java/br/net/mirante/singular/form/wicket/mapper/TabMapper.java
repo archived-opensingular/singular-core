@@ -4,7 +4,7 @@ import java.util.List;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
@@ -16,7 +16,7 @@ public class TabMapper extends DefaultCompostoMapper {
     public void buildView(WicketBuildContext ctx) {
 
         final SIComposite instance = (SIComposite) ctx.getModel().getObject();
-        final STypeComposto<SIComposite> tComposto = (STypeComposto<SIComposite>) instance.getMTipo();
+        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) instance.getMTipo();
         MTabView tabView = (MTabView) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {

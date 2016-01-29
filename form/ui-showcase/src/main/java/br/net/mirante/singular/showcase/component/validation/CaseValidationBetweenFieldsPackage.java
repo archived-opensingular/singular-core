@@ -3,7 +3,7 @@ package br.net.mirante.singular.showcase.component.validation;
 import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
@@ -15,7 +15,7 @@ public class CaseValidationBetweenFieldsPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         STypeInteger valorInicial = tipoMyForm.addCampoInteger("valorInicial");
         valorInicial.as(AtrBasic::new).label("Valor Inicial");

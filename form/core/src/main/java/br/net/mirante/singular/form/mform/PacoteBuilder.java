@@ -32,11 +32,11 @@ public class PacoteBuilder {
     }
 
     @SuppressWarnings("unchecked")
-    public STypeComposto<? extends SIComposite> createTipoComposto(String nomeSimplesNovoTipo) {
-        return createTipo(nomeSimplesNovoTipo, STypeComposto.class);
+    public STypeComposite<? extends SIComposite> createTipoComposto(String nomeSimplesNovoTipo) {
+        return createTipo(nomeSimplesNovoTipo, STypeComposite.class);
     }
 
-    public <I extends SIComposite> STypeLista<STypeComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
+    public <I extends SIComposite> STypeLista<STypeComposite<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
         return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
     }
 

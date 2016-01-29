@@ -5,9 +5,9 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 
 import java.util.ArrayList;
@@ -37,11 +37,11 @@ public class Value {
      * @return false se o valor do tipo simples for nulo ou se o tipo não for encontrado a partir da instancia
      * current informada
      */
-    public static <T> boolean notNull(SInstance current, STypeSimples<? extends SISimple<T>, T> tipo) {
+    public static <T> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
     }
 
-    public static <T> boolean notNull(SInstance current, STypeComposto tipo) {
+    public static <T> boolean notNull(SInstance current, STypeComposite tipo) {
         if (current != null && tipo != null) {
             SIComposite targetInstance = (SIComposite) getInstance(current, tipo);
             return Value.notNull(targetInstance);
@@ -103,7 +103,7 @@ public class Value {
      * @param <T>
      * @return
      */
-    public static <T> T of(SInstance instancia, STypeSimples<? extends SISimple<T>, T> tipo) {
+    public static <T> T of(SInstance instancia, STypeSimple<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
             SISimple targetInstance = (SISimple) getInstance(instancia, tipo);
             if (targetInstance != null) {
@@ -215,11 +215,11 @@ public class Value {
         }
     }
 
-    public <T> T of(STypeSimples<? extends SISimple<T>, T> tipo) {
+    public <T> T of(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(instancia, tipo);
     }
 
-    public <T> boolean notNull(STypeSimples<? extends SISimple<T>, T> tipo) {
+    public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
     }
 

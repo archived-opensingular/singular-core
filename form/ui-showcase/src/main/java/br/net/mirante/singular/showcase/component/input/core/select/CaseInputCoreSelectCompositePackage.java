@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -9,12 +9,12 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        STypeComposto ingredienteQuimico = tipoMyForm.addCampoComposto("ingredienteQuimico");
+        STypeComposite ingredienteQuimico = tipoMyForm.addCampoComposto("ingredienteQuimico");
         STypeString formulaQuimica = ingredienteQuimico.addCampoString("formulaQuimica");
         STypeString nome = ingredienteQuimico.addCampoString("nome");
 
@@ -38,7 +38,7 @@ public class CaseInputCoreSelectCompositePackage extends SPackage {
 
 
 
-        STypeComposto ingredienteQuimicoComplexo = tipoMyForm.addCampoComposto("ingredienteQuimicoComplexo");
+        STypeComposite ingredienteQuimicoComplexo = tipoMyForm.addCampoComposto("ingredienteQuimicoComplexo");
         STypeString formulaQuimicaComplexa = ingredienteQuimicoComplexo.addCampoString("formulaQuimica");
         STypeString inventor = ingredienteQuimicoComplexo.addCampoString("inventorFormulaQuimica");
         STypeString nomeComplexo = ingredienteQuimicoComplexo.addCampoString("nome");

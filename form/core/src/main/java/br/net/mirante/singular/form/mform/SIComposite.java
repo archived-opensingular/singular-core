@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.STypeComposto.FieldMapOfRecordType;
+import br.net.mirante.singular.form.mform.STypeComposite.FieldMapOfRecordType;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,8 +15,8 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     private FieldMapOfRecordInstance fields;
 
     @Override
-    public STypeComposto<?> getMTipo() {
-        return (STypeComposto<?>) super.getMTipo();
+    public STypeComposite<?> getMTipo() {
+        return (STypeComposite<?>) super.getMTipo();
     }
 
     @Override

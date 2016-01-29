@@ -6,7 +6,7 @@ import java.util.Collection;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
@@ -31,7 +31,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         if (lista.length == 0) {
             throwEmpryListError();
         }
-        if(tipoOpcoes instanceof STypeSimples){
+        if(tipoOpcoes instanceof STypeSimple){
             Arrays.stream(lista).forEach(o -> {
                 if (o instanceof SInstance) {
                     opcoes.addElement(o);

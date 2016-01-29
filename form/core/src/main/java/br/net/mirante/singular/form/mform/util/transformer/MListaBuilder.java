@@ -3,12 +3,12 @@ package br.net.mirante.singular.form.mform.util.transformer;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 /**
  * Classe utilitária para montar um MILista de MIComposto
  */
-public class MListaBuilder<T extends STypeComposto> {
+public class MListaBuilder<T extends STypeComposite> {
 
     private SList<?> sList;
     private T mTipo;

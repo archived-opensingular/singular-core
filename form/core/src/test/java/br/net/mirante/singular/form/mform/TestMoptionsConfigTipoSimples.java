@@ -10,7 +10,7 @@ public class TestMoptionsConfigTipoSimples {
 
 
     private SDictionary _dicionario;
-    private STypeComposto<? extends SIComposite> _raiz;
+    private STypeComposite<? extends SIComposite> _raiz;
     private STypeString _descricao;
     private SIComposite evento;
     private SISimple descricao;

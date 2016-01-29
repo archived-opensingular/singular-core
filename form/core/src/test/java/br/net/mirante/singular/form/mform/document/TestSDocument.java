@@ -20,7 +20,7 @@ public class TestSDocument extends TestCaseForm {
     public void testCriacaoImplicitaPacoteNovo() {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        STypeComposto<?> tipo = pb.createTipo("nome", STypeComposto.class);
+        STypeComposite<?> tipo = pb.createTipo("nome", STypeComposite.class);
 
         SInstance instancia1 = tipo.novaInstancia();
         assertFilhos(instancia1, 0);
@@ -34,8 +34,8 @@ public class TestSDocument extends TestCaseForm {
     public void testHerancaPelosSubcampos() {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        STypeLista<STypeComposto<SIComposite>, SIComposite> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
-        STypeComposto<?> tipoComposto = tipoLista.getTipoElementos();
+        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
+        STypeComposite<?> tipoComposto = tipoLista.getTipoElementos();
         tipoComposto.addCampoString("nome");
         tipoComposto.addCampoListaOf("dependentes", STypeString.class);
 

@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.util.transformer;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class FromPojoList<T> extends FromPojo<T> {
      * @param pojoList
      *  Lista com os pojos a serem convertidos.
      */
-    public FromPojoList(STypeComposto<? extends SIComposite> target, List<T> pojoList) {
+    public FromPojoList(STypeComposite<? extends SIComposite> target, List<T> pojoList) {
         super(target);
         this.pojoList = pojoList;
         this.listType = target;

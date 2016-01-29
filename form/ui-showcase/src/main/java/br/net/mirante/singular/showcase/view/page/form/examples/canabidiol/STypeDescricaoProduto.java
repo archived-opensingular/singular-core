@@ -6,7 +6,7 @@ import java.util.Map;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -17,7 +17,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 @MInfoTipo(nome = "MTipoDescricaoProduto", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeDescricaoProduto extends STypeComposto<SIComposite> {
+public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
 
     private static Map<Integer, String> composicoes = new HashMap<>();
@@ -134,7 +134,7 @@ public class STypeDescricaoProduto extends STypeComposto<SIComposite> {
         );
 
 
-        STypeComposto<?> outroMedicamento = this.addCampoComposto("outro");
+        STypeComposite<?> outroMedicamento = this.addCampoComposto("outro");
         outroMedicamento
                 .as(AtrCore::new)
                 .as(AtrBasic::new)

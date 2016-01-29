@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.options;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
 
 /**
@@ -28,7 +28,7 @@ public interface MOptionsCompositeProvider extends MOptionsProvider {
         } else {
             tipo = optionsInstance.getMTipo();
         }
-        MListaBuilder<STypeComposto> lb = new MListaBuilder<>((STypeComposto)tipo);
+        MListaBuilder<STypeComposite> lb = new MListaBuilder<>((STypeComposite)tipo);
         listOptions(optionsInstance, lb);
         return lb.getList();
     }
@@ -40,7 +40,7 @@ public interface MOptionsCompositeProvider extends MOptionsProvider {
      * @param lb
      * @return
      */
-    public void listOptions(SInstance instancia, MListaBuilder<STypeComposto> lb);
+    public void listOptions(SInstance instancia, MListaBuilder<STypeComposite> lb);
 
 
 }

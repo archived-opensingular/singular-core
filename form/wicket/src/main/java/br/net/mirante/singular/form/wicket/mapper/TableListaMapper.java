@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -96,9 +96,9 @@ public class TableListaMapper extends AbstractListaMapper {
 
         final SType<?> tElementos = tipoElementos.getObject();
 
-        if (tElementos instanceof STypeComposto<?>) {
+        if (tElementos instanceof STypeComposite<?>) {
 
-            final STypeComposto<SIComposite> tComposto = (STypeComposto<SIComposite>) tElementos;
+            final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) tElementos;
             final BSTRow tr = thead.newRow();
 
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha())) {
@@ -192,7 +192,7 @@ public class TableListaMapper extends AbstractListaMapper {
             final SInstance instancia = itemModel.getObject();
             if (instancia instanceof SIComposite) {
                 SIComposite composto = (SIComposite) instancia;
-                STypeComposto<SIComposite> tComposto = (STypeComposto<SIComposite>) composto.getMTipo();
+                STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getMTipo();
                 for (SType<?> tCampo : tComposto.getFields()) {
                     final SInstanceCampoModel<SInstance> mCampo =
                             new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());

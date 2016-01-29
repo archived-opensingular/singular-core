@@ -19,8 +19,8 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
@@ -164,15 +164,15 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         if (mapColumns.isEmpty()) {
             SType tipo = ((SList) model.getObject()).getTipoElementos();
-            if (tipo instanceof STypeSimples) {
-                mapColumnsTipos.put((STypeSimples) tipo, null);
+            if (tipo instanceof STypeSimple) {
+                mapColumnsTipos.put((STypeSimple) tipo, null);
             }
-            if (tipo instanceof STypeComposto) {
-                ((STypeComposto) tipo)
+            if (tipo instanceof STypeComposite) {
+                ((STypeComposite) tipo)
                         .getFields()
                         .stream()
-                        .filter(mtipo -> mtipo instanceof STypeSimples)
-                        .forEach(mtipo -> mapColumnsTipos.put((STypeSimples) mtipo, null));
+                        .filter(mtipo -> mtipo instanceof STypeSimple)
+                        .forEach(mtipo -> mapColumnsTipos.put((STypeSimple) mtipo, null));
 
             }
         } else {
@@ -231,7 +231,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<String> labelModel, IModel<SType<?>> mTipoModel) {
         builder.appendPropertyColumn(labelModel, o -> {
             SIComposite composto = (SIComposite) o;
-            STypeSimples mtipo = (STypeSimples) mTipoModel.getObject();
+            STypeSimple mtipo = (STypeSimple) mTipoModel.getObject();
             SISimple instancia = ((SISimple) composto.findDescendant(mtipo).get());
             return instancia.getValor();
         });

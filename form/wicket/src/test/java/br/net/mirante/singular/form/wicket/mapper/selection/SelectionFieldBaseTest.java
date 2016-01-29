@@ -7,7 +7,7 @@ import org.junit.BeforeClass;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -34,14 +34,14 @@ public abstract class SelectionFieldBaseTest {
         page = new TestPage();
         page.setDicionario(dicionario);
         localPackage = dicionario.criarNovoPacote("test"+(index.getAndIncrement()));
-        STypeComposto<? extends SIComposite> group = localPackage.createTipoComposto("group");
+        STypeComposite<? extends SIComposite> group = localPackage.createTipoComposto("group");
         createSelectionType(group);
         
         page.setNewInstanceOfType(group.getNome());
     }
     
     @SuppressWarnings("rawtypes")
-    abstract SType createSelectionType(STypeComposto group);
+    abstract SType createSelectionType(STypeComposite group);
     
     protected void buildPage() {
         page.build();

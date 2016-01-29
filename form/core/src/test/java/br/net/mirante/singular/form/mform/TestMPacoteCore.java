@@ -26,7 +26,7 @@ public class TestMPacoteCore extends TestCaseForm {
     public void testHerancaValorEntreTipos() {
         SDictionary dicionario = SDictionary.create();
 
-        STypeSimples<?, ?> tipoS = dicionario.getTipoOpcional(STypeSimples.class);
+        STypeSimple<?, ?> tipoS = dicionario.getTipoOpcional(STypeSimple.class);
         STypeBoolean tipoB = dicionario.getTipoOpcional(STypeBoolean.class);
         STypeInteger tipoI = dicionario.getTipoOpcional(STypeInteger.class);
 
@@ -100,7 +100,7 @@ public class TestMPacoteCore extends TestCaseForm {
         testarAtribuicao(tipoS, true, " true ", "true");
     }
 
-    private static void testarAtribuicao(STypeSimples<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
+    private static void testarAtribuicao(STypeSimple<?, ?> tipo, boolean valorValido, Object valor, Object valorFinalEsperado) {
         SISimple<?> instancia = tipo.novaInstancia();
         if (valorValido) {
             instancia.setValor(valor);
@@ -122,7 +122,7 @@ public class TestMPacoteCore extends TestCaseForm {
     public void testSelfReference() {
         SDictionary dicionario = SDictionary.create();
 
-        STypeSimples<?, ?> tipoS = dicionario.getTipoOpcional(STypeSimples.class);
+        STypeSimple<?, ?> tipoS = dicionario.getTipoOpcional(STypeSimple.class);
         STypeBoolean tipoB = dicionario.getTipoOpcional(STypeBoolean.class);
         STypeInteger tipoI = dicionario.getTipoOpcional(STypeInteger.class);
 
@@ -301,7 +301,7 @@ public class TestMPacoteCore extends TestCaseForm {
 
         assertEquals((Integer) 10, tipoEndereco.getValorAtributo(TestPacoteA.ATR_XX));
         assertEquals(null, dicionario.getTipoOpcional(STypeString.class).getValorAtributo(TestPacoteA.ATR_XX));
-        assertEquals(null, dicionario.getTipoOpcional(STypeSimples.class).getValorAtributo(TestPacoteA.ATR_XX));
+        assertEquals(null, dicionario.getTipoOpcional(STypeSimple.class).getValorAtributo(TestPacoteA.ATR_XX));
         assertEquals(null, dicionario.getTipoOpcional(SType.class).getValorAtributo(TestPacoteA.ATR_XX));
     }
 

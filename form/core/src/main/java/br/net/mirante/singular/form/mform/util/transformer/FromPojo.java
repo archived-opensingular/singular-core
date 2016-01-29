@@ -3,23 +3,23 @@ package br.net.mirante.singular.form.mform.util.transformer;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FromPojo<T> {
 
-    protected STypeComposto<? extends SIComposite> target;
+    protected STypeComposite<? extends SIComposite> target;
     private T pojo;
     protected Map<SType, FromPojoFiedlBuilder> mappings = new LinkedHashMap<>();
 
-    public FromPojo(STypeComposto<? extends SIComposite> target, T pojo) {
+    public FromPojo(STypeComposite<? extends SIComposite> target, T pojo) {
         this.target = target;
         this.pojo = pojo;
     }
 
-    public FromPojo(STypeComposto<? extends SIComposite> target) {
+    public FromPojo(STypeComposite<? extends SIComposite> target) {
         this.target = target;
     }
 

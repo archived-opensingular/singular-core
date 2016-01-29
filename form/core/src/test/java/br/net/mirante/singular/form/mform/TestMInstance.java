@@ -14,12 +14,12 @@ public class TestMInstance {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        STypeComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
         tipoPedido.addCampoString("descr");
         tipoPedido.addCampoString("prioridade");
         tipoPedido.addCampoListaOf("clientes", STypeString.class);
-        STypeComposto<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
+        STypeComposite<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
         tipoItem.addCampoString("nome");
         tipoItem.addCampoBoolean("urgente");
 
@@ -63,7 +63,7 @@ public class TestMInstance {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        STypeComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
         tipoPedido.addCampoString("descr");
         tipoPedido.addCampoString("prioridade");

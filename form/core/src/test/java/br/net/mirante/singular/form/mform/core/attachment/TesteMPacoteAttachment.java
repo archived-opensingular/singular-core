@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.TestCaseForm;
@@ -139,9 +139,9 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        STypeComposto<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoListaOf("anexos", STypeAttachment.class);
-        STypeComposto<? extends SIComposite> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
+        STypeComposite<? extends SIComposite> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
         tipoSubBloco.addCampo("subArquivo1", STypeAttachment.class);
         tipoSubBloco.addCampo("subArquivo2", STypeAttachment.class);
         tipoSubBloco.addCampo("subArquivo3", STypeAttachment.class);
@@ -211,7 +211,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
 
     public void testSerializacaoDeserializacaoComAnexo() {
         MDicionarioResolver resolver = TesteFormSerializationUtil.createLoaderPacoteTeste((pacote) -> {
-            STypeComposto<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
+            STypeComposite<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
             tipoBloco.addCampo("arquivo1", STypeAttachment.class);
             tipoBloco.addCampo("arquivo2", STypeAttachment.class);
         });

@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -21,13 +21,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
 
     //    MTipoSelectItem selectType;
-    protected STypeComposto selectType;
+    protected STypeComposite selectType;
     protected MSelecaoPorModalBuscaView view;
-    private STypeSimples nomeUF;
+    private STypeSimple nomeUF;
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    SType createSelectionType(STypeComposto group) {
+    SType createSelectionType(STypeComposite group) {
         selectType = group.addCampoComposto("originUF");
         selectType.addCampoString("id");
         nomeUF = selectType.addCampoString("nome");

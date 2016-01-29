@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
 @MInfoTipo(nome = "Decimal", pacote = SPackageCore.class)
-public class STypeDecimal extends STypeSimples<SIBigDecimal, BigDecimal> {
+public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
 
     public STypeDecimal() {
         super(SIBigDecimal.class, BigDecimal.class);

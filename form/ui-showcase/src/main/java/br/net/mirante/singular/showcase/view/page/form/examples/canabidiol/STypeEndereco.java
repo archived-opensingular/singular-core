@@ -2,8 +2,8 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoEndereco", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeEndereco extends STypeComposto<SIComposite> {
+public class STypeEndereco extends STypeComposite<SIComposite> {
 
 
     @Override
@@ -54,7 +54,7 @@ public class STypeEndereco extends STypeComposto<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(2);
 
-        STypeComposto<?> estado = this.addCampoComposto("estado");
+        STypeComposite<?> estado = this.addCampoComposto("estado");
         estado
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -69,13 +69,13 @@ public class STypeEndereco extends STypeComposto<SIComposite> {
                         (MOptionsProvider) optionsInstance ->SelectBuilder.buildEstados(estado)
                 );
 
-        STypeComposto<?> cidade = this.addCampoComposto("cidade");
+        STypeComposite<?> cidade = this.addCampoComposto("cidade");
         cidade
                 .as(AtrCore::new)
-                .obrigatorio(inst -> Value.notNull(inst, (STypeSimples) estado.getCampo(siglaUF)))
+                .obrigatorio(inst -> Value.notNull(inst, (STypeSimple) estado.getCampo(siglaUF)))
                 .as(AtrBasic::new)
                 .label("Cidade")
-                .visivel(inst -> Value.notNull(inst, (STypeSimples) estado.getCampo(siglaUF)))
+                .visivel(inst -> Value.notNull(inst, (STypeSimple) estado.getCampo(siglaUF)))
                 .dependsOn(estado)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
@@ -87,7 +87,7 @@ public class STypeEndereco extends STypeComposto<SIComposite> {
                         SelectBuilder
                                 .buildMunicipiosFiltrado(
                                         cidade,
-                                        (String) Value.of(inst, (STypeSimples) estado.getCampo(siglaUF)),
+                                        (String) Value.of(inst, (STypeSimple) estado.getCampo(siglaUF)),
                                         inst.getMTipo().novaLista()));
     }
 }

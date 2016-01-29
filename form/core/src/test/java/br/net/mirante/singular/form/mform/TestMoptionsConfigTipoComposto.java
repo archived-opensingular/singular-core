@@ -23,8 +23,8 @@ public class TestMoptionsConfigTipoComposto {
     private static final String label2 = DT_3 + " - " + DT_4;
 
     private SDictionary _dicionario;
-    private STypeComposto<? extends SIComposite> _raiz;
-    private STypeComposto<SIComposite> _periodo;
+    private STypeComposite<? extends SIComposite> _raiz;
+    private STypeComposite<SIComposite> _periodo;
     private STypeData _dataInicial;
     private STypeData _dataFinal;
     private SIComposite evento;

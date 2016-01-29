@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class MultipleSelectMapperTest extends MapperBaseTest {
 
     @Override
-    public void appendPackageFields(STypeComposto<? extends SIComposite> form) {
+    public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
         STypeString gadgets = form.addCampoString("gadget").withSelectionOf("iPod", "iPhone", "iMac");
         STypeLista<STypeString, SIString> gadgetsChoices = form.addCampoListaOf("gadgets", gadgets);
         gadgetsChoices.withView(MSelecaoMultiplaPorSelectView::new);

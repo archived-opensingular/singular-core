@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
@@ -24,7 +24,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
     protected STypeString selectType;
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
-    SType createSelectionType(STypeComposto group) {
+    SType createSelectionType(STypeComposite group) {
 //        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
 //        selectType.configureKeyValueFields();
         selectType = group.addCampoString("favoriteFruit");

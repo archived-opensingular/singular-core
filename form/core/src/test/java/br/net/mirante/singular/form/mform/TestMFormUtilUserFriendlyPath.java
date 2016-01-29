@@ -11,13 +11,13 @@ public class TestMFormUtilUserFriendlyPath {
 
     private SDictionary _dicionario;
 
-    private STypeComposto<? extends SIComposite> _evento;
+    private STypeComposite<? extends SIComposite> _evento;
     private STypeString _descricao;
-    private STypeComposto<SIComposite> _periodo;
+    private STypeComposite<SIComposite> _periodo;
     private STypeData _dataInicial;
     private STypeData _dataFinal;
-    private STypeLista<STypeComposto<SIComposite>, SIComposite> _alertas;
-    private STypeComposto<SIComposite> _alerta;
+    private STypeLista<STypeComposite<SIComposite>, SIComposite> _alertas;
+    private STypeComposite<SIComposite> _alerta;
     private STypeData _alerta_data;
 
     private SIComposite evento;

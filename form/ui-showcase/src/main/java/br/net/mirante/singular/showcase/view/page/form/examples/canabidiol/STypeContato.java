@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
 @MInfoTipo(nome = "MTipoContato", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeContato extends STypeComposto<SIComposite> {
+public class STypeContato extends STypeComposite<SIComposite> {
 
 
     public STypeEMail email;

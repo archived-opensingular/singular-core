@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
@@ -11,7 +11,7 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
     //@formatter:off
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         tipoMyForm.addCampoString("observacao1")
                 .withTextAreaView()

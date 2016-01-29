@@ -550,8 +550,8 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
             debugAtributos(appendable, nivel);
             appendable.append("\n");
 
-            if (this instanceof STypeSimples && ((STypeSimples<?, ?>) this).getProviderOpcoes() != null) {
-                pad(appendable, nivel + 2).append("selection of ").append(((STypeSimples<?, ?>) this).getProviderOpcoes().toDebug()).append("\n");
+            if (this instanceof STypeSimple && ((STypeSimple<?, ?>) this).getProviderOpcoes() != null) {
+                pad(appendable, nivel + 2).append("selection of ").append(((STypeSimple<?, ?>) this).getProviderOpcoes().toDebug()).append("\n");
             }
 
             atributosDefinidos

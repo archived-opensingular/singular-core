@@ -3,11 +3,11 @@ package br.net.mirante.singular.form.mform.core;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 
 @MInfoTipo(nome = "Boolean", pacote = SPackageCore.class)
-public class STypeBoolean extends STypeSimples<SIBoolean, Boolean> {
+public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
 
     public STypeBoolean() {
         super(SIBoolean.class, Boolean.class);

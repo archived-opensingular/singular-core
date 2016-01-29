@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @MInfoTipo(nome = "MTipoComposto", pacote = SPackageCore.class)
-public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
+public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         extends SType<TIPO_INSTANCIA>
         implements ICompositeType, MSelectionableCompositeType {
 
@@ -37,11 +37,11 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
     private String selectLabel;
 
     @SuppressWarnings("unchecked")
-    public STypeComposto() {
+    public STypeComposite() {
         super((Class<? extends TIPO_INSTANCIA>) SIComposite.class);
     }
 
-    protected STypeComposto(Class<TIPO_INSTANCIA> classeInstancia) {
+    protected STypeComposite(Class<TIPO_INSTANCIA> classeInstancia) {
         super(classeInstancia);
     }
 
@@ -66,17 +66,17 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
     final FieldMapOfRecordType getFieldsConsolidated() {
         if (fieldsConsolidated == null) {
             if (fieldsLocal == null) {
-                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposto) {
+                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposite) {
                     // Busca reaproveitar, pois muitas extensões são locais e
                     // não acrescentam campso
-                    fieldsConsolidated = ((STypeComposto<?>) getSuperTipo()).getFieldsConsolidated();
+                    fieldsConsolidated = ((STypeComposite<?>) getSuperTipo()).getFieldsConsolidated();
                 } else {
                     fieldsConsolidated = new FieldMapOfRecordType();
                 }
             } else {
                 fieldsConsolidated = new FieldMapOfRecordType();
-                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposto) {
-                    fieldsConsolidated.addAll(((STypeComposto<?>) getSuperTipo()).getFieldsConsolidated());
+                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposite) {
+                    fieldsConsolidated.addAll(((STypeComposite<?>) getSuperTipo()).getFieldsConsolidated());
                 }
                 fieldsConsolidated.addAll(fieldsLocal);
             }
@@ -122,8 +122,8 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
         return addInterno(nomeCampo, novo);
     }
 
-    public <I extends SIComposite> STypeLista<STypeComposto<I>, I> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
-        STypeLista<STypeComposto<I>, I> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
+    public <I extends SIComposite> STypeLista<STypeComposite<I>, I> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
+        STypeLista<STypeComposite<I>, I> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
         return addInterno(nomeCampo, novo);
     }
 
@@ -151,8 +151,8 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
     // --------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    public STypeComposto<SIComposite> addCampoComposto(String nomeCampo) {
-        return addCampo(nomeCampo, STypeComposto.class);
+    public STypeComposite<SIComposite> addCampoComposto(String nomeCampo) {
+        return addCampo(nomeCampo, STypeComposite.class);
     }
 
     public STypeString addCampoString(String nomeCampo) {
@@ -218,15 +218,15 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
     /**
      * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
      */
-    public STypeComposto<TIPO_INSTANCIA> withSelectView() {
-        return (STypeComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorSelectView::new);
+    public STypeComposite<TIPO_INSTANCIA> withSelectView() {
+        return (STypeComposite<TIPO_INSTANCIA>) super.withView(MSelecaoPorSelectView::new);
     }
 
     /**
      * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
      */
-    public STypeComposto<TIPO_INSTANCIA> withRadioView() {
-        return (STypeComposto<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
+    public STypeComposite<TIPO_INSTANCIA> withRadioView() {
+        return (STypeComposite<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
     }
 
     @Override

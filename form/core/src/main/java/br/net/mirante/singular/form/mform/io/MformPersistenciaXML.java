@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.util.xml.MDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -65,7 +65,7 @@ public class MformPersistenciaXML {
         lerAtributos(instancia, xml);
         if (instancia instanceof SISimple) {
             SISimple<?> instanciaS = (SISimple<?>) instancia;
-            STypeSimples<?, ?> tipos = instanciaS.getMTipo();
+            STypeSimple<?, ?> tipos = instanciaS.getMTipo();
             instancia.setValor(tipos.fromStringPersistencia(xml.getTextContent()));
         } else if (instancia instanceof SIComposite) {
             SIComposite instc = (SIComposite) instancia;

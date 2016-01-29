@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket.test.base;
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -75,13 +75,13 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        IModel<STypeComposto<SIComposite>> tCurriculo = new LoadableDetachableModel<STypeComposto<SIComposite>>() {
+        IModel<STypeComposite<SIComposite>> tCurriculo = new LoadableDetachableModel<STypeComposite<SIComposite>>() {
             @Override
             @SuppressWarnings("unchecked")
-            protected STypeComposto<SIComposite> load() {
+            protected STypeComposite<SIComposite> load() {
                 SDictionary dicionario = SDictionary.create();
                 dicionario.carregarPacote(SPackageCurriculo.class);
-                return (STypeComposto<SIComposite>) dicionario.getTipo(SPackageCurriculo.TIPO_CURRICULO);
+                return (STypeComposite<SIComposite>) dicionario.getTipo(SPackageCurriculo.TIPO_CURRICULO);
             }
         };
         IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(tCurriculo.getObject().novaInstancia());

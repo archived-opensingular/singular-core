@@ -133,13 +133,13 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
 
-        STypeSimples<?, ?> tipo = pb1.createTipo("X", STypeSimples.class);
+        STypeSimple<?, ?> tipo = pb1.createTipo("X", STypeSimple.class);
         MAtributo at1 = pb1.createTipoAtributo(tipo, "a", STypeInteger.class);
 
         PacoteBuilder pb2 = dicionario.criarNovoPacote("teste2");
         MAtributo at2 = pb2.createTipoAtributo(tipo, "a", STypeInteger.class);
 
-        assertException(() -> pb2.createTipoAtributo(dicionario.getTipo(STypeSimples.class), "a", STypeInteger.class), "já está criada");
+        assertException(() -> pb2.createTipoAtributo(dicionario.getTipo(STypeSimple.class), "a", STypeInteger.class), "já está criada");
 
         assertEquals("teste1.X.a", at1.getNome());
         assertEquals("teste2.a", at2.getNome());
@@ -286,7 +286,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
             pb.createTipo(TipoComAtributoInterno2.class);
             pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID1);
             pb.createTipoAtributo(TipoComAtributoInterno2.class, ATR_REF_ID2);
-            STypeComposto<? extends SIComposite> grouper = pb.createTipoComposto("Grouper");
+            STypeComposite<? extends SIComposite> grouper = pb.createTipoComposto("Grouper");
             fieldOfTipoComAtributoInterno1 = grouper.addCampo("TipoComAtributoInterno1", TipoComAtributoInterno1.class);
 
             pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID3);
@@ -294,7 +294,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
 
         @MInfoTipo(nome = "TipoCAI1", pacote = TestPacoteCAI.class)
-        public static class TipoComAtributoInterno1 extends STypeComposto<SIComposite> {
+        public static class TipoComAtributoInterno1 extends STypeComposite<SIComposite> {
 
             @Override
             protected void onLoadType(TipoBuilder tb) {
@@ -316,7 +316,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
 
-        STypeComposto<?> tipoPosicao = pb1.createTipoComposto("posicao");
+        STypeComposite<?> tipoPosicao = pb1.createTipoComposto("posicao");
         tipoPosicao.addCampoString("cor");
         tipoPosicao.addCampoInteger("linha");
 

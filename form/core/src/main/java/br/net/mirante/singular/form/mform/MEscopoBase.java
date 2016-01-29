@@ -77,8 +77,8 @@ public abstract class MEscopoBase implements MEscopo {
     }
 
     @SuppressWarnings("unchecked")
-    final <I extends SIComposite> STypeLista<STypeComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
-        STypeLista<STypeComposto<I>, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, STypeLista.class);
+    final <I extends SIComposite> STypeLista<STypeComposite<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
+        STypeLista<STypeComposite<I>, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, STypeLista.class);
         tipoLista.setTipoElementosNovoTipoComposto(nomeSimplesNovoTipoComposto);
         return tipoLista;
     }
@@ -97,7 +97,7 @@ public abstract class MEscopoBase implements MEscopo {
 
     final void registrar(SType<?> tipo) {
         if (tiposLocais == null) {
-            if (this instanceof STypeComposto) {
+            if (this instanceof STypeComposite) {
                 tiposLocais = new LinkedHashMap<>();
             } else {
                 tiposLocais = new LinkedHashMap<>();

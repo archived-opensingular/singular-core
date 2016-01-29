@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.component.layout;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -17,11 +17,11 @@ public class CaseGridTablePackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        STypeComposto<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
-        final STypeLista<STypeComposto<SIComposite>, SIComposite> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
         certificacoes.as(AtrBasic::new).label("Certificações");
-        final STypeComposto<?> certificacao = certificacoes.getTipoElementos();
+        final STypeComposite<?> certificacao = certificacoes.getTipoElementos();
         final STypeAnoMes dataCertificacao = certificacao.addCampo("data", STypeAnoMes.class, true);
         final STypeString entidadeCertificacao = certificacao.addCampoString("entidade", true);
         final STypeData validadeCertificacao = certificacao.addCampoData("validade");

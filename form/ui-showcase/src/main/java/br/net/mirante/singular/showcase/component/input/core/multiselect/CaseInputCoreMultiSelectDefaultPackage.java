@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -12,7 +12,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addMultiSelection(pb, tipoMyForm, 3);
         addMultiSelection(pb, tipoMyForm, 15);
@@ -20,7 +20,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
         
     }
 
-    private static void addMultiSelection(PacoteBuilder pb, STypeComposto<?> tipoMyForm, int size) {
+    private static void addMultiSelection(PacoteBuilder pb, STypeComposite<?> tipoMyForm, int size) {
         STypeString tipoSelection = pb.createTipo("opcoes" + size, STypeString.class);
         tipoSelection.withSelectionOf(createOptions(size));
 

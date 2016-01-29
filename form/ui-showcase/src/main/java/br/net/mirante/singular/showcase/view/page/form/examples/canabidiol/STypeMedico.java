@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoMedico", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeMedico extends STypeComposto<SIComposite> {
+public class STypeMedico extends STypeComposite<SIComposite> {
 
     @Override
     protected void onLoadType(TipoBuilder tb) {
@@ -36,7 +36,7 @@ public class STypeMedico extends STypeComposto<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(3);
 
-        STypeComposto<?> estado = this.addCampoComposto("UFCRM");
+        STypeComposite<?> estado = this.addCampoComposto("UFCRM");
         estado
                 .as(AtrCore::new)
                 .obrigatorio()

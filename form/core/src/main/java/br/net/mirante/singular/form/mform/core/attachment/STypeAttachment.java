@@ -2,14 +2,14 @@ package br.net.mirante.singular.form.mform.core.attachment;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 @MInfoTipo(nome = "Attachment", pacote = SPackageCore.class)
-public class STypeAttachment extends STypeComposto<SIAttachment> {
+public class STypeAttachment extends STypeComposite<SIAttachment> {
 
     public static final String          FIELD_NAME        = "name",
                                         FIELD_FILE_ID     = "fileId",

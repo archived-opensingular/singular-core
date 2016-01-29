@@ -7,12 +7,12 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
 public class SPackageTesteContatos extends SPackage {
 
-    public STypeComposto<?> contato;
-    public STypeLista<STypeComposto<SIComposite>, SIComposite> enderecos;
-    public STypeComposto<?> identificacao;
+    public STypeComposite<?> contato;
+    public STypeLista<STypeComposite<SIComposite>, SIComposite> enderecos;
+    public STypeComposite<?> identificacao;
     public STypeString nome;
     public STypeString sobrenome;
-    public STypeComposto<?> endereco;
+    public STypeComposite<?> endereco;
     public STypeString enderecoLogradouro;
     public STypeInteger enderecoNumero;
     public STypeString enderecoComplemento;

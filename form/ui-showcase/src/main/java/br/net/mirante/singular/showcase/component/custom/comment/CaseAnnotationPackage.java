@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 
 public class CaseAnnotationPackage extends SPackage {
 
-    public STypeComposto<?> pedido, cliente, endereco, request;
+    public STypeComposite<?> pedido, cliente, endereco, request;
 
     /*
      * Observe que as anotações só estão disponíveis quando devidamente configuradas no contexto.

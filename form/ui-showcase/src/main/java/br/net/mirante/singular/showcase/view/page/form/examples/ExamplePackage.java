@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -32,15 +32,15 @@ public class ExamplePackage extends SPackage {
         }
     }
 
-    public STypeComposto<? extends SIComposite> order;
+    public STypeComposite<? extends SIComposite> order;
     public STypeInteger orderNumber;
-    public STypeComposto<?> buyer;
+    public STypeComposite<?> buyer;
     public STypeNomePessoa buyerNome;
     public STypeCPF buyerCpf;
     public STypeTelefoneNacional buyerTelephone;
     public STypeAttachment buyerAvatar;
 
-    public STypeComposto<SIComposite> address;
+    public STypeComposite<SIComposite> address;
     public STypeString addressStreet;
     public STypeString addressCity;
     public STypeString addressState;
@@ -94,7 +94,7 @@ public class ExamplePackage extends SPackage {
         this.address.addInstanceValidator(InstanceValidators.allOrNothing());
     }
 
-    private <I extends SInstance, T extends SType<I>> T addField(STypeComposto<?> root, String name, String label,
+    private <I extends SInstance, T extends SType<I>> T addField(STypeComposite<?> root, String name, String label,
                                                                  Class<T> type) {
         T campo = root.addCampo(name, type);
         campo.as(AtrBasic::new).label(label);

@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.component.interaction;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -11,9 +11,9 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class CaseInteractionVisiblePackage extends SPackage {
 
-    public STypeComposto<?> testForm;
+    public STypeComposite<?> testForm;
     public STypeBoolean visible;
-    public STypeComposto<SIComposite> record;
+    public STypeComposite<SIComposite> record;
     public STypeString recordText;
     public STypeData recordDate;
 

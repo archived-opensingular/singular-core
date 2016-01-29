@@ -4,8 +4,8 @@ import javax.inject.Inject;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -19,7 +19,7 @@ import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
 
 @MInfoTipo(nome = "MTipoCID", pacote = SPackagePeticaoCanabidiol.class)
-public class STypeCID extends STypeComposto<SIComposite> {
+public class STypeCID extends STypeComposite<SIComposite> {
 
     @Inject // queria injetar :(
     private CIDDAO ciddao = new CIDDAO();
@@ -28,7 +28,7 @@ public class STypeCID extends STypeComposto<SIComposite> {
     protected void onLoadType(TipoBuilder tb) {
         super.onLoadType(tb);
 
-        STypeComposto<?> capitulo = this.addCampoComposto("capitulo");
+        STypeComposite<?> capitulo = this.addCampoComposto("capitulo");
         capitulo
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -53,14 +53,14 @@ public class STypeCID extends STypeComposto<SIComposite> {
                     }
                 });
 
-        STypeComposto<?> grupo = this.addCampoComposto("grupo");
+        STypeComposite<?> grupo = this.addCampoComposto("grupo");
         grupo
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Grupo")
                 .visivel(false)
-                .visivel(inst -> Value.notNull(inst, (STypeSimples)capitulo.getCampo("id")))
+                .visivel(inst -> Value.notNull(inst, (STypeSimple)capitulo.getCampo("id")))
                 .dependsOn(capitulo)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
@@ -82,7 +82,7 @@ public class STypeCID extends STypeComposto<SIComposite> {
                 });
 
 
-        STypeComposto<?> categoria = this.addCampoComposto("categoria");
+        STypeComposite<?> categoria = this.addCampoComposto("categoria");
         categoria
                 .as(AtrCore::new)
                 .obrigatorio()
@@ -111,7 +111,7 @@ public class STypeCID extends STypeComposto<SIComposite> {
                     }
                 });
 
-        STypeComposto<?> subcategoria = this.addCampoComposto("subcategoria");
+        STypeComposite<?> subcategoria = this.addCampoComposto("subcategoria");
         subcategoria
                 .as(AtrCore::new)
                 .obrigatorio(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)

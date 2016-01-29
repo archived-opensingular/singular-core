@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.Collection;
  * This interface represents the providers which will load options that
  * populate the choices for a specific field. The provider is specified
  * during the declaration of a Type or Field by using the
- * {@link STypeSimples#withSelectionFromProvider(String)} method.
+ * {@link STypeSimple#withSelectionFromProvider(String)} method.
  */
 public interface MOptionsProvider extends Serializable {
 

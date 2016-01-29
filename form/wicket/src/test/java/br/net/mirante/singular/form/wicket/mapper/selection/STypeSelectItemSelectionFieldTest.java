@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -18,18 +18,18 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
 
-    STypeComposto selectType;
-    STypeSimples nomeUF;
+    STypeComposite selectType;
+    STypeSimple nomeUF;
     private STypeString idUF;
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    SType createSelectionType(STypeComposto group) {
-        selectType = (STypeComposto) group.addCampoComposto("originUF");
+    SType createSelectionType(STypeComposite group) {
+        selectType = (STypeComposite) group.addCampoComposto("originUF");
         idUF = selectType.addCampoString("id");
         nomeUF = selectType.addCampoString("nome");
         return selectType;

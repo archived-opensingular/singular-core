@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.util.comuns;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -24,7 +24,7 @@ public class SPackageUtil extends SPackage {
 
         pb.addAtributo(STypeAnoMes.class, SPackageBasic.ATR_TAMANHO_EDICAO, 7);
 
-        STypeComposto<?> endereco = pb.createTipoComposto("Endereco");
+        STypeComposite<?> endereco = pb.createTipoComposto("Endereco");
         endereco.addCampoString("rua").as(AtrBasic.class).tamanhoMaximo(50);
         endereco.addCampoString("bairro");
         endereco.addCampo("cep", STypeCEP.class);

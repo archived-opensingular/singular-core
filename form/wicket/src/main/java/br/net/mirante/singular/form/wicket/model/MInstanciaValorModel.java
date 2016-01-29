@@ -8,7 +8,7 @@ import org.apache.wicket.model.IObjectClassAwareModel;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @SuppressWarnings("serial")
 public class MInstanciaValorModel<T>
@@ -49,8 +49,8 @@ public class MInstanciaValorModel<T>
     @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
         SType<?> mtipo = getTarget().getMTipo();
-        if (mtipo instanceof STypeSimples<?, ?>) {
-            return (Class<T>) ((STypeSimples<?, ?>) mtipo).getClasseTipoNativo();
+        if (mtipo instanceof STypeSimple<?, ?>) {
+            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getClasseTipoNativo();
         }
         return (Class<T>) mtipo.getClasseInstancia();
     }

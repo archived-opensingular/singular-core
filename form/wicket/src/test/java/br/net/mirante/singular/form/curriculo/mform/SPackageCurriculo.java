@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.curriculo.mform;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -32,13 +32,13 @@ public class SPackageCurriculo extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        final STypeComposto<?> curriculo = pb.createTipoComposto("Curriculo");
+        final STypeComposite<?> curriculo = pb.createTipoComposto("Curriculo");
         {
             curriculo
                 .as(AtrBasic::new).label("Currículo");
         }
 
-        final STypeComposto<?> informacoesPessoais = curriculo.addCampoComposto("informacoesPessoais");
+        final STypeComposite<?> informacoesPessoais = curriculo.addCampoComposto("informacoesPessoais");
         final STypeNomePessoa nome = informacoesPessoais.addCampo("nome", STypeNomePessoa.class, true);
         final STypeCPF cpf = informacoesPessoais.addCampo("cpf", STypeCPF.class, true);
         final STypeData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
@@ -55,7 +55,7 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeComposto<?> contatos = informacoesPessoais.addCampoComposto("contatos");
+        final STypeComposite<?> contatos = informacoesPessoais.addCampoComposto("contatos");
         final STypeEMail email = contatos.addCampo("email", STypeEMail.class, true);
         final STypeTelefoneNacional telFixo = contatos.addCampo("telefoneFixo", STypeTelefoneNacional.class);
         final STypeTelefoneNacional telFixo2 = contatos.addCampo("telefoneFixo2", STypeTelefoneNacional.class);
@@ -77,7 +77,7 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeComposto<?> referencia = curriculo.addCampoComposto("referencia");
+        final STypeComposite<?> referencia = curriculo.addCampoComposto("referencia");
         final STypeBoolean foiIndicado = referencia.addCampoBoolean("foiIndicado");
         final STypeBoolean refTemNaEmpresa = referencia.addCampoBoolean("conheceColaboradorNaEmpresa");
         final STypeString refQuemNaEmpresa = referencia.addCampoString("colaboradorContato");
@@ -96,8 +96,8 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(5);
         }
 
-        final STypeLista<STypeComposto<SIComposite>, SIComposite> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
-        final STypeComposto<?> cursoAcademico = formacao.getTipoElementos();
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
+        final STypeComposite<?> cursoAcademico = formacao.getTipoElementos();
         final STypeString academicoTipo = cursoAcademico.addCampoString("tipo", true)
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
         final STypeString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
@@ -128,8 +128,8 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeLista<STypeComposto<SIComposite>, SIComposite> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
-        final STypeComposto<?> experiencia = experiencias.getTipoElementos();
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
+        final STypeComposite<?> experiencia = experiencias.getTipoElementos();
         final STypeAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", STypeAnoMes.class, true);
         final STypeAnoMes dtFimExperiencia = experiencia.addCampo("fim", STypeAnoMes.class);
         final STypeString empresa = experiencia.addCampoString("empresa", true);
@@ -155,8 +155,8 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
-        final STypeLista<STypeComposto<SIComposite>, SIComposite> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
-        final STypeComposto<?> certificacao = certificacoes.getTipoElementos();
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
+        final STypeComposite<?> certificacao = certificacoes.getTipoElementos();
         final STypeAnoMes dataCertificacao = certificacao.addCampo("data", STypeAnoMes.class, true);
         final STypeString entidadeCertificacao = certificacao.addCampoString("entidade", true);
         final STypeData validadeCertificacao = certificacao.addCampoData("validade");

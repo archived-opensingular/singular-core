@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -41,7 +41,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
         + "gird,betrothed,prospective,advert,peremptory,rudiment,deduce,halting,ignominy,ideology,pallid,chagrin,obtrude")
             .split(",");
 
-    public STypeComposto<?> testForm;
+    public STypeComposite<?> testForm;
     public STypeString letter;
     public STypeString word;
 

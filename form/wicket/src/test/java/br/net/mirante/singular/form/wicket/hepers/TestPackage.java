@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.hepers;
 
 import br.net.mirante.singular.form.mform.SPackage;
-import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -12,7 +12,7 @@ public class TestPackage extends SPackage {
     public static final String PACOTE         = "mform.test.pack";
     public static final String TIPO_ATTACHMENT = PACOTE + ".Test";
     
-    public STypeComposto<?> baseType;
+    public STypeComposite<?> baseType;
     public STypeAttachment attachmentFileField;
     public STypeString stringField;
 

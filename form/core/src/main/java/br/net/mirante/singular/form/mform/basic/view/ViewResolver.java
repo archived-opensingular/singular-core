@@ -33,8 +33,8 @@ public class ViewResolver {
         // Registro das regas de escolha de view.
         addRule(STypeLista.class, MPanelListaView.class);
         addRule(STypeLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
-        addRule(STypeSimples.class, new ViewRuleTypeSimpleSelectionOf());
-        addRule(STypeComposto.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeSimple.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeComposite.class, new ViewRuleTypeSimpleSelectionOf());
     }
 
     /**

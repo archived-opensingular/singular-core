@@ -39,16 +39,16 @@ public class TestMFormUtil extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        STypeComposto<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         STypeInteger integer1 = tipoBloco.addCampoInteger("integer1");
         STypeString string1 = tipoBloco.addCampoString("string1");
-        STypeComposto<?> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
+        STypeComposite<?> tipoSubBloco = tipoBloco.addCampoComposto("subBloco");
         STypeInteger integer2 = tipoSubBloco.addCampoInteger("integer2");
         STypeString tipoString2 = pb.createTipo("string2", STypeString.class);
         STypeLista<STypeString, SIString> tipoListaString2 = tipoBloco.addCampoListaOf("enderecos", tipoString2);
         STypeString tipoString3 = pb.createTipo("string3", STypeString.class);
         STypeLista<STypeString, SIString> tipoListaString3 = tipoBloco.addCampoListaOf("nomes", tipoString3);
-        STypeLista<STypeComposto<SIComposite>, SIComposite> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
+        STypeLista<STypeComposite<SIComposite>, SIComposite> listaSubBloco2 = tipoBloco.addCampoListaOfComposto("listaSubBloco2", "coisa");
         STypeInteger tipoQtd = listaSubBloco2.getTipoElementos().addCampoInteger("qtd");
 
 //        tipoBloco.debug();
@@ -69,7 +69,7 @@ public class TestMFormUtil extends TestCaseForm {
         assertTipoResultanteException(integer1, "[0]", "Não se aplica um path a um tipo simples");
 
         assertTipoResultante(tipoBloco, "subBloco", tipoSubBloco);
-        assertTipoResultante(tipoBloco, "subBloco", dicionario.getTipo(STypeComposto.class));
+        assertTipoResultante(tipoBloco, "subBloco", dicionario.getTipo(STypeComposite.class));
         assertTipoResultante(tipoBloco, "subBloco.integer2", integer2);
 
         assertTipoResultanteException(tipoBloco, "integerX", "Não existe o campo 'integerX'");

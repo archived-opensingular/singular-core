@@ -81,7 +81,7 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
      */
     @SuppressWarnings("unchecked")
     void setTipoElementosNovoTipoComposto(String nomeSimplesNovoTipoComposto) {
-        STypeComposto<?> tipo = extenderTipo(nomeSimplesNovoTipoComposto, STypeComposto.class);
+        STypeComposite<?> tipo = extenderTipo(nomeSimplesNovoTipoComposto, STypeComposite.class);
         setTipoElementos((E) tipo);
     }
 
