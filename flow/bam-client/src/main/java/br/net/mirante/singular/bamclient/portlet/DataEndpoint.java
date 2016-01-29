@@ -8,18 +8,8 @@ import br.net.mirante.singular.bamclient.enums.EndpointType;
 public class DataEndpoint implements Serializable {
 
     private EndpointType endpointType;
-    private String processAbbreviation;
     private String dashboardViewName;
     private String url;
-
-
-    public String getProcessAbbreviation() {
-        return processAbbreviation;
-    }
-
-    public void setProcessAbbreviation(String processAbbreviation) {
-        this.processAbbreviation = processAbbreviation;
-    }
 
     public String getDashboardViewName() {
         return dashboardViewName;
@@ -45,10 +35,17 @@ public class DataEndpoint implements Serializable {
         this.url = url;
     }
 
+    /**
+     * @deprecated remover na proxima versao
+     */
+    @Deprecated
     public static DataEndpoint rest(String processAbbreviation, String dashboardViewName) {
+        return rest(dashboardViewName);
+    }
+
+    public static DataEndpoint rest(String dashboardViewName) {
         final DataEndpoint endpoint = new DataEndpoint();
         endpoint.endpointType = EndpointType.REST;
-        endpoint.processAbbreviation = processAbbreviation;
         endpoint.dashboardViewName = dashboardViewName;
         return endpoint;
     }
