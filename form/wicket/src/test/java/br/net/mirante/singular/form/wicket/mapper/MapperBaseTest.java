@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
@@ -17,15 +17,15 @@ import static org.junit.Assert.assertNotNull;
 public abstract class MapperBaseTest {
 
     protected WicketTester wicketTester;
-    protected MDicionario dicionario;
+    protected SDictionary dicionario;
 
-    protected MTipoComposto<? extends MIComposto> form;
+    protected STypeComposto<? extends SIComposite> form;
     protected TestPage testPage;
 
     @Before
     public void setUp() {
         wicketTester = new WicketTester(new TestApp());
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
         PacoteBuilder pacoteBuilder = dicionario.criarNovoPacote("MonetarioMapperPackage");
         form = pacoteBuilder.createTipoComposto("form");
         appendPackageFields(form);
@@ -35,7 +35,7 @@ public abstract class MapperBaseTest {
         testPage = new TestPage(new PageParameters().add("viewMode", viewMode));
         testPage.setDicionario(dicionario);
 
-        MIComposto formInstance = (MIComposto) dicionario.getTipo(form.getNome()).novaInstancia();
+        SIComposite formInstance = (SIComposite) dicionario.getTipo(form.getNome()).novaInstancia();
         assertNotNull(formInstance);
         mockFormValues(formInstance);
         testPage.setCurrentInstance(formInstance);
@@ -46,8 +46,8 @@ public abstract class MapperBaseTest {
         return wicketTester.newFormTester("test-form");
     }
 
-    public abstract void appendPackageFields(MTipoComposto<? extends MIComposto> form);
+    public abstract void appendPackageFields(STypeComposto<? extends SIComposite> form);
 
-    public abstract void mockFormValues(MIComposto formInstance);
+    public abstract void mockFormValues(SIComposite formInstance);
 
 }

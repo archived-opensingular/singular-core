@@ -1,22 +1,22 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInputCoreSelectCompositePackage extends MPacote {
+public class CaseInputCoreSelectCompositePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         /**
          * Neste caso os campos de chave e valor utilizados serão os padrões "id" e "value".
          */
-        MTipoComposto ingredienteQuimico = tipoMyForm.addCampoComposto("ingredienteQuimico");
-        MTipoString formulaQuimica = ingredienteQuimico.addCampoString("formulaQuimica");
-        MTipoString nome = ingredienteQuimico.addCampoString("nome");
+        STypeComposto ingredienteQuimico = tipoMyForm.addCampoComposto("ingredienteQuimico");
+        STypeString formulaQuimica = ingredienteQuimico.addCampoString("formulaQuimica");
+        STypeString nome = ingredienteQuimico.addCampoString("nome");
 
         ingredienteQuimico.withSelectionFromProvider(nome, (instancia, lb) -> {
             lb
@@ -38,10 +38,10 @@ public class CaseInputCoreSelectCompositePackage extends MPacote {
 
 
 
-        MTipoComposto ingredienteQuimicoComplexo = tipoMyForm.addCampoComposto("ingredienteQuimicoComplexo");
-        MTipoString formulaQuimicaComplexa = ingredienteQuimicoComplexo.addCampoString("formulaQuimica");
-        MTipoString inventor = ingredienteQuimicoComplexo.addCampoString("inventorFormulaQuimica");
-        MTipoString nomeComplexo = ingredienteQuimicoComplexo.addCampoString("nome");
+        STypeComposto ingredienteQuimicoComplexo = tipoMyForm.addCampoComposto("ingredienteQuimicoComplexo");
+        STypeString formulaQuimicaComplexa = ingredienteQuimicoComplexo.addCampoString("formulaQuimica");
+        STypeString inventor = ingredienteQuimicoComplexo.addCampoString("inventorFormulaQuimica");
+        STypeString nomeComplexo = ingredienteQuimicoComplexo.addCampoString("nome");
 
         ingredienteQuimicoComplexo.withSelectionFromProvider(nomeComplexo, (instancia, lb) -> {
             lb

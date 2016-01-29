@@ -11,20 +11,20 @@ import com.google.common.base.Preconditions;
 
 public abstract class MEscopoBase implements MEscopo {
 
-    private Map<String, MTipo<?>> tiposLocais;
+    private Map<String, SType<?>> tiposLocais;
 
     private static final Logger LOGGER = Logger.getLogger(MEscopoBase.class.getName());
 
     @Override
-    public Optional<MTipo<?>> getTipoLocalOpcional(String path) {
+    public Optional<SType<?>> getTipoLocalOpcional(String path) {
         return getTipoLocalOpcional(new LeitorPath(path));
     }
 
-    final Optional<MTipo<?>> getTipoLocalOpcional(LeitorPath leitor) {
+    final Optional<SType<?>> getTipoLocalOpcional(LeitorPath leitor) {
         if (tiposLocais == null) {
             return Optional.empty();
         }
-        MTipo<?> tipo = tiposLocais.get(leitor.getTrecho());
+        SType<?> tipo = tiposLocais.get(leitor.getTrecho());
         if (tipo == null) {
             return Optional.empty();
         } else if (leitor.isUltimo()) {
@@ -35,15 +35,15 @@ public abstract class MEscopoBase implements MEscopo {
 
 
     @Override
-    public MTipo<?> getTipoLocal(String path) {
+    public SType<?> getTipoLocal(String path) {
         // Não utiliza getTipoLocalOpcional, pois da forma abaixo é possível
         // apontar precisamente onde deu erro no path passado.
         return getTipoLocal(new LeitorPath(path));
     }
 
-    final MTipo<?> getTipoLocal(LeitorPath leitor) {
+    final SType<?> getTipoLocal(LeitorPath leitor) {
         if (tiposLocais != null) {
-            MTipo<?> tipo = tiposLocais.get(leitor.getTrecho());
+            SType<?> tipo = tiposLocais.get(leitor.getTrecho());
             if (tipo != null) {
                 if (leitor.isUltimo()) {
                     return tipo;
@@ -54,16 +54,16 @@ public abstract class MEscopoBase implements MEscopo {
         throw new SingularFormException(leitor.getTextoErro(this, "Não existe o tipo"));
     }
 
-    final <T extends MTipo<?>> T registrarTipo(T novo, Class<T> classeDeRegistro) {
+    final <T extends SType<?>> T registrarTipo(T novo, Class<T> classeDeRegistro) {
         return getDicionario().registrarTipo(this, novo, classeDeRegistro);
     }
 
-    final <T extends MTipo<?>> T registrarTipo(TipoBuilder tb, Class<T> classeDeRegistro) {
+    final <T extends SType<?>> T registrarTipo(TipoBuilder tb, Class<T> classeDeRegistro) {
         getDicionario().registrarTipo(this, (T)tb.getTipo(), classeDeRegistro);
         return (T) tb.configure();
     }
 
-    final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
+    final <T extends SType<?>> T extenderTipo(String nomeSimplesNovoTipo, T tipoPai) {
         if (getDicionario() != tipoPai.getDicionario()) {
             throw new SingularFormException("O tipo " + tipoPai.getNome() + " foi criado dentro de outro dicionário, que não o atual de " + getNome());
         }
@@ -71,33 +71,33 @@ public abstract class MEscopoBase implements MEscopo {
         return registrarTipo(tb, null);
     }
 
-    final <T extends MTipo<?>> T extenderTipo(String nomeSimplesNovoTipo, Class<T> classePai) {
+    final <T extends SType<?>> T extenderTipo(String nomeSimplesNovoTipo, Class<T> classePai) {
         T tipoPai = resolverTipo(classePai);
         return extenderTipo(nomeSimplesNovoTipo, tipoPai);
     }
 
     @SuppressWarnings("unchecked")
-    final <I extends MIComposto> MTipoLista<MTipoComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
-        MTipoLista<MTipoComposto<I>, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
+    final <I extends SIComposite> STypeLista<STypeComposto<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
+        STypeLista<STypeComposto<I>, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, STypeLista.class);
         tipoLista.setTipoElementosNovoTipoComposto(nomeSimplesNovoTipoComposto);
         return tipoLista;
     }
 
     @SuppressWarnings("unchecked")
-    final <I extends MInstancia, T extends MTipo<I>> MTipoLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
+    final <I extends SInstance, T extends SType<I>> STypeLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
         Preconditions.checkNotNull(tipoElementos);
-        MTipoLista<T, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, MTipoLista.class);
+        STypeLista<T, I> tipoLista = extenderTipo(nomeSimplesNovoTipo, STypeLista.class);
         tipoLista.setTipoElementos(tipoElementos);
         return tipoLista;
     }
 
-    final <T extends MTipo<?>> T resolverTipo(Class<T> classeTipo) {
+    final <T extends SType<?>> T resolverTipo(Class<T> classeTipo) {
         return getDicionario().getTipo(classeTipo);
     }
 
-    final void registrar(MTipo<?> tipo) {
+    final void registrar(SType<?> tipo) {
         if (tiposLocais == null) {
-            if (this instanceof MTipoComposto) {
+            if (this instanceof STypeComposto) {
                 tiposLocais = new LinkedHashMap<>();
             } else {
                 tiposLocais = new LinkedHashMap<>();
@@ -142,7 +142,7 @@ public abstract class MEscopoBase implements MEscopo {
 
     final public boolean hasAnyValidation() {
         if(tiposLocais != null) {
-            for (Map.Entry<String, MTipo<?>> entry : tiposLocais.entrySet()) {
+            for (Map.Entry<String, SType<?>> entry : tiposLocais.entrySet()) {
                 if(entry.getValue().hasValidation() || entry.getValue().hasAnyValidation()){
                     return true;
                 }

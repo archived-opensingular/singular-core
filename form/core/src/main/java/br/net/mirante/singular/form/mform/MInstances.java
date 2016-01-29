@@ -13,8 +13,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import br.net.mirante.singular.form.mform.core.MIBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
+import br.net.mirante.singular.form.mform.core.SIBoolean;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
 
 /**
  * Métodos utilitários para manipulação de MInstance.
@@ -30,7 +30,7 @@ public abstract class MInstances {
      * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
      */
-    public static void visitAllChildren(MInstancia parent, Consumer<MInstancia> consumer) {
+    public static void visitAllChildren(SInstance parent, Consumer<SInstance> consumer) {
         visitAllChildren(parent, false, consumer);
     }
 
@@ -40,9 +40,9 @@ public abstract class MInstances {
      * profundidade. Não chama o consumidor para a instância raiz.
      * @param childrenFirst se true o percorrimento é bottom-up
      */
-    public static void visitAllChildren(MInstancia parent, boolean childrenFirst, Consumer<MInstancia> consumer) {
+    public static void visitAllChildren(SInstance parent, boolean childrenFirst, Consumer<SInstance> consumer) {
         if (parent instanceof ICompositeInstance) {
-            for (MInstancia child : ((ICompositeInstance) parent).getChildren()) {
+            for (SInstance child : ((ICompositeInstance) parent).getChildren()) {
                 if (childrenFirst) {
                     visitAllChildren(child, childrenFirst, consumer);
                     consumer.accept(child);
@@ -60,7 +60,7 @@ public abstract class MInstances {
      * profundidade. Não chama o consumidor para a instância raiz.
      * @param instance
      */
-    public static void visitAllChildrenIncludingEmpty(MInstancia instance, Consumer<MInstancia> consumer) {
+    public static void visitAllChildrenIncludingEmpty(SInstance instance, Consumer<SInstance> consumer) {
         visitAllChildrenIncludingEmpty(instance, false, consumer);
     }
 
@@ -71,9 +71,9 @@ public abstract class MInstances {
      * @param instance
      * @param childrenFirst se true o percorrimento é bottom-up
      */
-    public static void visitAllChildrenIncludingEmpty(MInstancia instance, boolean childrenFirst, Consumer<MInstancia> consumer) {
+    public static void visitAllChildrenIncludingEmpty(SInstance instance, boolean childrenFirst, Consumer<SInstance> consumer) {
         if (instance instanceof ICompositeInstance) {
-            for (MInstancia child : ((ICompositeInstance) instance).getAllChildren()) {
+            for (SInstance child : ((ICompositeInstance) instance).getAllChildren()) {
                 if (childrenFirst) {
                     visitAllChildrenIncludingEmpty(child, childrenFirst, consumer);
                     consumer.accept(child);
@@ -90,7 +90,7 @@ public abstract class MInstances {
      * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
      * faz um pecorrimento em profundidade.
      */
-    public static void visitAll(MInstancia instance, Consumer<MInstancia> consumer) {
+    public static void visitAll(SInstance instance, Consumer<SInstance> consumer) {
         visitAll(instance, false, consumer);
     }
 
@@ -100,7 +100,7 @@ public abstract class MInstances {
      * faz um pecorrimento em profundidade.
      * @param childrenFirst se true o percorrimento é bottom-up
      */
-    public static void visitAll(MInstancia instance, boolean childrenFirst, Consumer<MInstancia> consumer) {
+    public static void visitAll(SInstance instance, boolean childrenFirst, Consumer<SInstance> consumer) {
         if (childrenFirst) {
             visitAllChildren(instance, childrenFirst, consumer);
             consumer.accept(instance);
@@ -117,7 +117,7 @@ public abstract class MInstances {
      * @return instância do ancestral do tipo especificado
      * @throws NoSuchElementException se não encontrar nenhum ancestral deste tipo
      */
-    public static <P extends MInstancia & ICompositeInstance> P getAncestor(MInstancia node, MTipo<P> ancestorType) throws NoSuchElementException {
+    public static <P extends SInstance & ICompositeInstance> P getAncestor(SInstance node, SType<P> ancestorType) throws NoSuchElementException {
         return findAncestor(node, ancestorType).get();
     }
 
@@ -128,8 +128,8 @@ public abstract class MInstances {
      * @return Optional da instância do ancestral do tipo especificado
      */
     @SuppressWarnings("unchecked")
-    public static <A extends MInstancia & ICompositeInstance> Optional<A> findAncestor(MInstancia node, MTipo<A> ancestorType) {
-        for (MInstancia parent = node.getPai(); parent != null; parent = parent.getPai()) {
+    public static <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SInstance node, SType<A> ancestorType) {
+        for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
             if (parent.getMTipo() == ancestorType) {
                 return Optional.of((A) parent);
             }
@@ -145,9 +145,9 @@ public abstract class MInstances {
      * @return Optional da instância do ancestral comum
      */
     @SuppressWarnings("unchecked")
-    public static <CA extends MInstancia & ICompositeInstance> Optional<CA> findCommonAncestor(MInstancia node, MTipo<?> targetType) {
+    public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
-            for (MInstancia ancestor = node; ancestor != null; ancestor = ancestor.getPai()) {
+            for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
                 if (ancestor.getMTipo() == type) {
                     return Optional.of((CA) ancestor);
                 }
@@ -162,7 +162,7 @@ public abstract class MInstances {
      * @param targetType tipo do campo a ser procurado
      * @return Optional da instância do targetType encontrado
      */
-    public static <A extends MInstancia> Optional<A> findNearest(MInstancia node, MTipo<A> targetType) {
+    public static <A extends SInstance> Optional<A> findNearest(SInstance node, SType<A> targetType) {
         return MInstances.findCommonAncestor(node, targetType)
             .flatMap(ancestor -> ancestor.findDescendant(targetType))
             .map(targetNode -> (A) targetNode);
@@ -173,7 +173,7 @@ public abstract class MInstances {
      * @param node instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
-    public static List<MInstancia> listAscendants(MInstancia instance) {
+    public static List<SInstance> listAscendants(SInstance instance) {
         return listAscendants(instance, null);
     }
 
@@ -182,12 +182,12 @@ public abstract class MInstances {
      * @param node instância inicial da busca
      * @return Lista das instâncias de ancestrais do tipo especificado
      */
-    public static List<MInstancia> listAscendants(MInstancia instance, MTipo<?> limitInclusive) {
-        List<MInstancia> list = new ArrayList<>();
-        MInstancia node = instance.getPai();
+    public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive) {
+        List<SInstance> list = new ArrayList<>();
+        SInstance node = instance.getParent();
         while (node != null && node.getMTipo() != limitInclusive) {
             list.add(node);
-            node = node.getPai();
+            node = node.getParent();
         }
         return list;
     }
@@ -199,7 +199,7 @@ public abstract class MInstances {
      * @return instância do primeiro descendente do tipo especificado
      * @throws NoSuchElementException se não encontrar nenhum descendente deste tipo
      */
-    public static <D extends MInstancia> D getDescendant(MInstancia node, MTipo<D> descendantType) {
+    public static <D extends SInstance> D getDescendant(SInstance node, SType<D> descendantType) {
         return findDescendant(node, descendantType).get();
     }
 
@@ -210,11 +210,11 @@ public abstract class MInstances {
      * @return Optional da instância do primeiro descendente do tipo especificado
      */
     @SuppressWarnings("unchecked")
-    public static <D extends MInstancia> Optional<D> findDescendant(MInstancia instancia, MTipo<D> descendantType) {
-        final Deque<MInstancia> deque = new ArrayDeque<>();
+    public static <D extends SInstance> Optional<D> findDescendant(SInstance instancia, SType<D> descendantType) {
+        final Deque<SInstance> deque = new ArrayDeque<>();
         deque.add(instancia);
         while (!deque.isEmpty()) {
-            final MInstancia node = deque.removeFirst();
+            final SInstance node = deque.removeFirst();
             if (node.getMTipo() == descendantType) {
                 return Optional.of((D) node);
             } else {
@@ -230,7 +230,7 @@ public abstract class MInstances {
      * @param descendantType tipo do descendente
      * @return Lista das instâncias de descendentes do tipo especificado
      */
-    public static <D extends MInstancia> List<D> listDescendants(MInstancia instance, MTipo<D> descendantType) {
+    public static <D extends SInstance> List<D> listDescendants(SInstance instance, SType<D> descendantType) {
         return listDescendants(instance, descendantType, Function.identity());
     }
 
@@ -241,12 +241,12 @@ public abstract class MInstances {
      * @return Lista das instâncias de descendentes do tipo especificado
      */
     @SuppressWarnings("unchecked")
-    public static <D extends MInstancia, V> List<V> listDescendants(MInstancia instance, MTipo<?> descendantType, Function<D, V> function) {
+    public static <D extends SInstance, V> List<V> listDescendants(SInstance instance, SType<?> descendantType, Function<D, V> function) {
         List<V> result = new ArrayList<>();
-        final Deque<MInstancia> deque = new ArrayDeque<>();
+        final Deque<SInstance> deque = new ArrayDeque<>();
         deque.add(instance);
         while (!deque.isEmpty()) {
-            final MInstancia node = deque.removeFirst();
+            final SInstance node = deque.removeFirst();
             if (node.getMTipo() == descendantType) {
                 result.add(function.apply((D) node));
             } else {
@@ -263,7 +263,7 @@ public abstract class MInstances {
      * @return Stream das instâncias de descendentes do tipo especificado
      */
     @SuppressWarnings("unchecked")
-    public static <D extends MInstancia> Stream<D> streamDescendants(MInstancia root, boolean includeRoot, MTipo<D> descendantType) {
+    public static <D extends SInstance> Stream<D> streamDescendants(SInstance root, boolean includeRoot, SType<D> descendantType) {
         return streamDescendants(root, includeRoot)
             .filter(it -> it.getMTipo() == descendantType)
             .map(it -> (D) it);
@@ -274,15 +274,15 @@ public abstract class MInstances {
      * @param node instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
-    public static Stream<MInstancia> streamDescendants(MInstancia root, boolean includeRoot) {
+    public static Stream<SInstance> streamDescendants(SInstance root, boolean includeRoot) {
         return StreamSupport.stream(new MInstanceRecursiveSpliterator(root, includeRoot), false);
     }
 
     /*
      * Lista os filhos diretos da instância <code>node</code>, criando-os se necessário.
      */
-    static Collection<MInstancia> children(MInstancia node) {
-        List<MInstancia> result = new ArrayList<>();
+    static Collection<SInstance> children(SInstance node) {
+        List<SInstance> result = new ArrayList<>();
         if (node instanceof ICompositeInstance) {
             result.addAll(((ICompositeInstance) node).getAllChildren());
         }
@@ -290,20 +290,20 @@ public abstract class MInstances {
     }
 
     public static void updateBooleanAttribute(
-        MInstancia instance,
-        AtrRef<MTipoBoolean, MIBoolean, Boolean> valueAttribute,
-        AtrRef<MTipoPredicate, MIPredicate, Predicate<MInstancia>> predicateAttribute) {
+        SInstance instance,
+        AtrRef<STypeBoolean, SIBoolean, Boolean> valueAttribute,
+        AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> predicateAttribute) {
 
-        Predicate<MInstancia> pred = instance.getValorAtributo(predicateAttribute);
+        Predicate<SInstance> pred = instance.getValorAtributo(predicateAttribute);
         if (pred != null)
             instance.setValorAtributo(valueAttribute, pred.test(instance));
     }
 
-    public static <V> V attributeValue(MInstancia instance, AtrRef<?, ?, V> attribute, V defaultValue) {
+    public static <V> V attributeValue(SInstance instance, AtrRef<?, ?, V> attribute, V defaultValue) {
         V value = instance.getValorAtributo(attribute);
         return (value != null) ? value : defaultValue;
     }
-    public static <V> boolean hasAttributeValue(MInstancia instance, AtrRef<?, ?, V> attribute) {
+    public static <V> boolean hasAttributeValue(SInstance instance, AtrRef<?, ?, V> attribute) {
         V value = instance.getValorAtributo(attribute);
         return (value != null);
     }

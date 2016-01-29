@@ -1,18 +1,18 @@
 package br.net.mirante.singular.showcase.component.file;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 
-public class CaseFileAttachmentPackage extends MPacote {
+public class CaseFileAttachmentPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
-        MTipoAttachment anexo = tipoMyForm.addCampo("anexo", MTipoAttachment.class);
+        STypeAttachment anexo = tipoMyForm.addCampo("anexo", STypeAttachment.class);
         anexo.as(AtrBasic.class).label("Anexo");
     }
 }

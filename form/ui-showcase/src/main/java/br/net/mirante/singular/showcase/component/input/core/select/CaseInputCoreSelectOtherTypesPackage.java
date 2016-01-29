@@ -1,33 +1,33 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import org.joda.time.DateTime;
 
 import java.util.Date;
 
-public class CaseInputCoreSelectOtherTypesPackage extends MPacote {
+public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
 
     //@formatter:off
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         //Select de Datas
-        MTipoData tipoData = tipoMyForm.addCampoData("inicio");
+        STypeData tipoData = tipoMyForm.addCampoData("inicio");
         tipoData.withSelectionOf(new Date(), DateTime.parse("2015-11-20").toDate());
         tipoData.withSelectView();
 
         //Select de Inteiros
-        MTipoInteger tipoInteiro = tipoMyForm.addCampoInteger("qtd");
+        STypeInteger tipoInteiro = tipoMyForm.addCampoInteger("qtd");
         tipoInteiro.withSelectionOf(20, 40, 50);
         tipoInteiro.withSelectView();
         
         //Select with composite Dates
-        MTipoData finishField = tipoMyForm.addCampoData("finish");
+        STypeData finishField = tipoMyForm.addCampoData("finish");
         finishField
                 .withSelection()
                 .add(DateTime.now().toDate(),"Today")

@@ -10,7 +10,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
 import br.net.mirante.singular.form.mform.MInstanceViewState;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
@@ -45,7 +45,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         if (!isInstanceEnabled(component))
             tag.put("disabled", "disabled");
         
-        MInstancia instance = resolveInstance(component);
+        SInstance instance = resolveInstance(component);
         if (instance != null) {
             tag.put("data-instance-id", instance.getId());
             tag.put("data-instance-path", instance.getPathFull());
@@ -75,7 +75,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
         return MInstanceViewState.get(resolveInstance(component)).isVisible();
     }
 
-    private static MInstancia resolveInstance(Component component) {
+    private static SInstance resolveInstance(Component component) {
         if (component != null) {
             IModel<?> model = component.getDefaultModel();
             if (model != null && IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {

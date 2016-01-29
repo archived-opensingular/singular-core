@@ -1,18 +1,18 @@
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
+public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addMultiSelection(pb, tipoMyForm, 3);
         addMultiSelection(pb, tipoMyForm, 15);
@@ -20,11 +20,11 @@ public class CaseInputCoreMultiSelectDefaultPackage extends MPacote {
         
     }
 
-    private static void addMultiSelection(PacoteBuilder pb, MTipoComposto<?> tipoMyForm, int size) {
-        MTipoString tipoSelection = pb.createTipo("opcoes" + size, MTipoString.class);
+    private static void addMultiSelection(PacoteBuilder pb, STypeComposto<?> tipoMyForm, int size) {
+        STypeString tipoSelection = pb.createTipo("opcoes" + size, STypeString.class);
         tipoSelection.withSelectionOf(createOptions(size));
 
-        MTipoLista<MTipoString, MIString> multiSelection = tipoMyForm.addCampoListaOf("multiSelection" + size, tipoSelection);
+        STypeLista<STypeString, SIString> multiSelection = tipoMyForm.addCampoListaOf("multiSelection" + size, tipoSelection);
         multiSelection.as(AtrBasic::new).label("Seleção de " + size);
     }
 

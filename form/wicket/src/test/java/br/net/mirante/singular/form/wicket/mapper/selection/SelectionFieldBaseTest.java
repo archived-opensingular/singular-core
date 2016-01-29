@@ -4,10 +4,10 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.BeforeClass;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 
 public abstract class SelectionFieldBaseTest {
-    protected static MDicionario dicionario;
+    protected static SDictionary dicionario;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
@@ -26,7 +26,7 @@ public abstract class SelectionFieldBaseTest {
     
     @BeforeClass
     public static void createDicionario() {
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
     }
 
     protected void setupPage() {
@@ -34,14 +34,14 @@ public abstract class SelectionFieldBaseTest {
         page = new TestPage();
         page.setDicionario(dicionario);
         localPackage = dicionario.criarNovoPacote("test"+(index.getAndIncrement()));
-        MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
+        STypeComposto<? extends SIComposite> group = localPackage.createTipoComposto("group");
         createSelectionType(group);
         
         page.setNewInstanceOfType(group.getNome());
     }
     
     @SuppressWarnings("rawtypes")
-    abstract MTipo createSelectionType(MTipoComposto group); 
+    abstract SType createSelectionType(STypeComposto group);
     
     protected void buildPage() {
         page.build();

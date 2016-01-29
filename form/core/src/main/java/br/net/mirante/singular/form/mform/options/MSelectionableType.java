@@ -1,11 +1,9 @@
 package br.net.mirante.singular.form.mform.options;
 
-import java.util.Collection;
-
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public interface MSelectionableType<BASE extends MTipo>  extends MSelectionable {
+public interface MSelectionableType<BASE extends SType>  extends MSelectionable {
 
     public MOptionsProvider getProviderOpcoes();
 

@@ -4,39 +4,39 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMFormUtilUserFriendlyPath {
 
-    private MDicionario _dicionario;
+    private SDictionary _dicionario;
 
-    private MTipoComposto<? extends MIComposto>               _evento;
-    private MTipoString                                       _descricao;
-    private MTipoComposto<MIComposto>                         _periodo;
-    private MTipoData                                         _dataInicial;
-    private MTipoData                                         _dataFinal;
-    private MTipoLista<MTipoComposto<MIComposto>, MIComposto> _alertas;
-    private MTipoComposto<MIComposto>                         _alerta;
-    private MTipoData                                         _alerta_data;
+    private STypeComposto<? extends SIComposite> _evento;
+    private STypeString _descricao;
+    private STypeComposto<SIComposite> _periodo;
+    private STypeData _dataInicial;
+    private STypeData _dataFinal;
+    private STypeLista<STypeComposto<SIComposite>, SIComposite> _alertas;
+    private STypeComposto<SIComposite> _alerta;
+    private STypeData _alerta_data;
 
-    private MIComposto evento;
+    private SIComposite evento;
 
-    private MILista<MIComposto> alertas;
+    private SList<SIComposite> alertas;
 
     @Before
     public void setUp() {
-        _dicionario = MDicionario.create();
+        _dicionario = SDictionary.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
         _evento = pb.createTipoComposto("evento");
-        _descricao = _evento.addCampo("descricao", MTipoString.class);
+        _descricao = _evento.addCampo("descricao", STypeString.class);
         _periodo = _evento.addCampoComposto("periodo");
-        _dataInicial = _periodo.addCampo("dataInicia", MTipoData.class);
-        _dataFinal = _periodo.addCampo("dataFinal", MTipoData.class);
+        _dataInicial = _periodo.addCampo("dataInicia", STypeData.class);
+        _dataFinal = _periodo.addCampo("dataFinal", STypeData.class);
         _alertas = _periodo.addCampoListaOfComposto("alertas", "alerta");
         _alerta = _alertas.getTipoElementos();
-        _alerta_data = _alerta.addCampo("data", MTipoData.class);
+        _alerta_data = _alerta.addCampo("data", STypeData.class);
 
         _evento.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");

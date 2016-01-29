@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
@@ -17,12 +17,12 @@ import static org.junit.Assert.*;
 public class MonetarioMapperTest extends MapperBaseTest {
 
     @Override
-    public void appendPackageFields(MTipoComposto<? extends MIComposto> form) {
+    public void appendPackageFields(STypeComposto<? extends SIComposite> form) {
         form.addCampoMonetario("money");
     }
 
     @Override
-    public void mockFormValues(MIComposto formInstance) {
+    public void mockFormValues(SIComposite formInstance) {
         formInstance.setValor("money", "10,00");
     }
 

@@ -1,21 +1,21 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInteractionVisiblePackage extends MPacote {
+public class CaseInteractionVisiblePackage extends SPackage {
 
-    public MTipoComposto<?> testForm;
-    public MTipoBoolean visible;
-    public MTipoComposto<MIComposto> record;
-    public MTipoString recordText;
-    public MTipoData recordDate;
+    public STypeComposto<?> testForm;
+    public STypeBoolean visible;
+    public STypeComposto<SIComposite> record;
+    public STypeString recordText;
+    public STypeData recordDate;
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
@@ -29,16 +29,16 @@ public class CaseInteractionVisiblePackage extends MPacote {
         recordText = record.addCampoString("text");
         recordDate = record.addCampoData("date");
 
-        visible.as(MPacoteBasic.aspect()).label("Visible");
+        visible.as(SPackageBasic.aspect()).label("Visible");
 
-        record.as(MPacoteBasic.aspect())
+        record.as(SPackageBasic.aspect())
                 .visivel(ins -> ins.findNearestValue(visible, Boolean.class).orElse(false))
                 .dependsOn(visible);
 
-        recordText.as(MPacoteBasic.aspect())
+        recordText.as(SPackageBasic.aspect())
                 .label("Text");
 
-        recordDate.as(MPacoteBasic.aspect())
+        recordDate.as(SPackageBasic.aspect())
                 .label("Date");
     }
 }

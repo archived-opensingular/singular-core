@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -22,13 +22,13 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput(MView view, BSContainer bodyContainer,
-                                 BSControls formGroup, final IModel<? extends MInstancia> model,
+                                 BSControls formGroup, final IModel<? extends SInstance> model,
                                  IModel<String> labelModel) {
         final List<SelectOption> opcoesValue;
-        final MTipoLista tipoLista;
-        if (model.getObject().getMTipo() instanceof MTipoLista) {
-            tipoLista = (MTipoLista) model.getObject().getMTipo();
-            MTipo elementType = tipoLista.getTipoElementos();
+        final STypeLista tipoLista;
+        if (model.getObject().getMTipo() instanceof STypeLista) {
+            tipoLista = (STypeLista) model.getObject().getMTipo();
+            SType elementType = tipoLista.getTipoElementos();
             opcoesValue = WicketSelectionUtils.createOptions(model, elementType);
         } else {
             opcoesValue = newArrayList();
@@ -39,7 +39,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected ListMultipleChoice<SelectOption> retrieveChoices(
-            IModel<? extends MInstancia> model,
+            IModel<? extends SInstance> model,
             final List<SelectOption> opcoesValue) {
         return new ListMultipleChoice<>(model.getObject().getNome(),
                 (IModel) new MSelectionInstanceModel<List<SelectOption>>(model), opcoesValue, renderer());
@@ -47,7 +47,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends MInstancia> model,
+                                          IModel<? extends SInstance> model,
                                           final List<SelectOption> opcoesValue) {
         final ListMultipleChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setMaxRows(5), true, false);
@@ -60,10 +60,10 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
 
         final StringBuilder output = new StringBuilder();
-        final MInstancia mi = model.getObject();
+        final SInstance mi = model.getObject();
 
         if ((mi != null) && (mi.getValor() != null)
                 && (mi.getValor() instanceof List)) {

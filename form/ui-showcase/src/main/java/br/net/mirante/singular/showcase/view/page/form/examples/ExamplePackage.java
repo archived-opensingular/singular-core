@@ -1,24 +1,24 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoNomePessoa;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
+import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 import br.net.mirante.singular.form.validation.validator.InstanceValidators;
 
-public class ExamplePackage extends MPacote {
+public class ExamplePackage extends SPackage {
 
     private static final String PACKAGE = "mform.exemplo.uiShowcase";
 
@@ -32,19 +32,19 @@ public class ExamplePackage extends MPacote {
         }
     }
 
-    public MTipoComposto<? extends MIComposto> order;
-    public MTipoInteger                        orderNumber;
-    public MTipoComposto<?>                    buyer;
-    public MTipoNomePessoa                     buyerNome;
-    public MTipoCPF                            buyerCpf;
-    public MTipoTelefoneNacional               buyerTelephone;
-    public MTipoAttachment                     buyerAvatar;
+    public STypeComposto<? extends SIComposite> order;
+    public STypeInteger orderNumber;
+    public STypeComposto<?> buyer;
+    public STypeNomePessoa buyerNome;
+    public STypeCPF buyerCpf;
+    public STypeTelefoneNacional buyerTelephone;
+    public STypeAttachment buyerAvatar;
 
-    public MTipoComposto<MIComposto> address;
-    public MTipoString               addressStreet;
-    public MTipoString               addressCity;
-    public MTipoString               addressState;
-    public MTipoCEP                  addressZipcode;
+    public STypeComposto<SIComposite> address;
+    public STypeString addressStreet;
+    public STypeString addressCity;
+    public STypeString addressState;
+    public STypeCEP addressZipcode;
 
     public ExamplePackage() {
         super(PACKAGE);
@@ -60,7 +60,7 @@ public class ExamplePackage extends MPacote {
         this.order.as(AtrBasic::new).label("Pedido");
 
         this.orderNumber = addField(order,
-            "OrderNumber", "Número do Pedido", MTipoInteger.class);
+            "OrderNumber", "Número do Pedido", STypeInteger.class);
         this.orderNumber.withObrigatorio(true);
 
         buildBuyerField();
@@ -70,15 +70,15 @@ public class ExamplePackage extends MPacote {
     private void buildBuyerField() {
         this.buyer = order.addCampoComposto("Buyer");
         this.buyer.as(AtrBasic::new).label("Comprador");
-        this.buyerNome = addField(buyer, "Name", "Nome", MTipoNomePessoa.class);
-        this.buyerCpf = addField(buyer, "CPF", "CPF", MTipoCPF.class);
-        this.buyerTelephone = addField(buyer, "Telephone", "Telefone", MTipoTelefoneNacional.class);
-        this.buyerAvatar = addField(buyer, "Avatar", "Imagem", MTipoAttachment.class);
+        this.buyerNome = addField(buyer, "Name", "Nome", STypeNomePessoa.class);
+        this.buyerCpf = addField(buyer, "CPF", "CPF", STypeCPF.class);
+        this.buyerTelephone = addField(buyer, "Telephone", "Telefone", STypeTelefoneNacional.class);
+        this.buyerAvatar = addField(buyer, "Avatar", "Imagem", STypeAttachment.class);
 
-        this.buyerNome.as(MPacoteCore.aspect()).obrigatorio();
+        this.buyerNome.as(SPackageCore.aspect()).obrigatorio();
 
         this.buyerCpf
-            .as(MPacoteBasic.aspect())
+            .as(SPackageBasic.aspect())
             .dependsOn(this.buyerNome)
         ;
     }
@@ -86,16 +86,16 @@ public class ExamplePackage extends MPacote {
     private void buildAddressField() {
         this.address = order.addCampoComposto("Address");
         this.address.as(AtrBasic::new).label("Endereço");
-        this.addressStreet = addField(address, "street", "Logradouro", MTipoString.class);
-        this.addressCity = addField(address, "city", "Cidade", MTipoString.class);
-        this.addressState = addField(address, "state", "Estado", MTipoString.class);
-        this.addressZipcode = addField(address, "Zipcode", "CEP", MTipoCEP.class);
+        this.addressStreet = addField(address, "street", "Logradouro", STypeString.class);
+        this.addressCity = addField(address, "city", "Cidade", STypeString.class);
+        this.addressState = addField(address, "state", "Estado", STypeString.class);
+        this.addressZipcode = addField(address, "Zipcode", "CEP", STypeCEP.class);
 
         this.address.addInstanceValidator(InstanceValidators.allOrNothing());
     }
 
-    private <I extends MInstancia, T extends MTipo<I>> T addField(MTipoComposto<?> root, String name, String label,
-        Class<T> type) {
+    private <I extends SInstance, T extends SType<I>> T addField(STypeComposto<?> root, String name, String label,
+                                                                 Class<T> type) {
         T campo = root.addCampo(name, type);
         campo.as(AtrBasic::new).label(label);
         return campo;

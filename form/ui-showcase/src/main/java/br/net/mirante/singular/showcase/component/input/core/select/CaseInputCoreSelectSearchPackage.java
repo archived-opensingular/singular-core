@@ -1,22 +1,21 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInputCoreSelectSearchPackage extends MPacote {
+public class CaseInputCoreSelectSearchPackage extends SPackage {
 
     //@formatter:off
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
-        final MTipoString tipoContato = tipoMyForm.addCampoString("tipoContato", true)
+        final STypeString tipoContato = tipoMyForm.addCampoString("tipoContato", true)
                  .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
         tipoContato.withView(MSelecaoPorModalBuscaView::new);
@@ -26,7 +25,7 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
         /*
             Neste caso vemos como tipos compostos podem ser usados na seleção por busca.
          */
-        MTipoString degreeType = tipoMyForm.addCampoString("degree");
+        STypeString degreeType = tipoMyForm.addCampoString("degree");
         degreeType.as(AtrBasic::new).label("Escolaridade");
         degreeType.withSelection()
             .add("Alfabetizado","Alfabetização")
@@ -43,10 +42,10 @@ public class CaseInputCoreSelectSearchPackage extends MPacote {
             No tipo composto é possível expandir a seleção para exibir outros campos além
             do valor de descrição, fornecendo maior flexibilidade e abrangência.
          */
-        MTipoComposto<?> planetType = tipoMyForm.addCampoComposto("planet");
+        STypeComposto<?> planetType = tipoMyForm.addCampoComposto("planet");
         planetType.as(AtrBasic::new).label("Planeta Favorito");
-        MTipoString id = planetType.addCampoString("id");
-        MTipoString nome = planetType.addCampoString("nome");
+        STypeString id = planetType.addCampoString("id");
+        STypeString nome = planetType.addCampoString("nome");
         planetType.addCampoDecimal("radius").as(AtrBasic::new).label("Raio");;
         planetType.addCampoString("atmosphericComposition").as(AtrBasic::new).label("Composição Atmosférica");;
         planetType.withSelectionFromProvider("nome", (inst, lb) ->{

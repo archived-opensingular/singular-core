@@ -1,23 +1,22 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInputCoreSelectComboRadioPackage extends MPacote {
+public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
     //@formatter:off
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         //@destacar:bloco
         //View por Select
-        MTipoString tipoContato1 = tipoMyForm.addCampoString("tipoContato1")
+        STypeString tipoContato1 = tipoMyForm.addCampoString("tipoContato1")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
@@ -27,7 +26,7 @@ public class CaseInputCoreSelectComboRadioPackage extends MPacote {
 
         //@destacar:bloco
         //View por Radio
-        MTipoString tipoContato2 = tipoMyForm.addCampoString("tipoContato2")
+        STypeString tipoContato2 = tipoMyForm.addCampoString("tipoContato2")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
@@ -37,7 +36,7 @@ public class CaseInputCoreSelectComboRadioPackage extends MPacote {
 
 
 
-        MTipoString tipoContato3 = tipoMyForm.addCampoString("tipoContato3")
+        STypeString tipoContato3 = tipoMyForm.addCampoString("tipoContato3")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
 

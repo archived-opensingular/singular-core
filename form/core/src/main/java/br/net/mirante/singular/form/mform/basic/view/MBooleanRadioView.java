@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
 
 /**
- * View para renderização do {@link MTipoBoolean} em forma de input radio.
+ * View para renderização do {@link STypeBoolean} em forma de input radio.
  */
 public class MBooleanRadioView extends MSelecaoPorRadioView {
 
@@ -13,8 +13,8 @@ public class MBooleanRadioView extends MSelecaoPorRadioView {
     private String labelFalse = "Não";
     
     @Override
-    public boolean aplicavelEm(MTipo<?> tipo) {
-        return tipo instanceof MTipoBoolean;
+    public boolean aplicavelEm(SType<?> tipo) {
+        return tipo instanceof STypeBoolean;
     }
 
     public String labelTrue() {

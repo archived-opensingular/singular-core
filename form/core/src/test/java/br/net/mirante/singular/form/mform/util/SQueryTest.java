@@ -7,18 +7,18 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacoteTesteContatos;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackageTesteContatos;
 
 public class SQueryTest {
 
     @Test
     public void test() {
-        MDicionario dicionario = MDicionario.create();
-        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        SDictionary dicionario = SDictionary.create();
+        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
 
-        MIComposto contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.novaInstancia();
 
         $(contato)
             .find(pacote.nome).val("Fulano").end()
@@ -40,10 +40,10 @@ public class SQueryTest {
 
     @Test
     public void testList() {
-        MDicionario dicionario = MDicionario.create();
-        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        SDictionary dicionario = SDictionary.create();
+        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
 
-        MIComposto contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.novaInstancia();
 
         $(contato).find(pacote.enderecos)
             .each(it -> it.addNovo())

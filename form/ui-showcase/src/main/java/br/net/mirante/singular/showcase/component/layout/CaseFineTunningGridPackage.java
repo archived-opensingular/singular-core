@@ -1,16 +1,16 @@
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 
-public class CaseFineTunningGridPackage extends MPacote {
+public class CaseFineTunningGridPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        final MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposto<?> testForm = pb.createTipoComposto("testForm");
 
         testForm.addCampoString("nome")
                 .as(AtrBasic.class).label("Nome")

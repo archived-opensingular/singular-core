@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
@@ -16,7 +16,7 @@ public class BooleanRadioMapper extends RadioMapper {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends MInstancia> model) {
+    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends SInstance> model) {
         if (!(view instanceof MBooleanRadioView)){
             throw new SingularFormException("Radio mapper requires a MBooleanRadioView configuration.");
         }
@@ -32,8 +32,8 @@ public class BooleanRadioMapper extends RadioMapper {
         };
     }
     
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
-        final MInstancia mi = model.getObject();
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+        final SInstance mi = model.getObject();
         Boolean valor = mi.getValor(Boolean.class);
         if(valor != null) {
             MBooleanRadioView booleanRadioView = (MBooleanRadioView) mi.getMTipo().getView();

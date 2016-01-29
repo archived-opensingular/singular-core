@@ -1,17 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.MTipoData;
+import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
-import br.net.mirante.singular.form.mform.util.transformer.Val;
-import org.apache.commons.lang3.StringUtils;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class TestMoptionsConfigTipoLista {
 
@@ -22,22 +20,22 @@ public class TestMoptionsConfigTipoLista {
     private static final Date DT_4 = new Date();
     private static final Date DT_5 = new Date();
     private static final Date DT_6 = new Date();
-    private MDicionario _dicionario;
-    private MTipoComposto<? extends MIComposto> _raiz;
-    private MTipoLista<MTipoComposto<MIComposto>, MIComposto> _alertas;
-    private MTipoComposto<MIComposto> _alerta;
-    private MTipoData _alerta_data;
-    private MIComposto evento;
-    private MILista<MIComposto> alertas;
-    private MILista listaAlertas;
-    private MInstancia opcaoAlerta1;
-    private MInstancia opcaoAlerta2;
-    private MInstancia opcaoAlerta3;
+    private SDictionary _dicionario;
+    private STypeComposto<? extends SIComposite> _raiz;
+    private STypeLista<STypeComposto<SIComposite>, SIComposite> _alertas;
+    private STypeComposto<SIComposite> _alerta;
+    private STypeData _alerta_data;
+    private SIComposite evento;
+    private SList<SIComposite> alertas;
+    private SList listaAlertas;
+    private SInstance opcaoAlerta1;
+    private SInstance opcaoAlerta2;
+    private SInstance opcaoAlerta3;
 
 
     @Before
     public void setup() {
-        _dicionario = MDicionario.create();
+        _dicionario = SDictionary.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
@@ -45,7 +43,7 @@ public class TestMoptionsConfigTipoLista {
 
         _alertas = _raiz.addCampoListaOfComposto("alertas", "alerta");
         _alerta = _alertas.getTipoElementos();
-        _alerta_data = _alerta.addCampo("data", MTipoData.class);
+        _alerta_data = _alerta.addCampo("data", STypeData.class);
 
         _raiz.asAtrBasic().label("Evento");
         _alertas.asAtrBasic().label("Alertas");
@@ -55,11 +53,11 @@ public class TestMoptionsConfigTipoLista {
         evento = _raiz.novaInstancia();
 
         //alertas
-        listaAlertas = (MILista) evento.getCampo(_alertas.getNomeSimples());
+        listaAlertas = (SList) evento.getCampo(_alertas.getNomeSimples());
 
         _alerta.withSelectionFromProvider(_alerta_data, new MOptionsCompositeProvider() {
             @Override
-            public void listOptions(MInstancia instancia, MListaBuilder<MTipoComposto> lb) {
+            public void listOptions(SInstance instancia, MListaBuilder<STypeComposto> lb) {
                 lb
                         .add()
                         .set(_alerta_data, DT_1)
@@ -77,16 +75,16 @@ public class TestMoptionsConfigTipoLista {
             }
         });
 
-        MILista listaOpcoes = _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas);
+        SList listaOpcoes = _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas);
         opcaoAlerta1 = listaOpcoes.get(0);
         opcaoAlerta2 = listaOpcoes.get(1);
         opcaoAlerta3 = listaOpcoes.get(2);
-        MInstancia m1 = listaAlertas.addNovo();
-        MInstancia m2 = listaAlertas.addNovo();
-        MInstancia m3 = listaAlertas.addNovo();
-        Val.hydrate(m1, Val.dehydrate(opcaoAlerta1));
-        Val.hydrate(m2, Val.dehydrate(opcaoAlerta2));
-        Val.hydrate(m3, Val.dehydrate(opcaoAlerta3));
+        SInstance m1 = listaAlertas.addNovo();
+        SInstance m2 = listaAlertas.addNovo();
+        SInstance m3 = listaAlertas.addNovo();
+        Value.hydrate(m1, Value.dehydrate(opcaoAlerta1));
+        Value.hydrate(m2, Value.dehydrate(opcaoAlerta2));
+        Value.hydrate(m3, Value.dehydrate(opcaoAlerta3));
 
 
     }
@@ -124,14 +122,14 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testMTipoOpcoes(){
-        for(MInstancia instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
+        for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
             Assert.assertEquals(_alerta, instancia.getMTipo());
         }
     }
 
     @Test
     public void testKeyValueMapping(){
-        for(MInstancia instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
+        for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
             String key = listaAlertas.getOptionsConfig().getKeyFromOptions(instancia);
             Assert.assertEquals(instancia, listaAlertas.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(listaAlertas.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -140,8 +138,8 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testSelectLabel() {
-        for(MInstancia instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
-            Assert.assertEquals(String.valueOf(Val.of(instancia, _alerta_data)), instancia.getSelectLabel());
+        for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
+            Assert.assertEquals(String.valueOf(Value.of(instancia, _alerta_data)), instancia.getSelectLabel());
         }
         Assert.assertEquals(_alerta_data.getNomeSimples(), _alerta.getSelectLabel());
     }

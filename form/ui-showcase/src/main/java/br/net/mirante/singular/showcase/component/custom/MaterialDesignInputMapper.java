@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.custom;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
@@ -20,10 +20,10 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends MInstancia> model = ctx.getModel();
+        final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final MInstancia mi = ctx.getCurrenttInstance();
-        final BSLabel label = new BSLabel("label", new AtributoModel<>(model, MPacoteBasic.ATR_LABEL));
+        final SInstance mi = ctx.getCurrenttInstance();
+        final BSLabel label = new BSLabel("label", new AtributoModel<>(model, SPackageBasic.ATR_LABEL));
 
         if(ctx.getViewMode().isVisualization()){
             formGroup.appendLabel(label);
@@ -35,7 +35,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
         }
     }
 
-    private IModel<String> getOutputString(MInstancia mi) {
+    private IModel<String> getOutputString(SInstance mi) {
         if (mi.getValor() != null) {
             return Model.of(String.valueOf(mi.getValor()));
         } else {

@@ -1,16 +1,16 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
 
 /**
  * Classe utilitária para montar um MILista de MIComposto
  */
-public class MListaBuilder<T extends MTipoComposto> {
+public class MListaBuilder<T extends STypeComposto> {
 
-    private MILista<?> miLista;
+    private SList<?> sList;
     private T mTipo;
 
     /**
@@ -20,7 +20,7 @@ public class MListaBuilder<T extends MTipoComposto> {
      */
     public MListaBuilder(T mtipo) {
         this.mTipo = mtipo;
-        this.miLista = mtipo.novaLista();
+        this.sList = mtipo.novaLista();
     }
 
     /**
@@ -29,25 +29,25 @@ public class MListaBuilder<T extends MTipoComposto> {
      * @return
      */
     public MCompostoValueSetter add() {
-        MIComposto novaInstancia = (MIComposto) mTipo.novaInstancia();
-        miLista.addElement(novaInstancia);
+        SIComposite novaInstancia = (SIComposite) mTipo.novaInstancia();
+        sList.addElement(novaInstancia);
         return new MCompostoValueSetter(novaInstancia, this);
     }
 
-    public MILista<?> getList() {
-        return miLista;
+    public SList<?> getList() {
+        return sList;
     }
 
     public static class MCompostoValueSetter {
         private MListaBuilder _lb;
-        private MIComposto instancia;
+        private SIComposite instancia;
 
-        public MCompostoValueSetter(MIComposto instancia, MListaBuilder lb) {
+        public MCompostoValueSetter(SIComposite instancia, MListaBuilder lb) {
             this._lb = lb;
             this.instancia = instancia;
         }
 
-        public MCompostoValueSetter set(MTipo<?> tipo, Object value) {
+        public MCompostoValueSetter set(SType<?> tipo, Object value) {
             instancia.setValor(tipo, value);
             return this;
         }
@@ -61,7 +61,7 @@ public class MListaBuilder<T extends MTipoComposto> {
             return _lb.add();
         }
 
-        public MILista<?> getList() {
+        public SList<?> getList() {
             return _lb.getList();
         }
     }

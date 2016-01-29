@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.context;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 import java.util.Map;
@@ -15,6 +15,6 @@ public interface InternalSingularFormConfig<T  extends UIBuilder<K>, K extends U
 
     public ServiceRegistry getServiceRegistry();
 
-    public  Map<Class<? extends MTipo>, Class<K>> getCustomMappers();
+    public  Map<Class<? extends SType>, Class<K>> getCustomMappers();
 
 }

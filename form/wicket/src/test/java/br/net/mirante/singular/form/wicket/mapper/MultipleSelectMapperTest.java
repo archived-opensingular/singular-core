@@ -1,12 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
@@ -23,15 +23,15 @@ import static org.junit.Assert.*;
 public class MultipleSelectMapperTest extends MapperBaseTest {
 
     @Override
-    public void appendPackageFields(MTipoComposto<? extends MIComposto> form) {
-        MTipoString gadgets = form.addCampoString("gadget").withSelectionOf("iPod", "iPhone", "iMac");
-        MTipoLista<MTipoString, MIString> gadgetsChoices = form.addCampoListaOf("gadgets", gadgets);
+    public void appendPackageFields(STypeComposto<? extends SIComposite> form) {
+        STypeString gadgets = form.addCampoString("gadget").withSelectionOf("iPod", "iPhone", "iMac");
+        STypeLista<STypeString, SIString> gadgetsChoices = form.addCampoListaOf("gadgets", gadgets);
         gadgetsChoices.withView(MSelecaoMultiplaPorSelectView::new);
     }
 
     @Override
-    public void mockFormValues(MIComposto formInstance) {
-        MILista gadgets = (MILista) formInstance.getCampo("gadgets");
+    public void mockFormValues(SIComposite formInstance) {
+        SList gadgets = (SList) formInstance.getCampo("gadgets");
         gadgets.addNovo().setValor("iPod");
         gadgets.addNovo().setValor("iPhone");
     }

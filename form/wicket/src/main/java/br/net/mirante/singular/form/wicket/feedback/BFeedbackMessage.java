@@ -6,26 +6,26 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public class BFeedbackMessage extends FeedbackMessage {
 
-    private final IModel<? extends MInstancia> instanceModel;
+    private final IModel<? extends SInstance> instanceModel;
 
     public BFeedbackMessage(
         Component reporter,
         Serializable message,
         int level,
-        IModel<? extends MInstancia> instanceModel) {
+        IModel<? extends SInstance> instanceModel) {
         super(reporter, message, level);
         this.instanceModel = instanceModel;
     }
 
-    public IModel<? extends MInstancia> getInstanceModel() {
+    public IModel<? extends SInstance> getInstanceModel() {
         return instanceModel;
     }
-    public MInstancia getInstance() {
-        IModel<? extends MInstancia> model = getInstanceModel();
+    public SInstance getInstance() {
+        IModel<? extends SInstance> model = getInstanceModel();
         return (getInstanceModel() == null) ? null : model.getObject();
     }
 }

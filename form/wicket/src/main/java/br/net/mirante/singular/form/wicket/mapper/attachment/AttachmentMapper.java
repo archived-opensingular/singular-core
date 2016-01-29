@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -30,21 +30,21 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         AttachmentContainer container = new AttachmentContainer(
-                (IModel<? extends MIAttachment>) model);
+                (IModel<? extends SIAttachment>) model);
         formGroup.appendTypeahead(container);
         return container.field();
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         return StringUtils.EMPTY;
     }
 
     @Override
     public Component appendReadOnlyInput(MView view, BSContainer bodyContainer,
-                                         BSControls formGroup, IModel<? extends MInstancia> model,
+                                         BSControls formGroup, IModel<? extends SInstance> model,
                                          IModel<String> labelModel) {
 
         final TemplatePanel templatePanel = formGroup.newTemplateTag(tt -> {
@@ -56,7 +56,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
         });
 
         final BSWellBorder outputBorder = BSWellBorder.small("outputBorder");
-        final MIAttachment attachment = (MIAttachment) model.getObject();
+        final SIAttachment attachment = (SIAttachment) model.getObject();
         final String fileId = attachment.getFileId();
         final IAttachmentRef attachmentRef;
 

@@ -7,10 +7,10 @@ public class TestMInstances {
 
     @Test
     public void test() {
-        MDicionario dicionario = MDicionario.create();
-        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        SDictionary dicionario = SDictionary.create();
+        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
 
-        MIComposto contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.novaInstancia();
 
         MInstances.getDescendant(contato, pacote.nome).getValor();
         MInstances.listDescendants(contato, pacote.enderecoEstado).stream();

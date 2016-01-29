@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public enum MInstanceViewState {
     EDITABLE, READONLY, HIDDEN;
@@ -32,13 +32,13 @@ public enum MInstanceViewState {
     H = hidden
     
     */
-    public static MInstanceViewState get(MInstancia instance) {
+    public static MInstanceViewState get(SInstance instance) {
         if (instance == null)
             return MInstanceViewState.HIDDEN;
 
         final boolean exists = instance.exists();
-        final Boolean visible = MInstances.attributeValue(instance, MPacoteBasic.ATR_VISIVEL, null);
-        final Boolean enabled = MInstances.attributeValue(instance, MPacoteBasic.ATR_ENABLED, null);
+        final Boolean visible = MInstances.attributeValue(instance, SPackageBasic.ATR_VISIVEL, null);
+        final Boolean enabled = MInstances.attributeValue(instance, SPackageBasic.ATR_ENABLED, null);
 
         if (exists) {
             if (visible != null && !visible) {
@@ -57,9 +57,9 @@ public enum MInstanceViewState {
         }
     }
 
-    public static boolean isInstanceRequired(MInstancia instance) {
+    public static boolean isInstanceRequired(SInstance instance) {
         return (instance != null)
-            && MInstances.attributeValue(instance, MPacoteCore.ATR_OBRIGATORIO, false)
+            && MInstances.attributeValue(instance, SPackageCore.ATR_OBRIGATORIO, false)
             && get(instance).isEnabled();
     }
 

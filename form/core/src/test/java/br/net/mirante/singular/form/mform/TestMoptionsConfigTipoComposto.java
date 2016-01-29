@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.Val;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,26 +22,26 @@ public class TestMoptionsConfigTipoComposto {
     private static final Date DT_4 = new Date();
     private static final String label2 = DT_3 + " - " + DT_4;
 
-    private MDicionario _dicionario;
-    private MTipoComposto<? extends MIComposto> _raiz;
-    private MTipoComposto<MIComposto> _periodo;
-    private MTipoData _dataInicial;
-    private MTipoData _dataFinal;
-    private MIComposto evento;
-    private MIComposto periodo;
-    private MInstancia opcaoPeriodo;
+    private SDictionary _dicionario;
+    private STypeComposto<? extends SIComposite> _raiz;
+    private STypeComposto<SIComposite> _periodo;
+    private STypeData _dataInicial;
+    private STypeData _dataFinal;
+    private SIComposite evento;
+    private SIComposite periodo;
+    private SInstance opcaoPeriodo;
 
 
     @Before
     public void setup() {
-        _dicionario = MDicionario.create();
+        _dicionario = SDictionary.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         _periodo = _raiz.addCampoComposto("periodo");
-        MTipoString descricao  = _periodo.addCampoString("descricao");
-        _dataInicial = _periodo.addCampo("dataInicial", MTipoData.class);
-        _dataFinal = _periodo.addCampo("dataFinal", MTipoData.class);
+        STypeString descricao  = _periodo.addCampoString("descricao");
+        _dataInicial = _periodo.addCampo("dataInicial", STypeData.class);
+        _dataFinal = _periodo.addCampo("dataFinal", STypeData.class);
 
 
         _raiz.asAtrBasic().label("Evento");
@@ -66,9 +66,9 @@ public class TestMoptionsConfigTipoComposto {
         evento = _raiz.novaInstancia();
 
         // perido
-        periodo = (MIComposto) evento.getCampo(_periodo.getNomeSimples());
+        periodo = (SIComposite) evento.getCampo(_periodo.getNomeSimples());
         opcaoPeriodo = _periodo.getProviderOpcoes().listAvailableOptions(periodo).get(0);
-        Val.hydrate(periodo, Val.dehydrate(opcaoPeriodo));
+        Value.hydrate(periodo, Value.dehydrate(opcaoPeriodo));
     }
 
 
@@ -89,14 +89,14 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testMTipoOpcoes(){
-        for(MInstancia instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
             Assert.assertEquals(_periodo, instancia.getMTipo());
         }
     }
 
     @Test
     public void testKeyValueMapping(){
-        for(MInstancia instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
             String key = periodo.getOptionsConfig().getKeyFromOptions(instancia);
             Assert.assertEquals(instancia, periodo.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(periodo.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -105,10 +105,10 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testSelectLabel() {
-        MILista lista = _periodo.getProviderOpcoes().listAvailableOptions(periodo);
-        MInstancia instancia1 = lista.get(0);
+        SList lista = _periodo.getProviderOpcoes().listAvailableOptions(periodo);
+        SInstance instancia1 = lista.get(0);
         Assert.assertEquals(label1, instancia1.getSelectLabel());
-        MInstancia instancia2 = lista.get(0);
+        SInstance instancia2 = lista.get(0);
         Assert.assertEquals(label2, instancia2.getSelectLabel());
 
         Assert.assertNotNull(_periodo.getSelectLabel());

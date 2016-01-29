@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.attachment;
 
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -38,10 +38,10 @@ import static java.util.Collections.synchronizedList;
 class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private MIAttachment instance;
+    transient private SIAttachment instance;
     private List<String> temporaryIds = synchronizedList(new LinkedList<String>());
 
-    public UploadBehavior(MIAttachment instance) {
+    public UploadBehavior(SIAttachment instance) {
         this.instance = instance;
     }
 

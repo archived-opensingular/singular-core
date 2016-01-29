@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -11,7 +11,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.ajax.json.JSONArray;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.protocol.http.servlet.MultipartServletWebRequest;
-import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
@@ -30,10 +29,10 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class UploadBehaviourTest extends WebBehaviourBaseTest {
-    private static MDicionario dicionario;
+    private static SDictionary dicionario;
     private static TestPackage tpackage;
 
-    private MIAttachment instance;
+    private SIAttachment instance;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -44,7 +43,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
 
     @BeforeClass
     public static void createDicionario() {
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
         tpackage = dicionario.carregarPacote(TestPackage.class);
     }
 
@@ -53,14 +52,14 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
         setupDriver(setupInstance());
     }
 
-    private void setupDriver(MIAttachment instance) throws FileUploadException {
+    private void setupDriver(SIAttachment instance) throws FileUploadException {
         new WicketTester(new TestApp());
         b = new UploadBehavior(instance);
         b.setWebWrapper(createWebWrapper());
         b.bind(new TestPage());
     }
 
-    private MIAttachment setupInstance() {
+    private SIAttachment setupInstance() {
         return instance = tpackage.attachmentFileField.novaInstancia();
     }
 
@@ -130,7 +129,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     }
     
     @Test public void storesInTheTemporaryServiceHandler() throws Exception {
-        MIAttachment instance = (MIAttachment) setupInstance();
+        SIAttachment instance = (SIAttachment) setupInstance();
         setupDriver(instance);
         
         FileItem f1 = file("my.file.ext", new byte[] { 0 });
@@ -145,7 +144,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     }
     
     @Test public void removesOlderTemporaryFilesIfNewOneIsUploaded() throws Exception {
-        MIAttachment instance = (MIAttachment) setupInstance();
+        SIAttachment instance = (SIAttachment) setupInstance();
         setupDriver(instance);
         
         FileItem f1 = file("my.file.ext", new byte[] { 0 });

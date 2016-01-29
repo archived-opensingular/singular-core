@@ -1,17 +1,17 @@
 package br.net.mirante.singular.form.mform;
 
-public class MAtributo extends MTipo<MInstancia> {
+public class MAtributo extends SType<SInstance> {
 
     private final boolean selfReference;
 
-    private final MTipo<?> tipoDono;
+    private final SType<?> tipoDono;
 
-    MAtributo(String nome, MTipo<? extends MInstancia> tipo) {
+    MAtributo(String nome, SType<? extends SInstance> tipo) {
         this(nome, tipo, null, false);
     }
 
-    MAtributo(String nome, MTipo<? extends MInstancia> tipo, MTipo<?> tipoDono, boolean selfReference) {
-        super(nome, (MTipo<MInstancia>) tipo, null);
+    MAtributo(String nome, SType<? extends SInstance> tipo, SType<?> tipoDono, boolean selfReference) {
+        super(nome, (SType<SInstance>) tipo, null);
         this.tipoDono = tipoDono;
         this.selfReference = selfReference;
     }
@@ -21,8 +21,8 @@ public class MAtributo extends MTipo<MInstancia> {
         return selfReference;
     }
 
-    final MInstancia novaInstanciaPara(MTipo<?> dono) {
-        MInstancia instance;
+    final SInstance novaInstanciaPara(SType<?> dono) {
+        SInstance instance;
         if (selfReference) {
             instance = dono.newInstance(getDicionario().getInternalDicionaryDocument());
         } else {
@@ -32,7 +32,7 @@ public class MAtributo extends MTipo<MInstancia> {
         return instance;
     }
 
-    public MTipo<?> getTipoDono() {
+    public SType<?> getTipoDono() {
         return tipoDono;
     }
 }

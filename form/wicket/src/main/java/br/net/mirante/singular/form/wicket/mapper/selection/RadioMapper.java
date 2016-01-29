@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -17,7 +17,7 @@ public class RadioMapper extends SelectMapper {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected RadioChoice retrieveChoices(IModel<? extends MInstancia> model,
+    protected RadioChoice retrieveChoices(IModel<? extends SInstance> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         if (!(view instanceof MSelecaoPorRadioView)) {
             throw new SingularFormException("View não suportada");
@@ -59,7 +59,7 @@ public class RadioMapper extends SelectMapper {
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends MInstancia> model,
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         if (!(view instanceof MSelecaoPorRadioView)) {
             throw new SingularFormException("View não suportada");

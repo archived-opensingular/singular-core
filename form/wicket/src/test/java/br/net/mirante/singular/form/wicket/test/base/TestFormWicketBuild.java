@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
-import br.net.mirante.singular.form.curriculo.mform.MPacoteCurriculo;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -46,17 +46,17 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
+        IModel<STypeString> tCidade = new LoadableDetachableModel<STypeString>() {
             @Override
-            protected MTipoString load() {
-                MDicionario dicionario = MDicionario.create();
+            protected STypeString load() {
+                SDictionary dicionario = SDictionary.create();
                 PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-                MTipoString tipoCidade = pb.createTipo("cidade", MTipoString.class);
+                STypeString tipoCidade = pb.createTipo("cidade", STypeString.class);
                 tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
                 return tipoCidade;
             }
         };
-        IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
+        IModel<SIString> mCidade = new MInstanceRootModel<SIString>(tCidade.getObject().novaInstancia());
         mCidade.getObject().setValor("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
@@ -75,16 +75,16 @@ public class TestFormWicketBuild extends TestCase {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
+        IModel<STypeComposto<SIComposite>> tCurriculo = new LoadableDetachableModel<STypeComposto<SIComposite>>() {
             @Override
             @SuppressWarnings("unchecked")
-            protected MTipoComposto<MIComposto> load() {
-                MDicionario dicionario = MDicionario.create();
-                dicionario.carregarPacote(MPacoteCurriculo.class);
-                return (MTipoComposto<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
+            protected STypeComposto<SIComposite> load() {
+                SDictionary dicionario = SDictionary.create();
+                dicionario.carregarPacote(SPackageCurriculo.class);
+                return (STypeComposto<SIComposite>) dicionario.getTipo(SPackageCurriculo.TIPO_CURRICULO);
             }
         };
-        IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
+        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(tCurriculo.getObject().novaInstancia());
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
 //        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 

@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimples;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,16 +15,16 @@ public class MListMasterDetailView extends MView {
     private Map<String, String> columns = new LinkedHashMap<>();
 
     @Override
-    public boolean aplicavelEm(MTipo<?> tipo) {
-        return tipo instanceof MTipoLista;
+    public boolean aplicavelEm(SType<?> tipo) {
+        return tipo instanceof STypeLista;
     }
 
-    public MListMasterDetailView col(MTipoSimples tipo) {
+    public MListMasterDetailView col(STypeSimples tipo) {
         columns.put(tipo.getNome(), null);
         return this;
     }
 
-    public MListMasterDetailView col(MTipoSimples tipo, String customLabel) {
+    public MListMasterDetailView col(STypeSimples tipo, String customLabel) {
         columns.put(tipo.getNome(), customLabel);
         return this;
     }

@@ -37,6 +37,6 @@ public interface MAtributoEnabled {
         return getValorAtributo(nomeCompleto, null);
     }
 
-    public MDicionario getDicionario();
+    public SDictionary getDicionario();
 
 }

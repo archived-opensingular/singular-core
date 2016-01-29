@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeSimples;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class MSelecaoPorModalBuscaView extends MView {
     private List<String> searchFields = newArrayList();
 
     @Override
-    public boolean aplicavelEm(MTipo<?> tipo) {
+    public boolean aplicavelEm(SType<?> tipo) {
         return tipo instanceof MSelectionableType;
     }
 
@@ -32,8 +32,8 @@ public class MSelecaoPorModalBuscaView extends MView {
         }
     }
 
-    public void setAdditionalFields(MTipoSimples... tipos) {
-        for(MTipoSimples f : tipos){
+    public void setAdditionalFields(STypeSimples... tipos) {
+        for(STypeSimples f : tipos){
             searchFields.add(f.getNomeSimples());
         }
     }

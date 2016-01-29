@@ -2,8 +2,8 @@ package br.net.mirante.singular.form.wicket.mapper.annotation;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.MTipoAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import com.google.common.collect.Lists;
@@ -22,17 +22,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class AnnotationWicketTest {
-    protected static MDicionario dicionario;
+    protected static SDictionary dicionario;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
-    private MTipoComposto<? extends MIComposto> baseCompositeField, annotated1, annotated2,
+    private STypeComposto<? extends SIComposite> baseCompositeField, annotated1, annotated2,
                                                 notAnnotated, annotated4;
 
     @Before
     public void createDicionario() {
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
     }
 
     protected void setupPage() {
@@ -161,8 +161,8 @@ public class AnnotationWicketTest {
 
         form.submit("save-btn");
 
-        MIComposto current = page.getCurrentInstance();
-        List<MIAnnotation> all = current.as(AtrAnnotation::new).allAnnotations();
+        SIComposite current = page.getCurrentInstance();
+        List<SIAnnotation> all = current.as(AtrAnnotation::new).allAnnotations();
 
         assertThat(all).hasSize(3);
 
@@ -170,7 +170,7 @@ public class AnnotationWicketTest {
                 .containsOnly( "Something to comment or not. Who knows.",
                         "Something very very very important, but I forgot what.",
                         "I'm tired, just go on your way.");
-        MIComposto iNotAnnotated = (MIComposto) current.getCampo(notAnnotated.getNomeSimples());
+        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getNomeSimples());
         assertThat(extractProperty("targetId").from(all)).containsOnly(
                 current.getCampo(annotated1.getNomeSimples()).getId(),
                 current.getCampo(annotated2.getNomeSimples()).getId(),
@@ -181,11 +181,11 @@ public class AnnotationWicketTest {
     @Test public void itLoadsDataFromPersistedAnnotationsOntoScreen(){
         setupPage();
 
-        MIComposto current = page.getCurrentInstance();
-        MIComposto iNotAnnotated = (MIComposto) current.getCampo(notAnnotated.getNomeSimples());
+        SIComposite current = page.getCurrentInstance();
+        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getNomeSimples());
 
         System.out.println(iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId());
-        MIAnnotation annotation2 = newAnnotation(
+        SIAnnotation annotation2 = newAnnotation(
                             current.getCampo(annotated1.getNomeSimples()).getId(),
                             "It is funny how hard it is to come up with these texts",
                             false),
@@ -213,16 +213,16 @@ public class AnnotationWicketTest {
 
     }
 
-    private MIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
-        MTipoAnnotation type = dicionario.getTipo(MTipoAnnotation.class);
-        MIAnnotation annotation = type.novaInstancia();
+    private SIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
+        STypeAnnotation type = dicionario.getTipo(STypeAnnotation.class);
+        SIAnnotation annotation = type.novaInstancia();
         annotation.setTargetId(targetId);
         annotation.setText(text);
         annotation.setApproved(isApproved);
         return annotation;
     }
 
-    private AtrAnnotation currentAnnotation(MTipo field) {
+    private AtrAnnotation currentAnnotation(SType field) {
         return page.getCurrentInstance().getCampo(field.getNomeSimples()).as(AtrAnnotation::new);
     }
 

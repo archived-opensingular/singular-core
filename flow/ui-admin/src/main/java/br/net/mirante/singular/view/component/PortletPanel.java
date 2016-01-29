@@ -33,12 +33,12 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
@@ -129,9 +129,9 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private void buildFilters() {
         final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
-            protected MTipo<?> getTipo() {
-                final PacoteBuilder builder = MDicionario.create().criarNovoPacote("pacote");
-                final MTipoComposto<? extends MIComposto> filtro = builder.createTipoComposto("filtro");
+            protected SType<?> getTipo() {
+                final PacoteBuilder builder = SDictionary.create().criarNovoPacote("pacote");
+                final STypeComposto<? extends SIComposite> filtro = builder.createTipoComposto("filtro");
                 appendFilters(filtro, config.getObject().getFilterConfigs());
                 return filtro;
             }
@@ -163,7 +163,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
 
             @Override
-            public IModel<? extends MInstancia> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return panel.getRootInstance();
             }
         };
@@ -218,9 +218,9 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         };
     }
 
-    private void appendFilters(MTipoComposto root, List<FilterConfig> filterConfigs) {
+    private void appendFilters(STypeComposto root, List<FilterConfig> filterConfigs) {
         filterConfigs.forEach(fc -> {
-            MTipoSimples field = null;
+            STypeSimples field = null;
             switch (fc.getFieldType()) {
                 case BOOLEAN:
                     field = root.addCampoBoolean(fc.getIdentifier());

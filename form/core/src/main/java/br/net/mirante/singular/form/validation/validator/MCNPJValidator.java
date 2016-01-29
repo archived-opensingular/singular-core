@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.validation.validator;
 
-import br.net.mirante.singular.form.mform.core.MIString;
+import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 
 import java.util.Arrays;
@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public enum MCNPJValidator implements IInstanceValueValidator<MIString, String> {
+public enum MCNPJValidator implements IInstanceValueValidator<SIString, String> {
     INSTANCE;
     
     private static final Logger LOGGER = Logger.getLogger("MCNPJValidator");
@@ -19,7 +19,7 @@ public enum MCNPJValidator implements IInstanceValueValidator<MIString, String> 
             "55555555555555", "66666666666666", "77777777777777", "88888888888888", "99999999999999");
 
     @Override
-    public void validate(IInstanceValidatable<MIString> validatable, String value) {
+    public void validate(IInstanceValidatable<SIString> validatable, String value) {
         if (!isValid(value)) {
             validatable.error("CNPJ inválido");
         }

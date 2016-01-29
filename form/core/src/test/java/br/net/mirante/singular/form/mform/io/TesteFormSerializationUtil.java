@@ -19,9 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 
@@ -37,9 +37,9 @@ public class TesteFormSerializationUtil {
     @Test
     public void testVerySimplesCase() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            pacote.createTipo("endereco", MTipoString.class);
+            pacote.createTipo("endereco", STypeString.class);
         });
-        MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
+        SInstance instancia = loader.loadType("teste.endereco").novaInstancia();
         testSerializacao(instancia, loader);
 
     }
@@ -47,12 +47,12 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            MTipoComposto<? extends MIComposto> endereco = pacote.createTipoComposto("endereco");
+            STypeComposto<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
         });
-        MIComposto instancia = (MIComposto) loader.loadType("teste.endereco").novaInstancia();
+        SIComposite instancia = (SIComposite) loader.loadType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "A1");
         instancia.setValor("bairro", "A2");
         testSerializacao(instancia, loader);
@@ -64,16 +64,16 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoCompostoComAnotacoes() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            MTipoComposto<? extends MIComposto> endereco = pacote.createTipoComposto("endereco");
+            STypeComposto<? extends SIComposite> endereco = pacote.createTipoComposto("endereco");
             endereco.addCampoString("rua");
             endereco.as(AtrAnnotation::new).setAnnotated();
         });
-        MIComposto instancia = (MIComposto) loader.loadType("teste.endereco").novaInstancia();
+        SIComposite instancia = (SIComposite) loader.loadType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "rua dos bobos");
         instancia.as(AtrAnnotation::new).text("numero zero ?");
 
         assertThat(instancia.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
-        MIComposto r = (MIComposto) testSerializacao(instancia, loader);
+        SIComposite r = (SIComposite) testSerializacao(instancia, loader);
         assertThat(r.getCampo("rua").getValor()).isEqualTo("rua dos bobos");
         assertThat(r.as(AtrAnnotation::new).text()).isEqualTo("numero zero ?");
     }
@@ -82,9 +82,9 @@ public class TesteFormSerializationUtil {
     @Test @SuppressWarnings("unchecked")
     public void testTipoListSimples() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            pacote.createTipoListaOf("enderecos", MTipoString.class);
+            pacote.createTipoListaOf("enderecos", STypeString.class);
         });
-        MILista<MIString> instancia = (MILista<MIString>) loader.loadType("teste.enderecos").novaInstancia();
+        SList<SIString> instancia = (SList<SIString>) loader.loadType("teste.enderecos").novaInstancia();
         instancia.addValor("A1");
         instancia.addValor("A2");
         instancia.addValor("A3");
@@ -99,12 +99,12 @@ public class TesteFormSerializationUtil {
     @Test @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            MTipoComposto<MIComposto> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
+            STypeComposto<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");
             endereco.addCampoString("cidade");
         });
-        MILista<MIComposto> instancia = (MILista<MIComposto>) loader.loadType("teste.enderecos").novaInstancia();
+        SList<SIComposite> instancia = (SList<SIComposite>) loader.loadType("teste.enderecos").novaInstancia();
         instancia.addNovo(e -> e.setValor("rua", "A1"));
         instancia.addNovo(e -> e.setValor("bairro", "A2"));
         instancia.addNovo(e -> {
@@ -121,18 +121,18 @@ public class TesteFormSerializationUtil {
     @Test
     public void testTipoCompostoListCompostoList() {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            MTipoComposto<? extends MIComposto> tipoCurriculo = pacote.createTipoComposto("curriculo");
+            STypeComposto<? extends SIComposite> tipoCurriculo = pacote.createTipoComposto("curriculo");
             tipoCurriculo.addCampoString("nome");
-            MTipoComposto<MIComposto> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
+            STypeComposto<SIComposite> tipoContato = tipoCurriculo.addCampoListaOfComposto("contatos", "contato").getTipoElementos();
             tipoContato.addCampoInteger("prioridade");
-            MTipoComposto<MIComposto> endereco = tipoContato.addCampoListaOfComposto("enderecos", "endereco").getTipoElementos();
+            STypeComposto<SIComposite> endereco = tipoContato.addCampoListaOfComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("cidade");
         });
 
-        MIComposto instancia = (MIComposto) loader.loadType("teste.curriculo").novaInstancia();
+        SIComposite instancia = (SIComposite) loader.loadType("teste.curriculo").novaInstancia();
         instancia.setValor("nome", "Joao");
-        MIComposto contato = (MIComposto) instancia.getFieldList("contatos").addNovo();
+        SIComposite contato = (SIComposite) instancia.getFieldList("contatos").addNovo();
         contato.setValor("prioridade", -1);
         contato.getFieldList("enderecos").addNovo();
         contato.setValor("enderecos[0].rua", "A31");
@@ -149,9 +149,9 @@ public class TesteFormSerializationUtil {
         TestCaseForm.assertException(() -> MDicionarioResolver.getDefault(), "resolver default não está configurado");
 
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
-            pacote.createTipo("endereco", MTipoString.class);
+            pacote.createTipo("endereco", STypeString.class);
         });
-        MInstancia instancia = loader.loadType("teste.endereco").novaInstancia();
+        SInstance instancia = loader.loadType("teste.endereco").novaInstancia();
 //        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
 
         MDicionarioResolver.setDefault(loader);
@@ -162,7 +162,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testUsoDicionarResolverSerializado() {
         DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(null);
-        MInstancia instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        SInstance instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
 //        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
@@ -173,7 +173,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testUsoDicionarResolverSerializadoMasComReferenciaInternaNaoSerializavel() {
         DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(this);
-        MInstancia instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        SInstance instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
         TestCaseForm.assertException(() -> testSerializacaoComResolverSerializado(instancia, resolver), "NotSerializableException");
@@ -182,13 +182,13 @@ public class TesteFormSerializationUtil {
     @Test
     public void testSerializacaoReferenciaServico() {
         MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
-            pacote.createTipo("endereco", MTipoString.class);
+            pacote.createTipo("endereco", STypeString.class);
         });
-        MInstancia instancia = resolver.loadType("teste.endereco").novaInstancia();
+        SInstance instancia = resolver.loadType("teste.endereco").novaInstancia();
 
         instancia.getDocument().bindLocalService("A", String.class,
             ServiceRef.of("AA"));
-        MInstancia instancia2 = testSerializacao(instancia, resolver);
+        SInstance instancia2 = testSerializacao(instancia, resolver);
         assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
 
         // Testa itens não mantido entre serializações
@@ -202,19 +202,19 @@ public class TesteFormSerializationUtil {
     @Test
     public void testSerializacaoAtributos() {
         MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
-            pacote.getDicionario().carregarPacote(MPacoteBasic.class);
-            MTipoComposto<?> tipoEndereco = pacote.createTipoComposto("endereco");
+            pacote.getDicionario().carregarPacote(SPackageBasic.class);
+            STypeComposto<?> tipoEndereco = pacote.createTipoComposto("endereco");
             tipoEndereco.addCampoString("rua");
             tipoEndereco.addCampoString("cidade");
         });
-        MIComposto instancia = (MIComposto) resolver.loadType("teste.endereco").novaInstancia();
+        SIComposite instancia = (SIComposite) resolver.loadType("teste.endereco").novaInstancia();
         instancia.setValor("rua", "A");
         instancia.as(AtrBasic.class).label("Address");
         instancia.getCampo("rua").as(AtrBasic.class).label("Street");
         instancia.getCampo("cidade").as(AtrBasic.class).label("City");
 
 
-        MIComposto instancia2 = (MIComposto) testSerializacao(instancia, resolver);
+        SIComposite instancia2 = (SIComposite) testSerializacao(instancia, resolver);
 
         assertEquals("Address", instancia2.as(AtrBasic.class).getLabel());
         assertEquals("Street", instancia2.getCampo("rua").as(AtrBasic.class).getLabel());
@@ -223,9 +223,9 @@ public class TesteFormSerializationUtil {
     }
 
     @Test public void serializationAndDeserializationAreIndempontent(){
-        MDicionario dict = MDicionario.create();
-        MPacoteTesteContatos pkt = dict.carregarPacote(MPacoteTesteContatos.class);
-        MIComposto bruce = pkt.contato.novaInstancia();
+        SDictionary dict = SDictionary.create();
+        SPackageTesteContatos pkt = dict.carregarPacote(SPackageTesteContatos.class);
+        SIComposite bruce = pkt.contato.novaInstancia();
         bruce.setValor("identificacao.nome","Bruce");
         bruce.setValor("identificacao.sobrenome","Wayne");
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
@@ -234,19 +234,19 @@ public class TesteFormSerializationUtil {
     }
 
     @Test public void cachesDictionaryForDeserialization(){
-        MDicionario dict1 = MDicionario.create();
-        MPacoteTesteContatos pkt = dict1.carregarPacote(MPacoteTesteContatos.class);
-        MIComposto bruce = pkt.contato.novaInstancia();
+        SDictionary dict1 = SDictionary.create();
+        SPackageTesteContatos pkt = dict1.carregarPacote(SPackageTesteContatos.class);
+        SIComposite bruce = pkt.contato.novaInstancia();
         bruce.setValor("identificacao.nome","Bruce");
 
-        MDicionario dict2 = MDicionario.create();
-        MPacoteTesteContatos pkt2 = dict2.carregarPacote(MPacoteTesteContatos.class);
-        MIComposto clark = pkt2.contato.novaInstancia();
+        SDictionary dict2 = SDictionary.create();
+        SPackageTesteContatos pkt2 = dict2.carregarPacote(SPackageTesteContatos.class);
+        SIComposite clark = pkt2.contato.novaInstancia();
         clark.setValor("identificacao.nome","Clark");
 
         FormSerialized fsBruce = FormSerializationUtil.toSerializedObject(bruce);
         FormSerialized fsClark = FormSerializationUtil.toSerializedObject(clark);
-        MInstancia deBruce = FormSerializationUtil.toInstance(fsBruce);
+        SInstance deBruce = FormSerializationUtil.toInstance(fsBruce);
         assertThat(deBruce.getDicionario()).isSameAs(dict1);
     }
 
@@ -261,28 +261,28 @@ public class TesteFormSerializationUtil {
 
         }
         @Override
-        public Optional<MDicionario> loadDicionaryForType(String typeName) {
-            MDicionario novo = MDicionario.create();
-            novo.criarNovoPacote("teste").createTipo("cadastro", MTipoString.class);
+        public Optional<SDictionary> loadDicionaryForType(String typeName) {
+            SDictionary novo = SDictionary.create();
+            novo.criarNovoPacote("teste").createTipo("cadastro", STypeString.class);
             return Optional.of(novo);
         }
 
     }
 
-    private static void testSerializacaoComResolverSerializado(MInstancia original, MDicionarioResolverSerializable resolver) {
+    private static void testSerializacaoComResolverSerializado(SInstance original, MDicionarioResolverSerializable resolver) {
         testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
     }
 
-    public static MInstancia testSerializacao(MInstancia original, MDicionarioResolver loader) {
+    public static SInstance testSerializacao(SInstance original, MDicionarioResolver loader) {
         return testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i),
                 fs -> FormSerializationUtil.toInstance(fs, loader));
     }
 
-    private static MInstancia testSerializacao(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
-            Function<FormSerialized, MInstancia> fromSerial) {
+    private static SInstance testSerializacao(SInstance original, Function<SInstance, FormSerialized> toSerial,
+                                              Function<FormSerialized, SInstance> fromSerial) {
         // Testa sem transformar em array de bytes
         FormSerialized fs = toSerial.apply(original);
-        MInstancia instancia2 = fromSerial.apply(fs);
+        SInstance instancia2 = fromSerial.apply(fs);
         assertEquivalent(original.getDocument(), instancia2.getDocument());
         assertEquivalent(original, instancia2);
 
@@ -304,13 +304,13 @@ public class TesteFormSerializationUtil {
         return instancia2;
     }
 
-    public static MInstancia serializarEDeserializar(MInstancia original, MDicionarioResolver loader) {
+    public static SInstance serializarEDeserializar(SInstance original, MDicionarioResolver loader) {
         return serializarEDeserializar(original, i -> FormSerializationUtil.toSerializedObject(i),
                 fs -> FormSerializationUtil.toInstance(fs, loader));
     }
 
-    private static MInstancia serializarEDeserializar(MInstancia original, Function<MInstancia, FormSerialized> toSerial,
-            Function<FormSerialized, MInstancia> fromSerial) {
+    private static SInstance serializarEDeserializar(SInstance original, Function<SInstance, FormSerialized> toSerial,
+                                                     Function<FormSerialized, SInstance> fromSerial) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
             ObjectOutputStream out2 = new ObjectOutputStream(out1);
@@ -327,7 +327,7 @@ public class TesteFormSerializationUtil {
     public static MDicionarioResolver createLoaderPacoteTeste(Consumer<PacoteBuilder> setupCode) {
         return new MDicionarioLoader() {
             @Override
-            protected void configDicionary(MDicionario newDicionary, String taregetTypeName) {
+            protected void configDicionary(SDictionary newDicionary, String taregetTypeName) {
                 setupCode.accept(newDicionary.criarNovoPacote("teste"));
             }
         };
@@ -352,7 +352,7 @@ public class TesteFormSerializationUtil {
         assertEquivalent(original.getRoot(), novo.getRoot());
     }
 
-    private static void assertEquivalent(MInstancia original, MInstancia novo) {
+    private static void assertEquivalent(SInstance original, SInstance novo) {
         assertNotSame(original, novo);
         assertEquals(original.getClass(), novo.getClass());
         assertEquals(original.getMTipo().getNome(), novo.getMTipo().getNome());
@@ -360,15 +360,15 @@ public class TesteFormSerializationUtil {
         assertEquals(original.getNome(), novo.getNome());
         assertEquals(original.getId(), novo.getId());
         assertEquals(original.getPathFull(), novo.getPathFull());
-        if (original.getPai() != null) {
-            assertNotNull(novo.getPai());
-            assertEquals(original.getPai().getPathFull(), novo.getPai().getPathFull());
+        if (original.getParent() != null) {
+            assertNotNull(novo.getParent());
+            assertEquals(original.getParent().getPathFull(), novo.getParent().getPathFull());
         } else {
-            assertNull(novo.getPai());
+            assertNull(novo.getParent());
         }
         if (original instanceof ICompositeInstance) {
-            List<MInstancia> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
-            List<MInstancia> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
+            List<SInstance> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
+            List<SInstance> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
             assertEquals(filhosOriginal.size(), filhosNovo.size());
             for (int i = 0; i < filhosOriginal.size(); i++) {
                 assertEquivalent(filhosOriginal.get(0), filhosNovo.get(0));
@@ -378,8 +378,8 @@ public class TesteFormSerializationUtil {
         }
 
         assertEquals(original.getAtributos().size(), novo.getAtributos().size());
-        for (Entry<String, MInstancia> atrOriginal : original.getAtributos().entrySet()) {
-            MInstancia atrNovo = novo.getAtributos().get(atrOriginal.getKey());
+        for (Entry<String, SInstance> atrOriginal : original.getAtributos().entrySet()) {
+            SInstance atrNovo = novo.getAtributos().get(atrOriginal.getKey());
             assertNotNull(atrNovo);
             assertEquals(atrOriginal.getValue(), atrNovo);
         }

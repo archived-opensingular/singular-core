@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.util.transformer.Val;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SISimple;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.STypeSimples;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -14,7 +14,7 @@ import java.util.Collection;
  * This interface represents the providers which will load options that
  * populate the choices for a specific field. The provider is specified
  * during the declaration of a Type or Field by using the
- * {@link MTipoSimples#withSelectionFromProvider(String)} method.
+ * {@link STypeSimples#withSelectionFromProvider(String)} method.
  */
 public interface MOptionsProvider extends Serializable {
 
@@ -27,47 +27,47 @@ public interface MOptionsProvider extends Serializable {
      * also the old state of it.
      *
      * @param selectedValueInstance : Current isntance used to select the options.
-     * @return list of options from the expected {@link MInstancia} type.
+     * @return list of options from the expected {@link SInstance} type.
      */
-    default public MILista<? extends MInstancia> listAvailableOptions(MSelectionableInstance selectedValueInstance) {
-        MILista<? extends MInstancia> defaultOptions = listOptions((MInstancia) selectedValueInstance);
-        checkForDanglingValues((MInstancia) selectedValueInstance, defaultOptions);
+    default public SList<? extends SInstance> listAvailableOptions(MSelectionableInstance selectedValueInstance) {
+        SList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance);
+        checkForDanglingValues((SInstance) selectedValueInstance, defaultOptions);
         return defaultOptions;
     }
 
-    public default void checkForDanglingValues(MInstancia selectedValueInstance, MILista<? extends MInstancia> defaultOptions) {
+    public default void checkForDanglingValues(SInstance selectedValueInstance, SList<? extends SInstance> defaultOptions) {
         Object value = selectedValueInstance.getValor();
         if (value == null) return;
         if (value instanceof Collection && ((Collection<?>) value).isEmpty()) return;
         addNotPresentElement(selectedValueInstance, defaultOptions);
     }
 
-    public default void addNotPresentElement(MInstancia selectedValueInstance, MILista<? extends MInstancia> defaultOptions) {
-        if (selectedValueInstance instanceof MILista) {
-            addNotPresentElementsOfList((MILista) selectedValueInstance, defaultOptions);
+    public default void addNotPresentElement(SInstance selectedValueInstance, SList<? extends SInstance> defaultOptions) {
+        if (selectedValueInstance instanceof SList) {
+            addNotPresentElementsOfList((SList) selectedValueInstance, defaultOptions);
         } else {
             addNotPresentElement(defaultOptions, selectedValueInstance);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    public default void addNotPresentElementsOfList(MILista listValue, MILista<? extends MInstancia> defaultOptions) {
-        for (MInstancia selectedValueInstance : listValue.getAllChildren()) {
+    public default void addNotPresentElementsOfList(SList listValue, SList<? extends SInstance> defaultOptions) {
+        for (SInstance selectedValueInstance : listValue.getAllChildren()) {
             addNotPresentElement(defaultOptions, selectedValueInstance);
         }
     }
 
-    public default void addNotPresentElement(MILista<? extends MInstancia> defaultOptions, MInstancia selectedValueInstance) {
+    public default void addNotPresentElement(SList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
         if (!containsValue(defaultOptions, selectedValueInstance)) {
             addNewValueUpfront(defaultOptions, selectedValueInstance);
         }
     }
 
-    public default boolean containsValue(MILista<? extends MInstancia> defaultOptions, MInstancia selectedValueInstance) {
-        if (!Val.notNull(selectedValueInstance)) {
+    public default boolean containsValue(SList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
+        if (!Value.notNull(selectedValueInstance)) {
             return true;
         }
-        for (MInstancia c : defaultOptions.getAllChildren()) {
+        for (SInstance c : defaultOptions.getAllChildren()) {
             if (selectedValueInstance.equals(c)) {
                 return true;
             }
@@ -75,18 +75,18 @@ public interface MOptionsProvider extends Serializable {
         return false;
     }
 
-    public default void addNewValueUpfront(MILista<? extends MInstancia> defaultOptions, MInstancia value) {
+    public default void addNewValueUpfront(SList<? extends SInstance> defaultOptions, SInstance value) {
         MSelectionableInstance newValue = (MSelectionableInstance) defaultOptions.addNovoAt(0);
         MSelectionableInstance currentValue = (MSelectionableInstance) value;
-        if (currentValue instanceof MIComposto) {
-            MIComposto newComposto = (MIComposto) newValue;
-            MIComposto currentComposto = (MIComposto) currentValue;
+        if (currentValue instanceof SIComposite) {
+            SIComposite newComposto = (SIComposite) newValue;
+            SIComposite currentComposto = (SIComposite) currentValue;
             currentComposto.getCampos().forEach(c ->
                             newComposto.getCampo(c.getNome()).setValor(c.getValor())
             );
-        } else if (currentValue instanceof MISimples) {
-            MISimples newComposto = (MISimples) newValue;
-            MISimples currentComposto = (MISimples) currentValue;
+        } else if (currentValue instanceof SISimple) {
+            SISimple newComposto = (SISimple) newValue;
+            SISimple currentComposto = (SISimple) currentValue;
             newComposto.setValor(currentComposto.getValor());
         }
     }
@@ -95,7 +95,7 @@ public interface MOptionsProvider extends Serializable {
      * Returns the list of options for this selection.
      *
      * @param optionsInstance : Current isntance used to select the options.
-     * @return list of options from the expected {@link MInstancia} type.
+     * @return list of options from the expected {@link SInstance} type.
      */
-    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance);
+    public SList<? extends SInstance> listOptions(SInstance optionsInstance);
 }

@@ -7,10 +7,10 @@ import java.util.Optional;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -18,8 +18,8 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -42,15 +42,15 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
     public static class CompostoViewBuilder {
 
         protected WicketBuildContext ctx;
-        protected AbstractMInstanciaModel<? extends MInstancia> model;
-        protected MIComposto instance;
-        protected MTipoComposto<MIComposto> type;
+        protected AbstractSInstanceModel<? extends SInstance> model;
+        protected SIComposite instance;
+        protected STypeComposto<SIComposite> type;
 
         public CompostoViewBuilder(WicketBuildContext ctx){
             this.ctx = ctx;
-            model = (AbstractMInstanciaModel<? extends MInstancia>) this.ctx.getModel();
+            model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
             instance = ctx.getCurrenttInstance();
-            type = (MTipoComposto<MIComposto>) instance.getMTipo();
+            type = (STypeComposto<SIComposite>) instance.getMTipo();
         }
 
         @SuppressWarnings("unchecked")
@@ -71,13 +71,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected void buildFields(WicketBuildContext ctx, BSRow row) {
-            for (MTipo<?> tCampo : type.getFields()) {
+            for (SType<?> tCampo : type.getFields()) {
                 buildField(ctx.getUiBuilderWicket(), row, fieldModel(tCampo));
             }
         }
 
-        protected MInstanciaCampoModel<MInstancia> fieldModel(MTipo<?> tCampo) {
-            return new MInstanciaCampoModel<>(model, tCampo.getNomeSimples());
+        protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
+            return new SInstanceCampoModel<>(model, tCampo.getNomeSimples());
         }
 
 
@@ -92,13 +92,13 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,
-                                final MInstanciaCampoModel<MInstancia> mCampo) {
+                                final SInstanceCampoModel<SInstance> mCampo) {
 
-            final MTipo<?> type = mCampo.getMInstancia().getMTipo();
-            final MInstancia iCampo = mCampo.getObject();
+            final SType<?> type = mCampo.getMInstancia().getMTipo();
+            final SInstance iCampo = mCampo.getObject();
             final ViewMode viewMode = ctx.getViewMode();
 
-            if (iCampo instanceof MIComposto) {
+            if (iCampo instanceof SIComposite) {
                 final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
                 wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
             } else {
@@ -106,7 +106,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             }
         }
 
-        protected BSCol configureColspan(WicketBuildContext ctx, MTipo<?> tCampo, final MInstancia iCampo, BSCol col) {
+        protected BSCol configureColspan(WicketBuildContext ctx, SType<?> tCampo, final SInstance iCampo, BSCol col) {
             final Map<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
         /*
         * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser

@@ -27,21 +27,21 @@ public class ViewResolver {
 
     private int nextId = 1;
 
-    private final HashMap<Class<? extends MTipo>, TreeSet<ViewRuleRef>> rules = new HashMap<>();
+    private final HashMap<Class<? extends SType>, TreeSet<ViewRuleRef>> rules = new HashMap<>();
 
     public ViewResolver() {
         // Registro das regas de escolha de view.
-        addRule(MTipoLista.class, MPanelListaView.class);
-        addRule(MTipoLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
-        addRule(MTipoSimples.class, new ViewRuleTypeSimpleSelectionOf());
-        addRule(MTipoComposto.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeLista.class, MPanelListaView.class);
+        addRule(STypeLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
+        addRule(STypeSimples.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeComposto.class, new ViewRuleTypeSimpleSelectionOf());
     }
 
     /**
      * Definie a view default para um dado componente. Essa regra tem menor
      * prioridade em relação com lógica explicitas.
      */
-    public void addRule(Class<? extends MTipo> type, Class<? extends MView> view) {
+    public void addRule(Class<? extends SType> type, Class<? extends MView> view) {
         addRule(type, 100, new ViewRuleSimple(view));
     }
 
@@ -51,11 +51,11 @@ public class ViewResolver {
      * da instância antes de decidir a melhor view. Essa regra tem maior
      * prioriade em relação as regras de componentes default.
      */
-    public void addRule(Class<? extends MTipo> type, ViewRule viewRule) {
+    public void addRule(Class<? extends SType> type, ViewRule viewRule) {
         addRule(type, 1000, viewRule);
     }
 
-    private void addRule(Class<? extends MTipo> type, int priority, ViewRule viewRule) {
+    private void addRule(Class<? extends SType> type, int priority, ViewRule viewRule) {
         ViewRuleRef rule = new ViewRuleRef(nextId++, priority, Objects.requireNonNull(viewRule));
 
         TreeSet<ViewRuleRef> list = rules.get(Objects.requireNonNull(type));
@@ -71,18 +71,18 @@ public class ViewResolver {
      * MView.DEFAULT, se não houver nenhum direcionamento específico e nesse
      * caso então cabe a cada gerador decidir como criar o componente na tela.
      */
-    public static MView resolve(MInstancia instance) {
+    public static MView resolve(SInstance instance) {
         return instance.getDicionario().getViewResolver().resolveInternal(instance);
     }
 
-    private MView resolveInternal(MInstancia instance) {
+    private MView resolveInternal(SInstance instance) {
         MView view = instance.getMTipo().getView();
         if (view != null) {
             return view;
         }
         Class<?> classType = instance.getMTipo().getClass();
         int priority = -1;
-        while (classType != MTipo.class) {
+        while (classType != SType.class) {
             TreeSet<ViewRuleRef> list = rules.get(classType);
             if (list != null) {
                 for (ViewRuleRef rule : list) {
@@ -109,7 +109,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(MInstancia instance) {
+        public MView apply(SInstance instance) {
             return newInstance(view);
         }
     }
@@ -134,7 +134,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(MInstancia instance) {
+        public MView apply(SInstance instance) {
             return viewRule.apply(instance);
         }
 

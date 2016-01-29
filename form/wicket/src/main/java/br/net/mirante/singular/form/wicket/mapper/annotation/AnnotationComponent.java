@@ -4,12 +4,12 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-        import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+        import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractMInstanciaModel;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -20,7 +20,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
@@ -40,7 +39,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
  * @author Fabricio Buzeto
  */
 public class AnnotationComponent extends Panel {
-    private final AbstractMInstanciaModel referenced;
+    private final AbstractSInstanceModel referenced;
     private final Component referencedComponent;
     private final WicketBuildContext context;
     private MInstanciaValorModel textModel, approvedModel;
@@ -48,7 +47,7 @@ public class AnnotationComponent extends Panel {
     private FormComponent comment_field, approval_field;
     private boolean keepOpened = false;
 
-    public AnnotationComponent(String id, AbstractMInstanciaModel referenced,
+    public AnnotationComponent(String id, AbstractSInstanceModel referenced,
                                Component referencedComponent, WicketBuildContext context) {
         super(id);
         this.referenced = referenced;
@@ -57,8 +56,8 @@ public class AnnotationComponent extends Panel {
         createModels(referenced);
     }
 
-    private void createModels(AbstractMInstanciaModel referenced) {
-        final MIAnnotation target = annotated(referenced).annotation();
+    private void createModels(AbstractSInstanceModel referenced) {
+        final SIAnnotation target = annotated(referenced).annotation();
         target.setTargetId(referenced.getMInstancia().getId());
         model = new MInstanceRootModel(target);
         setDefaultModel(model);
@@ -66,8 +65,8 @@ public class AnnotationComponent extends Panel {
     }
 
     private void createSubModels() {
-        textModel = new MInstanciaValorModel(new MInstanciaCampoModel<>(model,"text"));
-        approvedModel = new MInstanciaValorModel(new MInstanciaCampoModel<>(model,"isApproved"));
+        textModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"text"));
+        approvedModel = new MInstanciaValorModel(new SInstanceCampoModel<>(model,"isApproved"));
     }
 
     @Override
@@ -100,18 +99,18 @@ public class AnnotationComponent extends Panel {
         approval_field.setDefaultModel(approvedModel);
     }
 
-    private static String title(AbstractMInstanciaModel referenced) {
+    private static String title(AbstractSInstanceModel referenced) {
         if(StringUtils.isNoneBlank(annotated(referenced).label())) return annotated(referenced).label();
         String label = labelOf(referenced);
         if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
         return "Comentários";
     }
 
-    private static AtrAnnotation annotated(AbstractMInstanciaModel referenced) {
+    private static AtrAnnotation annotated(AbstractSInstanceModel referenced) {
         return referenced.getMInstancia().as(AtrAnnotation::new);
     }
 
-    private static String labelOf(AbstractMInstanciaModel target) {
+    private static String labelOf(AbstractSInstanceModel target) {
         return target.getMInstancia().as(AtrBasic::new).getLabel();
     }
 
@@ -151,19 +150,19 @@ public class AnnotationComponent extends Panel {
         private MInstanciaValorModel textModel, approvedModel ;
         private WicketBuildContext context;
         private AnnotationComponent parentComponent;
-        private AbstractMInstanciaModel referenced;
+        private AbstractSInstanceModel referenced;
 
         public AnnotationModalWindow(String id,
                                      MInstanceRootModel model,
-                                     AbstractMInstanciaModel referenced,
+                                     AbstractSInstanceModel referenced,
                                      WicketBuildContext context,
                                      AnnotationComponent parentComponent
         ) {
             super(id);
             this.referenced = referenced;
             setDefaultModel(model);
-            textModel = new MInstanciaValorModel<>(new MInstanciaCampoModel<>(model,"text"));
-            approvedModel = new MInstanciaValorModel<>(new MInstanciaCampoModel<>(model,"isApproved"));
+            textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"text"));
+            approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"isApproved"));
             this.context = context;
             this.parentComponent = parentComponent;
             this.setSize(BSModalBorder.Size.NORMAL);

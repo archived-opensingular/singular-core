@@ -4,26 +4,26 @@ import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public class TestMInstance {
 
     @Test public void testIncrementoId() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        STypeComposto<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
         tipoPedido.addCampoString("descr");
         tipoPedido.addCampoString("prioridade");
-        tipoPedido.addCampoListaOf("clientes", MTipoString.class);
-        MTipoComposto<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
+        tipoPedido.addCampoListaOf("clientes", STypeString.class);
+        STypeComposto<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
         tipoItem.addCampoString("nome");
         tipoItem.addCampoBoolean("urgente");
 
-        MIComposto pedido = tipoPedido.novaInstancia();
+        SIComposite pedido = tipoPedido.novaInstancia();
         assertId(pedido, 1, 1);
         assertId(pedido.getCampo("nome"), 2, 2);
         assertId(pedido.getCampo("descr"), 3, 3);
@@ -46,7 +46,7 @@ public class TestMInstance {
 //        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
-        MIComposto pedido2 = (MIComposto) MformPersistenciaXML.fromXML(tipoPedido, xml);
+        SIComposite pedido2 = (SIComposite) MformPersistenciaXML.fromXML(tipoPedido, xml);
         assertId(pedido2, 1, 12);
         assertId(pedido2.getCampo("nome"), 13, 13);
         assertId(pedido2.getCampo("prioridade"), 8, 13);
@@ -54,22 +54,22 @@ public class TestMInstance {
         assertId(pedido2.getCampo("itens[0].nome"), 14, 14);
     }
 
-    private static void assertId(MInstancia pedido, int idInstancia, int lastId) {
+    private static void assertId(SInstance pedido, int idInstancia, int lastId) {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }
 
     @Test public void testSerialializeEmptyObject() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        STypeComposto<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
         tipoPedido.addCampoString("descr");
         tipoPedido.addCampoString("prioridade");
-        tipoPedido.addCampoListaOf("clientes", MTipoString.class);
+        tipoPedido.addCampoListaOf("clientes", STypeString.class);
 
-        MIComposto instance = tipoPedido.novaInstancia();
+        SIComposite instance = tipoPedido.novaInstancia();
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
     }
 
