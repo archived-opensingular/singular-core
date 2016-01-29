@@ -10,8 +10,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>singular-peticionamento</artifactId>
-    <name>[singular-server :: singular-peticionamento]</name>
+    <artifactId>singular-pet-server</artifactId>
+    <name>[singular-server :: singular-pet-server]</name>
     <packaging>jar</packaging>
 
     <build>
@@ -33,6 +33,13 @@
         </resources>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-pet-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

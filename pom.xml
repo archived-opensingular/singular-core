@@ -12,7 +12,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>singular-peticionamento</module>
+        <module>singular-pet-server</module>
+        <module>singular-pet-module</module>
     </modules>
 
     <distributionManagement>

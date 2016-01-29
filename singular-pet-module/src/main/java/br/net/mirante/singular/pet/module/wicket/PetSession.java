@@ -1,4 +1,4 @@
-package br.net.mirante.singular.peticionamento.wicket;
+package br.net.mirante.singular.pet.module.wicket;
 
 import br.net.mirante.singular.flow.core.MUser;
 import org.apache.wicket.Session;
@@ -8,17 +8,17 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class PeticionamentoSession extends AuthenticatedWebSession {
+public class PetSession extends AuthenticatedWebSession {
 
     private Roles roles = new Roles();
 
-    public PeticionamentoSession(Request request, Response response) {
+    public PetSession(Request request, Response response) {
         super(request);
         this.roles.add(Roles.USER);
     }
 
-    public static PeticionamentoSession get() {
-        return (PeticionamentoSession) Session.get();
+    public static PetSession get() {
+        return (PetSession) Session.get();
     }
 
     @Override

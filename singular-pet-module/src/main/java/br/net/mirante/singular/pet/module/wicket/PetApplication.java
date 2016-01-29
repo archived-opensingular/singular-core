@@ -1,6 +1,6 @@
-package br.net.mirante.singular.peticionamento.wicket;
+package br.net.mirante.singular.pet.module.wicket;
 
-import br.net.mirante.singular.peticionamento.wicket.page.home.HomePage;
+import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
@@ -14,21 +14,39 @@ import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.util.Locale;
 
-public class PeticionamentoApplication extends AuthenticatedWebApplication
-    implements ApplicationContextAware {
+public class PetApplication extends AuthenticatedWebApplication
+        implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 
+    private Class<? extends WebPage> homePageClass;
+
     private ApplicationContext ctx;
+
+    public static PetApplication get() {
+        return (PetApplication) WebApplication.get();
+    }
 
     @Override
     public Class<? extends WebPage> getHomePage() {
-        return HomePage.class;
+        if (homePageClass == null) {
+            String pageClass = this.getInitParameter("homePageClass");
+            if (StringUtils.isEmpty(homePageClass)) {
+                throw new SingularServerException("O parâmetro homePageClass não foi definido. Defina no web.xml a Classe que representa a página inicial.");
+            }
+            try {
+                homePageClass = (Class<? extends WebPage>) Class.forName(pageClass);
+            } catch (ClassNotFoundException e) {
+                throw new SingularServerException("Não foi possível encontrar a classe definida no parâmetro homePageClass . Defina no web.xml a Classe que representa a página inicial.", e);
+            }
+        }
+        return homePageClass;
     }
 
     @Override
@@ -58,39 +76,35 @@ public class PeticionamentoApplication extends AuthenticatedWebApplication
 
     @Override
     public Session newSession(Request request, Response response) {
-        return new PeticionamentoSession(request, response);
+        return new PetSession(request, response);
     }
 
     @Override
     protected Class<? extends AbstractAuthenticatedWebSession> getWebSessionClass() {
-        return PeticionamentoSession.class;
+        return PetSession.class;
     }
 
     @Override
     protected Class<? extends WebPage> getSignInPageClass() {
-        return HomePage.class;
+        return getHomePage();
     }
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if (System.getProperty("singular.server.peticionamento.deployment") != null) {
+        if (System.getProperty("singular.pet.server.deployment") != null) {
             return RuntimeConfigurationType.DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.DEVELOPMENT;
         }
     }
 
-    public static PeticionamentoApplication get() {
-        return (PeticionamentoApplication) WebApplication.get();
+    public ApplicationContext getApplicationContext() {
+        return ctx;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         this.ctx = ctx;
     }
-    
-    public ApplicationContext getApplicationContext(){
-        return ctx;
-    }
-    
+
 }
