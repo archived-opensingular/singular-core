@@ -1,9 +1,10 @@
 package br.net.mirante.singular.view.component;
 
+import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -23,19 +24,13 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.json.JSONObject;
 
-import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
-import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.FilterPackageFactory;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -124,11 +119,9 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private void buildFilters() {
         final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
-            protected MTipo<?> getTipo() {
-                final PacoteBuilder builder = MDicionario.create().criarNovoPacote("pacote");
-                final MTipoComposto<? extends MIComposto> filtro = builder.createTipoComposto("filtro");
-                appendFilters(filtro, config.getObject().getFilterConfigs());
-                return filtro;
+            protected SType<?> getTipo() {
+                return new FilterPackageFactory(config.getObject().getFilterConfigs(),
+                        getServiceRegistry(), context.getObject().getProcessDefinitionCode()).createFilterPackage();
             }
 
             @Override
@@ -140,15 +133,11 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
         final BelverSaveButton saveButton = new BelverSaveButton("filterButton") {
             @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                if (xml != null) {
-                    final String jsonSource = xml.toJSONString();
-                    final JSONObject filtro = new JSONObject(jsonSource).getJSONObject("filtro");
-                    if (filtro != null) {
-                        context.getObject().setSerializedJSONFilter(filtro.toString());
-                    } else {
-                        context.getObject().setSerializedJSONFilter(null);
-                    }
+            protected void handleSaveXML(AjaxRequestTarget target, MElement element) {
+                if (element != null) {
+                    final String jsonSource = element.toJSONString();
+                    final Optional<JSONObject> filtro = Optional.ofNullable(new JSONObject(jsonSource).getJSONObject(ROOT));
+                    context.getObject().setSerializedJSONFilter(filtro.map(JSONObject::toString).orElse(null));
                 } else {
                     context.getObject().setSerializedJSONFilter(null);
                 }
@@ -156,12 +145,19 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
 
             @Override
-            public IModel<? extends MInstancia> getCurrentInstance() {
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                super.onValidationError(target, form, instanceModel);
+                modalBorder.hide(target);
+                modalBorder.show(target);
+            }
+
+            @Override
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return panel.getRootInstance();
             }
         };
-        saveButton.add($b.attr("value", "Filtrar"));
-        modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of("Filtrar"), saveButton);
+        saveButton.add($b.attr("value", getString("label.filter")));
+        modalBorder.addButton(BSModalBorder.ButtonStyle.PRIMARY, Model.of(getString("label.filter")), saveButton);
         modalBorder.add(panel);
     }
 
@@ -209,42 +205,6 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
                 item.add(new Label("filterLabel", Model.of(item.getModelObject().getLabel())));
             }
         };
-    }
-
-    private void appendFilters(MTipoComposto root, List<FilterConfig> filterConfigs) {
-        filterConfigs.forEach(fc -> {
-            MTipoSimples field = null;
-            switch (fc.getFieldType()) {
-                case BOOLEAN:
-                    field = root.addCampoBoolean(fc.getIdentificador());
-                    break;
-                case INTEGER:
-                    field = root.addCampoInteger(fc.getIdentificador());
-                    break;
-                case TEXT:
-                    field = root.addCampoString(fc.getIdentificador());
-                    break;
-                case TEXTAREA:
-                    field = root.addCampoString(fc.getIdentificador()).withTextAreaView();
-                    break;
-                case DATE:
-                    field = root.addCampoData(fc.getIdentificador());
-                    break;
-                case AGGREGATION_PERIOD:
-                    field = root.addCampoString(fc.getIdentificador());
-                    field.withSelection()
-                            .add(AggregationPeriod.WEEKLY, AggregationPeriod.BIMONTHLY.getDescription())
-                            .add(AggregationPeriod.MONTHLY, AggregationPeriod.MONTHLY.getDescription())
-                            .add(AggregationPeriod.BIMONTHLY, AggregationPeriod.BIMONTHLY.getDescription())
-                            .add(AggregationPeriod.YEARLY, AggregationPeriod.YEARLY.getDescription())
-                    ;
-                    break;
-            }
-            if (field != null) {
-                field.asAtrBasic().label(fc.getLabel());
-                field.asAtrBootstrap().colPreference(fc.getSize());
-            }
-        });
     }
 
 }

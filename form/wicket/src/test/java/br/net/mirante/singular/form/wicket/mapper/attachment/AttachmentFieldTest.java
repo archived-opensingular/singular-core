@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MISimples;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
@@ -20,7 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @SuppressWarnings("rawtypes")
 public class AttachmentFieldTest {
 
-    private static MDicionario dicionario;
+    private static SDictionary dicionario;
     private static TestPackage pacote;
     private WicketTester driver;
     private TestPage page;
@@ -28,7 +28,7 @@ public class AttachmentFieldTest {
 
     @BeforeClass
     public static void createDicionario() {
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
         pacote = dicionario.carregarPacote(TestPackage.class);
     }
 
@@ -69,7 +69,7 @@ public class AttachmentFieldTest {
         form.submit("save-btn");
 
         String attachmentName = pacote.attachmentFileField.getNomeSimples();
-        List<MISimples> values = (List) page.getCurrentInstance().getValor(attachmentName);
+        List<SISimple> values = (List) page.getCurrentInstance().getValor(attachmentName);
         assertThat(findValueInList(values, "name")).isEqualTo("abacate.png");
         assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
         assertThat(findValueInList(values, "size")).isEqualTo(1234);
@@ -83,8 +83,8 @@ public class AttachmentFieldTest {
         assertThat(behaviours).hasSize(1);
     }
 
-    private Object findValueInList(List<MISimples> list, String propName) {
-        for (MISimples m : list) {
+    private Object findValueInList(List<SISimple> list, String propName) {
+        for (SISimple m : list) {
             if (m.getNome().equals(propName))
                 return m.getValor();
         }

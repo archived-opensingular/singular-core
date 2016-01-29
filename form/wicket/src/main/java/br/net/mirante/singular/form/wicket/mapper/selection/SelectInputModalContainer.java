@@ -1,16 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SISimple;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MOptionsConfig;
-import br.net.mirante.singular.form.mform.util.transformer.Val;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
@@ -48,13 +48,13 @@ public class SelectInputModalContainer extends BSContainer {
 
     private BSControls formGroup;
     private BSContainer modalContainer;
-    private IModel<? extends MInstancia> model;
+    private IModel<? extends SInstance> model;
     private MSelecaoPorModalBuscaView view;
     private Label valueLabel;
     private IModel<String> valueLabelModel;
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends MInstancia> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
+                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -155,20 +155,20 @@ public class SelectInputModalContainer extends BSContainer {
     private void appendAdditionalSearchFields(BSDataTableBuilder builder) {
         for (String field : view.searchFields()) {
             builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
-                MTipoComposto selectType = (MTipoComposto) model.getObject().getMTipo();
-                MTipo<?> fieldType = selectType.getCampo(field);
+                STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
+                SType<?> fieldType = selectType.getCampo(field);
                 SelectOption select = (SelectOption) m;
                 MOptionsConfig provider = model.getObject().getOptionsConfig();
-                MInstancia instance = provider.getValueFromKey(String.valueOf(select.getValue()));
-                return Val.of(instance, (MTipoSimples) fieldType);
+                SInstance instance = provider.getValueFromKey(String.valueOf(select.getValue()));
+                return Value.of(instance, (STypeSimple) fieldType);
             });
         }
     }
 
     private String getAdditionalSearchFieldLabel(String searchField) {
-        MTipoComposto selectType = (MTipoComposto) model.getObject().getMTipo();
-        MTipo<?> fieldType = selectType.getCampo(searchField);
-        if (!(fieldType instanceof MTipoSimples)) {
+        STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
+        SType<?> fieldType = selectType.getCampo(searchField);
+        if (!(fieldType instanceof STypeSimple)) {
             throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
         }
         return fieldType.as(AtrBasic::new).getLabel();
@@ -203,8 +203,8 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     public SortableDataProvider<SelectOption, String> buildDataProvider(
-            IModel<? extends MInstancia> model, final IModel<String> filtro) {
-        MTipo<?> type = model.getObject().getMTipo();
+            IModel<? extends SInstance> model, final IModel<String> filtro) {
+        SType<?> type = model.getObject().getMTipo();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
         return new SortableDataProvider<SelectOption, String>() {
             @Override
@@ -246,9 +246,9 @@ public class SelectInputModalContainer extends BSContainer {
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
         MOptionsConfig miProvider = model.getObject().getOptionsConfig();
-        MIComposto composto = (MIComposto) miProvider.getValueFromKey(String.valueOf(s.getValue()));
+        SIComposite composto = (SIComposite) miProvider.getValueFromKey(String.valueOf(s.getValue()));
         for (String field : view.searchFields()) {
-            Object value = Val.of((MISimples<?>) composto.getCampo(field));
+            Object value = Value.of((SISimple<?>) composto.getCampo(field));
             String nValue = String.valueOf(value).toLowerCase();
             if (nValue.contains(termo)) return true;
         }
@@ -263,7 +263,7 @@ public class SelectInputModalContainer extends BSContainer {
         }
 
         @Override
-        protected Object getSimpleSelection(MInstancia target, MOptionsConfig provider) {
+        protected Object getSimpleSelection(SInstance target, MOptionsConfig provider) {
             SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
             if (v.getValue() == null) {
                 return null;

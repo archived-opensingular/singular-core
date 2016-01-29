@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
 
 /**
@@ -18,17 +18,17 @@ public interface MOptionsCompositeProvider extends MOptionsProvider {
      * Returns the list of options for this selection.
      *
      * @param optionsInstance : Current isntance used to select the options.
-     * @return list of options from the expected {@link MInstancia} type.
+     * @return list of options from the expected {@link SInstance} type.
      */
     @Override
-    public default MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
-        MTipo<?> tipo;
-        if (optionsInstance instanceof MILista){
-            tipo = ((MILista) optionsInstance).getTipoElementos();
+    public default SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+        SType<?> tipo;
+        if (optionsInstance instanceof SList){
+            tipo = ((SList) optionsInstance).getTipoElementos();
         } else {
             tipo = optionsInstance.getMTipo();
         }
-        MListaBuilder<MTipoComposto> lb = new MListaBuilder<>((MTipoComposto)tipo);
+        MListaBuilder<STypeComposite> lb = new MListaBuilder<>((STypeComposite)tipo);
         listOptions(optionsInstance, lb);
         return lb.getList();
     }
@@ -40,7 +40,7 @@ public interface MOptionsCompositeProvider extends MOptionsProvider {
      * @param lb
      * @return
      */
-    public void listOptions(MInstancia instancia, MListaBuilder<MTipoComposto> lb);
+    public void listOptions(SInstance instancia, MListaBuilder<STypeComposite> lb);
 
 
 }

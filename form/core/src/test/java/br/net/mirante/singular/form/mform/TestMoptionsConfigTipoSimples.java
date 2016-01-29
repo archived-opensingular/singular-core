@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,20 +9,20 @@ import org.junit.Test;
 public class TestMoptionsConfigTipoSimples {
 
 
-    private MDicionario _dicionario;
-    private MTipoComposto<? extends MIComposto> _raiz;
-    private MTipoString _descricao;
-    private MIComposto evento;
-    private MISimples descricao;
-    private MInstancia opcaoDescricao;
+    private SDictionary _dicionario;
+    private STypeComposite<? extends SIComposite> _raiz;
+    private STypeString _descricao;
+    private SIComposite evento;
+    private SISimple descricao;
+    private SInstance opcaoDescricao;
 
     @Before
     public void setup() {
-        _dicionario = MDicionario.create();
+        _dicionario = SDictionary.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
-        _descricao = _raiz.addCampo("descricao", MTipoString.class);
+        _descricao = _raiz.addCampo("descricao", STypeString.class);
         _descricao.withSelection()
                 .add("super", "Super")
                 .add("mega", "Mega")
@@ -37,7 +37,7 @@ public class TestMoptionsConfigTipoSimples {
 
 
         // descricao
-        descricao = (MISimples) evento.getCampo(_descricao.getNomeSimples());
+        descricao = (SISimple) evento.getCampo(_descricao.getNomeSimples());
         opcaoDescricao = _descricao.getProviderOpcoes().listAvailableOptions(descricao).get(0);
         descricao.setValor(opcaoDescricao.getValor());
 
@@ -62,14 +62,14 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testMTipoOpcoes() {
-        for (MInstancia instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
             Assert.assertEquals(_descricao, instancia.getMTipo());
         }
     }
 
     @Test
     public void testKeyValueMapping() {
-        for (MInstancia instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
             String key = descricao.getOptionsConfig().getKeyFromOptions(instancia);
             Assert.assertEquals(instancia, descricao.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(descricao.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -78,7 +78,7 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testSelectLabel() {
-        for (MInstancia instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
+        for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
             Assert.assertEquals(StringUtils.capitalize((String) instancia.getValor()), instancia.getSelectLabel());
         }
         Assert.assertNull(_descricao.getSelectLabel());

@@ -9,32 +9,30 @@ import br.net.mirante.singular.form.mform.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 
 public class TestSDocumentServices {
-    private MTipoComposto<?> groupingType;
-    private MIAttachment fileFieldInstance;
+    private STypeComposite<?> groupingType;
+    private SIAttachment fileFieldInstance;
     private SDocument document;
 
     @Before public void setup(){
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         createTypes(dicionario.criarNovoPacote("teste"));
         createInstances();
     }
 
     private void createTypes(PacoteBuilder pb) {
         groupingType = pb.createTipoComposto("Grouping");
-        groupingType.addCampo("anexo", MTipoAttachment.class);
+        groupingType.addCampo("anexo", STypeAttachment.class);
         groupingType.addCampoInteger("justIgnoreThis");
     }
     
     private void createInstances() {
-        MIComposto instance = (MIComposto) groupingType.novaInstancia();
+        SIComposite instance = (SIComposite) groupingType.novaInstancia();
         document = instance.getDocument();
-        fileFieldInstance = (MIAttachment) instance.getAllChildren().iterator().next();
+        fileFieldInstance = (SIAttachment) instance.getAllChildren().iterator().next();
     }
     
     @SuppressWarnings({ "rawtypes", "serial" })

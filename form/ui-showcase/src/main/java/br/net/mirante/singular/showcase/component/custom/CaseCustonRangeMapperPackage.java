@@ -1,23 +1,23 @@
 package br.net.mirante.singular.showcase.component.custom;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 
-public class CaseCustonRangeMapperPackage extends MPacote {
+public class CaseCustonRangeMapperPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
-        final MTipoComposto<? extends MIComposto> faixaIdade = testForm.addCampoComposto("faixaIdade");
-        final MTipoInteger valorInicial = faixaIdade.addCampoInteger("de");
-        final MTipoInteger valorFinal = faixaIdade.addCampoInteger("a");
+        final STypeComposite<? extends SIComposite> faixaIdade = testForm.addCampoComposto("faixaIdade");
+        final STypeInteger valorInicial = faixaIdade.addCampoInteger("de");
+        final STypeInteger valorFinal = faixaIdade.addCampoInteger("a");
 
         faixaIdade.as(AtrBasic::new).label("Faixa de Idade");
         //@destacar

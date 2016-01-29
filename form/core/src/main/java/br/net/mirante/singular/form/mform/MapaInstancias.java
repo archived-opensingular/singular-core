@@ -4,9 +4,9 @@ import java.util.function.Function;
 
 class MapaInstancias {
 
-    private final Function<String, MTipo<?>> recuperadorDefinicao;
+    private final Function<String, SType<?>> recuperadorDefinicao;
 
-    MapaInstancias(Function<String, MTipo<?>> recuperadorDefinicao) {
+    MapaInstancias(Function<String, SType<?>> recuperadorDefinicao) {
         this.recuperadorDefinicao = recuperadorDefinicao;
     }
 }

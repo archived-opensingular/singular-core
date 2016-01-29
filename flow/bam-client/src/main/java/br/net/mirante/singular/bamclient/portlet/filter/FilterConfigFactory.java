@@ -10,23 +10,39 @@ import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 public class FilterConfigFactory {
 
     public static List<FilterConfig> createConfigForClass(Class clazz) {
-        final List<FilterConfig> configs = new ArrayList<>();
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(FilterField.class)) {
-                final FilterField filterField = field.getAnnotation(FilterField.class);
-                final FilterConfig filterConfig = new FilterConfig();
-                filterConfig.setIdentificador(field.getName());
-                filterConfig.setLabel(filterField.label());
-                if (filterField.type() != FieldType.DEFAULT) {
-                    filterConfig.setFieldType(filterField.type());
+        final List<FilterConfig> filterConfigs = new ArrayList<>();
+        for (Field f : clazz.getDeclaredFields()) {
+            if (f.isAnnotationPresent(FilterField.class)) {
+
+                final FilterField ff = f.getAnnotation(FilterField.class);
+                final FilterConfig fc = new FilterConfig();
+
+                fc.setIdentifier(f.getName());
+                fc.setLabel(ff.label());
+
+                if (ff.type() != FieldType.DEFAULT) {
+                    fc.setFieldType(ff.type());
                 } else {
-                    filterConfig.setFieldType(identifyType(field));
+                    fc.setFieldType(identifyType(f));
                 }
-                filterConfig.setSize(filterField.size().getBootstrapSize());
-                configs.add(filterConfig);
+
+                final RestOptionsProvider optionsProvider = ff.optionsProvider();
+
+                if (!optionsProvider.endpoint().isEmpty()) {
+                    fc.setRestEndpoint(optionsProvider.endpoint());
+                    fc.setRestReturnType(optionsProvider.returnType());
+                } else {
+                    final String[] options = ff.options();
+                    if (options.length > 0 && !options[0].isEmpty()) {
+                        fc.setOptions(ff.options());
+                    }
+                }
+                fc.setRequired(ff.required());
+                fc.setSize(ff.size().getBootstrapSize());
+                filterConfigs.add(fc);
             }
         }
-        return configs;
+        return filterConfigs;
     }
 
     private static FieldType identifyType(Field field) {

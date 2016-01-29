@@ -1,31 +1,31 @@
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridTablePackage extends MPacote {
+public class CaseGridTablePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
-        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
         certificacoes.as(AtrBasic::new).label("Certificações");
-        final MTipoComposto<?> certificacao = certificacoes.getTipoElementos();
-        final MTipoAnoMes dataCertificacao = certificacao.addCampo("data", MTipoAnoMes.class, true);
-        final MTipoString entidadeCertificacao = certificacao.addCampoString("entidade", true);
-        final MTipoData validadeCertificacao = certificacao.addCampoData("validade");
-        final MTipoString nomeCertificacao = certificacao.addCampoString("nome", true);
+        final STypeComposite<?> certificacao = certificacoes.getTipoElementos();
+        final STypeAnoMes dataCertificacao = certificacao.addCampo("data", STypeAnoMes.class, true);
+        final STypeString entidadeCertificacao = certificacao.addCampoString("entidade", true);
+        final STypeData validadeCertificacao = certificacao.addCampoData("validade");
+        final STypeString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes
                     .withView(MTableListaView::new)

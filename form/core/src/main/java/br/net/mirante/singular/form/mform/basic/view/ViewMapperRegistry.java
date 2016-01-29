@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.lambda.ISupplier;
 
 /**
@@ -26,14 +26,14 @@ import br.net.mirante.singular.lambda.ISupplier;
  */
 public class ViewMapperRegistry<T> implements Serializable {
 
-    private final HashMap<Class<? extends MTipo>, List<RegisterEntry<T>>> registry = new HashMap<>();
+    private final HashMap<Class<? extends SType>, List<RegisterEntry<T>>> registry = new HashMap<>();
 
     /**
      * Registra o fornecedor para o tipo para quando não for solicitado um view
      * especifica. Seria a factory default.
      * @return 
      */
-    public ViewMapperRegistry<T> register(Class<? extends MTipo> type, ISupplier<T> factory) {
+    public ViewMapperRegistry<T> register(Class<? extends SType> type, ISupplier<T> factory) {
         return register(type, null, factory);
     }
 
@@ -45,7 +45,7 @@ public class ViewMapperRegistry<T> implements Serializable {
      *            Pode ser null
      * @return 
      */
-    public ViewMapperRegistry<T> register(Class<? extends MTipo> type, Class<? extends MView> viewType, ISupplier<T> factory) {
+    public ViewMapperRegistry<T> register(Class<? extends SType> type, Class<? extends MView> viewType, ISupplier<T> factory) {
         Objects.requireNonNull(factory);
         List<RegisterEntry<T>> list = registry.get(Objects.requireNonNull(type));
         if (list == null) {
@@ -77,8 +77,8 @@ public class ViewMapperRegistry<T> implements Serializable {
      * @param view
      *            Pode ser null
      */
-    public Optional<T> getMapper(MInstancia instance, MView view) {
-        Class<? extends MTipo> type = instance.getMTipo().getClass();
+    public Optional<T> getMapper(SInstance instance, MView view) {
+        Class<? extends SType> type = instance.getMTipo().getClass();
         if (view.getClass() == MView.class) {
             view = null;
         }
@@ -92,7 +92,7 @@ public class ViewMapperRegistry<T> implements Serializable {
     private T getMapper(Class<?> type, MView view) {
         RegisterEntry<T> selected = null;
         int score = -1;
-        while (type != MTipo.class) {
+        while (type != SType.class) {
             List<RegisterEntry<T>> list = registry.get(type);
             if (list != null) {
                 for (RegisterEntry<T> entry : list) {

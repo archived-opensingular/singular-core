@@ -37,14 +37,14 @@ public abstract class MTranslatorParaAtributo {
         return alvo;
     }
 
-    public MTipo<?> getTipo() {
+    public SType<?> getTipo() {
         if (alvo == null) {
             throw new RuntimeException("O objeto alvo dos atributos não foi definido");
         }
-        if (alvo instanceof MTipo) {
-            return (MTipo<?>) alvo;
+        if (alvo instanceof SType) {
+            return (SType<?>) alvo;
         }
-        return ((MInstancia) alvo).getMTipo();
+        return ((SInstance) alvo).getMTipo();
     }
 
     public <TR> TR as(Function<MAtributoEnabled, TR> wrapper) {

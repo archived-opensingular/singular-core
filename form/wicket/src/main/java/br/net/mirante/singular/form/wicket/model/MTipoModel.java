@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.model;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 
@@ -8,7 +8,7 @@ import org.apache.wicket.model.IDetachable;
  * Model
  */
 public class MTipoModel
-        implements IReadOnlyModel<MTipo<?>> {
+        implements IReadOnlyModel<SType<?>> {
 
     private transient Object rootTarget;
 
@@ -17,8 +17,8 @@ public class MTipoModel
     }
 
     @Override
-    public MTipo<?> getObject() {
-        return (MTipo<?>) rootTarget;
+    public SType<?> getObject() {
+        return (SType<?>) rootTarget;
     }
 
 

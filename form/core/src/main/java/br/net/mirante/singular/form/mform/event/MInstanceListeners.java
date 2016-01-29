@@ -5,28 +5,28 @@ import java.util.List;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public class MInstanceListeners {
 
     private ListMultimap<MInstanceEventType, IMInstanceListener> instanceListeners;
 
-    public void fireInstanceValueChanged(MInstancia instance, Object oldValue, Object newValue) {
+    public void fireInstanceValueChanged(SInstance instance, Object oldValue, Object newValue) {
         if (hasListenersFor(MInstanceEventType.VALUE_CHANGED))
-            fireInstanceEvent(MInstanceEventType.VALUE_CHANGED, new MInstanceValueChangeEvent(instance, oldValue, newValue));
+            fireInstanceEvent(MInstanceEventType.VALUE_CHANGED, new SInstanceValueChangeEvent(instance, oldValue, newValue));
     }
-    public void fireInstanceAttributeChanged(MInstancia instance, MInstancia attributeInstance, Object oldValue, Object valor) {
+    public void fireInstanceAttributeChanged(SInstance instance, SInstance attributeInstance, Object oldValue, Object valor) {
         if (hasListenersFor(MInstanceEventType.ATTRIBUTE_CHANGED))
-            fireInstanceEvent(MInstanceEventType.ATTRIBUTE_CHANGED, new MInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
+            fireInstanceEvent(MInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
     }
-    public void fireInstanceListElementAdded(MILista<?> listInstance, MInstancia addedInstance, int index) {
+    public void fireInstanceListElementAdded(SList<?> listInstance, SInstance addedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_ADDED))
-            fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_ADDED, new MInstanceListElementAddedEvent(listInstance, addedInstance, index));
+            fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_ADDED, new SInstanceListElementAddedEvent(listInstance, addedInstance, index));
     }
-    public void fireInstanceListElementRemoved(MILista<?> listInstance, MInstancia removedInstance, int index) {
+    public void fireInstanceListElementRemoved(SList<?> listInstance, SInstance removedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_REMOVED))
-            fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_REMOVED, new MInstanceListElementRemovedEvent(listInstance, removedInstance, index));
+            fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_REMOVED, new SInstanceListElementRemovedEvent(listInstance, removedInstance, index));
     }
 
     public boolean hasListenersFor(MInstanceEventType eventType) {
@@ -57,7 +57,7 @@ public class MInstanceListeners {
             remove(eventType, listener);
     }
 
-    protected void fireInstanceEvent(MInstanceEventType eventType, MInstanceEvent evt) {
+    protected void fireInstanceEvent(MInstanceEventType eventType, SInstanceEvent evt) {
         List<IMInstanceListener> listeners = instanceListeners.get(eventType);
         for (int i = 0; i < listeners.size(); i++) {
             IMInstanceListener listener = listeners.get(i);

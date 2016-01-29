@@ -1,9 +1,9 @@
 package br.net.mirante.singular.showcase.component.custom;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.AtributoModel;
@@ -24,7 +24,7 @@ public class RangeSliderMapper implements IWicketComponentMapper {
 
     private final String valorInicialPath, valorFinalPath;
 
-    public RangeSliderMapper(MTipoInteger valorInicial, MTipoInteger valorFinal) {
+    public RangeSliderMapper(STypeInteger valorInicial, STypeInteger valorFinal) {
         this.valorInicialPath = valorInicial.getNomeSimples();
         this.valorFinalPath = valorFinal.getNomeSimples();
     }
@@ -33,10 +33,10 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     public void buildView(WicketBuildContext ctx) {
 
         final BSControls formGroup = createFormGroup(ctx);
-        final MIComposto rootInstance = ctx.getCurrenttInstance();
+        final SIComposite rootInstance = ctx.getCurrenttInstance();
 
-        final IModel<? extends MInstancia> miInicial = resolveModel(rootInstance, valorInicialPath);
-        final IModel<? extends MInstancia> miFinal = resolveModel(rootInstance, valorFinalPath);
+        final IModel<? extends SInstance> miInicial = resolveModel(rootInstance, valorInicialPath);
+        final IModel<? extends SInstance> miFinal = resolveModel(rootInstance, valorFinalPath);
 
         final HiddenField valorInicial = new HiddenField<>("valorInicial", miInicial);
         final HiddenField valorFinal = new HiddenField<>("valorFinal", miFinal);
@@ -65,14 +65,14 @@ public class RangeSliderMapper implements IWicketComponentMapper {
         };
     }
 
-    private BSLabel buildLabel(IModel<? extends MInstancia> model) {
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
+    private BSLabel buildLabel(IModel<? extends SInstance> model) {
+        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
         return new BSLabel("label", labelModel);
     }
 
-    private IModel<? extends MInstancia> resolveModel(MIComposto mi, String path) {
-        final MInstancia mInstancia = mi.getCampo(path);
-        final MInstanceRootModel<?> rootModel = new MInstanceRootModel<>(mInstancia);
+    private IModel<? extends SInstance> resolveModel(SIComposite mi, String path) {
+        final SInstance SInstance = mi.getCampo(path);
+        final MInstanceRootModel<?> rootModel = new MInstanceRootModel<>(SInstance);
         return new MInstanciaValorModel<>(rootModel);
     }
 

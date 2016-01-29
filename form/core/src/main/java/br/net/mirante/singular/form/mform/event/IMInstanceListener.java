@@ -9,24 +9,24 @@ import com.google.common.collect.ImmutableList;
 
 public interface IMInstanceListener extends Serializable {
 
-    void onInstanceEvent(MInstanceEvent evt);
+    void onInstanceEvent(SInstanceEvent evt);
 
     public static class EventCollector implements IMInstanceListener {
-        private final List<MInstanceEvent> events = new ArrayList<>();
-        private Predicate<MInstanceEvent>  filter;
+        private final List<SInstanceEvent> events = new ArrayList<>();
+        private Predicate<SInstanceEvent>  filter;
         public EventCollector() {
             this.filter = e -> true;
         }
-        public EventCollector(Predicate<MInstanceEvent> filter) {
+        public EventCollector(Predicate<SInstanceEvent> filter) {
             this.filter = filter;
         }
         @Override
-        public void onInstanceEvent(MInstanceEvent evt) {
+        public void onInstanceEvent(SInstanceEvent evt) {
             if (filter.test(evt)) {
                 events.add(evt);
             }
         }
-        public List<MInstanceEvent> getEvents() {
+        public List<SInstanceEvent> getEvents() {
             return ImmutableList.copyOf(events);
         }
         public void clear() {

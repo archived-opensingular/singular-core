@@ -10,7 +10,7 @@ import javax.lang.model.SourceVersion;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
 public final class MFormUtil {
 
@@ -30,7 +30,7 @@ public final class MFormUtil {
         }
     }
 
-    public static MTipo<?> resolverTipoCampo(MTipo<?> tipo, LeitorPath leitor) {
+    public static SType<?> resolverTipoCampo(SType<?> tipo, LeitorPath leitor) {
         while (!leitor.isEmpty()) {
             tipo = resolverTipoCampoInterno(tipo, leitor);
             leitor = leitor.proximo();
@@ -38,22 +38,22 @@ public final class MFormUtil {
         return tipo;
     }
 
-    private static MTipo<?> resolverTipoCampoInterno(MTipo<?> tipo, LeitorPath leitor) {
-        if (tipo instanceof MTipoComposto) {
+    private static SType<?> resolverTipoCampoInterno(SType<?> tipo, LeitorPath leitor) {
+        if (tipo instanceof STypeComposite) {
             if (leitor.isIndice()) {
                 throw new RuntimeException(leitor.getTextoErro(tipo, "Índice de lista não se aplica a um tipo composto"));
             }
-            MTipo<?> campo = ((MTipoComposto<?>) tipo).getCampo(leitor.getTrecho());
+            SType<?> campo = ((STypeComposite<?>) tipo).getCampo(leitor.getTrecho());
             if (campo == null) {
                 throw new RuntimeException(leitor.getTextoErro(tipo, "Não existe o campo '" + leitor.getTrecho() + "'"));
             }
             return campo;
-        } else if (tipo instanceof MTipoLista) {
+        } else if (tipo instanceof STypeLista) {
             if (leitor.isIndice()) {
-                return ((MTipoLista<?, ?>) tipo).getTipoElementos();
+                return ((STypeLista<?, ?>) tipo).getTipoElementos();
             }
             throw new RuntimeException(leitor.getTextoErro(tipo, "Não se aplica a um tipo lista"));
-        } else if (tipo instanceof MTipoSimples) {
+        } else if (tipo instanceof STypeSimple) {
             throw new RuntimeException(leitor.getTextoErro(tipo, "Não se aplica um path a um tipo simples"));
         } else {
             throw new RuntimeException(leitor.getTextoErro(tipo, "Não implementado para " + tipo.getClass()));
@@ -64,27 +64,27 @@ public final class MFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public final static String generatePath(MInstancia atual, Predicate<MInstancia> condicaoDeParada) {
-        List<MInstancia> sequencia = null;
+    public final static String generatePath(SInstance atual, Predicate<SInstance> condicaoDeParada) {
+        List<SInstance> sequencia = null;
         while (!condicaoDeParada.test(atual)) {
             if (sequencia == null) {
                 sequencia = new ArrayList<>();
             }
             sequencia.add(atual);
-            atual = atual.getPai();
+            atual = atual.getParent();
         }
         if (sequencia != null) {
             StringBuilder sb = new StringBuilder();
             for (int i = sequencia.size() - 1; i != -1; i--) {
                 atual = sequencia.get(i);
-                if (atual.getPai() instanceof MILista) {
-                    int pos = ((MILista<?>) atual.getPai()).indexOf(atual);
+                if (atual.getParent() instanceof SList) {
+                    int pos = ((SList<?>) atual.getParent()).indexOf(atual);
                     if (pos == -1) {
                         throw new SingularFormException("Filho não encontrado");
                     }
                     sb.append('[').append(pos).append(']');
                 } else {
-                    if (atual.getPai() != null && sb.length() != 0) {
+                    if (atual.getParent() != null && sb.length() != 0) {
                         sb.append('.');
                     }
                     sb.append(atual.getNome());
@@ -95,19 +95,19 @@ public final class MFormUtil {
         return null;
     }
 
-    public static String generateUserFriendlyPath(MInstancia instance) {
+    public static String generateUserFriendlyPath(SInstance instance) {
         return generateUserFriendlyPath(instance, null);
     }
-    public static String generateUserFriendlyPath(MInstancia instance, MInstancia parentContext) {
+    public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        MInstancia child = null;
-        for (MInstancia node = instance; node != null && !node.equals(parentContext); child = node, node = node.getPai()) {
+        SInstance child = null;
+        for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
 
-            final String labelNode = node.as(MPacoteBasic.aspect()).getLabel();
+            final String labelNode = node.as(SPackageBasic.aspect()).getLabel();
 
-            if (node instanceof MILista<?>) {
-                MILista<?> lista = (MILista<?>) node;
-                String labelLista = lista.as(MPacoteBasic.aspect()).getLabel();
+            if (node instanceof SList<?>) {
+                SList<?> lista = (SList<?>) node;
+                String labelLista = lista.as(SPackageBasic.aspect()).getLabel();
                 int index = lista.indexOf(child) + 1;
                 labels.add(labelLista + ((index > 0) ? " [" + (index) + "]" : ""));
             } else {

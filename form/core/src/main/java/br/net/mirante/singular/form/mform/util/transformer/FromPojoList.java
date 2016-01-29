@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class FromPojoList<T> extends FromPojo<T> {
 
-    private MTipo listType;
+    private SType listType;
     private List<T> pojoList;
 
     /**
@@ -26,30 +26,30 @@ public class FromPojoList<T> extends FromPojo<T> {
      * @param pojoList
      *  Lista com os pojos a serem convertidos.
      */
-    public FromPojoList(MTipoComposto<? extends MIComposto> target, List<T> pojoList) {
+    public FromPojoList(STypeComposite<? extends SIComposite> target, List<T> pojoList) {
         super(target);
         this.pojoList = pojoList;
         this.listType = target;
     }
 
     @Override
-    public <K extends MTipo<?>> FromPojoList<T> map(K type, FromPojoFiedlBuilder<T> mapper) {
+    public <K extends SType<?>> FromPojoList<T> map(K type, FromPojoFiedlBuilder<T> mapper) {
         super.map(type, mapper);
         return this;
     }
 
     @Override
-    public <K extends MTipo<?>> FromPojoList<T> map(K type, Object value) {
+    public <K extends SType<?>> FromPojoList<T> map(K type, Object value) {
         super.map(type, value);
         return this;
     }
 
     @Override
-    public MILista<?> build() {
-        MILista<?> lista = target.novaLista();
+    public SList<?> build() {
+        SList<?> lista = target.novaLista();
         for (T pojo : pojoList) {
-            MIComposto instancia = target.novaInstancia();
-            for (Map.Entry<MTipo, FromPojoFiedlBuilder> e : mappings.entrySet()) {
+            SIComposite instancia = target.novaInstancia();
+            for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
                 instancia.setValor(e.getKey().getNome(), e.getValue().value(pojo));
             }
             lista.addElement(instancia);

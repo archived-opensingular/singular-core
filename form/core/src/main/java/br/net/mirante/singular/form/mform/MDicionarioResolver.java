@@ -51,7 +51,7 @@ public abstract class MDicionarioResolver {
      *            Tipicamente deve ser o tipo que representa um documento como
      *            um todo.
      */
-    public abstract Optional<MDicionario> loadDicionaryForType(String typeName);
+    public abstract Optional<SDictionary> loadDicionaryForType(String typeName);
 
     /**
      * Retorna o dicionário para o tipo informado ou dispara exception se não
@@ -64,7 +64,7 @@ public abstract class MDicionarioResolver {
      * @exception SingularFormException
      *                Senão encontrar o dicionário.
      */
-    public final MDicionario loadDicionaryForTypeOrException(String typeName) throws SingularFormException {
+    public final SDictionary loadDicionaryForTypeOrException(String typeName) throws SingularFormException {
         return loadDicionaryForType(typeName)
                 .orElseThrow(() -> new SingularFormException("Não foi encontrado dicionário para o tipo " + typeName));
     }
@@ -78,7 +78,7 @@ public abstract class MDicionarioResolver {
      * @exception SingularFormException
      *                Senão encontrar o dicionário ou o tipo no dicionário.
      */
-    public final MTipo<?> loadType(String typeName) {
+    public final SType<?> loadType(String typeName) {
         return loadDicionaryForTypeOrException(typeName).getTipo(typeName);
     }
 
@@ -88,10 +88,10 @@ public abstract class MDicionarioResolver {
      * @param onlyDict MDicionario to be returned.
      * @return MDicionarioResolver that always return onlyDict.
      */
-    public static MDicionarioResolver of(final MDicionario onlyDict){
+    public static MDicionarioResolver of(final SDictionary onlyDict){
         return new MDicionarioResolver(){
             @Override
-            public Optional<MDicionario> loadDicionaryForType(String typeName) {
+            public Optional<SDictionary> loadDicionaryForType(String typeName) {
                 return Optional.of(onlyDict);
             }
         };

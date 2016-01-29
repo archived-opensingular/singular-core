@@ -3,9 +3,9 @@ package br.net.mirante.singular.form.mform;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("rawtypes")
-public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
+public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
 
-    private final Class<? extends MPacote> classePacote;
+    private final Class<? extends SPackage> classePacote;
 
     private final String                   nomeSimples;
 
@@ -15,7 +15,7 @@ public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
 
     private final Class<V>                 classeValor;
 
-    private Class<? extends MTipo<?>>      classeDono;
+    private Class<? extends SType<?>>      classeDono;
 
     private String                         nomeEscopo;
 
@@ -23,12 +23,12 @@ public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
 
     private final boolean                  selfReference;
 
-    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends MPacote> classePacote, String nomeSimples) {
+    public static AtrRef<?, ?, Object> ofSelfReference(Class<? extends SPackage> classePacote, String nomeSimples) {
         return new AtrRef(classePacote, nomeSimples, null, null, null);
     }
 
-    public AtrRef(Class<? extends MPacote> classePacote, String nomeSimples, Class<T> classeTipo, Class<I> classeInstancia,
-        Class<V> classeValor) {
+    public AtrRef(Class<? extends SPackage> classePacote, String nomeSimples, Class<T> classeTipo, Class<I> classeInstancia,
+                  Class<V> classeValor) {
         MFormUtil.checkNomeSimplesValido(nomeSimples);
         this.classePacote = classePacote;
         this.nomeSimples = nomeSimples;
@@ -46,7 +46,7 @@ public class AtrRef<T extends MTipo, I extends MInstancia, V extends Object> {
         return classeTipo;
     }
 
-    public Class<? extends MPacote> getClassePacote() {
+    public Class<? extends SPackage> getClassePacote() {
         return classePacote;
     }
 

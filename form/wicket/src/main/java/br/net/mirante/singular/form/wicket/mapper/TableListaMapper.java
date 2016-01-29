@@ -11,22 +11,22 @@ import org.apache.wicket.model.IModel;
 
 import com.google.common.base.Strings;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
@@ -42,7 +42,7 @@ public class TableListaMapper extends AbstractListaMapper {
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<MILista<MInstancia>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
+        final IModel<SList<SInstance>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
         String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
         final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
@@ -72,13 +72,13 @@ public class TableListaMapper extends AbstractListaMapper {
 
     private void builContent(BSContainer<?> content,
                              Form<?> form,
-                             IModel<MILista<MInstancia>> mLista,
+                             IModel<SList<SInstance>> mLista,
                              UIBuilderWicket wicketBuilder,
                              WicketBuildContext ctx,
                              MView view,
                              ViewMode viewMode) {
 
-        final IModel<MTipo<MInstancia>> tipoElementos = new MTipoElementosModel(mLista);
+        final IModel<SType<SInstance>> tipoElementos = new MTipoElementosModel(mLista);
 
         final TemplatePanel template = content.newTemplateTag(t -> ""
                 + "    <table class='table table-condensed table-unstyled'>"
@@ -94,11 +94,11 @@ public class TableListaMapper extends AbstractListaMapper {
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
 
 
-        final MTipo<?> tElementos = tipoElementos.getObject();
+        final SType<?> tElementos = tipoElementos.getObject();
 
-        if (tElementos instanceof MTipoComposto<?>) {
+        if (tElementos instanceof STypeComposite<?>) {
 
-            final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) tElementos;
+            final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) tElementos;
             final BSTRow tr = thead.newRow();
 
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha())) {
@@ -107,12 +107,12 @@ public class TableListaMapper extends AbstractListaMapper {
 
             int sumWidthPref = tComposto.getFields().stream().mapToInt((x) -> x.as(AtrBootstrap::new).getColPreference(1)).sum();
 
-            for (MTipo<?> tCampo : tComposto.getFields()) {
+            for (SType<?> tCampo : tComposto.getFields()) {
 
                 final Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
-                final BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(MPacoteBasic.aspect()).getLabel()));
+                final BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel()));
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
-                final boolean isCampoObrigatorio = tCampo.as(MPacoteCore.aspect()).isObrigatorio();
+                final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isObrigatorio();
 
                 cell.setInnerStyle(width);
                 cell.add(new ClassAttributeModifier() {
@@ -166,7 +166,7 @@ public class TableListaMapper extends AbstractListaMapper {
         private final UIBuilderWicket wicketBuilder;
 
         private TableElementsView(String id,
-                                  IModel<MILista<MInstancia>> model,
+                                  IModel<SList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   MView view,
@@ -182,20 +182,20 @@ public class TableListaMapper extends AbstractListaMapper {
 
         @Override
         @SuppressWarnings("unchecked")
-        protected void populateItem(Item<MInstancia> item) {
+        protected void populateItem(Item<SInstance> item) {
             final BSTRow tr = new BSTRow("_r", BSGridSize.MD);
 
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha()))
                 appendInserirButton(this, form, item, tr.newCol());
 
-            final IModel<MInstancia> itemModel = item.getModel();
-            final MInstancia instancia = itemModel.getObject();
-            if (instancia instanceof MIComposto) {
-                MIComposto composto = (MIComposto) instancia;
-                MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) composto.getMTipo();
-                for (MTipo<?> tCampo : tComposto.getFields()) {
-                    final MInstanciaCampoModel<MInstancia> mCampo =
-                            new MInstanciaCampoModel<>(item.getModel(), tCampo.getNomeSimples());
+            final IModel<SInstance> itemModel = item.getModel();
+            final SInstance instancia = itemModel.getObject();
+            if (instancia instanceof SIComposite) {
+                SIComposite composto = (SIComposite) instancia;
+                STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getMTipo();
+                for (SType<?> tCampo : tComposto.getFields()) {
+                    final SInstanceCampoModel<SInstance> mCampo =
+                            new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
                     wicketBuilder.build(ctx.createChild(tr.newCol(), true, mCampo), viewMode);
                 }
             } else {

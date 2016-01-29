@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
@@ -257,7 +257,7 @@ public class CrudContent extends Content
     }
 
     private String getDefinicao(String typeName) {
-        final MPacote pacote = TemplateRepository.get().loadType(typeName).getPacote();
+        final SPackage pacote = TemplateRepository.get().loadType(typeName).getPacote();
         StringBuilder definicaoOutput = new StringBuilder();
         pacote.debug(definicaoOutput);
         return definicaoOutput.toString();

@@ -252,7 +252,7 @@ public class InstanceDAO extends BaseDAO{
             }
             if(active && !count && move){
                 hqlQuery.setParameter("endDate1", mes.plusMonths(3).toDate());
-                hqlQuery.setParameter("endDate2", mes.plusMonths(3).toDate());
+                hqlQuery.setParameter("endDate2", mes.plusMonths(6).toDate());
             }
             mes = mes.minusMonths(1);
             String descrMes = mes.toString("MMM/yy").toUpperCase();

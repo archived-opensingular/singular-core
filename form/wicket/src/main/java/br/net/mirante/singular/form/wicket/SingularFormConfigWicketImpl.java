@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.context.SingularFormConfigImpl;
 
@@ -12,9 +12,9 @@ public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuild
     private UIBuilderWicket buildContext = new UIBuilderWicket();
 
     @Override
-    public void setCustomMappers(Map<Class<? extends MTipo>, Class<IWicketComponentMapper>> customMappers) {
+    public void setCustomMappers(Map<Class<? extends SType>, Class<IWicketComponentMapper>> customMappers) {
         if (customMappers != null) {
-            for (Map.Entry<Class<? extends MTipo>, Class<IWicketComponentMapper>> entry : customMappers.entrySet()) {
+            for (Map.Entry<Class<? extends SType>, Class<IWicketComponentMapper>> entry : customMappers.entrySet()) {
                 buildContext.getViewMapperRegistry().register(entry.getKey(), () -> {
                     try {
                         return entry.getValue().newInstance();
@@ -35,7 +35,7 @@ public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuild
     }
 
     @Override
-    public Map<Class<? extends MTipo>, Class<IWicketComponentMapper>> getCustomMappers() {
+    public Map<Class<? extends SType>, Class<IWicketComponentMapper>> getCustomMappers() {
         throw new SingularFormException("Método não implementado");
     }
 }

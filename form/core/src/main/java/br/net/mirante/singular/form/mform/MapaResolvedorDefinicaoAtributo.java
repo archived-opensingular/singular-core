@@ -6,29 +6,29 @@ import java.util.Map;
 
 final class MapaResolvedorDefinicaoAtributo {
 
-    private Map<String, MInstancia> atributos;
+    private Map<String, SInstance> atributos;
 
-    private final MTipo<?> dono;
+    private final SType<?> dono;
 
-    MapaResolvedorDefinicaoAtributo(MTipo<?> dono) {
+    MapaResolvedorDefinicaoAtributo(SType<?> dono) {
         this.dono = dono;
     }
 
     public void set(String pathAtributo, Object valor) {
-        MInstancia instancia = getCriando(pathAtributo);
+        SInstance instancia = getCriando(pathAtributo);
         instancia.setValor(valor);
     }
 
-    public MInstancia getCriando(String pathAtributo) {
-        MInstancia entrada = get(pathAtributo);
+    public SInstance getCriando(String pathAtributo) {
+        SInstance entrada = get(pathAtributo);
         if (entrada != null) {
             return entrada;
         }
 
-        for (MTipo<?> atual = dono; atual != null; atual = atual.getSuperTipo()) {
+        for (SType<?> atual = dono; atual != null; atual = atual.getSuperTipo()) {
             MAtributo atributo = atual.getAtributoDefinidoLocal(pathAtributo);
             if (atributo != null) {
-                MInstancia novo = atributo.novaInstanciaPara(dono);
+                SInstance novo = atributo.novaInstanciaPara(dono);
                 if (atributos == null) {
                     atributos = new LinkedHashMap<>();
                 }
@@ -40,14 +40,14 @@ final class MapaResolvedorDefinicaoAtributo {
                 + "' ou nos tipos extendidos");
     }
 
-    final Map<String, MInstancia> getAtributos() {
+    final Map<String, SInstance> getAtributos() {
         if (atributos == null) {
             return Collections.emptyMap();
         }
         return atributos;
     }
 
-    public MInstancia get(String nomeCompleto) {
+    public SInstance get(String nomeCompleto) {
         if (atributos == null) {
             return null;
         }

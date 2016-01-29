@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public class InstanceValidationContext {
 
-    private MInstancia             rootInstance;
+    private SInstance rootInstance;
     private List<IValidationError> errors = new ArrayList<>();
 
-    public InstanceValidationContext(MInstancia instance) {
+    public InstanceValidationContext(SInstance instance) {
         this.rootInstance = instance;
     }
 
@@ -46,7 +46,7 @@ public class InstanceValidationContext {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <I extends MInstancia> void validateInstance(IInstanceValidatable<I> validatable) {
+    public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
         final I instance = validatable.getInstance();
 
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
@@ -54,15 +54,15 @@ public class InstanceValidationContext {
             return;
         }
 
-        final MTipo<I> tipo = (MTipo<I>) instance.getMTipo();
+        final SType<I> tipo = (SType<I>) instance.getMTipo();
         for (IInstanceValidator<I> validator : tipo.getValidators()) {
             validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
             validator.validate((IInstanceValidatable) validatable);
         }
     }
 
-    protected boolean checkRequired(MInstancia instance, boolean ignoreDisabledAndInvisible) {
-        if (!Boolean.TRUE.equals(instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO)))
+    protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
+        if (!Boolean.TRUE.equals(instance.getValorAtributo(SPackageCore.ATR_OBRIGATORIO)))
             return true;
 
         if (instance instanceof ICompositeInstance) {
@@ -74,15 +74,15 @@ public class InstanceValidationContext {
         }
     }
 
-    protected <I extends MInstancia> boolean isEnabledInHierarchy(MInstancia instance) {
+    protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance).stream()
-            .map(it -> it.getValorAtributo(MPacoteBasic.ATR_ENABLED))
+            .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
             .anyMatch(it -> Boolean.FALSE.equals(it));
     }
 
-    protected <I extends MInstancia> boolean isVisibleInHierarchy(MInstancia instance) {
+    protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance).stream()
-            .map(it -> it.getValorAtributo(MPacoteBasic.ATR_VISIVEL))
+            .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
             .anyMatch(it -> Boolean.FALSE.equals(it));
     }
 
@@ -93,7 +93,7 @@ public class InstanceValidationContext {
             .isPresent();
     }
 
-    private static class InstanceValidatable<I extends MInstancia> implements IInstanceValidatable<I> {
+    private static class InstanceValidatable<I extends SInstance> implements IInstanceValidatable<I> {
         private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
         private final I                         instance;
         private final Consumer<ValidationError> onError;
