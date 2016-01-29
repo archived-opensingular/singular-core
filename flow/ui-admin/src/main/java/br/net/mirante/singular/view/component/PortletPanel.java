@@ -29,7 +29,7 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
@@ -145,14 +145,14 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
 
             @Override
-            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 super.onValidationError(target, form, instanceModel);
                 modalBorder.hide(target);
                 modalBorder.show(target);
             }
 
             @Override
-            public IModel<? extends SInstance2> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return panel.getRootInstance();
             }
         };

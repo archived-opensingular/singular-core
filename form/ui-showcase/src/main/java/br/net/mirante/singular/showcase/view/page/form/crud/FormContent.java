@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -111,7 +111,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            protected MInstanceRootModel<SInstance2> populateInstance(SType<?> tipo) {
+            protected MInstanceRootModel<SInstance> populateInstance(SType<?> tipo) {
                 try {
                     loadOrbuildModel();
 
@@ -120,7 +120,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                         return super.populateInstance(tipo);
                     } else {
                         MElement xmlElement = MParser.parse(xml);
-                        SInstance2 instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
+                        SInstance instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
 
                         final String annotations = currentModel.getAnnnotations();
                         if(StringUtils.isNotBlank(annotations)){
@@ -171,7 +171,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private Component buildSaveButton() {
         final Component button = new BelverSaveButton("save-btn") {
             @Override
-            public IModel<? extends SInstance2> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
             }
 
@@ -193,7 +193,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private Component buildSaveAnnotationButton() {
         final Component button = new BelverValidationButton("save-annotation-btn") {
             @Override
-            public IModel<? extends SInstance2> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
             }
 
@@ -205,19 +205,19 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 save();
             }
 
             @Override
-            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 save();
             }
         };
         return button.add(visibleOnlyInAnnotationBehaviour());
     }
 
-    private void addAnnotationsToModel(SInstance2 instancia) {
+    private void addAnnotationsToModel(SInstance instancia) {
         AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
         List<SIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
         if(!allAnnotations.isEmpty()){
@@ -246,17 +246,17 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
+            protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 save();
             }
 
             @Override
-            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 save();
             }
 
             @Override
-            public IModel<? extends SInstance2> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
             }
 
@@ -279,11 +279,11 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
-                                               IModel<? extends SInstance2> instanceModel) {
+                                               IModel<? extends SInstance> instanceModel) {
             }
 
             @Override
-            public IModel<? extends SInstance2> getCurrentInstance() {
+            public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
             }
         };

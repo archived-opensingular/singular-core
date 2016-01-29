@@ -8,12 +8,12 @@ import java.util.stream.Stream;
 
 public interface ICompositeInstance {
 
-    public Collection<? extends SInstance2> getChildren();
-    public default Collection<? extends SInstance2> getAllChildren() {
+    public Collection<? extends SInstance> getChildren();
+    public default Collection<? extends SInstance> getAllChildren() {
         return getChildren();
     }
 
-    public Stream<? extends SInstance2> stream();
+    public Stream<? extends SInstance> stream();
 
     public void setValor(String pathCampo, Object valor);
 
@@ -36,10 +36,10 @@ public interface ICompositeInstance {
         return getValor(pathCampo) == null;
     }
 
-    public SInstance2 getCampo(String path);
+    public SInstance getCampo(String path);
 
-    public default <T extends SInstance2> T getField(String path, Class<T> typeOfInstance) {
-        SInstance2 instancia = getCampo(path);
+    public default <T extends SInstance> T getField(String path, Class<T> typeOfInstance) {
+        SInstance instancia = getCampo(path);
         if (instancia == null) {
             return null;
         } else if (typeOfInstance.isInstance(instancia)) {
@@ -58,7 +58,7 @@ public interface ICompositeInstance {
      *         ainda.
      */
     public default SIComposite getFieldRecord(String path) {
-        SInstance2 instancia = getCampo(path);
+        SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SIComposite)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
                 + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + SIComposite.class.getName());
@@ -76,7 +76,7 @@ public interface ICompositeInstance {
      *         ainda.
      */
     @SuppressWarnings("unchecked")
-    public default <T extends SInstance2> SList<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
+    public default <T extends SInstance> SList<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
         SList<?> lista = getFieldList(path);
         if (lista == null) {
             return null;
@@ -97,7 +97,7 @@ public interface ICompositeInstance {
      *         ainda.
      */
     public default SList<?> getFieldList(String path) {
-        SInstance2 instancia = getCampo(path);
+        SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SList)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
                 + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + SList.class.getName());
@@ -122,27 +122,27 @@ public interface ICompositeInstance {
         return null;
     }
 
-    public default <D extends SInstance2> D getDescendant(SType<D> descendantType) {
-        return MInstances.getDescendant((SInstance2) this, descendantType);
+    public default <D extends SInstance> D getDescendant(SType<D> descendantType) {
+        return MInstances.getDescendant((SInstance) this, descendantType);
     }
-    public default <D extends SInstance2> Optional<D> findDescendant(SType<D> descendantType) {
-        return MInstances.findDescendant((SInstance2) this, descendantType);
+    public default <D extends SInstance> Optional<D> findDescendant(SType<D> descendantType) {
+        return MInstances.findDescendant((SInstance) this, descendantType);
     }
-    public default <D extends SInstance2> List<D> listDescendants(SType<D> descendantType) {
-        return MInstances.listDescendants((SInstance2) this, descendantType);
+    public default <D extends SInstance> List<D> listDescendants(SType<D> descendantType) {
+        return MInstances.listDescendants((SInstance) this, descendantType);
     }
-    public default <D extends SInstance2, V> List<V> listDescendants(SType<?> descendantType, Function<D, V> function) {
-        return MInstances.listDescendants((SInstance2) this, descendantType, function);
+    public default <D extends SInstance, V> List<V> listDescendants(SType<?> descendantType, Function<D, V> function) {
+        return MInstances.listDescendants((SInstance) this, descendantType, function);
     }
     @SuppressWarnings("unchecked")
     public default <V> List<V> listDescendantValues(SType<?> descendantType, Class<V> valueType) {
-        return MInstances.listDescendants((SInstance2) this, descendantType, node -> (V) node.getValor());
+        return MInstances.listDescendants((SInstance) this, descendantType, node -> (V) node.getValor());
     }
-    public default Stream<SInstance2> streamDescendants(boolean includeRoot) {
-        return MInstances.streamDescendants((SInstance2) this, includeRoot);
+    public default Stream<SInstance> streamDescendants(boolean includeRoot) {
+        return MInstances.streamDescendants((SInstance) this, includeRoot);
     }
-    public default <D extends SInstance2> Stream<D> streamDescendants(SType<D> descendantType, boolean includeRoot) {
-        return MInstances.streamDescendants((SInstance2) this, includeRoot, descendantType);
+    public default <D extends SInstance> Stream<D> streamDescendants(SType<D> descendantType, boolean includeRoot) {
+        return MInstances.streamDescendants((SInstance) this, includeRoot, descendantType);
     }
 
 }

@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -42,7 +42,7 @@ public class TableListaMapper extends AbstractListaMapper {
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance2>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
+        final IModel<SList<SInstance>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
         String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
         final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
@@ -72,13 +72,13 @@ public class TableListaMapper extends AbstractListaMapper {
 
     private void builContent(BSContainer<?> content,
                              Form<?> form,
-                             IModel<SList<SInstance2>> mLista,
+                             IModel<SList<SInstance>> mLista,
                              UIBuilderWicket wicketBuilder,
                              WicketBuildContext ctx,
                              MView view,
                              ViewMode viewMode) {
 
-        final IModel<SType<SInstance2>> tipoElementos = new MTipoElementosModel(mLista);
+        final IModel<SType<SInstance>> tipoElementos = new MTipoElementosModel(mLista);
 
         final TemplatePanel template = content.newTemplateTag(t -> ""
                 + "    <table class='table table-condensed table-unstyled'>"
@@ -166,7 +166,7 @@ public class TableListaMapper extends AbstractListaMapper {
         private final UIBuilderWicket wicketBuilder;
 
         private TableElementsView(String id,
-                                  IModel<SList<SInstance2>> model,
+                                  IModel<SList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   MView view,
@@ -182,19 +182,19 @@ public class TableListaMapper extends AbstractListaMapper {
 
         @Override
         @SuppressWarnings("unchecked")
-        protected void populateItem(Item<SInstance2> item) {
+        protected void populateItem(Item<SInstance> item) {
             final BSTRow tr = new BSTRow("_r", BSGridSize.MD);
 
             if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha()))
                 appendInserirButton(this, form, item, tr.newCol());
 
-            final IModel<SInstance2> itemModel = item.getModel();
-            final SInstance2 instancia = itemModel.getObject();
+            final IModel<SInstance> itemModel = item.getModel();
+            final SInstance instancia = itemModel.getObject();
             if (instancia instanceof SIComposite) {
                 SIComposite composto = (SIComposite) instancia;
                 STypeComposto<SIComposite> tComposto = (STypeComposto<SIComposite>) composto.getMTipo();
                 for (SType<?> tCampo : tComposto.getFields()) {
-                    final SInstanceCampoModel<SInstance2> mCampo =
+                    final SInstanceCampoModel<SInstance> mCampo =
                             new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
                     wicketBuilder.build(ctx.createChild(tr.newCol(), true, mCampo), viewMode);
                 }

@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Objects;
 
-public class SISimple<TIPO_NATIVO> extends SInstance2 {
+public class SISimple<TIPO_NATIVO> extends SInstance {
 
     private TIPO_NATIVO valor;
 

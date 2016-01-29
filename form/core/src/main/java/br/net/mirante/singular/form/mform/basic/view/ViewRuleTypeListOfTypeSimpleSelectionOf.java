@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.options.MSelectionableType;
 class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
 
     @Override @SuppressWarnings("rawtypes")
-    public MView apply(SInstance2 listInstance) {
+    public MView apply(SInstance listInstance) {
         if (listInstance instanceof SList) {
             SList<?> listType = (SList<?>) listInstance;
             SType<?> elementType = listType.getTipoElementos();
@@ -30,7 +30,7 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
         return null;
     }
     
-    private MView decideView(SInstance2 instance, MOptionsProvider provider) {
+    private MView decideView(SInstance instance, MOptionsProvider provider) {
         int size = provider.listAvailableOptions(instance).size();
         if (size <= 3) {
             return newInstance(MSelecaoMultiplaPorCheckView.class);

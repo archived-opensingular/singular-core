@@ -6,25 +6,25 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public class MInstanceListeners {
 
     private ListMultimap<MInstanceEventType, IMInstanceListener> instanceListeners;
 
-    public void fireInstanceValueChanged(SInstance2 instance, Object oldValue, Object newValue) {
+    public void fireInstanceValueChanged(SInstance instance, Object oldValue, Object newValue) {
         if (hasListenersFor(MInstanceEventType.VALUE_CHANGED))
             fireInstanceEvent(MInstanceEventType.VALUE_CHANGED, new SInstanceValueChangeEvent(instance, oldValue, newValue));
     }
-    public void fireInstanceAttributeChanged(SInstance2 instance, SInstance2 attributeInstance, Object oldValue, Object valor) {
+    public void fireInstanceAttributeChanged(SInstance instance, SInstance attributeInstance, Object oldValue, Object valor) {
         if (hasListenersFor(MInstanceEventType.ATTRIBUTE_CHANGED))
             fireInstanceEvent(MInstanceEventType.ATTRIBUTE_CHANGED, new SInstanceAttributeChangeEvent(instance, attributeInstance, oldValue, valor));
     }
-    public void fireInstanceListElementAdded(SList<?> listInstance, SInstance2 addedInstance, int index) {
+    public void fireInstanceListElementAdded(SList<?> listInstance, SInstance addedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_ADDED))
             fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_ADDED, new SInstanceListElementAddedEvent(listInstance, addedInstance, index));
     }
-    public void fireInstanceListElementRemoved(SList<?> listInstance, SInstance2 removedInstance, int index) {
+    public void fireInstanceListElementRemoved(SList<?> listInstance, SInstance removedInstance, int index) {
         if (hasListenersFor(MInstanceEventType.LIST_ELEMENT_REMOVED))
             fireInstanceEvent(MInstanceEventType.LIST_ELEMENT_REMOVED, new SInstanceListElementRemovedEvent(listInstance, removedInstance, index));
     }

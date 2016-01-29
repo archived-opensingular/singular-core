@@ -102,7 +102,7 @@ public class SDictionary implements IContextoTipo {
         return tipoRef;
     }
 
-    public <I extends SInstance2, T extends SType<I>> I novaInstancia(Class<T> classeTipo) {
+    public <I extends SInstance, T extends SType<I>> I novaInstancia(Class<T> classeTipo) {
         return getTipo(classeTipo).novaInstancia();
     }
 

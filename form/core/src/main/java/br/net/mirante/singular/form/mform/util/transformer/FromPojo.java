@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 
@@ -33,7 +33,7 @@ public class FromPojo<T> {
         return this;
     }
 
-    public <R extends SInstance2> R build() {
+    public <R extends SInstance> R build() {
         SIComposite instancia = target.novaInstancia();
         for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
             instancia.setValor(e.getKey().getNome(), e.getValue().value(pojo));

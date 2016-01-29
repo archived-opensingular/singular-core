@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SList<E extends SInstance2> extends SInstance2 implements Iterable<E>, ICompositeInstance {
+public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
     private List<E> valores;
 
@@ -18,7 +18,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
 
     public SList() {}
 
-    static <I extends SInstance2> SList<I> of(SType<I> tipoElementos) {
+    static <I extends SInstance> SList<I> of(SType<I> tipoElementos) {
         //        MILista<I> lista = new MILista<>();
         //TODO: FABS: Evaluate this case, sin it impacts in the serialization process.
         SList<I> lista = (SList<I>) tipoElementos.getDicionario().getTipo(STypeLista.class).novaInstancia();
@@ -133,7 +133,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
         }
     }
 
-    public SInstance2 get(int index) {
+    public SInstance get(int index) {
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
@@ -141,16 +141,16 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
     }
 
     @Override
-    public SInstance2 getCampo(String path) {
+    public SInstance getCampo(String path) {
         return getCampo(new LeitorPath(path));
     }
 
     @Override
-    final SInstance2 getCampoLocal(LeitorPath leitor) {
+    final SInstance getCampoLocal(LeitorPath leitor) {
         if (!leitor.isIndice()) {
             throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        SInstance2 instancia = isEmpty() ? null : valores.get(leitor.getIndice());
+        SInstance instancia = isEmpty() ? null : valores.get(leitor.getIndice());
         if (instancia == null) {
             MFormUtil.resolverTipoCampo(getMTipo(), leitor);
         }
@@ -158,7 +158,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
     }
 
     @Override
-    final SInstance2 getCampoLocalSemCriar(LeitorPath leitor) {
+    final SInstance getCampoLocalSemCriar(LeitorPath leitor) {
         if (!leitor.isIndice()) {
             throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
@@ -175,7 +175,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
         if (!leitorPath.isIndice()) {
             throw new RuntimeException(leitorPath.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        SInstance2 instancia = get(leitorPath.getIndice());
+        SInstance instancia = get(leitorPath.getIndice());
         if (leitorPath.isUltimo()) {
             instancia.setValor(valor);
         } else {
@@ -183,7 +183,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
         }
     }
 
-    public SInstance2 remove(int index) {
+    public SInstance remove(int index) {
         if (valores == null) {
             throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
         }
@@ -203,7 +203,7 @@ public class SList<E extends SInstance2> extends SInstance2 implements Iterable<
      * @param supposedChild
      * @return -1 senão encontrou
      */
-    public int indexOf(SInstance2 supposedChild) {
+    public int indexOf(SInstance supposedChild) {
         for (int i = size() - 1; i != -1; i--) {
             if (valores.get(i) == supposedChild) {
                 return i;

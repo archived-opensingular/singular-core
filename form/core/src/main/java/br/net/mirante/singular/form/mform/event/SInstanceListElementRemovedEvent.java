@@ -1,20 +1,20 @@
 package br.net.mirante.singular.form.mform.event;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public class SInstanceListElementRemovedEvent extends SInstanceStructureChangeEvent {
 
-    private final SInstance2 removedInstance;
+    private final SInstance removedInstance;
     private final int        index;
 
-    public SInstanceListElementRemovedEvent(SList<? extends SInstance2> source, SInstance2 removedInstance, int index) {
+    public SInstanceListElementRemovedEvent(SList<? extends SInstance> source, SInstance removedInstance, int index) {
         super(source);
         this.removedInstance = removedInstance;
         this.index = index;
     }
 
-    public SInstance2 getRemovedInstance() {
+    public SInstance getRemovedInstance() {
         return removedInstance;
     }
     public int getIndex() {

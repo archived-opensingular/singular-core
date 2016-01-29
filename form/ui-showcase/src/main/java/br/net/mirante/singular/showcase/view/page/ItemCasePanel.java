@@ -21,7 +21,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
@@ -176,11 +176,11 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
                 @Override
                 protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
-                                                   IModel<? extends SInstance2> instanceModel) {
+                                                   IModel<? extends SInstance> instanceModel) {
                 }
 
                 @Override
-                public IModel<? extends SInstance2> getCurrentInstance() {
+                public IModel<? extends SInstance> getCurrentInstance() {
                     return ci;
                 }
             };
@@ -220,7 +220,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             final BelverSaveButton bsb = new BelverSaveButton(id) {
 
                 @Override
-                public IModel<? extends SInstance2> getCurrentInstance() {
+                public IModel<? extends SInstance> getCurrentInstance() {
                     return ci;
                 }
 
@@ -261,6 +261,6 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
     public interface ItemCaseButton extends Serializable {
-        AjaxButton buildButton(String id, IModel<? extends SInstance2> currentInstance);
+        AjaxButton buildButton(String id, IModel<? extends SInstance> currentInstance);
     }
 }

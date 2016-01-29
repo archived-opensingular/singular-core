@@ -158,7 +158,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertTrue(bloco.isCampoNull(path));
         assertEquals(qtdCamposAntes, bloco.getCampos().size());
 
-        SInstance2 resultado = bloco.getCampo(path); // Provoca instancia
+        SInstance resultado = bloco.getCampo(path); // Provoca instancia
         assertNotNull(resultado);
         if (resultado instanceof SISimple) {
             assertNull(bloco.getValor(path));

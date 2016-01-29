@@ -22,10 +22,10 @@ public class TestSDocument extends TestCaseForm {
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
         STypeComposto<?> tipo = pb.createTipo("nome", STypeComposto.class);
 
-        SInstance2 instancia1 = tipo.novaInstancia();
+        SInstance instancia1 = tipo.novaInstancia();
         assertFilhos(instancia1, 0);
 
-        SInstance2 instancia2 = tipo.novaInstancia();
+        SInstance instancia2 = tipo.novaInstancia();
         assertFilhos(instancia2, 0);
 
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());

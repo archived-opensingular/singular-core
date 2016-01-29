@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
@@ -30,7 +30,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         AttachmentContainer container = new AttachmentContainer(
                 (IModel<? extends SIAttachment>) model);
         formGroup.appendTypeahead(container);
@@ -38,13 +38,13 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         return StringUtils.EMPTY;
     }
 
     @Override
     public Component appendReadOnlyInput(MView view, BSContainer bodyContainer,
-                                         BSControls formGroup, IModel<? extends SInstance2> model,
+                                         BSControls formGroup, IModel<? extends SInstance> model,
                                          IModel<String> labelModel) {
 
         final TemplatePanel templatePanel = formGroup.newTemplateTag(tt -> {

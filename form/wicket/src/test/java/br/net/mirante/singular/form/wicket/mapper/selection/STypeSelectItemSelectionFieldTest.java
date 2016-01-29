@@ -8,7 +8,7 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 import java.util.List;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeSimples;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -46,10 +46,10 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     private MOptionsProvider newProviderFrom(SIComposite...compostos){
         return new MOptionsProvider() {
             @Override
-            public SList<? extends SInstance2> listOptions(SInstance2 optionsInstance) {
+            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
                 SList lista = selectType.novaLista();
                 for (SIComposite composto : compostos){
-                    SInstance2 instancia = lista.addNovo();
+                    SInstance instancia = lista.addNovo();
                     Object value = Value.dehydrate(composto);
                     Value.hydrate(instancia, value);
                 }
@@ -150,11 +150,11 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         return value;
     }
 
-    private Object getSelectKeyFromMInstancia(SInstance2 instancia){
+    private Object getSelectKeyFromMInstancia(SInstance instancia){
         return  getInstanciaSelect().getOptionsConfig().getKeyFromOptions(instancia);
     }
 
-    private SInstance2 getInstanciaSelect(){
+    private SInstance getInstanciaSelect(){
         return page.getCurrentInstance().getCampo("originUF");
     }
     

@@ -31,7 +31,7 @@ import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 @MInfoTipo(nome = "MTipo", pacote = SPackageCore.class)
-public class SType<I extends SInstance2> extends MEscopoBase implements MAtributoEnabled {
+public class SType<I extends SInstance> extends MEscopoBase implements MAtributoEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
 
@@ -235,15 +235,15 @@ public class SType<I extends SInstance2> extends MEscopoBase implements MAtribut
         throw new SingularFormException("Não existe atributo '" + nomeCompleto + "' em " + getNome());
     }
 
-    public <MI extends SInstance2> MI getInstanciaAtributo(AtrRef<?, MI, ?> atr) {
+    public <MI extends SInstance> MI getInstanciaAtributo(AtrRef<?, MI, ?> atr) {
         Class<MI> classeInstancia = atr.isSelfReference() ? (Class<MI>) getClasseInstanciaResolvida() : atr.getClasseInstancia();
-        SInstance2 instancia = getInstanciaAtributoInterno(atr.getNomeCompleto());
+        SInstance instancia = getInstanciaAtributoInterno(atr.getNomeCompleto());
         return classeInstancia.cast(instancia);
     }
 
-    final SInstance2 getInstanciaAtributoInterno(String nomeCompleto) {
+    final SInstance getInstanciaAtributoInterno(String nomeCompleto) {
         for (SType<?> atual = this; atual != null; atual = atual.superTipo) {
-            SInstance2 instancia = atual.atributosResolvidos.get(nomeCompleto);
+            SInstance instancia = atual.atributosResolvidos.get(nomeCompleto);
             if (instancia != null) {
                 return instancia;
             }
@@ -253,7 +253,7 @@ public class SType<I extends SInstance2> extends MEscopoBase implements MAtribut
 
     @Override
     public void setValorAtributo(String nomeAtributo, String subPath, Object valor) {
-        SInstance2 instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
+        SInstance instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
         if (subPath != null) {
             instancia.setValor(new LeitorPath(subPath), valor);
         } else {
@@ -264,7 +264,7 @@ public class SType<I extends SInstance2> extends MEscopoBase implements MAtribut
     @Override
     public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino) {
         nomeCompleto = mapearNome(nomeCompleto);
-        SInstance2 instancia = getInstanciaAtributoInterno(nomeCompleto);
+        SInstance instancia = getInstanciaAtributoInterno(nomeCompleto);
         if (instancia != null) {
             return (classeDestino == null) ? (V) instancia.getValor() : instancia.getValorWithDefault(classeDestino);
         }
@@ -460,7 +460,7 @@ public class SType<I extends SInstance2> extends MEscopoBase implements MAtribut
     }
 
     @SuppressWarnings("unchecked")
-    public I castInstancia(SInstance2 instancia) {
+    public I castInstancia(SInstance instancia) {
         // TODO verificar se essa é a verificação correta
         if (instancia.getMTipo() != this)
             throw new IllegalArgumentException("A instância " + instancia + " não é do tipo " + this);
@@ -580,7 +580,7 @@ public class SType<I extends SInstance2> extends MEscopoBase implements MAtribut
 
     private void debugAtributos(Appendable appendable, int nivel) {
         try {
-            Map<String, SInstance2> vals = atributosResolvidos.getAtributos();
+            Map<String, SInstance> vals = atributosResolvidos.getAtributos();
             if (vals.size() != 0) {
                 appendable.append(" {");
                 vals.entrySet().stream().forEach(e -> {

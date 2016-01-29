@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -28,7 +28,7 @@ public class PanelListaMapper extends AbstractListaMapper {
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance2>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
+        final IModel<SList<SInstance>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
         final SList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
@@ -74,7 +74,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         private final UIBuilderWicket wicketBuilder;
 
         private PanelElementsView(String id,
-                                  IModel<SList<SInstance2>> model,
+                                  IModel<SList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   MView view,
@@ -87,7 +87,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         }
 
         @Override
-        protected void populateItem(Item<SInstance2> item) {
+        protected void populateItem(Item<SInstance> item) {
             final BSGrid grid = new BSGrid("_r");
             final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();

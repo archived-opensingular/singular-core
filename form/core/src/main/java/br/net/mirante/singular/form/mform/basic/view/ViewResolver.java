@@ -71,11 +71,11 @@ public class ViewResolver {
      * MView.DEFAULT, se não houver nenhum direcionamento específico e nesse
      * caso então cabe a cada gerador decidir como criar o componente na tela.
      */
-    public static MView resolve(SInstance2 instance) {
+    public static MView resolve(SInstance instance) {
         return instance.getDicionario().getViewResolver().resolveInternal(instance);
     }
 
-    private MView resolveInternal(SInstance2 instance) {
+    private MView resolveInternal(SInstance instance) {
         MView view = instance.getMTipo().getView();
         if (view != null) {
             return view;
@@ -109,7 +109,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(SInstance2 instance) {
+        public MView apply(SInstance instance) {
             return newInstance(view);
         }
     }
@@ -134,7 +134,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(SInstance2 instance) {
+        public MView apply(SInstance instance) {
             return viewRule.apply(instance);
         }
 

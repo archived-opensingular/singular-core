@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -21,14 +21,14 @@ public class TextAreaMapper extends StringMapper {
 
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer,
-                                 BSControls formGroup, IModel<? extends SInstance2> model,
+                                 BSControls formGroup, IModel<? extends SInstance> model,
                                  IModel<String> labelModel) {
 
         if (view instanceof MTextAreaView) {
 
             MTextAreaView mTextAreaView = (MTextAreaView) view;
 
-            final SInstance2 mi = model.getObject();
+            final SInstance mi = model.getObject();
             FormComponent<?> textArea = new TextArea<>(mi.getNome(),new MInstanciaValorModel<>(model));
             textArea.setLabel(labelModel);
             formGroup.appendTextarea(textArea, mTextAreaView.getLinhas());

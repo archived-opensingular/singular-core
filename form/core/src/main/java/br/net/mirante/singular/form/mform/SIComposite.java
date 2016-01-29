@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class SIComposite extends SInstance2 implements ICompositeInstance {
+public class SIComposite extends SInstance implements ICompositeInstance {
 
     private FieldMapOfRecordInstance fields;
 
@@ -40,7 +40,7 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
      *
      * @return instancias dos campos
      */
-    public Collection<SInstance2> getCampos() {
+    public Collection<SInstance> getCampos() {
         return (fields == null) ? Collections.emptyList() : fields.getFields();
     }
 
@@ -49,36 +49,36 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
      *
      * @return instancias dos campos
      */
-    public Collection<SInstance2> getAllFields() {
+    public Collection<SInstance> getAllFields() {
         for (SType<?> field : getMTipo().getFields())
             getCampo(field.getNomeSimples());
         return getCampos();
     }
 
     @Override
-    public Collection<SInstance2> getChildren() {
+    public Collection<SInstance> getChildren() {
         return getCampos();
     }
 
     @Override
-    public Collection<SInstance2> getAllChildren() {
+    public Collection<SInstance> getAllChildren() {
         return getAllFields();
     }
 
     @Override
-    public Stream<? extends SInstance2> stream() {
+    public Stream<? extends SInstance> stream() {
         return fields == null ? Stream.empty() : fields.stream();
     }
 
     @Override
-    public SInstance2 getCampo(String path) {
+    public SInstance getCampo(String path) {
         return getCampo(new LeitorPath(path));
     }
 
     @Override
-    final SInstance2 getCampoLocal(LeitorPath leitor) {
+    final SInstance getCampoLocal(LeitorPath leitor) {
         int fieldIndex = findIndexTrecho(leitor);
-        SInstance2 instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
+        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
             instancia = createField(fieldIndex);
         }
@@ -86,12 +86,12 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
     }
 
     @Override
-    final SInstance2 getCampoLocalSemCriar(LeitorPath leitor) {
+    final SInstance getCampoLocalSemCriar(LeitorPath leitor) {
         int fieldIndex = findIndexTrecho(leitor);
         return (fields == null) ? null : fields.getByIndex(fieldIndex);
     }
 
-    public <T extends SInstance2> T getFilho(SType<T> tipoPai) {
+    public <T extends SInstance> T getFilho(SType<T> tipoPai) {
         throw new RuntimeException("Método não implementado");
     }
 
@@ -132,7 +132,7 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
     @Override
     void setValor(LeitorPath leitorPath, Object valor) {
         int fieldIndex = findIndexTrecho(leitorPath);
-        SInstance2 instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
+        SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
             if (valor == null) {
                 return;
@@ -141,7 +141,7 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
         }
         if (leitorPath.isUltimo()) {
             if (valor == null) {
-                SInstance2 child = fields.getByIndex(fieldIndex);
+                SInstance child = fields.getByIndex(fieldIndex);
                 if (child != null) {
                     child.internalOnRemove();
                     fields.remove(fieldIndex);
@@ -154,8 +154,8 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
         }
     }
 
-    private SInstance2 createField(int fieldIndex) {
-        SInstance2 instancia;
+    private SInstance createField(int fieldIndex) {
+        SInstance instancia;
         SType<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
         instancia = tipoCampo.newInstance(getDocument());
         instancia.setPai(this);
@@ -185,7 +185,7 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
     @Override
     final <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
         if (fields != null) {
-            SInstance2 instancia = fields.getByIndex(findIndexTrecho(leitor));
+            SInstance instancia = fields.getByIndex(findIndexTrecho(leitor));
             if (instancia != null) {
                 return instancia.getValorWithDefaultIfNull(leitor.proximo(), classeDestino);
             }
@@ -219,13 +219,13 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
 
     private final static class FieldMapOfRecordInstance {
 
-        private final SInstance2[] instances;
+        private final SInstance[] instances;
 
         public FieldMapOfRecordInstance(FieldMapOfRecordType fieldsDef) {
-            this.instances = new SInstance2[fieldsDef.size()];
+            this.instances = new SInstance[fieldsDef.size()];
         }
 
-        public SInstance2 getByIndex(int fieldIndex) {
+        public SInstance getByIndex(int fieldIndex) {
             return instances[fieldIndex];
         }
 
@@ -233,15 +233,15 @@ public class SIComposite extends SInstance2 implements ICompositeInstance {
             instances[fieldIndex] = null;
         }
 
-        public void set(int fieldIndex, SInstance2 instance) {
+        public void set(int fieldIndex, SInstance instance) {
             instances[fieldIndex] = instance;
         }
 
-        public List<SInstance2> getFields() {
+        public List<SInstance> getFields() {
             return stream().collect(Collectors.toList());
         }
 
-        public Stream<SInstance2> stream() {
+        public Stream<SInstance> stream() {
             return Arrays.stream(instances).filter(i -> i != null);
         }
 

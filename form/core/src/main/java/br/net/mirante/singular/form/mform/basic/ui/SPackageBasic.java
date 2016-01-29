@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.SIPredicate;
 import br.net.mirante.singular.form.mform.SISupplier;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeBehavior;
@@ -41,9 +41,9 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                   ATR_ENABLED                  = new AtrRef<>(SPackageBasic.class, "enabled", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeInteger, SIInteger, Integer>                   ATR_ORDEM                    = new AtrRef<>(SPackageBasic.class, "ordemExibicao", STypeInteger.class, SIInteger.class, Integer.class);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance2>> ATR_VISIBLE_FUNCTION         = new AtrRef(SPackageBasic.class, "visivelFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_VISIBLE_FUNCTION         = new AtrRef(SPackageBasic.class, "visivelFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance2>> ATR_ENABLED_FUNCTION         = new AtrRef(SPackageBasic.class, "enabledFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_ENABLED_FUNCTION         = new AtrRef(SPackageBasic.class, "enabledFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static final AtrRef<STypeSupplier<Collection<SType<?>>>, SISupplier<Collection<SType<?>>>, Supplier<Collection<SType<?>>>>
                                                                                    ATR_DEPENDS_ON_FUNCTION      = new AtrRef(SPackageBasic.class, "dependsOnFunction", STypeSupplier.class, SISupplier.class, Supplier.class);

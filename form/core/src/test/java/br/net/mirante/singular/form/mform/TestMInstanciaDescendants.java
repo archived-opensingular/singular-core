@@ -59,7 +59,7 @@ public class TestMInstanciaDescendants {
             Arrays.asList(0, 1, 2, 3),
             contato.listDescendantValues(pacote.enderecoNumero, Integer.class));
 
-        for (SInstance2 cid : contato.listDescendants(pacote.enderecoCidade))
+        for (SInstance cid : contato.listDescendants(pacote.enderecoCidade))
             cid.setValor("C" + cid.getAncestor(pacote.endereco).getDescendant(pacote.enderecoNumero).getValor());
 
         Assert.assertEquals(

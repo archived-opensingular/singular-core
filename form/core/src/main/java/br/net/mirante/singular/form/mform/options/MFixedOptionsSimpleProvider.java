@@ -4,14 +4,14 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimples;
 
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
-    private final SList<? extends SInstance2> opcoes;
+    private final SList<? extends SInstance> opcoes;
 
     public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Collection<? extends Object> lista) {
         this.opcoes = tipoOpcoes.novaLista();
@@ -33,7 +33,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         }
         if(tipoOpcoes instanceof STypeSimples){
             Arrays.stream(lista).forEach(o -> {
-                if (o instanceof SInstance2) {
+                if (o instanceof SInstance) {
                     opcoes.addElement(o);
                 } else {
                     opcoes.addValor(o);
@@ -54,7 +54,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
      * @return this
      */
     public MFixedOptionsSimpleProvider add(Object o){
-        SInstance2 e = opcoes.addNovo();
+        SInstance e = opcoes.addNovo();
         e.setValor(o);
         return this;
     }
@@ -66,7 +66,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
      * @return this
      */
     public MFixedOptionsSimpleProvider add(Object value, String selectLabel){
-        SInstance2 instancia = opcoes.addNovo();
+        SInstance instancia = opcoes.addNovo();
         MSelectionableInstance e = (MSelectionableInstance)instancia;
         e.setSelectLabel(selectLabel);
         instancia.setValor(value);
@@ -74,7 +74,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
     }
 
     @Override
-    public SList<? extends SInstance2> listOptions(SInstance2 optionsInstance) {
+    public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
         return opcoes;
     }
 

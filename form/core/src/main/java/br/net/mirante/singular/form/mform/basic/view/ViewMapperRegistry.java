@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.lambda.ISupplier;
 
@@ -77,7 +77,7 @@ public class ViewMapperRegistry<T> implements Serializable {
      * @param view
      *            Pode ser null
      */
-    public Optional<T> getMapper(SInstance2 instance, MView view) {
+    public Optional<T> getMapper(SInstance instance, MView view) {
         Class<? extends SType> type = instance.getMTipo().getClass();
         if (view.getClass() == MView.class) {
             view = null;

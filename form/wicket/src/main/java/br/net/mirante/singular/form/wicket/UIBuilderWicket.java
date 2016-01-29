@@ -76,7 +76,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     }
 
-    private IWicketComponentMapper resolveMapper(SInstance2 instancia) {
+    private IWicketComponentMapper resolveMapper(SInstance instancia) {
 
         final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
         final MView view = ViewResolver.resolve(instancia);
@@ -94,7 +94,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     }
 
-    private SingularFormException createErro(SInstance2 instancia, MView view, String msg) {
+    private SingularFormException createErro(SInstance instancia, MView view, String msg) {
         return new SingularFormException(
             msg + " (instancia=" + instancia.getPathFull()
                 + ", tipo=" + instancia.getMTipo().getNome()
@@ -156,7 +156,7 @@ class AnnotationBuilder {
         WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance2) ctx.getCurrenttInstance());
+        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance) ctx.getCurrenttInstance());
     }
 
     private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
@@ -175,7 +175,7 @@ class AnnotationBuilder {
         return superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
     }
 
-    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance2 instance) {
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
         if(instance.as(AtrAnnotation::new).isAnnotated()){
             BSContainer rootContainer = ctx.getRootContainer();
             Optional<Component> referenced = find(rootContainer.getItems(), instance);
@@ -186,7 +186,7 @@ class AnnotationBuilder {
         }
     }
 
-    private void addAnnotationComponent(BSGrid ngrid, SInstance2 instance,
+    private void addAnnotationComponent(BSGrid ngrid, SInstance instance,
                                         Optional<Component> targetComponent, WicketBuildContext ctx) {
         if(targetComponent.isPresent()){
             ngrid.newRow().appendTag("div", true, "",
@@ -200,7 +200,7 @@ class AnnotationBuilder {
         }
     }
 
-    private Optional<Component> find(RepeatingView children, final SInstance2 target) {
+    private Optional<Component> find(RepeatingView children, final SInstance target) {
         final Optional<Component>[] result = new Optional[]{Optional.empty()};
         children.visitChildren((x, y) -> {
             IModel<?> m = x.getDefaultModel();
@@ -214,14 +214,14 @@ class AnnotationBuilder {
         return result[0];
     }
 
-    private MInstanceRootModel<SInstance2> modelFor(SInstance2 instance) {
-        MInstanceRootModel<SInstance2> model = new MInstanceRootModel<>();
+    private MInstanceRootModel<SInstance> modelFor(SInstance instance) {
+        MInstanceRootModel<SInstance> model = new MInstanceRootModel<>();
         model.setObject(instance);
         return model;
     }
 
-    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<SInstance2> children) {
-        for(SInstance2 field: children){
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<SInstance> children) {
+        for(SInstance field: children){
             addAnnotationsFor(ctx, ngrid, field);
         }
     }

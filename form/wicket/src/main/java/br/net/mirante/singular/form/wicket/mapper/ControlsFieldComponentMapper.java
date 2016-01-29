@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -46,9 +46,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
-    Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel);
+    Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel);
 
-    String getReadOnlyFormattedText(IModel<? extends SInstance2> model);
+    String getReadOnlyFormattedText(IModel<? extends SInstance> model);
 
     /**
      * @param view          Instancia da MView utilizada para configurar o componente
@@ -60,8 +60,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      */
     @SuppressWarnings("rawtypes")
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
-                                          IModel<? extends SInstance2> model, IModel<String> labelModel) {
-        final SInstance2 mi = model.getObject();
+                                          IModel<? extends SInstance> model, IModel<String> labelModel) {
+        final SInstance mi = model.getObject();
         BOutputPanel comp = new BOutputPanel(mi.getNome(),
                 $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
@@ -70,7 +70,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
     default void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends SInstance2> model = ctx.getModel();
+        final IModel<? extends SInstance> model = ctx.getModel();
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);

@@ -6,7 +6,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -51,7 +51,7 @@ class AttachmentDocumentService {
         return getAttachmentHandler().getAttachments().size();
     }
 
-    public static AttachmentDocumentService lookup(SInstance2 ref) {
+    public static AttachmentDocumentService lookup(SInstance ref) {
         return lookup(ref.getDocument());
     }
 

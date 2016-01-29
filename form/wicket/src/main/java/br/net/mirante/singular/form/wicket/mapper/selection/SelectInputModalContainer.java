@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeSimples;
@@ -48,13 +48,13 @@ public class SelectInputModalContainer extends BSContainer {
 
     private BSControls formGroup;
     private BSContainer modalContainer;
-    private IModel<? extends SInstance2> model;
+    private IModel<? extends SInstance> model;
     private MSelecaoPorModalBuscaView view;
     private Label valueLabel;
     private IModel<String> valueLabelModel;
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends SInstance2> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
+                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -159,7 +159,7 @@ public class SelectInputModalContainer extends BSContainer {
                 SType<?> fieldType = selectType.getCampo(field);
                 SelectOption select = (SelectOption) m;
                 MOptionsConfig provider = model.getObject().getOptionsConfig();
-                SInstance2 instance = provider.getValueFromKey(String.valueOf(select.getValue()));
+                SInstance instance = provider.getValueFromKey(String.valueOf(select.getValue()));
                 return Value.of(instance, (STypeSimples) fieldType);
             });
         }
@@ -203,7 +203,7 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     public SortableDataProvider<SelectOption, String> buildDataProvider(
-            IModel<? extends SInstance2> model, final IModel<String> filtro) {
+            IModel<? extends SInstance> model, final IModel<String> filtro) {
         SType<?> type = model.getObject().getMTipo();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
         return new SortableDataProvider<SelectOption, String>() {
@@ -263,7 +263,7 @@ public class SelectInputModalContainer extends BSContainer {
         }
 
         @Override
-        protected Object getSimpleSelection(SInstance2 target, MOptionsConfig provider) {
+        protected Object getSimpleSelection(SInstance target, MOptionsConfig provider) {
             SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
             if (v.getValue() == null) {
                 return null;

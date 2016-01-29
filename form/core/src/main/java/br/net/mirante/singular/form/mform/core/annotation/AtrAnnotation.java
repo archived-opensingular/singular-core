@@ -144,13 +144,13 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     private void gatherAnnottionsFromChildren(HashSet<SIAnnotation> result) {
         if(getAlvo() instanceof SIComposite){
             SIComposite target = (SIComposite) getAlvo();
-            for(SInstance2 i : target.getAllFields()){
+            for(SInstance i : target.getAllFields()){
                 gatterAnnotationsFromChild(result, i);
             }
         }
     }
 
-    private void gatterAnnotationsFromChild(HashSet<SIAnnotation> result, SInstance2 child) {
+    private void gatterAnnotationsFromChild(HashSet<SIAnnotation> result, SInstance child) {
         AtrAnnotation childAs = child.as(AtrAnnotation::new);
         if(child instanceof SIComposite){
             result.addAll(childAs.allAnnotations());
@@ -168,7 +168,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         loadAnnotations(annotationmap, target());
     }
 
-    private void loadAnnotations(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance2 target) {
+    private void loadAnnotations(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
         Integer thisId = target.getId();
         if(annotationmap.containsKey(thisId)){
             target.as(AtrAnnotation::new).setAnnotation(annotationmap.get(thisId));
@@ -176,10 +176,10 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         loadAnnotationsForChidren(annotationmap, target);
     }
 
-    private void loadAnnotationsForChidren(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance2 target) {
+    private void loadAnnotationsForChidren(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
         if(target instanceof SIComposite){
             SIComposite ctarget = (SIComposite) target;
-            for(SInstance2 child : ctarget.getAllFields()){
+            for(SInstance child : ctarget.getAllFields()){
                 loadAnnotations(annotationmap, child);
             }
         }
@@ -212,7 +212,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         return target().getMTipo().getDicionario();
     }
 
-    private SInstance2 target() {
-        return (SInstance2) getAlvo();
+    private SInstance target() {
+        return (SInstance) getAlvo();
     }
 }

@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.mform.function;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
 @FunctionalInterface
-public interface IBehavior<T extends SInstance2> {
+public interface IBehavior<T extends SInstance> {
 
     public void on(IBehaviorContext ctx, T instance);
 
@@ -15,10 +15,10 @@ public interface IBehavior<T extends SInstance2> {
         };
     }
 
-    public static IBehavior<SInstance2> noop() {
+    public static IBehavior<SInstance> noop() {
         return (c, i) -> {};
     }
-    public static IBehavior<SInstance2> noopIfNull(IBehavior<SInstance2> behavior) {
+    public static IBehavior<SInstance> noopIfNull(IBehavior<SInstance> behavior) {
         return (behavior != null) ? behavior : noop();
     }
 }

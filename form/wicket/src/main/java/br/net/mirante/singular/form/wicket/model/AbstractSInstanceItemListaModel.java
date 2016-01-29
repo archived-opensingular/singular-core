@@ -5,9 +5,9 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
-public abstract class AbstractSInstanceItemListaModel<I extends SInstance2>
+public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 

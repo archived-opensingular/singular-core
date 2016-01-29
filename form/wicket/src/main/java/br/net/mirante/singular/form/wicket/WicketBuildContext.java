@@ -17,7 +17,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -44,18 +44,18 @@ public class WicketBuildContext implements Serializable {
     private final BSContainer externalContainer;
     private final BSContainer rootContainer;
 
-    private IModel<? extends SInstance2> model;
+    private IModel<? extends SInstance> model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
     private boolean annotationEnabled = false;
     private MView view;
 
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance2> model) {
+    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
         this(null, container, bodyContainer, false, model);
     }
 
     public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
-                              boolean hintsInherited, IModel<? extends SInstance2> model) {
+                              boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
         this.container = container;
         this.hintsInherited = hintsInherited;
@@ -68,7 +68,7 @@ public class WicketBuildContext implements Serializable {
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
 
-        final SInstance2 instance = getCurrenttInstance();
+        final SInstance instance = getCurrenttInstance();
 
         this.view = ViewResolver.resolve(instance);
         this.uiBuilderWicket = uiBuilderWicket;
@@ -138,14 +138,14 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance2> model) {
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
         return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
     }
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance2 instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
             return instancia.as(SPackageBasic.aspect()).getLabel();
         }
         return "[" + formComponent.getId() + "]";
@@ -159,7 +159,7 @@ public class WicketBuildContext implements Serializable {
     protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
-            SInstance2 instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
                 labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
@@ -220,9 +220,9 @@ public class WicketBuildContext implements Serializable {
     }
 
     public void rebuild(List<String> nomesTipo) {
-        IModel<? extends SInstance2> originalModel = getModel();
+        IModel<? extends SInstance> originalModel = getModel();
         for (String nomeTipo : nomesTipo) {
-            SInstanceCampoModel<SInstance2> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
+            SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
             setModel(subtree);
             getUiBuilderWicket().build(this, viewMode);
         }
@@ -232,9 +232,9 @@ public class WicketBuildContext implements Serializable {
     }
 
     private static final class InitRootContainerBehavior extends Behavior {
-        private final IModel<? extends SInstance2> instanceModel;
+        private final IModel<? extends SInstance> instanceModel;
 
-        public InitRootContainerBehavior(IModel<? extends SInstance2> instanceModel) {
+        public InitRootContainerBehavior(IModel<? extends SInstance> instanceModel) {
             this.instanceModel = instanceModel;
         }
 
@@ -246,12 +246,12 @@ public class WicketBuildContext implements Serializable {
 
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
         @Override
-        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance2> m) {
+        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
             WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
         }
 
         @Override
-        public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance2> instanceModel) {
+        public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
             WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
     }
@@ -268,16 +268,16 @@ public class WicketBuildContext implements Serializable {
         return view;
     }
 
-    public IModel<? extends SInstance2> getModel() {
+    public IModel<? extends SInstance> getModel() {
         return model;
     }
 
-    public void setModel(IModel<? extends SInstance2> model) {
+    public void setModel(IModel<? extends SInstance> model) {
         this.model = model;
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends SInstance2> T getCurrenttInstance() {
+    public <T extends SInstance> T getCurrenttInstance() {
         return (T) getModel().getObject();
     }
 

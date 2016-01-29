@@ -10,7 +10,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -22,7 +22,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
  * AttachmentContainer is the class responsible for rendering a upload field
  *         using the jquery-file-upload javascript plugin. Even though it creates
  *         a file input it is not used by the singular-form to submit the file
- *         information to the {@link SInstance2} representing it. Instead, it
+ *         information to the {@link SInstance} representing it. Instead, it
  *         populates the instance with a composite type containing the file
  *         descriptor.
  *         The workings of this component is as follows:
@@ -41,7 +41,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
  *         use different handlers for the upload (default) and submission
  *         (persistent) of the form.
  *
- *         OBS: Remember that each {@link SInstance2} has its own {@link SDocument}
+ *         OBS: Remember that each {@link SInstance} has its own {@link SDocument}
  *                 making each handler configuration unique for its own instance.
  *
  * @author Fabricio Buzeto
@@ -63,7 +63,7 @@ class AttachmentContainer extends BSContainer {
     }
 
     @SuppressWarnings("unchecked")
-    protected FormComponent setupFields(IModel<? extends SInstance2> model) {
+    protected FormComponent setupFields(IModel<? extends SInstance> model) {
         String name = model.getObject().getNome();
         fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
             public Object getObject() {return null;}
@@ -72,7 +72,7 @@ class AttachmentContainer extends BSContainer {
 
             public void detach() {}
 
-            public SInstance2 getMInstancia() {
+            public SInstance getMInstancia() {
                 return model.getObject().getMTipo().novaInstancia();
             }
         });
@@ -91,7 +91,7 @@ class AttachmentContainer extends BSContainer {
         return fileField;
     }
 
-    public void setup(FormComponent field, IModel<? extends SInstance2> model) {
+    public void setup(FormComponent field, IModel<? extends SInstance> model) {
         String fieldId = field.getMarkupId();
 
         appendTag("span", true, "class='btn btn-success fileinput-button'",
@@ -187,7 +187,7 @@ class AttachmentContainer extends BSContainer {
     }
 
     @SuppressWarnings("unchecked")
-    private WebMarkupContainer createDownloadLink(IModel<? extends SInstance2> model) {
+    private WebMarkupContainer createDownloadLink(IModel<? extends SInstance> model) {
         Link<Object> link = new DownloadLink("_", new PropertyModel(model, "fileName"));
 
         BSContainer wrapper = new BSContainer<>("_");

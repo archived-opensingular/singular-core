@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
@@ -41,7 +41,7 @@ public class SDocument {
     public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
-    private SInstance2 root;
+    private SInstance root;
 
     private int lastId = 0;
 
@@ -95,14 +95,14 @@ public class SDocument {
     /**
      * Obtêm a instância que representa o documento com um todo.
      */
-    public SInstance2 getRoot() {
+    public SInstance getRoot() {
         if (root == null) {
             throw new SingularFormException("Instancia raiz não foi configurada");
         }
         return root;
     }
 
-    public final void setRoot(SInstance2 root) {
+    public final void setRoot(SInstance root) {
         if (this.root != null) {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
@@ -240,7 +240,7 @@ class AttachmentPersistenceHelper {
         this.persistent = persistent;
     }
 
-    public void doPersistence(SInstance2 element) {
+    public void doPersistence(SInstance element) {
         if (element instanceof SIAttachment) {
             handleAttachment((SIAttachment) element);
         } else if (element instanceof ICompositeInstance) {
@@ -280,7 +280,7 @@ class AttachmentPersistenceHelper {
     }
 
     private void visitAllChildren(ICompositeInstance composite) {
-        for (SInstance2 child : composite.getAllChildren()) {
+        for (SInstance child : composite.getAllChildren()) {
             doPersistence(child);
         }
     }

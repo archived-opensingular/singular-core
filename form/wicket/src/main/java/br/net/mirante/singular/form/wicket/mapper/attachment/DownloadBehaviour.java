@@ -14,7 +14,7 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
@@ -24,9 +24,9 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 public class DownloadBehaviour extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private SInstance2 instance;
+    transient private SInstance instance;
 
-    public DownloadBehaviour(SInstance2 instance) {
+    public DownloadBehaviour(SInstance instance) {
         this.instance = instance;
     }
 

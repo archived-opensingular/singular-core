@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.List;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -40,7 +40,7 @@ public class TabMapper extends DefaultCompostoMapper {
 
     private void renderTab(List<String> nomesTipo, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String nomeTipo : nomesTipo) {
-            final SInstanceCampoModel<SInstance2> subtree = new SInstanceCampoModel<>(ctx.getModel(), nomeTipo);
+            final SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(ctx.getModel(), nomeTipo);
             final WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
             childContext.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
             childContext.getUiBuilderWicket().build(childContext, childContext.getViewMode());

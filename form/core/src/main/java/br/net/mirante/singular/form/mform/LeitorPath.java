@@ -102,7 +102,7 @@ class LeitorPath {
         return Integer.parseInt(trecho);
     }
 
-    String getTextoErro(SInstance2 instanciaContexto, String msg) {
+    String getTextoErro(SInstance instanciaContexto, String msg) {
         if (path.length() == trecho.length()) {
             return "Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
                     + "' para o path '" + path + "': " + msg;

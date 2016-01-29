@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform;
 import com.google.common.base.Preconditions;
 
 @SuppressWarnings("rawtypes")
-public class AtrRef<T extends SType, I extends SInstance2, V extends Object> {
+public class AtrRef<T extends SType, I extends SInstance, V extends Object> {
 
     private final Class<? extends SPackage> classePacote;
 

@@ -1,21 +1,21 @@
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public class ValidationError implements IValidationError {
 
-    private final SInstance2 instance;
+    private final SInstance instance;
     private final ValidationErrorLevel errorLevel;
     private final String               message;
 
-    public ValidationError(SInstance2 instance, ValidationErrorLevel level, String message) {
+    public ValidationError(SInstance instance, ValidationErrorLevel level, String message) {
         this.instance = instance;
         this.message = message;
         this.errorLevel = level;
     }
 
     @Override
-    public SInstance2 getInstance() {
+    public SInstance getInstance() {
         return instance;
     }
 

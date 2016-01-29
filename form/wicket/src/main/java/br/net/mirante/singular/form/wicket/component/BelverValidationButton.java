@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import java.util.Optional;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,8 +14,8 @@ public abstract class BelverValidationButton extends AjaxButton {
         super(id);
     }
 
-    protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2>  instanceModel);
-    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {}
+    protected abstract void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance>  instanceModel);
+    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {}
 
     @Override
     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -34,5 +34,5 @@ public abstract class BelverValidationButton extends AjaxButton {
         WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
     }
 
-    public abstract IModel<? extends SInstance2>  getCurrentInstance();
+    public abstract IModel<? extends SInstance>  getCurrentInstance();
 }

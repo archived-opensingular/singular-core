@@ -21,7 +21,7 @@ import org.apache.wicket.util.visit.Visits;
 
 import br.net.mirante.singular.form.mform.MFormUtil;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toSet;
  */
 public class WicketFormProcessing {
 
-    public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance2> baseInstance) {
+    public static void onFormError(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance) {
         container.visitChildren((c, v) -> {
             if (c instanceof FeedbackPanel && ((FeedbackPanel) c).anyMessage())
                 target.ifPresent(t -> t.add(c));
@@ -50,7 +50,7 @@ public class WicketFormProcessing {
         });
     }
 
-    public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance2> baseInstance, boolean validate) {
+    public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance, boolean validate) {
         if (baseInstance == null)
             return false;
 
@@ -73,7 +73,7 @@ public class WicketFormProcessing {
         return true;
     }
 
-    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance2> fieldInstance) {
+    public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
         if (fieldInstance == null || fieldInstance.getObject() == null)
             return;
 
@@ -95,10 +95,10 @@ public class WicketFormProcessing {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
                     .map(SInstanceEvent::getSource)
-                    .map(SInstance2::getId)
+                    .map(SInstance::getId)
                     .collect(toSet());
 
-            final BiPredicate<Component, SInstance2> predicate = (Component c, SInstance2 ins) -> {
+            final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
                 SType<?> insTipo = ins.getMTipo();
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
@@ -131,7 +131,7 @@ public class WicketFormProcessing {
                     .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
     }
 
-    private static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance2> baseInstance) {
+    private static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
         final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
 
         // associate errors to components
@@ -150,7 +150,7 @@ public class WicketFormProcessing {
                 .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
-    private static void associateErrorsTo(Component component, IModel<? extends SInstance2> baseInstance, boolean prependFullPathLabel, Set<IValidationError> errors) {
+    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance, boolean prependFullPathLabel, Set<IValidationError> errors) {
         for (IValidationError error : errors) {
             String message = error.getMessage();
             if (prependFullPathLabel) {
@@ -160,7 +160,7 @@ public class WicketFormProcessing {
             }
             Integer instanceId = error.getInstance().getId();
 
-            final IModel<? extends SInstance2> instanceModel = (IReadOnlyModel<SInstance2>) () ->
+            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () ->
                     MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
                             .filter(it -> Objects.equals(it.getId(), instanceId))
                             .findFirst()

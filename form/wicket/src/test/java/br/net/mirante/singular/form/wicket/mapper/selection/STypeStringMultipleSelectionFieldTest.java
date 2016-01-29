@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeLista;
@@ -56,7 +56,7 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         setupPage();
         SIComposite instance = page.getCurrentInstance();
         SList campo = (SList) instance.getCampo(fieldType.getNomeSimples());
-        SInstance2 element = campo.addNovo();
+        SInstance element = campo.addNovo();
         element.setValor("avocado");
 
         selectBaseType.withSelectionOf("strawberry", "apple");

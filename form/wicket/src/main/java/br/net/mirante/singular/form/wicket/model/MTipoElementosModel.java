@@ -4,13 +4,13 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class MTipoElementosModel
-    implements IReadOnlyModel<SType<SInstance2>> {
+    implements IReadOnlyModel<SType<SInstance>> {
 
     private Object rootTarget;
 
@@ -19,16 +19,16 @@ public class MTipoElementosModel
     }
 
     @Override
-    public SType<SInstance2> getObject() {
+    public SType<SInstance> getObject() {
         return getTipoElementos(rootTarget);
     }
 
     @SuppressWarnings("unchecked")
-    public static SType<SInstance2> getTipoElementos(Object obj) {
+    public static SType<SInstance> getTipoElementos(Object obj) {
         if (obj instanceof SList<?>)
-            return ((SList<SInstance2>) obj).getTipoElementos();
+            return ((SList<SInstance>) obj).getTipoElementos();
         if (obj instanceof STypeLista<?, ?>)
-            return ((STypeLista<SType<SInstance2>, SInstance2>) obj).getTipoElementos();
+            return ((STypeLista<SType<SInstance>, SInstance>) obj).getTipoElementos();
         if (obj instanceof IModel<?>)
             return getTipoElementos(((IModel<?>) obj).getObject());
 

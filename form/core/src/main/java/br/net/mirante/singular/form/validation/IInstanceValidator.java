@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 
 /**
- * Validator para {@link SInstance2}
+ * Validator para {@link SInstance}
  * 
  * @param <MInstancia>
  */
-public interface IInstanceValidator<I extends SInstance2> {
+public interface IInstanceValidator<I extends SInstance> {
     
     void validate(IInstanceValidatable<I> validatable);
 }

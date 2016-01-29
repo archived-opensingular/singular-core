@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.test.base;
 
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
@@ -93,7 +93,7 @@ public class TestPage extends WebPage {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private MInstanceRootModel newModelFromInstance(SInstance2 instance) {
+    private MInstanceRootModel newModelFromInstance(SInstance instance) {
         return new MInstanceRootModel(instance);
     }
 

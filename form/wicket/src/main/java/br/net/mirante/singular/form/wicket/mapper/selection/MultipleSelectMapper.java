@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance2;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -22,7 +22,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     @Override
     @SuppressWarnings("rawtypes")
     public Component appendInput(MView view, BSContainer bodyContainer,
-                                 BSControls formGroup, final IModel<? extends SInstance2> model,
+                                 BSControls formGroup, final IModel<? extends SInstance> model,
                                  IModel<String> labelModel) {
         final List<SelectOption> opcoesValue;
         final STypeLista tipoLista;
@@ -39,7 +39,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected ListMultipleChoice<SelectOption> retrieveChoices(
-            IModel<? extends SInstance2> model,
+            IModel<? extends SInstance> model,
             final List<SelectOption> opcoesValue) {
         return new ListMultipleChoice<>(model.getObject().getNome(),
                 (IModel) new MSelectionInstanceModel<List<SelectOption>>(model), opcoesValue, renderer());
@@ -47,7 +47,7 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
 
     @SuppressWarnings("rawtypes")
     protected Component formGroupAppender(BSControls formGroup,
-                                          IModel<? extends SInstance2> model,
+                                          IModel<? extends SInstance> model,
                                           final List<SelectOption> opcoesValue) {
         final ListMultipleChoice<SelectOption> choices = retrieveChoices(model, opcoesValue);
         formGroup.appendSelect(choices.setMaxRows(5), true, false);
@@ -60,10 +60,10 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
 
         final StringBuilder output = new StringBuilder();
-        final SInstance2 mi = model.getObject();
+        final SInstance mi = model.getObject();
 
         if ((mi != null) && (mi.getValor() != null)
                 && (mi.getValor() instanceof List)) {

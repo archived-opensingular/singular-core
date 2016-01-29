@@ -14,15 +14,15 @@ import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.util.xml.MElement;
 
-public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInstance {
+public abstract class SInstance implements MAtributoEnabled, MSelectionableInstance {
 
-    private SInstance2 parent;
+    private SInstance parent;
 
-    private SInstance2 attributeOwner;
+    private SInstance attributeOwner;
 
     private SType<?> SType;
 
-    private Map<String, SInstance2> atributos;
+    private Map<String, SInstance> atributos;
 
     private SDocument document;
 
@@ -69,7 +69,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
                 String label =  type.getSelectLabel();
                 Object valor = this.getValor();
                 if (valor instanceof Iterable) {
-                    for (SInstance2 mi : (Iterable<SInstance2>)valor) {
+                    for (SInstance mi : (Iterable<SInstance>)valor) {
                         if (label.equals(mi.getNome())) {
                             Object valorCampo = mi.getValor();
                             return valorCampo == null ? "" : valorCampo.toString();
@@ -128,7 +128,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         return getFlag(FlagsInstancia.IsAtributo);
     }
 
-    final void setAsAttribute(SInstance2 attributeOwner) {
+    final void setAsAttribute(SInstance attributeOwner) {
         setFlag(FlagsInstancia.IsAtributo, true);
         this.attributeOwner = attributeOwner;
     }
@@ -139,11 +139,11 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
      * for um atributo ou se atributo pertencer a um tipo em vez de uma
      * instância.
      */
-    public SInstance2 getAttributeOwner() {
+    public SInstance getAttributeOwner() {
         return attributeOwner;
     }
 
-    final void setPai(SInstance2 pai) {
+    final void setPai(SInstance pai) {
         /* exceção adicionada por vinicius nunes, para adicionar uma instancia a outra hierarquia deveria haver
         * uma chamada para 'destacar' a minstancia da sua hierarquia atual*/
         if (this.parent != null && pai != null){
@@ -216,12 +216,12 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
     }
 
     final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
-        SInstance2 instancia = this;
+        SInstance instancia = this;
         while (true) {
             if (leitor.isEmpty()) {
                 return instancia.getValor(classeDestino);
             }
-            SInstance2 instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
+            SInstance instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
             if (instanciaFilha == null) {
                 MFormUtil.resolverTipoCampo(instancia.getMTipo(), leitor);
                 return null;
@@ -231,7 +231,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         }
     }
 
-    <T extends Object> SInstance2 getCampoLocalSemCriar(LeitorPath leitor) {
+    <T extends Object> SInstance getCampoLocalSemCriar(LeitorPath leitor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
@@ -243,8 +243,8 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
-    final SInstance2 getCampo(LeitorPath leitor) {
-        SInstance2 instancia = this;
+    final SInstance getCampo(LeitorPath leitor) {
+        SInstance instancia = this;
         while (true) {
             instancia = instancia.getCampoLocal(leitor);
             if (leitor.isUltimo()) {
@@ -256,7 +256,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         }
     }
 
-    SInstance2 getCampoLocal(LeitorPath leitor) {
+    SInstance getCampoLocal(LeitorPath leitor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
@@ -266,7 +266,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
 
     @Override
     public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor) {
-        SInstance2 instanciaAtr = null;
+        SInstance instanciaAtr = null;
         if (atributos == null) {
             atributos = new HashMap<>();
         } else {
@@ -288,7 +288,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
     @Override
     public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino) {
         if (atributos != null) {
-            SInstance2 inst = atributos.get(nomeCompleto);
+            SInstance inst = atributos.get(nomeCompleto);
             if (inst != null) {
                 return inst.getValor(classeDestino);
             }
@@ -296,34 +296,34 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
     }
 
-    public Map<String, SInstance2> getAtributos() {
+    public Map<String, SInstance> getAtributos() {
         return atributos == null ? Collections.emptyMap() : atributos;
     }
 
-    public SInstance2 getParent() {
+    public SInstance getParent() {
         return this.parent;
     }
 
-    public <K extends SInstance2> K getIrmao(SType<K> tipoPai) {
+    public <K extends SInstance> K getIrmao(SType<K> tipoPai) {
         throw new RuntimeException("implementar");
     }
 
-    public <A extends SInstance2 & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
+    public <A extends SInstance & ICompositeInstance> A getAncestor(SType<A> ancestorType) {
         return findAncestor(ancestorType).get();
     }
-    public <A extends SInstance2 & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
+    public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
         return MInstances.findAncestor(this, ancestorType);
     }
-    public <A extends SInstance2> Optional<A> findNearest(SType<A> targetType) {
+    public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
         return MInstances.findNearest(this, targetType);
     }
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
-        Optional<? extends SInstance2> nearest = MInstances.findNearest(this, targetType);
+        Optional<? extends SInstance> nearest = MInstances.findNearest(this, targetType);
         return (Optional<V>) nearest.map(it -> it.getValorWithDefault());
     }
     public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> classeValor) {
-        Optional<? extends SInstance2> nearest = MInstances.findNearest(this, targetType);
+        Optional<? extends SInstance> nearest = MInstances.findNearest(this, targetType);
         return nearest.map(it -> classeValor.cast(it.getValorWithDefault(classeValor)));
     }
 
@@ -335,7 +335,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         throw new RuntimeException(
             "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
     }
-    public <T> T as(Function<? super SInstance2, T> aspectFactory) {
+    public <T> T as(Function<? super SInstance, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 
@@ -435,7 +435,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
         setFlag(FlagsInstancia.RemovendoInstancia, true);
         onRemove();
         if (getFlag(FlagsInstancia.RemovendoInstancia)) {
-            throw new SingularFormException(SInstance2.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
+            throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                 + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
         this.setPai(null);
@@ -447,7 +447,7 @@ public abstract class SInstance2 implements MAtributoEnabled, MSelectionableInst
      */
     void removeChildren() {
         if (this instanceof ICompositeInstance) {
-            for (SInstance2 child : ((ICompositeInstance) this).getChildren()) {
+            for (SInstance child : ((ICompositeInstance) this).getChildren()) {
                 child.internalOnRemove();
             }
         }
