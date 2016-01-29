@@ -109,7 +109,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         add(portletForm);
         portletForm.setOutputMarkupId(true);
         setOutputMarkupId(true);
-        add(new WebMarkupContainer("footer")
+        queue(new WebMarkupContainer("footer")
                 .add(new Label("footerLabel", footerLabel)));
     }
 
