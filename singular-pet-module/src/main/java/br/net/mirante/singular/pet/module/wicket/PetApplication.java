@@ -37,7 +37,7 @@ public class PetApplication extends AuthenticatedWebApplication
     public Class<? extends WebPage> getHomePage() {
         if (homePageClass == null) {
             String pageClass = this.getInitParameter("homePageClass");
-            if (StringUtils.isEmpty(homePageClass)) {
+            if (StringUtils.isEmpty(pageClass)) {
                 throw new SingularServerException("O parâmetro homePageClass não foi definido. Defina no web.xml a Classe que representa a página inicial.");
             }
             try {
@@ -71,7 +71,7 @@ public class PetApplication extends AuthenticatedWebApplication
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
-        new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.showcase.view.page.**").mount(this);
+        new AnnotatedMountScanner().scanPackage(null).mount(this);
     }
 
     @Override

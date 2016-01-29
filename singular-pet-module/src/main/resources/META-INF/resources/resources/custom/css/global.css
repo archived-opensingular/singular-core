@@ -1,0 +1,10 @@
+.action-column {
+    width:1%;
+    white-space:nowrap;
+}
+
+@media (min-width: 992px) {
+    .modal-belver {
+        width: 900px;
+    }
+}
