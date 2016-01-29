@@ -21,4 +21,6 @@ public @interface FilterField {
 
     RestOptionsProvider optionsProvider() default @RestOptionsProvider();
 
+    boolean required() default false;
+
 }

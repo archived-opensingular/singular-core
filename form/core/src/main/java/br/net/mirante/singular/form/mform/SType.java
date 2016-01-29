@@ -23,6 +23,8 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.MPacoteCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.function.IBehavior;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -376,6 +378,10 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
 
     public AtrBootstrap asAtrBootstrap() {
         return as(i -> new AtrBootstrap(i));
+    }
+
+    public AtrCore asAtrCore() {
+        return as(i -> new AtrCore(i));
     }
 
 

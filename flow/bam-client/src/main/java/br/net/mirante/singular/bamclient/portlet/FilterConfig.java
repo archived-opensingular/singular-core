@@ -14,6 +14,7 @@ public class FilterConfig implements Serializable {
     private String[] options;
     private String restEndpoint;
     private RestReturnType restReturnType;
+    private Boolean required = Boolean.FALSE;
 
     public String getIdentifier() {
         return identifier;
@@ -69,5 +70,13 @@ public class FilterConfig implements Serializable {
 
     public void setRestReturnType(RestReturnType restReturnType) {
         this.restReturnType = restReturnType;
+    }
+
+    public Boolean getRequired() {
+        return required;
+    }
+
+    public void setRequired(Boolean required) {
+        this.required = required;
     }
 }

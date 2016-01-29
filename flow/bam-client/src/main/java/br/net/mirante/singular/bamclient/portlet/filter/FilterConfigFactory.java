@@ -37,7 +37,7 @@ public class FilterConfigFactory {
                         fc.setOptions(ff.options());
                     }
                 }
-
+                fc.setRequired(ff.required());
                 fc.setSize(ff.size().getBootstrapSize());
                 filterConfigs.add(fc);
             }
