@@ -144,6 +144,13 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
 
             @Override
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+                super.onValidationError(target, form, instanceModel);
+                modalBorder.hide(target);
+                modalBorder.show(target);
+            }
+
+            @Override
             public IModel<? extends MInstancia> getCurrentInstance() {
                 return panel.getRootInstance();
             }
