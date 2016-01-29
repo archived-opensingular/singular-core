@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.error;
+package br.net.mirante.singular.util.wicket.page.error;
 
 import org.apache.wicket.markup.html.WebPage;
 

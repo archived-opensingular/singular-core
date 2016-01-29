@@ -26,7 +26,7 @@ import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
 
-public class DashboardUtil {
+public class PortletConfigUtil {
 
     private static final Map<String, Supplier<PortletConfig<?>>> mapa = new HashMap<>();
 
@@ -43,18 +43,18 @@ public class DashboardUtil {
 
     static {
         // Dashboards Gerais
-        mapa.put(MEAN_TIME_BY_PROCESS, DashboardUtil::buildPortletConfigMeanTimeByProcess);
-        mapa.put(NEW_INSTANCES_QUANTITY_LAST_YEAR, DashboardUtil::buildPortletConfigNewInstancesQuantityLastYear);
-        mapa.put(COUNTER_ACTIVE_INSTANCES, DashboardUtil::buildPortletConfigCounterActiveInstances);
+        mapa.put(MEAN_TIME_BY_PROCESS, PortletConfigUtil::buildPortletConfigMeanTimeByProcess);
+        mapa.put(NEW_INSTANCES_QUANTITY_LAST_YEAR, PortletConfigUtil::buildPortletConfigNewInstancesQuantityLastYear);
+        mapa.put(COUNTER_ACTIVE_INSTANCES, PortletConfigUtil::buildPortletConfigCounterActiveInstances);
 
         // Dashboards por Processo
-        mapa.put(STATS_BY_ACTIVE_TASK, DashboardUtil::buildPortletConfigStatsByActiveTask);
-        mapa.put(MEAN_TIME_BY_TASK, DashboardUtil::buildPortletConfigMeanTimeByTask);
-        mapa.put(MEAN_TIME_ACTIVE_INSTANCES, DashboardUtil::buildPortletConfigMeanTimeActiveInstances);
-        mapa.put(MEAN_TIME_FINISHED_INSTANCES, DashboardUtil::buildPortletConfigMeanTimeFinishedInstances);
-        mapa.put(END_STATUS_QUANTITY_BY_PERIOD, DashboardUtil::buildPortletConfigEndStatusQuantityByPeriod);
-        mapa.put(STATS_TIME_BY_ACTIVE_TASK, DashboardUtil::buildPortletConfigStatsTimeByActiveTask);
-        mapa.put(AVERAGE_TIMES_ACTIVE_INSTANCES, DashboardUtil::buildPortletConfigAverageTimesActiveInstances);
+        mapa.put(STATS_BY_ACTIVE_TASK, PortletConfigUtil::buildPortletConfigStatsByActiveTask);
+        mapa.put(MEAN_TIME_BY_TASK, PortletConfigUtil::buildPortletConfigMeanTimeByTask);
+        mapa.put(MEAN_TIME_ACTIVE_INSTANCES, PortletConfigUtil::buildPortletConfigMeanTimeActiveInstances);
+        mapa.put(MEAN_TIME_FINISHED_INSTANCES, PortletConfigUtil::buildPortletConfigMeanTimeFinishedInstances);
+        mapa.put(END_STATUS_QUANTITY_BY_PERIOD, PortletConfigUtil::buildPortletConfigEndStatusQuantityByPeriod);
+        mapa.put(STATS_TIME_BY_ACTIVE_TASK, PortletConfigUtil::buildPortletConfigStatsTimeByActiveTask);
+        mapa.put(AVERAGE_TIMES_ACTIVE_INSTANCES, PortletConfigUtil::buildPortletConfigAverageTimesActiveInstances);
     }
 
     public static PortletConfig<?> getById(String id) {
@@ -161,7 +161,7 @@ public class DashboardUtil {
                 .setSubtitle(getString("label.chart.active.instance.quantity.subtitle"));
     }
 
-    private static PortletConfig<?> buildPortletConfigMeanTimeFinishedInstances() {
+    public static PortletConfig<?> buildPortletConfigMeanTimeFinishedInstances() {
 
         final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
 
@@ -171,7 +171,7 @@ public class DashboardUtil {
                 .setSubtitle(getString("label.chart.finished.instances.mean.time.subtitle"));
     }
 
-    private static PortletConfig<?> buildPortletConfigEndStatusQuantityByPeriod() {
+    public static PortletConfig<?> buildPortletConfigEndStatusQuantityByPeriod() {
         final SingularChart chart = new DonutPieChart("SITUACAO", "QUANTIDADE");
         final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/endStatusQuantityByPeriod")), chart);
 
@@ -182,7 +182,7 @@ public class DashboardUtil {
                 .setSubtitle(getString("label.chart.status.hour.quantity.subtitle"));
     }
 
-    private static PortletConfig<?> buildPortletConfigStatsTimeByActiveTask() {
+    public static PortletConfig<?> buildPortletConfigStatsTimeByActiveTask() {
 
         final SingularChart chart = new PieChart("NOME", "TEMPO");
 
@@ -192,7 +192,7 @@ public class DashboardUtil {
                 .setSubtitle(getString("label.chart.active.task.mean.time.subtitle"));
     }
 
-    private static PortletConfig<?> buildPortletConfigAverageTimesActiveInstances() {
+    public static PortletConfig<?> buildPortletConfigAverageTimesActiveInstances() {
 
         final SingularChart chart = new AreaChart("DATA", "TEMPO", "TEMPO2").
                 labels(getString("label.chart.active.instances.average.time.3"), getString("label.chart.active.instances.average.time.6"));

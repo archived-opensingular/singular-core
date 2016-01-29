@@ -1,12 +1,14 @@
 package br.net.mirante.singular.view.component;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
@@ -14,6 +16,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -48,7 +51,6 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
@@ -61,10 +63,15 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
     private final IModel<C> config;
     private final IModel<PortletContext> context;
+    private final IModel<String> footerLabel;
     private final BSModalBorder modalBorder = new BSModalBorder("filter");
     private final Form portletForm = new Form("porletForm");
 
     public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
+        this(id, config, processDefinitionCode, portletIndex, null);
+    }
+
+    public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex, String footer) {
         super(id);
         Objects.requireNonNull(config, "Configuração é obrigatória");
         final PortletContext portletContext = new PortletContext();
@@ -74,6 +81,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         portletContext.setFilterClassName(config.getFilterClassName());
         this.config = Model.of(config);
         this.context = Model.of(portletContext);
+        footerLabel = Model.of(buildFooterLabel(footer));
     }
 
     protected ViewResultPanel buildViewResult() {
@@ -106,6 +114,16 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         add(portletForm);
         portletForm.setOutputMarkupId(true);
         setOutputMarkupId(true);
+        queue(new WebMarkupContainer("footer")
+                .add(new Label("footerLabel", footerLabel)));
+    }
+
+    private String buildFooterLabel(String footer) {
+        if (footer == null) {
+            return "";
+        } else {
+            return String.format("%s: %s", getString("label.chart.process"), footer);
+        }
     }
 
     private void buildFilters() {
