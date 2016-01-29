@@ -41,6 +41,7 @@ public class AnnotationComponent extends Panel {
     private MInstanciaValorModel textModel, approvedModel;
     private MInstanceRootModel model;
     private FormComponent comment_field, approval_field;
+    private boolean keepOpened = false;
 
     public AnnotationComponent(String id, AbstractMInstanciaModel referenced,
                                Component referencedComponent, WicketBuildContext context) {
@@ -82,6 +83,7 @@ public class AnnotationComponent extends Panel {
         this.queue(new ActionAjaxButton("open_modal") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                keepOpened = true;
                 annotationModal.show(target);
             }
         });
@@ -119,6 +121,8 @@ public class AnnotationComponent extends Panel {
 
             modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;'",
                     new TextArea<>("modalText",textModel));
+            modalBody.appendTag("label", true, "class=\"control-label\"",
+                    new Label("approvalLabel",$m.ofValue("Aprovado?")));
             modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
                     "data-on-color=\"success\" data-on-text=\"Aprovado\" "+
                     "data-off-color=\"danger\" data-off-text=\"Rejeitado\" ",
@@ -189,7 +193,12 @@ public class AnnotationComponent extends Panel {
 
     protected void onConfigure() {
         super.onConfigure();
-        this.add(WicketUtils.$b.attrAppender("style", "display: none;", ""));
+        if(keepOpened){
+            this.add(WicketUtils.$b.attr("style", "float: left; display: block;"));
+        }else{
+            this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
+        }
+        keepOpened = false;
         this.add(WicketUtils.$b.attrAppender("class", "portlet box", ""));
     }
 }

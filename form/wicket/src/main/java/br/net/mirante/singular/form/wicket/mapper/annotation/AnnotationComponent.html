@@ -20,9 +20,10 @@
                 </div>
             </div>
             <div class="col-md-12 col-sm-12">
+                <label class="control-label" >Aprovado? </label>
                 <input wicket:id="approval_field"  type="checkbox" class="make-switch"
-                               data-on-color="success" data-on-text="Aprovado"
-                               data-off-color="danger" data-off-text="Rejeitado" />
+                               data-on-color="info" data-on-text="Sim"
+                               data-off-color="danger" data-off-text="Não" />
                 <script type="application/javascript">
                     $(function(){
                         var target = '#<wicket:container wicket:id="referenced_id" />';

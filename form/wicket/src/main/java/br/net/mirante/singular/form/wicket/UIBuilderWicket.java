@@ -189,7 +189,7 @@ class AnnotationBuilder {
     private void addAnnotationComponent(BSGrid ngrid, MInstancia instance,
                                         Optional<Component> targetComponent, WicketBuildContext ctx) {
         if(targetComponent.isPresent()){
-            ngrid.newRow().appendTag("div", true, "style=\"float: left;\"",
+            ngrid.newRow().appendTag("div", true, "",
                     (id) -> {
                         return new AnnotationComponent(id, modelFor(instance),
                                 targetComponent.get(), ctx);
