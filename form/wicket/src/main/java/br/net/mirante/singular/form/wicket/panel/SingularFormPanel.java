@@ -1,5 +1,11 @@
 package br.net.mirante.singular.form.wicket.panel;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.feedback.FencedFeedbackPanel;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
@@ -13,16 +19,11 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.feedback.FencedFeedbackPanel;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
  */
-public abstract class BelverPanel extends Panel {
+public abstract class SingularFormPanel extends Panel {
 
     /**
      * Referência  ao ServiceRegistry utilizado na aplicação cliente
@@ -54,8 +55,8 @@ public abstract class BelverPanel extends Panel {
      * @param id o markup id wicket
      * @param serviceRegistry utilizado para lookup de serviços
      */
-    public BelverPanel(final String id,
-                       final ServiceRegistry serviceRegistry) {
+    public SingularFormPanel(final String id,
+                             final ServiceRegistry serviceRegistry) {
         super(id);
         this.serviceRegistry = serviceRegistry;
     }
@@ -101,9 +102,9 @@ public abstract class BelverPanel extends Panel {
      */
     protected void bindDefaultServices(final SDocument document) {
         document.setAttachmentPersistenceHandler(ServiceRef.of(new InMemoryAttachmentPersitenceHandler()));
+        document.addServiceRegistry(getServiceRegistry());
         document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class,
                 ServiceRef.of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
-        document.addServiceRegistry(getServiceRegistry());
     }
 
     /**

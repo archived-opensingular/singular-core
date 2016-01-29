@@ -1,24 +1,22 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
+import javax.inject.Inject;
+
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.mform.util.transformer.FromPojoList;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.dao.CIDDAO;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CapituloCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CategoriaCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.GrupoCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
-
-import javax.inject.Inject;
 
 @MInfoTipo(nome = "MTipoCID", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoCID extends MTipoComposto<MIComposto>  {

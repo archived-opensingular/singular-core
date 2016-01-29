@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.NotImplementedException;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
@@ -372,6 +373,11 @@ public class MTipo<I extends MInstancia> extends MEscopoBase implements MAtribut
     public AtrBasic asAtrBasic() {
         return as(i -> new AtrBasic(i));
     }
+
+    public AtrBootstrap asAtrBootstrap() {
+        return as(i -> new AtrBootstrap(i));
+    }
+
 
     public <T> T as(Function<? super MTipo<I>, T> aspectFactory) {
         return aspectFactory.apply(this);

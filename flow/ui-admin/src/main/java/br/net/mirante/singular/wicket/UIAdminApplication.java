@@ -1,7 +1,7 @@
 package br.net.mirante.singular.wicket;
 
-import java.util.Locale;
-
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
@@ -13,13 +13,16 @@ import org.apache.wicket.settings.ExceptionSettings;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import br.net.mirante.singular.view.error.Error403Page;
-import br.net.mirante.singular.view.page.dashboard.DashboardPage;
+import java.util.Locale;
 
 public class UIAdminApplication extends AuthenticatedWebApplication {
 
     private static String appName;
-    
+
+    public static UIAdminApplication get() {
+        return (UIAdminApplication) WebApplication.get(appName);
+    }
+
     @Override
     public Class<? extends WebPage> getHomePage() {
         return DashboardPage.class;
@@ -41,7 +44,7 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
 
         getComponentInstantiationListeners().add(new SpringComponentInjector(this));
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.view.page.**").mount(this);
-        
+
         appName = getName();
     }
 
@@ -64,12 +67,8 @@ public class UIAdminApplication extends AuthenticatedWebApplication {
     public RuntimeConfigurationType getConfigurationType() {
         if (System.getProperty("singular.development") != null) {
             return RuntimeConfigurationType.DEVELOPMENT;
-       } else {
+        } else {
             return RuntimeConfigurationType.DEPLOYMENT;
         }
-    }
-
-    public static UIAdminApplication get() {
-        return (UIAdminApplication) WebApplication.get(appName);
     }
 }

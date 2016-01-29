@@ -4,8 +4,8 @@ import br.net.mirante.singular.form.mform.MPacote;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.MTipoDataHora;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
 
 public class CaseInputCoreDateTimePackage extends MPacote {
 

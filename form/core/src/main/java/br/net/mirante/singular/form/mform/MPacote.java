@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.mform;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.lang3.NotImplementedException;
 
 public class MPacote extends MEscopoBase {
 
@@ -14,7 +14,7 @@ public class MPacote extends MEscopoBase {
 
     private MDicionario dicionario;
 
-    protected MPacote() {
+    public MPacote() {
         this.nome = getClass().getName();
         MFormUtil.checkNomePacoteValido(nome);
         if (getClass() == MPacote.class) {

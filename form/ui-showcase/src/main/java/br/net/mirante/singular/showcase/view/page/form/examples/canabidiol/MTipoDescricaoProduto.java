@@ -1,20 +1,20 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MILista;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoInteger;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @MInfoTipo(nome = "MTipoDescricaoProduto", pacote = MPacotePeticaoCanabidiol.class)
 public class MTipoDescricaoProduto extends MTipoComposto<MIComposto> {
