@@ -17,9 +17,13 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -27,6 +31,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 /**
@@ -87,15 +92,58 @@ public class AnnotationComponent extends Panel {
                 annotationModal.show(target);
             }
         });
-
-        this.add(new Label("referenced_id",$m.ofValue(referencedComponent.getMarkupId())));
-        this.add(new Label("this_id",$m.ofValue(this.getMarkupId())));
     }
 
     private void updateModels() {
         createSubModels();
         comment_field.setDefaultModel(textModel);
         approval_field.setDefaultModel(approvedModel);
+    }
+
+    private static String title(AbstractMInstanciaModel referenced) {
+        if(StringUtils.isNoneBlank(annotated(referenced).label())) return annotated(referenced).label();
+        String label = labelOf(referenced);
+        if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
+        return "Comentários";
+    }
+
+    private static AtrAnnotation annotated(AbstractMInstanciaModel referenced) {
+        return referenced.getMInstancia().as(AtrAnnotation::new);
+    }
+
+    private static String labelOf(AbstractMInstanciaModel target) {
+        return target.getMInstancia().as(AtrBasic::new).getLabel();
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        final PackageResourceReference customJS = new PackageResourceReference(getClass(), "annotation.js");
+        response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
+        response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),"updateAnnotation_"+this.getMarkupId()
+        ));
+    }
+
+    private String generateUpdateJS() {
+        return "$(function(){\n" +
+                "new Annotation(" +
+                    "'#"+referencedComponent.getMarkupId()+"', " +
+                    "'#"+this.getMarkupId()+"'," +
+                    "'#"+approval_field.getMarkupId()+"'" +
+                ").setup()\n" +
+                "});\n";
+    }
+
+
+    protected void onConfigure() {
+        super.onConfigure();
+        if(keepOpened){
+            this.add(WicketUtils.$b.attr("style", "float: left; display: block;"));
+        }else{
+            this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
+        }
+        keepOpened = false;
+        this.add(WicketUtils.$b.attrAppender("class", "portlet box", ""));
     }
 
     private static class AnnotationModalWindow extends BFModalWindow{
@@ -122,24 +170,38 @@ public class AnnotationComponent extends Panel {
 
             BSContainer modalBody = new BSContainer("bogoMips");
 
-            modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;'",
-                    new TextArea<>("modalText",textModel));
+            TextArea modalText = new TextArea<>("modalText", textModel);
+            modalText.add(new Behavior(){
+                @Override
+                public void bind( Component component ){
+                    super.bind( component );
+                    component.add( AttributeModifier.replace( "onkeydown",
+                            Model.of( "if(event.keyCode == 13) {$(event.target).val($(event.target).val()+'\\n');event.preventDefault();}" ) ) );
+                }
+            });
+            modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
+                    modalText);
             modalBody.appendTag("label", true, "class=\"control-label\"",
                     new Label("approvalLabel",$m.ofValue("Aprovado?")));
             modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
-                    "data-on-color=\"info\" data-on-text=\"Sim\" "+
-                    "data-off-color=\"danger\" data-off-text=\"Não\" ",
+                            "data-on-color=\"info\" data-on-text=\"Sim\" "+
+                            "data-off-color=\"danger\" data-off-text=\"Não\" ",
                     new CheckBox("modalApproval",approvedModel));
             this.setBody(modalBody);
+
             addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
                     new ActionAjaxButton("btn") {
-                @Override
-                protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                    target.add(parentComponent);
-                    parentComponent.updateModels();
-                    AnnotationModalWindow.this.hide(target);
-                }
-            });
+                        @Override
+                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                            target.add(parentComponent);
+                            parentComponent.updateModels();
+                            AnnotationModalWindow.this.hide(target);
+                            target.appendJavaScript(parentComponent.generateUpdateJS());
+                        }
+
+
+                    }
+            );
 
             this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
                 @Override
@@ -170,38 +232,5 @@ public class AnnotationComponent extends Panel {
             js +=" })(10050); ";
             return js;
         }
-    }
-
-    private static String title(AbstractMInstanciaModel referenced) {
-        if(StringUtils.isNoneBlank(annotated(referenced).label())) return annotated(referenced).label();
-        String label = labelOf(referenced);
-        if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
-        return "Comentários";
-    }
-
-    private static AtrAnnotation annotated(AbstractMInstanciaModel referenced) {
-        return referenced.getMInstancia().as(AtrAnnotation::new);
-    }
-
-    private static String labelOf(AbstractMInstanciaModel target) {
-        return target.getMInstancia().as(AtrBasic::new).getLabel();
-    }
-
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        final PackageResourceReference customJS = new PackageResourceReference(getClass(), "annotation.js");
-        response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
-    }
-
-    protected void onConfigure() {
-        super.onConfigure();
-        if(keepOpened){
-            this.add(WicketUtils.$b.attr("style", "float: left; display: block;"));
-        }else{
-            this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
-        }
-        keepOpened = false;
-        this.add(WicketUtils.$b.attrAppender("class", "portlet box", ""));
     }
 }

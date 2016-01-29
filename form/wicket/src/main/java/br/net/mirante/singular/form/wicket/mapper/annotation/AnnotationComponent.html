@@ -8,8 +8,8 @@
             </span>
         </div>
         <div class="actions">
-            <a class="btn btn-circle btn-icon-only btn-default" wicket:id="open_modal"
-                href="javascript:;" data-original-title="" title=""> </a>
+            <a class="btn btn-circle btn-icon-only btn-default fullscreen"
+               style="padding: 8px;" wicket:id="open_modal"> </a>
         </div>
     </div>
     <div class="portlet-body" style="height: auto;">
@@ -23,14 +23,9 @@
                 <label class="control-label" >Aprovado? </label>
                 <input wicket:id="approval_field"  type="checkbox" class="make-switch"
                                data-on-color="info" data-on-text="Sim"
-                               data-off-color="danger" data-off-text="Não" />
-                <script type="application/javascript">
-                    $(function(){
-                        var target = '#<wicket:container wicket:id="referenced_id" />';
-                        var thiz = '#<wicket:container wicket:id="this_id" />';
-                        new Annotation(target, thiz).setup();
-                    });
-                </script>
+                               data-off-color="danger" data-off-text="Não"
+                                onSwitchChange=""
+                />
             </div>
     </div>
 </wicket:panel>
