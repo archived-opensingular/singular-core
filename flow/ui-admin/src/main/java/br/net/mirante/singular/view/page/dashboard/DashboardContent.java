@@ -1,9 +1,11 @@
 package br.net.mirante.singular.view.page.dashboard;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -21,18 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import br.net.mirante.singular.bamclient.builder.amchart.AmChartValueField;
-import br.net.mirante.singular.bamclient.chart.AreaChart;
-import br.net.mirante.singular.bamclient.chart.ColumnSerialChart;
-import br.net.mirante.singular.bamclient.chart.DonutPieChart;
-import br.net.mirante.singular.bamclient.chart.LineSerialChart;
-import br.net.mirante.singular.bamclient.chart.PieChart;
-import br.net.mirante.singular.bamclient.chart.SingularChart;
-import br.net.mirante.singular.bamclient.portlet.AmChartPortletConfig;
-import br.net.mirante.singular.bamclient.portlet.DataEndpoint;
-import br.net.mirante.singular.bamclient.portlet.MorrisChartPortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
-import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.bamclient.portlet.PortletSize;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.flow.core.dto.GroupDTO;
@@ -40,8 +31,6 @@ import br.net.mirante.singular.flow.core.dto.IStatusDTO;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataREST;
 import br.net.mirante.singular.util.wicket.resource.Color;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import br.net.mirante.singular.view.component.PortletPanel;
 import br.net.mirante.singular.view.page.processo.MetadadosPage;
 import br.net.mirante.singular.view.page.processo.ProcessosPage;

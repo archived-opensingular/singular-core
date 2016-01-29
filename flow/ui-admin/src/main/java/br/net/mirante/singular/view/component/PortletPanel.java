@@ -1,18 +1,19 @@
 package br.net.mirante.singular.view.component;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
-import java.util.Objects;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -45,7 +46,6 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
