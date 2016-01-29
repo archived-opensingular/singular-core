@@ -10,6 +10,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -32,14 +33,21 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
 
     private final IModel<C> config;
     private final IModel<PortletContext> context;
+    private final IModel<String> footerLabel;
 
     public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex) {
+        this(id, config, processDefinitionCode, portletIndex, null);
+    }
+
+    public PortletPanel(String id, C config, String processDefinitionCode, int portletIndex, String footer) {
         super(id);
         Objects.requireNonNull(config, "Configuração é obrigatória");
         this.config = Model.of(config);
         context = Model.of(new PortletContext(portletIndex));
         context.getObject().setProcessDefinitionCode(processDefinitionCode);
         context.getObject().setProcessDefinitionKeysWithAccess(getProcesseDefinitionsKeysWithAcess());
+        footerLabel = Model.of(buildFooterLabel(footer));
+
     }
 
     protected ViewResultPanel buildViewResult() {
@@ -61,6 +69,16 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         add(buildViewResult());
         add($b.classAppender(config.getPortletSize().getBootstrapSize()));
         setOutputMarkupId(true);
+        add(new WebMarkupContainer("footer")
+                .add(new Label("footerLabel", footerLabel)));
+    }
+
+    private String buildFooterLabel(String footer) {
+        if (footer == null) {
+            return "";
+        } else {
+            return String.format("%s: %s", getString("label.chart.process"), footer);
+        }
     }
 
     private Component buildQuickFilters() {

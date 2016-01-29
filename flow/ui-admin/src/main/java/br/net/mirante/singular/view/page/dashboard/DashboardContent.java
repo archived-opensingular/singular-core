@@ -162,151 +162,25 @@ public class DashboardContent extends Content {
 
     public void populateConfigs() {
         if (processDefinitionCode == null) {
-            configs.add(buildPortletConfigMeanTimeByProcess());
+            configs.add(PortletConfigUtil.buildPortletConfigMeanTimeByProcess());
         }
 
-        configs.add(buildPortletConfigNewInstancesQuantityLastYear());
-        configs.add(buildPortletConfigCounterActiveInstances());
+        configs.add(PortletConfigUtil.buildPortletConfigNewInstancesQuantityLastYear());
+        configs.add(PortletConfigUtil.buildPortletConfigCounterActiveInstances());
 
         if (processDefinitionCode != null) {
-            configs.add(buildPortletConfigMeanTimeActiveInstances());
-            configs.add(buildPortletConfigStatsByActiveTask());
-            configs.add(buildPortletConfigMeanTimeByTask());
-            configs.add(buildPortletConfigMeanTimeFinishedInstances());
-            configs.add(buildPortletConfigEndStatusQuantityByPeriod());
-            configs.add(buildPortletConfigAverageTimesActiveInstances());
-            configs.add(buildPortletConfigStatsTimeByActiveTask());
+            configs.add(PortletConfigUtil.buildPortletConfigMeanTimeActiveInstances());
+            configs.add(PortletConfigUtil.buildPortletConfigStatsByActiveTask());
+            configs.add(PortletConfigUtil.buildPortletConfigMeanTimeByTask());
+            configs.add(PortletConfigUtil.buildPortletConfigMeanTimeFinishedInstances());
+            configs.add(PortletConfigUtil.buildPortletConfigEndStatusQuantityByPeriod());
+            configs.add(PortletConfigUtil.buildPortletConfigAverageTimesActiveInstances());
+            configs.add(PortletConfigUtil.buildPortletConfigStatsTimeByActiveTask());
 
             configs.addAll(getAvailableDashboards(processDefinitionCode));
 
         }
 
-    }
-
-    public PortletConfig<?> buildPortletConfigMeanTimeByProcess() {
-
-        final SingularChart chart = new ColumnSerialChart("NOME", new AmChartValueField("MEAN", "", "dia(s)"));
-        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByProcess")), chart);
-
-        addPeriodQuickFilter(config.getQuickFilter());
-
-        config.setPortletSize(PortletSize.LARGE);
-        config.setTitle(getString("label.chart.mean.time.process.title"));
-        config.setSubtitle(getString("label.chart.mean.time.process.subtitle"));
-
-        return config;
-    }
-
-    public PortletConfig<?> buildPortletConfigMeanTimeActiveInstances() {
-
-        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeActiveInstances")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.active.instances.mean.time.title"))
-                .setSubtitle(getString("label.chart.active.instances.mean.time.subtitle"));
-    }
-
-    public PortletConfig<?> buildPortletConfigNewInstancesQuantityLastYear() {
-
-        final List<AmChartValueField> valueFields = new ArrayList<>();
-        valueFields.add(new AmChartValueField("QTD_NEW", getString("label.chart.new.instance.quantity.new")));
-        valueFields.add(new AmChartValueField("QTD_CLS", getString("label.chart.new.instance.quantity.finished")));
-
-        final SingularChart chart = new LineSerialChart("MES", valueFields);
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/newInstancesQuantityLastYear")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.new.instance.quantity.title"))
-                .setSubtitle(getString("label.chart.new.instance.quantity.title"));
-    }
-
-    public PortletConfig<?> buildPortletConfigCounterActiveInstances() {
-
-        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("QUANTIDADE", ""));
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/counterActiveInstances")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.active.instance.quantity.title"))
-                .setSubtitle(getString("label.chart.active.instance.quantity.subtitle"));
-    }
-
-    public PortletConfig<?> buildPortletConfigStatsByActiveTask() {
-
-        final SingularChart chart = new PieChart("NOME", "QUANTIDADE");
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/statsByActiveTask")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.count.task.title"))
-                .setSubtitle(getString("label.chart.count.task.subtitle"));
-    }
-
-    public PortletConfig<?> buildPortletConfigMeanTimeByTask() {
-
-        final SingularChart chart = new PieChart("NOME", "MEAN");
-        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeByTask")), chart);
-
-        addPeriodQuickFilter(config.getQuickFilter());
-
-        return config.setPortletSize(PortletSize.LARGE)
-                .setTitle(getString("label.chart.mean.time.task.title"))
-                .setSubtitle(getString("label.chart.mean.time.task.subtitle"));
-    }
-
-    private void addPeriodQuickFilter(List<PortletQuickFilter> list) {
-        list.add(new PortletQuickFilter("1 Semana", String.valueOf(PeriodType.WEEKLY)));
-        list.add(new PortletQuickFilter("1 Mês", String.valueOf(PeriodType.MONTHLY)));
-        list.add(new PortletQuickFilter("1 Ano", String.valueOf(PeriodType.YEARLY)));
-    }
-
-    private PortletConfig<?> buildPortletConfigMeanTimeFinishedInstances() {
-
-        final SingularChart chart = new LineSerialChart("MES", new AmChartValueField("TEMPO", ""));
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/meanTimeFinishedInstances")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.finished.instances.mean.time.title"))
-                .setSubtitle(getString("label.chart.finished.instances.mean.time.subtitle"));
-    }
-
-    private PortletConfig<?> buildPortletConfigEndStatusQuantityByPeriod() {
-        final SingularChart chart = new DonutPieChart("SITUACAO", "QUANTIDADE");
-        final AmChartPortletConfig config = new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/endStatusQuantityByPeriod")), chart);
-
-        addPeriodQuickFilter(config.getQuickFilter());
-
-        return config.setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.status.hour.quantity.title"))
-                .setSubtitle(getString("label.chart.status.hour.quantity.subtitle"));
-    }
-
-    private PortletConfig<?> buildPortletConfigStatsTimeByActiveTask() {
-
-        final SingularChart chart = new PieChart("NOME", "TEMPO");
-
-        return new AmChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/statsByActiveTask")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.active.task.mean.time.title"))
-                .setSubtitle(getString("label.chart.active.task.mean.time.subtitle"));
-    }
-
-    private PortletConfig<?> buildPortletConfigAverageTimesActiveInstances() {
-
-        final SingularChart chart = new AreaChart("DATA", "TEMPO", "TEMPO2").
-                labels(getString("label.chart.active.instances.average.time.3"), getString("label.chart.active.instances.average.time.6"));
-
-        return new MorrisChartPortletConfig(DataEndpoint.local(appendRelativeURL("/rest/averageTimesActiveInstances")), chart)
-                .setPortletSize(PortletSize.MEDIUM)
-                .setTitle(getString("label.chart.active.instances.average.time.title"))
-                .setSubtitle(getString("label.chart.active.instances.average.time.subtitle"));
-    }
-
-    private String appendRelativeURL(String path) {
-        final String fullUrl = getRequestCycle().getUrlRenderer().renderFullUrl(getRequest().getUrl());
-        final String currentPath = getRequest().getUrl().toString();
-        final int beginPath = fullUrl.lastIndexOf(currentPath);
-        final Optional<String> contextPath = Optional.ofNullable(getRequestCycle().getRequest().getContextPath());
-        return fullUrl.substring(0, beginPath - 1) + contextPath.orElse("") + path;
     }
 
     public List<PortletConfig<?>> getAvailableDashboards(String processAbbreviation) {

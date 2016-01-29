@@ -10,6 +10,7 @@ import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ public class CustomDashboardContent extends Content {
 
     private String customDashboardCode;
     private RepeatingView portlets;
+    private Dashboard dashboard;
 
     public CustomDashboardContent(String id, String customDashboardCode) {
         super(id, false, false, false, true);
@@ -40,22 +42,22 @@ public class CustomDashboardContent extends Content {
 
     @Override
     protected IModel<?> getContentTitlelModel() {
-        if (customDashboardCode == null) {
-            return new ResourceModel("label.content.title");
+        if (dashboard != null) {
+            return $m.property(dashboard, "name");
         } else {
-            return $m.ofValue(uiAdminFacade.retrieveProcessDefinitionName(customDashboardCode));
+            return new ResourceModel("label.content.title");
         }
     }
 
     @Override
     protected IModel<?> getContentSubtitlelModel() {
-        return new ResourceModel("label.content.subtitle");
+        return Model.of("");
     }
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/admin/page/scripts/settings.js"));
+        response.render(JavaScriptReferenceHeaderItem.forUrl("resources/custom/scripts/settings.js"));
         StringBuilder script = new StringBuilder();
         script.append("jQuery(document).ready(function () {\n")
                 .append("    SettingUI.init(); // init settings features\n")
@@ -65,10 +67,9 @@ public class CustomDashboardContent extends Content {
 
     @Override
     protected void onInitialize() {
-        super.onInitialize();
         add(portlets = new RepeatingView("portlets"));
 
-        Dashboard dashboard = uiAdminFacade.retrieveDashboardById(customDashboardCode);
+        dashboard = uiAdminFacade.retrieveDashboardById(customDashboardCode);
 
         List<Portlet> authorizedPortlets = flowMetadataFacade.getAuthorizedPortlets(dashboard, getUserId());
 
@@ -85,10 +86,18 @@ public class CustomDashboardContent extends Content {
             error(getString("error.user.without.access.to.process"));
         }
 
+        super.onInitialize();
     }
 
     protected void buildDashboard(Portlet portlet, PortletConfig<?> config) {
-        portlets.add(new PortletPanel<>(portlets.newChildId(), config, portlet.getProcessAbbreviation(), portlet.getOrdem().intValue()));
+        String footer = null;
+        if (portlet.getProcessAbbreviation() != null) {
+            footer = uiAdminFacade.retrieveProcessDefinitionName(portlet.getProcessAbbreviation());
+        }
+
+        portlets.add(new PortletPanel<>(portlets.newChildId(), config,
+                portlet.getProcessAbbreviation(), portlet.getOrdem().intValue(),
+                footer));
     }
 
     private PortletConfig<?> buildConfig(Portlet portlet) {
@@ -109,7 +118,7 @@ public class CustomDashboardContent extends Content {
                         url, portlet.getProcessAbbreviation(), portlet.getName()), e);
             }
         } else {
-            return DashboardUtil.getById(portlet.getName());
+            return PortletConfigUtil.getById(portlet.getName());
         }
     }
 
