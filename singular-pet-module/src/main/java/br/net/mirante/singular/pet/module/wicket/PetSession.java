@@ -13,7 +13,7 @@ public class PetSession extends AuthenticatedWebSession {
     private Roles roles = new Roles();
     private String name;
     private String avatar;
-    private String logout;
+    private String logout = PetApplication.get().getServletContext().getContextPath() + "/logout";
 
     public PetSession(Request request, Response response) {
         super(request);
@@ -73,5 +73,6 @@ public class PetSession extends AuthenticatedWebSession {
     public void setLogout(String logout) {
         this.logout = logout;
     }
+
 }
 

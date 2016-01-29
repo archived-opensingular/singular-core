@@ -8,3 +8,8 @@
         width: 900px;
     }
 }
+
+
+.page-sidebar-fixed .page-footer {
+    margin-left: 0px;
+}

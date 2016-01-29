@@ -71,7 +71,7 @@ public class PetApplication extends AuthenticatedWebApplication
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
-        new AnnotatedMountScanner().scanPackage(null).mount(this);
+        new AnnotatedMountScanner().scanPackage("br.**").mount(this);
     }
 
     @Override
