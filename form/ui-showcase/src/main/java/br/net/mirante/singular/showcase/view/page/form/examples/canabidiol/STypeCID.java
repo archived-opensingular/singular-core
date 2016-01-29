@@ -1,9 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
-import javax.inject.Inject;
-
-import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.TipoBuilder;
@@ -17,6 +15,8 @@ import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CategoriaCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.GrupoCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
+
+import javax.inject.Inject;
 
 @MInfoTipo(nome = "MTipoCID", pacote = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
@@ -59,8 +59,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Grupo")
-                .visivel(false)
-                .visivel(inst -> Value.notNull(inst, (STypeSimple)capitulo.getCampo("id")))
+                .visivel(inst -> Value.notNull(inst, (STypeSimple) capitulo.getCampo("id")))
                 .dependsOn(capitulo)
                 .as(AtrBootstrap::new)
                 .colPreference(3);
@@ -88,7 +87,6 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Categoria")
-                .visivel(false)
                 .visivel(inst -> Value.notNull(inst, idGrupo))
                 .dependsOn(grupo)
                 .as(AtrBootstrap::new)
@@ -117,7 +115,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .obrigatorio(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
                 .as(AtrBasic::new)
                 .label("Sub-Categoria")
-                .visivel(false)
+
                 .visivel(inst -> ciddao.listSubCategoriasByIdCategoria(Value.of(inst, idCategoria)).size() > 0)
                 .dependsOn(categoria)
                 .as(AtrBootstrap::new)
@@ -130,7 +128,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoSubAbreviadaCategoria = subcategoria
                 .addCampoString("descricaoAbreviada");
 
-        subcategoria.withSelectionFromProvider(descricaoSubCategoria,(instancia, listaBuilder) -> {
+        subcategoria.withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
             for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
                 listaBuilder.add()
                         .set(idSubCategoria, c.getId())

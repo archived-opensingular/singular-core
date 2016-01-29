@@ -82,7 +82,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Composição")
-                .visivel(false)
+
                 .visivel(instancia -> {
                     boolean truth = Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) < 8;
                     return truth;
@@ -113,7 +113,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Endereço do fabricante")
-                .visivel(false)
+
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
@@ -140,7 +140,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrBasic::new)
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
-                .visivel(false)
+
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) == 8);
 
         outroMedicamento
