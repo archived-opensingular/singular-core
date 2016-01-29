@@ -18,7 +18,7 @@ public class Menu extends Panel {
         add(buildMenu());
     }
 
-    private MetronicMenu buildMenu() {
+    protected MetronicMenu buildMenu() {
         MetronicMenu menu = new MetronicMenu("menu");
 
         menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", PetApplication.get().getHomePage()));

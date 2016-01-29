@@ -34,9 +34,17 @@ public abstract class Template extends PetModulePage {
                 .add($b.attrAppender("class", "page-sidebar-fixed", " ", $m.ofValue(withMenu())))
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
         queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
-        queue(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"));
+        if (withMenu()) {
+            queue(configureMenu("_Menu"));
+        } else {
+            queue(new WebMarkupContainer("_Menu"));
+        }
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
+    }
+
+    protected Menu configureMenu(String id) {
+        return new Menu(id);
     }
 
     @Override
