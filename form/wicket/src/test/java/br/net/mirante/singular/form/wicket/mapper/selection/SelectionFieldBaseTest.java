@@ -12,6 +12,8 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 
 public abstract class SelectionFieldBaseTest {
@@ -20,6 +22,7 @@ public abstract class SelectionFieldBaseTest {
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
+    private static final AtomicInteger index = new AtomicInteger(0);
     
     @BeforeClass
     public static void createDicionario() {
@@ -30,7 +33,7 @@ public abstract class SelectionFieldBaseTest {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test"+(int)(Math.random()*1000));
+        localPackage = dicionario.criarNovoPacote("test"+(index.getAndIncrement()));
         MTipoComposto<? extends MIComposto> group = localPackage.createTipoComposto("group");
         createSelectionType(group);
         
