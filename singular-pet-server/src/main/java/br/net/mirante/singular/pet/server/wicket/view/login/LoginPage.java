@@ -2,11 +2,17 @@ package br.net.mirante.singular.pet.server.wicket.view.login;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -19,7 +25,14 @@ public class LoginPage extends WebPage{
         super(pageParameters);
         setStatelessHint(true);
     }
-    
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(new CssResourceReference(LoginPage.class, "LoginPage.css")));
+        response.render(JavaScriptHeaderItem.forReference(new JavaScriptResourceReference(LoginPage.class, "LoginPage.js")));
+    }
+
     @Override
     protected void onInitialize() {
         super.onInitialize();
