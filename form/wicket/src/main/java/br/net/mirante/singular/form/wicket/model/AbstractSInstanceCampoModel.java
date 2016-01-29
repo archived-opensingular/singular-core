@@ -7,13 +7,13 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 
-public abstract class AbstractSInstanceCampoModel2<I extends SInstance>
+public abstract class AbstractSInstanceCampoModel<I extends SInstance>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 
     private Object rootTarget;
 
-    public AbstractSInstanceCampoModel2(Object rootTarget) {
+    public AbstractSInstanceCampoModel(Object rootTarget) {
         this.rootTarget = rootTarget;
     }
 
@@ -67,7 +67,7 @@ public abstract class AbstractSInstanceCampoModel2<I extends SInstance>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AbstractSInstanceCampoModel2<?> other = (AbstractSInstanceCampoModel2<?>) obj;
+        AbstractSInstanceCampoModel<?> other = (AbstractSInstanceCampoModel<?>) obj;
         if (rootTarget == null) {
             if (other.rootTarget != null)
                 return false;

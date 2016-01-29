@@ -75,7 +75,7 @@ public class MICompostoModel<T extends SIComposite>
         return true;
     }
 
-    private class AttachedCompoundPropertyModel<C extends SInstance> extends AbstractSInstanceCampoModel2<C>
+    private class AttachedCompoundPropertyModel<C extends SInstance> extends AbstractSInstanceCampoModel<C>
         implements IWrapModel<C> {
         private final Component owner;
         public AttachedCompoundPropertyModel(Component owner) {
