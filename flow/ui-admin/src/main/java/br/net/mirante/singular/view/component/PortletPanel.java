@@ -1,10 +1,13 @@
 package br.net.mirante.singular.view.component;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -25,17 +28,9 @@ import br.net.mirante.singular.bamclient.portlet.PortletConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.FilterPackageFactory;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposto;
-import br.net.mirante.singular.form.mform.STypeSimples;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.FilterPackageFactory;
-import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -46,7 +41,6 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
@@ -151,7 +145,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
 
             @Override
-            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends MInstancia> instanceModel) {
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                 super.onValidationError(target, form, instanceModel);
                 modalBorder.hide(target);
                 modalBorder.show(target);

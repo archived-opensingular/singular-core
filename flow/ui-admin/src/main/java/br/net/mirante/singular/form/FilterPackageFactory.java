@@ -9,12 +9,12 @@ import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.filter.AggregationPeriod;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposto;
+import br.net.mirante.singular.form.mform.STypeSimples;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.service.FlowMetadataFacade;
@@ -33,16 +33,16 @@ public class FilterPackageFactory {
         this.processAbbreviation = processAbbreviation;
     }
 
-    public MTipo<?> createFilterPackage() {
-        final PacoteBuilder builder = MDicionario.create().criarNovoPacote("FilterPackage");
-        final MTipoComposto<? extends MIComposto> filtro = builder.createTipoComposto("filter");
+    public SType<?> createFilterPackage() {
+        final PacoteBuilder builder = SDictionary.create().criarNovoPacote("FilterPackage");
+        final STypeComposto<? extends SIComposite> filtro = builder.createTipoComposto("filter");
         appendFilters(filtro);
         return filtro;
     }
 
-    private void appendFilters(MTipoComposto root) {
+    private void appendFilters(STypeComposto root) {
         filterConfigs.forEach(fc -> {
-            MTipoSimples field = null;
+            STypeSimples field = null;
             switch (fc.getFieldType()) {
                 case BOOLEAN:
                     field = root.addCampoBoolean(fc.getIdentifier());
