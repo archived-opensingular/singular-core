@@ -2,10 +2,13 @@ package br.net.mirante.singular.view.component;
 
 import javax.inject.Inject;
 
-import java.util.Objects;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
@@ -19,6 +22,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.json.JSONObject;
+import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
 import br.net.mirante.singular.bamclient.portlet.PortletConfig;
@@ -36,6 +40,7 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -124,8 +129,10 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 if (xml != null) {
+                    System.out.println(xml);
                     final String jsonSource = xml.toJSONString();
                     final JSONObject filtro = new JSONObject(jsonSource).getJSONObject("filtro");
+                    System.out.println(filtro);
                     if (filtro != null) {
                         context.getObject().setSerializedJSONFilter(filtro.toString());
                     } else {
@@ -198,28 +205,44 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             MTipoSimples field = null;
             switch (fc.getFieldType()) {
                 case BOOLEAN:
-                    field = root.addCampoBoolean(fc.getIdentificador());
+                    field = root.addCampoBoolean(fc.getIdentifier());
                     break;
                 case INTEGER:
-                    field = root.addCampoInteger(fc.getIdentificador());
+                    field = root.addCampoInteger(fc.getIdentifier());
                     break;
                 case TEXT:
-                    field = root.addCampoString(fc.getIdentificador());
+                    field = root.addCampoString(fc.getIdentifier());
                     break;
                 case TEXTAREA:
-                    field = root.addCampoString(fc.getIdentificador()).withTextAreaView();
+                    field = root.addCampoString(fc.getIdentifier()).withTextAreaView();
                     break;
                 case DATE:
-                    field = root.addCampoData(fc.getIdentificador());
+                    field = root.addCampoData(fc.getIdentifier());
+                    break;
+                case SELECTION:
+                    field = root.addCampoString(fc.getIdentifier());
+                    final MFixedOptionsSimpleProvider selectionProvider = field.withSelection();
+                    if (!StringUtils.isEmpty(fc.getRestEndpoint())) {
+                        final String connectionURL = getGroupConnectionURL(context.getObject().getProcessDefinitionCode());
+                        if (!StringUtils.isEmpty(connectionURL)) {
+                            final String fullConnectionPoint = connectionURL + fc.getRestEndpoint();
+                            switch (fc.getRestReturnType()) {
+                                case VALUE:
+                                    fillValueOptions(selectionProvider, fullConnectionPoint);
+                                    break;
+                                case KEY_VALUE:
+                                    fillKeyValueOptions(selectionProvider, fullConnectionPoint);
+                                    break;
+                            }
+                        }
+                    } else if (fc.getOptions() != null && fc.getOptions().length > 0) {
+                        Arrays.asList(fc.getOptions()).forEach(selectionProvider::add);
+                    }
                     break;
                 case AGGREGATION_PERIOD:
-                    field = root.addCampoString(fc.getIdentificador());
-                    field.withSelection()
-                            .add(AggregationPeriod.WEEKLY, AggregationPeriod.BIMONTHLY.getDescription())
-                            .add(AggregationPeriod.MONTHLY, AggregationPeriod.MONTHLY.getDescription())
-                            .add(AggregationPeriod.BIMONTHLY, AggregationPeriod.BIMONTHLY.getDescription())
-                            .add(AggregationPeriod.YEARLY, AggregationPeriod.YEARLY.getDescription())
-                    ;
+                    field = root.addCampoString(fc.getIdentifier());
+                    final MFixedOptionsSimpleProvider aggregationProvider = field.withSelection();
+                    Arrays.asList(AggregationPeriod.values()).forEach(ap -> aggregationProvider.add(ap, ap.getDescription()));
                     break;
             }
             if (field != null) {
@@ -228,5 +251,26 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
         });
     }
+
+    public void fillValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
+        final RestTemplate restTemplate = new RestTemplate();
+        final List<String> list = restTemplate.getForObject(endpoint, List.class);
+        if (list != null) {
+            list.forEach(provider::add);
+        }
+    }
+
+    public void fillKeyValueOptions(MFixedOptionsSimpleProvider provider, String endpoint) {
+        final RestTemplate restTemplate = new RestTemplate();
+        final Map<String, String> map = restTemplate.getForObject(endpoint, Map.class);
+        if (map != null) {
+            map.forEach(provider::add);
+        }
+    }
+
+    private String getGroupConnectionURL(String processAbbreviation) {
+        return flowMetadataFacade.retrieveGroupByProcess(processAbbreviation).getConnectionURL();
+    }
+
 
 }

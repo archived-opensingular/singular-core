@@ -3,20 +3,24 @@ package br.net.mirante.singular.bamclient.portlet;
 import java.io.Serializable;
 
 import br.net.mirante.singular.bamclient.portlet.filter.FieldType;
+import br.net.mirante.singular.bamclient.portlet.filter.RestReturnType;
 
 public class FilterConfig implements Serializable {
 
-    private String identificador;
+    private String identifier;
     private FieldType fieldType;
     private String label;
-    private int size;
+    private Integer size;
+    private String[] options;
+    private String restEndpoint;
+    private RestReturnType restReturnType;
 
-    public String getIdentificador() {
-        return identificador;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setIdentificador(String identificador) {
-        this.identificador = identificador;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public FieldType getFieldType() {
@@ -35,11 +39,35 @@ public class FilterConfig implements Serializable {
         this.label = label;
     }
 
-    public int getSize() {
+    public Integer getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(Integer size) {
         this.size = size;
+    }
+
+    public String[] getOptions() {
+        return options;
+    }
+
+    public void setOptions(String[] options) {
+        this.options = options;
+    }
+
+    public String getRestEndpoint() {
+        return restEndpoint;
+    }
+
+    public void setRestEndpoint(String restEndpoint) {
+        this.restEndpoint = restEndpoint;
+    }
+
+    public RestReturnType getRestReturnType() {
+        return restReturnType;
+    }
+
+    public void setRestReturnType(RestReturnType restReturnType) {
+        this.restReturnType = restReturnType;
     }
 }
