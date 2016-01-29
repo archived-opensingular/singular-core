@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/security
+	http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+
+    <security:http entry-point-ref="http403ForbiddenEntryPoint">
+        <security:csrf disabled="true" />
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="j2eePreAuthenticatedProcessingFilter"/>
+        <security:intercept-url pattern="/**" access="authenticated" />
+    </security:http>
+
+    <bean id="http403ForbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+    <bean id="j2eePreAuthenticatedProcessingFilter" class="org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="casAuthenticationProvider" />
+    </security:authentication-manager>
+
+    <bean id="casAuthenticationProvider"
+          class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService">
+            <bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+                <constructor-arg ref="peticionamentoUserDetailService" />
+            </bean>
+        </property>
+    </bean>
+
+</beans>
