@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.util.transformer;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeLista;
@@ -20,14 +20,14 @@ import java.util.Map;
  */
 public class Value {
 
-    private SInstance instancia;
+    private SInstance2 instancia;
 
-    public Value(SInstance instancia) {
+    public Value(SInstance2 instancia) {
         this.instancia = instancia;
     }
 
-    private static SInstance getInstance(SInstance instancia, SType target) {
-        return (SInstance) instancia.findNearest(target).orElse(null);
+    private static SInstance2 getInstance(SInstance2 instancia, SType target) {
+        return (SInstance2) instancia.findNearest(target).orElse(null);
     }
 
     /**
@@ -37,11 +37,11 @@ public class Value {
      * @return false se o valor do tipo simples for nulo ou se o tipo não for encontrado a partir da instancia
      * current informada
      */
-    public static <T> boolean notNull(SInstance current, STypeSimples<? extends SISimple<T>, T> tipo) {
+    public static <T> boolean notNull(SInstance2 current, STypeSimples<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
     }
 
-    public static <T> boolean notNull(SInstance current, STypeComposto tipo) {
+    public static <T> boolean notNull(SInstance2 current, STypeComposto tipo) {
         if (current != null && tipo != null) {
             SIComposite targetInstance = (SIComposite) getInstance(current, tipo);
             return Value.notNull(targetInstance);
@@ -50,7 +50,7 @@ public class Value {
     }
 
 
-    public static <T> boolean notNull(SInstance current, STypeLista tipo) {
+    public static <T> boolean notNull(SInstance2 current, STypeLista tipo) {
         if (current != null && tipo != null) {
             SList instanciaLista = (SList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
@@ -83,7 +83,7 @@ public class Value {
         return null;
     }
 
-    public static <T> boolean notNull(SInstance instancia) {
+    public static <T> boolean notNull(SInstance2 instancia) {
         if (instancia instanceof SIComposite) {
             return Value.notNull((SIComposite) instancia);
         } else if (instancia instanceof SISimple) {
@@ -103,7 +103,7 @@ public class Value {
      * @param <T>
      * @return
      */
-    public static <T> T of(SInstance instancia, STypeSimples<? extends SISimple<T>, T> tipo) {
+    public static <T> T of(SInstance2 instancia, STypeSimples<? extends SISimple<T>, T> tipo) {
         if (instancia != null && tipo != null) {
             SISimple targetInstance = (SISimple) getInstance(instancia, tipo);
             if (targetInstance != null) {
@@ -120,7 +120,7 @@ public class Value {
      * @param instancia
      * @param value
      */
-    public static void hydrate(SInstance instancia, Object value) {
+    public static void hydrate(SInstance2 instancia, Object value) {
         if (instancia != null) {
             if (instancia instanceof SIComposite) {
                 fromMap((Map<String, Object>) value, (SIComposite) instancia);
@@ -142,7 +142,7 @@ public class Value {
 
     private static void fromList(List<Object> list, SList sList) {
         for (Object o : list) {
-            SInstance novo = sList.addNovo();
+            SInstance2 novo = sList.addNovo();
             hydrate(novo, o);
         }
     }
@@ -156,17 +156,17 @@ public class Value {
      * @return
      *  Objetos serializáveis representando os dados da MInstancia
      */
-    public static Object dehydrate(SInstance value) {
+    public static Object dehydrate(SInstance2 value) {
         if (value != null) {
             if (value instanceof SIComposite) {
                 Map<String, Object> map = new LinkedHashMap<>();
-                toMap(map, (SInstance) value);
+                toMap(map, (SInstance2) value);
                 return map;
             } else if (value instanceof SISimple) {
                 return ((SISimple) value).getValor();
             } else if (value instanceof SList) {
                 List<Object> list = new ArrayList<>();
-                toList(list, (SInstance) value);
+                toList(list, (SInstance2) value);
                 return list;
             } else {
                 throw new SingularFormException("Tipo de instancia não suportado");
@@ -181,7 +181,7 @@ public class Value {
      * @param innocentVessel
      * @return
      */
-    public static Soul exorcize(SInstance innocentVessel){
+    public static Soul exorcize(SInstance2 innocentVessel){
         Soul s = new Soul();
         s.value = dehydrate(innocentVessel);
         return s;
@@ -194,22 +194,22 @@ public class Value {
      * @param evilSpirit
      *  A alma do espírito realmente extraída a partir do método exorcize
      */
-    public static void possess(SInstance pureVessel, Soul evilSpirit) {
+    public static void possess(SInstance2 pureVessel, Soul evilSpirit) {
         hydrate(pureVessel, evilSpirit.value);
     }
 
-    private static void toMap(Map<String, Object> value, SInstance instancia) {
+    private static void toMap(Map<String, Object> value, SInstance2 instancia) {
         if (instancia instanceof SIComposite) {
             SIComposite item = (SIComposite) instancia;
-            for (SInstance i : item.getAllChildren()) {
+            for (SInstance2 i : item.getAllChildren()) {
                 value.put(i.getNome(), dehydrate(i));
             }
         }
     }
 
-    private static void toList(List<Object> value, SInstance instancia) {
+    private static void toList(List<Object> value, SInstance2 instancia) {
         if (instancia instanceof SList<?>) {
-            for (SInstance i : ((SList<?>) instancia).getValores()) {
+            for (SInstance2 i : ((SList<?>) instancia).getValores()) {
                 value.add(dehydrate(i));
             }
         }

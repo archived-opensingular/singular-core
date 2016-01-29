@@ -54,7 +54,7 @@ public class TestMInstance {
         assertId(pedido2.getCampo("itens[0].nome"), 14, 14);
     }
 
-    private static void assertId(SInstance pedido, int idInstancia, int lastId) {
+    private static void assertId(SInstance2 pedido, int idInstancia, int lastId) {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }

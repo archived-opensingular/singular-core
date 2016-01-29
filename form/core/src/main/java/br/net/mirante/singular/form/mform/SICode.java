@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
-public class SICode<T> extends SInstance {
+public class SICode<T> extends SInstance2 {
 
     private T code;
 

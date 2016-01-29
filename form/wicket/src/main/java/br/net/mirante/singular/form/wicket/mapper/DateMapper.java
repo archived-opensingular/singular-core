@@ -16,7 +16,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
@@ -37,7 +37,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
         @SuppressWarnings("unchecked")
         TextField<?> comp = new TextField<Date>(model.getObject().getNome(),
             new MInstanciaValorModel<>(model), Date.class) {
@@ -73,16 +73,16 @@ public class DateMapper implements ControlsFieldComponentMapper {
     }
     
     @Override
-    public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    public void addAjaxUpdate(Component component, IModel<SInstance2> model, IAjaxUpdateListener listener) {
         component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
         MarkupContainer container = component.getMetaData(BSDatepickerConstants.KEY_CONTAINER);
         container.add(WicketUtils.$b.onReadyScript(c -> ""
             + JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
     }
 
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
         if ((model != null) && (model.getObject() != null)) {
-            SInstance instancia = model.getObject();
+            SInstance2 instancia = model.getObject();
             if (instancia.getValor() instanceof Date) {
                 Date dt = (Date) instancia.getValor();
                 final SimpleDateFormat formattter = new SimpleDateFormat(STypeData.FORMAT);
@@ -94,7 +94,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
 
     private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
         private transient boolean flag;
-        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, IAjaxUpdateListener listener) {
+        private BSDatepickerAjaxUpdateBehavior(IModel<SInstance2> model, IAjaxUpdateListener listener) {
             super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
         }
         @Override

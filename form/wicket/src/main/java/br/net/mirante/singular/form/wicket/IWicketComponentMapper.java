@@ -11,7 +11,7 @@ import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateChoiceBehavior;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -21,7 +21,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
 
     void buildView(WicketBuildContext ctx);
 
-    default void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+    default void addAjaxUpdate(Component component, IModel<SInstance2> model, IAjaxUpdateListener listener) {
         if ((component instanceof RadioChoice) ||
             (component instanceof CheckBoxMultipleChoice) ||
             (component instanceof RadioGroup) ||

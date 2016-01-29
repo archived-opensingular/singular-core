@@ -17,7 +17,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * <p>
  * Classe de suporte a serialização e deserialização de
  * {@link br.net.mirante.singular.form.mform.document.SDocument} e
- * {@link SInstance}.
+ * {@link SInstance2}.
  * </p>
  * <p>
  * Tendo em vista que as definições de tipos não serializadas (vão apenas os
@@ -55,7 +55,7 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    public static FormSerialized toSerializedObject(SInstance instance) {
+    public static FormSerialized toSerializedObject(SInstance2 instance) {
         return toSerializedObject(instance, null);
     }
 
@@ -75,7 +75,7 @@ public class FormSerializationUtil {
      *            resolver para facilitar a recuperação.
      *            </p>
      */
-    public static FormSerialized toSerializedObject(SInstance instance,
+    public static FormSerialized toSerializedObject(SInstance2 instance,
                                                     MDicionarioResolverSerializable dicionarioResolverSerializable) {
         FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
         defineFocusField(instance, fs);
@@ -83,13 +83,13 @@ public class FormSerializationUtil {
         return fs;
     }
 
-    private static void defineFocusField(SInstance instance, FormSerialized fs) {
+    private static void defineFocusField(SInstance2 instance, FormSerialized fs) {
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
         }
     }
 
-    private static void setDictionaryIfAny(SInstance instance, MDicionarioResolverSerializable dicionarioResolverSerializable, FormSerialized fs) {
+    private static void setDictionaryIfAny(SInstance2 instance, MDicionarioResolverSerializable dicionarioResolverSerializable, FormSerialized fs) {
         if (dicionarioResolverSerializable == null) {
             fs.setDictionaryId(dictionaries.put(instance.getDicionario()));
         }
@@ -106,7 +106,7 @@ public class FormSerializationUtil {
      */
     private static FormSerialized toSerialized(SDocument document,
                                   MDicionarioResolverSerializable dicionaroResolverSerializable) {
-        SInstance root = document.getRoot();
+        SInstance2 root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
         if(root.as(AtrAnnotation::new).hasAnnotation()){
@@ -140,7 +140,7 @@ public class FormSerializationUtil {
      * @exception SingularFormException
      *                Senão encontrar o dicionário ou tipo necessário.
      */
-    public static SInstance toInstance(FormSerialized fs) {
+    public static SInstance2 toInstance(FormSerialized fs) {
         return toInstance(fs, null);
     }
 
@@ -161,10 +161,10 @@ public class FormSerializationUtil {
      * @exception SingularFormException
      *                Senão encontrar o dicionário ou tipo necessário.
      */
-    public static SInstance toInstance(FormSerialized fs, MDicionarioResolver dictionaryResolver) {
+    public static SInstance2 toInstance(FormSerialized fs, MDicionarioResolver dictionaryResolver) {
         try {
             SType<?> rootType = loaType(fs, dictionaryResolver, fs.getRootType());
-            SInstance root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
+            SInstance2 root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
 
             deserializeServices(fs.getServices(), root.getDocument());
             if(fs.getAnnotations() != null){
@@ -201,7 +201,7 @@ public class FormSerializationUtil {
         document.bindLocalService(entry.getKey(), (Class<Object>) p.type, p.provider);
     }
 
-    private static SInstance defineRoot(FormSerialized fs, SInstance root) {
+    private static SInstance2 defineRoot(FormSerialized fs, SInstance2 root) {
         if (StringUtils.isBlank(fs.getFocusFieldPath())) { return root; }
         return ((ICompositeInstance) root).getCampo(fs.getFocusFieldPath());
     }

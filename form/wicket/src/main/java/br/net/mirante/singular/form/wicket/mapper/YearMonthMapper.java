@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 public class YearMonthMapper implements ControlsFieldComponentMapper {
 
     @Override @SuppressWarnings("rawtypes")
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
         YearMonthField comp = new YearMonthField(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendDatepicker(comp.setLabel(labelModel)
                         .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
@@ -32,9 +32,9 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
         if ((model != null) && (model.getObject() != null)) {
-            SInstance instancia = model.getObject();
+            SInstance2 instancia = model.getObject();
             if (instancia.getValor() instanceof YearMonth) {
                 YearMonth ym = (YearMonth) instancia.getValor();
                 return String.format("%02d/%04d", ym.getMonthValue(), ym.getYear());

@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.core;
 import java.util.function.Predicate;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
 public class AtrCore extends MTranslatorParaAtributo {
@@ -23,7 +23,7 @@ public class AtrCore extends MTranslatorParaAtributo {
         return this;
     }
 
-    public AtrCore obrigatorio(Predicate<SInstance> valor) {
+    public AtrCore obrigatorio(Predicate<SInstance2> valor) {
         getAlvo().setValorAtributo(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }
@@ -37,7 +37,7 @@ public class AtrCore extends MTranslatorParaAtributo {
         return this;
     }
     
-    public AtrCore exists(Predicate<SInstance> valor) {
+    public AtrCore exists(Predicate<SInstance2> valor) {
         getAlvo().setValorAtributo(SPackageCore.ATR_OBRIGATORIO_FUNCTION, valor);
         return this;
     }

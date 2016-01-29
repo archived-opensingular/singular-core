@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
@@ -30,7 +30,7 @@ public class LookupOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public SList<? extends SInstance> listOptions(SInstance instance) {
+    public SList<? extends SInstance2> listOptions(SInstance2 instance) {
         SDocument document = instance.getDocument();
         MOptionsProvider provider = whichProvider(document);
         return provider.listAvailableOptions(instance);

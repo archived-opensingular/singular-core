@@ -7,14 +7,14 @@ import junit.framework.TestCase;
 
 public abstract class TestCaseForm extends TestCase {
 
-    protected static void testCaminho(SInstance registro, String path, String caminhoCompletoEsperado) {
-        SInstance esperada = (path == null) ? registro : ((ICompositeInstance) registro).getCampo(path);
+    protected static void testCaminho(SInstance2 registro, String path, String caminhoCompletoEsperado) {
+        SInstance2 esperada = (path == null) ? registro : ((ICompositeInstance) registro).getCampo(path);
         assertNotNull(esperada);
         String caminho = esperada.getPathFromRoot();
         assertEquals(caminhoCompletoEsperado, caminho);
 
         String esperadoFull;
-        SInstance raiz = registro.getDocument().getRoot();
+        SInstance2 raiz = registro.getDocument().getRoot();
         if (caminho == null) {
             esperadoFull = raiz.getNome();
         } else if (raiz instanceof SList) {
@@ -29,13 +29,13 @@ public abstract class TestCaseForm extends TestCase {
         }
     }
 
-    protected static <R extends SInstance & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor,
-                                                                                    int qtdFilhosEsperados) {
+    protected static <R extends SInstance2 & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor,
+                                                                                     int qtdFilhosEsperados) {
         testAtribuicao(registro, path, valor);
         assertFilhos(registro, qtdFilhosEsperados);
     }
 
-    protected static <R extends SInstance & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor) {
+    protected static <R extends SInstance2 & ICompositeInstance> void testAtribuicao(R registro, String path, Object valor) {
         registro.setValor(path, valor);
         assertEquals(valor, registro.getValor(path));
     }
@@ -57,13 +57,13 @@ public abstract class TestCaseForm extends TestCase {
     /**
      * Faz alguns verifições quanto a integridade dos filhos;
      */
-    protected static void assertFilhos(SInstance pai, int qtdFilhosEsperados) {
+    protected static void assertFilhos(SInstance2 pai, int qtdFilhosEsperados) {
         int[] counter = new int[1];
         assertNotNull(pai.getDocument());
         assertFilhos(pai, pai, counter);
         assertEquals(qtdFilhosEsperados, counter[0]);
 
-        SInstance atual = pai;
+        SInstance2 atual = pai;
         while (atual != null) {
             assertEquals(pai.getDocument(), atual.getDocument());
             if (atual.getParent() == null) {
@@ -74,9 +74,9 @@ public abstract class TestCaseForm extends TestCase {
 
     }
 
-    private static void assertFilhos(SInstance raiz, SInstance pai, int[] counter) {
+    private static void assertFilhos(SInstance2 raiz, SInstance2 pai, int[] counter) {
         if (pai instanceof ICompositeInstance) {
-            for (SInstance filho : ((ICompositeInstance) pai).getChildren()) {
+            for (SInstance2 filho : ((ICompositeInstance) pai).getChildren()) {
                 assertEquals(raiz.getDocument(), filho.getDocument());
                 assertEquals(pai, filho.getParent());
                 counter[0]++;

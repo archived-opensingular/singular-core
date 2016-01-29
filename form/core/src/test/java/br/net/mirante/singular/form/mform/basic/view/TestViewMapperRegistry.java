@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeSimples;
@@ -144,7 +144,7 @@ public class TestViewMapperRegistry {
         }
     }
 
-    private void assertResult(String expected, SInstance instance, MView view) {
+    private void assertResult(String expected, SInstance2 instance, MView view) {
         assertEquals(expected, mapper.getMapper(instance, view).orElse(null));
 
     }

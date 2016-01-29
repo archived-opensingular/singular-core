@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
@@ -20,12 +20,12 @@ import java.util.List;
 public class SelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
 
         return formGroupAppender(formGroup, model, getOpcoesValue(view, model), view);
     }
 
-    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends SInstance> model) {
+    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends SInstance2> model) {
         return new IReadOnlyModel<List<SelectOption>>() {
             @Override
             public List<SelectOption> getObject() {
@@ -36,32 +36,32 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         };
     }
 
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance2> model, final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue, view);
         formGroup.appendSelect(choices.setNullValid(true), isMultiple(model), isBSSelect(model));
         return choices;
     }
 
 
-    protected boolean isBSSelect(IModel<? extends SInstance> model) {
+    protected boolean isBSSelect(IModel<? extends SInstance2> model) {
         return false;
     }
 
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
-        final SInstance mi = model.getObject();
+    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
+        final SInstance2 mi = model.getObject();
         if (mi != null) {
             return mi.getSelectLabel();
         }
         return StringUtils.EMPTY;
     }
 
-    protected boolean isMultiple(IModel<? extends SInstance> model) {
+    protected boolean isMultiple(IModel<? extends SInstance2> model) {
         return false;
     }
 
     @SuppressWarnings({"unchecked"})
     protected AbstractSingleSelectChoice<SelectOption> retrieveChoices(
-            IModel<? extends SInstance> model,
+            IModel<? extends SInstance2> model,
             final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         String id = model.getObject().getNome();
         return new DropDownChoice<>(id, new MSelectionInstanceModel<>(model), opcoesValue, rendererer());

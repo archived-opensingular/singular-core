@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.component.custom.comment;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -31,7 +31,7 @@ public class PageWithAnnotation {
         /**
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.
          */
-        SInstance instanciaCampoCliente = pedido.getDescendant(pacote.cliente);
+        SInstance2 instanciaCampoCliente = pedido.getDescendant(pacote.cliente);
         SIAnnotation anotacaoDoCliente = instanciaCampoCliente.as(AtrAnnotation::new).annotation();
 
         /**

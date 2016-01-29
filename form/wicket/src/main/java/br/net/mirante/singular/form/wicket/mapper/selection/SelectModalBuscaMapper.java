@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
@@ -16,7 +16,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
 
     public Component appendInput(MView view, BSContainer bodyContainer,
-                                 BSControls formGroup, IModel<? extends SInstance> model,
+                                 BSControls formGroup, IModel<? extends SInstance2> model,
                                  IModel<String> labelModel) {
         if (view instanceof MSelecaoPorModalBuscaView) {
             return formGroupAppender(formGroup, bodyContainer, model, (MSelecaoPorModalBuscaView) view);
@@ -25,7 +25,7 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
     protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
-                                          IModel<? extends SInstance> model,
+                                          IModel<? extends SInstance2> model,
                                           MSelecaoPorModalBuscaView view) {
         SelectInputModalContainer panel = new SelectInputModalContainer(
                 model.getObject().getNome() + "inputGroup",
@@ -42,8 +42,8 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
-        final SInstance mi = model.getObject();
+    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
+        final SInstance2 mi = model.getObject();
         if (mi != null) {
             return mi.getSelectLabel();
         }

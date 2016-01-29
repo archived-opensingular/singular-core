@@ -64,8 +64,8 @@ public final class MFormUtil {
      * Retorna o nome do filho atual indo em direção ao raiz mas parando segundo
      * a condicão de parada informada.
      */
-    public final static String generatePath(SInstance atual, Predicate<SInstance> condicaoDeParada) {
-        List<SInstance> sequencia = null;
+    public final static String generatePath(SInstance2 atual, Predicate<SInstance2> condicaoDeParada) {
+        List<SInstance2> sequencia = null;
         while (!condicaoDeParada.test(atual)) {
             if (sequencia == null) {
                 sequencia = new ArrayList<>();
@@ -95,13 +95,13 @@ public final class MFormUtil {
         return null;
     }
 
-    public static String generateUserFriendlyPath(SInstance instance) {
+    public static String generateUserFriendlyPath(SInstance2 instance) {
         return generateUserFriendlyPath(instance, null);
     }
-    public static String generateUserFriendlyPath(SInstance instance, SInstance parentContext) {
+    public static String generateUserFriendlyPath(SInstance2 instance, SInstance2 parentContext) {
         LinkedList<String> labels = new LinkedList<>();
-        SInstance child = null;
-        for (SInstance node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
+        SInstance2 child = null;
+        for (SInstance2 node = instance; node != null && !node.equals(parentContext); child = node, node = node.getParent()) {
 
             final String labelNode = node.as(SPackageBasic.aspect()).getLabel();
 

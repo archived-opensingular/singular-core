@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeLista;
@@ -50,7 +50,7 @@ public class TestViewResolver {
         assertView(expectedView, newInstance.novaInstancia());
     }
 
-    private static void assertView(Class<?> expectedView, SInstance instance) {
+    private static void assertView(Class<?> expectedView, SInstance2 instance) {
         MView view = ViewResolver.resolve(instance);
         if (expectedView == null && view == MView.DEFAULT) {
             return;

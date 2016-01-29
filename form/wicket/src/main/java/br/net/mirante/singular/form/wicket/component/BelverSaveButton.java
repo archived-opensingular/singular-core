@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.component;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,7 +14,7 @@ public abstract class BelverSaveButton extends BelverValidationButton {
     }
 
     @Override
-    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+    protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance2> instanceModel) {
         MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
         handleSaveXML(target, rootXml);
     }

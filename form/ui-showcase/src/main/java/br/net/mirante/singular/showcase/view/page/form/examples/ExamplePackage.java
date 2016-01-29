@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
@@ -94,8 +94,8 @@ public class ExamplePackage extends SPackage {
         this.address.addInstanceValidator(InstanceValidators.allOrNothing());
     }
 
-    private <I extends SInstance, T extends SType<I>> T addField(STypeComposto<?> root, String name, String label,
-                                                                 Class<T> type) {
+    private <I extends SInstance2, T extends SType<I>> T addField(STypeComposto<?> root, String name, String label,
+                                                                  Class<T> type) {
         T campo = root.addCampo(name, type);
         campo.as(AtrBasic::new).label(label);
         return campo;

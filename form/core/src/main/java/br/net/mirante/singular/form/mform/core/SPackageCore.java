@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIPredicate;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeCode;
@@ -32,10 +32,10 @@ public class SPackageCore extends SPackage {
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_EMPTY_TO_NULL   = new AtrRef<>(SPackageCore.class, "emptyToNull", STypeBoolean.class, SIBoolean.class, Boolean.class);
 
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_OBRIGATORIO     = new AtrRef<>(SPackageCore.class, "obrigatorio", STypeBoolean.class, SIBoolean.class, Boolean.class);
-    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_OBRIGATORIO_FUNCTION = new AtrRef(SPackageCore.class, "obrigatorioFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance2>> ATR_OBRIGATORIO_FUNCTION = new AtrRef(SPackageCore.class, "obrigatorioFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
 
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean> ATR_EXISTS          = new AtrRef<>(SPackageCore.class, "exists", STypeBoolean.class, SIBoolean.class, Boolean.class);
-    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance>> ATR_EXISTS_FUNCTION      = new AtrRef(SPackageCore.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
+    public static final AtrRef<STypePredicate, SIPredicate, Predicate<SInstance2>> ATR_EXISTS_FUNCTION      = new AtrRef(SPackageCore.class, "existsFunction", STypePredicate.class, SIPredicate.class, Predicate.class);
     
     public static final AtrRef<STypeFormula, SIComposite, Object> ATR_FORMULA         = new AtrRef<>(SPackageCore.class, "formula", STypeFormula.class, SIComposite.class, Object.class);
     

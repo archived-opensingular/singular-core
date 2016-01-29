@@ -44,7 +44,7 @@ public abstract class MTranslatorParaAtributo {
         if (alvo instanceof SType) {
             return (SType<?>) alvo;
         }
-        return ((SInstance) alvo).getMTipo();
+        return ((SInstance2) alvo).getMTipo();
     }
 
     public <TR> TR as(Function<MAtributoEnabled, TR> wrapper) {

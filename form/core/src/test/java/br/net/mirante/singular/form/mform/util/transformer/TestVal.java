@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimples;
@@ -151,7 +151,7 @@ public class TestVal {
     @Test
     public void testDehydrateHydrate() {
         Object value = Value.dehydrate(evento);
-        SInstance novaInstancia = _raiz.novaInstancia();
+        SInstance2 novaInstancia = _raiz.novaInstancia();
         Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
@@ -179,9 +179,9 @@ public class TestVal {
         Value.of((SISimple)null);
         Value.of(null, null);
         Value.notNull((SList) null);
-        Value.notNull((SInstance) null, (STypeSimples) null);
-        Value.notNull((SInstance) null, (STypeComposto) null);
-        Value.notNull((SInstance) null, (STypeLista) null);
+        Value.notNull((SInstance2) null, (STypeSimples) null);
+        Value.notNull((SInstance2) null, (STypeComposto) null);
+        Value.notNull((SInstance2) null, (STypeLista) null);
         Value.dehydrate((SIComposite)null);
         Value.hydrate((SIComposite)null, null);
     }

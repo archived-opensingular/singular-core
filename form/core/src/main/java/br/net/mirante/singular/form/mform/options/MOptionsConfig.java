@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.slf4j.Logger;
@@ -23,9 +23,9 @@ public class MOptionsConfig {
 
     private BigInteger keySeed = BigInteger.ZERO;
     private static final Logger LOGGER = LoggerFactory.getLogger(MOptionsConfig.class);
-    private BiMap<String, SInstance> optionsKeyInstanceMap;
+    private BiMap<String, SInstance2> optionsKeyInstanceMap;
     private LinkedHashMap<String, String> optionsKeylabelMap;
-    private SList<? extends SInstance> options;
+    private SList<? extends SInstance2> options;
     private MSelectionableInstance instancia;
 
     public MOptionsConfig(MSelectionableInstance instancia) {
@@ -39,7 +39,7 @@ public class MOptionsConfig {
         return instancia.getMTipo().getProviderOpcoes();
     }
 
-    private BiMap<String, SInstance> getOptions() {
+    private BiMap<String, SInstance2> getOptions() {
         init();
         return optionsKeyInstanceMap;
     }
@@ -56,13 +56,13 @@ public class MOptionsConfig {
     private void reloadOptionsFromProvider() {
         MOptionsProvider provider = getOptionsProvider();
         if (provider != null) {
-            SList<? extends SInstance> newOptions = provider.listAvailableOptions(instancia);
+            SList<? extends SInstance2> newOptions = provider.listAvailableOptions(instancia);
             LOGGER.warn("Opções recarregadas para " + toString());
             if (newOptions != null && !newOptions.equals(options)) {
                 options = newOptions;
                 optionsKeyInstanceMap = HashBiMap.create(options.size());
                 optionsKeylabelMap = new LinkedHashMap<>(options.size());
-                for (SInstance SInstance : options) {
+                for (SInstance2 SInstance : options) {
                     /* ignora silenciosamente valores duplicados */
                     if (!optionsKeyInstanceMap.inverse().containsKey(SInstance)) {
                         String key = newUniqueKey();
@@ -90,7 +90,7 @@ public class MOptionsConfig {
         return optionsKeylabelMap.get(key);
     }
 
-    public String getKeyFromOptions(SInstance option) {
+    public String getKeyFromOptions(SInstance2 option) {
         if (option == null) {
             return null;
         }
@@ -103,7 +103,7 @@ public class MOptionsConfig {
      * @param key
      * @return
      */
-    public SInstance getValueFromKey(String key) {
+    public SInstance2 getValueFromKey(String key) {
         if (key == null) {
             return null;
         }

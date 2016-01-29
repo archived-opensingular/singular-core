@@ -6,7 +6,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimples;
 
@@ -17,13 +17,13 @@ public class MInstanciaValorModel<T>
     IObjectClassAwareModel<T>,
     IMInstanciaAwareModel<T> {
 
-    private IModel<? extends SInstance> instanciaModel;
+    private IModel<? extends SInstance2> instanciaModel;
 
-    public MInstanciaValorModel(IModel<? extends SInstance> instanciaModel) {
+    public MInstanciaValorModel(IModel<? extends SInstance2> instanciaModel) {
         this.instanciaModel = instanciaModel;
     }
 
-    public SInstance getTarget() {
+    public SInstance2 getTarget() {
         return instanciaModel.getObject();
     }
 
@@ -36,7 +36,7 @@ public class MInstanciaValorModel<T>
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setObject(T object) {
-        SInstance target = getTarget();
+        SInstance2 target = getTarget();
         if (target instanceof SList) {
             ((SList) target).clear();
             ((List) object).forEach(((SList) target)::addValor);
@@ -56,7 +56,7 @@ public class MInstanciaValorModel<T>
     }
 
     @Override
-    public SInstance getMInstancia() {
+    public SInstance2 getMInstancia() {
         return instanciaModel.getObject();
     }
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
@@ -40,7 +40,7 @@ import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
  * @see {@link br.net.mirante.singular.form.mform.io.FormSerializationUtil}
  * @author Daniel C. Bordin
  */
-public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I>
+public class MInstanceRootModel<I extends SInstance2> extends AbstractSInstanceModel<I>
     implements Externalizable,
     IMInstanceEventCollector<I> {
 

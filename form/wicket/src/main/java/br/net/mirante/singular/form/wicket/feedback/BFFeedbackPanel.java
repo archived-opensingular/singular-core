@@ -7,7 +7,7 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
 
 import br.net.mirante.singular.form.mform.MFormUtil;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 
@@ -35,8 +35,8 @@ public class BFFeedbackPanel extends BSFeedbackPanel {
             if (message instanceof BFeedbackMessage) {
                 final BFeedbackMessage bfm = (BFeedbackMessage) message;
 
-                final SInstance instance = bfm.getInstanceModel().getObject();
-                final SInstance parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
+                final SInstance2 instance = bfm.getInstanceModel().getObject();
+                final SInstance2 parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
                 final String labelPath = StringUtils.defaultString(
                     MFormUtil.generateUserFriendlyPath(instance, parentContext),
                     MFormUtil.generatePath(instance, it -> it == parentContext));

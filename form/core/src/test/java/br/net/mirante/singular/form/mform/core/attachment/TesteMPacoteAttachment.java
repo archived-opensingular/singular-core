@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
@@ -230,7 +230,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         assertConteudo(conteudo2, bloco2.getField("arquivo2", SIAttachment.class), 2);
     }
 
-    private static void assertBinariosAssociadosDocument(SInstance ref, int expectedDistinctFiles) {
+    private static void assertBinariosAssociadosDocument(SInstance2 ref, int expectedDistinctFiles) {
         AttachmentDocumentService aService = AttachmentDocumentService.lookup(ref);
         assertEquals(expectedDistinctFiles, aService.countDistinctFiles());
     }

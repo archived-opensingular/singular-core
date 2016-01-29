@@ -9,7 +9,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -22,7 +22,7 @@ public class IntegerMapper extends StringMapper {
     private static final int DEFAULT_SIZE = 9;
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
         Optional<Integer> size = Optional.ofNullable(
                 model.getObject().getValorAtributo(SPackageBasic.ATR_TAMANHO_MAXIMO));
         TextField<Integer> comp = new TextField<>(model.getObject().getNome(),

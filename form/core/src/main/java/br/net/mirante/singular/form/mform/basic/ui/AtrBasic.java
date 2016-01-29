@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 
@@ -56,7 +56,7 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(SPackageBasic.ATR_VISIVEL, valor);
         return this;
     }
-    public AtrBasic visivel(Predicate<SInstance> valor) {
+    public AtrBasic visivel(Predicate<SInstance2> valor) {
         getAlvo().setValorAtributo(SPackageBasic.ATR_VISIBLE_FUNCTION, valor);
         return this;
     }
@@ -65,7 +65,7 @@ public class AtrBasic extends MTranslatorParaAtributo {
         getAlvo().setValorAtributo(SPackageBasic.ATR_ENABLED, valor);
         return this;
     }
-    public AtrBasic enabled(Predicate<SInstance> valor) {
+    public AtrBasic enabled(Predicate<SInstance2> valor) {
         getAlvo().setValorAtributo(SPackageBasic.ATR_ENABLED_FUNCTION, valor);
         return this;
     }

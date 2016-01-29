@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import com.google.common.base.Throwables;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 
 /**
  * Representa uma regra de mapeamento de uma instância em uma view. Se a regra
@@ -12,13 +12,13 @@ import br.net.mirante.singular.form.mform.SInstance;
  *
  * @author Daniel C. Bordin
  */
-public abstract class ViewRule implements Function<SInstance, MView> {
+public abstract class ViewRule implements Function<SInstance2, MView> {
 
     /**
      * Retorna uma view se a regra se aplicar ao caso ou null senão se aplica.
      */
     @Override
-    public abstract MView apply(SInstance instance);
+    public abstract MView apply(SInstance2 instance);
 
     /** Método de apoio. Cria uma instância a partir da classe. */
     protected final static MView newInstance(Class<? extends MView> view) {

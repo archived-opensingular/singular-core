@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.view.page.form.examples;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
 
@@ -72,7 +72,7 @@ public class SelectBuilder {
                 .collect(Collectors.toList());
     }
 
-    public static SList<? extends SInstance> buildMunicipiosFiltrado(STypeComposto<?> tipoOpcoes, String uf, SList<? extends SInstance> lista) {
+    public static SList<? extends SInstance2> buildMunicipiosFiltrado(STypeComposto<?> tipoOpcoes, String uf, SList<? extends SInstance2> lista) {
         buildMunicipiosFiltrado(tipoOpcoes, uf).forEach(si -> lista.addElement(si));
         return lista;
     }

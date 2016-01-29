@@ -32,7 +32,7 @@ public enum MInstanceViewState {
     H = hidden
     
     */
-    public static MInstanceViewState get(SInstance instance) {
+    public static MInstanceViewState get(SInstance2 instance) {
         if (instance == null)
             return MInstanceViewState.HIDDEN;
 
@@ -57,7 +57,7 @@ public enum MInstanceViewState {
         }
     }
 
-    public static boolean isInstanceRequired(SInstance instance) {
+    public static boolean isInstanceRequired(SInstance2 instance) {
         return (instance != null)
             && MInstances.attributeValue(instance, SPackageCore.ATR_OBRIGATORIO, false)
             && get(instance).isEnabled();

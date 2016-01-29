@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform.event;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 
 public class SInstanceValueChangeEvent extends SInstanceEvent {
 
     private final Object oldValue;
     private final Object newValue;
 
-    public SInstanceValueChangeEvent(SInstance instance, Object oldValue, Object newValue) {
+    public SInstanceValueChangeEvent(SInstance2 instance, Object oldValue, Object newValue) {
         super(instance);
         this.oldValue = oldValue;
         this.newValue = newValue;

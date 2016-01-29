@@ -11,17 +11,17 @@ import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public class InstanceValidationContext {
 
-    private SInstance rootInstance;
+    private SInstance2 rootInstance;
     private List<IValidationError> errors = new ArrayList<>();
 
-    public InstanceValidationContext(SInstance instance) {
+    public InstanceValidationContext(SInstance2 instance) {
         this.rootInstance = instance;
     }
 
@@ -46,7 +46,7 @@ public class InstanceValidationContext {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
+    public <I extends SInstance2> void validateInstance(IInstanceValidatable<I> validatable) {
         final I instance = validatable.getInstance();
 
         if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
@@ -61,7 +61,7 @@ public class InstanceValidationContext {
         }
     }
 
-    protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
+    protected boolean checkRequired(SInstance2 instance, boolean ignoreDisabledAndInvisible) {
         if (!Boolean.TRUE.equals(instance.getValorAtributo(SPackageCore.ATR_OBRIGATORIO)))
             return true;
 
@@ -74,13 +74,13 @@ public class InstanceValidationContext {
         }
     }
 
-    protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
+    protected <I extends SInstance2> boolean isEnabledInHierarchy(SInstance2 instance) {
         return !MInstances.listAscendants(instance).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
             .anyMatch(it -> Boolean.FALSE.equals(it));
     }
 
-    protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
+    protected <I extends SInstance2> boolean isVisibleInHierarchy(SInstance2 instance) {
         return !MInstances.listAscendants(instance).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
             .anyMatch(it -> Boolean.FALSE.equals(it));
@@ -93,7 +93,7 @@ public class InstanceValidationContext {
             .isPresent();
     }
 
-    private static class InstanceValidatable<I extends SInstance> implements IInstanceValidatable<I> {
+    private static class InstanceValidatable<I extends SInstance2> implements IInstanceValidatable<I> {
         private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
         private final I                         instance;
         private final Consumer<ValidationError> onError;

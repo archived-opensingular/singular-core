@@ -39,7 +39,7 @@ public class TesteFormSerializationUtil {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipo("endereco", STypeString.class);
         });
-        SInstance instancia = loader.loadType("teste.endereco").novaInstancia();
+        SInstance2 instancia = loader.loadType("teste.endereco").novaInstancia();
         testSerializacao(instancia, loader);
 
     }
@@ -151,7 +151,7 @@ public class TesteFormSerializationUtil {
         MDicionarioResolver loader = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipo("endereco", STypeString.class);
         });
-        SInstance instancia = loader.loadType("teste.endereco").novaInstancia();
+        SInstance2 instancia = loader.loadType("teste.endereco").novaInstancia();
 //        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
 
         MDicionarioResolver.setDefault(loader);
@@ -162,7 +162,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testUsoDicionarResolverSerializado() {
         DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(null);
-        SInstance instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        SInstance2 instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
 //        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
@@ -173,7 +173,7 @@ public class TesteFormSerializationUtil {
     @Test
     public void testUsoDicionarResolverSerializadoMasComReferenciaInternaNaoSerializavel() {
         DicionarioResolverStaticTest resolver = new DicionarioResolverStaticTest(this);
-        SInstance instancia = resolver.loadType("teste.cadastro").novaInstancia();
+        SInstance2 instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
         TestCaseForm.assertException(() -> testSerializacaoComResolverSerializado(instancia, resolver), "NotSerializableException");
@@ -184,11 +184,11 @@ public class TesteFormSerializationUtil {
         MDicionarioResolver resolver = createLoaderPacoteTeste((pacote) -> {
             pacote.createTipo("endereco", STypeString.class);
         });
-        SInstance instancia = resolver.loadType("teste.endereco").novaInstancia();
+        SInstance2 instancia = resolver.loadType("teste.endereco").novaInstancia();
 
         instancia.getDocument().bindLocalService("A", String.class,
             ServiceRef.of("AA"));
-        SInstance instancia2 = testSerializacao(instancia, resolver);
+        SInstance2 instancia2 = testSerializacao(instancia, resolver);
         assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
 
         // Testa itens não mantido entre serializações
@@ -246,7 +246,7 @@ public class TesteFormSerializationUtil {
 
         FormSerialized fsBruce = FormSerializationUtil.toSerializedObject(bruce);
         FormSerialized fsClark = FormSerializationUtil.toSerializedObject(clark);
-        SInstance deBruce = FormSerializationUtil.toInstance(fsBruce);
+        SInstance2 deBruce = FormSerializationUtil.toInstance(fsBruce);
         assertThat(deBruce.getDicionario()).isSameAs(dict1);
     }
 
@@ -269,20 +269,20 @@ public class TesteFormSerializationUtil {
 
     }
 
-    private static void testSerializacaoComResolverSerializado(SInstance original, MDicionarioResolverSerializable resolver) {
+    private static void testSerializacaoComResolverSerializado(SInstance2 original, MDicionarioResolverSerializable resolver) {
         testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
     }
 
-    public static SInstance testSerializacao(SInstance original, MDicionarioResolver loader) {
+    public static SInstance2 testSerializacao(SInstance2 original, MDicionarioResolver loader) {
         return testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i),
                 fs -> FormSerializationUtil.toInstance(fs, loader));
     }
 
-    private static SInstance testSerializacao(SInstance original, Function<SInstance, FormSerialized> toSerial,
-                                              Function<FormSerialized, SInstance> fromSerial) {
+    private static SInstance2 testSerializacao(SInstance2 original, Function<SInstance2, FormSerialized> toSerial,
+                                               Function<FormSerialized, SInstance2> fromSerial) {
         // Testa sem transformar em array de bytes
         FormSerialized fs = toSerial.apply(original);
-        SInstance instancia2 = fromSerial.apply(fs);
+        SInstance2 instancia2 = fromSerial.apply(fs);
         assertEquivalent(original.getDocument(), instancia2.getDocument());
         assertEquivalent(original, instancia2);
 
@@ -304,13 +304,13 @@ public class TesteFormSerializationUtil {
         return instancia2;
     }
 
-    public static SInstance serializarEDeserializar(SInstance original, MDicionarioResolver loader) {
+    public static SInstance2 serializarEDeserializar(SInstance2 original, MDicionarioResolver loader) {
         return serializarEDeserializar(original, i -> FormSerializationUtil.toSerializedObject(i),
                 fs -> FormSerializationUtil.toInstance(fs, loader));
     }
 
-    private static SInstance serializarEDeserializar(SInstance original, Function<SInstance, FormSerialized> toSerial,
-                                                     Function<FormSerialized, SInstance> fromSerial) {
+    private static SInstance2 serializarEDeserializar(SInstance2 original, Function<SInstance2, FormSerialized> toSerial,
+                                                      Function<FormSerialized, SInstance2> fromSerial) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
             ObjectOutputStream out2 = new ObjectOutputStream(out1);
@@ -352,7 +352,7 @@ public class TesteFormSerializationUtil {
         assertEquivalent(original.getRoot(), novo.getRoot());
     }
 
-    private static void assertEquivalent(SInstance original, SInstance novo) {
+    private static void assertEquivalent(SInstance2 original, SInstance2 novo) {
         assertNotSame(original, novo);
         assertEquals(original.getClass(), novo.getClass());
         assertEquals(original.getMTipo().getNome(), novo.getMTipo().getNome());
@@ -367,8 +367,8 @@ public class TesteFormSerializationUtil {
             assertNull(novo.getParent());
         }
         if (original instanceof ICompositeInstance) {
-            List<SInstance> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
-            List<SInstance> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
+            List<SInstance2> filhosOriginal = new ArrayList<>(((ICompositeInstance) original).getChildren());
+            List<SInstance2> filhosNovo = new ArrayList<>(((ICompositeInstance) novo).getChildren());
             assertEquals(filhosOriginal.size(), filhosNovo.size());
             for (int i = 0; i < filhosOriginal.size(); i++) {
                 assertEquivalent(filhosOriginal.get(0), filhosNovo.get(0));
@@ -378,8 +378,8 @@ public class TesteFormSerializationUtil {
         }
 
         assertEquals(original.getAtributos().size(), novo.getAtributos().size());
-        for (Entry<String, SInstance> atrOriginal : original.getAtributos().entrySet()) {
-            SInstance atrNovo = novo.getAtributos().get(atrOriginal.getKey());
+        for (Entry<String, SInstance2> atrOriginal : original.getAtributos().entrySet()) {
+            SInstance2 atrNovo = novo.getAtributos().get(atrOriginal.getKey());
             assertNotNull(atrNovo);
             assertEquals(atrOriginal.getValue(), atrNovo);
         }

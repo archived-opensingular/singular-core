@@ -1,16 +1,16 @@
 package br.net.mirante.singular.form.mform.event;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 
 public abstract class SInstanceEvent {
 
-    private final SInstance source;
+    private final SInstance2 source;
 
-    protected SInstanceEvent(SInstance source) {
+    protected SInstanceEvent(SInstance2 source) {
         this.source = source;
     }
 
-    public SInstance getSource() {
+    public SInstance2 getSource() {
         return source;
     }
 

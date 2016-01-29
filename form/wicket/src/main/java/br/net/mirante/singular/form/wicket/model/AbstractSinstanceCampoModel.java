@@ -5,9 +5,9 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 
-public abstract class AbstractSInstanceCampoModel<I extends SInstance>
+public abstract class AbstractSInstanceCampoModel<I extends SInstance2>
     extends AbstractSInstanceModel<I>
     implements IChainingModel<I> {
 

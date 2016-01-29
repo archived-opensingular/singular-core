@@ -6,7 +6,7 @@ import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
@@ -38,7 +38,7 @@ public abstract class SingularFormPanel extends Panel {
     /**
      * Instancia root do pacote
      */
-    private MInstanceRootModel<? extends SInstance> rootInstance;
+    private MInstanceRootModel<? extends SInstance2> rootInstance;
 
     /**
      * ViewMode, por padrão é de edição
@@ -82,7 +82,7 @@ public abstract class SingularFormPanel extends Panel {
      * @param tipo o tipo 'root'
      * @return instancia criada e populada
      */
-    protected MInstanceRootModel<SInstance> populateInstance(final SType<?> tipo) {
+    protected MInstanceRootModel<SInstance2> populateInstance(final SType<?> tipo) {
         return new MInstanceRootModel<>(tipo.novaInstancia());
     }
 
@@ -169,7 +169,7 @@ public abstract class SingularFormPanel extends Panel {
         return getServiceRegistry().lookupService(SingularFormContextWicket.class);
     }
 
-    public IModel<? extends SInstance> getRootInstance() {
+    public IModel<? extends SInstance2> getRootInstance() {
         return rootInstance;
     }
 

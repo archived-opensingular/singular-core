@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.io;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public class PersistenceBuilderXML {
@@ -36,7 +36,7 @@ public class PersistenceBuilderXML {
         return persistAttributes;
     }
 
-    public MElement toXML(SInstance instancia) {
+    public MElement toXML(SInstance2 instancia) {
         return MformPersistenciaXML.toXML(null, null, instancia, this);
     }
 

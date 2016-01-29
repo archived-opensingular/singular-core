@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
@@ -21,7 +21,7 @@ import static br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Mas
 public class StringMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance2> model, IModel<String> labelModel) {
         FormComponent<?> comp;
 
         formGroup.appendInputText(comp = new TextField<>(model.getObject().getNome(),
@@ -45,8 +45,8 @@ public class StringMapper implements ControlsFieldComponentMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
-        final SInstance mi = model.getObject();
+    public String getReadOnlyFormattedText(IModel<? extends SInstance2> model) {
+        final SInstance2 mi = model.getObject();
         if ((mi != null) && (mi.getValor() != null)) {
             return String.valueOf(mi.getValor());
         }

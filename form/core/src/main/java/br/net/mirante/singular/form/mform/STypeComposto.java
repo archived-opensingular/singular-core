@@ -50,7 +50,7 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
         return getFields();
     }
 
-    private <I extends SInstance, T extends SType<I>> T addInterno(String localName, T type) {
+    private <I extends SInstance2, T extends SType<I>> T addInterno(String localName, T type) {
         if (instanceCount > 0){
             throw new SingularFormException("Esse MTipo já possui instancias associadas, não é seguro alterar sua definição. ");
         }
@@ -95,29 +95,29 @@ public class STypeComposto<TIPO_INSTANCIA extends SIComposite>
      * @return
      */
     @Deprecated
-    public <I extends SInstance, T extends SType<I>> T addCampo(Class<T> classeTipo) {
+    public <I extends SInstance2, T extends SType<I>> T addCampo(Class<T> classeTipo) {
         T tipo = resolverTipo(classeTipo);
         return addCampo(tipo.getNomeSimples(), classeTipo);
     }
 
-    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> tipo, boolean obrigatorio) {
+    public <I extends SInstance2, T extends SType<I>> T addCampo(String nomeCampo, Class<T> tipo, boolean obrigatorio) {
         T novo = addCampo(nomeCampo, tipo);
         novo.withObrigatorio(obrigatorio);
         return novo;
     }
 
-    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> classeTipo) {
+    public <I extends SInstance2, T extends SType<I>> T addCampo(String nomeCampo, Class<T> classeTipo) {
         T novo = extenderTipo(nomeCampo, classeTipo);
         return addInterno(nomeCampo, novo);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
+    public <I extends SInstance2, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
         T tipo = resolverTipo(classeTipoLista);
         STypeLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
         return addInterno(nomeSimplesNovoTipo, novo);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
+    public <I extends SInstance2, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
         STypeLista<T, I> novo = createTipoListaOf(nomeCampo, tipoElementos);
         return addInterno(nomeCampo, novo);
     }

@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SInstance2;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposto;
 import br.net.mirante.singular.form.mform.ServiceRef;
@@ -42,7 +42,7 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
                 return "debug this";
             }
 
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+            public SList<? extends SInstance2> listOptions(SInstance2 optionsInstance) {
                 SList<?> r = optionsInstance.getMTipo().novaLista();
                 options.forEach((o) -> {r.addValor(o);});
                 return r;

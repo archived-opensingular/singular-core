@@ -63,7 +63,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals(esperadoGetValor, alvo.getValorAtributo(TestPacoteAA.ATR_YY));
         assertEquals(esperadoGetValor, alvo.getValorAtributo(TestPacoteAA.ATR_YY, Integer.class));
 
-        SInstance instancia = alvo.novaInstancia();
+        SInstance2 instancia = alvo.novaInstancia();
         assertEquals(esperadoGetValor, instancia.getValorAtributo(TestPacoteAA.ATR_YY));
         assertEquals(esperadoGetValor, instancia.getValorAtributo(TestPacoteAA.ATR_YY, Integer.class));
 
@@ -238,7 +238,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("A1", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("A3", fieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
         
-        SInstance instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
+        SInstance2 instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
         
         assertEquals("A1", instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("A3", instanceOfFieldOfTipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
@@ -251,7 +251,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
         TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
         
-        SInstance instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
+        SInstance2 instanceOfFieldOfTipo1 = fieldOfTipo1.novaInstancia();
         
         instanceOfFieldOfTipo1.setValorAtributo(TestPacoteCAI.ATR_REF_ID3,"what");
         
@@ -349,7 +349,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         instancia.getAtributos().values().stream().forEach(a -> assertIsAtributo(a, instancia));
     }
 
-    private static void assertIsAtributo(SInstance instancia, SInstance expectedOwner) {
+    private static void assertIsAtributo(SInstance2 instancia, SInstance2 expectedOwner) {
         assertTrue(instancia.isAttribute());
         assertTrue(expectedOwner == instancia.getAttributeOwner());
         if (instancia instanceof ICompositeInstance) {
@@ -371,11 +371,11 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         SType<?> ty = pb.createTipo("y", tipo).withDefaultValueIfNull(valorIfNull);
         SType<?> tz = pb.createTipo("z", tipo).withValorInicial(valorInicial).withDefaultValueIfNull(valorIfNull);
 
-        SInstance instX = tx.novaInstancia();
+        SInstance2 instX = tx.novaInstancia();
         assertEquals(valorInicial, instX.getValor());
         assertEquals(valorInicial, instX.getValorWithDefault());
 
-        SInstance instY = ty.novaInstancia();
+        SInstance2 instY = ty.novaInstancia();
         assertNull(instY.getValor());
         assertEquals(valorIfNull, instY.getValorWithDefault());
         instY.setValor(valorInicial);
@@ -383,7 +383,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         instY.setValor(null);
         assertEquals(valorIfNull, instY.getValorWithDefault());
 
-        SInstance instZ = tz.novaInstancia();
+        SInstance2 instZ = tz.novaInstancia();
         assertEquals(valorInicial, instZ.getValor());
         assertEquals(valorInicial, instZ.getValorWithDefault());
         instZ.setValor(null);
