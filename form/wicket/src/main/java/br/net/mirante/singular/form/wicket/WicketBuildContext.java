@@ -66,8 +66,7 @@ public class WicketBuildContext implements Serializable {
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
 
-    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket,
-                                   ViewMode viewMode) {
+    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
 
         final MInstancia instance = getCurrenttInstance();
 
@@ -76,7 +75,7 @@ public class WicketBuildContext implements Serializable {
         this.viewMode = viewMode;
 
         if (isRootContext()) {
-            getContainer().add(new InitRootContainerBehavior(getModel()));
+            initContainerBehavior();
         }
 
         if (getContainer().getDefaultModel() == null) {
@@ -97,6 +96,20 @@ public class WicketBuildContext implements Serializable {
         }
 
         return this;
+    }
+
+    /**
+     * Adiciona um behavior que executa o update atributes do SDocument em toda requisição.
+     *
+     * Normalmente este método não deve ser chamado externamente,
+     * porem pode existir situações em que o container root não é atualizado
+     * e novos componentes filhos são adicionados.
+     *
+     * @see br.net.mirante.singular.form.mform.document.SDocument
+     * @see br.net.mirante.singular.form.wicket.mapper.TabMapper
+     */
+    public void initContainerBehavior(){
+        getContainer().add(new InitRootContainerBehavior(getModel()));
     }
 
     /**

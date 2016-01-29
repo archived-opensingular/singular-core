@@ -36,7 +36,7 @@ public class TopMenu extends Panel {
 
         WebMarkupContainer avatar = new WebMarkupContainer("codrh");
         avatar.add($b.attr("src", Optional.ofNullable(StringUtils.trimToNull(uiAdminFacade.getUserAvatar()))
-            .orElse(UrlUtils.rewriteToContextRelative("resources/admin/layout/img/avatar.png", getRequestCycle())).replace("{0}", UIAdminSession.get().getUserId())));
+            .orElse(UrlUtils.rewriteToContextRelative("/singular-static/resources/metronic/layout4/img/avatar.png", getRequestCycle())).replace("{0}", UIAdminSession.get().getUserId())));
         queue(avatar);
         
         WebMarkupContainer logout = new WebMarkupContainer("logout");

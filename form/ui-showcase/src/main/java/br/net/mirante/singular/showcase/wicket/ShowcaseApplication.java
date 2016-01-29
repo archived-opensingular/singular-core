@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.wicket;
 
-import java.util.Locale;
-
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
@@ -17,15 +17,18 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import br.net.mirante.singular.showcase.view.error.Error403Page;
-import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import java.util.Locale;
 
-public class ShowcaseApplication extends AuthenticatedWebApplication 
-    implements ApplicationContextAware {
+public class ShowcaseApplication extends AuthenticatedWebApplication
+        implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
 
     private ApplicationContext ctx;
+
+    public static ShowcaseApplication get() {
+        return (ShowcaseApplication) WebApplication.get();
+    }
 
     @Override
     public Class<? extends WebPage> getHomePage() {
@@ -81,17 +84,13 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
         }
     }
 
-    public static ShowcaseApplication get() {
-        return (ShowcaseApplication) WebApplication.get();
+    public ApplicationContext getApplicationContext() {
+        return ctx;
     }
 
     @Override
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         this.ctx = ctx;
     }
-    
-    public ApplicationContext getApplicationContext(){
-        return ctx;
-    }
-    
+
 }

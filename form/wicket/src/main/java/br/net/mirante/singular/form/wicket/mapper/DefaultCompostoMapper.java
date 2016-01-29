@@ -1,11 +1,18 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
 import br.net.mirante.singular.form.mform.MIComposto;
 import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -17,12 +24,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;

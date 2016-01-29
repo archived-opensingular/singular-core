@@ -40,10 +40,11 @@ public class TabMapper extends DefaultCompostoMapper {
 
     private void renderTab(List<String> nomesTipo, BSPanelGrid panel, WicketBuildContext ctx) {
         for (String nomeTipo : nomesTipo) {
-            MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(ctx.getModel(), nomeTipo);
-            WicketBuildContext child = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
-            child.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
-            child.getUiBuilderWicket().build(child, child.getViewMode());
+            final MInstanciaCampoModel<MInstancia> subtree = new MInstanciaCampoModel<>(ctx.getModel(), nomeTipo);
+            final WicketBuildContext childContext = ctx.createChild(panel.getContainer().newGrid().newColInRow(), true, subtree);
+            childContext.init(ctx.getUiBuilderWicket(), ctx.getViewMode());
+            childContext.getUiBuilderWicket().build(childContext, childContext.getViewMode());
+            childContext.initContainerBehavior();
         }
     }
 }

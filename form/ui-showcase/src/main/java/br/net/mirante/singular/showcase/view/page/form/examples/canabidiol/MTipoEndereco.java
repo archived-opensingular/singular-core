@@ -1,19 +1,16 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
 import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
 import br.net.mirante.singular.form.mform.MInfoTipo;
-import br.net.mirante.singular.form.mform.MInstancia;
 import br.net.mirante.singular.form.mform.MTipoComposto;
 import br.net.mirante.singular.form.mform.MTipoSimples;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.MTipoString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Val;
-import br.net.mirante.singular.form.wicket.AtrBootstrap;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
 @MInfoTipo(nome = "MTipoEndereco", pacote = MPacotePeticaoCanabidiol.class)

@@ -11,8 +11,13 @@ public class DashboardPage extends Template {
 
     @Override
     protected Content getContent(String id) {
-        StringValue processDefinitionCode = getPageParameters().get(Content.PROCESS_DEFINITION_COD_PARAM);
-        return new DashboardContent(id, processDefinitionCode.toString());
+        StringValue customDashboardCode = getPageParameters().get(Content.CUSTOM_DASHBOARD_COD_PARAM);
+        if (!customDashboardCode.isNull()) {
+            return new CustomDashboardContent(id, customDashboardCode.toString());
+        } else {
+            StringValue processDefinitionCode = getPageParameters().get(Content.PROCESS_DEFINITION_COD_PARAM);
+            return new DashboardContent(id, processDefinitionCode.toString());
+        }
     }
 
 }

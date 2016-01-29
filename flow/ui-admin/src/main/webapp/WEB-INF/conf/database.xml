@@ -2,13 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:jee="http://www.springframework.org/schema/jee"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-                           http://www.springframework.org/schema/jee
-                           http://www.springframework.org/schema/jee/spring-jee.xsd">
+                           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
     <!-- DATA SOURCE CONFIGURATION -->
     <bean name="dataSourceSingular" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -27,7 +24,9 @@
 			<list>
 				<value>br.net.mirante.singular.persistence.entity.Actor</value>
 				<value>br.net.mirante.singular.persistence.entity.CategoryEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Dashboard</value>
 				<value>br.net.mirante.singular.persistence.entity.ExecutionVariableEntity</value>
+				<value>br.net.mirante.singular.persistence.entity.Portlet</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessDefinitionEntity</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessGroupEntity</value>
 				<value>br.net.mirante.singular.persistence.entity.ProcessInstanceEntity</value>
