@@ -191,27 +191,7 @@ public class CrudContent extends Content
                                 .add(FormPage.MODEL_KEY, model.getObject().getKey())
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                     }));
-        boolean hasAnntations = false;
-        if(selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite){
-
-            STypeComposite type = (STypeComposite) selectedTemplate.getType();
-            for(SType<?> i : (Collection<SType<?>>)type.getFields()){
-                hasAnntations |= i.as(AtrAnnotation::new).isAnnotated();
-            }
-        }
-        if(hasAnntations) {
-            builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                    .appendAction(getMessage("label.table.column.analisar"),
-                            Icone.COMMENT,
-                            (target, model) -> {
-                                setResponsePage(FormPage.class,
-                                        new PageParameters()
-                                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
-                                                .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
-                                                .add(FormPage.ANNOTATION_ENABLED, true));
-                            }));
-        }
+        addAnnotationColumnIfNeeded(builder);
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.delete"),
                     Icone.MINUS, this::deleteSelected))
@@ -220,6 +200,37 @@ public class CrudContent extends Content
                     Icone.EYE, this::viewXml))
             .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
         return builder.build("data-list");
+    }
+
+    private void addAnnotationColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
+        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
+                    @Override
+                    public String getCssClass() {
+                        return hasAnnotations() ? "" : "hidden";
+                    }
+                }
+            .appendAction(getMessage("label.table.column.analisar"),
+                Icone.COMMENT,
+                (target, model) -> {
+                    setResponsePage(FormPage.class,
+                        new PageParameters()
+                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                            .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
+                            .add(FormPage.ANNOTATION_ENABLED, true));
+                })
+        );
+    }
+
+    private boolean hasAnnotations() {
+        boolean hasAnntations = false;
+        if(selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite){
+            STypeComposite type = (STypeComposite) selectedTemplate.getType();
+            for(SType<?> i : (Collection<SType<?>>)type.getFields()){
+                hasAnntations |= i.as(AtrAnnotation::new).isAnnotated();
+            }
+        }
+        return hasAnntations;
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
