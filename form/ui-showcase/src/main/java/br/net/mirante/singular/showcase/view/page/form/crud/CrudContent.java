@@ -5,6 +5,7 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,10 +13,16 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.showcase.component.CaseBase;
+import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -160,7 +167,8 @@ public class CrudContent extends Content
 
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
         updateDataList();
-        return new BSDataTableBuilder<>(createDataProvider())
+        BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder = new BSDataTableBuilder<>(createDataProvider());
+        builder
             .appendPropertyColumn(getMessage("label.table.column.key"),
                 "key", ExampleDataDTO::getKey)
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
@@ -182,8 +190,17 @@ public class CrudContent extends Content
                                 .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
                                 .add(FormPage.MODEL_KEY, model.getObject().getKey())
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
-                    }))
-            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                    }));
+        boolean hasAnntations = false;
+        if(selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite){
+
+            STypeComposite type = (STypeComposite) selectedTemplate.getType();
+            for(SType<?> i : (Collection<SType<?>>)type.getFields()){
+                hasAnntations |= i.as(AtrAnnotation::new).isAnnotated();
+            }
+        }
+        if(hasAnntations) {
+            builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                     .appendAction(getMessage("label.table.column.analisar"),
                             Icone.COMMENT,
                             (target, model) -> {
@@ -193,15 +210,16 @@ public class CrudContent extends Content
                                                 .add(FormPage.MODEL_KEY, model.getObject().getKey())
                                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
                                                 .add(FormPage.ANNOTATION_ENABLED, true));
-                            }))
-            .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
+                            }));
+        }
+        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.delete"),
                     Icone.MINUS, this::deleteSelected))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.visualizar.xml"),
                     Icone.EYE, this::viewXml))
-            .setRowsPerPage(Long.MAX_VALUE) //TODO: proper pagination
-            .build("data-list");
+            .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
+        return builder.build("data-list");
     }
 
     private BaseDataProvider<ExampleDataDTO, String> createDataProvider() {
