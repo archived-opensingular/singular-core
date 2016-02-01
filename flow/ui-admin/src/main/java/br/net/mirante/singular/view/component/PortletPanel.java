@@ -11,7 +11,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -74,13 +73,8 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         footerLabel = Model.of(buildFooterLabel(footer));
     }
 
-    protected AjaxLazyLoadPanel buildViewResult() {
-        return new AjaxLazyLoadPanel("portletContent") {
-            @Override
-            public Component getLazyLoadComponent(String markupId) {
-                return PortletViewConfigResolver.newViewResult(markupId, config, context);
-            }
-        };
+    protected ViewResultPanel buildViewResult() {
+        return PortletViewConfigResolver.newViewResult("portletContent", config, context);
     }
 
     private Set<String> getProcesseDefinitionsKeysWithAcess() {
