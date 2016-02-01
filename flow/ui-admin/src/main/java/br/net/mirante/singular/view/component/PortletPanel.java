@@ -1,19 +1,17 @@
 package br.net.mirante.singular.view.component;
 
-import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import javax.inject.Inject;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.inject.Inject;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxLazyLoadPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -29,6 +27,7 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
+import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
@@ -41,6 +40,7 @@ import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
@@ -74,8 +74,13 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         footerLabel = Model.of(buildFooterLabel(footer));
     }
 
-    protected ViewResultPanel buildViewResult() {
-        return PortletViewConfigResolver.newViewResult("portletContent", config, context);
+    protected AjaxLazyLoadPanel buildViewResult() {
+        return new AjaxLazyLoadPanel("portletContent") {
+            @Override
+            public Component getLazyLoadComponent(String markupId) {
+                return PortletViewConfigResolver.newViewResult(markupId, config, context);
+            }
+        };
     }
 
     private Set<String> getProcesseDefinitionsKeysWithAcess() {
