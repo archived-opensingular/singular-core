@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public class MSelectionableCompositeTypeBuilder<BASE extends MTipo & MSelectionableType> {
+public class MSelectionableCompositeTypeBuilder<BASE extends SType & MSelectionableType> {
 
 
     private MSelectionableType<BASE> selectionable;

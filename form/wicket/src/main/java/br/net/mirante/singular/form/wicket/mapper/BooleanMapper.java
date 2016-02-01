@@ -5,8 +5,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
@@ -22,9 +22,9 @@ public class BooleanMapper implements IWicketComponentMapper {
 
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends MInstancia> model = ctx.getModel();
+        final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
+        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
 
         IModel<String> labelText = WicketUtils.$m.ofValue("");
         BSLabel label = new BSLabel("label", labelText);
@@ -41,21 +41,21 @@ public class BooleanMapper implements IWicketComponentMapper {
         }
     }
 
-    private void buildForEdition(WicketBuildContext ctx, IModel<? extends MInstancia> model, BSControls formGroup,
-        AtributoModel<String> labelModel) {
+    private void buildForEdition(WicketBuildContext ctx, IModel<? extends SInstance> model, BSControls formGroup,
+                                 AtributoModel<String> labelModel) {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, labelModel);
         input.add(DisabledClassBehavior.getInstance());
         ctx.configure(this, input);
     }
 
-    private void buildForVisualization(IModel<? extends MInstancia> model, BSControls formGroup,
-        AtributoModel<String> labelModel, BSLabel label, IModel<String> labelText) {
+    private void buildForVisualization(IModel<? extends SInstance> model, BSControls formGroup,
+                                       AtributoModel<String> labelModel, BSLabel label, IModel<String> labelText) {
         labelText.setObject("&zwnj;");
         label.setEscapeModelStrings(false);
         final Boolean checked;
 
-        final MInstancia mi = model.getObject();
+        final SInstance mi = model.getObject();
         if ((mi != null) && (mi.getValor() != null)) {
             checked = (Boolean) mi.getValor();
         } else {

@@ -5,18 +5,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
-import br.net.mirante.singular.showcase.view.page.form.examples.MPacoteCurriculo;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.MPacotePeticaoCanabidiol;
-import br.net.mirante.singular.showcase.view.page.form.examples.MPacotePeticaoGGTOX;
+import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
+import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
+import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
 
 public class TemplateRepository extends MDicionarioResolver {
 
@@ -32,10 +32,10 @@ public class TemplateRepository extends MDicionarioResolver {
 
     private static TemplateRepository novoTemplate() {
         TemplateRepository novo = new TemplateRepository();
-        novo.add(MPacoteCurriculo.class, MPacoteCurriculo.TIPO_CURRICULO);
+        novo.add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
         novo.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
-        novo.add(MPacotePeticaoGGTOX.class, MPacotePeticaoGGTOX.NOME_COMPLETO);
-        novo.add(MPacotePeticaoCanabidiol.class, MPacotePeticaoCanabidiol.NOME_COMPLETO);
+        novo.add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
+        novo.add(SPackagePeticaoCanabidiol.class, SPackagePeticaoCanabidiol.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
@@ -53,22 +53,22 @@ public class TemplateRepository extends MDicionarioResolver {
         return novo;
     }
 
-    private void add(Class<? extends MPacote> packageClass, String typeName) {
-        MDicionario d = MDicionario.create();
+    private void add(Class<? extends SPackage> packageClass, String typeName) {
+        SDictionary d = SDictionary.create();
         d.carregarPacote(packageClass);
         add(d.getTipo(typeName));
     }
 
-    public void add(MTipo<?> type) {
+    public void add(SType<?> type) {
         add(type.getNomeSimples(), type);
     }
 
-    public void add(String displayName, MTipo<?> type) {
+    public void add(String displayName, SType<?> type) {
         entries.put(type.getNome(), new TemplateEntry(displayName, type));
     }
 
     @Override
-    public Optional<MDicionario> loadDicionaryForType(String typeName) {
+    public Optional<SDictionary> loadDicionaryForType(String typeName) {
         return Optional.ofNullable(entries.get(typeName)).map(e -> e.getType().getDicionario());
     }
 
@@ -88,9 +88,9 @@ public class TemplateRepository extends MDicionarioResolver {
     public static class TemplateEntry {
 
         private final String displayName;
-        private final MTipo<?> type;
+        private final SType<?> type;
 
-        public TemplateEntry(String displayName, MTipo<?> type) {
+        public TemplateEntry(String displayName, SType<?> type) {
             this.displayName = displayName;
             this.type = type;
         }
@@ -99,7 +99,7 @@ public class TemplateRepository extends MDicionarioResolver {
             return displayName;
         }
 
-        public MTipo<?> getType() {
+        public SType<?> getType() {
             return type;
         }
 

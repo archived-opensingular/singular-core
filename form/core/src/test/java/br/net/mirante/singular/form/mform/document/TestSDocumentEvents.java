@@ -1,21 +1,21 @@
 package br.net.mirante.singular.form.mform.document;
 
-import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.TestCaseForm;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.mform.event.MInstanceAttributeChangeEvent;
+import br.net.mirante.singular.form.mform.event.SInstanceAttributeChangeEvent;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
-import br.net.mirante.singular.form.mform.event.MInstanceValueChangeEvent;
+import br.net.mirante.singular.form.mform.event.SInstanceValueChangeEvent;
 import org.junit.Assert;
 import org.junit.Before;
 
 public class TestSDocumentEvents extends TestCaseForm {
 
-    private MDicionario dicionario;
-    private MIString    root;
+    private SDictionary dicionario;
+    private SIString root;
     private SDocument   doc;
 
     private IMInstanceListener.EventCollector globalCollector;
@@ -24,13 +24,13 @@ public class TestSDocumentEvents extends TestCaseForm {
 
     @Before
     public void setUp() {
-        dicionario = MDicionario.create();
-        root = dicionario.novaInstancia(MTipoString.class);
+        dicionario = SDictionary.create();
+        root = dicionario.novaInstancia(STypeString.class);
         doc = root.getDocument();
 
         globalCollector = new IMInstanceListener.EventCollector();
-        attributeCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceAttributeChangeEvent);
-        valueCollector = new IMInstanceListener.EventCollector(e -> e instanceof MInstanceValueChangeEvent);
+        attributeCollector = new IMInstanceListener.EventCollector(e -> e instanceof SInstanceAttributeChangeEvent);
+        valueCollector = new IMInstanceListener.EventCollector(e -> e instanceof SInstanceValueChangeEvent);
     }
 
     public void testValueChanges() {
@@ -49,13 +49,13 @@ public class TestSDocumentEvents extends TestCaseForm {
     public void testAttributeChanges() {
         doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
 
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
+        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
+        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
         assertEventsCount(1, attributeCollector);
 
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, false);
+        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, false);
         assertEventsCount(2, attributeCollector);
     }
 
@@ -74,12 +74,12 @@ public class TestSDocumentEvents extends TestCaseForm {
         assertEventsCount(0, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, true);
+        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, true);
         assertEventsCount(3, globalCollector);
         assertEventsCount(1, attributeCollector);
         assertEventsCount(2, valueCollector);
 
-        root.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, false);
+        root.setValorAtributo(SPackageCore.ATR_OBRIGATORIO, false);
         assertEventsCount(4, globalCollector);
         assertEventsCount(2, attributeCollector);
         assertEventsCount(2, valueCollector);

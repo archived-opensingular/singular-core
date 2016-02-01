@@ -1,16 +1,16 @@
 package br.net.mirante.singular.showcase.component.input.core.select;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInputCoreSelectDefaultPackage extends MPacote {
+public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        MTipoComposto<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         addSelection(tipoMyForm, 3, true);
         addSelection(tipoMyForm, 3, false);
@@ -19,14 +19,14 @@ public class CaseInputCoreSelectDefaultPackage extends MPacote {
         /*
             Outra forma de definir suas opções é populando o provedor padrão
          */
-        MTipoString favvortiteFruit = tipoMyForm.addCampoString("favvortiteFruit");
+        STypeString favvortiteFruit = tipoMyForm.addCampoString("favvortiteFruit");
         favvortiteFruit.as(AtrBasic::new).label("Fruta Favorita");
         favvortiteFruit.withSelection().add("Maçã").add("Laranja").add("Banana").add("Goiaba");
 
     }
 
-    private static void addSelection(MTipoComposto<?> tipoMyForm, int sizeOptions, boolean required) {
-        MTipoString tipoSelection = tipoMyForm.addCampoString("opcoes" + sizeOptions + required);
+    private static void addSelection(STypeComposite<?> tipoMyForm, int sizeOptions, boolean required) {
+        STypeString tipoSelection = tipoMyForm.addCampoString("opcoes" + sizeOptions + required);
 
         tipoSelection.withSelectionOf(createOptions(sizeOptions));
         tipoSelection.withObrigatorio(required);

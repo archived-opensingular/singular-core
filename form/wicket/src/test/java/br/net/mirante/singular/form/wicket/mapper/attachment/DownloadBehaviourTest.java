@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.MDicionario;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
@@ -29,20 +29,20 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
     @Rule
     public TemporaryFolder rootTmp = new TemporaryFolder();
     
-    private static MDicionario dicionario;
+    private static SDictionary dicionario;
     private static TestPackage testPackage;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     private DownloadBehaviour b;
-    private MIAttachment instance;
+    private SIAttachment instance;
 
     private FileSystemAttachmentHandler persistentHandler;
 
 
     @BeforeClass
     public static void createDicionario() {
-        dicionario = MDicionario.create();
+        dicionario = SDictionary.create();
         testPackage = dicionario.carregarPacote(TestPackage.class);
     }
     
@@ -61,8 +61,8 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         persistentHandler = new FileSystemAttachmentHandler(tmpFolder);
     }
 
-    private MIAttachment setupInstance() {
-        MTipoAttachment tipo = testPackage.attachmentFileField;
+    private SIAttachment setupInstance() {
+        STypeAttachment tipo = testPackage.attachmentFileField;
         return tipo.novaInstancia();
     }
 

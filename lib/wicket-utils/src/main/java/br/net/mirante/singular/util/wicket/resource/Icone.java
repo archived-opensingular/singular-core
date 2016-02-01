@@ -56,7 +56,11 @@ public enum Icone {
     PUZZLE /*           */("icon-puzzle"),
     FOLDER /*           */("icon-folder"),
     WRENCH /*           */("icon-wrench"),
-    MAP /*              */("icon-map");
+    MAP /*              */("icon-map"),
+    NOTE /*             */("icon-note"),
+    DOCS /*             */("icon-docs"),
+    CLOCK /*            */("icon-clock"),
+    LAYERS/*            */("icon-layers");
 
     private final String cssClass;
 

@@ -6,8 +6,8 @@ import org.apache.wicket.feedback.FencedFeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
@@ -38,7 +38,7 @@ public abstract class SingularFormPanel extends Panel {
     /**
      * Instancia root do pacote
      */
-    private MInstanceRootModel<? extends MInstancia> rootInstance;
+    private MInstanceRootModel<? extends SInstance> rootInstance;
 
     /**
      * ViewMode, por padrão é de edição
@@ -65,7 +65,7 @@ public abstract class SingularFormPanel extends Panel {
      * Método abstrato utilizado para recuperar o tipo root
      * @return o tipo root para criação do form
      */
-    protected abstract MTipo<?> getTipo();
+    protected abstract SType<?> getTipo();
 
     /**
      * Cria ou substitui o container
@@ -82,7 +82,7 @@ public abstract class SingularFormPanel extends Panel {
      * @param tipo o tipo 'root'
      * @return instancia criada e populada
      */
-    protected MInstanceRootModel<MInstancia> populateInstance(final MTipo<?> tipo) {
+    protected MInstanceRootModel<SInstance> populateInstance(final SType<?> tipo) {
         return new MInstanceRootModel<>(tipo.novaInstancia());
     }
 
@@ -90,7 +90,7 @@ public abstract class SingularFormPanel extends Panel {
      * Cria a instancia a partir do tipo.
      */
     private void createInstance() {
-        MTipo<?> tipo = getTipo();
+        SType<?> tipo = getTipo();
         rootInstance = populateInstance(tipo);
         bindDefaultServices(getRootInstance().getObject().getDocument());
         bindAdditionalServices(getRootInstance().getObject().getDocument());
@@ -169,7 +169,7 @@ public abstract class SingularFormPanel extends Panel {
         return getServiceRegistry().lookupService(SingularFormContextWicket.class);
     }
 
-    public IModel<? extends MInstancia> getRootInstance() {
+    public IModel<? extends SInstance> getRootInstance() {
         return rootInstance;
     }
 

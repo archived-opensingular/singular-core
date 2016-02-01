@@ -1,16 +1,16 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SISimple;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,39 +29,39 @@ public class TestVal {
     private static final Date DT_1 = new Date();
     private static final Date DT_2 = new Date();
     private static final Date DT_3 = new Date();
-    private MDicionario _dicionario;
-    private MTipoComposto<? extends MIComposto> _raiz;
-    private MTipoString _descricao;
-    private MTipoComposto<MIComposto> _periodo;
-    private MTipoData _dataInicial;
-    private MTipoData _dataFinal;
-    private MTipoLista<MTipoComposto<MIComposto>, MIComposto> _alertas;
-    private MTipoComposto<MIComposto> _alerta;
-    private MTipoData _alerta_data;
-    private MIComposto evento;
-    private MILista<MIComposto> alertas;
+    private SDictionary _dicionario;
+    private STypeComposite<? extends SIComposite> _raiz;
+    private STypeString _descricao;
+    private STypeComposite<SIComposite> _periodo;
+    private STypeData _dataInicial;
+    private STypeData _dataFinal;
+    private STypeLista<STypeComposite<SIComposite>, SIComposite> _alertas;
+    private STypeComposite<SIComposite> _alerta;
+    private STypeData _alerta_data;
+    private SIComposite evento;
+    private SList<SIComposite> alertas;
     private Map<String, Object> valorEsperado = new LinkedHashMap<>();
-    private MILista listaAlertas;
-    private MIComposto alerta3;
-    private MIComposto alertaVazio;
-    private MIComposto alerta2;
-    private MIComposto alerta1;
-    private MISimples dataVazia;
-    private MISimples data3;
+    private SList listaAlertas;
+    private SIComposite alerta3;
+    private SIComposite alertaVazio;
+    private SIComposite alerta2;
+    private SIComposite alerta1;
+    private SISimple dataVazia;
+    private SISimple data3;
 
     @Before
     public void setup() {
-        _dicionario = MDicionario.create();
+        _dicionario = SDictionary.create();
         PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
-        _descricao = _raiz.addCampo("descricao", MTipoString.class);
+        _descricao = _raiz.addCampo("descricao", STypeString.class);
         _periodo = _raiz.addCampoComposto("periodo");
-        _dataInicial = _periodo.addCampo("dataInicial", MTipoData.class);
-        _dataFinal = _periodo.addCampo("dataFinal", MTipoData.class);
+        _dataInicial = _periodo.addCampo("dataInicial", STypeData.class);
+        _dataFinal = _periodo.addCampo("dataFinal", STypeData.class);
         _alertas = _periodo.addCampoListaOfComposto("alertas", "alerta");
         _alerta = _alertas.getTipoElementos();
-        _alerta_data = _alerta.addCampo("data", MTipoData.class);
+        _alerta_data = _alerta.addCampo("data", STypeData.class);
 
         _raiz.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");
@@ -79,7 +79,7 @@ public class TestVal {
         evento.setValor(_descricao, DESCRICAO);
         valorEsperado.put(_descricao.getNomeSimples(), DESCRICAO);
         // perido
-        MIComposto periodo = (MIComposto) evento.getCampo(_periodo.getNomeSimples());
+        SIComposite periodo = (SIComposite) evento.getCampo(_periodo.getNomeSimples());
         valorEsperado.put(_periodo.getNomeSimples(), new LinkedHashMap<String, Object>());
         //dt inicial
         periodo.setValor(_dataInicial, DT_INICIAL);
@@ -88,7 +88,7 @@ public class TestVal {
         periodo.setValor(_dataFinal, DT_FINAL);
         ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).put(_dataFinal.getNomeSimples(), DT_FINAL);
         //alertas
-        listaAlertas = (MILista) periodo.getCampo(_alertas.getNomeSimples());
+        listaAlertas = (SList) periodo.getCampo(_alertas.getNomeSimples());
         ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).put(_alertas.getNomeSimples(), new ArrayList<Map<String, Date>>());
 
         //Alerta Data 1
@@ -109,7 +109,7 @@ public class TestVal {
 
         //Alerta Data 3
         alerta3 = _alerta.novaInstancia();
-        data3 = (MISimples) alerta3.getCampo(_alerta_data.getNomeSimples());
+        data3 = (SISimple) alerta3.getCampo(_alerta_data.getNomeSimples());
         data3.setValor(DT_3);
         listaAlertas.addElement(alerta3);
         Map<String, Date> alertaMap3 = new LinkedHashMap<>();
@@ -118,7 +118,7 @@ public class TestVal {
 
         //Alerta Vazio
         alertaVazio = _alerta.novaInstancia();
-        dataVazia = (MISimples) alertaVazio.getCampo(_alerta_data.getNomeSimples());
+        dataVazia = (SISimple) alertaVazio.getCampo(_alerta_data.getNomeSimples());
         dataVazia.setValor(null);
 
         listaAlertas.addElement(alertaVazio);
@@ -130,60 +130,60 @@ public class TestVal {
 
     @Test
     public void testDehydrate() {
-        Assert.assertEquals(valorEsperado, Val.dehydrate(evento));
+        Assert.assertEquals(valorEsperado, Value.dehydrate(evento));
     }
 
     @Test
     public void testHydrate() {
-        MIComposto novaInstancia = _raiz.novaInstancia();
-        Val.hydrate(novaInstancia, valorEsperado);
+        SIComposite novaInstancia = _raiz.novaInstancia();
+        Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
 
     @Test
     public void testHydrateDehydrate() {
-        MIComposto novaInstancia = _raiz.novaInstancia();
-        Val.hydrate(novaInstancia, valorEsperado);
-        Assert.assertEquals(valorEsperado, Val.dehydrate(novaInstancia));
+        SIComposite novaInstancia = _raiz.novaInstancia();
+        Value.hydrate(novaInstancia, valorEsperado);
+        Assert.assertEquals(valorEsperado, Value.dehydrate(novaInstancia));
     }
 
 
     @Test
     public void testDehydrateHydrate() {
-        Object value = Val.dehydrate(evento);
-        MInstancia novaInstancia = _raiz.novaInstancia();
-        Val.hydrate(novaInstancia, valorEsperado);
+        Object value = Value.dehydrate(evento);
+        SInstance novaInstancia = _raiz.novaInstancia();
+        Value.hydrate(novaInstancia, valorEsperado);
         Assert.assertEquals(evento, novaInstancia);
     }
 
     @Test
     public void testNoNull() {
-        Assert.assertTrue(Val.notNull(evento));
-        Assert.assertTrue(Val.notNull(evento, _alerta_data));
-        Assert.assertTrue(Val.notNull(evento, _alerta));
-        Assert.assertTrue(Val.notNull(listaAlertas));
+        Assert.assertTrue(Value.notNull(evento));
+        Assert.assertTrue(Value.notNull(evento, _alerta_data));
+        Assert.assertTrue(Value.notNull(evento, _alerta));
+        Assert.assertTrue(Value.notNull(listaAlertas));
     }
 
     @Test
     public void testValOf() {
-        Assert.assertEquals(DT_1, Val.of(alerta1, _alerta_data));
-        Assert.assertEquals(DT_2, Val.of(alerta2, _alerta_data));
-        Assert.assertEquals(DT_3, Val.of(alerta3, _alerta_data));
-        Assert.assertEquals(null, Val.of(alertaVazio, _alerta_data));
-        Assert.assertEquals((Date) null, Val.of(dataVazia));
-        Assert.assertEquals(DT_3, Val.of(data3));
+        Assert.assertEquals(DT_1, Value.of(alerta1, _alerta_data));
+        Assert.assertEquals(DT_2, Value.of(alerta2, _alerta_data));
+        Assert.assertEquals(DT_3, Value.of(alerta3, _alerta_data));
+        Assert.assertEquals(null, Value.of(alertaVazio, _alerta_data));
+        Assert.assertEquals((Date) null, Value.of(dataVazia));
+        Assert.assertEquals(DT_3, Value.of(data3));
     }
 
     @Test
     public void testNullSafe() {
-        Val.of((MISimples)null);
-        Val.of(null, null);
-        Val.notNull((MILista) null);
-        Val.notNull((MInstancia) null, (MTipoSimples) null);
-        Val.notNull((MInstancia) null, (MTipoComposto) null);
-        Val.notNull((MInstancia) null, (MTipoLista) null);
-        Val.dehydrate((MIComposto)null);
-        Val.hydrate((MIComposto)null, null);
+        Value.of((SISimple)null);
+        Value.of(null, null);
+        Value.notNull((SList) null);
+        Value.notNull((SInstance) null, (STypeSimple) null);
+        Value.notNull((SInstance) null, (STypeComposite) null);
+        Value.notNull((SInstance) null, (STypeLista) null);
+        Value.dehydrate((SIComposite)null);
+        Value.hydrate((SIComposite)null, null);
     }
 
 }

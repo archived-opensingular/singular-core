@@ -1,44 +1,44 @@
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseMasterDetailNestedPackage extends MPacote {
+public class CaseMasterDetailNestedPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
 
-        MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
-        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
-        final MTipoComposto<?> experiencia = experiencias.getTipoElementos();
-        final MTipoAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", MTipoAnoMes.class, true);
-        final MTipoAnoMes dtFimExperiencia = experiencia.addCampo("fim", MTipoAnoMes.class);
-        final MTipoString empresa = experiencia.addCampoString("empresa", true);
-        final MTipoString atividades = experiencia.addCampoString("atividades");
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
+        final STypeComposite<?> experiencia = experiencias.getTipoElementos();
+        final STypeAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", STypeAnoMes.class, true);
+        final STypeAnoMes dtFimExperiencia = experiencia.addCampo("fim", STypeAnoMes.class);
+        final STypeString empresa = experiencia.addCampoString("empresa", true);
+        final STypeString atividades = experiencia.addCampoString("atividades");
 
-        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> cargos = experiencia.addCampoListaOfComposto("cargos", "cargo");
-        final MTipoComposto<?> cargo = cargos.getTipoElementos();
-        final MTipoString nome = cargo.addCampoString("nome", true);
-        final MTipoAnoMes dtInicioCargo = cargo.addCampo("inicio", MTipoAnoMes.class, true);
-        final MTipoAnoMes dtFimCargo = cargo.addCampo("fim", MTipoAnoMes.class);
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> cargos = experiencia.addCampoListaOfComposto("cargos", "cargo");
+        final STypeComposite<?> cargo = cargos.getTipoElementos();
+        final STypeString nome = cargo.addCampoString("nome", true);
+        final STypeAnoMes dtInicioCargo = cargo.addCampo("inicio", STypeAnoMes.class, true);
+        final STypeAnoMes dtFimCargo = cargo.addCampo("fim", STypeAnoMes.class);
 
 
-        final MTipoLista<MTipoComposto<MIComposto>, MIComposto> pets = cargo.addCampoListaOfComposto("pets", "pet");
-        final MTipoComposto pet = pets.getTipoElementos();
-        final MTipoString nomeDoPet = pet.addCampoString("nome", true);
-        final MTipoString tipoDoPet = pet.addCampoString("tipo", true)
+        final STypeLista<STypeComposite<SIComposite>, SIComposite> pets = cargo.addCampoListaOfComposto("pets", "pet");
+        final STypeComposite pet = pets.getTipoElementos();
+        final STypeString nomeDoPet = pet.addCampoString("nome", true);
+        final STypeString tipoDoPet = pet.addCampoString("tipo", true)
                 .withSelectionOf("Gatinho", "Cachorrinho", "Papagaio");
-        final MTipoInteger idadePet = pet.addCampoInteger("idade");
+        final STypeInteger idadePet = pet.addCampoInteger("idade");
 
         {
             //@destacar:bloco

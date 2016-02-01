@@ -1,13 +1,11 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MISimples;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SType;
 
 import java.util.Collection;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public interface MSelectionableSimpleType<BASE extends MTipo, TIPO_NATIVO> extends MSelectionableType<BASE> {
+public interface MSelectionableSimpleType<BASE extends SType, TIPO_NATIVO> extends MSelectionableType<BASE> {
 
 
     /**
@@ -47,13 +45,13 @@ public interface MSelectionableSimpleType<BASE extends MTipo, TIPO_NATIVO> exten
         return (MFixedOptionsSimpleProvider) provider;
     }
 
-    default public <T extends MTipo<?>> T withSelectionOf(TIPO_NATIVO... opcoes) {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((MTipo<?>) this, opcoes));
+    default public <T extends SType<?>> T withSelectionOf(TIPO_NATIVO... opcoes) {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((SType<?>) this, opcoes));
         return (T) this;
     }
 
-    default public <T extends MTipo<?>> T withSelectionOf(Collection<TIPO_NATIVO> opcoes) {
-        setProviderOpcoes(new MFixedOptionsSimpleProvider((MTipo<?>) this, opcoes));
+    default public <T extends SType<?>> T withSelectionOf(Collection<TIPO_NATIVO> opcoes) {
+        setProviderOpcoes(new MFixedOptionsSimpleProvider((SType<?>) this, opcoes));
         return (T) this;
     }
 

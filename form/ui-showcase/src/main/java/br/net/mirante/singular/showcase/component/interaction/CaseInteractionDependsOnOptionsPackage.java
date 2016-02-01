@@ -4,13 +4,13 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.stream.Stream;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInteractionDependsOnOptionsPackage extends MPacote {
+public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
     private static final String[] WORDS = (""
         + "consider,minute,accord,evident,practice,intend,concern,commit,issue,approach,establish,utter,conduct,engage,"
@@ -41,9 +41,9 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
         + "gird,betrothed,prospective,advert,peremptory,rudiment,deduce,halting,ignominy,ideology,pallid,chagrin,obtrude")
             .split(",");
 
-    public MTipoComposto<?> testForm;
-    public MTipoString      letter;
-    public MTipoString      word;
+    public STypeComposite<?> testForm;
+    public STypeString letter;
+    public STypeString word;
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
@@ -53,11 +53,11 @@ public class CaseInteractionDependsOnOptionsPackage extends MPacote {
         letter = testForm.addCampoString("letter");
         word = testForm.addCampoString("word");
 
-        letter.as(MPacoteBasic.aspect())
+        letter.as(SPackageBasic.aspect())
             .label("Letter");
         letter.withSelectionOf("a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z".split(","));
 
-        word.as(MPacoteBasic.aspect())
+        word.as(SPackageBasic.aspect())
             .label("Word")
             .dependsOn(letter);
         word.withSelectionFromProvider(ins -> {

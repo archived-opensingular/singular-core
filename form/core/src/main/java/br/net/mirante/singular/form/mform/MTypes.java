@@ -21,7 +21,7 @@ public abstract class MTypes {
      * consumidor, incluindo os filhos dos filhos. Ou seja, faz um pecorrimento em
      * profundidade. Não chama o consumidor para a instância raiz.
      */
-    public static void visitAllChildren(MTipo<?> parent, Consumer<MTipo<?>> consumer) {
+    public static void visitAllChildren(SType<?> parent, Consumer<SType<?>> consumer) {
         visitAllContainedTypes(parent, false, consumer);
     }
 
@@ -31,9 +31,9 @@ public abstract class MTypes {
      * profundidade. Não chama o consumidor para a instância raiz.
      * @param containedTypesFirst se true o percorrimento é bottom-up
      */
-    public static void visitAllContainedTypes(MTipo<?> parent, boolean containedTypesFirst, Consumer<MTipo<?>> consumer) {
+    public static void visitAllContainedTypes(SType<?> parent, boolean containedTypesFirst, Consumer<SType<?>> consumer) {
         if (parent instanceof ICompositeType) {
-            for (MTipo<?> child : ((ICompositeType) parent).getContainedTypes()) {
+            for (SType<?> child : ((ICompositeType) parent).getContainedTypes()) {
                 if (containedTypesFirst) {
                     visitAllContainedTypes(child, containedTypesFirst, consumer);
                     consumer.accept(child);
@@ -50,7 +50,7 @@ public abstract class MTypes {
      * informada chamando o consumidor, incundo os filhos dos filhos. Ou seja,
      * faz um pecorrimento em profundidade.
      */
-    public static void visitAll(MTipo<?> type, Consumer<MTipo<?>> consumer) {
+    public static void visitAll(SType<?> type, Consumer<SType<?>> consumer) {
         visitAll(type, false, consumer);
     }
 
@@ -60,7 +60,7 @@ public abstract class MTypes {
      * faz um pecorrimento em profundidade.
      * @param containedTypesFirst se true o percorrimento é bottom-up
      */
-    public static void visitAll(MTipo<?> type, boolean containedTypesFirst, Consumer<MTipo<?>> consumer) {
+    public static void visitAll(SType<?> type, boolean containedTypesFirst, Consumer<SType<?>> consumer) {
         if (containedTypesFirst) {
             visitAllContainedTypes(type, containedTypesFirst, consumer);
             consumer.accept(type);
@@ -75,12 +75,12 @@ public abstract class MTypes {
      * @param node instância inicial da busca
      * @return Stream das instâncias de descendentes
      */
-    public static Stream<MTipo<?>> streamDescendants(MTipo<?> root, boolean includeRoot) {
+    public static Stream<SType<?>> streamDescendants(SType<?> root, boolean includeRoot) {
         return StreamSupport.stream(new MTypeRecursiveSpliterator(root, includeRoot), false);
     }
 
-    public static Collection<? extends MTipo<?>> containedTypes(MTipo<?> node) {
-        List<MTipo<?>> result = new ArrayList<>();
+    public static Collection<? extends SType<?>> containedTypes(SType<?> node) {
+        List<SType<?>> result = new ArrayList<>();
         if (node instanceof ICompositeType) {
             result.addAll(((ICompositeType) node).getContainedTypes());
         }
@@ -88,17 +88,17 @@ public abstract class MTypes {
         return result;
     }
 
-    public static List<MTipo<?>> listAscendants(MTipo<?> root, boolean includeRoot) {
+    public static List<SType<?>> listAscendants(SType<?> root, boolean includeRoot) {
 
-        final List<MTipo<?>> list = new ArrayList<>();
+        final List<SType<?>> list = new ArrayList<>();
 
         if (includeRoot)
             list.add(root);
 
         MEscopo tipo = root.getEscopoPai();
         while (tipo != null) {
-            if (tipo instanceof MTipo<?>)
-                list.add((MTipo<?>) tipo);
+            if (tipo instanceof SType<?>)
+                list.add((SType<?>) tipo);
             tipo = tipo.getEscopoPai();
         }
         return list;

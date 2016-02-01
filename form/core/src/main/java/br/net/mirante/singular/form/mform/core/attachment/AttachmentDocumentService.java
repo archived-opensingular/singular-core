@@ -6,7 +6,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -30,13 +30,13 @@ class AttachmentDocumentService {
     private AttachmentDocumentService(SDocument document) {
         this.document = document;
         MInstances.visitAll(document.getRoot(), i -> {
-            if (i instanceof MIAttachment) {
-                addReference((MIAttachment) i);
+            if (i instanceof SIAttachment) {
+                addReference((SIAttachment) i);
             }
         });
     }
 
-    private void addReference(MIAttachment attachment) {
+    private void addReference(SIAttachment attachment) {
         String id = attachment.getFileId();
         if (id != null) {
             contador.add(id);
@@ -51,7 +51,7 @@ class AttachmentDocumentService {
         return getAttachmentHandler().getAttachments().size();
     }
 
-    public static AttachmentDocumentService lookup(MInstancia ref) {
+    public static AttachmentDocumentService lookup(SInstance ref) {
         return lookup(ref.getDocument());
     }
 

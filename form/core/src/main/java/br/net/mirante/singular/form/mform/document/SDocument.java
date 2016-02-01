@@ -8,16 +8,16 @@ import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.annotation.MIAnnotation;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
@@ -41,7 +41,7 @@ public class SDocument {
     public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
-    private MInstancia root;
+    private SInstance root;
 
     private int lastId = 0;
 
@@ -49,7 +49,7 @@ public class SDocument {
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
-    private Map<Integer, MIAnnotation> annotationMap = new HashMap<>();
+    private Map<Integer, SIAnnotation> annotationMap = new HashMap<>();
 
     public SDocument() {}
 
@@ -95,23 +95,23 @@ public class SDocument {
     /**
      * Obtêm a instância que representa o documento com um todo.
      */
-    public MInstancia getRoot() {
+    public SInstance getRoot() {
         if (root == null) {
             throw new SingularFormException("Instancia raiz não foi configurada");
         }
         return root;
     }
 
-    public final void setRoot(MInstancia root) {
+    public final void setRoot(SInstance root) {
         if (this.root != null) {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
         MTypes.streamDescendants(getRoot().getMTipo(), true).forEach(tipo -> {
             // init dependencies
-            final Supplier<Collection<MTipo<?>>> func = tipo.getValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
-                for (MTipo<?> dependency : func.get())
+                for (SType<?> dependency : func.get())
                     dependency.getDependentTypes().add(tipo);
             }
         });
@@ -200,8 +200,8 @@ public class SDocument {
             MInstances.visitAll(getRoot(), true, instance -> {
                 instance.updateExists();
                 instance.updateObrigatorio();
-                MInstances.updateBooleanAttribute(instance, MPacoteBasic.ATR_ENABLED, MPacoteBasic.ATR_ENABLED_FUNCTION);
-                MInstances.updateBooleanAttribute(instance, MPacoteBasic.ATR_VISIVEL, MPacoteBasic.ATR_VISIBLE_FUNCTION);
+                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
+                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIVEL, SPackageBasic.ATR_VISIBLE_FUNCTION);
             });
         } finally {
             getInstanceListeners().remove(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
@@ -220,8 +220,8 @@ public class SDocument {
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
-    public MIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
-    public void annotation(Integer id, MIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
+    public SIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
+    public void annotation(Integer id, SIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
 }
 
 /**
@@ -240,19 +240,19 @@ class AttachmentPersistenceHelper {
         this.persistent = persistent;
     }
 
-    public void doPersistence(MInstancia element) {
-        if (element instanceof MIAttachment) {
-            handleAttachment((MIAttachment) element);
+    public void doPersistence(SInstance element) {
+        if (element instanceof SIAttachment) {
+            handleAttachment((SIAttachment) element);
         } else if (element instanceof ICompositeInstance) {
             visitChildrenIfAny((ICompositeInstance) element);
         }
     }
 
-    private void handleAttachment(MIAttachment attachment) {
+    private void handleAttachment(SIAttachment attachment) {
         moveFromTemporaryToPersistentIfNeeded(attachment);
     }
 
-    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
+    private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if (fileRef != null) {
@@ -263,12 +263,12 @@ class AttachmentPersistenceHelper {
         }
     }
 
-    private void deleteOldFiles(MIAttachment attachment, IAttachmentRef fileRef) {
+    private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
         temporary.deleteAttachment(fileRef.getId());
         persistent.deleteAttachment(attachment.getOriginalFileId());
     }
 
-    private void updateFileId(MIAttachment attachment, IAttachmentRef newRef) {
+    private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
         attachment.setFileId(newRef.getId());
         attachment.setOriginalFileId(newRef.getId());
     }
@@ -280,7 +280,7 @@ class AttachmentPersistenceHelper {
     }
 
     private void visitAllChildren(ICompositeInstance composite) {
-        for (MInstancia child : composite.getAllChildren()) {
+        for (SInstance child : composite.getAllChildren()) {
             doPersistence(child);
         }
     }

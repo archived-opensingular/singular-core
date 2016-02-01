@@ -1,8 +1,8 @@
 package br.net.mirante.singular.showcase.component;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.showcase.view.page.ItemCasePanel;
 
@@ -23,7 +23,7 @@ public class CaseBase implements Serializable {
     private final List<ItemCasePanel.ItemCaseButton> botoes = new ArrayList<>();
     private final List<ResourceRef> aditionalSources = new ArrayList<>();
 
-    private transient MTipo<?> caseType;
+    private transient SType<?> caseType;
     
     public CaseBase(String componentName) {
         this(componentName, null);
@@ -54,24 +54,24 @@ public class CaseBase implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    private Class<? extends MPacote> getPackage() {
+    private Class<? extends SPackage> getPackage() {
         String target = getClass().getName() + "Package";
         try {
             Class<?> c = getClass().getClassLoader().loadClass(target);
-            if (!MPacote.class.isAssignableFrom(c)) {
-                throw new RuntimeException(target + " não extende " + MPacote.class.getName());
+            if (!SPackage.class.isAssignableFrom(c)) {
+                throw new RuntimeException(target + " não extende " + SPackage.class.getName());
             }
-            return (Class<? extends MPacote>) c;
+            return (Class<? extends SPackage>) c;
         } catch (ClassNotFoundException e) {
             throw new SingularFormException("É esperado uma classe com o nome " + target + " como complemento de " + getClass().getName(),
                     e);
         }
     }
 
-    public MTipo<?> getCaseType() {
+    public SType<?> getCaseType() {
         if(caseType == null){
-            MDicionario dicionario = MDicionario.create();
-            MPacote p = dicionario.carregarPacote(getPackage());
+            SDictionary dicionario = SDictionary.create();
+            SPackage p = dicionario.carregarPacote(getPackage());
             
             caseType = p.getTipoLocalOpcional("testForm")
                 .orElseThrow(() -> new SingularFormException("O pacote " + p.getNome() + " não define o tipo para exibição 'testForm'"));

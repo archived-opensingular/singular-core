@@ -3,14 +3,14 @@ package br.net.mirante.singular.form.wicket.model;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoLista;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class MTipoElementosModel
-    implements IReadOnlyModel<MTipo<MInstancia>> {
+    implements IReadOnlyModel<SType<SInstance>> {
 
     private Object rootTarget;
 
@@ -19,16 +19,16 @@ public class MTipoElementosModel
     }
 
     @Override
-    public MTipo<MInstancia> getObject() {
+    public SType<SInstance> getObject() {
         return getTipoElementos(rootTarget);
     }
 
     @SuppressWarnings("unchecked")
-    public static MTipo<MInstancia> getTipoElementos(Object obj) {
-        if (obj instanceof MILista<?>)
-            return ((MILista<MInstancia>) obj).getTipoElementos();
-        if (obj instanceof MTipoLista<?, ?>)
-            return ((MTipoLista<MTipo<MInstancia>, MInstancia>) obj).getTipoElementos();
+    public static SType<SInstance> getTipoElementos(Object obj) {
+        if (obj instanceof SList<?>)
+            return ((SList<SInstance>) obj).getTipoElementos();
+        if (obj instanceof STypeLista<?, ?>)
+            return ((STypeLista<SType<SInstance>, SInstance>) obj).getTipoElementos();
         if (obj instanceof IModel<?>)
             return getTipoElementos(((IModel<?>) obj).getObject());
 

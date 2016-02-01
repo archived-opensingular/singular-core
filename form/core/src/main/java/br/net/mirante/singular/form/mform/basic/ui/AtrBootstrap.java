@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
 import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
-import br.net.mirante.singular.form.mform.core.MPacoteBootstrap;
+import br.net.mirante.singular.form.mform.core.SPackageBootstrap;
 
 public class AtrBootstrap extends MTranslatorParaAtributo {
 
@@ -20,32 +20,32 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public AtrBootstrap colPreference(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBootstrap.ATR_COL_PREFERENCE, valor);
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colXs(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBootstrap.ATR_COL_XS_PREFERENCE, valor);
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colSm(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBootstrap.ATR_COL_SM_PREFERENCE, valor);
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colMd(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBootstrap.ATR_COL_MD_PREFERENCE, valor);
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colLg(Integer valor) {
-        getAlvo().setValorAtributo(MPacoteBootstrap.ATR_COL_LG_PREFERENCE, valor);
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
         return this;
     }
 
     public Integer getColPreference() {
-        return getAlvo().getValorAtributo(MPacoteBootstrap.ATR_COL_PREFERENCE);
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_PREFERENCE);
     }
 
     public Integer getColPreference(Integer defaultValue) {
@@ -53,7 +53,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColXs() {
-        return getAlvo().getValorAtributo(MPacoteBootstrap.ATR_COL_XS_PREFERENCE);
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_XS_PREFERENCE);
     }
 
     public Integer getColXs(Integer defaultValue) {
@@ -61,7 +61,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColSm() {
-        return getAlvo().getValorAtributo(MPacoteBootstrap.ATR_COL_SM_PREFERENCE);
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_SM_PREFERENCE);
     }
 
     public Integer getColSm(Integer defaultValue) {
@@ -69,7 +69,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColMd() {
-        return getAlvo().getValorAtributo(MPacoteBootstrap.ATR_COL_MD_PREFERENCE);
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_MD_PREFERENCE);
     }
 
     public Integer getColMd(Integer defaultValue) {
@@ -77,7 +77,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColLg() {
-        return getAlvo().getValorAtributo(MPacoteBootstrap.ATR_COL_LG_PREFERENCE);
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_LG_PREFERENCE);
     }
 
     public Integer getColLg(Integer defaultValue) {

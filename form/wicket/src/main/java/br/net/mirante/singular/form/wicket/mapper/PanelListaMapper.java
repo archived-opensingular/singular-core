@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
@@ -28,9 +28,9 @@ public class PanelListaMapper extends AbstractListaMapper {
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<MILista<MInstancia>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
-        final MILista<?> iLista = listaModel.getObject();
-        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(MPacoteBasic.aspect()).getLabel()));
+        final IModel<SList<SInstance>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
+        final SList<?> iLista = listaModel.getObject();
+        final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
         final BSContainer<?> parentCol = ctx.getContainer();
         final ViewMode viewMode = ctx.getViewMode();
@@ -74,7 +74,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         private final UIBuilderWicket wicketBuilder;
 
         private PanelElementsView(String id,
-                                  IModel<MILista<MInstancia>> model,
+                                  IModel<SList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   MView view,
@@ -87,7 +87,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         }
 
         @Override
-        protected void populateItem(Item<MInstancia> item) {
+        protected void populateItem(Item<SInstance> item) {
             final BSGrid grid = new BSGrid("_r");
             final BSRow row = grid.newRow();
             final ViewMode viewMode = ctx.getViewMode();

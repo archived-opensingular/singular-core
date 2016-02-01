@@ -6,19 +6,19 @@ public interface MEscopo {
 
     public String getNome();
 
-    public Optional<MTipo<?>> getTipoLocalOpcional(String nomeSimples);
+    public Optional<SType<?>> getTipoLocalOpcional(String nomeSimples);
 
-    public MTipo<?> getTipoLocal(String nomeSimples);
+    public SType<?> getTipoLocal(String nomeSimples);
 
     public MEscopo getEscopoPai();
 
-    public default MPacote getPacote() {
+    public default SPackage getPacote() {
         MEscopo atual = this;
-        while (atual != null && !(atual instanceof MPacote)) {
+        while (atual != null && !(atual instanceof SPackage)) {
             atual = atual.getEscopoPai();
         }
-        return (MPacote) atual;
+        return (SPackage) atual;
     }
 
-    public MDicionario getDicionario();
+    public SDictionary getDicionario();
 }

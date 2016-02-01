@@ -4,18 +4,18 @@ import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.*;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoDataHora;
-import br.net.mirante.singular.form.mform.core.MTipoDecimal;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoLatitudeLongitude;
-import br.net.mirante.singular.form.mform.core.MTipoMonetario;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDataHora;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
+import br.net.mirante.singular.form.mform.core.STypeMonetario;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoTelefoneNacional;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
@@ -76,7 +76,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     }
 
-    private IWicketComponentMapper resolveMapper(MInstancia instancia) {
+    private IWicketComponentMapper resolveMapper(SInstance instancia) {
 
         final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
         final MView view = ViewResolver.resolve(instancia);
@@ -94,7 +94,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     }
 
-    private SingularFormException createErro(MInstancia instancia, MView view, String msg) {
+    private SingularFormException createErro(SInstance instancia, MView view, String msg) {
         return new SingularFormException(
             msg + " (instancia=" + instancia.getPathFull()
                 + ", tipo=" + instancia.getMTipo().getNome()
@@ -107,35 +107,35 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
-                .register(MTipoSimples.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoSimples.class,    MSelecaoPorSelectView.class, SelectMapper::new)
-                .register(MTipoBoolean.class,                                           BooleanMapper::new)
-                .register(MTipoBoolean.class,    MBooleanRadioView.class,               BooleanRadioMapper::new)
-                .register(MTipoInteger.class,                                           IntegerMapper::new)
-                .register(MTipoString.class,                                            StringMapper::new)
-                .register(MTipoString.class,     MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(MTipoString.class,     MTextAreaView.class,                   TextAreaMapper::new)
-                .register(MTipoData.class,                                              DateMapper::new)
-                .register(MTipoAnoMes.class,                                            YearMonthMapper::new)
-                .register(MTipoDecimal.class,                                           DecimalMapper::new)
-                .register(MTipoMonetario.class,                                         MonetarioMapper::new)
-                .register(MTipoAttachment.class,                                        AttachmentMapper::new)
-                .register(MTipoLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
-                .register(MTipoComposto.class,                                          DefaultCompostoMapper::new)
-                .register(MTipoComposto.class,   MTabView.class,                        TabMapper::new)
-                .register(MTipoComposto.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(MTipoComposto.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
-                .register(MTipoComposto.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
-                .register(MTipoLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
-                .register(MTipoLista.class,                                             TableListaMapper::new)
-                .register(MTipoLista.class,      MTableListaView.class,                 TableListaMapper::new)
-                .register(MTipoLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
-                .register(MTipoLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
-                .register(MTipoDataHora.class,                                          DateTimeMapper::new)
-                .register(MTipoDataHora.class,   MDateTimerView.class,                  DateTimeMapper::new)
-                .register(MTipoTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
+                .register(STypeSimple.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
+                .register(STypeSimple.class,    MSelecaoPorSelectView.class, SelectMapper::new)
+                .register(STypeBoolean.class,                                           BooleanMapper::new)
+                .register(STypeBoolean.class,    MBooleanRadioView.class,               BooleanRadioMapper::new)
+                .register(STypeInteger.class,                                           IntegerMapper::new)
+                .register(STypeString.class,                                            StringMapper::new)
+                .register(STypeString.class,     MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
+                .register(STypeString.class,     MTextAreaView.class,                   TextAreaMapper::new)
+                .register(STypeData.class,                                              DateMapper::new)
+                .register(STypeAnoMes.class,                                            YearMonthMapper::new)
+                .register(STypeDecimal.class,                                           DecimalMapper::new)
+                .register(STypeMonetario.class,                                         MonetarioMapper::new)
+                .register(STypeAttachment.class,                                        AttachmentMapper::new)
+                .register(STypeLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
+                .register(STypeComposite.class,                                          DefaultCompostoMapper::new)
+                .register(STypeComposite.class,   MTabView.class,                        TabMapper::new)
+                .register(STypeComposite.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
+                .register(STypeComposite.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
+                .register(STypeComposite.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
+                .register(STypeLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
+                .register(STypeLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
+                .register(STypeLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
+                .register(STypeLista.class,                                             TableListaMapper::new)
+                .register(STypeLista.class,      MTableListaView.class,                 TableListaMapper::new)
+                .register(STypeLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
+                .register(STypeLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
+                .register(STypeDataHora.class,                                          DateTimeMapper::new)
+                .register(STypeDataHora.class,   MDateTimerView.class,                  DateTimeMapper::new)
+                .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }
 }
@@ -156,7 +156,7 @@ class AnnotationBuilder {
         WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (MInstancia) ctx.getCurrenttInstance());
+        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance) ctx.getCurrenttInstance());
     }
 
     private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
@@ -175,18 +175,18 @@ class AnnotationBuilder {
         return superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
     }
 
-    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, MInstancia instance) {
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
         if(instance.as(AtrAnnotation::new).isAnnotated()){
             BSContainer rootContainer = ctx.getRootContainer();
             Optional<Component> referenced = find(rootContainer.getItems(), instance);
             addAnnotationComponent(ngrid, instance, referenced, ctx);
         }
-        if(instance instanceof MIComposto){
-            addAnnotationsFor(ctx, ngrid, ((MIComposto) instance).getAllFields());
+        if(instance instanceof SIComposite){
+            addAnnotationsFor(ctx, ngrid, ((SIComposite) instance).getAllFields());
         }
     }
 
-    private void addAnnotationComponent(BSGrid ngrid, MInstancia instance,
+    private void addAnnotationComponent(BSGrid ngrid, SInstance instance,
                                         Optional<Component> targetComponent, WicketBuildContext ctx) {
         if(targetComponent.isPresent()){
             ngrid.newRow().appendTag("div", true, "",
@@ -200,7 +200,7 @@ class AnnotationBuilder {
         }
     }
 
-    private Optional<Component> find(RepeatingView children, final MInstancia target) {
+    private Optional<Component> find(RepeatingView children, final SInstance target) {
         final Optional<Component>[] result = new Optional[]{Optional.empty()};
         children.visitChildren((x, y) -> {
             IModel<?> m = x.getDefaultModel();
@@ -214,14 +214,14 @@ class AnnotationBuilder {
         return result[0];
     }
 
-    private MInstanceRootModel<MInstancia> modelFor(MInstancia instance) {
-        MInstanceRootModel<MInstancia> model = new MInstanceRootModel<>();
+    private MInstanceRootModel<SInstance> modelFor(SInstance instance) {
+        MInstanceRootModel<SInstance> model = new MInstanceRootModel<>();
         model.setObject(instance);
         return model;
     }
 
-    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<MInstancia> children) {
-        for(MInstancia field: children){
+    private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, Collection<SInstance> children) {
+        for(SInstance field: children){
             addAnnotationsFor(ctx, ngrid, field);
         }
     }

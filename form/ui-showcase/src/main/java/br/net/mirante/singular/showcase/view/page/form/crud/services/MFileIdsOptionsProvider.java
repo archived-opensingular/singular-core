@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.showcase.dao.form.ExampleFile;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
@@ -25,10 +25,10 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
      */
     @Override
     // @destacar:bloco
-    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
-        MILista<?> list;
-        if (optionsInstance instanceof MILista) {
-            list = ((MILista) optionsInstance).getTipoElementos().novaLista();
+    public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+        SList<?> list;
+        if (optionsInstance instanceof SList) {
+            list = ((SList) optionsInstance).getTipoElementos().novaLista();
         } else {
             list = optionsInstance.getMTipo().novaLista();
         }

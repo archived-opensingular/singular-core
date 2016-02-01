@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 
 public interface MIDateTimeModel {
 
@@ -27,7 +27,7 @@ public interface MIDateTimeModel {
         }
 
         @Override
-        public MInstancia getMInstancia() {
+        public SInstance getMInstancia() {
             return model.getMInstancia();
         }
     }

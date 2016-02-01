@@ -3,37 +3,37 @@ package br.net.mirante.singular.form.mform.options;
 import java.util.Arrays;
 import java.util.Collection;
 
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
-    private final MILista<? extends MInstancia> opcoes;
+    private final SList<? extends SInstance> opcoes;
 
-    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Collection<? extends Object> lista) {
+    public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Collection<? extends Object> lista) {
         this.opcoes = tipoOpcoes.novaLista();
         if (lista != null) {
             init(tipoOpcoes, lista.toArray(new Object[0]));
         }
     }
 
-    public MFixedOptionsSimpleProvider(MTipo<?> tipoOpcoes, Object[] lista) {
+    public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Object[] lista) {
         this.opcoes = tipoOpcoes.novaLista();
         if (lista != null) {
             init(tipoOpcoes, lista);
         }
     }
 
-    private void init(MTipo<?> tipoOpcoes, Object[] lista){
+    private void init(SType<?> tipoOpcoes, Object[] lista){
         if (lista.length == 0) {
             throwEmpryListError();
         }
-        if(tipoOpcoes instanceof MTipoSimples){
+        if(tipoOpcoes instanceof STypeSimple){
             Arrays.stream(lista).forEach(o -> {
-                if (o instanceof MInstancia) {
+                if (o instanceof SInstance) {
                     opcoes.addElement(o);
                 } else {
                     opcoes.addValor(o);
@@ -54,7 +54,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
      * @return this
      */
     public MFixedOptionsSimpleProvider add(Object o){
-        MInstancia e = opcoes.addNovo();
+        SInstance e = opcoes.addNovo();
         e.setValor(o);
         return this;
     }
@@ -66,7 +66,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
      * @return this
      */
     public MFixedOptionsSimpleProvider add(Object value, String selectLabel){
-        MInstancia instancia = opcoes.addNovo();
+        SInstance instancia = opcoes.addNovo();
         MSelectionableInstance e = (MSelectionableInstance)instancia;
         e.setSelectLabel(selectLabel);
         instancia.setValor(value);
@@ -74,7 +74,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
     }
 
     @Override
-    public MILista<? extends MInstancia> listOptions(MInstancia optionsInstance) {
+    public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
         return opcoes;
     }
 

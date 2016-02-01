@@ -4,17 +4,17 @@ import static java.util.stream.Collectors.*;
 
 import java.util.Set;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 
-public enum AllOrNothingInstanceValidator implements IInstanceValidator<MIComposto> {
+public enum AllOrNothingInstanceValidator implements IInstanceValidator<SIComposite> {
     INSTANCE;
     @Override
-    public void validate(IInstanceValidatable<MIComposto> v) {
+    public void validate(IInstanceValidatable<SIComposite> v) {
         Set<Boolean> nullValues = v.getInstance().streamDescendants(false)
-            .filter(it -> it.getMTipo() instanceof MTipoSimples<?, ?>)
+            .filter(it -> it.getMTipo() instanceof STypeSimple<?, ?>)
             .map(it -> it.getValor() == null)
             .collect(toSet());
         

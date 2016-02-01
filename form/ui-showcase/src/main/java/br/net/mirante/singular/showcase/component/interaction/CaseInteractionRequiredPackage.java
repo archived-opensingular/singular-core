@@ -1,22 +1,22 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
-import br.net.mirante.singular.form.mform.core.MTipoBoolean;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
-public class CaseInteractionRequiredPackage extends MPacote {
+public class CaseInteractionRequiredPackage extends SPackage {
 
-    public MTipoComposto<?>          testForm;
-    public MTipoBoolean              required;
-    public MTipoComposto<MIComposto> record;
-    public MTipoString               recordText;
-    public MTipoData                 recordDate;
+    public STypeComposite<?> testForm;
+    public STypeBoolean required;
+    public STypeComposite<SIComposite> record;
+    public STypeString recordText;
+    public STypeData recordDate;
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
@@ -30,14 +30,14 @@ public class CaseInteractionRequiredPackage extends MPacote {
         recordText = record.addCampoString("text");
         recordDate = record.addCampoData("date");
 
-        required.as(MPacoteBasic.aspect()).label("Required");
+        required.as(SPackageBasic.aspect()).label("Required");
 
-        recordText.as(MPacoteBasic.aspect())
+        recordText.as(SPackageBasic.aspect())
             .label("Text")
             .dependsOn(required)
             .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
 
-        recordDate.as(MPacoteBasic.aspect())
+        recordDate.as(SPackageBasic.aspect())
             .label("Date").dependsOn(required)
             .as(AtrCore::new).obrigatorio(ins -> ins.findNearestValue(required, Boolean.class).orElse(false));
     }

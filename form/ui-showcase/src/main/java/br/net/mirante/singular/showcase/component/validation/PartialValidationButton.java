@@ -1,7 +1,7 @@
 package br.net.mirante.singular.showcase.component.validation;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
@@ -13,16 +13,16 @@ import org.apache.wicket.model.IModel;
 
 public class PartialValidationButton extends AjaxButton {
 
-    private final IModel<? extends MInstancia>  currentInstance;
+    private final IModel<? extends SInstance>  currentInstance;
 
-    public PartialValidationButton(String id, IModel<? extends MInstancia> currentInstance) {
+    public PartialValidationButton(String id, IModel<? extends SInstance> currentInstance) {
         super(id);
         this.currentInstance = currentInstance;
     }
 
-    protected void addValidationErrors(Form<?> form, MInstancia instance) {
+    protected void addValidationErrors(Form<?> form, SInstance instance) {
         //@destacar:bloco
-        final MInstancia obrigatorio1 = ((MIComposto) instance).getCampo("obrigatorio_1");
+        final SInstance obrigatorio1 = ((SIComposite) instance).getCampo("obrigatorio_1");
         InstanceValidationContext validationContext = new InstanceValidationContext(obrigatorio1);
         //@destacar:fim
         validationContext.validateSingle();

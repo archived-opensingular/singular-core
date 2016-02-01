@@ -1,18 +1,11 @@
 package br.net.mirante.singular.showcase;
 
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MPacote;
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.util.Collection;
-import java.util.stream.Collectors;
+import org.junit.Test;
 
 //@RunWith(value = Parameterized.class)
 public class SerializationTest {
@@ -47,7 +40,7 @@ public class SerializationTest {
                 pacote = (ExamplePackage) entry.getType().getPacote();
             }
         }
-        MIComposto order = pacote.order.novaInstancia();
+        SIComposite order = pacote.order.novaInstancia();
         order.setValor(pacote.orderNumber.getNomeSimples(),1);
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(order));
     }

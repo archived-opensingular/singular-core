@@ -11,5 +11,5 @@ public @interface MInfoTipo {
 
     public String nome();
 
-    public Class<? extends MPacote> pacote();
+    public Class<? extends SPackage> pacote();
 }

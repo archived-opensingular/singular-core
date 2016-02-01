@@ -30,10 +30,10 @@ public abstract class MDicionarioLoader extends MDicionarioResolver {
      * estiverem configurado, pode adicionar pacotes extras.
      */
     @Override
-    public final Optional<MDicionario> loadDicionaryForType(String typeName) {
-        MDicionario novo;
+    public final Optional<SDictionary> loadDicionaryForType(String typeName) {
+        SDictionary novo;
         if (parent == null) {
-            novo = MDicionario.create();
+            novo = SDictionary.create();
         } else {
             novo = parent.loadDicionaryForType(typeName).get();
         }
@@ -46,6 +46,6 @@ public abstract class MDicionarioLoader extends MDicionarioResolver {
      * Configura o dicionário criado de acordo com o comportamento do loader em
      * questão.
      */
-    protected abstract void configDicionary(MDicionario newDicionary, String taregetTypeName);
+    protected abstract void configDicionary(SDictionary newDicionary, String taregetTypeName);
 
 }

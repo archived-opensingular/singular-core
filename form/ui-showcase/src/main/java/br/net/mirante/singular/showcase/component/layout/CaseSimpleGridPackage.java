@@ -1,16 +1,16 @@
 package br.net.mirante.singular.showcase.component.layout;
 
-import br.net.mirante.singular.form.mform.MPacote;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 
-public class CaseSimpleGridPackage extends MPacote {
+public class CaseSimpleGridPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PacoteBuilder pb) {
-        final MTipoComposto<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
         testForm.addCampoString("nome")
                 .as(AtrBasic.class).label("Nome")

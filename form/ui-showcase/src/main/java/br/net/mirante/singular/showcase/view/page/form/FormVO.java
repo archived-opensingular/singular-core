@@ -5,15 +5,15 @@ import java.io.Serializable;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository.TemplateEntry;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 
 @SuppressWarnings("serial")
 public class FormVO implements Serializable, IModel<String> {
     private String key;
     private String typeName;
-    private transient MTipo<?> value;
+    private transient SType<?> value;
 
-    public FormVO(String key, MTipo<?> value) {
+    public FormVO(String key, SType<?> value) {
         this.key = key;
         this.value = value;
         if(value != null) this.typeName = value.getNome();
@@ -35,11 +35,11 @@ public class FormVO implements Serializable, IModel<String> {
         return typeName;
     }
 
-    public MTipo<?> getType() {
+    public SType<?> getType() {
         return value;
     }
 
-    public void setType(MTipo<?> value) {
+    public void setType(SType<?> value) {
         this.value = value;
     }
 

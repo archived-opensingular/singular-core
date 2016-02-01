@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 
 /**
  * Represents an MInstancia that is of a kind of MSelectionableType.
@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.MTipo;
  */
 public interface MSelectionableInstance  extends MSelectionable{
 
-    MTipo<?> getMTipo();
+    SType<?> getMTipo();
 
     MOptionsConfig getOptionsConfig();
 

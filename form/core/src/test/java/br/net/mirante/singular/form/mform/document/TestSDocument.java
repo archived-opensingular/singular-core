@@ -1,54 +1,54 @@
 package br.net.mirante.singular.form.mform.document;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestSDocument extends TestCaseForm {
 
     public void testCriacaoImplicitaPacoteCore() {
-        MDicionario dicionario = MDicionario.create();
-        MIString instancia1 = dicionario.novaInstancia(MTipoString.class);
+        SDictionary dicionario = SDictionary.create();
+        SIString instancia1 = dicionario.novaInstancia(STypeString.class);
         assertFilhos(instancia1, 0);
 
-        MIString instancia2 = dicionario.novaInstancia(MTipoString.class);
+        SIString instancia2 = dicionario.novaInstancia(STypeString.class);
         assertFilhos(instancia2, 0);
 
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());
     }
 
     public void testCriacaoImplicitaPacoteNovo() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoComposto<?> tipo = pb.createTipo("nome", MTipoComposto.class);
+        STypeComposite<?> tipo = pb.createTipo("nome", STypeComposite.class);
 
-        MInstancia instancia1 = tipo.novaInstancia();
+        SInstance instancia1 = tipo.novaInstancia();
         assertFilhos(instancia1, 0);
 
-        MInstancia instancia2 = tipo.novaInstancia();
+        SInstance instancia2 = tipo.novaInstancia();
         assertFilhos(instancia2, 0);
 
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());
     }
 
     public void testHerancaPelosSubcampos() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
-        MTipoComposto<?> tipoComposto = tipoLista.getTipoElementos();
+        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
+        STypeComposite<?> tipoComposto = tipoLista.getTipoElementos();
         tipoComposto.addCampoString("nome");
-        tipoComposto.addCampoListaOf("dependentes", MTipoString.class);
+        tipoComposto.addCampoListaOf("dependentes", STypeString.class);
 
-        MILista<MIComposto> pessoas = tipoLista.novaInstancia(MIComposto.class);
+        SList<SIComposite> pessoas = tipoLista.novaInstancia(SIComposite.class);
         assertFilhos(pessoas, 0);
 
-        MIComposto pessoa = pessoas.addNovo();
+        SIComposite pessoa = pessoas.addNovo();
         assertFilhos(pessoa, 0);
 
         pessoa.setValor("nome", "Daniel");
         assertFilhos(pessoa.getCampo("nome"), 0);
 
-        MIString campo = pessoa.getFieldList("dependentes", MIString.class).addValor("Lara");
+        SIString campo = pessoa.getFieldList("dependentes", SIString.class).addValor("Lara");
         assertFilhos(campo, 0);
         assertFilhos(pessoas, 4);
     }

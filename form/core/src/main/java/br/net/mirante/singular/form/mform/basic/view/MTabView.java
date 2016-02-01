@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 
 public class MTabView extends MView {
@@ -14,7 +14,7 @@ public class MTabView extends MView {
     private List<MTab> tabs = new ArrayList<>();
 
     @Override
-    public boolean aplicavelEm(MTipo<?> tipo) {
+    public boolean aplicavelEm(SType<?> tipo) {
         return true;
     }
 
@@ -36,7 +36,7 @@ public class MTabView extends MView {
         return tab;
     }
 
-    public MTab addTab(MTipo<?> tipo) {
+    public MTab addTab(SType<?> tipo) {
         return addTab(tipo.getNomeSimples(), tipo.as(AtrBasic.class).getLabel())
             .add(tipo);
     }
@@ -55,7 +55,7 @@ public class MTabView extends MView {
             nomesTipo = new ArrayList<>();
         }
 
-        public MTab add(MTipo<?> campo) {
+        public MTab add(SType<?> campo) {
             nomesTipo.add(campo.getNomeSimples());
             return this;
         }

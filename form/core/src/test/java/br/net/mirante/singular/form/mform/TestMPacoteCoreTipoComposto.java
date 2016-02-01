@@ -3,38 +3,38 @@ package br.net.mirante.singular.form.mform;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompostoComCargaInterna;
+import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoComposto.TestPacoteCompostoA.TestTipoCompositeComCargaInterna;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testTipoCompostoCriacao() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<?> tipoEndereco = pb.createTipoComposto("endereco");
-        tipoEndereco.addCampo("rua", MTipoString.class);
+        STypeComposite<?> tipoEndereco = pb.createTipoComposto("endereco");
+        tipoEndereco.addCampo("rua", STypeString.class);
         tipoEndereco.addCampoString("bairro", true);
         tipoEndereco.addCampoInteger("cep", true);
 
-        MTipoComposto<?> tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
+        STypeComposite<?> tipoClassificacao = tipoEndereco.addCampoComposto("classificacao");
         tipoClassificacao.addCampoInteger("prioridade");
         tipoClassificacao.addCampoString("descricao");
 
-        assertTipo(tipoEndereco.getTipoLocal("rua"), "rua", MTipoString.class);
-        assertTipo(tipoEndereco.getCampo("rua"), "rua", MTipoString.class);
+        assertTipo(tipoEndereco.getTipoLocal("rua"), "rua", STypeString.class);
+        assertTipo(tipoEndereco.getCampo("rua"), "rua", STypeString.class);
         assertEquals((Object) false, tipoEndereco.getTipoLocal("rua").isObrigatorio());
         assertEquals((Object) true, tipoEndereco.getTipoLocal("cep").isObrigatorio());
 
-        assertTipo(tipoEndereco.getTipoLocal("classificacao"), "classificacao", MTipoComposto.class);
-        assertTipo(tipoEndereco.getTipoLocal("classificacao.prioridade"), "prioridade", MTipoInteger.class);
+        assertTipo(tipoEndereco.getTipoLocal("classificacao"), "classificacao", STypeComposite.class);
+        assertTipo(tipoEndereco.getTipoLocal("classificacao.prioridade"), "prioridade", STypeInteger.class);
 
         assertNull(tipoEndereco.getTipoLocalOpcional("classificacao.prioridade.x.y").orElse(null));
         assertException(() -> tipoEndereco.getTipoLocal("classificacao.prioridade.x.y"), "Não existe o tipo");
 
-        MIComposto endereco = tipoEndereco.novaInstancia();
+        SIComposite endereco = tipoEndereco.novaInstancia();
         assertFilhos(endereco, 0);
 
         assertNull(endereco.getValor("rua"));
@@ -69,31 +69,31 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertException(() -> endereco.setValor("classificacao", "X"), "Método não suportado");
     }
 
-    private static void assertTipo(MTipo<?> tipo, String nomeEsperado, Class<?> classeEsperadaDoTipo) {
+    private static void assertTipo(SType<?> tipo, String nomeEsperado, Class<?> classeEsperadaDoTipo) {
         assertNotNull(tipo);
         assertEquals(nomeEsperado, tipo.getNomeSimples());
         assertEquals(classeEsperadaDoTipo, tipo.getClass());
     }
 
     public void testeComposicaoCamposQuandoUmCompostoExtendeOutroComposto() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<?> tipoBloco = pb.createTipoComposto("bloco");
+        STypeComposite<?> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoString("nome");
         tipoBloco.addCampoString("endereco");
 
         assertOrdemCampos(tipoBloco.getFields(), "nome", "endereco");
         assertOrdemCampos(tipoBloco.getFieldsLocal(), "nome", "endereco");
 
-        MTipoComposto<?> tipoSubBloco = pb.createTipo("subBloco", tipoBloco);
+        STypeComposite<?> tipoSubBloco = pb.createTipo("subBloco", tipoBloco);
         tipoSubBloco.addCampoInteger("idade");
         tipoSubBloco.addCampoString("area");
 
         assertOrdemCampos(tipoSubBloco.getFields(), "nome", "endereco", "idade", "area");
         assertOrdemCampos(tipoSubBloco.getFieldsLocal(), "idade", "area");
 
-        MIComposto subBloco = tipoSubBloco.novaInstancia();
+        SIComposite subBloco = tipoSubBloco.novaInstancia();
         testAtribuicao(subBloco, "area", "sul", 1);
         testAtribuicao(subBloco, "idade", 10, 2);
         assertNull(subBloco.getValor("endereco"));
@@ -103,22 +103,22 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEqualsList(subBloco.getCampos().stream().map(c -> c.getValor()).collect(Collectors.toList()), "Paulo", "Rua 1", 10, "sul");
     }
 
-    private static void assertOrdemCampos(Collection<MTipo<?>> fields, String... nomesEsperados) {
+    private static void assertOrdemCampos(Collection<SType<?>> fields, String... nomesEsperados) {
         assertEqualsList(fields.stream().map(f -> f.getNomeSimples()).collect(Collectors.toList()), (Object[]) nomesEsperados);
     }
 
     public void testCriacaoDinamicaDeCamposNaInstancia() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<? extends MIComposto> tipoBloco = pb.createTipoComposto("bloco");
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoInteger("inicio");
         tipoBloco.addCampoInteger("fim");
-        tipoBloco.addCampoListaOf("enderecos", MTipoString.class);
+        tipoBloco.addCampoListaOf("enderecos", STypeString.class);
         tipoBloco.addCampoListaOfComposto("itens", "item").getTipoElementos().addCampoInteger("qtd");
         tipoBloco.addCampoComposto("subBloco").addCampoBoolean("teste");
 
-        MIComposto bloco = tipoBloco.novaInstancia();
+        SIComposite bloco = tipoBloco.novaInstancia();
 
         assertTrue(bloco.isEmptyOfData());
         assertTrue(bloco.isCampoNull("inicio"));
@@ -152,15 +152,15 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals(1, bloco.getFieldRecord("subBloco").getCampos().size());
     }
 
-    private static void assertCriacaoDinamicaSubCampo(MIComposto bloco, String path, int qtdCamposAntes, int qtdCamposDepois) {
+    private static void assertCriacaoDinamicaSubCampo(SIComposite bloco, String path, int qtdCamposAntes, int qtdCamposDepois) {
         Object resultado2 = bloco.getValor(path); // Não provoca nova instancia
         assertNull(resultado2);
         assertTrue(bloco.isCampoNull(path));
         assertEquals(qtdCamposAntes, bloco.getCampos().size());
 
-        MInstancia resultado = bloco.getCampo(path); // Provoca instancia
+        SInstance resultado = bloco.getCampo(path); // Provoca instancia
         assertNotNull(resultado);
-        if (resultado instanceof MISimples) {
+        if (resultado instanceof SISimple) {
             assertNull(bloco.getValor(path));
         }
         assertTrue(resultado.isEmptyOfData());
@@ -168,17 +168,17 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     }
 
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoSimples() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<? extends MIComposto> tipoBloco = pb.createTipoComposto("bloco");
-        tipoBloco.addCampoListaOf("enderecos", MTipoString.class);
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
+        tipoBloco.addCampoListaOf("enderecos", STypeString.class);
 
-        assertTipo(tipoBloco.getTipoLocal("enderecos"), "enderecos", MTipoLista.class);
-        assertTipo(tipoBloco.getCampo("enderecos"), "enderecos", MTipoLista.class);
-        assertTipo(((MTipoLista<?, ?>) tipoBloco.getCampo("enderecos")).getTipoElementos(), "String", MTipoString.class);
+        assertTipo(tipoBloco.getTipoLocal("enderecos"), "enderecos", STypeLista.class);
+        assertTipo(tipoBloco.getCampo("enderecos"), "enderecos", STypeLista.class);
+        assertTipo(((STypeLista<?, ?>) tipoBloco.getCampo("enderecos")).getTipoElementos(), "String", STypeString.class);
 
-        MIComposto bloco = tipoBloco.novaInstancia();
+        SIComposite bloco = tipoBloco.novaInstancia();
         assertNull(bloco.getValor("enderecos"));
         assertNull(bloco.getValor("enderecos[0]"));
         assertEquals(0, bloco.getCampos().size());
@@ -206,16 +206,16 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     }
 
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoComposto() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
 
-        MTipoComposto<? extends MIComposto> tipoBloco = pb.createTipoComposto("bloco");
-        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoEnderecos = tipoBloco.addCampoListaOfComposto("enderecos", "endereco");
-        MTipoComposto<?> tipoEndereco = tipoEnderecos.getTipoElementos();
+        STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
+        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoEnderecos = tipoBloco.addCampoListaOfComposto("enderecos", "endereco");
+        STypeComposite<?> tipoEndereco = tipoEnderecos.getTipoElementos();
         tipoEndereco.addCampoString("rua");
         tipoEndereco.addCampoString("cidade");
 
-        MIComposto bloco = tipoBloco.novaInstancia();
+        SIComposite bloco = tipoBloco.novaInstancia();
         assertNull(bloco.getValor("enderecos"));
         assertNull(bloco.getValor("enderecos[0]"));
         assertNull(bloco.getValor("enderecos[0].rua"));
@@ -231,7 +231,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNull(bloco.getFieldList("enderecos").getValor("[0]"));
         assertNull(bloco.getFieldList("enderecos").getValor("[0].rua"));
 
-        MIComposto endereco = (MIComposto) bloco.getFieldList("enderecos").addNovo();
+        SIComposite endereco = (SIComposite) bloco.getFieldList("enderecos").addNovo();
         assertEquals(1, bloco.getCampos().size());
         assertTrue(bloco.isEmptyOfData());
         assertTrue(endereco.isEmptyOfData());
@@ -262,19 +262,19 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
     }
 
     public void testeOnCargaTipoDireto() {
-        MDicionario dicionario = MDicionario.create();
-        TestTipoCompostoComCargaInterna tipo = dicionario.getTipo(TestTipoCompostoComCargaInterna.class);
+        SDictionary dicionario = SDictionary.create();
+        TestTipoCompositeComCargaInterna tipo = dicionario.getTipo(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertNotNull(tipo.getCampo("nome"));
         assertEquals((Boolean) true, tipo.isObrigatorio());
     }
 
     public void testeOnCargaTipoChamadaSubTipo() {
-        MDicionario dicionario = MDicionario.create();
+        SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-        TestTipoCompostoComCargaInterna tipo = pb.createTipo("derivado", TestTipoCompostoComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipo = pb.createTipo("derivado", TestTipoCompositeComCargaInterna.class);
 
-        TestTipoCompostoComCargaInterna tipoPai = dicionario.getTipo(TestTipoCompostoComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipoPai = dicionario.getTipo(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipoPai.as(AtrBasic.class).getLabel());
         assertNotNull(tipoPai.getCampo("nome"));
         assertEquals((Boolean) true, tipoPai.isObrigatorio());
@@ -284,7 +284,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertEquals((Boolean) true, tipo.isObrigatorio());
     }
 
-    public static final class TestPacoteCompostoA extends MPacote {
+    public static final class TestPacoteCompostoA extends SPackage {
 
         protected TestPacoteCompostoA() {
             super("teste.pacoteCompostoA");
@@ -292,13 +292,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
         @Override
         protected void carregarDefinicoes(PacoteBuilder pb) {
-            pb.createTipo(TestTipoCompostoComCargaInterna.class);
+            pb.createTipo(TestTipoCompositeComCargaInterna.class);
         }
 
         @MInfoTipo(nome = "TestTipoCompostoComCargaInterna", pacote = TestPacoteCompostoA.class)
-        public static final class TestTipoCompostoComCargaInterna extends MTipoComposto<MIComposto> {
+        public static final class TestTipoCompositeComCargaInterna extends STypeComposite<SIComposite> {
             @Override
-            protected void onCargaTipo(TipoBuilder tb) {
+            protected void onLoadType(TipoBuilder tb) {
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
                 addCampoString("nome");

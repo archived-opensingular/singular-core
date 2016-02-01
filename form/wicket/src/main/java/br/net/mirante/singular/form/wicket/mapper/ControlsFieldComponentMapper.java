@@ -1,9 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
@@ -46,9 +46,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      * @return Retorna o componente  já adicionado ao formGroup
      */
     @SuppressWarnings("rawtypes")
-    Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel);
+    Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel);
 
-    String getReadOnlyFormattedText(IModel<? extends MInstancia> model);
+    String getReadOnlyFormattedText(IModel<? extends SInstance> model);
 
     /**
      * @param view          Instancia da MView utilizada para configurar o componente
@@ -60,8 +60,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
      */
     @SuppressWarnings("rawtypes")
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
-                                          IModel<? extends MInstancia> model, IModel<String> labelModel) {
-        final MInstancia mi = model.getObject();
+                                          IModel<? extends SInstance> model, IModel<String> labelModel) {
+        final SInstance mi = model.getObject();
         BOutputPanel comp = new BOutputPanel(mi.getNome(),
                 $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
@@ -70,7 +70,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
 
     default void buildView(WicketBuildContext ctx) {
 
-        final IModel<? extends MInstancia> model = ctx.getModel();
+        final IModel<? extends SInstance> model = ctx.getModel();
         final boolean hintNoDecoration = ctx.getHint(NO_DECORATION);
 
         final IFeedbackMessageFilter feedbackMessageFilter = new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING);
@@ -78,8 +78,8 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         final BSContainer<?> container = ctx.getContainer();
         final BSControls controls = container.newFormGroup();
 
-        final AtributoModel<String> labelModel = new AtributoModel<>(model, MPacoteBasic.ATR_LABEL);
-        final AtributoModel<String> subtitle = new AtributoModel<>(model, MPacoteBasic.ATR_SUBTITLE);
+        final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
+        final AtributoModel<String> subtitle = new AtributoModel<>(model, SPackageBasic.ATR_SUBTITLE);
 
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
@@ -107,7 +107,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
                 label.add(new ClassAttributeModifier() {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
-                        if (model.getObject().getValorAtributo(MPacoteCore.ATR_OBRIGATORIO)) {
+                        if (model.getObject().getValorAtributo(SPackageCore.ATR_OBRIGATORIO)) {
                             oldClasses.add("required");
                         } else {
                             oldClasses.remove("required");
