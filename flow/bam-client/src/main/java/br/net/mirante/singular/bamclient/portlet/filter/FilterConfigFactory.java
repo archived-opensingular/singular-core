@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
+import br.net.mirante.singular.flow.core.DashboardFilter;
 
 public class FilterConfigFactory {
 
-    public static List<FilterConfig> createConfigForClass(Class clazz) {
+    public static List<FilterConfig> createConfigForClass(Class<? extends DashboardFilter> clazz) {
         final List<FilterConfig> filterConfigs = new ArrayList<>();
         for (Field f : clazz.getDeclaredFields()) {
             if (f.isAnnotationPresent(FilterField.class)) {
