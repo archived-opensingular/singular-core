@@ -1,8 +1,5 @@
 package br.net.mirante.singular.bamclient.portlet;
 
-/**
- * Created by danilo.mesquita on 07/01/2016.
- */
 public enum PortletSize {
 
     SMALL(3),
@@ -16,8 +13,8 @@ public enum PortletSize {
     }
 
     public String getBootstrapSize() {
-        String template = "col-md-size col-sm-size";
-        return template.replace("size", String.valueOf(size));
+        String template = "col-lg-%s col-md-%s";
+        return String.format(template, size, size * 2 > 12 ? 12 : size * 2);
     }
 
     public int getSize() {
