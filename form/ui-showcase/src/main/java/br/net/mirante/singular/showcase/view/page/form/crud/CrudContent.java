@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import javax.inject.Inject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,8 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
@@ -51,6 +49,7 @@ import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 public class CrudContent extends Content
@@ -232,8 +231,8 @@ public class CrudContent extends Content
         final String definicao = getDefinicao(model.getObject().getType());
 
         final BSTabPanel xmlTabs = new BSTabPanel("xmlTabs");
-        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
         xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlTabulado)));
+        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
         xmlTabs.addTab(getString("label.definicao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(definicao)));
 
         viewXmlModal.addOrReplace(xmlTabs);
