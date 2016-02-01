@@ -2,6 +2,8 @@ package br.net.mirante.singular.pet.server.wicket.view.racunho;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -11,8 +13,12 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
+import br.net.mirante.singular.pet.server.wicket.dao.PeticaoDAO;
 
 public class RascunhoContent extends Content {
+
+    @Inject
+    private PeticaoDAO peticaoDAO;
 
     public RascunhoContent(String id) {
         super(id);
@@ -52,6 +58,8 @@ public class RascunhoContent extends Content {
                 item.add(new Label("dataCriacao"));
             }
         });
+
+        peticaoDAO.listAll();
     }
 
     @Override
