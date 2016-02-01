@@ -12,8 +12,8 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -26,8 +26,8 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.model.MTipoElementosModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.IBSGridCol.BSGridSize;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -119,9 +119,9 @@ public class TableListaMapper extends AbstractListaMapper {
                     @Override
                     protected Set<String> update(Set<String> oldClasses) {
                         if (isCampoObrigatorio) {
-                            oldClasses.add("required");
+                            oldClasses.add("singular-form-required");
                         } else {
-                            oldClasses.remove("required");
+                            oldClasses.remove("singular-form-required");
                         }
                         return oldClasses;
                     }
