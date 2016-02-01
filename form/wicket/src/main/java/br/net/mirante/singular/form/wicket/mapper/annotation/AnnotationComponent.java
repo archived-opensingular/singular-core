@@ -74,24 +74,35 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
+        createFields();
         this.queue(new Label("target_label",$m.ofValue(title(referenced))));
-        comment_field = new TextArea<>("comment_field");
-        approval_field = new CheckBox("approval_field");
-        updateModels();
         this.queue(comment_field);
         this.queue(approval_field);
 
+        BFModalWindow annotationModal = createModal();
+        this.queue(createOpenModalButton(annotationModal));
+    }
+
+    private void createFields() {
+        comment_field = new TextArea<>("comment_field");
+        approval_field = new CheckBox("approval_field");
+        updateModels();
+    }
+
+    private BFModalWindow createModal() {
         BFModalWindow annotationModal = new AnnotationModalWindow("annotationModal",
-                model, referenced,
-                context, this);
+                                                          model, referenced, context, this);
         context.getExternalContainer().appendTag("div", true, null, annotationModal);
-        this.queue(new ActionAjaxButton("open_modal") {
-            @Override
+        return annotationModal;
+    }
+
+    private ActionAjaxButton createOpenModalButton(final BFModalWindow annotationModal) {
+        return new ActionAjaxButton("open_modal") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
             }
-        });
+        };
     }
 
     private void updateModels() {
