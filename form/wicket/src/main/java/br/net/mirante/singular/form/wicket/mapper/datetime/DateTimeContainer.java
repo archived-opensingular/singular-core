@@ -12,6 +12,8 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.TextField;
 
 import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
+import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Masks;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.model.MIDateTimeModel;
 import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
@@ -39,7 +41,8 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
 
     protected Component buildDateField() {
         return new TextField<>("date", new MIDateTimeModel.DateModel(model))
-                .add(new DatePickerInitBehaviour());
+                .add(new DatePickerInitBehaviour())
+                .add(new InputMaskBehavior(Masks.FULL_DATE));
     }
 
     protected TextField<String> buildTimeField() {
@@ -52,7 +55,7 @@ public class DateTimeContainer extends BSContainer<DateTimeContainer> {
                 response.render(OnDomReadyHeaderItem.forScript(script));
             }
         });
-
+        time.add(new InputMaskBehavior(Masks.TIME));
         return time;
     }
 
