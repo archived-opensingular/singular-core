@@ -14,7 +14,7 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class BooleanRadioMapper extends RadioMapper {
 
-    @SuppressWarnings("rawtypes")
+    /*@SuppressWarnings("rawtypes")
     @Override
     public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends SInstance> model) {
         if (!(view instanceof MBooleanRadioView)){
@@ -30,7 +30,7 @@ public class BooleanRadioMapper extends RadioMapper {
                 return opcoesValue;
             }
         };
-    }
+    }*/
     
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();

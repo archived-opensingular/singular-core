@@ -41,11 +41,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
         SInstance target = getTarget();
         if (object instanceof SelectOption) {
             SelectOption sel = (SelectOption) object;
-            if(target instanceof SIBoolean){
-                target.setValor(sel.getValue());
-            }else{
-                setValueAt(target, (SelectOption) object, target.getOptionsConfig());
-            }
+            setValueAt(target, (SelectOption) object, target.getOptionsConfig());
         } else if (object instanceof Collection) {
             setListValueAt(target, (Collection) object);
         } else if (object == null) {
