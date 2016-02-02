@@ -17,7 +17,7 @@ import org.apache.wicket.model.Model;
 
 import br.net.mirante.singular.util.wicket.behavior.BSSelectInitBehaviour;
 import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
-import br.net.mirante.singular.util.wicket.behavior.MultiSelectInitBehaviour;
+import br.net.mirante.singular.util.wicket.behavior.PicklistInitBehaviour;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -129,7 +129,7 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
 
     public BSControls appendPicklist(Component select) {
         return (BSControls) super.appendTag("select", true, "multiple", select)
-                .add(new MultiSelectInitBehaviour());
+                .add(new PicklistInitBehaviour());
     }
 
     public BSControls appendStaticText(Component text) {
