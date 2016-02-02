@@ -14,7 +14,7 @@ public class CaseInputCoreYearMonthPackage extends SPackage {
         final STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
         tipoMyForm.addCampo("inicio", STypeAnoMes.class)
                 .as(AtrBasic.class)
-                .label("Data inicio")
+                .label("Data Início")
                 .as(AtrBootstrap::new)
                 .colPreference(2);
     }
