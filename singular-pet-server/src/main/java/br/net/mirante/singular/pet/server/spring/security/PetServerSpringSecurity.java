@@ -12,29 +12,30 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+/**
+ * Provedor padrão do spring security do Singular
+ * Delega a congfiguração do spring security a um bean que implementa a interface
+ * {@link SingularSpringSecurityConfigurer}. Esse bean deve ser único
+ */
 @Configuration
 @EnableWebSecurity
 public class PetServerSpringSecurity extends WebSecurityConfigurerAdapter {
-
-    @Inject
-    @Named("peticionamentoUserDetailService")
-    private UserDetailsService peticionamentoUserDetailService;
 
     @Inject
     private SingularSpringSecurityConfigurer configurer;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        configurer.configure(http, peticionamentoUserDetailService);
+        configurer.configure(http);
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        configurer.configure(web, peticionamentoUserDetailService);
+        configurer.configure(web);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        configurer.configure(auth, peticionamentoUserDetailService);
+        configurer.configure(auth);
     }
 }

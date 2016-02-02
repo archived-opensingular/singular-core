@@ -1,32 +1,45 @@
 package br.net.mirante.singular.pet.server.spring.security.config;
 
 
+import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.Arrays;
+import java.util.Optional;
 
 
 public class SingularCASSpringSecurityConfigurer implements SingularSpringSecurityConfigurer {
 
-    @Override
-    public void configure(WebSecurity web, UserDetailsService userDetailsService) throws Exception {
+    @Inject
+    @Named("peticionamentoUserDetailService")
+    private Optional<UserDetailsService> peticionamentoUserDetailService;
 
-    }
-
     @Override
-    public void configure(HttpSecurity http, UserDetailsService peticionamentoUserDetailService) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         PreAuthenticatedAuthenticationProvider casAuthenticationProvider = new PreAuthenticatedAuthenticationProvider();
-        casAuthenticationProvider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(peticionamentoUserDetailService));
+        casAuthenticationProvider.setPreAuthenticatedUserDetailsService(
+                new UserDetailsByNameServiceWrapper<>(peticionamentoUserDetailService.orElseThrow(() ->
+                                new SingularServerException(
+                                        String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
+                                                UserDetailsService.class.getName(),
+                                                "peticionamentoUserDetailService",
+                                                SingularCASSpringSecurityConfigurer.class.getName(),
+                                                UserDetailsService.class.getName(),
+                                                "peticionamentoUserDetailService"
+                                        ))
+                )
+                )
+        );
 
         ProviderManager authenticationManager = new ProviderManager(Arrays.asList(new AuthenticationProvider[]{casAuthenticationProvider}));
 
@@ -44,9 +57,5 @@ public class SingularCASSpringSecurityConfigurer implements SingularSpringSecuri
                 .authorizeRequests().antMatchers("/*").authenticated();
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder http, UserDetailsService userDetailsService) throws Exception {
-
-    }
 
 }

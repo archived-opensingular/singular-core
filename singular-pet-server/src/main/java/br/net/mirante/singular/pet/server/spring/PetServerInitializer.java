@@ -15,10 +15,13 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 import java.util.EnumSet;
 
 /**
- *
+ *Configura os filtros, servlets e listeners default do singular pet server
+ * e as configurações básicas do spring e spring-security
  */
 public abstract class PetServerInitializer implements WebApplicationInitializer {
 
@@ -35,9 +38,28 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
         afterSingularConfiguration(ctx, applicationContext);
     }
 
+    /**
+     * Método destinado a ser sobrescrito para incluir qualquer configuração da aplicação web
+     * antes que as configurações do singular pet server sejam feitas.
+     *
+     * @param ctx
+     *  Servlet Context a partir do qual as configurações devem ser feitas
+     * @param applicationContext
+     *  Application context do spring.
+     */
     protected void beforeSingularConfiguration(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
     }
 
+
+    /**
+     * Método destinado a ser sobrescrito para incluir qualquer configuração da aplicação web
+     * após as configurações do singular pet server.
+     *
+     * @param ctx
+     *  Servlet Context a partir do qual as configurações devem ser feitas
+     * @param applicationContext
+     *  Application context do spring.
+     */
     protected void afterSingularConfiguration(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
     }
 
@@ -56,6 +78,15 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
         dispatcher.addMapping(getSpringMVServletMapping());
     }
 
+    /**
+     * Fornece a classe que será utilizada como configuração java do Spring.
+     * A classe fornecida deve herdar de {@link PetServerSpringAppConfig} e deve
+     * ser anotada com {@link org.springframework.context.annotation.Configuration}.
+     * As principais configurações do pet server são feitas pela superclasse bastando declarar
+     * na classe informada apenas as configurações e beans do spring específicos da aplicação
+     * @return
+     *  Uma classe concreta que herda de {@link PetServerSpringAppConfig} e anotada com {@link org.springframework.context.annotation.Configuration}
+     */
     protected abstract Class<? extends PetServerSpringAppConfig> getSpringConfigurationClass();
 
     protected String getSpringMVServletMapping() {
@@ -75,6 +106,32 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
         wicketFilter.setInitParameter("homePageClass", EntradaPage.class.getName());
         wicketFilter.setInitParameter("filterMappingUrlPattern", path);
         wicketFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, path);
+    }
+
+    /**
+     * Configura o timeout da sessão web em minutos
+     * @return
+     */
+    protected int getSessionTimeoutMinutes() {
+        return 30;
+    }
+
+    /**
+     * Configura o session timeout da aplicação
+     * Criado para permitir a remoção completa do web.xml
+     * @param servletContext
+     */
+    private void addSessionListener(ServletContext servletContext) {
+        servletContext.addListener(new HttpSessionListener() {
+            @Override
+            public void sessionCreated(HttpSessionEvent se) {
+                se.getSession().setMaxInactiveInterval(60 * getSessionTimeoutMinutes());
+            }
+
+            @Override
+            public void sessionDestroyed(HttpSessionEvent se) {
+            }
+        });
     }
 
 

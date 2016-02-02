@@ -1,24 +1,27 @@
 package br.net.mirante.singular.pet.server.spring.security.config;
 
 
+import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Optional;
 
 
 public class SingularMiranteADSpringSecurityConfigurer implements SingularSpringSecurityConfigurer {
 
 
-    @Override
-    public void configure(WebSecurity web, UserDetailsService peticionamentoUserDetailService) throws Exception {
+    @Inject
+    @Named("peticionamentoUserDetailService")
+    private Optional<UserDetailsContextMapper> peticionamentoUserDetailContextMapper;
 
-    }
 
     @Override
-    public void configure(HttpSecurity http, UserDetailsService userDetailsService) throws Exception {
+    public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .rememberMe().key("mirante").tokenValiditySeconds(604800).rememberMeParameter("remember")
@@ -39,7 +42,7 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
     }
 
     @Override
-    public void configure(AuthenticationManagerBuilder auth, UserDetailsService userDetailsService) throws Exception {
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .ldapAuthentication()
                 .userSearchFilter("(sAMAccountName={0})")
@@ -47,7 +50,17 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
                 .rolePrefix("ROLE_")
                 .groupSearchBase("OU=GruposGS,DC=miranteinfo,DC=com")
                 .groupSearchFilter("(member={0})")
-                .userDetailsContextMapper((UserDetailsContextMapper) userDetailsService)
+                .userDetailsContextMapper(peticionamentoUserDetailContextMapper.orElseThrow(() ->
+                                        new SingularServerException(
+                                                String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
+                                                        UserDetailsContextMapper.class.getName(),
+                                                        "peticionamentoUserDetailService",
+                                                        SingularMiranteADSpringSecurityConfigurer.class.getName(),
+                                                        UserDetailsContextMapper.class.getName(),
+                                                        "peticionamentoUserDetailService"
+                                                ))
+                        )
+                )
                 .contextSource()
                 .managerDn("tomcatLogin")
                 .managerPassword("jnditomcat")
