@@ -25,9 +25,23 @@ public abstract class SIComparable<TIPO_NATIVO extends Comparable<TIPO_NATIVO>> 
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof SIComparable){
-            return compareTo((SIComparable) obj) == 0;
+        if (obj != null && obj instanceof SIComparable) {
+            final SIComparable other = (SIComparable) obj;
+            if (this.getValor() != null && other.getValor() != null) {
+                return compareTo(other) == 0;
+            } else {
+                return this.getValor() == null && other.getValor() == null;
+            }
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (getValor() != null) {
+            return getValor().hashCode();
+        } else {
+            return super.hashCode();
+        }
     }
 }
