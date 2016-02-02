@@ -31,7 +31,7 @@ public enum MEmailValidator implements IInstanceValueValidator<SIString, String>
         try {
             boolean isValid = SingularEmailValidator.getInstance(allowLocal).isValid(value);
             if(!isValid){
-                validatable.error("Email inválido");
+                validatable.error("E-mail inválido");
             }
         } catch (SingularFormException e){
             validatable.error(e.getMessage());
