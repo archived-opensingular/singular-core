@@ -6,6 +6,6 @@ public class CaseFineTunningGrid  extends CaseBase{
 
     public CaseFineTunningGrid() {
         super("Grid","Fine Tunning");
-        setDescriptionHtml("Permite a configuraçãos fina do tamanho das colunas, sendo possivel especificar o tamanho para telas de qualquer tamanho.");
+        setDescriptionHtml("Permite a configuração fina do tamanho das colunas, sendo possível especificar o tamanho para telas de qualquer tamanho.");
     }
 }
