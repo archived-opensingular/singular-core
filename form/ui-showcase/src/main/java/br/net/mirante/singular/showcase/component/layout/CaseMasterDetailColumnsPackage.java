@@ -30,7 +30,7 @@ public class CaseMasterDetailColumnsPackage extends SPackage {
             //@destacar:bloco
             experiencias.withView(new MListMasterDetailView()
                     .col(empresa, "Empresa em que trabalhou") // Fornecendo label específico para noemar a coluna
-                    .col(dtInicioExperiencia) //Utilizando o label do MTipo para noemar a coluna
+                    .col(dtInicioExperiencia) //Utilizando o label do MTipo para nomear a coluna
                     .col(dtFimExperiencia))
             //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");
