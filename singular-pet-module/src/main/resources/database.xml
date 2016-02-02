@@ -19,7 +19,14 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSourceSingular"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="br.net.mirante.singular.pet.server.wicket.model" />
+        <!--<property name="packagesToScan" value="br.net.mirante.singular.pet.server.wicket.model" />-->
+
+        <property name="annotatedClasses">
+            <list>
+                <value>br.gov.anvisa.peticionamento.canabidiol.model.ArquivoPeticao</value>
+                <value>br.gov.anvisa.peticionamento.canabidiol.model.Peticao</value>
+            </list>
+        </property>
 
         <property name="hibernateProperties">
             <props>

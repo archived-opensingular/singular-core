@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.wicket.view.racunho;
+package br.net.mirante.singular.pet.server.wicket.view.rascunho;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 

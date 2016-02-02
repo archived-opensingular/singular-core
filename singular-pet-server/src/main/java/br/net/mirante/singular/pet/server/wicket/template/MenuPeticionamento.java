@@ -3,7 +3,7 @@ package br.net.mirante.singular.pet.server.wicket.template;
 import br.net.mirante.singular.pet.module.wicket.view.template.Menu;
 import br.net.mirante.singular.pet.server.wicket.view.acompanhamento.AcompanhamentoPage;
 import br.net.mirante.singular.pet.server.wicket.view.entrada.EntradaPage;
-import br.net.mirante.singular.pet.server.wicket.view.racunho.RascunhoPage;
+import br.net.mirante.singular.pet.server.wicket.view.rascunho.RascunhoPage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;

@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.server.wicket.view.racunho;
+package br.net.mirante.singular.pet.server.wicket.view.rascunho;
 
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.pet.server.wicket.template.PetServerTemplate;
