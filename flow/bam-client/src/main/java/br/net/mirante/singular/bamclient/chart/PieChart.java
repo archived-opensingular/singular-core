@@ -23,7 +23,6 @@ public class PieChart implements SingularChart {
                 .startDuration(0.5)
                 .startEffect("easeOutSine")
                 .angle(12)
-                .marginTop(-50)
                 .balloonText("[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>")
                 .depth3D(15)
                 .labelRadius(50)

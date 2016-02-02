@@ -137,8 +137,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private void viewXml(AjaxRequestTarget target, MElement xml) {
         final BSTabPanel xmlCodes = new BSTabPanel("xmlCodes");
-        xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, false))));
         xmlCodes.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, true))));
+        xmlCodes.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(getXmlOutput(xml, false))));
         viewXmlModal.addOrReplace(xmlCodes);
         viewXmlModal.show(target);
     }

@@ -73,24 +73,35 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
+        createFields();
         this.queue(new Label("target_label",$m.ofValue(title(referenced))));
-        comment_field = new TextArea<>("comment_field");
-        approval_field = new CheckBox("approval_field");
-        updateModels();
         this.queue(comment_field);
         this.queue(approval_field);
 
+        BFModalWindow annotationModal = createModal();
+        this.queue(createOpenModalButton(annotationModal));
+    }
+
+    private void createFields() {
+        comment_field = new TextArea<>("comment_field");
+        approval_field = new CheckBox("approval_field");
+        updateModels();
+    }
+
+    private BFModalWindow createModal() {
         BFModalWindow annotationModal = new AnnotationModalWindow("annotationModal",
-                model, referenced,
-                context, this);
+                                                          model, referenced, context, this);
         context.getExternalContainer().appendTag("div", true, null, annotationModal);
-        this.queue(new ActionAjaxButton("open_modal") {
-            @Override
+        return annotationModal;
+    }
+
+    private ActionAjaxButton createOpenModalButton(final BFModalWindow annotationModal) {
+        return new ActionAjaxButton("open_modal") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
             }
-        });
+        };
     }
 
     private void updateModels() {
@@ -167,11 +178,30 @@ public class AnnotationComponent extends Panel {
             this.parentComponent = parentComponent;
             this.setSize(BSModalBorder.Size.NORMAL);
 
-            BSContainer modalBody = new BSContainer("bogoMips");
+            this.setBody(createBody());
 
+            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
+                    createOkButton(parentComponent)
+            );
+            this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                    createCancelButton()
+            );
+        }
+
+        private BSContainer createBody() {
+            BSContainer modalBody = new BSContainer("bogoMips");
+            createFields(modalBody);
+            return modalBody;
+        }
+
+        private void createFields(BSContainer modalBody) {
+            createCommentField(modalBody);
+            createApprovedField(modalBody);
+        }
+
+        private void createCommentField(BSContainer modalBody) {
             TextArea modalText = new TextArea<>("modalText", textModel);
             modalText.add(new Behavior(){
-                @Override
                 public void bind( Component component ){
                     super.bind( component );
                     component.add( AttributeModifier.replace( "onkeydown",
@@ -180,34 +210,15 @@ public class AnnotationComponent extends Panel {
             });
             modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
                     modalText);
+        }
+
+        private void createApprovedField(BSContainer modalBody) {
             modalBody.appendTag("label", true, "class=\"control-label\"",
                     new Label("approvalLabel",$m.ofValue("Aprovado?")));
             modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
                             "data-on-color=\"info\" data-on-text=\"Sim\" "+
                             "data-off-color=\"danger\" data-off-text=\"Não\" ",
                     new CheckBox("modalApproval",approvedModel));
-            this.setBody(modalBody);
-
-            addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
-                    new ActionAjaxButton("btn") {
-                        @Override
-                        protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                            target.add(parentComponent);
-                            parentComponent.updateModels();
-                            AnnotationModalWindow.this.hide(target);
-                            target.appendJavaScript(parentComponent.generateUpdateJS());
-                        }
-
-
-                    }
-            );
-
-            this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"), new ActionAjaxLink<Void>("btn-cancelar") {
-                @Override
-                protected void onAction(AjaxRequestTarget target) {
-                    AnnotationModalWindow.this.hide(target);
-                }
-            });
         }
 
         public void show(AjaxRequestTarget target) {
@@ -230,6 +241,25 @@ public class AnnotationComponent extends Panel {
             js +="     }); ";
             js +=" })(10050); ";
             return js;
+        }
+
+        private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
+            return new ActionAjaxButton("btn") {
+                protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                    target.add(parentComponent);
+                    parentComponent.updateModels();
+                    AnnotationModalWindow.this.hide(target);
+                    target.appendJavaScript(parentComponent.generateUpdateJS());
+                }
+            };
+        }
+
+        private ActionAjaxLink<Void> createCancelButton() {
+            return new ActionAjaxLink<Void>("btn-cancelar") {
+                protected void onAction(AjaxRequestTarget target) {
+                    AnnotationModalWindow.this.hide(target);
+                }
+            };
         }
     }
 }
