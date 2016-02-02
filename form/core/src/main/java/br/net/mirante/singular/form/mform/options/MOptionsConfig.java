@@ -65,7 +65,7 @@ public class MOptionsConfig {
                 for (br.net.mirante.singular.form.mform.SInstance SInstance : options) {
                     /* ignora silenciosamente valores duplicados */
                     if (!optionsKeyInstanceMap.inverse().containsKey(SInstance)) {
-                        String key = newUniqueKey();
+                        String key = newUniqueKey(SInstance);
                         optionsKeyInstanceMap.put(key, SInstance);
                         optionsKeylabelMap.put(key, SInstance.getSelectLabel());
                     }
@@ -77,7 +77,8 @@ public class MOptionsConfig {
         }
     }
 
-    private String newUniqueKey(){
+    private String newUniqueKey(SInstance SInstance){
+        if(SInstance.getValor() != null) return String.valueOf(SInstance.getValor()); //TODO: this should be re-evaluated
         keySeed = keySeed.add(BigInteger.ONE);
         return String.valueOf(keySeed);
     }

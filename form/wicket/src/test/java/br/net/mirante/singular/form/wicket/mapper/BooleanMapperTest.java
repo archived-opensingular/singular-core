@@ -33,8 +33,7 @@ public class BooleanMapperTest {
     private STypeComposite<? extends SIComposite> baseCompositeField;
     private STypeBoolean field1;
 
-    @Before
-    public void createDicionario() {
+    @Before public void createDicionario() {
         dicionario = SDictionary.create();
     }
 
@@ -59,16 +58,14 @@ public class BooleanMapperTest {
         form = driver.newFormTester("test-form", false);
     }
 
-    @Test
-    public void rendersSpecifiedLabel(){
+    @Test public void rendersSpecifiedLabel(){
         setupPage();
         buildPage();
 
         driver.assertContains("Aceito os termos e condições");
     }
 
-    @Test
-    public void rendersACheckBoxByDefault(){
+    @Test public void rendersACheckBoxByDefault(){
         setupPage();
         buildPage();
 
@@ -76,8 +73,26 @@ public class BooleanMapperTest {
         assertThat(inputs).hasSize(1);
     }
 
-    @Test
-    public void submitsFalseThroutghTheCheckbox(){
+    @Test public void rendersACheckBoxByDefaultUnckecked(){
+        setupPage();
+        buildPage();
+
+        List<CheckBox> inputs = (List)findTag(form.getForm(), CheckBox.class);
+        CheckBox opt1 = inputs.get(0);
+        assertThat(opt1.getValue()).isEqualTo("");
+    }
+
+    @Test public void rendersACheckBoxCheckedWhenValueIsTrue(){
+        setupPage();
+        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        buildPage();
+
+        List<CheckBox> inputs = (List)findTag(form.getForm(), CheckBox.class);
+        CheckBox opt1 = inputs.get(0);
+        assertThat(opt1.getValue()).isEqualTo("true");
+    }
+
+    @Test public void submitsFalseThroutghTheCheckbox(){
         setupPage();
         buildPage();
 
@@ -89,8 +104,7 @@ public class BooleanMapperTest {
         assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
     }
 
-    @Test
-    public void submitsTrueThroutghTheCheckbox(){
+    @Test public void submitsTrueThroutghTheCheckbox(){
         setupPage();
         buildPage();
 
@@ -104,8 +118,7 @@ public class BooleanMapperTest {
         assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
     }
 
-    @Test
-    public void rendersARadioChoiceIfAsked(){
+    @Test public void rendersARadioChoiceIfAsked(){
         setupPage();
         field1.withRadioView();
         buildPage();
@@ -113,13 +126,33 @@ public class BooleanMapperTest {
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly(true, false);
+                .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("Sim", "Não");
     }
 
-    @Test
-    public void submitsTheValueThroughTheRadioYes(){
+    @Test public void rendersNoChoiceIfNoneIsSelected(){
+        setupPage();
+        field1.withRadioView();
+        buildPage();
+
+        List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
+
+        assertThat(inputs.get(0).getValue()).isNullOrEmpty();
+    }
+
+    @Test public void rendersFalseChoiceIfFalseIsSelected(){
+        setupPage();
+        field1.withRadioView();
+        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        buildPage();
+
+        List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
+
+        assertThat(inputs.get(0).getValue()).isEqualTo("true");
+    }
+
+    @Test public void submitsTheValueThroughTheRadioYes(){
         setupPage();
         field1.withRadioView();
         buildPage();
@@ -133,8 +166,7 @@ public class BooleanMapperTest {
         assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
     }
 
-    @Test
-    public void submitsTheValueThroughTheRadioNo(){
+    @Test public void submitsTheValueThroughTheRadioNo(){
         setupPage();
         field1.withRadioView();
         buildPage();
@@ -148,8 +180,7 @@ public class BooleanMapperTest {
         assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
     }
 
-    @Test
-    public void rendersARadioChoiceWithPersonalizedLabel(){
+    @Test public void rendersARadioChoiceWithPersonalizedLabel(){
         setupPage();
         field1.withRadioView("For Sure", "No Way");
         buildPage();
@@ -157,7 +188,7 @@ public class BooleanMapperTest {
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly(true, false);
+                .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("For Sure", "No Way");
     }
