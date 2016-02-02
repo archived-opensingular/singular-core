@@ -1,21 +1,26 @@
 package br.net.mirante.singular.showcase.view.page;
 
-import br.net.mirante.singular.form.wicket.util.ProcessadorCondigoFonte;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.util.List;
+
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
-import java.util.List;
+import br.net.mirante.singular.form.wicket.util.ProcessadorCondigoFonte;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class ItemCodePanel extends Panel {
 
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        response.render(OnDomReadyHeaderItem.forScript("SyntaxHighlighter.defaults['toolbar'] = false;SyntaxHighlighter.all();"));
+        final StringBuilder initScript = new StringBuilder();
+        initScript.append("SyntaxHighlighter.defaults['toolbar'] = false;");
+        initScript.append("SyntaxHighlighter.defaults['quick-code'] = false;");
+        initScript.append("SyntaxHighlighter.all();");
+        response.render(OnDomReadyHeaderItem.forScript(initScript.toString()));
     }
 
     public ItemCodePanel(String id, IModel<String> code, IModel<String> extension) {
