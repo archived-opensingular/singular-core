@@ -1,5 +1,26 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.MarkupStream;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.Response;
+
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -18,27 +39,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.MarkupStream;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.Response;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 /**
@@ -54,7 +54,7 @@ public class SelectInputModalContainer extends BSContainer {
     private IModel<String> valueLabelModel;
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, Model<String> valueLabelModel) {
+                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, IModel<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -245,13 +245,19 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
-        MOptionsConfig miProvider = model.getObject().getOptionsConfig();
-        SIComposite composto = (SIComposite) miProvider.getValueFromKey(String.valueOf(s.getValue()));
-        for (String field : view.searchFields()) {
-            Object value = Value.of((SISimple<?>) composto.getCampo(field));
-            String nValue = String.valueOf(value).toLowerCase();
-            if (nValue.contains(termo)) return true;
+        final MOptionsConfig miProvider = model.getObject().getOptionsConfig();
+        final SInstance si = miProvider.getValueFromKey(String.valueOf(s.getValue()));
+
+        if (SIComposite.class.isAssignableFrom(si.getClass())) {
+            for (String field : view.searchFields()) {
+                final Object value = Value.of((SISimple<?>) ((SIComposite) si).getCampo(field));
+                final String nValue = String.valueOf(value).toLowerCase();
+                if (nValue.contains(termo)) {
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 
