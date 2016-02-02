@@ -51,7 +51,7 @@ public class SelectOption implements IModel {
 
     @Override
     public String toString() {
-        return String.format("SelectOption('%s','%s')", value, selectLabel);
+        return String.format("SelectOption('%s','%s')", selectLabel, value);
     }
 
     @Override
@@ -61,7 +61,6 @@ public class SelectOption implements IModel {
         boolean eq = true;
         SelectOption op = (SelectOption) obj;
         eq &= value != null && value.equals(op.value);
-
         return eq;
     }
 

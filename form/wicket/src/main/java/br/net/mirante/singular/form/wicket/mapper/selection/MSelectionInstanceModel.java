@@ -1,7 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import org.apache.wicket.model.IModel;
@@ -38,7 +40,12 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     public void setObject(T object) {
         SInstance target = getTarget();
         if (object instanceof SelectOption) {
-            setValueAt(target, (SelectOption) object, target.getOptionsConfig());
+            SelectOption sel = (SelectOption) object;
+            if(target instanceof SIBoolean){
+                target.setValor(sel.getValue());
+            }else{
+                setValueAt(target, (SelectOption) object, target.getOptionsConfig());
+            }
         } else if (object instanceof Collection) {
             setListValueAt(target, (Collection) object);
         } else if (object == null) {
