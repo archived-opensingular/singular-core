@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.validation.validator;
 
-import org.apache.commons.validator.routines.EmailValidator;
-
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.validation.IInstanceValidatable;
+import br.net.mirante.singular.form.validation.SingularEmailValidator;
 
-public enum MEmailValidator implements IInstanceValueValidator<SIString, String> {
+public enum MEmailValidator implements IInstanceValueValidator<SIString, String>  {
 
     /**
      * Local address is considered invalid
@@ -28,8 +28,13 @@ public enum MEmailValidator implements IInstanceValueValidator<SIString, String>
 
     @Override
     public void validate(IInstanceValidatable<SIString> validatable, String value) {
-        if (!EmailValidator.getInstance(allowLocal).isValid(value)) {
-            validatable.error("Email inválido");
+        try {
+            boolean isValid = SingularEmailValidator.getInstance(allowLocal).isValid(value);
+            if(!isValid){
+                validatable.error("Email inválido");
+            }
+        } catch (SingularFormException e){
+            validatable.error(e.getMessage());
         }
     }
 }
