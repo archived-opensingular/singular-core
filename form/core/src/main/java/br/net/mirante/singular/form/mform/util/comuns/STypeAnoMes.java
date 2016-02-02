@@ -36,7 +36,7 @@ public class STypeAnoMes extends STypeSimple<SIAnoMes, YearMonth> {
             return YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
         } else if (valor instanceof String){
             DateTimeFormatter monthAndYear = new DateTimeFormatterBuilder()
-                .appendPattern("MMyyyy")
+                .appendPattern("MM/yyyy")
                 .toFormatter();
             return YearMonth.parse((String)valor, monthAndYear);
         }
@@ -77,7 +77,7 @@ public class STypeAnoMes extends STypeSimple<SIAnoMes, YearMonth> {
         if (valorOriginal == null) {
             return null;
         }
-        return String.format("%02d%04d", valorOriginal.getMonthValue(), valorOriginal.getYear());
+        return String.format("%02d/%04d", valorOriginal.getMonthValue(), valorOriginal.getYear());
     }
 
     @Override
