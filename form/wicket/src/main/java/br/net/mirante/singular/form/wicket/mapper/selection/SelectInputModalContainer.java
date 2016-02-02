@@ -245,13 +245,19 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
-        MOptionsConfig miProvider = model.getObject().getOptionsConfig();
-        SIComposite composto = (SIComposite) miProvider.getValueFromKey(String.valueOf(s.getValue()));
-        for (String field : view.searchFields()) {
-            Object value = Value.of((SISimple<?>) composto.getCampo(field));
-            String nValue = String.valueOf(value).toLowerCase();
-            if (nValue.contains(termo)) return true;
+        final MOptionsConfig miProvider = model.getObject().getOptionsConfig();
+        final SInstance si = miProvider.getValueFromKey(String.valueOf(s.getValue()));
+
+        if (SIComposite.class.isAssignableFrom(si.getClass())) {
+            for (String field : view.searchFields()) {
+                final Object value = Value.of((SISimple<?>) ((SIComposite) si).getCampo(field));
+                final String nValue = String.valueOf(value).toLowerCase();
+                if (nValue.contains(termo)) {
+                    return true;
+                }
+            }
         }
+
         return false;
     }
 
