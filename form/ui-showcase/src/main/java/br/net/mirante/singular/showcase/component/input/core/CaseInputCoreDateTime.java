@@ -6,6 +6,7 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 public class CaseInputCoreDateTime extends CaseBase {
 
     public CaseInputCoreDateTime() {
-        super("Date", "Date and Time");
+        super("Date", "Data e Hora");
+        setDescriptionHtml("Componente para inserção de data e hora.");
     }
 }

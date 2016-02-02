@@ -68,7 +68,9 @@ public class InputMaskBehavior extends Behavior {
         /**
          * <p>Máscara para CEP.</p>
          */
-        CEP("99.999-999");
+        CEP("99.999-999"),
+
+        TIME("99:99");
 
         private String mask;
 
