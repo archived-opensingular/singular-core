@@ -1,14 +1,5 @@
 package br.net.mirante.singular.view.template;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
@@ -25,8 +16,6 @@ import br.net.mirante.singular.wicket.UIAdminSession;
 
 //@AuthorizeAction(action = Action.RENDER, roles = Roles.ADMIN)
 public abstract class Template extends WebPage {
-    
-    private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
     @Override
     protected void onInitialize() {
@@ -47,9 +36,6 @@ public abstract class Template extends WebPage {
         response.render(CssHeaderItem.forReference(new PackageResourceReference(Template.class, "Template.css")));
         if (withSideBar()) {
             addQuickSidebar(response);
-        }
-        for (String script : initializerJavascripts) {
-            response.render(OnDomReadyHeaderItem.forScript(script));
         }
     }
 
@@ -92,29 +78,4 @@ public abstract class Template extends WebPage {
         response.render(OnDomReadyHeaderItem.forScript(script));
     }
 
-    @Override
-    public void onEvent(IEvent<?> event) {
-        super.onEvent(event);
-        Object payload = event.getPayload();
-        if (payload instanceof AjaxRequestTarget) {
-            AjaxRequestTarget target = (AjaxRequestTarget) payload;
-            target.addListener(new AjaxRequestTarget.IListener() {
-                @Override
-                public void onBeforeRespond(Map<String, Component> map, AjaxRequestTarget target) {
-                }
-
-                @Override
-                public void onAfterRespond(Map<String, Component> map, AjaxRequestTarget.IJavaScriptResponse response) {
-                    if (!map.isEmpty()) {
-                        initializerJavascripts.forEach(response::addJavaScript);
-                    }
-                }
-
-                @Override
-                public void updateAjaxAttributes(AbstractDefaultAjaxBehavior behavior, AjaxRequestAttributes attributes) {
-
-                }
-            });
-        }
-    }
 }
