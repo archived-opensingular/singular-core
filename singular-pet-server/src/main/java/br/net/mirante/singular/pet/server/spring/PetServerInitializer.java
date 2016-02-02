@@ -30,6 +30,7 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(getSpringConfigurationClass());
         beforeSingularConfiguration(ctx, applicationContext);
+        addSessionListener(ctx);
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);
