@@ -22,4 +22,12 @@ public abstract class SIComparable<TIPO_NATIVO extends Comparable<TIPO_NATIVO>> 
     public boolean isBefore(SIComparable<TIPO_NATIVO> outro) {
         return compareTo(outro) < 0;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof SIComparable){
+            return compareTo((SIComparable) obj) == 0;
+        }
+        return false;
+    }
 }

@@ -52,9 +52,14 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     @SuppressWarnings("unchecked")
     protected T getSimpleSelection(SInstance target, MOptionsConfig provider) {
         if (target != null) {
-            String key = provider.getKeyFromOptions(target);
-            String label = provider.getLabelFromKey(key);
-            return (T) new SelectOption(label, key);
+//            String key = provider.getKeyFromOptions(target);
+//            String label = provider.getLabelFromKey(key);
+//            return (T) new SelectOption(label, key);
+            SInstance v = provider.getValueFromKey(String.valueOf(target.getValor()));
+            if(v!= null){
+                return (T) new SelectOption(v.getSelectLabel(), v.getValor());
+            }
+            return (T) new SelectOption(null, null);
         }
         return null;
     }

@@ -80,8 +80,8 @@ public class STypeStringKeyValueRadioTest {
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
-//        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-//                .containsOnly(true, false);
+        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                .containsOnly("IMG", "TXT", "BIN");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("Imagem", "Texto", "Binário");
     }
@@ -93,9 +93,10 @@ public class STypeStringKeyValueRadioTest {
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
-//        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-//                .containsOnly(true, false);
+        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                .containsOnly("IMG", "TXT", "BIN");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("Imagem", "Texto", "Binário");
+        assertThat(inputs.get(0).getValue()).isEqualTo("TXT");
     }
 }

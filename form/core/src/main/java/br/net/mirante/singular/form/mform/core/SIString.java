@@ -15,11 +15,4 @@ public class SIString extends SIComparable<String> {
         return String.format("MIString('%s')", getValor());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if(obj instanceof SIString){
-            return compareTo((SIComparable<String>) obj) == 0;
-        }
-        return false;
-    }
 }

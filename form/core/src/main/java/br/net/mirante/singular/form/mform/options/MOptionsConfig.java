@@ -78,7 +78,7 @@ public class MOptionsConfig {
     }
 
     private String newUniqueKey(SInstance SInstance){
-        if(SInstance.getValor() != null) return String.valueOf(SInstance.getValor());
+        if(SInstance.getValor() != null) return String.valueOf(SInstance.getValor()); //TODO: this should be re-evaluated
         keySeed = keySeed.add(BigInteger.ONE);
         return String.valueOf(keySeed);
     }

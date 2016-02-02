@@ -125,8 +125,8 @@ public class BooleanMapperTest {
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
-//        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-//                .containsOnly(true, false);
+        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("Sim", "Não");
     }
@@ -149,7 +149,7 @@ public class BooleanMapperTest {
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
 
-        assertThat(inputs.get(0).getValue()).isEqualTo("false");
+        assertThat(inputs.get(0).getValue()).isEqualTo("true");
     }
 
     @Test public void submitsTheValueThroughTheRadioYes(){
@@ -187,8 +187,8 @@ public class BooleanMapperTest {
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
-//        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-//                .containsOnly(true, false);
+        assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
+                .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
                 .containsOnly("For Sure", "No Way");
     }
