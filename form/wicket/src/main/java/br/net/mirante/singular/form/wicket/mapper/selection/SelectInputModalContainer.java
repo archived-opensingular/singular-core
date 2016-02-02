@@ -10,6 +10,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.MarkupStream;
@@ -33,6 +34,7 @@ import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
 import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
@@ -52,6 +54,7 @@ public class SelectInputModalContainer extends BSContainer {
     private MSelecaoPorModalBuscaView view;
     private Label valueLabel;
     private IModel<String> valueLabelModel;
+    private IConsumer<IModel<?>> clearModel = m -> m.setObject(null);
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
                                      IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, IModel<String> valueLabelModel) {
@@ -114,6 +117,10 @@ public class SelectInputModalContainer extends BSContainer {
         BFModalWindow searchModal = new BFModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
         searchModal.setBody(buildConteudoModal(id, filterModel, searchModal));
+        /**
+         * Limpa o filtro apos fechar a modal
+         */
+        searchModal.setCloseIconCallback(target -> clearModel.accept(filterModel));
         return searchModal;
     }
 
@@ -130,17 +137,22 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private Component buildResultTable(String id, IModel<String> filterModel, final BFModalWindow modal) {
-        BSDataTableBuilder builder = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
+        final BSDataTableBuilder<SelectOption, Void, IColumn<SelectOption, Void>> builder
+                = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
         builder.appendPropertyColumn(Model.of(""), "selectLabel");
         appendAdditionalSearchFields(builder);
-        builder.appendColumn(new BSActionColumn<SelectOption, String>(Model.of(""))
+        builder.appendColumn(new BSActionColumn<SelectOption, Void>(Model.of(""))
                 .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
                     selectedModel.getObject().copyValueToInstance(model.getObject());
                     modal.hide(target);
                     target.add(valueLabel);
+                    /**
+                     * Limpa o filtro apos fechar a modal
+                     */
+                    clearModel.accept(filterModel);
                 }));
 
-        BSDataTable<SelectOption, String> table = builder.build("selectionModalTable");
+        BSDataTable<SelectOption, Void> table = builder.build("selectionModalTable");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
@@ -152,14 +164,13 @@ public class SelectInputModalContainer extends BSContainer {
         return table;
     }
 
-    private void appendAdditionalSearchFields(BSDataTableBuilder builder) {
+    private void appendAdditionalSearchFields(BSDataTableBuilder<SelectOption, Void, IColumn<SelectOption, Void>> builder) {
         for (String field : view.searchFields()) {
             builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
-                STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
-                SType<?> fieldType = selectType.getCampo(field);
-                SelectOption select = (SelectOption) m;
-                MOptionsConfig provider = model.getObject().getOptionsConfig();
-                SInstance instance = provider.getValueFromKey(String.valueOf(select.getValue()));
+                final STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
+                final SType<?> fieldType = selectType.getCampo(field);
+                final MOptionsConfig provider = model.getObject().getOptionsConfig();
+                final SInstance instance = provider.getValueFromKey(String.valueOf(m.getValue()));
                 return Value.of(instance, (STypeSimple) fieldType);
             });
         }
@@ -174,13 +185,13 @@ public class SelectInputModalContainer extends BSContainer {
         return fieldType.as(AtrBasic::new).getLabel();
     }
 
-    public void buildSearchField(String id, IModel<?> filterModel, BSGrid grid, Component table, Form<?> form) {
+    public void buildSearchField(String id, IModel<String> filterModel, BSGrid grid, Component table, Form<?> form) {
         BSControls formGroup = grid.newFormGroup();
 
         BSContainer inputGroup = new BSContainer(id + "inputGroup");
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", inputGroup);
 
-        TextField inputFiltro = new TextField("termo", filterModel);
+        TextField<String> inputFiltro = new TextField<>("termo", filterModel);
         inputGroup.appendTag("input", true, "class=\"form-control\"", inputFiltro);
 
         BSContainer inputGroupButton = new BSContainer(id + "inputGroupButton");
@@ -202,11 +213,11 @@ public class SelectInputModalContainer extends BSContainer {
         });
     }
 
-    public SortableDataProvider<SelectOption, String> buildDataProvider(
+    public SortableDataProvider<SelectOption, Void> buildDataProvider(
             IModel<? extends SInstance> model, final IModel<String> filtro) {
         SType<?> type = model.getObject().getMTipo();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
-        return new SortableDataProvider<SelectOption, String>() {
+        return new SortableDataProvider<SelectOption, Void>() {
             @Override
             public Iterator<? extends SelectOption> iterator(long first, long count) {
                 return filterOptions(filtro, options)
@@ -236,10 +247,9 @@ public class SelectInputModalContainer extends BSContainer {
     public boolean filter(IModel<String> filtro, SelectOption s) {
         if (filtro != null && filtro.getObject() != null) {
             String termo = filtro.getObject().toLowerCase();
-            String value = s.getSelectLabel().toString().toLowerCase();
+            String value = s.getSelectLabel().toLowerCase();
             if (value.contains(termo)) return true;
-            if (checkFilterAgainstAditionalFields(s, termo)) return true;
-            return false;
+            return checkFilterAgainstAditionalFields(s, termo);
         }
         return true;
     }
