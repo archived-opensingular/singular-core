@@ -1,10 +1,10 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
@@ -37,13 +37,13 @@ public class CaseGridTablePackage extends SPackage {
                     .as(AtrBootstrap::new).colPreference(2);
             entidadeCertificacao
                     .as(AtrBasic::new).label("Entidade")
-                    .as(AtrBootstrap::new).colPreference(10);
+                    .as(AtrBootstrap::new).colPreference(4);
             validadeCertificacao
                     .as(AtrBasic::new).label("Validade")
                     .as(AtrBootstrap::new).colPreference(2);
             nomeCertificacao
                     .as(AtrBasic::new).label("Nome")
-                    .as(AtrBootstrap::new).colPreference(10);
+                    .as(AtrBootstrap::new).colPreference(4);
         }
     }
 }
