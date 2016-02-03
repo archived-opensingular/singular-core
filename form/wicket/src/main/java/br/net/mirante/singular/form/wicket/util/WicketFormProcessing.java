@@ -137,7 +137,7 @@ public class WicketFormProcessing {
                     .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
     }
 
-    private static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
+    public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
         final Map<Integer, Set<IValidationError>> instanceErrors = validationContext.getErrorsByInstanceId();
 
         // associate errors to components

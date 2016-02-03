@@ -57,7 +57,8 @@ public class SelectInputModalContainer extends BSContainer {
     private IConsumer<IModel<?>> clearModel = m -> m.setObject(null);
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view, IModel<String> valueLabelModel) {
+                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view,
+                                     IModel<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
         this.modalContainer = modalContainer;
@@ -137,27 +138,36 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private Component buildResultTable(String id, IModel<String> filterModel, final BFModalWindow modal) {
-        final BSDataTableBuilder<SelectOption, Void, IColumn<SelectOption, Void>> builder
-                = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
+
+        final BSDataTableBuilder<SelectOption, Void, IColumn<SelectOption, Void>> builder;
+        builder = new BSDataTableBuilder<>(buildDataProvider(model, filterModel));
+
         builder.appendPropertyColumn(Model.of(""), "selectLabel");
         appendAdditionalSearchFields(builder);
-        builder.appendColumn(new BSActionColumn<SelectOption, Void>(Model.of(""))
-                .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
-                    selectedModel.getObject().copyValueToInstance(model.getObject());
-                    modal.hide(target);
-                    target.add(valueLabel);
-                    /**
-                     * Limpa o filtro apos fechar a modal
-                     */
-                    clearModel.accept(filterModel);
-                }));
+        builder
+                .appendColumn(new BSActionColumn<SelectOption, Void>(Model.of(""))
+                        .appendAction(Model.of("Selecionar"), (target, selectedModel) -> {
+                            selectedModel
+                                    .getObject()
+                                    .copyValueToInstance(model.getObject());
+                            modal.hide(target);
+                            target.add(valueLabel);
+                            /**
+                             * Limpa o filtro apos fechar a modal
+                             */
+                            clearModel.accept(filterModel);
+                        }));
 
         BSDataTable<SelectOption, Void> table = builder.build("selectionModalTable");
         table.add(new Behavior() {
             @Override
             public void onConfigure(Component component) {
                 super.onConfigure(component);
-                component.setVisible(((BSDataTable) component).getDataProvider().size() > 0);
+                boolean isEmpty = ((BSDataTable) component).getDataProvider().size() == 0;
+                if (isEmpty) {
+                    addInfoMessage("Nenhum registro encontrado.");
+                }
+                component.setVisible(!isEmpty);
             }
         });
         table.setVisible(false);
