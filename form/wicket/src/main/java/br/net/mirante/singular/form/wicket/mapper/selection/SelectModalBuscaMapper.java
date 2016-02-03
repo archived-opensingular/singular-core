@@ -16,9 +16,9 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
 
 
-    public Component appendInput(MView view, BSContainer bodyContainer,
-                                 BSControls formGroup, IModel<? extends SInstance> model,
-                                 IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
+                                 IModel<? extends SInstance> model, IModel<String> labelModel)
+    {
         if (view instanceof MSelecaoPorModalBuscaView) {
             return formGroupAppender(formGroup, bodyContainer, model, (MSelecaoPorModalBuscaView) view);
         }
@@ -26,10 +26,9 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     }
 
     protected Component formGroupAppender(BSControls formGroup, BSContainer modalContainer,
-                                          IModel<? extends SInstance> model,
-                                          MSelecaoPorModalBuscaView view) {
-        SelectInputModalContainer panel = new SelectInputModalContainer(
-                model.getObject().getNome() + "inputGroup",
+                                          IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view)
+    {
+        final SelectInputModalContainer panel = new SelectInputModalContainer(model.getObject().getNome() + "inputGroup",
                 formGroup, modalContainer, model, view, new OutputValueModel() {
             @Override
             public SInstance getMInstancia() {
@@ -57,12 +56,11 @@ public class SelectModalBuscaMapper implements ControlsFieldComponentMapper {
     abstract class OutputValueModel implements IMInstanciaAwareModel<String> {
 
         @Override
-        public void setObject(String object) {
-        }
+        public void setObject(String object) {}
 
         @Override
-        public void detach() {
-        }
+        public void detach() {}
+
     }
 }
 
