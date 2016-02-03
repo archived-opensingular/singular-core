@@ -1,5 +1,7 @@
 package br.net.mirante.singular.pet.server.wicket.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +34,12 @@ public class Peticao implements IModel {
     @Lob
     private String annotations;
 
+    private String description;
+
+    private String process;
+
+    private Date creationDate;
+
     public Peticao() {}
 
     public Peticao(String key) {
@@ -62,7 +70,7 @@ public class Peticao implements IModel {
         this.xml = xml;
     }
 
-    public String getAnnnotations() {
+    public String getAnnotations() {
         return annotations;
     }
 
@@ -88,4 +96,28 @@ public class Peticao implements IModel {
 
     @Override
     public void setObject(Object arg0) {}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 }

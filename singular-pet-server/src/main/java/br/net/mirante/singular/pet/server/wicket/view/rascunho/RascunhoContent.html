@@ -10,36 +10,13 @@
                     </div>
                 </div>
                 <div class="form-actions">
-                    <input type="submit" class="btn blue" wicket:id="pesquisar">
+                    <input type="submit" class="btn" wicket:id="pesquisar">
+                    <a class="btn blue" wicket:id="novo"></a>
                 </div>
             </form>
             <div class="dataTables_wrapper no-footer">
 
-                <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" >
-                    <thead>
-                        <tr>
-                            <th class="sorting">Número</th>
-                            <th class="sorting">Descrição</th>
-                            <th class="sorting">Processo</th>
-                            <th class="sorting">Data de criação</th>
-                            <th class="sorting">Ação</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr wicket:id="tabela">
-                            <td wicket:id="numero"></td>
-                            <td wicket:id="descricao"></td>
-                            <td wicket:id="processo"></td>
-                            <td wicket:id="dataCriacao"></td>
-                            <td>
-                                <a class="btn btn-sm btn-outline grey-salsa"><i class="fa fa-edit"></i> Edit</a>
-                                <a class="btn btn-sm btn-outline grey-salsa"><i class="fa fa-remove"></i> Remove</a>
-                            </td>
-                        </tr>
-                    </tbody>
-
-                </table>
+                <table wicket:id="tabela" ></table>
 
             </div>
         </div>
