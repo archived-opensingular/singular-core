@@ -7,6 +7,9 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -22,11 +25,14 @@ import br.net.mirante.singular.pet.server.wicket.model.Peticao;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public class RascunhoContent extends Content {
 
     public static final int ROWS_PER_PAGE = 10;
+
     @Inject
     private PeticaoDAO peticaoDAO;
 
@@ -37,6 +43,7 @@ public class RascunhoContent extends Content {
     private Form<?>             deleteForm   = new Form<>("delete-form");
 
     private String filtro = "";
+    private Peticao currentModel;
 
     public RascunhoContent(String id) {
         super(id);
@@ -77,11 +84,31 @@ public class RascunhoContent extends Content {
             }
         }.setBody(getMessage("label.button.insert")).add($b.attr("target", "blank")));
 
-        queue(setupDataTable());
+        listTable = setupDataTable();
+        queue(listTable);
+
+        deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                peticaoDAO.remove(currentModel);
+                currentModel = null;
+                target.add(RascunhoContent.this.listTable);
+                deleteModal.hide(target);
+            }
+        }).queue(new AjaxButton("cancel-delete-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                currentModel = null;
+                deleteModal.hide(target);
+            }
+        }));
+
+        queue(deleteModal);
 
     }
 
     private BSDataTable<Peticao, String> setupDataTable() {
+
         return new BSDataTableBuilder<>(createDataProvider())
                 .appendPropertyColumn(getMessage("label.table.column.number"),
                         "id", Peticao::getId)
@@ -91,7 +118,9 @@ public class RascunhoContent extends Content {
                         "process", Peticao::getProcess)
                 .appendPropertyColumn(getMessage("label.table.column.creation.date"),
                         "creationDate", Peticao::getCreationDate)
-                .appendColumn(new BSActionColumn<>($m.ofValue("")))
+                .appendColumn(new BSActionColumn<Peticao, String>(getMessage("label.table.column.actions"))
+                        .appendAction(getMessage("label.table.column.delete"),
+                        Icone.MINUS, this::deleteSelected))
                 .setRowsPerPage(ROWS_PER_PAGE)
                 .build("tabela");
     }
@@ -110,6 +139,11 @@ public class RascunhoContent extends Content {
                 return peticaoDAO.quickSearch(filtro, first, count, sortProperty, ascending).iterator();
             }
         };
+    }
+
+    private void deleteSelected(AjaxRequestTarget target, IModel<Peticao> model) {
+        currentModel = model.getObject();
+        deleteModal.show(target);
     }
 
     @Override
