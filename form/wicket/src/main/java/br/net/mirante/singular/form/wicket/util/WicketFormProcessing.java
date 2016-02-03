@@ -29,7 +29,7 @@ import br.net.mirante.singular.form.mform.options.MSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
-import br.net.mirante.singular.form.wicket.feedback.BFeedbackMessage;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackMessage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import static java.util.stream.Collectors.toSet;
@@ -175,10 +175,10 @@ public class WicketFormProcessing {
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 
             if (error.getErrorLevel() == ValidationErrorLevel.ERROR)
-                feedbackMessages.add(new BFeedbackMessage(component, message, FeedbackMessage.ERROR, instanceModel));
+                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.ERROR, instanceModel));
 
             else if (error.getErrorLevel() == ValidationErrorLevel.WARNING)
-                feedbackMessages.add(new BFeedbackMessage(component, message, FeedbackMessage.WARNING, instanceModel));
+                feedbackMessages.add(new SFeedbackMessage(component, message, FeedbackMessage.WARNING, instanceModel));
 
             else
                 throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());

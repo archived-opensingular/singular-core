@@ -41,7 +41,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.feedback.BFFeedbackPanel;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
@@ -100,7 +100,7 @@ public class CrudContent extends Content
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        queue(new BFFeedbackPanel("feedback", this));
+        queue(new SFeedbackPanel("feedback", this));
         Form<Object> optionsForm = new Form<>("optionsForm");
         optionsForm.queue(setUpTemplatesOptions());
         queue(optionsForm);

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
@@ -36,6 +37,11 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
+
+    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
+
+    public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
+    public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
     private final WicketBuildContext parent;
     private final BSContainer<?> container;
@@ -140,6 +146,22 @@ public class WicketBuildContext implements Serializable {
 
     public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
         return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
+    }
+
+    public void configureContainer(IModel<String> title) {
+        setHint(TITLE_KEY, title);
+    }
+    
+    public Optional<IModel<String>> resolveContainerTitle() {
+        return Optional.ofNullable(getHint(TITLE_KEY));
+    }
+    
+//    public boolean resolveReceivesInvisibleInnerComponentErrors() {
+//        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
+//    }
+
+    public static Optional<WicketBuildContext> get(Component comp) {
+        return Optional.ofNullable(comp.getMetaData(METADATA_KEY));
     }
 
     protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {

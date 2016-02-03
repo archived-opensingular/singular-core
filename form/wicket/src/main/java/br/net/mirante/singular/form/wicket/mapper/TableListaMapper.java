@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -34,34 +36,26 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListaMapper extends AbstractListaMapper {
 
-    @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<SList<SInstance>> mLista = $m.get(() -> (ctx.getCurrenttInstance()));
-        String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
+        final String strLabel = mLista.getObject().as(AtrBasic::new).getLabel();
         final IModel<String> label = $m.ofValue(strLabel);
         final ViewMode viewMode = ctx.getViewMode();
         final MView view = ctx.getView();
 
+        ctx.configureContainer(label);
         ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
 
         final BSContainer<?> parentCol = ctx.getContainer();
 
-        parentCol.appendComponent(id ->
-                        MetronicPanel.MetronicPanelBuilder.build(id,
-                                (header, form) ->
-                                        buildHeader(header, form, label),
-                                (content, form) ->
-                                        builContent(content, form, mLista, ctx.getUiBuilderWicket(), ctx, view, viewMode),
-                                (footer, form) ->
-                                        footer.setVisible(false)
-                        )
-        );
+        parentCol.appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
+            (header, form) -> buildHeader(header, form, label),
+            (content, form) -> builContent(content, form, mLista, ctx.getUiBuilderWicket(), ctx, view, viewMode),
+            (footer, form) -> footer.setVisible(false)));
 
     }
 
@@ -81,23 +75,23 @@ public class TableListaMapper extends AbstractListaMapper {
         final IModel<SType<SInstance>> tipoElementos = new MTipoElementosModel(mLista);
 
         final TemplatePanel template = content.newTemplateTag(t -> ""
-                + "    <table class='table table-condensed table-unstyled'>"
-                + "      <thead wicket:id='_h'></thead>"
-                + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody>"
-                + "      <tfoot wicket:id='_ft'>"
-                + "        <tr><td colspan='99' wicket:id='_fb'></td></tr>"
-                + "      </tfoot>"
-                + "    </table>");
+            + "    <table class='table table-condensed table-unstyled'>"
+            + "      <thead wicket:id='_h'></thead>"
+            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody>"
+            + "      <tfoot wicket:id='_ft'>"
+            + "        <tr><td colspan='99' wicket:id='_fb'></td></tr>"
+            + "      </tfoot>"
+            + "    </table>");
         final BSTSection thead = new BSTSection("_h").setTagName("thead");
         final ElementsView trView = new TableElementsView("_e", mLista, wicketBuilder, ctx, view, form, viewMode);
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
 
-
         final SType<?> tElementos = tipoElementos.getObject();
 
         if (tElementos instanceof STypeComposite<?>) {
 
+            @SuppressWarnings("unchecked")
             final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) tElementos;
             final BSTRow tr = thead.newRow();
 
@@ -110,9 +104,12 @@ public class TableListaMapper extends AbstractListaMapper {
             for (SType<?> tCampo : tComposto.getFields()) {
 
                 final Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
-                final BSTDataCell cell = tr.newTHeaderCell($m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel()));
+                final IModel<String> labelModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
+                final BSTDataCell cell = tr.newTHeaderCell(labelModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
                 final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isObrigatorio();
+
+                ctx.configureContainer(labelModel);
 
                 cell.setInnerStyle(width);
                 cell.add(new ClassAttributeModifier() {
@@ -141,37 +138,36 @@ public class TableListaMapper extends AbstractListaMapper {
         }
 
         if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteAdicaoDeLinha()
-                && viewMode.isEdition()) {
-//            AdicionarButton btn = appendAdicionarButton(mLista, form, footerBody);
-//            if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
-//                btn.add($b.classAppender("pull-right"));
-//            }
+            && viewMode.isEdition()) {
+            //            AdicionarButton btn = appendAdicionarButton(mLista, form, footerBody);
+            //            if (!((MTableListaView) view).isPermiteInsercaoDeLinha()) {
+            //                btn.add($b.classAppender("pull-right"));
+            //            }
         } else {
             footer.setVisible(false);
         }
         template
-                .add(thead)
-                .add(trView)
-                .add(footer
-                        .add(footerBody));
+            .add(thead)
+            .add(trView)
+            .add(footer
+                .add(footerBody));
     }
-
 
     private static final class TableElementsView extends ElementsView {
 
         private final WicketBuildContext ctx;
-        private final MView view;
-        private final Form<?> form;
-        private final ViewMode viewMode;
-        private final UIBuilderWicket wicketBuilder;
+        private final MView              view;
+        private final Form<?>            form;
+        private final ViewMode           viewMode;
+        private final UIBuilderWicket    wicketBuilder;
 
         private TableElementsView(String id,
-                                  IModel<SList<SInstance>> model,
-                                  UIBuilderWicket wicketBuilder,
-                                  WicketBuildContext ctx,
-                                  MView view,
-                                  Form<?> form,
-                                  ViewMode viewMode) {
+            IModel<SList<SInstance>> model,
+            UIBuilderWicket wicketBuilder,
+            WicketBuildContext ctx,
+            MView view,
+            Form<?> form,
+            ViewMode viewMode) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
@@ -194,8 +190,7 @@ public class TableListaMapper extends AbstractListaMapper {
                 SIComposite composto = (SIComposite) instancia;
                 STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getMTipo();
                 for (SType<?> tCampo : tComposto.getFields()) {
-                    final SInstanceCampoModel<SInstance> mCampo =
-                            new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
+                    final SInstanceCampoModel<SInstance> mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
                     wicketBuilder.build(ctx.createChild(tr.newCol(), true, mCampo), viewMode);
                 }
             } else {
@@ -203,7 +198,7 @@ public class TableListaMapper extends AbstractListaMapper {
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
-                    && viewMode.isEdition()) {
+                && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, tr.newCol());
             }
 

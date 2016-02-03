@@ -25,7 +25,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class PanelListaMapper extends AbstractListaMapper {
 
-    @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<SList<SInstance>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
@@ -35,50 +34,51 @@ public class PanelListaMapper extends AbstractListaMapper {
         final BSContainer<?> parentCol = ctx.getContainer();
         final ViewMode viewMode = ctx.getViewMode();
 
+        ctx.configureContainer(label);
+
         parentCol.appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(id,
-                        (heading, form) -> {
+            (heading, form) -> {
 
-                            heading.appendTag("span", new Label("_title", label));
-                            heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
+                heading.appendTag("span", new Label("_title", label));
+                heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-                        },
-                        (content, form) -> {
+            } ,
+            (content, form) -> {
 
-                            TemplatePanel list = content.newTemplateTag(t -> ""
-                                    + "    <ul class='list-group'>"
-                                    + "      <li wicket:id='_e' class='list-group-item'>"
-                                    + "        <div wicket:id='_r'></div>"
-                                    + "      </li>"
-                                    + "    </ul>");
-                            list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
+                TemplatePanel list = content.newTemplateTag(t -> ""
+                    + "    <ul class='list-group'>"
+                    + "      <li wicket:id='_e' class='list-group-item'>"
+                    + "        <div wicket:id='_r'></div>"
+                    + "      </li>"
+                    + "    </ul>");
+                list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
 
-                        },
-                        (footer, form) -> {
+            } ,
+            (footer, form) -> {
 
-                            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
-                                    && viewMode.isEdition()) {
-                                appendAdicionarButton(listaModel, form, footer);
-                            } else {
-                                footer.setVisible(false);
-                            }
+                if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                    && viewMode.isEdition()) {
+                    appendAdicionarButton(listaModel, form, footer);
+                } else {
+                    footer.setVisible(false);
+                }
 
-                        })
-        );
+            }));
     }
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final MView view;
-        private final Form<?> form;
+        private final MView              view;
+        private final Form<?>            form;
         private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
+        private final UIBuilderWicket    wicketBuilder;
 
         private PanelElementsView(String id,
-                                  IModel<SList<SInstance>> model,
-                                  UIBuilderWicket wicketBuilder,
-                                  WicketBuildContext ctx,
-                                  MView view,
-                                  Form<?> form) {
+            IModel<SList<SInstance>> model,
+            UIBuilderWicket wicketBuilder,
+            WicketBuildContext ctx,
+            MView view,
+            Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
             this.ctx = ctx;
@@ -97,15 +97,15 @@ public class PanelListaMapper extends AbstractListaMapper {
             final BSGrid btnGrid = row.newCol(1).newGrid();
 
             if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha())
-                    && viewMode.isEdition()) {
+                && viewMode.isEdition()) {
                 appendInserirButton(this, form, item, btnGrid.newColInRow())
-                        .add($b.classAppender("pull-right"));
+                    .add($b.classAppender("pull-right"));
             }
 
             if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha()
-                    && viewMode.isEdition()) {
+                && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, btnGrid.newColInRow())
-                        .add($b.classAppender("pull-right"));
+                    .add($b.classAppender("pull-right"));
             }
 
             item.add(grid);

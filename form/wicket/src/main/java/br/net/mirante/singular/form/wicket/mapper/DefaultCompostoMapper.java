@@ -1,7 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,36 +26,32 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class DefaultCompostoMapper implements IWicketComponentMapper {
 
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = HashMap::new;
-    static final HintKey<Boolean> INLINE = () -> false;
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+    static final HintKey<Boolean>                  INLINE     = () -> false;
 
-    @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
         new CompostoViewBuilder(ctx).buildView();
     }
 
     public static class CompostoViewBuilder {
 
-        protected WicketBuildContext ctx;
+        protected WicketBuildContext                          ctx;
         protected AbstractSInstanceModel<? extends SInstance> model;
-        protected SIComposite instance;
-        protected STypeComposite<SIComposite> type;
+        protected SIComposite                                 instance;
+        protected STypeComposite<SIComposite>                 type;
 
-        public CompostoViewBuilder(WicketBuildContext ctx){
+        @SuppressWarnings("unchecked")
+        public CompostoViewBuilder(WicketBuildContext ctx) {
             this.ctx = ctx;
             model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
             instance = ctx.getCurrenttInstance();
             type = (STypeComposite<SIComposite>) instance.getMTipo();
         }
 
-        @SuppressWarnings("unchecked")
         public void buildView() {
             final BSGrid grid = createCompositeGrid(ctx);
             buildFields(ctx, grid.newRow());
@@ -63,7 +61,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             final BSContainer<?> parentCol = ctx.getContainer();
             final BSGrid grid = parentCol.newGrid();
 
-            addLabelIfNeeded(grid);
+            addLabelIfNeeded(ctx, grid);
 
             grid.add(DisabledClassBehavior.getInstance());
             grid.setDefaultModel(model);
@@ -80,19 +78,19 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             return new SInstanceCampoModel<>(model, tCampo.getNomeSimples());
         }
 
-
-        protected BSCol addLabelIfNeeded(final BSGrid grid) {
+        protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
             IModel<String> label = $m.ofValue(trimToEmpty(instance.as(AtrBasic::new).getLabel()));
             if (isNotBlank(label.getObject())) {
                 BSCol column = grid.newColInRow();
                 column.appendTag("h3", new Label("_title", label));
+                ctx.configureContainer(label);
                 return column;
             }
             return null;
         }
 
         protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,
-                                final SInstanceCampoModel<SInstance> mCampo) {
+                                  final SInstanceCampoModel<SInstance> mCampo) {
 
             final SType<?> type = mCampo.getMInstancia().getMTipo();
             final SInstance iCampo = mCampo.getObject();
@@ -107,11 +105,11 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected BSCol configureColspan(WicketBuildContext ctx, SType<?> tCampo, final SInstance iCampo, BSCol col) {
-            final Map<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
-        /*
-        * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
-        * parametrizado ou transoformado em uma configuracao
-        */
+            final HashMap<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
+            /*
+            * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
+            * parametrizado ou transoformado em uma configuracao
+            */
             final int colPref;
 
             if (hintColWidths.containsKey(tCampo.getNome())) {

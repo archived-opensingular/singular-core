@@ -11,18 +11,18 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 
-public class BFFeedbackPanel extends BSFeedbackPanel {
+public class SFeedbackPanel extends BSFeedbackPanel {
 
-    public BFFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
+    public SFeedbackPanel(String id, Component fence, IFeedbackMessageFilter filter) {
         super(id, fence, filter);
     }
-    public BFFeedbackPanel(String id, Component fence) {
+    public SFeedbackPanel(String id, Component fence) {
         super(id, fence);
     }
-    public BFFeedbackPanel(String id, IFeedbackMessageFilter filter) {
+    public SFeedbackPanel(String id, IFeedbackMessageFilter filter) {
         super(id, filter);
     }
-    public BFFeedbackPanel(String id) {
+    public SFeedbackPanel(String id) {
         super(id);
     }
 
@@ -32,13 +32,13 @@ public class BFFeedbackPanel extends BSFeedbackPanel {
         if (component instanceof Label) {
             final Label label = (Label) component;
 
-            if (message instanceof BFeedbackMessage) {
-                final BFeedbackMessage bfm = (BFeedbackMessage) message;
+            if (message instanceof SFeedbackMessage) {
+                final SFeedbackMessage bfm = (SFeedbackMessage) message;
 
                 final SInstance instance = bfm.getInstanceModel().getObject();
                 final SInstance parentContext = WicketFormUtils.resolveInstance(getFence()).orElse(null);
                 final String labelPath = StringUtils.defaultString(
-                    MFormUtil.generateUserFriendlyPath(instance, parentContext),
+                    WicketFormUtils.generateTitlePath(getFence(), parentContext, message.getReporter(), instance),
                     MFormUtil.generatePath(instance, it -> it == parentContext));
 
                 label.setDefaultModelObject(labelPath + " : " + bfm.getMessage());
