@@ -74,10 +74,8 @@ public class WicketFormProcessing {
     }
 
     public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
-
-        if (fieldInstance == null || fieldInstance.getObject() == null) {
+        if (fieldInstance == null || fieldInstance.getObject() == null)
             return;
-        }
 
         // Validação do valor do componente
         final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
@@ -111,12 +109,8 @@ public class WicketFormProcessing {
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
                 if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    final SInstance currentIstance = ((IMInstanciaAwareModel) c.getDefaultModel()).getMInstancia();
-                    if (predicate.test(c, currentIstance)) {
-                        // Limpa os campos denpendentes.
-                        if (c instanceof FormComponent) {
-                            currentIstance.clearInstance();
-                        }
+                    if (predicate.test(c, ((IMInstanciaAwareModel) c.getDefaultModel()).getMInstancia())) {
+                        clearTargetOnChange(c);
                         t.add(c);
                     }
                 }
@@ -130,6 +124,11 @@ public class WicketFormProcessing {
 //                    .filter(c -> c != null)
 //                    .forEach(t::add);
         });
+     }
+
+    private static void clearTargetOnChange(Component c) {
+        Object obj = c.getDefaultModel().getObject();
+        if (obj instanceof SInstance){  ((SInstance) obj).clearInstance();  }
     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {

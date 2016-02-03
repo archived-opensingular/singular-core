@@ -16,7 +16,7 @@ public class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
         this.model = model;
     }
     @Override
-    protected void onUpdate(AjaxRequestTarget target) {
+    public void onUpdate(AjaxRequestTarget target) {
         listener.onUpdate(this.getComponent(), target, model);
     }
 }
