@@ -12,8 +12,8 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -22,14 +22,14 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
-    protected static AdicionarButton appendAdicionarButton(final IModel<SList<SInstance>> mLista, final Form<?> form, final BSContainer<?> cell) {
-        AdicionarButton btn = new AdicionarButton("_add", form, mLista);
+    protected static AddButton appendAddButton(final IModel<SList<SInstance>> mLista, final Form<?> form, final BSContainer<?> cell) {
+        AddButton btn = new AddButton("_add", form, mLista);
         cell
             .newTemplateTag(t -> ""
                 + "<button"
                 + " wicket:id='_add'"
-                + " class='btn btn-success btn-sm'"
-                + " style='padding:5px 3px 1px;margin-top:3px;margin-right:7px;'><i class='" + Icone.PLUS + "'></i>"
+                + " class='btn btn-success btn-sm pull-right'"
+                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
                 + "</button>"
             ).add(btn);
         return btn;
@@ -143,9 +143,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         }
     }
 
-    protected static final class AdicionarButton extends ActionAjaxButton {
+    protected static final class AddButton extends ActionAjaxButton {
         private final IModel<SList<SInstance>> modelLista;
-        private AdicionarButton(String id, Form<?> form, IModel<SList<SInstance>> mLista) {
+        private AddButton(String id, Form<?> form, IModel<SList<SInstance>> mLista) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;

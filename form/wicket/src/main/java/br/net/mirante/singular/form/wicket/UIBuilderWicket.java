@@ -1,7 +1,35 @@
 package br.net.mirante.singular.form.wicket;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.view.*;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -29,7 +57,7 @@ import br.net.mirante.singular.form.wicket.mapper.MonetarioMapper;
 import br.net.mirante.singular.form.wicket.mapper.PanelListaMapper;
 import br.net.mirante.singular.form.wicket.mapper.StringMapper;
 import br.net.mirante.singular.form.wicket.mapper.TabMapper;
-import br.net.mirante.singular.form.wicket.mapper.TableListaMapper;
+import br.net.mirante.singular.form.wicket.mapper.TableListMapper;
 import br.net.mirante.singular.form.wicket.mapper.TelefoneNacionalMapper;
 import br.net.mirante.singular.form.wicket.mapper.TextAreaMapper;
 import br.net.mirante.singular.form.wicket.mapper.YearMonthMapper;
@@ -47,13 +75,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -64,7 +85,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     }
 
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
-        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrenttInstance());
+        final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
         if(ctx.isRootContext() && ctx.isAnnotationEnabled()){ //TODO: Fabs: Check is is annotation enabled
             ctx.init(this, viewMode);
@@ -129,8 +150,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
                 .register(STypeLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
                 .register(STypeLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
-                .register(STypeLista.class,                                             TableListaMapper::new)
-                .register(STypeLista.class,      MTableListaView.class,                 TableListaMapper::new)
+                .register(STypeLista.class,                                             TableListMapper::new)
+                .register(STypeLista.class,      MTableListaView.class,                 TableListMapper::new)
                 .register(STypeLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
                 .register(STypeLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
                 .register(STypeDataHora.class,                                          DateTimeMapper::new)
@@ -156,7 +177,7 @@ class AnnotationBuilder {
         WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance) ctx.getCurrenttInstance());
+        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance) ctx.getCurrentInstance());
     }
 
     private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
