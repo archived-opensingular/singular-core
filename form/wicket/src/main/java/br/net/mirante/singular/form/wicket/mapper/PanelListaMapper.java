@@ -45,7 +45,8 @@ public class PanelListaMapper extends AbstractListaMapper {
                             if ((view instanceof MPanelListaView)
                                     && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
                                     && viewMode.isEdition()) {
-                                appendAddButton(listaModel, form, heading);
+                                appendAddButton(listaModel, form, heading, false)
+                                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
                             }
                         },
                         (content, form) -> {
@@ -60,7 +61,13 @@ public class PanelListaMapper extends AbstractListaMapper {
 
                         },
                         (footer, form) -> {
+                            footer.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
                             footer.setVisible(false);
+                            if ((view instanceof MPanelListaView)
+                                    && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                                    && viewMode.isEdition()) {
+                                appendAddButton(listaModel, form, footer, true);
+                            }
                         })
         );
     }

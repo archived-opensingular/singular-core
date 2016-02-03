@@ -56,7 +56,12 @@ public class TableListMapper extends AbstractListaMapper {
                     id,
                     (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
                     (content, form) -> builContent(content, form, list, ctx, view, isEdition),
-                    (footer, form) -> footer.setVisible(false)
+                    (footer, form) -> {
+                        footer.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
+                        if (view.isPermiteAdicaoDeLinha() && isEdition) {
+                            appendAddButton(list, form, footer, true);
+                        }
+                    }
             ));
         }
     }
@@ -70,14 +75,14 @@ public class TableListMapper extends AbstractListaMapper {
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
         if (view.isPermiteAdicaoDeLinha() && isEdition) {
-            appendAddButton(list, form, header);
+            appendAddButton(list, form, header, false)
+                    .add($b.onConfigure(c -> c.setVisible(list.getObject().isEmpty())));
         }
 
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
-
 
         final String markup = ""
                 + " <table class='table table-condensed table-unstyled'>                                             "
@@ -89,6 +94,8 @@ public class TableListMapper extends AbstractListaMapper {
                 + " </table>                                                                                         ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
+        template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
+
         final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
         final ElementsView trView = new TableElementsView("_e", list, ctx, form);
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
