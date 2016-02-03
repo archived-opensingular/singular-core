@@ -52,7 +52,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
 
     private <I extends SInstance, T extends SType<I>> T addInterno(String localName, T type) {
         if (instanceCount > 0){
-            throw new SingularFormException("Esse MTipo já possui instancias associadas, não é seguro alterar sua definição. ");
+            throw new SingularFormException("O MTipo '"+type.getNome()+"' já possui instancias associadas, não é seguro alterar sua definição. ");
         }
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();

@@ -233,7 +233,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             SIComposite composto = (SIComposite) o;
             STypeSimple mtipo = (STypeSimple) mTipoModel.getObject();
             SISimple instancia = ((SISimple) composto.findDescendant(mtipo).get());
-            return instancia.getValor();
+            return instancia.getDisplayString();
         });
     }
 

@@ -38,17 +38,19 @@ public class BooleanMapperTest {
     }
 
     protected void setupPage() {
-        driver = new WicketTester(new TestApp());
-        page = new TestPage();
-        page.setDicionario(dicionario);
-        page.enableAnnotation();
         localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
+
+        page = new TestPage();
+        page.setDicionario(dicionario);
+        page.setNewInstanceOfType(baseCompositeField.getNome());
+
+        driver = new WicketTester(new TestApp());
+        page.enableAnnotation();
 
         field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
         field1.asAtrBasic().label("Aceito os termos e condições");
 
-        page.setNewInstanceOfType(baseCompositeField.getNome());
     }
 
     protected void buildPage() {
