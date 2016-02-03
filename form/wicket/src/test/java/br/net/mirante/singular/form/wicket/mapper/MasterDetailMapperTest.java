@@ -12,16 +12,15 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-/**
- * Created by nuk on 03/02/16.
- */
 public class MasterDetailMapperTest {
     protected SDictionary dict;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
+    private STypeComposite<?> baseCompositeField;
+
     protected FormTester form;
-    private STypeComposite<?> baseCompositeField, listElementType;
+    private STypeComposite<?> listElementType;
     private STypeBoolean field1;
     private STypeAnoMes date;
     private STypeDecimal number;
@@ -30,15 +29,7 @@ public class MasterDetailMapperTest {
 
     protected void setup() {
         createBaseType();
-
-        listBaseType = baseCompositeField.addCampoListaOfComposto("listOf", "compositeStuff");
-        listElementType = listBaseType.getTipoElementos();
-        date = listElementType.addCampo("date", STypeAnoMes.class);
-        number = listElementType.addCampo("number", STypeDecimal.class);
-        cpf = listElementType.addCampo("cpf", STypeCPF.class);
-
-        listBaseType.withView(new MListMasterDetailView().col(date).col(number));
-
+        loadTestType(baseCompositeField);
         setupPage();
     }
 
@@ -61,6 +52,16 @@ public class MasterDetailMapperTest {
         driver.startPage(page);
 
         form = driver.newFormTester("test-form", false);
+    }
+
+    private void loadTestType(STypeComposite<?> baseCompositeField) {
+        listBaseType = baseCompositeField.addCampoListaOfComposto("listOf", "compositeStuff");
+        listElementType = listBaseType.getTipoElementos();
+        date = listElementType.addCampo("date", STypeAnoMes.class);
+        number = listElementType.addCampo("number", STypeDecimal.class);
+        cpf = listElementType.addCampo("cpf", STypeCPF.class);
+
+        listBaseType.withView(new MListMasterDetailView().col(date).col(number));
     }
 
     @Test public void rendersDataDisplayValuesOnTable(){

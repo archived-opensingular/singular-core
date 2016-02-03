@@ -25,7 +25,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class BooleanMapperTest {
-    protected static SDictionary dicionario;
+    //TODO: Fabs: Genralizar esses testes
+    protected SDictionary dicionario;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
@@ -33,24 +34,21 @@ public class BooleanMapperTest {
     private STypeComposite<? extends SIComposite> baseCompositeField;
     private STypeBoolean field1;
 
-    @Before public void createDicionario() {
-        dicionario = SDictionary.create();
-    }
-
     protected void setupPage() {
+        dicionario = SDictionary.create();
         localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
+
+        field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
+        field1.asAtrBasic().label("Aceito os termos e condições");
+
+        driver = new WicketTester(new TestApp());
 
         page = new TestPage();
         page.setDicionario(dicionario);
         page.setNewInstanceOfType(baseCompositeField.getNome());
 
-        driver = new WicketTester(new TestApp());
         page.enableAnnotation();
-
-        field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
-        field1.asAtrBasic().label("Aceito os termos e condições");
-
     }
 
     protected void buildPage() {
