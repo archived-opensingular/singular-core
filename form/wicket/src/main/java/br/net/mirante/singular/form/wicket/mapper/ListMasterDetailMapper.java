@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.util.xml.MParser;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -18,9 +19,9 @@ import org.apache.wicket.model.Model;
 import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -35,8 +36,8 @@ import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
@@ -90,18 +91,31 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             protected void buildHeading(BSContainer<?> heading, Form<?> form) {
                 heading.appendTag("span", new Label("_title", listaLabel));
                 heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listaLabel.getObject()))));
-            }
-
-            @Override
-            protected void buildFooter(BSContainer<?> footer, Form<?> form) {
                 if (viewMode.isEdition() && ((MListMasterDetailView) view).isNewElementEnabled()) {
-                    appendAdicionarButton(footer, modal);
+                    appendAddButton(heading, modal);
                 }
             }
 
             @Override
+            protected void buildFooter(BSContainer<?> footer, Form<?> form) {
+                footer.setVisible(false);
+            }
+
+            @Override
             protected void buildContent(BSContainer<?> content, Form<?> form) {
-                content.appendTag("table", true, null, id -> buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode));
+                content.appendTag("table", true, null, (id) -> {
+                    BSDataTable bsDataTable = buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode);
+                    bsDataTable.add(new Behavior() {
+                        @Override
+                        public void onConfigure(Component component) {
+                            super.onConfigure(component);
+                            if (ctx.getCurrentInstance() instanceof SList) {
+                                component.setVisible(!((SList) ctx.getCurrentInstance()).isEmpty());
+                            }
+                        }
+                    });
+                    return bsDataTable;
+                });
             }
         });
     }
@@ -202,26 +216,28 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     }
 
-    private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
-                                      IModel<? extends SInstance> model,
-                                      MasterDetailModal modal,
-                                      WicketBuildContext ctx,
-                                      ViewMode viewMode,
+    private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<? extends SInstance> model,
+                                      MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode,
                                       MListMasterDetailView view) {
-
         builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
-                (target, rowModel) -> {
-                    SList sList = ((SList) model.getObject());
-                    sList.remove(sList.indexOf(rowModel.getObject()));
-                    target.add(ctx.getContainer());
-                });
+                actionColumn.appendAction(
+                        new ActionConfig()
+                                .iconeModel(Model.of(Icone.MINUS))
+                                .buttonModel(Model.of("red"))
+                                .style($m.ofValue("padding:5px 3px 1px;")),
+                        (target, rowModel) -> {
+                            SList sList = ((SList) model.getObject());
+                            sList.remove(sList.indexOf(rowModel.getObject()));
+                            target.add(ctx.getContainer());
+                        });
             }
-
-            Icone iconeBotaoAbrirModal = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
-
-            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)).buttonModel(Model.of("blue-madison")),
+            final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
+            actionColumn.appendAction(
+                    new ActionConfig()
+                            .iconeModel(Model.of(openModalIcon))
+                            .buttonModel(Model.of("blue-madison"))
+                            .style($m.ofValue("padding:5px 3px 1px;")),
                     (target, rowModel) -> {
                         modal.showExisting(target, rowModel, ctx);
                     }
@@ -242,13 +258,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
     @SuppressWarnings("unchecked")
-    protected void appendAdicionarButton(BSContainer<?> container, MasterDetailModal modal) {
+    protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal) {
         container
                 .newTemplateTag(t -> ""
                                 + "<button"
                                 + " wicket:id='_add'"
-                                + " class='btn btn-success btn-sm'"
-                                + " style='padding:5px 3px 1px;margin-top:3px;margin-right:7px;'><i class='" + Icone.PLUS + "'></i>"
+                                + " class='btn btn-success btn-sm pull-right'"
+                                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
                                 + "</button>"
                 ).add(
                 new AjaxLink("_add") {
@@ -383,18 +399,18 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             target.appendJavaScript(getConfigureBackdropScript());
         }
 
-        private String getConfigureBackdropScript(){
+        private String getConfigureBackdropScript() {
             String js = "";
-            js +=" (function (zindex){ ";
-            js +="     $('.modal-backdrop').each(function(index) { ";
-            js +="         var zIndex = $(this).css('z-index'); ";
-            js +="         $(this).css('z-index', zindex-1+index); ";
-            js +="     }); ";
-            js +="     $('.modal').each(function(index) { ";
-            js +="         var zIndex = $(this).css('z-index'); ";
-            js +="         $(this).css('z-index', zindex+index); ";
-            js +="     }); ";
-            js +=" })(10050); ";
+            js += " (function (zindex){ ";
+            js += "     $('.modal-backdrop').each(function(index) { ";
+            js += "         var zIndex = $(this).css('z-index'); ";
+            js += "         $(this).css('z-index', zindex-1+index); ";
+            js += "     }); ";
+            js += "     $('.modal').each(function(index) { ";
+            js += "         var zIndex = $(this).css('z-index'); ";
+            js += "         $(this).css('z-index', zindex+index); ";
+            js += "     }); ";
+            js += " })(10050); ";
             return js;
         }
 

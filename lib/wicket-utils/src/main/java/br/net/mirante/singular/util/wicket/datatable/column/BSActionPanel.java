@@ -1,11 +1,7 @@
 package br.net.mirante.singular.util.wicket.datatable.column;
 
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.datatable.IBSAction;
-import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.util.wicket.resource.IconeView;
 import java.io.Serializable;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -16,6 +12,11 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.datatable.IBSAction;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.resource.IconeView;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -66,24 +67,23 @@ public class BSActionPanel<T> extends Panel {
     }
 
     public BSActionPanel<T> appendAction(ActionConfig config, IBSAction<T> action, IModel<T> model) {
-        return appendAction(config, childId -> {
-            return new ActionAjaxLink<T>(childId, model) {
-                @Override
-                public void onAction(AjaxRequestTarget target) {
-                    action.execute(target, this.getModel());
-                }
-                @Override
-                protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                    super.updateAjaxAttributes(attributes);
-                    action.updateAjaxAttributes(attributes);
-                }
-                @Override
-                protected void onConfigure() {
-                    super.onConfigure();
-                    this.setVisible(action.isVisible(this.getModel()));
-                    this.setEnabled(action.isEnabled(this.getModel()));
-                }
-            };
+        return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
+            @Override
+            public void onAction(AjaxRequestTarget target) {
+                action.execute(target, this.getModel());
+            }
+            @Override
+            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                super.updateAjaxAttributes(attributes);
+                action.updateAjaxAttributes(attributes);
+            }
+            @Override
+            protected void onConfigure() {
+                super.onConfigure();
+                this.setVisible(action.isVisible(this.getModel()));
+                this.setEnabled(action.isEnabled(this.getModel()));
+                add($b.attrAppender("style", config.style, " "));
+            }
         });
     }
 
@@ -106,6 +106,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> stripeModel;
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
+        protected IModel<String> style;
         protected boolean withText = true;
 
         public ActionConfig labelModel(IModel<?> labelModel) {
@@ -135,6 +136,11 @@ public class BSActionPanel<T> extends Panel {
 
         public ActionConfig withText(boolean withText) {
             this.withText = withText;
+            return this;
+        }
+
+        public ActionConfig style(IModel<String> style) {
+            this.style = style;
             return this;
         }
     }

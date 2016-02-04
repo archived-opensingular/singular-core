@@ -16,27 +16,50 @@ import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
     private static final ConfigureByMInstanciaAttributesBehavior INSTANCE = new ConfigureByMInstanciaAttributesBehavior();
+
     public static ConfigureByMInstanciaAttributesBehavior getInstance() {
         return INSTANCE;
     }
 
-    private ConfigureByMInstanciaAttributesBehavior() {}
+    private ConfigureByMInstanciaAttributesBehavior() {
+    }
 
     @Override
     public void onConfigure(Component component) {
         super.onConfigure(component);
 
         component.setEnabled(isInstanceEnabled(component));
-        component.setVisible(isInstanceVisible(component));
+        handleVisibility(component);
     }
+
+    /**
+     * Configura a visualização de um componente, caso o mesmo seja marcado como invisivel, ira limpar o valor da instancia.
+     * @param comp
+     */
+    private void handleVisibility(Component comp) {
+        boolean isInstanceVisible = isInstanceVisible(comp);
+
+        if (!isInstanceVisible) {
+            final IModel<?> model = comp.getDefaultModel();
+            if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
+                final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
+                if (instancia != null) {
+                    instancia.clearInstance();
+                }
+            }
+        }
+
+        comp.setVisible(isInstanceVisible);
+    }
+
 
     public void renderHead(Component component, IHeaderResponse response) {
         if (component instanceof FormComponent<?>)
             response.render(OnDomReadyHeaderItem.forScript(""
-                + "$('label[for=" + component.getMarkupId() + "]')"
-                + ".find('span.required').remove().end()"
-                + ((isInstanceRequired(component)) ? ".append('<span class=\\'required\\'>*</span>')" : "")
-                + ""));
+                    + "$('label[for=" + component.getMarkupId() + "]')"
+                    + ".find('span.required').remove().end()"
+                    + ((isInstanceRequired(component)) ? ".append('<span class=\\'required\\'>*</span>')" : "")
+                    + ""));
     }
 
     @Override
@@ -44,7 +67,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
         if (!isInstanceEnabled(component))
             tag.put("disabled", "disabled");
-        
+
         SInstance instance = resolveInstance(component);
         if (instance != null) {
             tag.put("data-instance-id", instance.getId());
@@ -68,9 +91,11 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     protected boolean isInstanceRequired(Component component) {
         return MInstanceViewState.isInstanceRequired(resolveInstance(component));
     }
+
     protected boolean isInstanceEnabled(Component component) {
         return MInstanceViewState.get(resolveInstance(component)).isEnabled();
     }
+
     protected boolean isInstanceVisible(Component component) {
         return MInstanceViewState.get(resolveInstance(component)).isVisible();
     }

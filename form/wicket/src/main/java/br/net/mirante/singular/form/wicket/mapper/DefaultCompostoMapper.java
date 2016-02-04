@@ -49,7 +49,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         public CompostoViewBuilder(WicketBuildContext ctx){
             this.ctx = ctx;
             model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
-            instance = ctx.getCurrenttInstance();
+            instance = ctx.getCurrentInstance();
             type = (STypeComposite<SIComposite>) instance.getMTipo();
         }
 

@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.STypeComposite.FieldMapOfRecordType;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import br.net.mirante.singular.form.mform.STypeComposite.FieldMapOfRecordType;
 
 public class SIComposite extends SInstance implements ICompositeInstance {
 
@@ -26,7 +26,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public void clearInstance() {
-        getCampos().clear();
+        getCampos().forEach(SInstance::clearInstance);
     }
 
     @Override
