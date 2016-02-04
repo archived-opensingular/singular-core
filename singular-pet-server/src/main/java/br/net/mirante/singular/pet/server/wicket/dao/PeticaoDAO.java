@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import br.net.mirante.singular.pet.server.wicket.model.Peticao;
 
-@Repository
+
 public class PeticaoDAO {
 
     @Inject

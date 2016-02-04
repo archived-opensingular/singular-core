@@ -23,7 +23,7 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 import br.net.mirante.singular.pet.server.wicket.model.ArquivoPeticao;
 
-@Repository(SDocument.FILE_PERSISTENCE_SERVICE)
+
 @SuppressWarnings("serial")
 public class FileDao implements IAttachmentPersistenceHandler {
 

@@ -28,6 +28,10 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
+        onStartup(ctx, applicationContext);
+    }
+
+    public void onStartup(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) throws ServletException {
         applicationContext.register(getSpringConfigurationClass());
         addSessionListener(ctx);
         addSpringContextListener(ctx, applicationContext);
@@ -76,10 +80,14 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
     protected void addWicketFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         String path = "/*";
         FilterRegistration.Dynamic wicketFilter = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
-        wicketFilter.setInitParameter("applicationClassName", PetApplication.class.getName());
+        wicketFilter.setInitParameter("applicationClassName", getWicketApplicationClass().getName());
         wicketFilter.setInitParameter("homePageClass", EntradaPage.class.getName());
         wicketFilter.setInitParameter("filterMappingUrlPattern", path);
         wicketFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, path);
+    }
+
+    protected Class<? extends PetApplication> getWicketApplicationClass(){
+        return PetApplication.class;
     }
 
     /**

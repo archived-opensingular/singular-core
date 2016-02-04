@@ -1,19 +1,22 @@
 package br.net.mirante.singular.pet.module.wicket;
 
-import br.net.mirante.singular.flow.core.MUser;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PetSession extends AuthenticatedWebSession {
 
     private Roles roles = new Roles();
     private String name;
     private String avatar;
-    private String logout = PetApplication.get().getServletContext().getContextPath() + "/logout";
+    private String username;
+
+    private Map<String, Object> params = new HashMap<>();
 
     public PetSession(Request request, Response response) {
         super(request);
@@ -34,45 +37,25 @@ public class PetSession extends AuthenticatedWebSession {
         return roles;
     }
 
-    public void addRole(String roleKey) {
-        roles.add(roleKey);
+
+    public void put(String key, Object value) {
+        params.put(key, value);
     }
 
-    public String getUserId() {
-        return getUser().getCod().toString();
-    }
-
-    public MUser getUser() {
-        return (MUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
-    public boolean hasAdminRole() {
-        return roles.hasRole(Roles.ADMIN);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public <T> T get(String key) {
+        return (T) params.get(key);
     }
 
     public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public String getName() {
+        return name;
     }
 
-    public String getLogout() {
-        return logout;
+    public String getUsername() {
+        return username;
     }
-
-    public void setLogout(String logout) {
-        this.logout = logout;
-    }
-
 }
 
