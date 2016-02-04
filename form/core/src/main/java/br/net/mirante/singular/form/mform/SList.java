@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
     private List<E> valores;
@@ -165,6 +167,17 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         return isEmpty() ? null : valores.get(leitor.getIndice());
     }
 
+    @Override
+    public void setValor(Object obj) {
+        if(obj instanceof SList){
+            clearInstance();
+            valores = newArrayList(((SList)obj).valores);
+            tipoElementos = ((SList)obj).tipoElementos;
+            ((SList)obj).clearInstance();
+        }else{
+            throw new RuntimeException("SList só suporta valores de mesmo tipo");
+        }
+    }
     @Override
     public final void setValor(String pathCampo, Object valor) {
         setValor(new LeitorPath(pathCampo), valor);

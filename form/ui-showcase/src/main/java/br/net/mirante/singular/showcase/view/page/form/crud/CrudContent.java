@@ -13,11 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.showcase.component.CaseBase;
-import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +24,7 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
@@ -37,6 +33,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
@@ -55,10 +54,11 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder.ButtonStyle;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 public class CrudContent extends Content
@@ -72,7 +72,6 @@ public class CrudContent extends Content
 
     private final BFModalBorder deleteModal  = new BFModalBorder("deleteModal");
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
-    private Form<?>             deleteForm   = new Form<>("delete-form");
 
     @Inject
     ExampleDataDAO dao;
@@ -99,25 +98,39 @@ public class CrudContent extends Content
 
     @Override
     protected void onInitialize() {
+
         super.onInitialize();
-        queue(new SFeedbackPanel("feedback", this));
-        Form<Object> optionsForm = new Form<>("optionsForm");
-        optionsForm.queue(setUpTemplatesOptions());
-        queue(optionsForm);
-        queue(setUpInsertButton());
-        listTable = setupDataTable();
-        queue(listTable);
-        deleteModal.queue(deleteForm.queue(new AjaxButton("delete-btn") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                dao.remove(currentModel);
-                currentModel = null;
-                updateListTableFromModal(target);
-                deleteModal.hide(target);
-            }
-        }));
-        queue(deleteModal);
-        queue(viewXmlModal);
+
+        add(new Form<>("optionsForm").add(setUpTemplatesOptions()));
+        add(new Form<>("delete-form").add(deleteModal));
+        add(setUpInsertButton());
+        add(listTable = setupDataTable());
+        add(viewXmlModal);
+        add(new SFeedbackPanel("feedback", this));
+
+        deleteModal.setTitleText(Model.of(getString("label.delete.message")));
+
+        deleteModal.addButton(ButtonStyle.PRIMARY, Model.of(getString("label.button.ok")),
+                new AjaxButton("delete-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        dao.remove(currentModel);
+                        currentModel = null;
+                        updateListTableFromModal(target);
+                        deleteModal.hide(target);
+                    }
+                });
+
+        deleteModal.addButton(ButtonStyle.DEFAULT, Model.of(getString("label.button.cancel")),
+                new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        deleteModal.hide(target);
+                    }
+                });
+
+        deleteModal.setSize(Size.SMALL);
+
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -226,7 +239,7 @@ public class CrudContent extends Content
     private boolean hasAnnotations() {
         boolean hasAnntations = false;
         if(selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite){
-            STypeComposite type = (STypeComposite) selectedTemplate.getType();
+            STypeComposite<?> type = (STypeComposite<?>) selectedTemplate.getType();
             for(SType<?> i : (Collection<SType<?>>)type.getFields()){
                 hasAnntations |= i.as(AtrAnnotation::new).isAnnotated();
             }

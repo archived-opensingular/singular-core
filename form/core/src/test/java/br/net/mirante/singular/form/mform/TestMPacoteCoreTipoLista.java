@@ -65,7 +65,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         SList<SIComposite> pedidos = (SList<SIComposite>) tipoPedidos.novaInstancia();
         SIComposite pedido;
-        assertException(() -> pedidos.addValor("Paulo"), "Método não suportado");
+        assertException(() -> pedidos.addValor("Paulo"), "SIComposite só suporta valores de mesmo tipo");
         pedido = pedidos.addNovo();
         assertFilhos(pedidos, 1);
         assertNotNull(pedido);
