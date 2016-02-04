@@ -40,6 +40,11 @@ public class STypeString extends STypeSimple<SIString, String> {
         return (STypeString) super.withSelectionOf(nomes);
     }
 
+    @Override
+    public String getSelectLabel() {
+        return super.getSelectLabel();
+    }
+
     /**
      * Configura o tipo para utilizar a view {@link MTextAreaView} e invoca o initializer 
      */

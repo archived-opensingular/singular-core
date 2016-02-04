@@ -1,19 +1,23 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.ListMultipleChoice;
 import org.apache.wicket.model.IModel;
 
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import static org.apache.wicket.util.lang.Generics.newArrayList;
 
 @SuppressWarnings("serial")
@@ -65,15 +69,21 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
         final StringBuilder output = new StringBuilder();
         final SInstance mi = model.getObject();
 
-        if ((mi != null) && (mi.getValor() != null)
-                && (mi.getValor() instanceof List)) {
-            List<?> collection = (List<?>) mi.getValor();
-            for (Object o : collection) {
-                if (collection.indexOf(o) == 0) {
-                    output.append(o.toString());
-                } else {
-                    output.append(", ");
-                    output.append(o.toString());
+        if (mi instanceof SList) {
+            final Collection children = ((SList) mi).getChildren();
+            final Iterator iterator = children.iterator();
+            boolean first = true;
+            while (iterator.hasNext()) {
+                final Object val = iterator.next();
+                if (val instanceof MSelectionableInstance) {
+                    final String label = ((MSelectionableInstance) val).getSelectLabel();
+                    if (first) {
+                        output.append(label);
+                        first = false;
+                    } else {
+                        output.append(", ");
+                        output.append(label);
+                    }
                 }
             }
         }

@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.STypeSimple;
 @MInfoTipo(nome = "Data", pacote = SPackageCore.class)
 public class STypeData extends STypeSimple<SIData, Date> {
     private static final Logger LOGGER = Logger.getLogger(SIData.class.getName());
-    
+
     public static final String FORMAT = "dd/MM/yyyy";
 
     public STypeData() {
@@ -28,7 +28,7 @@ public class STypeData extends STypeSimple<SIData, Date> {
 
     public Date fromString(String valor) {
         try {
-            if(Strings.isNullOrEmpty(valor)) return null;
+            if (Strings.isNullOrEmpty(valor)) return null;
             return (new SimpleDateFormat(STypeData.FORMAT)).parse(valor);
         } catch (ParseException e) {
             String msg = String.format("Can't parse value '%s' with format '%s'.", valor, STypeData.FORMAT);
@@ -36,9 +36,13 @@ public class STypeData extends STypeSimple<SIData, Date> {
             throw Throwables.propagate(e);
         }
     }
-    
+
     @Override
     protected String toStringPersistencia(Date valorOriginal) {
-        return (new SimpleDateFormat(STypeData.FORMAT)).format(valorOriginal);
+        if (valorOriginal != null) {
+            return (new SimpleDateFormat(STypeData.FORMAT)).format(valorOriginal);
+        } else {
+            return null;
+        }
     }
 }

@@ -1,7 +1,14 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SList;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
+
+import com.google.common.base.Strings;
+
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
@@ -13,12 +20,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import com.google.common.base.Strings;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -28,7 +29,7 @@ public class PanelListaMapper extends AbstractListaMapper {
     @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance>> listaModel = $m.get(() -> (ctx.getCurrenttInstance()));
+        final IModel<SList<SInstance>> listaModel = $m.get(() -> (ctx.getCurrentInstance()));
         final SList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
@@ -41,6 +42,12 @@ public class PanelListaMapper extends AbstractListaMapper {
                             heading.appendTag("span", new Label("_title", label));
                             heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
+                            if ((view instanceof MPanelListaView)
+                                    && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                                    && viewMode.isEdition()) {
+                                appendAddButton(listaModel, form, heading, false)
+                                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
+                            }
                         },
                         (content, form) -> {
 
@@ -54,14 +61,13 @@ public class PanelListaMapper extends AbstractListaMapper {
 
                         },
                         (footer, form) -> {
-
-                            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                            footer.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
+                            footer.setVisible(false);
+                            if ((view instanceof MPanelListaView)
+                                    && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
                                     && viewMode.isEdition()) {
-                                appendAdicionarButton(listaModel, form, footer);
-                            } else {
-                                footer.setVisible(false);
+                                appendAddButton(listaModel, form, footer, true);
                             }
-
                         })
         );
     }

@@ -14,4 +14,5 @@ public class SIString extends SIComparable<String> {
     public String toString() {
         return String.format("MIString('%s')", getValor());
     }
+
 }

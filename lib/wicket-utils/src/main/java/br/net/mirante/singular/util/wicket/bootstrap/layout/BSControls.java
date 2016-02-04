@@ -15,8 +15,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import br.net.mirante.singular.util.wicket.behavior.BSSelectInitBehaviour;
 import br.net.mirante.singular.util.wicket.behavior.DatePickerInitBehaviour;
-import br.net.mirante.singular.util.wicket.behavior.MultiSelectInitBehaviour;
+import br.net.mirante.singular.util.wicket.behavior.PicklistInitBehaviour;
 import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerConstants;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
@@ -114,17 +115,21 @@ public class BSControls extends BSContainer<BSControls> implements IBSGridCol<BS
     }
 
     public BSControls appendSelect(Component select, boolean multiple, boolean bootstrap) {
+        if(multiple) {
+            select.add(new BSSelectInitBehaviour());
+        }
+
         return super.appendTag("select", true,
-            ((bootstrap)
-                ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
-                : "class='form-control'")
-                + (multiple ? "multiple" : ""),
-            select);
+                ((bootstrap)
+                        ? "class='bs-select form-control' title='" + getString("BSControls.Select.Title") + "'"
+                        : "class='form-control'")
+                        + (multiple ? "multiple" : ""),
+                select);
     }
 
     public BSControls appendPicklist(Component select) {
         return (BSControls) super.appendTag("select", true, "multiple", select)
-                .add(new MultiSelectInitBehaviour());
+                .add(new PicklistInitBehaviour());
     }
 
     public BSControls appendStaticText(Component text) {

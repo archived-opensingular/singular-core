@@ -1,16 +1,23 @@
 package br.net.mirante.singular.util.wicket.datatable;
 
-import br.net.mirante.singular.lambda.IConsumer;
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
-import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
+
+/**
+ * @param <T> Tipo de objeto que sera renderizado pelas celulas da coluna
+ * @param <S> Propriedade de Ordenacao
+ * @param <PREVCOL> Coluna
+ */
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}

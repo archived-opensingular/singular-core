@@ -1,5 +1,11 @@
 package br.net.mirante.singular.showcase.component.custom;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -9,11 +15,6 @@ import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.behavior.AttributeAppender;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 
 public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
@@ -22,7 +23,7 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
 
         final IModel<? extends SInstance> model = ctx.getModel();
         final BSControls formGroup = ctx.getContainer().newFormGroup();
-        final SInstance mi = ctx.getCurrenttInstance();
+        final SInstance mi = ctx.getCurrentInstance();
         final BSLabel label = new BSLabel("label", new AtributoModel<>(model, SPackageBasic.ATR_LABEL));
 
         if(ctx.getViewMode().isVisualization()){

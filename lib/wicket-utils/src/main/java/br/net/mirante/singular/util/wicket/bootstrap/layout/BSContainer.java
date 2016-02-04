@@ -1,8 +1,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -11,6 +10,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.lambda.IFunction;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
@@ -159,4 +159,11 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
     public String getInnerStyle() {return innerStyle; }
 
     public RepeatingView getItems() {return items;}
+
+    public void addInfoMessage(String message) {
+        final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        if (target != null) {
+            target.appendJavaScript(";bootbox.alert('" + message + "');");
+        }
+    }
 }

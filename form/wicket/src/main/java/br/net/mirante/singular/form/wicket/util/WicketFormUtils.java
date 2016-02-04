@@ -104,31 +104,27 @@ public abstract class WicketFormUtils {
 
         container.visitChildren((component, visit) -> {
             final IModel<?> model = component.getDefaultModel();
-
             final SInstance instance;
             if (model == null) {
                 return;
-
             } else if (model.getObject() instanceof SInstance) {
                 instance = (SInstance) model.getObject();
-
             } else if (model instanceof IMInstanciaAwareModel<?>) {
                 instance = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-
             } else {
                 return;
             }
 
-            Set<IValidationError> errors = instanceErrors.get(instance.getId());
+            final Set<IValidationError> errors = instanceErrors.get(instance.getId());
             if (errors != null) {
                 for (IValidationError error : errors) {
                     switch (error.getErrorLevel()) {
                         case ERROR:
                             component.error(error.getMessage());
-                            return;
+                            break;
                         case WARNING:
                             component.warn(error.getMessage());
-                            return;
+                            break;
                         default:
                             throw new IllegalStateException("Invalid error level: " + error.getErrorLevel());
                     }

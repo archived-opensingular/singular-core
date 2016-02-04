@@ -16,7 +16,7 @@ public enum MTelefoneNacionalValidator implements IInstanceValueValidator<SIStri
     public void validate(IInstanceValidatable<SIString> validatable, String value) {
         final Matcher matcher = VALIDATE_PATTERN.matcher(value);
         if (!matcher.find()) {
-            validatable.error("Número de telefone invalido");
+            validatable.error("Número de telefone inválido");
         }
     }
 }

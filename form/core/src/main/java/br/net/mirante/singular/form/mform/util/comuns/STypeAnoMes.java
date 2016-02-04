@@ -35,12 +35,15 @@ public class STypeAnoMes extends STypeSimple<SIAnoMes, YearMonth> {
             Calendar cal = (Calendar) valor;
             return YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
         } else if (valor instanceof String){
-            DateTimeFormatter monthAndYear = new DateTimeFormatterBuilder()
-                .appendPattern("MMyyyy")
-                .toFormatter();
-            return YearMonth.parse((String)valor, monthAndYear);
+            return YearMonth.parse((String)valor, formatter());
         }
         throw createErroConversao(valor);
+    }
+
+    private DateTimeFormatter formatter() {
+        return new DateTimeFormatterBuilder()
+                    .appendPattern("MM/yyyy")
+                    .toFormatter();
     }
 
     private YearMonth converterFromInteger(int valor) {
@@ -54,54 +57,18 @@ public class STypeAnoMes extends STypeSimple<SIAnoMes, YearMonth> {
 
     @Override
     public YearMonth fromString(String valor) {
-        valor = StringUtils.trimToNull(valor);
-        if (valor == null) {
-            return null;
-        }
-        try {
-            int pos = valor.indexOf('/');
-            if (pos != -1 && pos != 0 && pos != valor.length() - 1) {
-                String mes = valor.substring(0, pos);
-                String ano = valor.substring(pos + 1);
-                return YearMonth.of(Integer.parseInt(ano), Integer.parseInt(mes));
-            }
-
-            return converterFromInteger(Integer.parseInt(valor));
-        } catch (Exception e) {
-            throw createErroConversao(valor, Integer.class, null, e);
-        }
+        if (StringUtils.isBlank(valor)) {    return null;    }
+        return YearMonth.parse((String)valor, formatter());
     }
 
     @Override
     protected String toStringPersistencia(YearMonth valorOriginal) {
-        if (valorOriginal == null) {
-            return null;
-        }
-        return String.format("%02d%04d", valorOriginal.getMonthValue(), valorOriginal.getYear());
+        if (valorOriginal == null) {    return null;    }
+        return valorOriginal.format(formatter());
     }
 
     @Override
     public String toStringDisplay(YearMonth valor) {
-        if (valor == null) {
-            return null;
-        }
-        YearMonth anoMes = converter(valor);
-        StringBuilder sb = new StringBuilder(7);
-        if (anoMes.getMonthValue() < 10) {
-            sb.append('0');
-        }
-        sb.append(anoMes.getMonthValue()).append('/');
-        int ano = anoMes.getYear();
-        if (ano > 0 && ano < 1000) {
-            sb.append('0');
-            if (ano < 100) {
-                sb.append('0');
-                if (ano < 10) {
-                    sb.append('0');
-                }
-            }
-        }
-        sb.append(ano);
-        return sb.toString();
+        return toStringPersistencia(valor);
     }
 }

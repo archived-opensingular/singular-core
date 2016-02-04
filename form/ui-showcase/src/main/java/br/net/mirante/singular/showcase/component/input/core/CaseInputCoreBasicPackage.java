@@ -1,8 +1,8 @@
 package br.net.mirante.singular.showcase.component.input.core;
 
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
@@ -19,7 +19,7 @@ public class CaseInputCoreBasicPackage extends SPackage {
         tipoMyForm.addCampoCEP("cep")
                 .as(AtrBasic.class).label("CEP");
         tipoMyForm.addCampoEmail("email")
-                .as(AtrBasic.class).label("E-Mail");
+                .as(AtrBasic.class).label("E-mail");
         tipoMyForm.addCampoString("descricao")
                 .as(AtrBasic.class).label("Descrição");
         tipoMyForm.addCampo("telefone", STypeTelefoneNacional.class)
