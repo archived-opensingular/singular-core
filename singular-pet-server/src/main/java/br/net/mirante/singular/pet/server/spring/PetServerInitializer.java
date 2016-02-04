@@ -27,45 +27,18 @@ import br.net.mirante.singular.pet.module.wicket.PetApplication;
 public abstract class PetServerInitializer implements WebApplicationInitializer {
 
     @Override
-    public final void onStartup(ServletContext ctx) throws ServletException {
+    public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
         applicationContext.register(getSpringConfigurationClass());
-        beforeSingularConfiguration(ctx, applicationContext);
         addSessionListener(ctx);
         addSpringContextListener(ctx, applicationContext);
         addSpringRequestContextListener(ctx, applicationContext);
         addSpringMVCServlet(ctx, applicationContext);
         addSpringSecurityFilter(ctx, applicationContext);
         addWicketFilter(ctx, applicationContext);
-        afterSingularConfiguration(ctx, applicationContext);
     }
 
-    /**
-     * Método destinado a ser sobrescrito para incluir qualquer configuração da aplicação web
-     * antes que as configurações do singular pet server sejam feitas.
-     *
-     * @param ctx
-     *  Servlet Context a partir do qual as configurações devem ser feitas
-     * @param applicationContext
-     *  Application context do spring.
-     */
-    protected void beforeSingularConfiguration(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
-    }
-
-
-    /**
-     * Método destinado a ser sobrescrito para incluir qualquer configuração da aplicação web
-     * após as configurações do singular pet server.
-     *
-     * @param ctx
-     *  Servlet Context a partir do qual as configurações devem ser feitas
-     * @param applicationContext
-     *  Application context do spring.
-     */
-    protected void afterSingularConfiguration(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
-    }
-
-    protected void addSpringContextListener(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
+  protected void addSpringContextListener(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         ctx.addListener(new ContextLoaderListener(applicationContext));
     }
 
@@ -123,7 +96,7 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
      * Criado para permitir a remoção completa do web.xml
      * @param servletContext
      */
-    private void addSessionListener(ServletContext servletContext) {
+    protected final void addSessionListener(ServletContext servletContext) {
         servletContext.addListener(new HttpSessionListener() {
             @Override
             public void sessionCreated(HttpSessionEvent se) {
