@@ -1,14 +1,6 @@
 package br.net.mirante.singular.pet.server.spring;
 
-import br.net.mirante.singular.pet.module.wicket.PetApplication;
-import br.net.mirante.singular.pet.server.wicket.view.entrada.EntradaPage;
-import org.apache.wicket.protocol.http.WicketFilter;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.request.RequestContextListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.servlet.DispatcherServlet;
+import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -17,7 +9,16 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import java.util.EnumSet;
+
+import org.apache.wicket.protocol.http.WicketFilter;
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
+import org.springframework.web.servlet.DispatcherServlet;
+
+import br.net.mirante.singular.pet.module.wicket.PetApplication;
 
 /**
  *Configura os filtros, servlets e listeners default do singular pet server
@@ -80,8 +81,8 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
     protected void addWicketFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         String path = "/*";
         FilterRegistration.Dynamic wicketFilter = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
-        wicketFilter.setInitParameter("applicationClassName", getWicketApplicationClass().getName());
-        wicketFilter.setInitParameter("homePageClass", EntradaPage.class.getName());
+        wicketFilter.setInitParameter("applicationClassName", PetApplication.class.getName());
+        wicketFilter.setInitParameter("homePageClass", "br.gov.anvisa.peticionamento.view.entrada.EntradaPage");
         wicketFilter.setInitParameter("filterMappingUrlPattern", path);
         wicketFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, path);
     }

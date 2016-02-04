@@ -11,6 +11,8 @@ import javax.inject.Inject;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+import br.net.mirante.singular.pet.module.wicket.PetSession;
+
 
 public abstract class Content extends Panel {
 
@@ -49,6 +51,10 @@ public abstract class Content extends Panel {
         if (withInfoLink) {
             infoLink.add(getInfoLink("_InfoLink"));
         }
+    }
+
+    public PetSession getPetSession() {
+        return PetSession.get();
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
