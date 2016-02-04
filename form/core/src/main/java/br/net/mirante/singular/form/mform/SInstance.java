@@ -76,7 +76,13 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
                         }
                     }
                 } else {
-                    return valor == null ? "" : valor.toString();
+                    final String valorString = String.valueOf(valor);
+                    final String labelFromKey = getOptionsConfig().getLabelFromKey(valorString);
+                    if(labelFromKey == null){
+                        return valorString;
+                    } else {
+                        return labelFromKey;
+                    }
                 }
             }
         }

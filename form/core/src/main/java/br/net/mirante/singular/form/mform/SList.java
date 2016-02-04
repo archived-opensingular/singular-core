@@ -166,6 +166,17 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     @Override
+    public void setValor(Object obj) {
+        if(obj instanceof SList){
+            clearInstance();
+            valores = ((SList)obj).valores;
+            tipoElementos = ((SList)obj).tipoElementos;
+            ((SList)obj).clearInstance();
+        }else{
+            throw new RuntimeException("SList só suporta valores de mesmo tipo");
+        }
+    }
+    @Override
     public final void setValor(String pathCampo, Object valor) {
         setValor(new LeitorPath(pathCampo), valor);
     }
