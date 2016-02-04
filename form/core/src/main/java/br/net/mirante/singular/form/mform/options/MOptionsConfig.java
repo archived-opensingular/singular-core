@@ -1,14 +1,16 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SInstance;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import java.math.BigInteger;
+import java.util.LinkedHashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigInteger;
-import java.util.LinkedHashMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 
 /**
  * Mapeia cada MInstancia fornecida pelo OptionsProvider
@@ -85,7 +87,7 @@ public class MOptionsConfig {
 
 
     public String getLabelFromKey(String key) {
-        if (key == null) {
+        if (key == null || optionsKeylabelMap == null) {
             return null;
         }
         return optionsKeylabelMap.get(key);
