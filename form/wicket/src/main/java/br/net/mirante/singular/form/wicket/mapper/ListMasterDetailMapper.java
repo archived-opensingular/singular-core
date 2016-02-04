@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -44,6 +47,7 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -268,6 +272,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         private IConsumer<AjaxRequestTarget> closeCallback;
         private MListMasterDetailView view;
         private BSContainer containerExterno;
+        private String instanceBackupXml;
 
         public MasterDetailModal(String id,
                                  IModel<? extends SInstance> model,
@@ -288,6 +293,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             this.listModel = $m.get(() -> (SList<SInstance>) model.getObject());
             this.containerExterno = containerExterno;
 
+
             this.setSize(BSModalBorder.Size.NORMAL);
 
             this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"), new ActionAjaxButton("btn") {
@@ -304,11 +310,29 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     if (closeCallback != null) {
                         closeCallback.accept(target);
                     }
+                    rollbackState();
                     target.add(table);
                     MasterDetailModal.this.hide(target);
                 }
             });
 
+        }
+
+        private void saveState() {
+            MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
+            if(xml != null) instanceBackupXml = xml.toString();
+        }
+
+        private void rollbackState() {
+            try {
+                if(instanceBackupXml != null){
+                    MElement xml = MParser.parse(instanceBackupXml);
+                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
+                    currentInstance.getObject().setValor(i);
+                }
+            }catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
@@ -326,6 +350,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
+
+            saveState();
+
             this.configureNewContent(prefix, target);
         }
 

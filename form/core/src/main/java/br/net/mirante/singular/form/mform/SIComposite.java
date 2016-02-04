@@ -96,6 +96,17 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
+    public void setValor(Object obj) {
+        if(obj instanceof SIComposite){
+            clearInstance();
+            fields = ((SIComposite)obj).fields;
+            ((SIComposite)obj).clearInstance();
+        }else{
+            throw new RuntimeException("SIComposite só suporta valores de mesmo tipo");
+        }
+    }
+
+    @Override
     public final void setValor(String pathCampo, Object valor) {
         setValor(new LeitorPath(pathCampo), valor);
     }
