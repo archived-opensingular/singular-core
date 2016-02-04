@@ -61,8 +61,9 @@ public class PetApplication extends AuthenticatedWebApplication
         getMarkupSettings().setStripComments(true);
         getMarkupSettings().setDefaultMarkupEncoding("UTF-8");
         getComponentInitializationListeners().add(c -> {
-            if (!c.getRenderBodyOnly())
+            if (!c.getRenderBodyOnly()) {
                 c.setOutputMarkupId(true).setOutputMarkupPlaceholderTag(true);
+            }
         });
 
         if (ctx != null) {

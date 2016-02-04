@@ -2,7 +2,9 @@ package br.net.mirante.singular.pet.module.exception;
 
 import br.net.mirante.singular.commons.base.SingularException;
 
-
+/**
+ * Exceções do Singular pet server e seus módulos
+ */
 public class SingularServerException extends SingularException {
 
     public SingularServerException(String msg) {
