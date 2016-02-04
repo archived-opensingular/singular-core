@@ -74,7 +74,7 @@ public class WicketBuildContext implements Serializable {
 
     public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
 
-        final SInstance instance = getCurrenttInstance();
+        final SInstance instance = getCurrentInstance();
 
         this.view = ViewResolver.resolve(instance);
         this.uiBuilderWicket = uiBuilderWicket;
@@ -299,7 +299,7 @@ public class WicketBuildContext implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends SInstance> T getCurrenttInstance() {
+    public <T extends SInstance> T getCurrentInstance() {
         return (T) getModel().getObject();
     }
 

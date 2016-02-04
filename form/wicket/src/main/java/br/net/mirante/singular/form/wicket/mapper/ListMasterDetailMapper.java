@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
@@ -87,14 +88,24 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             @Override
             protected void buildFooter(BSContainer<?> footer, Form<?> form) {
-                if (viewMode.isEdition() && ((MListMasterDetailView) view).isNewElementEnabled()) {
-                    appendAdicionarButton(footer, modal);
-                }
+                footer.setVisible(false);
             }
 
             @Override
             protected void buildContent(BSContainer<?> content, Form<?> form) {
-                content.appendTag("table", true, null, id -> buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode));
+                content.appendTag("table", true, null, (id) -> {
+                    BSDataTable<SInstance, ?> bsDataTable = buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode);
+                    bsDataTable.add(new Behavior() {
+                        @Override
+                        public void onConfigure(Component component) {
+                            super.onConfigure(component);
+                            if (ctx.getCurrentInstance() instanceof SList) {
+                                component.setVisible(!((SList<?>) ctx.getCurrentInstance()).isEmpty());
+                            }
+                        }
+                    });
+                    return bsDataTable;
+                });
             }
         });
     }
@@ -117,7 +128,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         return labelModel;
     }
 
-    private BSDataTable<?, ?> buildTable(String id, IModel<? extends SInstance> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
+    private BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
         BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
 
@@ -210,10 +221,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     target.add(ctx.getContainer());
                 });
             }
-
-            Icone iconeBotaoAbrirModal = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
-
-            actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(iconeBotaoAbrirModal)).buttonModel(Model.of("blue-madison")),
+            final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
+            actionColumn.appendAction(
+                new ActionConfig()
+                    .iconeModel(Model.of(openModalIcon))
+                    .buttonModel(Model.of("blue-madison"))
+                    .style($m.ofValue("padding:5px 3px 1px;")),
                 (target, rowModel) -> {
                 modal.showExisting(target, rowModel, ctx);
             });
@@ -232,13 +245,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    protected void appendAdicionarButton(BSContainer<?> container, MasterDetailModal modal) {
+    protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal) {
         container
             .newTemplateTag(t -> ""
                 + "<button"
                 + " wicket:id='_add'"
-                + " class='btn btn-success btn-sm'"
-                + " style='padding:5px 3px 1px;margin-top:3px;margin-right:7px;'><i class='" + Icone.PLUS + "'></i>"
+                + " class='btn btn-success btn-sm pull-right'"
+                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
                 + "</button>")
             .add(
                 new AjaxLink<Void>("_add") {

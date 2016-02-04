@@ -1,5 +1,14 @@
 package br.net.mirante.singular.showcase.component.custom;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -11,14 +20,6 @@ import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSLabel;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.html.form.HiddenField;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.PackageResourceReference;
 
 public class RangeSliderMapper implements IWicketComponentMapper {
 
@@ -33,7 +34,7 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     public void buildView(WicketBuildContext ctx) {
 
         final BSControls formGroup = createFormGroup(ctx);
-        final SIComposite rootInstance = ctx.getCurrenttInstance();
+        final SIComposite rootInstance = ctx.getCurrentInstance();
 
         final IModel<? extends SInstance> miInicial = resolveModel(rootInstance, valorInicialPath);
         final IModel<? extends SInstance> miFinal = resolveModel(rootInstance, valorFinalPath);
