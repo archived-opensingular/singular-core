@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
     private List<E> valores;
@@ -169,7 +171,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     public void setValor(Object obj) {
         if(obj instanceof SList){
             clearInstance();
-            valores = ((SList)obj).valores;
+            valores = newArrayList(((SList)obj).valores);
             tipoElementos = ((SList)obj).tipoElementos;
             ((SList)obj).clearInstance();
         }else{

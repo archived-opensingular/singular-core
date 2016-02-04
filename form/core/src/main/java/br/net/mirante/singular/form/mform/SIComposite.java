@@ -100,7 +100,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         if(obj instanceof SIComposite){
             clearInstance();
             fields = ((SIComposite)obj).fields;
-            ((SIComposite)obj).clearInstance();
+            ((SIComposite)obj).fields = null;
         }else{
             throw new RuntimeException("SIComposite só suporta valores de mesmo tipo");
         }
