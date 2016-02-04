@@ -23,8 +23,8 @@
 
         <property name="annotatedClasses">
             <list>
-                <value>br.gov.anvisa.peticionamento.canabidiol.model.ArquivoPeticao</value>
-                <value>br.gov.anvisa.peticionamento.canabidiol.model.Peticao</value>
+                <value>br.gov.anvisa.peticionamento.entity.form.ArquivoPeticao</value>
+                <value>br.gov.anvisa.peticionamento.entity.form.Peticao</value>
             </list>
         </property>
 
@@ -33,7 +33,7 @@
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.hbm2ddl.auto">none</prop>
             </props>
         </property>
     </bean>
