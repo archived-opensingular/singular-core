@@ -6,6 +6,8 @@ import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,13 +16,15 @@ public class PetSession extends AuthenticatedWebSession {
     private Roles roles = new Roles();
     private String name;
     private String avatar;
-    private String username;
+    private String userId;
 
     private Map<String, Object> params = new HashMap<>();
 
     public PetSession(Request request, Response response) {
         super(request);
         this.roles.add(Roles.USER);
+        Principal principal = ((HttpServletRequest) request.getContainerRequest()).getUserPrincipal();
+        this.userId = principal == null ? null : principal.getName();
     }
 
     public static PetSession get() {
@@ -54,8 +58,8 @@ public class PetSession extends AuthenticatedWebSession {
         return name;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserId() {
+        return userId;
     }
 }
 
