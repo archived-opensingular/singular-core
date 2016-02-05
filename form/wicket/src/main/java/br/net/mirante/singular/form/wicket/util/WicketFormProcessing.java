@@ -124,11 +124,15 @@ public class WicketFormProcessing {
 //                    .filter(c -> c != null)
 //                    .forEach(t::add);
         });
-     }
+    }
 
     private static void clearTargetOnChange(Component c) {
-        Object obj = c.getDefaultModel().getObject();
-        if (obj instanceof SInstance){  ((SInstance) obj).clearInstance();  }
+        if (c instanceof FormComponent) {
+            final IModel model = ((FormComponent) c).getModel();
+            if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
+                ((IMInstanciaAwareModel) model).getMInstancia().clearInstance();
+            }
+        }
     }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
