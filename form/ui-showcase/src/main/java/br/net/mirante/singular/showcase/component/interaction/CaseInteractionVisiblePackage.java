@@ -1,9 +1,10 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
@@ -36,9 +37,11 @@ public class CaseInteractionVisiblePackage extends SPackage {
                 .dependsOn(visible);
 
         recordText.as(SPackageBasic.aspect())
-                .label("Text");
+                .label("Text")
+                .as(AtrBootstrap::new).colPreference(3);
 
         recordDate.as(SPackageBasic.aspect())
-                .label("Date");
+                .label("Date")
+                .as(AtrBootstrap::new).colPreference(2);
     }
 }

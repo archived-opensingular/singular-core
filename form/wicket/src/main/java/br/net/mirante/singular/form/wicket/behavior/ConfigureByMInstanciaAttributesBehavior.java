@@ -34,17 +34,25 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
 
     /**
      * Configura a visualização de um componente, caso o mesmo seja marcado como invisivel, ira limpar o valor da instancia.
+     *
      * @param comp
      */
     private void handleVisibility(Component comp) {
         boolean isInstanceVisible = isInstanceVisible(comp);
 
         if (!isInstanceVisible) {
-            final IModel<?> model = comp.getDefaultModel();
-            if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
-                if (instancia != null) {
-                    instancia.clearInstance();
+            final IModel<?> model;
+            if (comp instanceof FormComponent) {
+                model = ((FormComponent) comp).getModel();
+            } else {
+                model = comp.getDefaultModel();
+            }
+            if (model != null) {
+                if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
+                    final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
+                    if (instancia != null) {
+                        instancia.clearInstance();
+                    }
                 }
             }
         }

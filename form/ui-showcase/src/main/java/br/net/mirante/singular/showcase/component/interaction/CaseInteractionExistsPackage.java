@@ -1,9 +1,10 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
@@ -32,11 +33,13 @@ public class CaseInteractionExistsPackage extends SPackage {
         exists.as(SPackageBasic.aspect()).label("Exists");
 
         record
-            .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))
-            .asAtrBasic().dependsOn(exists);
+                .withExists(ins -> ins.findNearestValue(exists, Boolean.class).orElse(false))
+                .asAtrBasic().dependsOn(exists);
 
-        recordText.asAtrBasic().label("Text");
+        recordText.asAtrBasic().label("Text")
+                .as(AtrBootstrap::new).colPreference(3);
 
-        recordDate.asAtrBasic().label("Date");
+        recordDate.asAtrBasic().label("Date")
+                .as(AtrBootstrap::new).colPreference(2);
     }
 }
