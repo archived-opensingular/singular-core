@@ -1,17 +1,18 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import java.util.List;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 
-import java.util.List;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 
 public class RadioMapper extends SelectMapper {
 
@@ -36,7 +37,7 @@ public class RadioMapper extends SelectMapper {
                     map.put("class", "radio-inline");
                     map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;");
                 } else if (radioView.getLayout() == MSelecaoPorRadioView.Layout.VERTICAL) {
-                    map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;");
+                    map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;display:table-cell;");
                 }
 
                 return map;
@@ -70,7 +71,7 @@ public class RadioMapper extends SelectMapper {
             choices.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
             choices.setSuffix("</span>");
         } else if (radioView.getLayout() == MSelecaoPorRadioView.Layout.VERTICAL) {
-            choices.setPrefix("<span class=\"radio\" style=\"white-space: nowrap;\">");
+            choices.setPrefix("<span style='display: table;padding: 4px 0;'>");
             choices.setSuffix("</span>");
         }
         formGroup.appendRadioChoice(choices);
