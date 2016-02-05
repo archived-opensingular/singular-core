@@ -88,7 +88,15 @@ public class AnnotationComponent extends Panel {
     }
 
     private void createFields() {
-        comment_field = new Label("comment_field", textModel);
+        comment_field = new Label("comment_field", new Model(){
+            @Override
+            public Serializable getObject() {
+                if(textModel.getObject() == null){  return "";  }
+                String text = (String) textModel.getObject();
+                if(text.length() > 100){    return text.substring(0,100) + " [...]";   }
+                return text;
+            }
+        });
         approval_field = new Label("approval_field", new Model(){
             public Serializable getObject() {
                 if(Boolean.TRUE.equals(approvedModel.getObject())){
