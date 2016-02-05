@@ -81,7 +81,7 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
     protected void addWicketFilter(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         String path = "/*";
         FilterRegistration.Dynamic wicketFilter = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
-        wicketFilter.setInitParameter("applicationClassName", PetApplication.class.getName());
+        wicketFilter.setInitParameter("applicationClassName", getWicketApplicationClass().getName());
         wicketFilter.setInitParameter("homePageClass", "br.gov.anvisa.peticionamento.view.entrada.EntradaPage");
         wicketFilter.setInitParameter("filterMappingUrlPattern", path);
         wicketFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, path);
