@@ -1,11 +1,11 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -32,17 +32,18 @@ public class CaseInteractionEnabledPackage extends SPackage {
         recordDate = record.addCampoData("date");
 
         enabled
-            .as(SPackageBasic.aspect()).label("Enable");
+                .as(SPackageBasic.aspect()).label("Enable");
 
         record.as(SPackageBasic.aspect())
-            .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(false))
-            .dependsOn(enabled);
+                .enabled(ins -> ins.findNearestValue(enabled, Boolean.class).orElse(false))
+                .dependsOn(enabled);
 
         recordText.as(SPackageBasic.aspect())
-            .label("Text")
-            .as(AtrCore::new);
+                .label("Text")
+                .as(AtrBootstrap::new).colPreference(3);
 
         recordDate.as(SPackageBasic.aspect())
-            .label("Date");
+                .label("Date")
+                .as(AtrBootstrap::new).colPreference(2);
     }
 }
