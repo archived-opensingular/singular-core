@@ -29,9 +29,12 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
+
+import java.io.Serializable;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -44,8 +47,9 @@ public class AnnotationComponent extends Panel {
     private final WicketBuildContext context;
     private MInstanciaValorModel textModel, approvedModel;
     private MInstanceRootModel model;
-    private FormComponent comment_field, approval_field;
+    private Label comment_field, approval_field;
     private boolean keepOpened = false;
+    private ActionAjaxButton openModalButton;
 
     public AnnotationComponent(String id, AbstractSInstanceModel referenced,
                                Component referencedComponent, WicketBuildContext context) {
@@ -78,14 +82,32 @@ public class AnnotationComponent extends Panel {
         this.queue(comment_field);
         this.queue(approval_field);
 
+
         BFModalWindow annotationModal = createModal();
-        this.queue(createOpenModalButton(annotationModal));
+        this.queue(openModalButton = createOpenModalButton(annotationModal));
     }
 
     private void createFields() {
-        comment_field = new TextArea<>("comment_field");
-        approval_field = new CheckBox("approval_field");
-        updateModels();
+        comment_field = new Label("comment_field", textModel);
+        approval_field = new Label("approval_field", new Model(){
+            public Serializable getObject() {
+                if(Boolean.TRUE.equals(approvedModel.getObject())){
+                    return "Aprovado";
+                }else if(Boolean.FALSE.equals(approvedModel.getObject())) {
+                    return "Rejeitado";
+                }
+                return "";
+            }
+        }){
+            protected void onConfigure() {
+                super.onConfigure();
+                if(Boolean.TRUE.equals(approvedModel.getObject())){
+                    this.add(WicketUtils.$b.attr("class", "list-group-item bg-blue bg-font-blue"));
+                }else if(Boolean.FALSE.equals(approvedModel.getObject())) {
+                    this.add(WicketUtils.$b.attr("class", "list-group-item bg-red bg-font-red"));
+                }
+            }
+        };
     }
 
     private BFModalWindow createModal() {
@@ -102,12 +124,6 @@ public class AnnotationComponent extends Panel {
                 annotationModal.show(target);
             }
         };
-    }
-
-    private void updateModels() {
-        createSubModels();
-        comment_field.setDefaultModel(textModel);
-        approval_field.setDefaultModel(approvedModel);
     }
 
     private static String title(AbstractSInstanceModel referenced) {
@@ -139,8 +155,9 @@ public class AnnotationComponent extends Panel {
                 "new Annotation(" +
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
-                    "'#"+comment_field.getMarkupId()+"'," +
-                    "'#"+approval_field.getMarkupId()+"'" +
+                    "'#"+openModalButton.getMarkupId()+"'," +
+                    "`"+textModel.getObject()+"`," +
+                    ""+approvedModel.getObject()+"" +
                 ").setup()\n" +
                 "});\n";
     }
@@ -248,7 +265,6 @@ public class AnnotationComponent extends Panel {
             return new ActionAjaxButton("btn") {
                 protected void onAction(AjaxRequestTarget target, Form<?> form) {
                     target.add(parentComponent);
-                    parentComponent.updateModels();
                     AnnotationModalWindow.this.hide(target);
                     target.appendJavaScript(parentComponent.generateUpdateJS());
                 }

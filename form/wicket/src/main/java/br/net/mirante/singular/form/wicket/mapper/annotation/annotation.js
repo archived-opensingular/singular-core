@@ -1,64 +1,67 @@
 if( window.Annotation == undefined){
-    window.Annotation = function (target_id, this_id, comment_id, approved_id){
+    window.Annotation = function (target_id, this_id, open_modal_id, comment, approved){
         this.target_component = $(target_id);
         this.this_component = $(this_id);
-        this.comment = $(comment_id);
-        this.approved = $(approved_id);
-
-        var target = '#<wicket:container wicket:id="referenced_id" />';
-        var thiz = '#<wicket:container wicket:id="this_id" />';
-
+        this.open_modal = $(open_modal_id);
+        this.comment = comment;
+        this.approved = approved;
     }
 
     window.Annotation.prototype = {
-        define_button_color: function() {
-            var isApproved = this.approved.bootstrapSwitch('state');
-            var comment = this.comment.val();
-            if( ! isApproved && ! comment){
-                return 'btn-default';
-            }
-            if ( isApproved ) {
-                return 'btn-info';
-            }
-            return 'btn-danger';
-        },
-
         setup : function(){
             var thiz = this;
 
-            var button_color = this.define_button_color();
-
-            var show_button = $('<a>')
-                .addClass('btn btn-circle btn-icon-only '+button_color)
-                .attr('href','javascript:;')
-                .append($('<i>').addClass('fa fa-comment-o'))
-
-            this.approved.on('switchChange.bootstrapSwitch', function(event, state) {
-                show_button.removeClass('btn-default')
-                show_button.removeClass('btn-info')
-                show_button.removeClass('btn-danger')
-                show_button.addClass(thiz.define_button_color());
-            })
-
+            var show_button = this.create_show_button();
 
             this.target_component.find('h3').append(
                 $('<div>')
                     .attr('style','position:absolute;top:10px;right: 15px;')
                     .append(show_button)
                     .click(function(){
-                        if(!thiz.this_component.is(":visible")){
-                            thiz.this_component.fadeIn();
-                        }else{
+                        if(thiz.is_blank()){
+                            thiz.open_modal[0].click();
                             thiz.this_component.fadeOut();
+                        }else{
+                            if(!thiz.this_component.is(":visible")){
+                                thiz.this_component.fadeIn();
+                            }else{
+                                thiz.this_component.fadeOut();
+                            }
                         }
                     })
             );
-            thiz.this_component.css('position','absolute')
-            var target_offset = thiz.target_component.parent().offset()['top'],
-                this_offset = thiz.this_component.parent().offset()['top'];
-            thiz.this_component.css('top',(target_offset-this_offset)+"px");
+            this.adjust_height_position();
+            if(thiz.is_blank()) {   thiz.this_component.hide(); }
+        },
+
+        is_blank : function () {
+            return ! this.approved && (! this.comment || this.comment === 'null') ;
+        },
+
+        create_show_button : function(){
+            return $('<a>')
+                .addClass('btn btn-circle btn-icon-only '+this.define_button_color())
+                .attr('href','javascript:;')
+                .append($('<i>').addClass(this.define_button_icon()))
+        },
+
+        define_button_color: function() {
+            if(this.is_blank() ){   return 'btn-default';   }
+            if ( this.approved ) {  return 'btn-info';  }
+            return 'btn-danger';
+        },
+
+        define_button_icon: function(){
+            if( this.is_blank() ){ return "fa fa-plus"; }
+            return 'fa fa-comment-o';
+        },
+
+        adjust_height_position: function(){
+            this.this_component.css('position','absolute')
+            var target_offset = this.target_component.parent().offset()['top'],
+                this_offset = this.this_component.parent().offset()['top'];
+            this.this_component.css('top',(target_offset-this_offset)+"px");
         }
     }
-
 
 }
