@@ -2,6 +2,7 @@ package br.net.mirante.singular.pet.server.spring.security.config;
 
 
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
+import br.net.mirante.singular.pet.module.spring.security.SingularUserDetailsService;
 import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
@@ -22,7 +23,7 @@ public class SingularCASSpringSecurityConfigurer implements SingularSpringSecuri
 
     @Inject
     @Named("peticionamentoUserDetailService")
-    private Optional<UserDetailsService> peticionamentoUserDetailService;
+    private Optional<SingularUserDetailsService> peticionamentoUserDetailService;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {

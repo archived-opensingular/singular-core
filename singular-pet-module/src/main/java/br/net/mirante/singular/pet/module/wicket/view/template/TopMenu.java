@@ -27,7 +27,7 @@ public class TopMenu extends Panel {
         queue(new Label("nome", $m.ofValue(PetSession.get().getName())));
 
         WebMarkupContainer avatar = new WebMarkupContainer("codrh");
-        Optional<String> avatarSrc = Optional.ofNullable(PetSession.get().getAvatar());
+        Optional<String> avatarSrc = Optional.ofNullable(null);
         avatarSrc.ifPresent(src -> avatar.add($b.attr("src", src)));
         queue(avatar);
 

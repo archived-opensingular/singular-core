@@ -2,6 +2,7 @@ package br.net.mirante.singular.pet.server.spring.security.config;
 
 
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
+import br.net.mirante.singular.pet.module.spring.security.SingularUserDetailsService;
 import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +18,7 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
 
     @Inject
     @Named("peticionamentoUserDetailService")
-    private Optional<UserDetailsContextMapper> peticionamentoUserDetailContextMapper;
+    private Optional<SingularUserDetailsService> peticionamentoUserDetailContextMapper;
 
 
     @Override
