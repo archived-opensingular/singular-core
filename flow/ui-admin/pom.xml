@@ -264,6 +264,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.4.6.1</version>
         </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>flow-bam-client</artifactId>
+            <version>0.5.8-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 
