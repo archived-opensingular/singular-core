@@ -1,21 +1,30 @@
 package br.net.mirante.singular.form.wicket.util;
 
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.model.IModel;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
@@ -69,7 +78,7 @@ public abstract class WicketFormUtils {
 
     public static Optional<Component> findChildByInstance(MarkupContainer root, SInstance instance) {
         return streamDescendants(root)
-            .filter(c -> instanciaIfAware(c.getDefaultModel()) == instance)
+            .filter(c -> instanciaIfAware(c.getDefaultModel()).orElse(null) == instance)
             .findAny();
     }
     public static Stream<Component> streamComponentsByInstance(Component anyComponent, BiPredicate<Component, SInstance> predicate) {
@@ -80,12 +89,12 @@ public abstract class WicketFormUtils {
             .get();
         return streamDescendants(rootContainer)
             .filter(c -> c.getDefaultModel() instanceof IMInstanciaAwareModel<?>)
-            .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel())));
+            .filter(c -> predicate.test(c, instanciaIfAware(c.getDefaultModel()).orElse(null)));
     }
-    private static SInstance instanciaIfAware(IModel<?> model) {
+    private static Optional<SInstance> instanciaIfAware(IModel<?> model) {
         return (model instanceof IMInstanciaAwareModel<?>)
-            ? ((IMInstanciaAwareModel<?>) model).getMInstancia()
-            : null;
+            ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
+            : Optional.empty();
     }
 
     public static Stream<MarkupContainer> streamAscendants(Component root) {
@@ -143,5 +152,58 @@ public abstract class WicketFormUtils {
         return (model instanceof IMInstanciaAwareModel<?>)
             ? Optional.ofNullable(((IMInstanciaAwareModel<?>) model).getMInstancia())
             : Optional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String generateTitlePath(Component parentContainer,
+                                           SInstance parentContext,
+                                           Component childComponent,
+                                           SInstance childInstance) {
+
+        List<Component> components = Lists.newArrayList(childComponent);
+        WicketUtils.appendListOfParents(components, childComponent, parentContainer);
+
+        Deque<String> titles = new LinkedList<>();
+        SInstance lastInstance = null;
+        String lastBaseTitle = null;
+        for (Component comp : components) {
+
+            SInstance instance = WicketFormUtils.instanciaIfAware(comp.getDefaultModel()).orElse(null);
+
+            Optional<WicketBuildContext> wbc = WicketBuildContext.get(comp);
+            if (wbc.isPresent()) {
+
+                Optional<String> title = wbc.get().resolveContainerTitle()
+                    .map(it -> StringUtils.trimToNull(it.getObject()));
+                if (title.isPresent()) {
+                    final String baseTitle = title.get();
+                    if (Objects.equal(baseTitle, lastBaseTitle)) {
+                        continue;
+                    } else {
+                        lastBaseTitle = baseTitle;
+                    }
+
+                    if ((lastInstance != null) && (instance instanceof SList<?>)) {
+                        SList<SInstance> lista = (SList<SInstance>) instance;
+                        Iterator<SInstance> iter = lista.iterator();
+                        for (int i = 1; iter.hasNext(); i++) {
+                            SInstance itemInstance = iter.next();
+                            if (lastInstance == itemInstance || lastInstance.isDescentantOf(itemInstance)) {
+                                titles.addFirst(baseTitle + " [" + i + "]");
+                                break;
+                            }
+                        }
+                    } else {
+                        titles.addFirst(baseTitle);
+                    }
+                }
+            }
+            lastInstance = instance;
+        }
+
+        if (!titles.isEmpty())
+            return titles.stream().collect(Collectors.joining(" > "));
+        else
+            return null;
     }
 }

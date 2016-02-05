@@ -13,6 +13,7 @@ import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
 public class TabMapper extends DefaultCompostoMapper {
 
     @Override
+    @SuppressWarnings("unchecked")
     public void buildView(WicketBuildContext ctx) {
 
         final SIComposite instance = (SIComposite) ctx.getModel().getObject();

@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -33,9 +35,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
-import br.net.mirante.singular.util.wicket.model.ValueModel;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -53,30 +52,31 @@ public class TableListMapper extends AbstractListaMapper {
 
             ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
             ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(
-                    id,
-                    (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
-                    (content, form) -> builContent(content, form, list, ctx, view, isEdition),
-                    (footer, form) -> {
-                        footer.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
-                        if (view.isPermiteAdicaoDeLinha() && isEdition) {
-                            appendAddButton(list, form, footer, true);
-                        }
+                id,
+                (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
+                (content, form) -> builContent(content, form, list, ctx, view, isEdition),
+                (footer, form) -> {
+                    footer.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
+                    if (view.isPermiteAdicaoDeLinha() && isEdition) {
+                        appendAddButton(list, form, footer, true);
                     }
-            ));
+                }));
         }
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
-        final ValueModel<String> label = $m.ofValue(ctx.getCurrentInstance().getMTipo().asAtrBasic().getLabel());
+        final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getMTipo().asAtrBasic().getLabel());
+
+        ctx.configureContainer(label);
 
         header.appendTag("span", new Label("_title", label));
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
         if (view.isPermiteAdicaoDeLinha() && isEdition) {
             appendAddButton(list, form, header, false)
-                    .add($b.onConfigure(c -> c.setVisible(list.getObject().isEmpty())));
+                .add($b.onConfigure(c -> c.setVisible(list.getObject().isEmpty())));
         }
 
     }
@@ -85,13 +85,13 @@ public class TableListMapper extends AbstractListaMapper {
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final String markup = ""
-                + " <table class='table table-condensed table-unstyled'>                                             "
-                + "      <thead wicket:id='_h'></thead>                                                              "
-                + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-                + "      <tfoot wicket:id='_ft'>                                                                     "
-                + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-                + "      </tfoot>                                                                                    "
-                + " </table>                                                                                         ";
+            + " <table class='table table-condensed table-unstyled'>                                             "
+            + "      <thead wicket:id='_h'></thead>                                                              "
+            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+            + "      <tfoot wicket:id='_ft'>                                                                     "
+            + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+            + "      </tfoot>                                                                                    "
+            + " </table>                                                                                         ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
         template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
@@ -116,9 +116,12 @@ public class TableListMapper extends AbstractListaMapper {
 
             for (SType<?> tCampo : sTypeComposite.getFields()) {
                 final Integer preferentialWidth = tCampo.as(AtrBootstrap::new).getColPreference(1);
-                final BSTDataCell cell = row.newTHeaderCell($m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel()));
+                final IModel<String> headerModel = $m.ofValue(tCampo.as(SPackageBasic.aspect()).getLabel());
+                final BSTDataCell cell = row.newTHeaderCell(headerModel);
                 final String width = String.format("width:%.0f%%;", (100.0 * preferentialWidth) / sumWidthPref);
                 final boolean isCampoObrigatorio = tCampo.as(SPackageCore.aspect()).isObrigatorio();
+
+                ctx.configureContainer(headerModel);
 
                 cell.setInnerStyle(width);
                 cell.add(new ClassAttributeModifier() {
@@ -141,18 +144,17 @@ public class TableListMapper extends AbstractListaMapper {
         footer.setVisible(!(view.isPermiteAdicaoDeLinha() && isEdition));
 
         template.add(tableHeader)
-                .add(trView)
-                .add(footer.add(footerBody));
+            .add(trView)
+            .add(footer.add(footerBody));
     }
-
 
     private static final class TableElementsView extends ElementsView {
 
         private final WicketBuildContext ctx;
-        private final MView view;
-        private final Form<?> form;
-        private final ViewMode viewMode;
-        private final UIBuilderWicket wicketBuilder;
+        private final MView              view;
+        private final Form<?>            form;
+        private final ViewMode           viewMode;
+        private final UIBuilderWicket    wicketBuilder;
 
         private TableElementsView(String id, IModel<SList<SInstance>> model, WicketBuildContext ctx, Form<?> form) {
             super(id, model);
@@ -164,6 +166,7 @@ public class TableListMapper extends AbstractListaMapper {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected void populateItem(Item<SInstance> item) {
 
             final BSTRow row = new BSTRow("_r", BSGridSize.MD);
@@ -187,7 +190,7 @@ public class TableListMapper extends AbstractListaMapper {
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
-                    && viewMode.isEdition()) {
+                && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, row.newCol());
             }
 
