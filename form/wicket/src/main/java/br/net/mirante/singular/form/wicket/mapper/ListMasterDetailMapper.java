@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static org.apache.commons.lang3.StringUtils.*;
+
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,6 +29,9 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -45,13 +51,9 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
-
 
     public void buildView(WicketBuildContext ctx) {
 
@@ -61,21 +63,19 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         if (!(view instanceof MListMasterDetailView)) {
             throw new SingularFormException("Error: Mapper " +
-                    ListMasterDetailMapper.class.getSimpleName() +
-                    " must be associated with a view  of type" +
-                    MListMasterDetailView.class.getName() +
-                    ".");
+                ListMasterDetailMapper.class.getSimpleName() +
+                " must be associated with a view  of type" +
+                MListMasterDetailView.class.getName() +
+                ".");
         }
 
-        final IModel<String> listaLabel = newLabelModel(model);
+        final IModel<String> listaLabel = newLabelModel(ctx, model);
 
-
-        BSContainer externalAtual = new BSContainer<>("externalContainerAtual");
-        BSContainer externalIrmao = new BSContainer<>("externalContainerIrmao");
+        BSContainer<?> externalAtual = new BSContainer<>("externalContainerAtual");
+        BSContainer<?> externalIrmao = new BSContainer<>("externalContainerIrmao");
 
         ctx.getExternalContainer().appendTag("div", true, null, externalAtual);
         ctx.getExternalContainer().appendTag("div", true, null, externalIrmao);
-
 
         final MasterDetailModal modal = new MasterDetailModal("mods", model, listaLabel, ctx, viewMode, (MListMasterDetailView) view, externalIrmao, ctx.getUiBuilderWicket());
 
@@ -100,13 +100,13 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             @Override
             protected void buildContent(BSContainer<?> content, Form<?> form) {
                 content.appendTag("table", true, null, (id) -> {
-                    BSDataTable bsDataTable = buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode);
+                    BSDataTable<SInstance, ?> bsDataTable = buildTable(id, model, (MListMasterDetailView) view, modal, ctx, viewMode);
                     bsDataTable.add(new Behavior() {
                         @Override
                         public void onConfigure(Component component) {
                             super.onConfigure(component);
                             if (ctx.getCurrentInstance() instanceof SList) {
-                                component.setVisible(!((SList) ctx.getCurrentInstance()).isEmpty());
+                                component.setVisible(!((SList<?>) ctx.getCurrentInstance()).isEmpty());
                             }
                         }
                     });
@@ -116,26 +116,27 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-
     /*
      * DATA TABLE
      */
 
     /**
+     * @param ctx 
      * @param model
      * @return
      */
     @SuppressWarnings("unchecked")
-    private IModel<String> newLabelModel(IModel<? extends SInstance> model) {
+    private IModel<String> newLabelModel(WicketBuildContext ctx, IModel<? extends SInstance> model) {
         IModel<SList<SInstance>> listaModel = $m.get(() -> (SList<SInstance>) model.getObject());
         SList<?> iLista = listaModel.getObject();
-        return $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        IModel<String> labelModel = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
+        ctx.configureContainer(labelModel);
+        return labelModel;
     }
 
-    @SuppressWarnings("unchecked")
-    private BSDataTable buildTable(String id, IModel<? extends SInstance> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
+    private BSDataTable<SInstance, ?> buildTable(String id, IModel<? extends SInstance> model, MListMasterDetailView view, MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode) {
 
-        BSDataTableBuilder builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
+        BSDataTableBuilder<SInstance, ?, ?> builder = new BSDataTableBuilder<>(newDataProvider(model)).withNoRecordsToolbar();
 
         configureColumns(view.getColumns(), builder, model, modal, ctx, viewMode, view);
 
@@ -143,11 +144,11 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private BaseDataProvider newDataProvider(final IModel<? extends SInstance> model) {
-        return new BaseDataProvider() {
+    private BaseDataProvider<SInstance, ?> newDataProvider(final IModel<? extends SInstance> model) {
+        return new BaseDataProvider<SInstance, Object>() {
 
             @Override
-            public Iterator iterator(int first, int count, Object sortProperty, boolean ascending) {
+            public Iterator<SInstance> iterator(int first, int count, Object sortProperty, boolean ascending) {
                 return ((SList<SInstance>) model.getObject()).iterator();
             }
 
@@ -157,43 +158,42 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             @Override
-            public IModel model(Object object) {
+            public IModel<SInstance> model(SInstance object) {
                 IModel<SList<SInstance>> listaModel = $m.get(() -> (SList<SInstance>) model.getObject());
                 return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf((SInstance) object));
             }
         };
     }
 
-    @SuppressWarnings("unchecked")
     private void configureColumns(
-            Map<String, String> mapColumns,
-            BSDataTableBuilder<SInstance, ?, ?> builder,
-            IModel<? extends SInstance> model,
-            MasterDetailModal modal,
-            WicketBuildContext ctx,
-            ViewMode viewMode,
-            MListMasterDetailView view) {
+                                  Map<String, String> mapColumns,
+                                  BSDataTableBuilder<SInstance, ?, ?> builder,
+                                  IModel<? extends SInstance> model,
+                                  MasterDetailModal modal,
+                                  WicketBuildContext ctx,
+                                  ViewMode viewMode,
+                                  MListMasterDetailView view) {
 
-        Map<SType, String> mapColumnsTipos = new LinkedHashMap<>();
+        Map<SType<?>, String> mapColumnsTipos = new LinkedHashMap<>();
 
         if (mapColumns.isEmpty()) {
-            SType tipo = ((SList) model.getObject()).getTipoElementos();
+            SType<?> tipo = ((SList<?>) model.getObject()).getTipoElementos();
             if (tipo instanceof STypeSimple) {
-                mapColumnsTipos.put((STypeSimple) tipo, null);
+                mapColumnsTipos.put((STypeSimple<?, ?>) tipo, null);
             }
             if (tipo instanceof STypeComposite) {
-                ((STypeComposite) tipo)
-                        .getFields()
-                        .stream()
-                        .filter(mtipo -> mtipo instanceof STypeSimple)
-                        .forEach(mtipo -> mapColumnsTipos.put((STypeSimple) mtipo, null));
+                ((STypeComposite<?>) tipo)
+                    .getFields()
+                    .stream()
+                    .filter(mtipo -> mtipo instanceof STypeSimple)
+                    .forEach(mtipo -> mapColumnsTipos.put((STypeSimple<?, ?>) mtipo, null));
 
             }
         } else {
             mapColumns.forEach((key, value) -> mapColumnsTipos.put(model.getObject().getDicionario().getTipo(key), value));
         }
 
-        for (Map.Entry<SType, String> entry : mapColumnsTipos.entrySet()) {
+        for (Map.Entry<SType<?>, String> entry : mapColumnsTipos.entrySet()) {
 
             IModel<String> labelModel;
             String label = entry.getValue();
@@ -209,35 +209,33 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, view);
 
-
     }
 
-    private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<? extends SInstance> model,
-                                      MasterDetailModal modal, WicketBuildContext ctx, ViewMode viewMode,
+    private void actionColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
+                                      IModel<? extends SInstance> model,
+                                      MasterDetailModal modal,
+                                      WicketBuildContext ctx,
+                                      ViewMode viewMode,
                                       MListMasterDetailView view) {
+
         builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction(
-                        new ActionConfig()
-                                .iconeModel(Model.of(Icone.MINUS))
-                                .buttonModel(Model.of("red"))
-                                .style($m.ofValue("padding:5px 3px 1px;")),
-                        (target, rowModel) -> {
-                            SList sList = ((SList) model.getObject());
-                            sList.remove(sList.indexOf(rowModel.getObject()));
-                            target.add(ctx.getContainer());
-                        });
+                actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
+                    (target, rowModel) -> {
+                    SList<?> sList = ((SList<?>) model.getObject());
+                    sList.remove(sList.indexOf(rowModel.getObject()));
+                    target.add(ctx.getContainer());
+                });
             }
             final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
             actionColumn.appendAction(
-                    new ActionConfig()
-                            .iconeModel(Model.of(openModalIcon))
-                            .buttonModel(Model.of("blue-madison"))
-                            .style($m.ofValue("padding:5px 3px 1px;")),
-                    (target, rowModel) -> {
-                        modal.showExisting(target, rowModel, ctx);
-                    }
-            );
+                new ActionConfig()
+                    .iconeModel(Model.of(openModalIcon))
+                    .buttonModel(Model.of("blue-madison"))
+                    .style($m.ofValue("padding:5px 3px 1px;")),
+                (target, rowModel) -> {
+                modal.showExisting(target, rowModel, ctx);
+            });
         });
     }
 
@@ -247,23 +245,22 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<String> labelModel, IModel<SType<?>> mTipoModel) {
         builder.appendPropertyColumn(labelModel, o -> {
             SIComposite composto = (SIComposite) o;
-            STypeSimple mtipo = (STypeSimple) mTipoModel.getObject();
-            SISimple instancia = ((SISimple) composto.findDescendant(mtipo).get());
+            STypeSimple<?, ?> mtipo = (STypeSimple<?, ?>) mTipoModel.getObject();
+            SISimple<?> instancia = ((SISimple<?>) composto.findDescendant(mtipo).get());
             return instancia.getDisplayString();
         });
     }
 
-    @SuppressWarnings("unchecked")
     protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal) {
         container
-                .newTemplateTag(t -> ""
-                                + "<button"
-                                + " wicket:id='_add'"
-                                + " class='btn btn-success btn-sm pull-right'"
-                                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
-                                + "</button>"
-                ).add(
-                new AjaxLink("_add") {
+            .newTemplateTag(t -> ""
+                + "<button"
+                + " wicket:id='_add'"
+                + " class='btn btn-success btn-sm pull-right'"
+                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
+                + "</button>")
+            .add(
+                new AjaxLink<Void>("_add") {
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         modal.showNew(target);
@@ -271,28 +268,29 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 });
     }
 
-
     private static class MasterDetailModal extends BFModalWindow {
 
         private final IModel<SList<SInstance>> listModel;
-        private final IModel<String> listaLabel;
-        private final WicketBuildContext ctx;
-        private final UIBuilderWicket wicketBuilder;
-        private final Component table;
-        private final ViewMode viewMode;
-        private IModel<SInstance> currentInstance;
-        private IConsumer<AjaxRequestTarget> closeCallback;
-        private MListMasterDetailView view;
-        private BSContainer containerExterno;
+        private final IModel<String>           listaLabel;
+        private final WicketBuildContext       ctx;
+        private final UIBuilderWicket          wicketBuilder;
+        private final Component                table;
+        private final ViewMode                 viewMode;
+        private IModel<SInstance>              currentInstance;
+        private IConsumer<AjaxRequestTarget>   closeCallback;
+        private MListMasterDetailView          view;
+        private BSContainer<?>                 containerExterno;
+        private String instanceBackupXml;
 
+        @SuppressWarnings("unchecked")
         public MasterDetailModal(String id,
-                                 IModel<? extends SInstance> model,
-                                 IModel<String> listaLabel,
-                                 WicketBuildContext ctx,
-                                 ViewMode viewMode,
-                                 MListMasterDetailView view,
-                                 BSContainer containerExterno,
-                                 UIBuilderWicket wicketBuilder) {
+            IModel<? extends SInstance> model,
+            IModel<String> listaLabel,
+            WicketBuildContext ctx,
+            ViewMode viewMode,
+            MListMasterDetailView view,
+            BSContainer<?> containerExterno,
+            UIBuilderWicket wicketBuilder) {
             super(id, true, false);
 
             this.wicketBuilder = wicketBuilder;
@@ -320,11 +318,29 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                     if (closeCallback != null) {
                         closeCallback.accept(target);
                     }
+                    rollbackState();
                     target.add(table);
                     MasterDetailModal.this.hide(target);
                 }
             });
 
+        }
+
+        private void saveState() {
+            MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
+            if(xml != null) instanceBackupXml = xml.toString();
+        }
+
+        private void rollbackState() {
+            try {
+                if(instanceBackupXml != null){
+                    MElement xml = MParser.parse(instanceBackupXml);
+                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
+                    currentInstance.getObject().setValor(i);
+                }
+            }catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
@@ -342,6 +358,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             String prefix = ctx.getViewMode().isEdition() ? "Editar" : "";
             closeCallback = null;
             currentInstance = forEdit;
+
+            saveState();
+
             this.configureNewContent(prefix, target);
         }
 
@@ -351,7 +370,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         private void configureNewContent(String prefix, AjaxRequestTarget target) {
             this.setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
-            BSContainer modalBody = new BSContainer("bogoMips");
+            BSContainer<?> modalBody = new BSContainer<>("bogoMips");
             this.setBody(modalBody);
 
             ViewMode viewModeModal = viewMode;
@@ -388,6 +407,5 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
     }
-
 
 }

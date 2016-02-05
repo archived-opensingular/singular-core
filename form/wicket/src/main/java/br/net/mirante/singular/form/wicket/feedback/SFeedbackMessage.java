@@ -8,11 +8,11 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 
-public class BFeedbackMessage extends FeedbackMessage {
+public class SFeedbackMessage extends FeedbackMessage {
 
     private final IModel<? extends SInstance> instanceModel;
 
-    public BFeedbackMessage(
+    public SFeedbackMessage(
         Component reporter,
         Serializable message,
         int level,

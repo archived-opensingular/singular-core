@@ -20,17 +20,12 @@ import java.util.stream.Stream;
 
 public final class WicketUtils {
 
-    public static final IBehaviorsMixin $b = new IBehaviorsMixin() {
-    };
-    public static final IModelsMixin $m = new IModelsMixin() {
-    };
-    public static final IValidatorsMixin $v = new IValidatorsMixin() {
-    };
-    public static final ILambdasMixin $L = new ILambdasMixin() {
-    };
+    public static final IBehaviorsMixin $b = new IBehaviorsMixin() {};
+    public static final IModelsMixin $m = new IModelsMixin() {};
+    public static final IValidatorsMixin $v = new IValidatorsMixin() {};
+    public static final ILambdasMixin $L = new ILambdasMixin() {};
 
-    private WicketUtils() {
-    }
+    private WicketUtils() {}
 
     @SuppressWarnings("unchecked")
     public static <C> Stream<C> findChildren(MarkupContainer container, Class<C> type) {
@@ -62,16 +57,56 @@ public final class WicketUtils {
                 .forEach(it -> it.markRendered());
     }
 
+    /**
+     * Retorna uma lista de parent containers, ordenados do filho para o pai.
+     * @param child
+     * @return lista de parent containers, ordenados do filho para o pai
+     */
     public static List<MarkupContainer> listParents(Component reporter) {
-        List<MarkupContainer> list = new ArrayList<MarkupContainer>();
-        if (reporter != null) {
-            MarkupContainer container = reporter.getParent();
+        return listParents(reporter, null);
+    }
+
+    /**
+     * Retorna uma lista de parent containers, ordenados do filho para o pai.
+     * @param child
+     * @param topParentInclusive parent mais alto na hierarquia a ser incluído na lista
+     * @return 
+     */
+    public static List<MarkupContainer> listParents(Component child, MarkupContainer topParentInclusive) {
+        List<MarkupContainer> list = new ArrayList<>();
+        if (child != null) {
+            MarkupContainer container = child.getParent();
             while (container != null) {
                 list.add(container);
+                if (container == topParentInclusive)
+                    break;
                 container = container.getParent();
+            }
+            if (topParentInclusive != container) {
+                throw new IllegalArgumentException("Top parent not found");
             }
         }
         return list;
+    }
+
+    /**
+     * Adiciona os parent containers à lista, ordenados do filho para o pai.
+     * @param child
+     * @param topParentInclusive parent mais alto na hierarquia a ser incluído na lista
+     */
+    public static void appendListOfParents(List<? super MarkupContainer> list, Component child, Component topParentInclusive) {
+        if (child != null) {
+            MarkupContainer container = child.getParent();
+            while (container != null) {
+                list.add(container);
+                if (container == topParentInclusive)
+                    break;
+                container = container.getParent();
+            }
+            if (topParentInclusive != container) {
+                throw new IllegalArgumentException("Top parent not found");
+            }
+        }
     }
 
     public static boolean nullOrEmpty(Object obj) {

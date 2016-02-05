@@ -333,6 +333,14 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         return nearest.map(it -> classeValor.cast(it.getValorWithDefault(classeValor)));
     }
 
+    public boolean isDescentantOf(SInstance ancestor) {
+        SInstance node = this;
+        for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent())
+            if (parent == ancestor)
+                return true;
+        return false;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
         if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {

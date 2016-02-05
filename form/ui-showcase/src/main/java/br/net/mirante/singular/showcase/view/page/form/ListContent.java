@@ -11,7 +11,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import br.net.mirante.singular.form.wicket.feedback.BFFeedbackPanel;
+import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
@@ -40,7 +40,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     protected void onInitialize() {
         super.onInitialize();
 
-        queue(new BFFeedbackPanel("feedback", this));
+        queue(new SFeedbackPanel("feedback", this));
         queue(buildFormDataTable());
     }
 

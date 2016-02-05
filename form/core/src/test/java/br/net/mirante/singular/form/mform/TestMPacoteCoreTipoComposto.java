@@ -45,7 +45,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNull(endereco.getValor("classificacao.descricao"));
         assertFilhos(endereco, 0);
 
-        assertException(() -> endereco.setValor(100), "Método não suportado");
+        assertException(() -> endereco.setValor(100), "SIComposite só suporta valores de mesmo tipo");
 
         testAtribuicao(endereco, "rua", "Pontes", 1);
         testAtribuicao(endereco, "bairro", "Norte", 2);
@@ -66,7 +66,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNull(endereco.getValor("classificacao.prioridade"));
         testAtribuicao(endereco, "classificacao.prioridade", null, 2);
 
-        assertException(() -> endereco.setValor("classificacao", "X"), "Método não suportado");
+        assertException(() -> endereco.setValor("classificacao", "X"), "SIComposite só suporta valores de mesmo tipo");
     }
 
     private static void assertTipo(SType<?> tipo, String nomeEsperado, Class<?> classeEsperadaDoTipo) {
