@@ -139,6 +139,7 @@ public class AnnotationComponent extends Panel {
                 "new Annotation(" +
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
+                    "'#"+comment_field.getMarkupId()+"'," +
                     "'#"+approval_field.getMarkupId()+"'" +
                 ").setup()\n" +
                 "});\n";

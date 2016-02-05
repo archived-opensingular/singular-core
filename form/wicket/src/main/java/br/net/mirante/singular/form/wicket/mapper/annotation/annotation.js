@@ -1,7 +1,8 @@
 if( window.Annotation == undefined){
-    window.Annotation = function (target_id, this_id, approved_id){
+    window.Annotation = function (target_id, this_id, comment_id, approved_id){
         this.target_component = $(target_id);
         this.this_component = $(this_id);
+        this.comment = $(comment_id);
         this.approved = $(approved_id);
 
         var target = '#<wicket:container wicket:id="referenced_id" />';
@@ -12,7 +13,11 @@ if( window.Annotation == undefined){
     window.Annotation.prototype = {
         define_button_color: function() {
             var isApproved = this.approved.bootstrapSwitch('state');
-            if (isApproved  ) {
+            var comment = this.comment.val();
+            if( ! isApproved && ! comment){
+                return 'btn-default';
+            }
+            if ( isApproved ) {
                 return 'btn-info';
             }
             return 'btn-danger';
