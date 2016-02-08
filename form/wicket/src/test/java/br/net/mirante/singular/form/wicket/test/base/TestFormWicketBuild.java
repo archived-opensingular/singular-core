@@ -1,10 +1,21 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -17,22 +28,13 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
 import junit.framework.TestCase;
-import org.apache.wicket.Component;
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainerRelativePath;
 
 public class TestFormWicketBuild extends TestCase {
 
     WicketTester tester;
-    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().getContext();
+    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
 
+    @Override
     public void setUp() {
         tester = new WicketTester(new WebApplication() {
             @Override

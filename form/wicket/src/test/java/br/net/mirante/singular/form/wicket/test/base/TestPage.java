@@ -1,5 +1,11 @@
 package br.net.mirante.singular.form.wicket.test.base;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -10,11 +16,6 @@ import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * This is an example page to you to use in your form tests.
@@ -40,7 +41,7 @@ public class TestPage extends WebPage {
     private SDictionary dicionario;
     private Form<?> submittedForm;
     private SIComposite currentInstance;
-    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().getContext();
+    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
     private ViewMode viewMode;
     private boolean annotationEnabled =false;
 
