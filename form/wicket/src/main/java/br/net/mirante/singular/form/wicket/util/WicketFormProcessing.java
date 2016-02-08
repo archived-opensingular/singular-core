@@ -160,7 +160,8 @@ public class WicketFormProcessing {
                 .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
-    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance, boolean prependFullPathLabel, Set<IValidationError> errors) {
+    private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance,
+                                          boolean prependFullPathLabel, Set<IValidationError> errors) {
         for (IValidationError error : errors) {
             String message = error.getMessage();
             if (prependFullPathLabel) {
