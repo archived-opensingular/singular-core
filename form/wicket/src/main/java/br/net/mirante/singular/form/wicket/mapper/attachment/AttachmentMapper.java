@@ -1,18 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import java.io.IOException;
 import java.io.OutputStream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -24,15 +14,25 @@ import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.wicket.mapper.ControlsFieldComponentMapper;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class AttachmentMapper implements ControlsFieldComponentMapper {
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
-        AttachmentContainer container = new AttachmentContainer(
-                (IModel<? extends SIAttachment>) model);
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
+                                 IModel<? extends SInstance> model, IModel<String> labelModel) {
+        AttachmentContainer container = new AttachmentContainer((IModel<? extends SIAttachment>) model);
         formGroup.appendTypeahead(container);
         return container.field();
     }

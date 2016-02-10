@@ -73,7 +73,7 @@ class AttachmentContainer extends BSContainer {
             public void detach() {}
 
             public SInstance getMInstancia() {
-                return model.getObject().getMTipo().novaInstancia();
+                return model.getObject();
             }
         });
         nameField = new HiddenField("file_name_"+name,

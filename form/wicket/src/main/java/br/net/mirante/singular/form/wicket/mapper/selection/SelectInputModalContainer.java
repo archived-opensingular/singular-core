@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -42,6 +44,7 @@ import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 /**
  * This component is used to represent a selection placed in a modal search.
@@ -115,13 +118,22 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     public BFModalWindow buildModal(String id, IModel<String> filterModel) {
-        BFModalWindow searchModal = new BFModalWindow(id, true);
+        final BFModalWindow searchModal = new BFModalWindow(id, true);
         searchModal.setTitleText(Model.of("Buscar"));
         searchModal.setBody(buildConteudoModal(id, filterModel, searchModal));
         /**
          * Limpa o filtro apos fechar a modal
          */
         searchModal.setCloseIconCallback(target -> clearModel.accept(filterModel));
+        searchModal.addButton(BSModalBorder.ButtonStyle.DANGER,$m.ofValue("Limpar"),
+                new ActionAjaxButton("limpar"){
+                    @Override
+                    protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                        model.getObject().clearInstance();
+                        target.add(valueLabel);
+                        searchModal.hide(target);
+                    }
+                });
         return searchModal;
     }
 

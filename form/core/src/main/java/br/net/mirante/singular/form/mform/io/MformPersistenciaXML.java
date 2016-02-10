@@ -10,9 +10,9 @@ import org.w3c.dom.NamedNodeMap;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -182,7 +182,7 @@ public class MformPersistenciaXML {
             }
             return xmlLista;
         } else {
-            throw new SingularFormException("Instancia da classe " + instancia.getClass().getName() + " não suportada");
+            throw new SingularFormException("Instancia da classe " + instancia.getClass().getName() + " não suportada", instancia);
         }
     }
 
@@ -218,8 +218,8 @@ public class MformPersistenciaXML {
                         String sPersistencia = ((SISimple<?>) atr.getValue()).toStringPersistencia();
                         element.setAttribute(atr.getKey(), sPersistencia);
                     } else {
-                        throw new SingularFormException("Não implementada a persitência de atributos compostos: " + atr.getKey() + " em "
-                                + instancia.getPathFull());
+                        throw new SingularFormException("Não implementada a persitência de atributos compostos: " + atr.getKey(),
+                                instancia);
                     }
                 }
             }

@@ -7,9 +7,9 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-public abstract class BelverSaveButton extends BelverValidationButton {
+public abstract class SingularSaveButton extends SingularValidationButton {
 
-    public BelverSaveButton(String id) {
+    public SingularSaveButton(String id) {
         super(id);
     }
 
