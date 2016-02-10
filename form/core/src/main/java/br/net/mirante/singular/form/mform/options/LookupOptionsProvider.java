@@ -1,13 +1,15 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Class responsible for looking up for the desired providers from the current
  * instance in order to populate the options.
- * 
+ *
  * @author Fabricio Buzeto
  *
  */
@@ -37,11 +39,22 @@ public class LookupOptionsProvider implements MOptionsProvider {
     }
 
     private MOptionsProvider whichProvider(SDocument document) {
+        MOptionsProvider p;
         if(providerName != null){
-            return document.lookupService(providerName, MOptionsProvider.class);
+            p = document.lookupService(providerName, MOptionsProvider.class);
+            if (p == null) {
+                throw new SingularFormException("Não foi localizado o " + MOptionsProvider.class.getSimpleName() + " de nome '"
+                        + providerName + "' nos serviços registrado para o documento");
+            }
         }else if(providerClass != null){
-            return document.lookupService(providerClass);
+            p = document.lookupService(providerClass);
+            if (p == null) {
+                throw new SingularFormException("Não foi localizado o " + MOptionsProvider.class.getSimpleName() + " da classe '"
+                        + providerClass + "' nos serviços registrado para o documento");
+            }
+        } else {
+            throw new SingularException("Não foi configurador a origem do " + MOptionsProvider.class.getSimpleName());
         }
-        return null;
+        return p;
     }
 }

@@ -1,7 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -55,6 +56,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<? extends SInstance> model = ctx.getModel();
@@ -62,11 +64,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         final MView view = ctx.getView();
 
         if (!(view instanceof MListMasterDetailView)) {
-            throw new SingularFormException("Error: Mapper " +
-                ListMasterDetailMapper.class.getSimpleName() +
-                " must be associated with a view  of type" +
-                MListMasterDetailView.class.getName() +
-                ".");
+            throw new SingularFormException("Error: Mapper " + ListMasterDetailMapper.class.getSimpleName()
+                    + " must be associated with a view  of type" + MListMasterDetailView.class.getName() + ".", model.getObject());
         }
 
         final IModel<String> listaLabel = newLabelModel(ctx, model);
@@ -121,7 +120,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
      */
 
     /**
-     * @param ctx 
+     * @param ctx
      * @param model
      * @return
      */
@@ -240,7 +239,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
     /**
-     * property column isolado em outro método para isolar o escopo de serialização do lambda do appendPropertyColumn
+     * property column isolado em outro método para isolar o escopo de
+     * serialização do lambda do appendPropertyColumn
      */
     private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<String> labelModel, IModel<SType<?>> mTipoModel) {
         builder.appendPropertyColumn(labelModel, o -> {
@@ -302,7 +302,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             this.listModel = $m.get(() -> (SList<SInstance>) model.getObject());
             this.containerExterno = containerExterno;
 
-            this.setSize(BSModalBorder.Size.NORMAL);
+            setSize(BSModalBorder.Size.NORMAL);
 
             this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"), new ActionAjaxButton("btn") {
                 @Override
@@ -361,7 +361,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             saveState();
 
-            this.configureNewContent(prefix, target);
+            configureNewContent(prefix, target);
         }
 
         private void revert(AjaxRequestTarget target) {
@@ -369,9 +369,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         }
 
         private void configureNewContent(String prefix, AjaxRequestTarget target) {
-            this.setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
+            setTitleText($m.ofValue((prefix + " " + listaLabel.getObject()).trim()));
             BSContainer<?> modalBody = new BSContainer<>("bogoMips");
-            this.setBody(modalBody);
+            setBody(modalBody);
 
             ViewMode viewModeModal = viewMode;
             if (!view.isEditElementEnabled()) {
@@ -382,7 +382,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
 
-            this.show(target);
+            show(target);
         }
 
         @Override
