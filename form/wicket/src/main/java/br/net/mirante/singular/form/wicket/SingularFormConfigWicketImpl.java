@@ -1,10 +1,10 @@
 package br.net.mirante.singular.form.wicket;
 
-import java.util.Map;
-
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.context.SingularFormConfigImpl;
+
+import java.util.Map;
 
 
 public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<UIBuilderWicket, IWicketComponentMapper> implements SingularFormConfigWicket {

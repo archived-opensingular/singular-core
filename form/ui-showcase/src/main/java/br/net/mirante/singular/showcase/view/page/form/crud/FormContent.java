@@ -30,8 +30,8 @@ import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
-import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
-import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -93,7 +93,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private Form<?> buildForm() {
         Form<?> form = new Form<>("save-form");
         form.setMultiPart(true);
-        form.add(buildBelverBasePanel());
+        form.add(buildSingularBasePanel());
         form.add(buildSaveButton());
         form.add(buildSaveAnnotationButton());
         form.add(buildSaveWithoutValidateButton());
@@ -102,8 +102,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return form;
     }
 
-    private SingularFormPanel buildBelverBasePanel() {
-        singularFormPanel = new SingularFormPanel("belver-panel", serviceRegistry) {
+    private SingularFormPanel buildSingularBasePanel() {
+        singularFormPanel = new SingularFormPanel("singular-panel", serviceRegistry) {
 
             @Override
             protected SType<?> getTipo() {
@@ -169,7 +169,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveButton() {
-        final Component button = new BelverSaveButton("save-btn") {
+        final Component button = new SingularSaveButton("save-btn") {
             @Override
             public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
@@ -191,7 +191,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveAnnotationButton() {
-        final Component button = new BelverValidationButton("save-annotation-btn") {
+        final Component button = new SingularValidationButton("save-annotation-btn") {
             @Override
             public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
@@ -231,7 +231,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildSaveWithoutValidateButton() {
-        final Component button = new BelverValidationButton("save-whitout-validate-btn") {
+        final Component button = new SingularValidationButton("save-whitout-validate-btn") {
             protected void save() {
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
@@ -275,7 +275,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private Component buildValidateButton() {
-        final BelverValidationButton button = new BelverValidationButton("validate-btn") {
+        final SingularValidationButton button = new SingularValidationButton("validate-btn") {
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
