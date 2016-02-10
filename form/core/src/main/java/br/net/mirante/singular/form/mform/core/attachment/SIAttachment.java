@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 public class SIAttachment extends SIComposite {
 
     private IAttachmentPersistenceHandler getAttachmentHandler() {
-        return getDocument().getAttachmentPersistenceHandler();
+        return getDocument().getAttachmentPersistenceHandler(isTemporary());
     }
 
     private AttachmentDocumentService getAttachmentService() {
@@ -106,7 +106,7 @@ public class SIAttachment extends SIComposite {
     }
     
     public String getOriginalFileId() {
-        return (String) getValorAtributo(STypeAttachment.ATR_ORIGINAL_ID);
+        return getValorAtributo(STypeAttachment.ATR_ORIGINAL_ID);
     }
 
     public String getFileHashSHA1() {
@@ -123,10 +123,10 @@ public class SIAttachment extends SIComposite {
         return ref == null ? null : ref.getContent();
     }
 
-    public void setTemporary() {
+    public SIAttachment setTemporary() {
         setValorAtributo(STypeAttachment.ATR_IS_TEMPORARY, "true");
+        return this;
     }
-
 
     public boolean isTemporary() {
         return getValorAtributo(STypeAttachment.ATR_IS_TEMPORARY) != null;

@@ -39,7 +39,7 @@ public interface IAttachmentPersistenceHandler extends Serializable {
      *
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      */
-    public IAttachmentRef addAttachment(byte[] content);
+    IAttachmentRef addAttachment(byte[] content);
 
     /**
      * Salvo os dados informado e associa-o ao documento (formulário) atual.
@@ -47,14 +47,14 @@ public interface IAttachmentPersistenceHandler extends Serializable {
      * @return Referencia ao arquivo salvo, incluido id e hash do mesmo.
      * @throws IOException
      */
-    public IAttachmentRef addAttachment(InputStream in);
+    IAttachmentRef addAttachment(InputStream in);
 
     /**
      * Copia o anexo entre persistencias diferente. Por default, faz uma copia
      * simples (copia os bytes de um para o outro), mas pode ser sobreescrito
      * para otimizar essa copia dependendo da implementações específicas.
      */
-    public default IAttachmentRef copy(IAttachmentRef toBeCopied) {
+    default IAttachmentRef copy(IAttachmentRef toBeCopied) {
         return addAttachment(toBeCopied.getContent());
     }
 
@@ -62,12 +62,12 @@ public interface IAttachmentPersistenceHandler extends Serializable {
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
      * será um Documento).
      */
-    public Collection<? extends IAttachmentRef> getAttachments();
+    Collection<? extends IAttachmentRef> getAttachments();
     /**
      * Recuperar os anexos associados ao contexto atual (provavelmente contexto
      * será um Documento).
      */
-    public default List<? extends IAttachmentRef> getAttachmentsAsList() {
+    default List<? extends IAttachmentRef> getAttachmentsAsList() {
         Collection<? extends IAttachmentRef> c = getAttachments();
         if (c instanceof List) {
             return (List<? extends IAttachmentRef>) c;
@@ -75,7 +75,7 @@ public interface IAttachmentPersistenceHandler extends Serializable {
         return new ArrayList<>(c);
     }
 
-    public IAttachmentRef getAttachment(String hashId);
+    IAttachmentRef getAttachment(String hashId);
 
-    public void deleteAttachment(String hashId);
+    void deleteAttachment(String hashId);
 }

@@ -8,9 +8,9 @@ import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
+import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -82,12 +82,12 @@ public class SDocument {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, ref);
     }
 
-    public IAttachmentPersistenceHandler getAttachmentPersistenceHandler() {
-        IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
-        if (ref == null) {
+    public IAttachmentPersistenceHandler getAttachmentPersistenceHandler(boolean temporary) {
+        String serviceName = temporary ? FILE_TEMPORARY_SERVICE : FILE_PERSISTENCE_SERVICE;
+        IAttachmentPersistenceHandler ref = lookupService(serviceName, IAttachmentPersistenceHandler.class);
+        if (ref == null && temporary) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(FILE_TEMPORARY_SERVICE,
-                IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            bindLocalService(serviceName, IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
         }
         return ref;
     }
@@ -216,7 +216,7 @@ public class SDocument {
     public void persistFiles() {
         IAttachmentPersistenceHandler persistent = lookupService(
             SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler(true);
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
