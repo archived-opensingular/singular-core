@@ -53,6 +53,8 @@ public class PetApplication extends AuthenticatedWebApplication
     public void init() {
         super.init();
 
+        setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
+
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);

@@ -10,6 +10,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
@@ -33,7 +34,9 @@ public abstract class Template extends PetModulePage {
         add(new WebMarkupContainer("pageBody")
                 .add($b.attrAppender("class", "page-sidebar-fixed", " ", $m.ofValue(withMenu())))
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
-        queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
+//        queue(new HeaderResponseContainer("css", "css"));
+        queue(new HeaderResponseContainer("scripts", "scripts"));
+        queue(configureHeader("_Header"));
         if (withMenu()) {
             queue(configureMenu("_Menu"));
         } else {
@@ -45,6 +48,10 @@ public abstract class Template extends PetModulePage {
 
     protected Menu configureMenu(String id) {
         return new Menu(id);
+    }
+
+    protected Header configureHeader(String id){
+        return new Header(id, withMenu(), withTopAction(), withSideBar());
     }
 
     @Override

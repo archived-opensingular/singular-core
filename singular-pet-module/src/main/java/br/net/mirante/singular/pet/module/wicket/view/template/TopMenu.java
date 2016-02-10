@@ -23,6 +23,10 @@ public class TopMenu extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        buildContent();
+    }
+
+    protected void buildContent(){
         queue(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
         queue(new Label("nome", $m.ofValue(PetSession.get().getName())));
 
