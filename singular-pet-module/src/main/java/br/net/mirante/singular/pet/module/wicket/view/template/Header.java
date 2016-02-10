@@ -17,7 +17,7 @@ public class Header extends Panel {
         this.withSideBar = false;
     }
 
-    public Header(String id, boolean withTogglerButton,  boolean withTopAction, boolean withSideBar) {
+    public Header(String id, boolean withTogglerButton, boolean withTopAction, boolean withSideBar) {
         super(id);
         this.withTogglerButton = withTogglerButton;
         this.withSideBar = withSideBar;
@@ -29,7 +29,11 @@ public class Header extends Panel {
         add(new WebMarkupContainer("togglerButton")
                 .add($b.attrAppender("class", "hide", " ", $m.ofValue(!withTogglerButton))));
         add(new WebMarkupContainer("_TopAction"));
-        add(new TopMenu("_TopMenu", withSideBar));
+        add(configureTopMenu("_TopMenu"));
         add(new WebMarkupContainer("brandLogo"));
+    }
+
+    protected TopMenu configureTopMenu(String id) {
+        return new TopMenu(id, withSideBar);
     }
 }

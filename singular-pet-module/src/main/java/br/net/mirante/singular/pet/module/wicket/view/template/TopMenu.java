@@ -23,11 +23,15 @@ public class TopMenu extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
+        buildContent();
+    }
+
+    protected void buildContent(){
         queue(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
         queue(new Label("nome", $m.ofValue(PetSession.get().getName())));
 
         WebMarkupContainer avatar = new WebMarkupContainer("codrh");
-        Optional<String> avatarSrc = Optional.ofNullable(PetSession.get().getAvatar());
+        Optional<String> avatarSrc = Optional.ofNullable(null);
         avatarSrc.ifPresent(src -> avatar.add($b.attr("src", src)));
         queue(avatar);
 

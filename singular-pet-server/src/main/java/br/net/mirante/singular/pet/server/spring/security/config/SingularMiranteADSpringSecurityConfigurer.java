@@ -2,10 +2,10 @@ package br.net.mirante.singular.pet.server.spring.security.config;
 
 
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
+import br.net.mirante.singular.pet.module.spring.security.SingularUserDetailsService;
 import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -14,10 +14,9 @@ import java.util.Optional;
 
 public class SingularMiranteADSpringSecurityConfigurer implements SingularSpringSecurityConfigurer {
 
-
     @Inject
     @Named("peticionamentoUserDetailService")
-    private Optional<UserDetailsContextMapper> peticionamentoUserDetailContextMapper;
+    private Optional<SingularUserDetailsService> peticionamentoUserDetailService;
 
 
     @Override
@@ -50,14 +49,14 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
                 .rolePrefix("ROLE_")
                 .groupSearchBase("OU=GruposGS,DC=miranteinfo,DC=com")
                 .groupSearchFilter("(member={0})")
-                .userDetailsContextMapper(peticionamentoUserDetailContextMapper.orElseThrow(() ->
+                .userDetailsContextMapper(peticionamentoUserDetailService.orElseThrow(() ->
                                         new SingularServerException(
                                                 String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
-                                                        UserDetailsContextMapper.class.getName(),
-                                                        "peticionamentoUserDetailService",
+                                                        SingularUserDetailsService.class.getName(),
+                                                        "SingularUserDetailsService",
                                                         SingularMiranteADSpringSecurityConfigurer.class.getName(),
-                                                        UserDetailsContextMapper.class.getName(),
-                                                        "peticionamentoUserDetailService"
+                                                        SingularUserDetailsService.class.getName(),
+                                                        "SingularUserDetailsService"
                                                 ))
                         )
                 )
