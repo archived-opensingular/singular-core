@@ -6,20 +6,20 @@ import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SingularFormException;
 
 /**
- * Mapeia cada MInstancia fornecida pelo OptionsProvider
- * para uma par de descricao e chave (label e key)
- * É reponsável também por devolver a MIinstancia correspondente a cada
- * chave
- * As chaves geradas são efêmeras enão devem ser utilizadas para persistir.
- * O objetivo dessas chaves é mapear um valor na tela para uma MInstancia e memória
- * no lado do servidor.
+ * Mapeia cada MInstancia fornecida pelo OptionsProvider para uma par de
+ * descricao e chave (label e key) É reponsável também por devolver a
+ * MIinstancia correspondente a cada chave As chaves geradas são efêmeras enão
+ * devem ser utilizadas para persistir. O objetivo dessas chaves é mapear um
+ * valor na tela para uma MInstancia e memória no lado do servidor.
  */
 public class MOptionsConfig {
 
@@ -58,7 +58,15 @@ public class MOptionsConfig {
     private void reloadOptionsFromProvider() {
         MOptionsProvider provider = getOptionsProvider();
         if (provider != null) {
-            SList<? extends SInstance> newOptions = provider.listAvailableOptions(instancia);
+            SList<? extends SInstance> newOptions;
+            try {
+                newOptions = provider.listAvailableOptions(instancia);
+            } catch (Exception e) {
+                if (instancia instanceof SInstance) {
+                    throw new SingularFormException("Erro ao listar opções para instancia ", e, (SInstance) instancia);
+                }
+                throw Throwables.propagate(e);
+            }
             LOGGER.warn("Opções recarregadas para " + toString());
             if (newOptions != null && !newOptions.equals(options)) {
                 options = newOptions;

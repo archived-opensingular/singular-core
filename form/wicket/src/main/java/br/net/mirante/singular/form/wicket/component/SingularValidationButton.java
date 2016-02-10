@@ -8,9 +8,9 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-public abstract class BelverValidationButton extends AjaxButton {
+public abstract class SingularValidationButton extends AjaxButton {
 
-    public BelverValidationButton(String id) {
+    public SingularValidationButton(String id) {
         super(id);
     }
 

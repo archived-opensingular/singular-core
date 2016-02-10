@@ -106,23 +106,13 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
             if (customMapper instanceof IWicketComponentMapper) {
                 return (IWicketComponentMapper) customMapper;
             } else {
-                throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario implementar IWicketComponentMapper");
+                throw new SingularFormException("Para utilizar custom mapper com Wicket, é necessario " + customMapper.getClass().getName()
+                        + " implementar IWicketComponentMapper", instancia);
             }
         } else {
-            return getViewMapperRegistry().getMapper(instancia, view)
-                .orElseThrow(() -> createErro(instancia, view, "Não há mappeamento de componente Wicket para o tipo"));
+            return getViewMapperRegistry().getMapper(instancia, view).orElseThrow(
+                    () -> new SingularFormException("Não há mappeamento de componente Wicket para o tipo", instancia, "view=" + view));
         }
-
-    }
-
-    private SingularFormException createErro(SInstance instancia, MView view, String msg) {
-        return new SingularFormException(
-            msg + " (instancia=" + instancia.getPathFull()
-                + ", tipo=" + instancia.getMTipo().getNome()
-                + ", classeInstancia=" + instancia.getClass()
-                + ", tipo=" + instancia.getMTipo()
-                + ", view=" + view
-                + ")");
     }
 
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {

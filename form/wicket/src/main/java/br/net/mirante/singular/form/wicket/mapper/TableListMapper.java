@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 import java.util.Set;
 
@@ -38,10 +39,11 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
 
 public class TableListMapper extends AbstractListaMapper {
 
+    @Override
     public void buildView(WicketBuildContext ctx) {
 
         if (!(ctx.getView() instanceof MTableListaView)) {
-            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView");
+            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", ctx.getCurrentInstance());
         }
 
         if (ctx.getCurrentInstance() instanceof SList) {

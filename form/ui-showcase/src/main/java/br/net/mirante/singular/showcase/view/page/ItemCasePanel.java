@@ -25,8 +25,8 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
-import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
-import br.net.mirante.singular.form.wicket.component.BelverValidationButton;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
@@ -66,7 +66,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         add(buildHeaderText());
 
         Form<Void> form = new Form<>("form");
-        form.add(buildBelverBasePanel());
+        form.add(buildSingularBasePanel());
         form.add(buildButtons());
         form.add(viewXmlModal);
 
@@ -106,7 +106,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
 
-    private SingularFormPanel buildBelverBasePanel() {
+    private SingularFormPanel buildSingularBasePanel() {
         singularFormPanel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
             protected SType<?> getTipo() {
@@ -168,7 +168,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildValidateButton() {
         return (id, ci) -> {
-            final BelverValidationButton bsb = new BelverValidationButton(id) {
+            final SingularValidationButton bsb = new SingularValidationButton(id) {
                 @Override
                 public boolean isVisible() {
                     return caseBase.getObject().showValidateButton();
@@ -217,7 +217,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
     private ItemCaseButton buildSaveButton() {
         return (id, ci) -> {
-            final BelverSaveButton bsb = new BelverSaveButton(id) {
+            final SingularSaveButton bsb = new SingularSaveButton(id) {
 
                 @Override
                 public IModel<? extends SInstance> getCurrentInstance() {

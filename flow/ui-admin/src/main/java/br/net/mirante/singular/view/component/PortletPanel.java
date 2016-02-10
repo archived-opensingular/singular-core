@@ -33,7 +33,7 @@ import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.wicket.component.BelverSaveButton;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.spring.SpringServiceRegistry;
@@ -130,7 +130,7 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             }
         };
 
-        final BelverSaveButton saveButton = new BelverSaveButton("filterButton") {
+        final SingularSaveButton saveButton = new SingularSaveButton("filterButton") {
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement element) {
                 if (element != null) {

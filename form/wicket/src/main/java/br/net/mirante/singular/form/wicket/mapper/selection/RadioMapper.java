@@ -21,7 +21,7 @@ public class RadioMapper extends SelectMapper {
     protected RadioChoice retrieveChoices(IModel<? extends SInstance> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         if (!(view instanceof MSelecaoPorRadioView)) {
-            throw new SingularFormException("View não suportada");
+            throw new SingularFormException("View não suportada", model.getObject());
         }
         MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
         MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
@@ -53,17 +53,17 @@ public class RadioMapper extends SelectMapper {
 
             @Override
             protected void onConfigure() {
-                this.setVisible(!opcoesModel.getObject().toString().isEmpty());
+                setVisible(!opcoesModel.getObject().toString().isEmpty());
             }
         };
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked" })
     protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         if (!(view instanceof MSelecaoPorRadioView)) {
-            throw new SingularFormException("View não suportada");
+            throw new SingularFormException("View não suportada", model.getObject());
         }
         MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue, view);
