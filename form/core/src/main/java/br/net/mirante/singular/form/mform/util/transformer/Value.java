@@ -134,7 +134,7 @@ public class Value {
             } else if (instancia instanceof SList) {
                 fromList((List<Object>) value, (SList) instancia);
             } else {
-                throw new SingularFormException("Tipo de instancia não suportado", value);
+                throw new SingularFormException("Tipo de instancia não suportado: " + instancia.getClass().getName());
             }
         }
     }
