@@ -83,6 +83,30 @@ public class STypeAnnotationTest {
         assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
     }
 
+    @Test public void youCanEreaseAnnotationsFromASingleInstance(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+
+        asAnnotation(instance, annotated1).annotation().setText("Abacate");
+
+        asAnnotation(instance, annotated1).annotation().clear();
+
+        assertThat(asAnnotation(instance, annotated1).annotation()).isNotNull();
+        assertThat(asAnnotation(instance, annotated1).annotation().getText()).isNullOrEmpty();
+        assertThat(asAnnotation(instance, annotated1).annotation().getApproved()).isNull();
+    }
+
+    @Test public void youCanEreaseAnnotationsFromTheMixin(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+
+        asAnnotation(instance, annotated1).annotation().setText("Abacate");
+
+        asAnnotation(instance, annotated1).clear();
+
+        List<SIAnnotation> all = instance.as(AtrAnnotation::new).allAnnotations();
+        assertThat(asAnnotation(instance, annotated1).annotation().getText()).isNullOrEmpty();
+        assertThat(asAnnotation(instance, annotated1).annotation().getApproved()).isNull();
+    }
+
     private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {
         return instance.getDescendant(field).as(AtrAnnotation::new);
     }

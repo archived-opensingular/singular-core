@@ -215,4 +215,6 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     private SInstance target() {
         return (SInstance) getAlvo();
     }
+
+    public void clear() {   target().getDocument().annotation(target().getId(),null);    }
 }
