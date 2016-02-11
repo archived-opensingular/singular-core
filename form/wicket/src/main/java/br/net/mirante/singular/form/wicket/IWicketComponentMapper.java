@@ -22,6 +22,7 @@ public interface IWicketComponentMapper extends UIComponentMapper {
     void buildView(WicketBuildContext ctx);
 
     default void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
+        component.setOutputMarkupId(true);
         if ((component instanceof RadioChoice) ||
             (component instanceof CheckBoxMultipleChoice) ||
             (component instanceof RadioGroup) ||

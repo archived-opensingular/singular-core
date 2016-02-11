@@ -1,5 +1,16 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import java.io.File;
+
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
+
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
@@ -11,17 +22,6 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DownloadBehaviourTest extends WebBehaviourBaseTest {
@@ -75,7 +75,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
     
     private IAttachmentRef setupTemporaryDummyFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler(true);
         return addFile(fileName, content, handler);
     }
     

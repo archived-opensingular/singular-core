@@ -1,9 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
@@ -20,10 +21,10 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedList;
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import static java.util.Collections.synchronizedList;
 
 /**
@@ -39,7 +40,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
     transient private SIAttachment instance;
-    private List<String> temporaryIds = synchronizedList(new LinkedList<String>());
+    private List<String> temporaryIds = synchronizedList(new LinkedList<>());
 
     public UploadBehavior(SIAttachment instance) {
         this.instance = instance;
@@ -122,7 +123,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     private IAttachmentPersistenceHandler temporaryHandler() {
         SDocument rootDocument = instance.getDocument();
-        return rootDocument.getAttachmentPersistenceHandler();
+        return rootDocument.getAttachmentPersistenceHandler(true);
     }
 
     private JSONObject createJsonFile(FileItem item, IAttachmentRef ref) {

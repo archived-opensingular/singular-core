@@ -29,7 +29,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
  *
  *         1 - Whem a file is uploaded it uses the UploadBehaviour to call the
  *                 {@link IAttachmentPersistenceHandler} registered in the
- *                 {@link SDocument#getAttachmentPersistenceHandler()}. It has a
+ *                 {@link SDocument#getAttachmentPersistenceHandler(boolean)}. It has a
  *                 default handler, but you can personalize as desired by using
  *                 the {@link SDocument#setAttachmentPersistenceHandler(br.net.mirante.singular.form.mform.ServiceRef)}
  *                 register method.

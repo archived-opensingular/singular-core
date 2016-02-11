@@ -3,9 +3,9 @@ package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TipoBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -47,6 +47,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
     private STypeString composicao;
     private STypeString enderecoFabricante;
     private STypeString descricaoQuantidade;
+    private STypeString outroComposicao;
 
     @Override
     protected void onLoadType(TipoBuilder tb) {
@@ -84,7 +85,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .label("Composição")
 
                 .visivel(instancia -> {
-                    boolean truth = Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) < 8;
+                    boolean truth = Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8;
                     return truth;
                 })
                 .dependsOn(nomeComercial)
@@ -114,7 +115,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrBasic::new)
                 .label("Endereço do fabricante")
 
-                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) < 8)
+                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
                 .colPreference(6);
@@ -141,21 +142,22 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .label("Outro Medicamento")
                 .dependsOn(nomeComercial)
 
-                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) == 8);
+                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8);
 
         outroMedicamento
                 .addCampoString("outroNome")
                 .as(AtrCore::new)
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) == 8)
+                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
                 .label("Nome Comercial")
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
-        outroMedicamento
-                .addCampoString("outroComposicao")
+        outroComposicao = outroMedicamento.addCampoString("outroComposicao");
+
+        outroComposicao
                 .as(AtrCore::new)
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) == 8)
+                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
                 .label("Composição")
                 .as(AtrBootstrap::new)
@@ -164,7 +166,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         outroMedicamento
                 .addCampoString("outroEndereco")
                 .as(AtrCore::new)
-                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && ((Integer) Value.of(instancia, nomeComercial)) == 8)
+                .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
                 .label("Endereço do Fabricante")
                 .as(AtrBootstrap::new)
@@ -196,5 +198,9 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
     public STypeString getDescricaoQuantidade() {
         return descricaoQuantidade;
+    }
+
+    public STypeString getOutroComposicao() {
+        return outroComposicao;
     }
 }

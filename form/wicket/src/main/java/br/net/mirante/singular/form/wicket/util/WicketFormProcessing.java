@@ -109,8 +109,9 @@ public class WicketFormProcessing {
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
                 if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    if (predicate.test(c, ((IMInstanciaAwareModel) c.getDefaultModel()).getMInstancia())) {
-                        clearTargetOnChange(c);
+                    IMInstanciaAwareModel model = (IMInstanciaAwareModel) c.getDefaultModel();
+                    if (predicate.test(c, model.getMInstancia())) {
+                        (model).getMInstancia().clearInstance();
                         t.add(c);
                     }
                 }
@@ -126,14 +127,6 @@ public class WicketFormProcessing {
         });
     }
 
-    private static void clearTargetOnChange(Component c) {
-        if (c instanceof FormComponent) {
-            final IModel model = ((FormComponent) c).getModel();
-            if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                ((IMInstanciaAwareModel) model).getMInstancia().clearInstance();
-            }
-        }
-    }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null)
