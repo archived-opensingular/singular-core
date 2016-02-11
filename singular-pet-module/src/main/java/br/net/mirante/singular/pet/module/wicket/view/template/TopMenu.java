@@ -1,6 +1,6 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
-import br.net.mirante.singular.pet.module.wicket.PetApplication;
+import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
 import br.net.mirante.singular.pet.module.wicket.PetSession;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -26,7 +26,7 @@ public class TopMenu extends Panel {
         buildContent();
     }
 
-    protected void buildContent(){
+    protected void buildContent() {
         queue(new WebMarkupContainer("sideBarToggle").setVisible(withSideBar));
         queue(new Label("nome", $m.ofValue(PetSession.get().getName())));
 
@@ -36,7 +36,7 @@ public class TopMenu extends Panel {
         queue(avatar);
 
         WebMarkupContainer logout = new WebMarkupContainer("logout");
-        logout.add($b.attr("href", PetApplication.get().getServletContext().getContextPath() + "/logout"));
+        logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
         queue(logout);
     }
 }

@@ -3,16 +3,17 @@ package br.net.mirante.singular.pet.server.spring.security.config;
 
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.module.spring.security.SingularUserDetailsService;
-import br.net.mirante.singular.pet.server.spring.security.SingularSpringSecurityConfigurer;
+import br.net.mirante.singular.pet.server.spring.security.AbstractSingularSpringSecurityAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Optional;
 
 
-public class SingularMiranteADSpringSecurityConfigurer implements SingularSpringSecurityConfigurer {
+public abstract class SingularMiranteADSpringSecurityConfig extends AbstractSingularSpringSecurityAdapter {
 
     @Inject
     @Named("peticionamentoUserDetailService")
@@ -22,23 +23,25 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
+                .regexMatcher(getRegex())
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .rememberMe().key("mirante").tokenValiditySeconds(604800).rememberMeParameter("remember")
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login*").permitAll()
-                .antMatchers("/resources/**").permitAll()
-                .antMatchers("/wicket/resource/**").permitAll()
-                .antMatchers("/**").authenticated()
+                .antMatchers(getDefaultPublicUrls()).permitAll()
+                .antMatchers(getPath() + "/login*").permitAll()
+                .antMatchers(getPath() + "/**").authenticated()
+                .antMatchers("/**").permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/login")
-                .failureUrl("/login?error=true")
-                .defaultSuccessUrl("/", false)
+                .loginPage(getPath() + "/login")
+                .loginProcessingUrl(getPath() + "/login")
+                .failureUrl(getPath() + "/login?error=true")
+                .defaultSuccessUrl(getPath() + "/", false)
                 .and()
-                .logout().logoutUrl("/logout");
+                .logout().logoutUrl(getPath() + "/logout");
 
     }
 
@@ -56,7 +59,7 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
                                                 String.format("Bean %s do tipo %s não pode ser nulo. Para utilizar a configuração de segurança %s é preciso declarar um bean do tipo %s identificado pelo nome %s .",
                                                         SingularUserDetailsService.class.getName(),
                                                         "SingularUserDetailsService",
-                                                        SingularMiranteADSpringSecurityConfigurer.class.getName(),
+                                                        SingularMiranteADSpringSecurityConfig.class.getName(),
                                                         SingularUserDetailsService.class.getName(),
                                                         "SingularUserDetailsService"
                                                 ))
@@ -70,4 +73,7 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
 
     }
 
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+    }
 }
