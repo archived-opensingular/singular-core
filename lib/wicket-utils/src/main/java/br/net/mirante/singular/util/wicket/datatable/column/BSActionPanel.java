@@ -12,6 +12,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.lambda.IBiFunction;
 import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.datatable.IBSAction;
@@ -66,25 +67,35 @@ public class BSActionPanel<T> extends Panel {
         return appendAction(actionConfig.link(linkFactory.apply(LINK_ID)));
     }
 
+    public BSActionPanel<T> appendAction(ActionConfig actionConfig, IBiFunction<T, String, MarkupContainer> linkFactory, IModel<T> model) {
+        return appendAction(actionConfig.link(linkFactory.apply(model.getObject(), LINK_ID)));
+    }
+
     public BSActionPanel<T> appendAction(ActionConfig config, IBSAction<T> action, IModel<T> model) {
-        return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
-            @Override
-            public void onAction(AjaxRequestTarget target) {
-                action.execute(target, this.getModel());
-            }
-            @Override
-            protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
-                super.updateAjaxAttributes(attributes);
-                action.updateAjaxAttributes(attributes);
-            }
-            @Override
-            protected void onConfigure() {
-                super.onConfigure();
-                this.setVisible(action.isVisible(this.getModel()));
-                this.setEnabled(action.isEnabled(this.getModel()));
-                add($b.attrAppender("style", config.style, " "));
-            }
-        });
+        if (config.linkFactory == null) {
+            return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
+                @Override
+                public void onAction(AjaxRequestTarget target) {
+                    action.execute(target, this.getModel());
+                }
+
+                @Override
+                protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
+                    super.updateAjaxAttributes(attributes);
+                    action.updateAjaxAttributes(attributes);
+                }
+
+                @Override
+                protected void onConfigure() {
+                    super.onConfigure();
+                    this.setVisible(action.isVisible(this.getModel()));
+                    this.setEnabled(action.isEnabled(this.getModel()));
+                    add($b.attrAppender("style", config.style, " "));
+                }
+            });
+        } else {
+            return appendAction(config, config.linkFactory, model);
+        }
     }
 
     protected void onConfigure() {
@@ -99,7 +110,7 @@ public class BSActionPanel<T> extends Panel {
     }
 
 
-    public static class ActionConfig implements Serializable {
+    public static class ActionConfig<T> implements Serializable {
 
         protected IModel<?> labelModel = $m.ofValue("");
         protected IModel<Icone> iconeModel;
@@ -108,6 +119,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<String> buttonModel = $m.ofValue("black");
         protected IModel<String> style;
         protected boolean withText = true;
+        protected IBiFunction<T, String, MarkupContainer> linkFactory;
 
         public ActionConfig labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
@@ -141,6 +153,11 @@ public class BSActionPanel<T> extends Panel {
 
         public ActionConfig style(IModel<String> style) {
             this.style = style;
+            return this;
+        }
+
+        public ActionConfig linkFactory(IBiFunction<T, String, MarkupContainer> linkFactory) {
+            this.linkFactory = linkFactory;
             return this;
         }
     }
