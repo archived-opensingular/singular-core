@@ -1,9 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -52,6 +48,9 @@ import br.net.mirante.singular.util.wicket.datatable.BaseDataProvider;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionPanel.ActionConfig;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.resource.Icone;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 @SuppressWarnings("serial")
 public class ListMasterDetailMapper implements IWicketComponentMapper {
@@ -159,7 +158,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             @Override
             public IModel<SInstance> model(SInstance object) {
                 IModel<SList<SInstance>> listaModel = $m.get(() -> (SList<SInstance>) model.getObject());
-                return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf((SInstance) object));
+                return new SInstanceItemListaModel<>(listaModel, listaModel.getObject().indexOf(object));
             }
         };
     }
@@ -178,7 +177,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         if (mapColumns.isEmpty()) {
             SType<?> tipo = ((SList<?>) model.getObject()).getTipoElementos();
             if (tipo instanceof STypeSimple) {
-                mapColumnsTipos.put((STypeSimple<?, ?>) tipo, null);
+                mapColumnsTipos.put(tipo, null);
             }
             if (tipo instanceof STypeComposite) {
                 ((STypeComposite<?>) tipo)
@@ -219,7 +218,10 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction(new ActionConfig().iconeModel(Model.of(Icone.MINUS)).buttonModel(Model.of("red")),
+                actionColumn.appendAction(new ActionConfig()
+                                .iconeModel(Model.of(Icone.MINUS))
+                                .buttonModel(Model.of("red"))
+                                .style($m.ofValue("padding:5px 3px;")),
                     (target, rowModel) -> {
                     SList<?> sList = ((SList<?>) model.getObject());
                     sList.remove(sList.indexOf(rowModel.getObject()));
@@ -231,7 +233,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 new ActionConfig()
                     .iconeModel(Model.of(openModalIcon))
                     .buttonModel(Model.of("blue-madison"))
-                    .style($m.ofValue("padding:5px 3px 1px;")),
+                    .style($m.ofValue("padding:5px 3px;")),
                 (target, rowModel) -> {
                 modal.showExisting(target, rowModel, ctx);
             });
@@ -246,7 +248,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         builder.appendPropertyColumn(labelModel, o -> {
             SIComposite composto = (SIComposite) o;
             STypeSimple<?, ?> mtipo = (STypeSimple<?, ?>) mTipoModel.getObject();
-            SISimple<?> instancia = ((SISimple<?>) composto.findDescendant(mtipo).get());
+            SISimple<?> instancia = composto.findDescendant(mtipo).get();
             return instancia.getDisplayString();
         });
     }
