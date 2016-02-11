@@ -1,7 +1,7 @@
 package br.net.mirante.singular.pet.server.wicket.view.login;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
+import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
+import br.net.mirante.singular.pet.module.wicket.PetApplication;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -11,12 +11,13 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.protocol.http.WicketFilter;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.wicketstuff.annotation.mount.MountPath;
 
-import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @StatelessComponent
 @MountPath("login")
