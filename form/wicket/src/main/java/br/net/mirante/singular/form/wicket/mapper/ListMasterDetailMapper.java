@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -39,6 +39,7 @@ import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -164,45 +165,46 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
     }
 
     private void configureColumns(
-                                  Map<String, String> mapColumns,
-                                  BSDataTableBuilder<SInstance, ?, ?> builder,
-                                  IModel<? extends SInstance> model,
-                                  MasterDetailModal modal,
-                                  WicketBuildContext ctx,
-                                  ViewMode viewMode,
-                                  MListMasterDetailView view) {
+            List<MListMasterDetailView.Column> mapColumns,
+            BSDataTableBuilder<SInstance, ?, ?> builder,
+            IModel<? extends SInstance> model,
+            MasterDetailModal modal,
+            WicketBuildContext ctx,
+            ViewMode viewMode,
+            MListMasterDetailView view) {
 
-        Map<SType<?>, String> mapColumnsTipos = new LinkedHashMap<>();
+
+        List<ColumnType> columnTypes = new ArrayList<>();
 
         if (mapColumns.isEmpty()) {
             SType<?> tipo = ((SList<?>) model.getObject()).getTipoElementos();
             if (tipo instanceof STypeSimple) {
-                mapColumnsTipos.put(tipo, null);
+                columnTypes.add(new ColumnType(tipo, null));
             }
             if (tipo instanceof STypeComposite) {
                 ((STypeComposite<?>) tipo)
-                    .getFields()
-                    .stream()
-                    .filter(mtipo -> mtipo instanceof STypeSimple)
-                    .forEach(mtipo -> mapColumnsTipos.put((STypeSimple<?, ?>) mtipo, null));
+                        .getFields()
+                        .stream()
+                        .filter(mtipo -> mtipo instanceof STypeSimple)
+                        .forEach(mtipo -> columnTypes.add(new ColumnType(mtipo, null)));
 
             }
         } else {
-            mapColumns.forEach((key, value) -> mapColumnsTipos.put(model.getObject().getDicionario().getTipo(key), value));
+            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDicionario().getTipo(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
-        for (Map.Entry<SType<?>, String> entry : mapColumnsTipos.entrySet()) {
+        for (ColumnType columnType : columnTypes) {
 
             IModel<String> labelModel;
-            String label = entry.getValue();
+            String label = columnType.getCustomLabel();
 
             if (label != null) {
                 labelModel = $m.ofValue(label);
             } else {
-                labelModel = $m.ofValue((String) entry.getKey().getValorAtributo(SPackageBasic.ATR_LABEL.getNomeCompleto()));
+                labelModel = $m.ofValue((String) columnType.getType().getValorAtributo(SPackageBasic.ATR_LABEL.getNomeCompleto()));
             }
 
-            propertyColumnAppender(builder, labelModel, new MTipoModel(entry.getKey()));
+            propertyColumnAppender(builder, labelModel, new MTipoModel(columnType.getType()), columnType.getDisplayValueFunction());
         }
 
         actionColumnAppender(builder, model, modal, ctx, viewMode, view);
@@ -222,21 +224,21 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                                 .iconeModel(Model.of(Icone.MINUS))
                                 .buttonModel(Model.of("red"))
                                 .style($m.ofValue("padding:5px 3px;")),
-                    (target, rowModel) -> {
-                    SList<?> sList = ((SList<?>) model.getObject());
-                    sList.remove(sList.indexOf(rowModel.getObject()));
-                    target.add(ctx.getContainer());
-                });
+                        (target, rowModel) -> {
+                            SList<?> sList = ((SList<?>) model.getObject());
+                            sList.remove(sList.indexOf(rowModel.getObject()));
+                            target.add(ctx.getContainer());
+                        });
             }
             final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
             actionColumn.appendAction(
-                new ActionConfig()
-                    .iconeModel(Model.of(openModalIcon))
-                    .buttonModel(Model.of("blue-madison"))
-                    .style($m.ofValue("padding:5px 3px;")),
-                (target, rowModel) -> {
-                modal.showExisting(target, rowModel, ctx);
-            });
+                    new ActionConfig()
+                            .iconeModel(Model.of(openModalIcon))
+                            .buttonModel(Model.of("blue-madison"))
+                            .style($m.ofValue("padding:5px 3px;")),
+                    (target, rowModel) -> {
+                        modal.showExisting(target, rowModel, ctx);
+                    });
         });
     }
 
@@ -244,55 +246,57 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
      * property column isolado em outro método para isolar o escopo de
      * serialização do lambda do appendPropertyColumn
      */
-    private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder, IModel<String> labelModel, IModel<SType<?>> mTipoModel) {
+    private void propertyColumnAppender(BSDataTableBuilder<SInstance, ?, ?> builder,
+                                        IModel<String> labelModel, IModel<SType<?>> mTipoModel,
+                                        IFunction<SInstance, String> displayValueFunction) {
         builder.appendPropertyColumn(labelModel, o -> {
             SIComposite composto = (SIComposite) o;
             STypeSimple<?, ?> mtipo = (STypeSimple<?, ?>) mTipoModel.getObject();
             SISimple<?> instancia = composto.findDescendant(mtipo).get();
-            return instancia.getDisplayString();
+            return displayValueFunction.apply(instancia);
         });
     }
 
     protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal) {
         container
-            .newTemplateTag(t -> ""
-                + "<button"
-                + " wicket:id='_add'"
-                + " class='btn btn-success btn-sm pull-right'"
-                + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
-                + "</button>")
-            .add(
-                new AjaxLink<Void>("_add") {
-                    @Override
-                    public void onClick(AjaxRequestTarget target) {
-                        modal.showNew(target);
-                    }
-                });
+                .newTemplateTag(t -> ""
+                        + "<button"
+                        + " wicket:id='_add'"
+                        + " class='btn btn-success btn-sm pull-right'"
+                        + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
+                        + "</button>")
+                .add(
+                        new AjaxLink<Void>("_add") {
+                            @Override
+                            public void onClick(AjaxRequestTarget target) {
+                                modal.showNew(target);
+                            }
+                        });
     }
 
     private static class MasterDetailModal extends BFModalWindow {
 
         private final IModel<SList<SInstance>> listModel;
-        private final IModel<String>           listaLabel;
-        private final WicketBuildContext       ctx;
-        private final UIBuilderWicket          wicketBuilder;
-        private final Component                table;
-        private final ViewMode                 viewMode;
-        private IModel<SInstance>              currentInstance;
-        private IConsumer<AjaxRequestTarget>   closeCallback;
-        private MListMasterDetailView          view;
-        private BSContainer<?>                 containerExterno;
+        private final IModel<String> listaLabel;
+        private final WicketBuildContext ctx;
+        private final UIBuilderWicket wicketBuilder;
+        private final Component table;
+        private final ViewMode viewMode;
+        private IModel<SInstance> currentInstance;
+        private IConsumer<AjaxRequestTarget> closeCallback;
+        private MListMasterDetailView view;
+        private BSContainer<?> containerExterno;
         private String instanceBackupXml;
 
         @SuppressWarnings("unchecked")
         public MasterDetailModal(String id,
-            IModel<? extends SInstance> model,
-            IModel<String> listaLabel,
-            WicketBuildContext ctx,
-            ViewMode viewMode,
-            MListMasterDetailView view,
-            BSContainer<?> containerExterno,
-            UIBuilderWicket wicketBuilder) {
+                                 IModel<? extends SInstance> model,
+                                 IModel<String> listaLabel,
+                                 WicketBuildContext ctx,
+                                 ViewMode viewMode,
+                                 MListMasterDetailView view,
+                                 BSContainer<?> containerExterno,
+                                 UIBuilderWicket wicketBuilder) {
             super(id, true, false);
 
             this.wicketBuilder = wicketBuilder;
@@ -330,17 +334,17 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         private void saveState() {
             MElement xml = MformPersistenciaXML.toXML(currentInstance.getObject());
-            if(xml != null) instanceBackupXml = xml.toString();
+            if (xml != null) instanceBackupXml = xml.toString();
         }
 
         private void rollbackState() {
             try {
-                if(instanceBackupXml != null){
+                if (instanceBackupXml != null) {
                     MElement xml = MParser.parse(instanceBackupXml);
                     SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
                     currentInstance.getObject().setValor(i);
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -410,4 +414,39 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     }
 
+
+    public static class ColumnType {
+
+        private SType type;
+        private String customLabel;
+        private IFunction<SInstance, String> displayValueFunction = SInstance::getDisplayString;
+
+        public ColumnType() {
+        }
+
+        public ColumnType(SType type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+            this.type = type;
+            this.customLabel = customLabel;
+            if (displayValueFunction != null) {
+                this.displayValueFunction = displayValueFunction;
+            }
+        }
+
+        public ColumnType(SType type, String customLabel) {
+            this.type = type;
+            this.customLabel = customLabel;
+        }
+
+        public SType getType() {
+            return type;
+        }
+
+        public String getCustomLabel() {
+            return customLabel;
+        }
+
+        public IFunction<SInstance, String> getDisplayValueFunction() {
+            return displayValueFunction;
+        }
+    }
 }

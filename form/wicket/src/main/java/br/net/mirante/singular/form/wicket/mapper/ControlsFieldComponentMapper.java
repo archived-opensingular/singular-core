@@ -62,8 +62,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                           IModel<? extends SInstance> model, IModel<String> labelModel) {
         final SInstance mi = model.getObject();
-        BOutputPanel comp = new BOutputPanel(mi.getNome(),
-                $m.ofValue(getReadOnlyFormattedText(model)));
+        BOutputPanel comp = new BOutputPanel(mi.getNome(), $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
     }

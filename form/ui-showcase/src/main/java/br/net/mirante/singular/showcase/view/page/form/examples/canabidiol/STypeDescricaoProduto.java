@@ -47,6 +47,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
     private STypeString composicao;
     private STypeString enderecoFabricante;
     private STypeString descricaoQuantidade;
+    private STypeString outroComposicao;
 
     @Override
     protected void onLoadType(TipoBuilder tb) {
@@ -152,8 +153,9 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
-        outroMedicamento
-                .addCampoString("outroComposicao")
+        outroComposicao = outroMedicamento.addCampoString("outroComposicao");
+
+        outroComposicao
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
@@ -196,5 +198,9 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
     public STypeString getDescricaoQuantidade() {
         return descricaoQuantidade;
+    }
+
+    public STypeString getOutroComposicao() {
+        return outroComposicao;
     }
 }
