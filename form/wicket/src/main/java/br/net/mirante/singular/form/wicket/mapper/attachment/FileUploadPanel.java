@@ -16,7 +16,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -28,18 +27,40 @@ import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
+/**
+ * FileUploadPanel
+ * Classe responsavel por renderizar o conteudo do componente de anexo do singular
+ */
 public class FileUploadPanel extends Panel {
 
+    private final static String CLICK_DELEGATE_SCRIPT_TEMPLATE = "$('#%s').on('click', function(){$('#%s').click();});";
+
+    /**
+     * Model principal, deve ser provido na construção da instancia
+     */
     private final IModel<SIAttachment> model;
 
-    private final FileUploadField uploadField = new FileUploadField("fileUpload");
+    /**
+     * Componente de upload do wicket
+     */
+    private final SFileUploadField uploadField = new SFileUploadField("fileUpload");
 
+    /**
+     * Markup do botão de escolha
+     */
     private final WebMarkupContainer chooseFieldButton = new WebMarkupContainer("choose");
 
+    /**
+     * Markup do field que mostra o link para download
+     */
     private final WebMarkupContainer fileDummyField = new WebMarkupContainer("fileDummyField");
 
+    /**
+     * DownloadLink, escreve o arquivo do SIAttachment.
+     */
     private final Link<Void> downloadLink = new Link<Void>("downloadLink") {
         @Override
         public void onClick() {
@@ -56,6 +77,9 @@ public class FileUploadPanel extends Panel {
         }
     };
 
+    /**
+     * Label do nome do arquivo
+     */
     private final Label fileName = new Label("fileName", new AbstractReadOnlyModel<String>() {
         @Override
         public String getObject() {
@@ -66,6 +90,10 @@ public class FileUploadPanel extends Panel {
         }
     });
 
+    /**
+     * Markup do botão de remover arquivos,
+     * utilizia  methodo cleaninstance da instancia
+     */
     private final AjaxButton removeFileButton = new AjaxButton("removeFileButton") {
         @Override
         protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -75,6 +103,12 @@ public class FileUploadPanel extends Panel {
         }
     };
 
+    /**
+     * Construdor do Panel, todos os parametros são obrigatorios
+     *
+     * @param id    do compoente
+     * @param model que contem o SIAttachment
+     */
     public FileUploadPanel(String id, IModel<SIAttachment> model) {
         super(id);
         this.model = model;
@@ -84,6 +118,9 @@ public class FileUploadPanel extends Panel {
                         .add(fileName)));
     }
 
+    /**
+     * Inicialização do panel, somente configura o outputmarkid
+     */
     @Override
     protected void onInitialize() {
         super.onInitialize();
@@ -93,6 +130,9 @@ public class FileUploadPanel extends Panel {
         removeFileButton.setOutputMarkupId(true);
     }
 
+    /**
+     * Adiciona os behaviours aos componentes
+     */
     @Override
     protected void onConfigure() {
         super.onConfigure();
@@ -113,7 +153,8 @@ public class FileUploadPanel extends Panel {
             @Override
             public void renderHead(Component component, IHeaderResponse response) {
                 super.renderHead(component, response);
-                response.render(OnDomReadyHeaderItem.forScript("$('#" + chooseFieldButton.getMarkupId(true) + "').on('click', function(){$('#" + uploadField.getMarkupId(true) + "').click();});"));
+                response.render(OnDomReadyHeaderItem.forScript(String.format(CLICK_DELEGATE_SCRIPT_TEMPLATE,
+                        chooseFieldButton.getMarkupId(true), uploadField.getMarkupId(true))));
             }
         });
         fileDummyField.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData())));
@@ -121,13 +162,27 @@ public class FileUploadPanel extends Panel {
         removeFileButton.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData())));
     }
 
-    public FileUploadField getUploadField() {
+    /**
+     * @return o field principal do painel
+     */
+    public SFileUploadField getUploadField() {
         return uploadField;
     }
 
+    /**
+     * Wrapper model para utilização em um fileuploadField, adiciona o comportamento de
+     * IMInstanciaAwareModel, tornando capaz de recuperar o SIAttachment
+     */
     class WrapperAwareModel implements IMInstanciaAwareModel<List<FileUpload>> {
 
+        /**
+         * Model que armazena o  SIAttachment
+         */
         private final IModel<SIAttachment> realModeal;
+
+        /**
+         * Arquivos
+         */
         private List<FileUpload> files;
 
         WrapperAwareModel(IModel<SIAttachment> realModeal) {
