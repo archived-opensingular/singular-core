@@ -51,6 +51,8 @@ public class SingularCASSpringSecurityConfigurer implements SingularSpringSecuri
                 .httpBasic().authenticationEntryPoint(new Http403ForbiddenEntryPoint())
                 .and()
                 .csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .jee().j2eePreAuthenticatedProcessingFilter(j2eeFilter)
                 .and()
                 .authorizeRequests().antMatchers("/rest/*").permitAll()

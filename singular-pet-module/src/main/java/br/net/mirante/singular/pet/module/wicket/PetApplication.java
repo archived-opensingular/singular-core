@@ -6,10 +6,14 @@ import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.resource.JavaScriptResourceReference;
+import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -75,6 +79,10 @@ public class PetApplication extends AuthenticatedWebApplication
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
         new AnnotatedMountScanner().scanPackage("br.**").mount(this);
+
+        /* Desabiltando jquery */
+        getJavaScriptLibrarySettings()
+                .setJQueryReference(new JavaScriptResourceReference(PetApplication.class, "empty.js"));
     }
 
     @Override

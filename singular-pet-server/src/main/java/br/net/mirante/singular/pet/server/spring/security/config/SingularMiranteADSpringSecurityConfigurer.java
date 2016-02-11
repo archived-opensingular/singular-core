@@ -23,6 +23,8 @@ public class SingularMiranteADSpringSecurityConfigurer implements SingularSpring
     public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .rememberMe().key("mirante").tokenValiditySeconds(604800).rememberMeParameter("remember")
                 .and()
                 .authorizeRequests()
