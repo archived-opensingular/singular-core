@@ -45,7 +45,6 @@ public class BSModalBorder extends Border {
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
-        EMPTY(""),
         DEFAULT("btn-default"),
         PRIMARY("btn-primary"),
         LINK("btn-link"),
