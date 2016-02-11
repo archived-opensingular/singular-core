@@ -43,12 +43,12 @@ class AttachmentDocumentService {
         }
     }
 
-    private IAttachmentPersistenceHandler getAttachmentHandler() {
-        return document.getAttachmentPersistenceHandler();
+    private IAttachmentPersistenceHandler getTemporaryAttachmentHandler() {
+        return document.getAttachmentPersistenceHandler(true);
     }
 
     public int countDistinctFiles() {
-        return getAttachmentHandler().getAttachments().size();
+        return getTemporaryAttachmentHandler().getAttachments().size();
     }
 
     public static AttachmentDocumentService lookup(SInstance ref) {
@@ -65,11 +65,11 @@ class AttachmentDocumentService {
     }
 
     public IAttachmentRef addContent(String oldReferenceId, byte[] content) {
-        return addContent(oldReferenceId, getAttachmentHandler().addAttachment(content));
+        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(content));
     }
 
     public IAttachmentRef addContent(String oldReferenceId, InputStream in) {
-        return addContent(oldReferenceId, getAttachmentHandler().addAttachment(in));
+        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(in));
     }
 
     private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef) {
@@ -89,7 +89,7 @@ class AttachmentDocumentService {
         if (fileId != null) {
             contador.remove(fileId);
             if (contador.count(fileId) == 0) {
-                getAttachmentHandler().deleteAttachment(fileId);
+                getTemporaryAttachmentHandler().deleteAttachment(fileId);
             }
         }
     }

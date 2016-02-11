@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 import br.net.mirante.singular.form.mform.io.TesteFormSerializationUtil;
@@ -52,7 +52,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         SDictionary dicionario = SDictionary.create();
         PacoteBuilder pb = dicionario.criarNovoPacote("teste");
         STypeAttachment tipo = pb.createTipo("arquivo", STypeAttachment.class);
-        return tipo.novaInstancia();
+        return tipo.novaInstancia().setTemporary();
     }
 
     public void testUpdateContent() {
@@ -219,10 +219,18 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo2 = new byte[] { 4, 5, 6 };
 
         SIComposite bloco = (SIComposite) resolver.loadType("teste.bloco").novaInstancia();
-        bloco.getField("arquivo1", SIAttachment.class).setContent(conteudo1);
-        bloco.getField("arquivo2", SIAttachment.class).setContent(conteudo2);
-        assertConteudo(conteudo1, bloco.getField("arquivo1", SIAttachment.class), 2);
-        assertConteudo(conteudo2, bloco.getField("arquivo2", SIAttachment.class), 2);
+
+        final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
+        final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);
+
+        arquivo1.setTemporary();
+        arquivo2.setTemporary();
+
+        arquivo1.setContent(conteudo1);
+        arquivo2.setContent(conteudo2);
+
+        assertConteudo(conteudo1, arquivo1, 2);
+        assertConteudo(conteudo2, arquivo2, 2);
 
         SIComposite bloco2 = (SIComposite) TesteFormSerializationUtil.testSerializacao(bloco, resolver);
 

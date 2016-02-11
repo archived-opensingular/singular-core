@@ -32,9 +32,9 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
     @Override
     public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                  IModel<? extends SInstance> model, IModel<String> labelModel) {
-        AttachmentContainer container = new AttachmentContainer((IModel<? extends SIAttachment>) model);
-        formGroup.appendTypeahead(container);
-        return container.field();
+        final FileUploadPanel container = new FileUploadPanel("container", (IModel<SIAttachment>) model);
+        formGroup.appendDiv(container);
+        return container.getUploadField();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
         final IAttachmentRef attachmentRef;
 
         if (fileId != null
-            && (attachmentRef = getAttachmentRef(attachment.getDocument(), fileId)) !=null) {
+                && (attachmentRef = getAttachmentRef(attachment.getDocument(), fileId)) != null) {
 
             final byte[] content = attachmentRef.getContentAsByteArray();
             final String fileName = attachment.getFileName();

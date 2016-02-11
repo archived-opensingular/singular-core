@@ -4,6 +4,7 @@ import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 
@@ -16,5 +17,6 @@ public class CaseFileAttachmentPackage extends SPackage {
         STypeAttachment anexo = tipoMyForm.addCampo("anexo", STypeAttachment.class);
         anexo.as(AtrBasic.class).label("Anexo");
         anexo.as(AtrCore.class).obrigatorio(true);
+        anexo.as(AtrBootstrap.class).colPreference(3);
     }
 }
