@@ -1,7 +1,7 @@
 package br.net.mirante.singular.pet.server.wicket.view.login;
 
+import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
 import br.net.mirante.singular.pet.module.wicket.PetApplication;
-import br.net.mirante.singular.pet.server.spring.security.SecurityUtil;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
 import org.apache.wicket.markup.head.CssHeaderItem;
