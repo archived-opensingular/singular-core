@@ -109,9 +109,10 @@ public class WicketFormProcessing {
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
                 if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    if (predicate.test(c, ((IMInstanciaAwareModel) c.getDefaultModel()).getMInstancia())) {
-                        clearTargetOnChange(c);
-                        t.add(c);
+                    IMInstanciaAwareModel model = (IMInstanciaAwareModel) c.getDefaultModel();
+                    if (predicate.test(c, model.getMInstancia())) {
+                        (model).getMInstancia().clearInstance();
+                        refresh(Optional.of(t), c);
                     }
                 }
             });
@@ -126,19 +127,11 @@ public class WicketFormProcessing {
         });
     }
 
-    private static void clearTargetOnChange(Component c) {
-        if (c instanceof FormComponent) {
-            final IModel model = ((FormComponent) c).getModel();
-            if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
-                ((IMInstanciaAwareModel) model).getMInstancia().clearInstance();
-            }
-        }
-    }
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
-        if (target.isPresent() && component != null)
-            target.get()
-                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+        if (target.isPresent() && component != null) {
+            target.get().add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+        }
     }
 
     public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {

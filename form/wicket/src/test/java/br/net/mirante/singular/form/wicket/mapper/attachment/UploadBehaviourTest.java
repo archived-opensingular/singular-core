@@ -1,11 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.ajax.json.JSONArray;
@@ -19,9 +16,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -137,7 +137,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
 
         b.onResourceRequested();
         
-        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler(true);
         
         assertThat(handler.getAttachment("5ba93c9db0cff93f52b521d7420e43f6eda2784f"))
             .isNotNull();
@@ -155,7 +155,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
         when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(f2));
         b.onResourceRequested();
         
-        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler(true);
         
         assertThat(handler.getAttachments()).hasSize(1);
         assertThat(handler.getAttachment("bf8b4530d8d246dd74ac53a13471bba17941dff7"))

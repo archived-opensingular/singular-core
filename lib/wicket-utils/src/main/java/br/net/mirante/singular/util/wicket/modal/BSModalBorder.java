@@ -1,5 +1,7 @@
 package br.net.mirante.singular.util.wicket.modal;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 import java.io.Serializable;
 
 import org.apache.wicket.AttributeModifier;
@@ -36,7 +38,6 @@ import br.net.mirante.singular.util.wicket.ajax.AjaxErrorEventPayload;
 import br.net.mirante.singular.util.wicket.feedback.BSFeedbackPanel;
 import br.net.mirante.singular.util.wicket.feedback.NotContainedFeedbackMessageFilter;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings({ "serial" })
 public class BSModalBorder extends Border {
@@ -44,14 +45,28 @@ public class BSModalBorder extends Border {
     private static final String BUTTON_LABEL = "label";
 
     public enum ButtonStyle {
-        DEFAULT, PRIMARY, LINK, DANGER
-        //        SUCCESS, INFO, WARNING, ,
-        ;
+        EMPTY(""),
+        DEFAULT("btn-default"),
+        PRIMARY("btn-primary"),
+        LINK("btn-link"),
+        DANGER("btn-danger"),
+        BLUE("blue");
+
+        private String cssClass;
+
+        ButtonStyle(String cssClass) {
+            this.cssClass = cssClass;
+        }
+
+        public String getCssClass() {
+            return cssClass;
+        }
+
         public IModel<String> cssClassModel() {
             return new AbstractReadOnlyModel<String>() {
                 @Override
                 public String getObject() {
-                    return "btn-" + name().toLowerCase();
+                    return getCssClass();
                 }
             };
         }
@@ -115,7 +130,7 @@ public class BSModalBorder extends Border {
         closeIcon = newCloseIcon(CLOSE_ICON);
         compressIcon = newCompressIcon(COMPRESS_ICON);
         expandIcon = newExpandIcon(EXPAND_ICON);
-        final Component title = newTitle(TITLE, Model.of(""));
+        final Component title = newTitle(TITLE, getDefaultModel());
         final Fragment buttonsFragment = new Fragment("buttons", "buttonsFragment", this);
 
         header.setOutputMarkupId(true);
@@ -450,7 +465,7 @@ public class BSModalBorder extends Border {
             + ";"));
     }
 
-    protected Component newTitle(String id, IModel<String> titleModel) {
+    protected Component newTitle(String id, IModel<?> titleModel) {
         return new Label(id, titleModel);
     }
 

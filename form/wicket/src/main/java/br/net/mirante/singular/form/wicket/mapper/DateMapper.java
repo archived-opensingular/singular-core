@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
@@ -28,7 +27,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.datepicker.BSDatepickerCons
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.jquery.JQuery;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 @SuppressWarnings("serial")
 public class DateMapper implements ControlsFieldComponentMapper {
@@ -71,13 +69,10 @@ public class DateMapper implements ControlsFieldComponentMapper {
             .add(new InputMaskBehavior(Masks.FULL_DATE)));
         return comp;
     }
-    
+
     @Override
     public void addAjaxUpdate(Component component, IModel<SInstance> model, IAjaxUpdateListener listener) {
         component.add(new BSDatepickerAjaxUpdateBehavior(model, listener));
-        MarkupContainer container = component.getMetaData(BSDatepickerConstants.KEY_CONTAINER);
-        container.add(WicketUtils.$b.onReadyScript(c -> ""
-            + JQuery.redirectEvent(c, "changeDate", component, BSDatepickerConstants.JS_CHANGE_EVENT)));
     }
 
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
@@ -93,16 +88,20 @@ public class DateMapper implements ControlsFieldComponentMapper {
     }
 
     private static final class BSDatepickerAjaxUpdateBehavior extends AjaxUpdateInputBehavior {
+
         private transient boolean flag;
+
         private BSDatepickerAjaxUpdateBehavior(IModel<SInstance> model, IAjaxUpdateListener listener) {
             super(BSDatepickerConstants.JS_CHANGE_EVENT, model, listener);
         }
+
         @Override
         protected void updateAjaxAttributes(AjaxRequestAttributes attributes) {
             super.updateAjaxAttributes(attributes);
             if (flag)
                 attributes.setEventNames();
         }
+
         @Override
         protected CharSequence getCallbackScript(Component component) {
             flag = true;
