@@ -128,13 +128,13 @@ public class FileUploadPanel extends Panel {
         fileName.setOutputMarkupId(true);
         chooseFieldButton.setOutputMarkupId(true);
         removeFileButton.setOutputMarkupId(true);
+        configureBehaviours();
     }
 
     /**
      * Adiciona os behaviours aos componentes
      */
-    @Override
-    protected void onConfigure() {
+    protected void configureBehaviours() {
         super.onConfigure();
         uploadField.add(new AjaxFormSubmitBehavior("change") {
             @Override
