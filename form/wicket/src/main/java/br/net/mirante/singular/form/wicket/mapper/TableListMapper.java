@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-
 import java.util.Set;
 
 import org.apache.wicket.ClassAttributeModifier;
@@ -36,6 +33,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTDataCell;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.table.BSTSection;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 public class TableListMapper extends AbstractListaMapper {
 
@@ -43,7 +42,7 @@ public class TableListMapper extends AbstractListaMapper {
     public void buildView(WicketBuildContext ctx) {
 
         if (!(ctx.getView() instanceof MTableListaView)) {
-            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", ctx.getCurrentInstance());
+            throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", (SInstance) ctx.getCurrentInstance());
         }
 
         if (ctx.getCurrentInstance() instanceof SList) {
@@ -58,10 +57,7 @@ public class TableListMapper extends AbstractListaMapper {
                 (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
                 (content, form) -> builContent(content, form, list, ctx, view, isEdition),
                 (footer, form) -> {
-                    footer.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
-                    if (view.isPermiteAdicaoDeLinha() && isEdition) {
-                        appendAddButton(list, form, footer, true);
-                    }
+                    footer.setVisible(false);
                 }));
         }
     }
@@ -77,8 +73,7 @@ public class TableListMapper extends AbstractListaMapper {
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
         if (view.isPermiteAdicaoDeLinha() && isEdition) {
-            appendAddButton(list, form, header, false)
-                .add($b.onConfigure(c -> c.setVisible(list.getObject().isEmpty())));
+            appendAddButton(list, form, header, false);
         }
 
     }
@@ -87,7 +82,7 @@ public class TableListMapper extends AbstractListaMapper {
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final String markup = ""
-            + " <table class='table table-condensed table-unstyled'>                                             "
+            + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
             + "      <thead wicket:id='_h'></thead>                                                              "
             + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
             + "      <tfoot wicket:id='_ft'>                                                                     "
@@ -97,6 +92,7 @@ public class TableListMapper extends AbstractListaMapper {
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
         template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
+        content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
         final BSTSection tableHeader = new BSTSection("_h").setTagName("thead");
         final ElementsView trView = new TableElementsView("_e", list, ctx, form);
