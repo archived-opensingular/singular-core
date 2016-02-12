@@ -40,7 +40,6 @@ public class SIAnnotation extends SIComposite {
 
     public void clear() {
         setText(null);
-        setTargetId(null);
         setApproved(null);
     }
 }

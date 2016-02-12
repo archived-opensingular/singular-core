@@ -58,19 +58,33 @@ public class STypeAnnotationTest {
         assertThat(extractProperty("text").from(all)).containsOnly("Abacate","Avocado","ukwatapheya");
     }
 
+    @Test public void returnAllAnnotationsFromInstanceWithoutEmptyOnes(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+
+        asAnnotation(instance, annotated1).annotation().setText("Abacate");
+        asAnnotation(instance, annotated2).annotation();
+        asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
+
+        List<SIAnnotation> all = instance.as(AtrAnnotation::new).allAnnotations();
+        assertThat(extractProperty("text").from(all)).containsOnly("Abacate","ukwatapheya");
+    }
+
     @Test public void returnAllAnnotationsInAPersitentObject(){
         SIComposite instance = baseCompositeField.novaInstancia();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
-        asAnnotation(instance, annotated2).annotation().setText("Avocado");
+        asAnnotation(instance, annotated2).annotation().setApproved(true);
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
         SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(persistent.getMTipo()).isInstanceOf(STypeAnnotationList.class);
         assertThat(persistent.getTipoElementos()).isInstanceOf(STypeAnnotation.class);
         assertThat(extractProperty("text").from(persistent.getValores()))
-                .containsOnly("Abacate","Avocado","ukwatapheya");
+                .containsOnly("Abacate", null, "ukwatapheya");
+        assertThat(extractProperty("approved").from(persistent.getValores()))
+                .containsOnly(null, true);
     }
+
 
     @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
         SIComposite instance = baseCompositeField.novaInstancia();

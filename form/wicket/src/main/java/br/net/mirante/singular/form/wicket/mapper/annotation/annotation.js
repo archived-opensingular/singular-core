@@ -23,6 +23,18 @@ if( window.Annotation == undefined){
                             thiz.this_component.fadeOut();
                         }else{
                             if(!thiz.this_component.is(":visible")){
+                                var base_start = thiz.this_component.parent().offset()['top'],
+                                    base_height = thiz.this_component.height();
+                                var base_end = base_start+base_height;
+                                $(".sannotation-snipet-box:visible").each(function(i,e){
+                                    var start = $(e).parent().offset()['top'],
+                                        this_height = $(e).height();
+                                    var end = start+this_height;
+                                    if(start < base_end && end > base_start){
+                                        console.log(start, end, base_start, base_end)
+                                        $(e).fadeOut();
+                                    }
+                                });
                                 thiz.this_component.fadeIn();
                             }else{
                                 thiz.this_component.fadeOut();
@@ -35,7 +47,7 @@ if( window.Annotation == undefined){
         },
 
         is_blank : function () {
-            return ! this.approved && (! this.comment || this.comment === 'null') ;
+            return this.approved == null;
         },
 
         create_show_button : function(){
@@ -60,7 +72,8 @@ if( window.Annotation == undefined){
             this.this_component.css('position','absolute')
             var target_offset = this.target_component.parent().offset()['top'],
                 this_offset = this.this_component.parent().offset()['top'];
-            this.this_component.css('top',(target_offset-this_offset)+"px");
+            var result_offset = target_offset-this_offset;
+            this.this_component.css('top',(result_offset)+"px");
         }
     }
 

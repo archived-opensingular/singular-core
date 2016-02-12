@@ -101,7 +101,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      */
     public boolean hasAnnotation(){
         SIAnnotation atr = target().getDocument().annotation(target().getId());
-        return atr != null && StringUtils.isNotBlank(atr.getText());
+        return atr != null && hasValue(atr);
+    }
+
+    private boolean hasValue(SIAnnotation atr) {
+        return StringUtils.isNotBlank(atr.getText()) || atr.getApproved() != null;
     }
 
     private void createAttributeIfNeeded() {
@@ -216,5 +220,5 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         return (SInstance) getAlvo();
     }
 
-    public void clear() {   target().getDocument().annotation(target().getId(),null);    }
+    public void clear() {   annotation().clear();    }
 }

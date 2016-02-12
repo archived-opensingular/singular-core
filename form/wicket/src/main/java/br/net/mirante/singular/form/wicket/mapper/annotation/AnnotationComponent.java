@@ -21,15 +21,14 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -77,19 +76,15 @@ public class AnnotationComponent extends Panel {
     protected void onInitialize() {
         super.onInitialize();
 
-        createFields();
         this.queue(new Label("target_label",$m.ofValue(title(referenced))));
-        this.queue(comment_field);
-        this.queue(approval_field);
-
-
-        BFModalWindow annotationModal = createModal();
-        this.queue(openModalButton = createOpenModalButton(annotationModal));
+        this.queue(comment_field = createCommentSnippet());
+        this.queue(approval_field = createApprovalLabel());
+        this.queue(openModalButton = createOpenModalButton(createEditModal()));
+        this.queue(createDeleteModalButton());
     }
 
-    private void createFields() {
-        comment_field = new Label("comment_field", new Model(){
-            @Override
+    private Label createCommentSnippet() {
+        return new Label("comment_field", new Model(){
             public Serializable getObject() {
                 if(textModel.getObject() == null){  return "";  }
                 String text = (String) textModel.getObject();
@@ -97,7 +92,10 @@ public class AnnotationComponent extends Panel {
                 return text;
             }
         });
-        approval_field = new Label("approval_field", new Model(){
+    }
+
+    private Label createApprovalLabel() {
+        return new Label("approval_field", new Model(){
             public Serializable getObject() {
                 if(Boolean.TRUE.equals(approvedModel.getObject())){
                     return "Aprovado";
@@ -118,7 +116,7 @@ public class AnnotationComponent extends Panel {
         };
     }
 
-    private BFModalWindow createModal() {
+    private BFModalWindow createEditModal() {
         BFModalWindow annotationModal = new AnnotationModalWindow("annotationModal",
                                                           model, referenced, context, this);
         context.getExternalContainer().appendTag("div", true, null, annotationModal);
@@ -130,6 +128,42 @@ public class AnnotationComponent extends Panel {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
+            }
+        };
+    }
+
+    private ActionAjaxButton createDeleteModalButton() {
+        final BFModalWindow deleteModal = new BFModalWindow("deleteAnnotationModal"){
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                final BFModalWindow thiz = this;
+
+                thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente apagar este comentário?")));
+
+                this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Apagar"),
+                    new ActionAjaxButton("deleteBtn"){
+                        protected void onAction(AjaxRequestTarget target, Form<?> form){
+                            ((SIAnnotation)model.getObject()).clear();
+                            target.add(AnnotationComponent.this);
+                            target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
+                            thiz.hide(target);
+                        }
+                    }
+                );
+                this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                    new ActionAjaxLink("cancelDeleteBtn"){
+                        protected void onAction(AjaxRequestTarget target) {
+                            thiz.hide(target);
+                        }
+                    }
+                );
+            }
+        };
+        context.getExternalContainer().appendTag("div", true, null, deleteModal);
+        return new ActionAjaxButton("trash_modal") {
+            protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                deleteModal.show(target);
             }
         };
     }
@@ -152,10 +186,14 @@ public class AnnotationComponent extends Panel {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
-        final PackageResourceReference customJS = new PackageResourceReference(getClass(), "annotation.js");
-        response.render(JavaScriptReferenceHeaderItem.forReference(customJS));
+        response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("annotation.js")));
+        response.render(CssReferenceHeaderItem.forReference(resourceRef("annotation.css")));
         response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),"updateAnnotation_"+this.getMarkupId()
         ));
+    }
+
+    private PackageResourceReference resourceRef(String resourceName) {
+        return new PackageResourceReference(getClass(), resourceName);
     }
 
     private String generateUpdateJS() {
@@ -179,7 +217,7 @@ public class AnnotationComponent extends Panel {
             this.add(WicketUtils.$b.attr("style", "float: left; display: none;"));
         }
         keepOpened = false;
-        this.add(WicketUtils.$b.attrAppender("class", "portlet box", ""));
+        this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
     }
 
     private static class AnnotationModalWindow extends BFModalWindow{
@@ -251,22 +289,6 @@ public class AnnotationComponent extends Panel {
             this.setTitleText($m.ofValue(title(referenced)));
 
             super.show(target);
-            target.appendJavaScript(getConfigureBackdropScript());
-        }
-
-        private String getConfigureBackdropScript(){
-            String js = "";
-            js +=" (function (zindex){ ";
-            js +="     $('.modal-backdrop').each(function(index) { ";
-            js +="         var zIndex = $(this).css('z-index'); ";
-            js +="         $(this).css('z-index', zindex-1+index); ";
-            js +="     }); ";
-            js +="     $('.modal').each(function(index) { ";
-            js +="         var zIndex = $(this).css('z-index'); ";
-            js +="         $(this).css('z-index', zindex+index); ";
-            js +="     }); ";
-            js +=" })(10050); ";
-            return js;
         }
 
         private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
