@@ -4,16 +4,14 @@ import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
+import org.apache.wicket.authorization.strategies.CompoundAuthorizationStrategy;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.Url;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.apache.wicket.request.resource.UrlResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +22,7 @@ import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
 import java.util.Locale;
 
-public class PetApplication extends AuthenticatedWebApplication
+public abstract class PetApplication extends AuthenticatedWebApplication
         implements ApplicationContextAware {
 
     public static final String BASE_FOLDER = "/tmp/fileUploader";
@@ -57,6 +55,12 @@ public class PetApplication extends AuthenticatedWebApplication
     public void init() {
         super.init();
 
+        CompoundAuthorizationStrategy authorizationStrategy = new CompoundAuthorizationStrategy();
+        authorizationStrategy.add(new SingularAuthorizationStrategy(getDisallowedPackages()));
+        authorizationStrategy.add(getSecuritySettings().getAuthorizationStrategy());
+        getSecuritySettings().setAuthorizationStrategy(authorizationStrategy);
+
+
         setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
         Locale.setDefault(new Locale("pt", "BR"));
 
@@ -77,7 +81,7 @@ public class PetApplication extends AuthenticatedWebApplication
             getComponentInstantiationListeners().add(new SpringComponentInjector(this));
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
-        new AnnotatedMountScanner().scanPackage("br.**").mount(this);
+        new AnnotatedMountScanner().scanPackage(getPackageToScan()).mount(this);
 
         /* Desabiltando jquery */
         getJavaScriptLibrarySettings()
@@ -116,5 +120,17 @@ public class PetApplication extends AuthenticatedWebApplication
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         this.ctx = ctx;
     }
+
+    /**
+     * @return Package a ser escaneada pelo {@link AnnotatedMountScanner} para buscar pelos mounts das páginas.
+     */
+    protected abstract String getPackageToScan();
+
+
+    /**
+     * @return Nomes dos pacotes cujas páginas e componentes não podem ser instanciadas por essa aplicação wicket.
+     */
+    protected abstract String[] getDisallowedPackages();
+
 
 }
