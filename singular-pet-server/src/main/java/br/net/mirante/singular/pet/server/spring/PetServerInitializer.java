@@ -90,7 +90,6 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
 
         FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter("AnaliseApplication", WicketFilter.class);
         wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClassAnalise().getName());
-        wicketFilterAnalise.setInitParameter("homePageClass", getHomePage());
         wicketFilterAnalise.setInitParameter("filterMappingUrlPattern", ServerContext.ANALISE.getContextPath());
         wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.ANALISE.getContextPath());
     }
@@ -98,13 +97,9 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
     protected void addWicketFilterPeticionamento(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         FilterRegistration.Dynamic wicketFilterPeticionamento = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
         wicketFilterPeticionamento.setInitParameter("applicationClassName", getWicketApplicationClassPeticionamento().getName());
-        wicketFilterPeticionamento.setInitParameter("homePageClass", getHomePage());
         wicketFilterPeticionamento.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, ServerContext.PETICIONAMENTO.getContextPath());
         wicketFilterPeticionamento.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.PETICIONAMENTO.getContextPath());
     }
-
-
-    protected abstract String getHomePage();
 
     protected Class<? extends PetApplication> getWicketApplicationClassPeticionamento() {
         return PetApplication.class;
