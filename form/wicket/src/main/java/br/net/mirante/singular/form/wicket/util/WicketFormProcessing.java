@@ -112,7 +112,7 @@ public class WicketFormProcessing {
                     IMInstanciaAwareModel model = (IMInstanciaAwareModel) c.getDefaultModel();
                     if (predicate.test(c, model.getMInstancia())) {
                         (model).getMInstancia().clearInstance();
-                        t.add(c);
+                        refresh(Optional.of(t), c);
                     }
                 }
             });
@@ -129,9 +129,9 @@ public class WicketFormProcessing {
 
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
-        if (target.isPresent() && component != null)
-            target.get()
-                    .add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+        if (target.isPresent() && component != null) {
+            target.get().add(ObjectUtils.defaultIfNull(WicketFormUtils.getCellContainer(component), component));
+        }
     }
 
     public static void associateErrorsToComponents(InstanceValidationContext validationContext, MarkupContainer container, IModel<? extends SInstance> baseInstance) {
