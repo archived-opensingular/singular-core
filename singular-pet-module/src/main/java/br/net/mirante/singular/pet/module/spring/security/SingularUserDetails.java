@@ -10,6 +10,15 @@ import java.util.List;
 
 public interface SingularUserDetails extends UserDetails {
 
+    public default boolean isAnalise(){
+        return  ServerContext.ANALISE.equals(getServerContext());
+    }
+
+    public default boolean isPeticionamento(){
+        return  ServerContext.PETICIONAMENTO.equals(getServerContext());
+    }
+
+    public ServerContext getServerContext();
 
     public String getDisplayName();
 

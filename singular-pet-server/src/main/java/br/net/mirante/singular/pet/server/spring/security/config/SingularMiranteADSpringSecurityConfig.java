@@ -23,7 +23,7 @@ public abstract class SingularMiranteADSpringSecurityConfig extends AbstractSing
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .regexMatcher(getRegex())
+                .regexMatcher(getContext().getPathRegex())
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin()
                 .and()
@@ -31,17 +31,17 @@ public abstract class SingularMiranteADSpringSecurityConfig extends AbstractSing
                 .and()
                 .authorizeRequests()
                 .antMatchers(getDefaultPublicUrls()).permitAll()
-                .antMatchers(getPath() + "/login*").permitAll()
-                .antMatchers(getPath() + "/**").authenticated()
+                .antMatchers(getContext().getUrlPath() + "/login*").permitAll()
+                .antMatchers(getContext().getUrlPath() + "/**").authenticated()
                 .antMatchers("/**").permitAll()
                 .and()
                 .formLogin()
-                .loginPage(getPath() + "/login")
-                .loginProcessingUrl(getPath() + "/login")
-                .failureUrl(getPath() + "/login?error=true")
-                .defaultSuccessUrl(getPath() + "/", false)
+                .loginPage(getContext().getUrlPath() + "/login")
+                .loginProcessingUrl(getContext().getUrlPath() + "/login")
+                .failureUrl(getContext().getUrlPath() + "/login?error=true")
+                .defaultSuccessUrl(getContext().getUrlPath() + "/", false)
                 .and()
-                .logout().logoutUrl(getPath() + "/logout");
+                .logout().logoutUrl(getContext().getUrlPath() + "/logout");
 
     }
 

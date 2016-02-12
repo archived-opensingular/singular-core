@@ -50,7 +50,7 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
         j2eeFilter.setAuthenticationManager(authenticationManager);
 
         http
-                .regexMatcher(getRegex())
+                .regexMatcher(getContext().getPathRegex())
                 .httpBasic().authenticationEntryPoint(new Http403ForbiddenEntryPoint())
                 .and()
                 .csrf().disable()
@@ -60,7 +60,7 @@ public abstract class SingularCASSpringSecurityConfig extends AbstractSingularSp
                 .and()
                 .authorizeRequests()
                 .antMatchers(getDefaultPublicUrls()).permitAll()
-                .antMatchers(getPath() + "/*").authenticated();
+                .antMatchers(getContext().getContextPath()).authenticated();
     }
 
 

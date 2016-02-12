@@ -7,7 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 public interface SingularUserDetailsService extends UserDetailsService, UserDetailsContextMapper {
@@ -23,6 +26,12 @@ public interface SingularUserDetailsService extends UserDetailsService, UserDeta
     }
 
     @Override
-    public SingularUserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    public default SingularUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        return loadUserByUsername(username, ServerContext.getContextFromRequest(request));
+    }
+
+
+    public SingularUserDetails loadUserByUsername(String username, ServerContext context) throws UsernameNotFoundException;
 
 }

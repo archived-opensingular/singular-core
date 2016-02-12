@@ -1,5 +1,6 @@
 package br.net.mirante.singular.pet.server.spring;
 
+import br.net.mirante.singular.pet.module.spring.security.ServerContext;
 import br.net.mirante.singular.pet.module.wicket.PetApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -90,25 +91,18 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
         FilterRegistration.Dynamic wicketFilterAnalise = ctx.addFilter("AnaliseApplication", WicketFilter.class);
         wicketFilterAnalise.setInitParameter("applicationClassName", getWicketApplicationClassAnalise().getName());
         wicketFilterAnalise.setInitParameter("homePageClass", getHomePage());
-        wicketFilterAnalise.setInitParameter("filterMappingUrlPattern", getPathAnalise());
-        wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, getPathAnalise());
+        wicketFilterAnalise.setInitParameter("filterMappingUrlPattern", ServerContext.ANALISE.getContextPath());
+        wicketFilterAnalise.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.ANALISE.getContextPath());
     }
 
     protected void addWicketFilterPeticionamento(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         FilterRegistration.Dynamic wicketFilterPeticionamento = ctx.addFilter("PeticionamentoApplication", WicketFilter.class);
         wicketFilterPeticionamento.setInitParameter("applicationClassName", getWicketApplicationClassPeticionamento().getName());
         wicketFilterPeticionamento.setInitParameter("homePageClass", getHomePage());
-        wicketFilterPeticionamento.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, getPathPeticionamento());
-        wicketFilterPeticionamento.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, getPathPeticionamento());
+        wicketFilterPeticionamento.setInitParameter(WicketFilter.FILTER_MAPPING_PARAM, ServerContext.PETICIONAMENTO.getContextPath());
+        wicketFilterPeticionamento.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, ServerContext.PETICIONAMENTO.getContextPath());
     }
 
-    protected String getPathPeticionamento() {
-        return DefaultConfigConstants.PETICIONAMENTO_CONTEXT;
-    }
-
-    protected String getPathAnalise() {
-        return DefaultConfigConstants.ANALISE_CONTEXT;
-    }
 
     protected abstract String getHomePage();
 

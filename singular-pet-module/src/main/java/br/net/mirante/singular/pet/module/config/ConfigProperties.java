@@ -12,6 +12,8 @@ import java.util.Properties;
  */
 public class ConfigProperties {
 
+    public static final String ANALISE_CONTEXT_KEY = "singular.analise.context";
+    public static final String PETICIONAMENTO_CONTEXT_KEY = "singular.peticionamento.context";
     private static Properties propertiesServer = new Properties();
     private static Properties propertiesPet = new Properties();
     private static Properties propertiesAnl = new Properties();
