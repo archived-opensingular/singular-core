@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.*;
-import static org.apache.commons.lang3.StringUtils.*;
-
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
@@ -23,12 +20,15 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 public class PanelListaMapper extends AbstractListaMapper {
 
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance>> listaModel = $m.get(() -> ctx.getCurrentInstance());
+        final IModel<SList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
@@ -46,8 +46,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                 if ((view instanceof MPanelListaView)
                     && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
                     && viewMode.isEdition()) {
-                    appendAddButton(listaModel, form, heading, false)
-                        .add($b.onConfigure(c -> c.setVisible(listaModel.getObject().isEmpty())));
+                    appendAddButton(listaModel, form, heading, false);
                 }
             } ,
             (content, form) -> {
@@ -59,16 +58,11 @@ public class PanelListaMapper extends AbstractListaMapper {
                     + "      </li>"
                     + "    </ul>");
                 list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
+                content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 
             } ,
             (footer, form) -> {
-                footer.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
                 footer.setVisible(false);
-                if ((view instanceof MPanelListaView)
-                    && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
-                    && viewMode.isEdition()) {
-                    appendAddButton(listaModel, form, footer, true);
-                }
             }));
     }
 
