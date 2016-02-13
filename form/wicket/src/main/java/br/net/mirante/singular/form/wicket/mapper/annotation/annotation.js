@@ -10,7 +10,7 @@ if( window.Annotation == undefined){
     window.Annotation.prototype = {
         setup : function(){
             var thiz = this;
-            this.target_component.find('h3').append(
+            this.target_component.find('h3:first').append(
                 $('<div>').attr('style','position:absolute;top:10px;right: 15px;')
                             .append(this.create_show_button())
                             .click(function(){thiz.toggle_button_on_click()})

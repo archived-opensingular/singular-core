@@ -279,7 +279,7 @@ public class CrudContent extends Content
         xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
         xmlTabs.addTab(getString("label.definicao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(definicao)));
         if(hasAnnotations()){
-            final String xmlAnnotations = getXmlTabulado(model.getObject().getAnnnotations());
+            String xmlAnnotations = getXmlTabulado(model.getObject().getAnnnotations());
             xmlTabs.addTab(getString("label.xml.anotacao"),
                     new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlAnnotations)));
         }
@@ -290,7 +290,7 @@ public class CrudContent extends Content
     }
 
     private String getXmlTabulado(String xmlString) {
-        if (!xmlString.isEmpty()) {
+        if (StringUtils.isNotEmpty(xmlString)) {
             try {
                 final MElement xml = MParser.parse(xmlString);
                 final StringWriter sw = new StringWriter();
