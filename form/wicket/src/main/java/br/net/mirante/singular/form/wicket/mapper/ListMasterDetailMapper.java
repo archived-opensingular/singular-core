@@ -38,6 +38,7 @@ import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -385,6 +386,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
 
             wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance), viewModeModal);
+            WicketFormProcessing.onFormPrepare(modalBody, currentInstance, false);
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
 

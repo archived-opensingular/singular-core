@@ -23,6 +23,7 @@ import br.net.mirante.singular.form.mform.MFormUtil;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -51,22 +52,32 @@ public class WicketFormProcessing {
     }
 
     public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance, boolean validate) {
-        if (baseInstance == null)
+        return processAndPrepareForm(container, target, baseInstance, validate);
+    }
+
+    public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
+        return processAndPrepareForm(container, Optional.empty(), baseInstance, validate);
+    }
+    
+    private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
+        if (baseInstanceModel == null)
             return false;
 
         // Validação do valor do componente
         if (validate) {
-            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstance.getObject());
+            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstanceModel.getObject());
             validationContext.validateAll();
             if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                associateErrorsToComponents(validationContext, container, baseInstance);
+                associateErrorsToComponents(validationContext, container, baseInstanceModel);
                 refresh(target, container);
                 return false;
             }
         }
 
         // atualizar documento e recuperar instancias com atributos alterados
-        baseInstance.getObject().getDocument().updateAttributes(null);
+        SInstance baseInstance = baseInstanceModel.getObject();
+        SDocument document = baseInstance.getDocument();
+        document.updateAttributes(baseInstance, null);
 
         // re-renderizar form
         refresh(target, container);
@@ -94,9 +105,9 @@ public class WicketFormProcessing {
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                    .map(SInstanceEvent::getSource)
-                    .map(SInstance::getId)
-                    .collect(toSet());
+                .map(SInstanceEvent::getSource)
+                .map(SInstance::getId)
+                .collect(toSet());
 
             final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
                 SType<?> insTipo = ins.getMTipo();
@@ -109,7 +120,7 @@ public class WicketFormProcessing {
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
                 if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    IMInstanciaAwareModel model = (IMInstanciaAwareModel) c.getDefaultModel();
+                    IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) c.getDefaultModel();
                     if (predicate.test(c, model.getMInstancia())) {
                         (model).getMInstancia().clearInstance();
                         refresh(Optional.of(t), c);
@@ -117,16 +128,15 @@ public class WicketFormProcessing {
                 }
             });
 
-//           // re-renderizar componentes
-//            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-//                    .map(WicketFormUtils::findCellContainer)
-//                    .filter(Optional::isPresent)
-//                    .map(Optional::get)
-//                    .filter(c -> c != null)
-//                    .forEach(t::add);
+            //           // re-renderizar componentes
+            //            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
+            //                    .map(WicketFormUtils::findCellContainer)
+            //                    .filter(Optional::isPresent)
+            //                    .map(Optional::get)
+            //                    .filter(c -> c != null)
+            //                    .forEach(t::add);
         });
     }
-
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null) {
@@ -143,14 +153,14 @@ public class WicketFormProcessing {
                 visit.dontGoDeeper();
             } else {
                 WicketFormUtils.resolveInstance(component.getDefaultModel())
-                        .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
-                        .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
+                    .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
+                    .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
             }
         });
 
         // associate remaining errors to container
         instanceErrors.values().stream()
-                .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
+            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
     private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance,
@@ -164,11 +174,10 @@ public class WicketFormProcessing {
             }
             Integer instanceId = error.getInstance().getId();
 
-            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () ->
-                    MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                            .filter(it -> Objects.equals(it.getId(), instanceId))
-                            .findFirst()
-                            .orElse(null);
+            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
+                .filter(it -> Objects.equals(it.getId(), instanceId))
+                .findFirst()
+                .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 
