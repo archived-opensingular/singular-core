@@ -119,22 +119,14 @@ public class WicketFormProcessing {
 
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
-                if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) c.getDefaultModel();
+                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     if (predicate.test(c, model.getMInstancia())) {
                         (model).getMInstancia().clearInstance();
                         refresh(Optional.of(t), c);
                     }
-                }
+                });
             });
 
-            //           // re-renderizar componentes
-            //            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-            //                    .map(WicketFormUtils::findCellContainer)
-            //                    .filter(Optional::isPresent)
-            //                    .map(Optional::get)
-            //                    .filter(c -> c != null)
-            //                    .forEach(t::add);
         });
     }
 

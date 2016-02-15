@@ -47,16 +47,18 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         if (valores == null) {
             return Collections.emptyList();
         }
-        return valores.stream().map(v -> v.getValor()).collect(Collectors.toList());
+        return valores.stream().map(SInstance::getValor).collect(Collectors.toList());
     }
 
     @Override
     public void clearInstance() {
-        getValor().clear();
+        if (valores != null) {
+            valores.forEach(SInstance::clearInstance);
+        }
     }
 
     @Override
-    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
+    public final <T> T getValor(String pathCampo, Class<T> classeDestino) {
         return getValor(new LeitorPath(pathCampo), classeDestino);
     }
 
@@ -67,7 +69,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     @Override
     public boolean isEmptyOfData() {
-        return isEmpty() || valores.stream().allMatch(i -> i.isEmptyOfData());
+        return isEmpty() || valores.stream().allMatch(SInstance::isEmptyOfData);
     }
 
     public E addNovo() {
@@ -87,8 +89,8 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         return addInterno(element);
     }
 
-    public E addElementAt(int index, Object e) {
-        E element = (E) e;
+    public E addElementAt(int index, E e) {
+        E element = e;
         element.setDocument(getDocument());
         addAtInterno(index, element);
         return element;
@@ -230,7 +232,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     public boolean isEmpty() {
-        return (valores == null) ? true : valores.isEmpty();
+        return (valores == null) || valores.isEmpty();
     }
 
     public List<E> getValores() {
@@ -253,7 +255,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     public String toDebug() {
-        return stream().map(i -> i.getDisplayString()).collect(Collectors.joining("; "));
+        return stream().map(SInstance::getDisplayString).collect(Collectors.joining("; "));
     }
 
     @Override
