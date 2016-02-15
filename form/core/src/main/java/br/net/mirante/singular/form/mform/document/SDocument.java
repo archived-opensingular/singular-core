@@ -187,17 +187,17 @@ public class SDocument {
             this.instanceListeners = new MInstanceListeners();
         return this.instanceListeners;
     }
-
-    /**
-     *
-     * @return eventos coletados
-     */
+    
     public void updateAttributes(IMInstanceListener listener) {
+        updateAttributes(getRoot(), listener);
+    }
+
+    public void updateAttributes(SInstance root, IMInstanceListener listener) {
         if (listener != null)
             getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
         try {
-            MInstances.visitAll(getRoot(), true, instance -> {
+            MInstances.visitAll(root, true, instance -> {
                 instance.updateExists();
                 instance.updateObrigatorio();
                 MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
