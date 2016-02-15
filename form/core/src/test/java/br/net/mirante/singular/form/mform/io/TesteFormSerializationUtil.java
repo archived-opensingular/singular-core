@@ -1,11 +1,19 @@
 package br.net.mirante.singular.form.mform.io;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,19 +21,27 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
-
-import static org.junit.Assert.*;
 
 public class TesteFormSerializationUtil {
 
@@ -152,7 +168,8 @@ public class TesteFormSerializationUtil {
             pacote.createTipo("endereco", STypeString.class);
         });
         SInstance instancia = loader.loadType("teste.endereco").novaInstancia();
-//        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+        // TestCaseForm.assertException(() -> testSerializacao(instancia, null),
+        // "resolver default não está configurado");
 
         MDicionarioResolver.setDefault(loader);
         testSerializacao(instancia, null);
@@ -165,7 +182,8 @@ public class TesteFormSerializationUtil {
         SInstance instancia = resolver.loadType("teste.cadastro").novaInstancia();
         instancia.setValor("Fulano");
 
-//        TestCaseForm.assertException(() -> testSerializacao(instancia, null), "resolver default não está configurado");
+        // TestCaseForm.assertException(() -> testSerializacao(instancia, null),
+        // "resolver default não está configurado");
 
         testSerializacaoComResolverSerializado(instancia, resolver);
     }
@@ -222,34 +240,44 @@ public class TesteFormSerializationUtil {
 
     }
 
-    @Test public void serializationAndDeserializationAreIndempontent(){
-        SDictionary dict = SDictionary.create();
-        SPackageTesteContatos pkt = dict.carregarPacote(SPackageTesteContatos.class);
-        SIComposite bruce = pkt.contato.novaInstancia();
-        bruce.setValor("identificacao.nome","Bruce");
-        bruce.setValor("identificacao.sobrenome","Wayne");
-        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
-        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
-        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(bruce));
+    @Test
+    public void testRefSerialization() {
+        MDicionarioResolverSerializable resolver = createLoaderPacoteTeste((pacote) -> {
+            pacote.createTipo("endereco", STypeString.class);
+        });
+        SIString endereco = (SIString) resolver.loadType("teste.endereco").novaInstancia();
+        endereco.setValor("aqui");
+
+        InstanceSerializableRef<?> ref = new InstanceSerializableRef<>(endereco, resolver);
+        testSerializacao(ref);
+
     }
 
-    @Test public void cachesDictionaryForDeserialization(){
-        SDictionary dict1 = SDictionary.create();
-        SPackageTesteContatos pkt = dict1.carregarPacote(SPackageTesteContatos.class);
-        SIComposite bruce = pkt.contato.novaInstancia();
-        bruce.setValor("identificacao.nome","Bruce");
+    @Test
+    public void testSerializationOfTwoIndependnteReferenceAtSameTime() {
+        MDicionarioResolverSerializable resolver = createLoaderPacoteTeste((pacote) -> {
+            pacote.createTipo("endereco", STypeString.class);
+        });
+        SType<?> type = resolver.loadType("teste.endereco");
 
-        SDictionary dict2 = SDictionary.create();
-        SPackageTesteContatos pkt2 = dict2.carregarPacote(SPackageTesteContatos.class);
-        SIComposite clark = pkt2.contato.novaInstancia();
-        clark.setValor("identificacao.nome","Clark");
+        TwoReferences tr1 = new TwoReferences();
+        tr1.ref1 = new InstanceSerializableRef<>(type.novaInstancia(), resolver);
+        tr1.ref1.get().setValor("Rua 1");
+        tr1.ref2 = new InstanceSerializableRef<>(type.novaInstancia(), resolver);
+        tr1.ref2.get().setValor("Rua 2");
+        assertSame(tr1.ref1.get().getDicionario(), tr1.ref2.get().getDicionario());
 
-        FormSerialized fsBruce = FormSerializationUtil.toSerializedObject(bruce);
-        FormSerialized fsClark = FormSerializationUtil.toSerializedObject(clark);
-        SInstance deBruce = FormSerializationUtil.toInstance(fsBruce);
-        assertThat(deBruce.getDicionario()).isSameAs(dict1);
+        TwoReferences tr2 = toAndFromByteArray(tr1);
+
+        assertEquivalent(tr1.ref1.get().getDocument(), tr2.ref1.get().getDocument());
+        assertEquivalent(tr1.ref1.get(), tr2.ref1.get());
+        assertSame(tr2.ref1.get().getDicionario(), tr2.ref2.get().getDicionario());
     }
 
+    private static class TwoReferences implements Serializable {
+        public InstanceSerializableRef<?> ref1;
+        public InstanceSerializableRef<?> ref2;
+    }
 
     @SuppressWarnings("serial")
     private static final class DicionarioResolverStaticTest extends MDicionarioResolverSerializable {
@@ -273,6 +301,12 @@ public class TesteFormSerializationUtil {
         testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i, resolver), fs -> FormSerializationUtil.toInstance(fs));
     }
 
+    public static void testSerializacao(InstanceSerializableRef<?> ref) {
+        SInstance instancia2 = toAndFromByteArray(ref).get();
+        assertEquivalent(ref.get().getDocument(), instancia2.getDocument());
+        assertEquivalent(ref.get(), instancia2);
+    }
+
     public static SInstance testSerializacao(SInstance original, MDicionarioResolver loader) {
         return testSerializacao(original, i -> FormSerializationUtil.toSerializedObject(i),
                 fs -> FormSerializationUtil.toInstance(fs, loader));
@@ -286,22 +320,26 @@ public class TesteFormSerializationUtil {
         assertEquivalent(original.getDocument(), instancia2.getDocument());
         assertEquivalent(original, instancia2);
 
-        // Testa transformando em um array de bytes
+        fs = toAndFromByteArray(fs);
+        instancia2 = fromSerial.apply(fs);
+        assertEquivalent(original.getDocument(), instancia2.getDocument());
+        assertEquivalent(original, instancia2);
+
+        return instancia2;
+    }
+
+    private static <T> T toAndFromByteArray(T obj) {
         try {
             ByteArrayOutputStream out1 = new ByteArrayOutputStream();
             ObjectOutputStream out2 = new ObjectOutputStream(out1);
-            out2.writeObject(fs);
+            out2.writeObject(obj);
             out2.close();
 
             ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(out1.toByteArray()));
-            fs = (FormSerialized) in.readObject();
-            instancia2 = fromSerial.apply(fs);
-            assertEquivalent(original.getDocument(), instancia2.getDocument());
-            assertEquivalent(original, instancia2);
+            return (T) in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return instancia2;
     }
 
     public static SInstance serializarEDeserializar(SInstance original, MDicionarioResolver loader) {
@@ -324,11 +362,13 @@ public class TesteFormSerializationUtil {
         }
     }
 
-    public static MDicionarioResolver createLoaderPacoteTeste(Consumer<PacoteBuilder> setupCode) {
-        return new MDicionarioLoader() {
+    public static <T extends Consumer<PacoteBuilder> & Serializable> MDicionarioResolverSerializable createLoaderPacoteTeste(T setupCode) {
+        return new MDicionarioResolverSerializable() {
             @Override
-            protected void configDicionary(SDictionary newDicionary, String taregetTypeName) {
-                setupCode.accept(newDicionary.criarNovoPacote("teste"));
+            public Optional<SDictionary> loadDicionaryForType(String typeName) {
+                SDictionary novo = SDictionary.create();
+                setupCode.accept(novo.criarNovoPacote("teste"));
+                return Optional.of(novo);
             }
         };
     }
