@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -18,7 +19,7 @@ public class SDictionary implements IContextoTipo {
 
     /**
      * Refência a si próprio que pode ser serializada. Pode ser null. É
-     * configurada pelo {{@link MDicionarioResolver} se o mesmo der suporte.
+     * configurada pelo {{@link SDictionaryLoader} se o mesmo der suporte.
      */
     private SDictionaryRef serializableDictionarySelfReference;
 
@@ -160,14 +161,23 @@ public class SDictionary implements IContextoTipo {
         System.out.println("=======================================================");
     }
 
-    public final SDictionaryRef getSerializableDictionarySelfReference() {
-        if (serializableDictionarySelfReference == null) {
-            serializableDictionarySelfReference = SDictionaryRef.referenceUnifier(this);
-        }
-        return serializableDictionarySelfReference;
+    /**
+     * Obtem referência serializável ao dicionário atual. Essa referência deve
+     * ser capaz, depois de ser deserializada, recarregar o dicionário, ou
+     * recriando-o (nova instância) ou recuperando de algum cache em memória
+     * (ex. referência estáticas).
+     */
+    public final Optional<SDictionaryRef> getSerializableDictionarySelfReference() {
+        return Optional.ofNullable(serializableDictionarySelfReference);
     }
 
-    final void setSerializableDictionarySelfReference(SDictionaryRef serializableDictionarySelfReference) {
+    /**
+     * Define a referência serializável ao dicionário atual. Essa referência
+     * deve ser capaz, depois de ser deserializada, recarregar o dicionário, ou
+     * recriando-o (nova instância) ou recuperando de algum cache em memória
+     * (ex. referência estáticas).
+     */
+    public final void setSerializableDictionarySelfReference(SDictionaryRef serializableDictionarySelfReference) {
         this.serializableDictionarySelfReference = serializableDictionarySelfReference;
     }
 }

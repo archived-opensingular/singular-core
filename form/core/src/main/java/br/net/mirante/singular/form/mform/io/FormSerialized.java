@@ -16,16 +16,13 @@ import br.net.mirante.singular.form.util.xml.MElement;
 public final class FormSerialized implements Serializable {
 
     private final SDictionaryRef dictionaryRef;
-    private final MDicionarioResolverSerializable dicionarioResolver;
     private final String rootType;
     private final MElement xml, annotations;
     private String focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
 
-    public FormSerialized(String rootType, MElement xml, MElement annotations, SDictionaryRef dictionaryRef,
-                          MDicionarioResolverSerializable dicionarioResolver) {
+    public FormSerialized(String rootType, MElement xml, MElement annotations, SDictionaryRef dictionaryRef) {
         this.dictionaryRef = dictionaryRef;
-        this.dicionarioResolver = dicionarioResolver;
         this.rootType = rootType;
         this.xml = xml;
         this.annotations = annotations;
@@ -55,10 +52,6 @@ public final class FormSerialized implements Serializable {
 
     public void setServices(Map<String, ServiceRegistry.Pair> services) {
         this.services = services;
-    }
-
-    public MDicionarioResolverSerializable getDicionarioResolver() {
-        return dicionarioResolver;
     }
 
     public SDictionaryRef getDictionaryRef() {

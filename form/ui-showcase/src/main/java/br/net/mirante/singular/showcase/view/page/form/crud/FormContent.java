@@ -1,11 +1,11 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import javax.inject.Inject;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -21,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -107,7 +107,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
             @Override
             protected SType<?> getTipo() {
-                return TemplateRepository.get().loadType(typeName);
+                return TemplateRepository.create().loadType(typeName, typeName);
             }
 
             @Override
