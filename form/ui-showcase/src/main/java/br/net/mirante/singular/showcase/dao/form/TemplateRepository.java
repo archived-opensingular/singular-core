@@ -5,8 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SDictionaryLoader;
+import br.net.mirante.singular.form.mform.SDictionaryRefByLoader;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.showcase.component.CaseBase;
@@ -18,15 +19,11 @@ import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurricul
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
 
-public class TemplateRepository extends MDicionarioResolver {
+public class TemplateRepository extends SDictionaryLoader<String> {
 
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
-    static {
-        MDicionarioResolver.setDefault(TemplateRepository.get());
-    }
-
-    public static TemplateRepository get() {
+    public static TemplateRepository create() {
         return novoTemplate();
     }
 
@@ -49,7 +46,6 @@ public class TemplateRepository extends MDicionarioResolver {
                 }
             }
         }
-//        MDicionarioResolver.setDefault(novo);
         return novo;
     }
 
@@ -64,16 +60,23 @@ public class TemplateRepository extends MDicionarioResolver {
     }
 
     public void add(String displayName, SType<?> type) {
+        ShowcaseDicionaryRef ref = new ShowcaseDicionaryRef(type.getNome());
+        type.getDicionario().setSerializableDictionarySelfReference(ref);
+
         entries.put(type.getNome(), new TemplateEntry(displayName, type));
     }
 
     @Override
-    public Optional<SDictionary> loadDicionaryForType(String typeName) {
-        return Optional.ofNullable(entries.get(typeName)).map(e -> e.getType().getDicionario());
+    public Optional<SDictionary> loadDictionaryImpl(String typeName) {
+        return Optional.ofNullable(entries.get(typeName)).map(e -> e.getDictionary());
     }
 
     public Collection<TemplateEntry> getEntries() {
         return entries.values();
+    }
+
+    private TemplateEntry get(String name) {
+        return entries.get(name);
     }
 
     public TemplateEntry findEntryByType(String type) {
@@ -103,5 +106,20 @@ public class TemplateRepository extends MDicionarioResolver {
             return type;
         }
 
+        public SDictionary getDictionary() {
+            return type.getDicionario();
+        }
+    }
+
+    final static class ShowcaseDicionaryRef extends SDictionaryRefByLoader<String> {
+
+        ShowcaseDicionaryRef(String typeName) {
+            super(typeName);
+        }
+
+        @Override
+        public SDictionaryLoader<String> getDictionaryLoader() {
+            return TemplateRepository.create();
+        }
     }
 }

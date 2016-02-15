@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -58,19 +57,4 @@ public class TestMInstance {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }
-
-    @Test public void testSerialializeEmptyObject() {
-        SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
-        tipoPedido.addCampoString("nome");
-        tipoPedido.addCampoString("descr");
-        tipoPedido.addCampoString("prioridade");
-        tipoPedido.addCampoListaOf("clientes", STypeString.class);
-
-        SIComposite instance = tipoPedido.novaInstancia();
-        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
-    }
-
 }

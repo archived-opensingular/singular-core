@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,8 +11,6 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -175,7 +175,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
             clearInstance();
             valores = newArrayList(((SList)obj).valores);
             tipoElementos = ((SList)obj).tipoElementos;
-            ((SList)obj).clearInstance();
+            ((SList) obj).getValor().clear();
         }else{
             throw new RuntimeException("SList só suporta valores de mesmo tipo");
         }

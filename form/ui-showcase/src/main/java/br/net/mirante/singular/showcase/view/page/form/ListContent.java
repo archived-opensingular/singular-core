@@ -29,7 +29,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     final static List<FormVO> formTypes;
 
     static {
-        formTypes = TemplateRepository.get().getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+        formTypes = TemplateRepository.create().getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
     }
 
     public ListContent(String id) {
