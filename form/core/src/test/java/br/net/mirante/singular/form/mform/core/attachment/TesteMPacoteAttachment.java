@@ -15,6 +15,7 @@ import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.TestCaseForm;
 import br.net.mirante.singular.form.mform.io.HashUtil;
 import br.net.mirante.singular.form.mform.io.TesteFormSerializationUtil;
+import br.net.mirante.singular.lambda.IConsumer;
 
 public class TesteMPacoteAttachment extends TestCaseForm {
 
@@ -210,7 +211,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
-        MDicionarioResolver resolver = TesteFormSerializationUtil.createLoaderPacoteTeste((pacote) -> {
+        MDicionarioResolver resolver = TesteFormSerializationUtil.createLoaderPacoteTeste((IConsumer<PacoteBuilder>) pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
             tipoBloco.addCampo("arquivo1", STypeAttachment.class);
             tipoBloco.addCampo("arquivo2", STypeAttachment.class);

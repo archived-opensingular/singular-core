@@ -3,12 +3,18 @@ package br.net.mirante.singular.form.mform.io;
 import java.io.Serializable;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.*;
+import org.apache.commons.lang3.StringUtils;
+
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -38,8 +44,6 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * @author Daniel C. Bordin
  */
 public class FormSerializationUtil {
-
-    private static DictionaryCache dictionaries = new DictionaryCache();
 
     private FormSerializationUtil() {
     }
@@ -79,19 +83,12 @@ public class FormSerializationUtil {
                                                     MDicionarioResolverSerializable dicionarioResolverSerializable) {
         FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
         defineFocusField(instance, fs);
-        setDictionaryIfAny(instance, dicionarioResolverSerializable, fs);
         return fs;
     }
 
     private static void defineFocusField(SInstance instance, FormSerialized fs) {
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
-        }
-    }
-
-    private static void setDictionaryIfAny(SInstance instance, MDicionarioResolverSerializable dicionarioResolverSerializable, FormSerialized fs) {
-        if (dicionarioResolverSerializable == null) {
-            fs.setDictionaryId(dictionaries.put(instance.getDicionario()));
         }
     }
 
@@ -113,6 +110,7 @@ public class FormSerializationUtil {
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
         }
         FormSerialized fs = new FormSerialized(root.getMTipo().getNome(), xml, annotations,
+                root.getDicionario().getSerializableDictionarySelfReference(),
                                                 dicionaroResolverSerializable);
         serializeServices(document, fs);
         return fs;
@@ -179,15 +177,21 @@ public class FormSerializationUtil {
     }
 
     private static SType<?> loaType(FormSerialized fs, MDicionarioResolver dicionaryResolver, String rootType) {
-        dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
-        if (dicionaryResolver == null) {
-            if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
-                return dictionaries.get(fs.getDictionaryId()).getTipo(rootType);
-            }else{
-                dicionaryResolver = MDicionarioResolver.getDefault();
+        if (fs.getDictionaryRef() != null) {
+            SDictionary d = fs.getDictionaryRef().getDictionary();
+            if (d != null) {
+                return d.getTipo(rootType);
             }
         }
-        return dicionaryResolver.loadType(rootType);
+        dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
+        if (dicionaryResolver == null) {
+            dicionaryResolver = MDicionarioResolver.getDefault();
+        }
+        SType<?> t = dicionaryResolver.loadType(rootType);
+        if (fs.getDictionaryRef() != null) {
+            fs.getDictionaryRef().setDicionary(t.getDicionario());
+        }
+        return t;
     }
 
     private static void deserializeServices(Map<String, Pair> services, SDocument document) {

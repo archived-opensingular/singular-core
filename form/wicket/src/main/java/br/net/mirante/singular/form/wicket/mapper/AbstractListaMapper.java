@@ -163,7 +163,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            SList<SInstance> lista = modelLista.getObject();
+            final SList<SInstance> lista = modelLista.getObject();
             lista.addNovo();
             target.add(form);
             target.focusComponent(this);

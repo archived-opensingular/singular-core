@@ -16,6 +16,7 @@ import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
@@ -109,6 +110,8 @@ public class PanelListaMapper extends AbstractListaMapper {
             }
 
             item.add(grid);
+
+            WicketFormProcessing.onFormPrepare(grid, item.getModel(), false);
         }
     }
 }

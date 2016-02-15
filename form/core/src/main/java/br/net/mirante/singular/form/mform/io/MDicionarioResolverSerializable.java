@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.MDicionarioResolver;
  * singleton, constante ou mesmo recriar o dicionário do zero.
  * </p>
  * <p>
- * ATENÇÃO: Se for criado como um classe anonima ou closure, cuidado para não
+ * ATENÇÃO: Se for criado como um classe anonima ou lambda, cuidado para não
  * colocar um referência implicita a um dado que não deva ser serializado.
  * </p>
  *

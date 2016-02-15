@@ -5,8 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.MDicionarioResolver;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.showcase.component.CaseBase;
@@ -15,15 +15,15 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
+import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
 
 public class TemplateRepository extends MDicionarioResolver {
 
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
     static {
-        TemplateRepository.setDefault(TemplateRepository.get());
+        MDicionarioResolver.setDefault(TemplateRepository.get());
     }
 
     public static TemplateRepository get() {
@@ -75,7 +75,7 @@ public class TemplateRepository extends MDicionarioResolver {
     public Collection<TemplateEntry> getEntries() {
         return entries.values();
     }
-    
+
     public TemplateEntry findEntryByType(String type) {
         for(TemplateEntry t : entries.values()){
             if(t.getType().getNome().equals(type)){

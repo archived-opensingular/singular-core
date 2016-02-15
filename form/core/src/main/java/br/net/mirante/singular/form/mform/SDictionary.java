@@ -16,6 +16,12 @@ public class SDictionary implements IContextoTipo {
 
     private ViewResolver viewResolver;
 
+    /**
+     * Refência a si próprio que pode ser serializada. Pode ser null. É
+     * configurada pelo {{@link MDicionarioResolver} se o mesmo der suporte.
+     */
+    private SDictionaryRef serializableDictionarySelfReference;
+
     private SDictionary() {
     }
 
@@ -152,5 +158,16 @@ public class SDictionary implements IContextoTipo {
         System.out.println("=======================================================");
         pacotes.forEach(p -> p.debug());
         System.out.println("=======================================================");
+    }
+
+    public final SDictionaryRef getSerializableDictionarySelfReference() {
+        if (serializableDictionarySelfReference == null) {
+            serializableDictionarySelfReference = SDictionaryRef.referenceUnifier(this);
+        }
+        return serializableDictionarySelfReference;
+    }
+
+    final void setSerializableDictionarySelfReference(SDictionaryRef serializableDictionarySelfReference) {
+        this.serializableDictionarySelfReference = serializableDictionarySelfReference;
     }
 }
