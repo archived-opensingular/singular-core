@@ -83,11 +83,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Composição")
-
-                .visivel(instancia -> {
-                    boolean truth = Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8;
-                    return truth;
-                })
+                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
                 .colPreference(6);

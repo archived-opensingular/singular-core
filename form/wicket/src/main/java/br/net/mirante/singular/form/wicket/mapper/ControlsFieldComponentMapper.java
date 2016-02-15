@@ -13,8 +13,6 @@ import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.LabeledWebMarkupContainer;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -62,7 +60,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
     default Component appendReadOnlyInput(MView view, BSContainer bodyContainer, BSControls formGroup,
                                           IModel<? extends SInstance> model, IModel<String> labelModel) {
         final SInstance mi = model.getObject();
-        BOutputPanel comp = new BOutputPanel(mi.getNome(), $m.ofValue(getReadOnlyFormattedText(model)));
+        final BOutputPanel comp = new BOutputPanel(mi.getNome(), $m.ofValue(getReadOnlyFormattedText(model)));
         formGroup.appendTag("div", comp);
         return comp;
     }
@@ -102,19 +100,17 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             controls.appendFeedback(controls, feedbackMessageFilter);
             input.add(DisabledClassBehavior.getInstance());
 
-            input.add($b.onConfigure(c -> {
-                label.add(new ClassAttributeModifier() {
-                    @Override
-                    protected Set<String> update(Set<String> oldClasses) {
-                        if (model.getObject().getValorAtributo(SPackageCore.ATR_OBRIGATORIO)) {
-                            oldClasses.add("singular-form-required");
-                        } else {
-                            oldClasses.remove("singular-form-required");
-                        }
-                        return oldClasses;
+            input.add($b.onConfigure(c -> label.add(new ClassAttributeModifier() {
+                @Override
+                protected Set<String> update(Set<String> oldClasses) {
+                    if (model.getObject().getValorAtributo(SPackageCore.ATR_OBRIGATORIO)) {
+                        oldClasses.add("singular-form-required");
+                    } else {
+                        oldClasses.remove("singular-form-required");
                     }
-                });
-            }));
+                    return oldClasses;
+                }
+            })));
 
             for (FormComponent fc : findAjaxComponents(input)) {
                 ctx.configure(this, fc);
@@ -124,28 +120,24 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         }
 
-
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {
             ((LabeledWebMarkupContainer) input).setLabel(labelModel);
         }
     }
 
 
-    default public FormComponent[] findAjaxComponents(Component input) {
+    default FormComponent[] findAjaxComponents(Component input) {
         if (input instanceof FormComponent) {
             return new FormComponent[]{(FormComponent) input};
         } else if (input instanceof MarkupContainer) {
             List<FormComponent> formComponents = new ArrayList<>();
-            ((MarkupContainer) input).visitChildren(new IVisitor<Component, Object>() {
-                @Override
-                public void component(Component component, IVisit<Object> iVisit) {
-                    if (component instanceof FormComponent) {
-                        formComponents.add((FormComponent) component);
-                        iVisit.dontGoDeeper();
-                    }
+            ((MarkupContainer) input).visitChildren((component, iVisit) -> {
+                if (component instanceof FormComponent) {
+                    formComponents.add((FormComponent) component);
+                    iVisit.dontGoDeeper();
                 }
             });
-            return formComponents.toArray(new FormComponent[0]);
+            return formComponents.toArray(new FormComponent[formComponents.size()]);
         } else {
             return new FormComponent[0];
         }

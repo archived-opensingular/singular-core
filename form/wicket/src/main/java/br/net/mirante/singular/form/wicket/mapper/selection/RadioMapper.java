@@ -20,18 +20,19 @@ public class RadioMapper extends SelectMapper {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected RadioChoice retrieveChoices(IModel<? extends SInstance> model,
                                           final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
+
         if (!(view instanceof MSelecaoPorRadioView)) {
             throw new SingularFormException("View não suportada", model.getObject());
         }
-        MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
-        MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
-        String id = model.getObject().getNome();
+
+        final MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
+        final MSelectionInstanceModel opcoesModel = new MSelectionInstanceModel<SelectOption>(model);
+        final String id = model.getObject().getNome();
+
         return new RadioChoice<SelectOption>(id,
                 (IModel) opcoesModel, opcoesValue, rendererer()) {
             @Override
-            protected IValueMap getAdditionalAttributesForLabel(int index,
-                                                                SelectOption choice) {
-
+            protected IValueMap getAdditionalAttributesForLabel(int index, SelectOption choice) {
                 IValueMap map = new ValueMap();
                 if (radioView.getLayout() == MSelecaoPorRadioView.Layout.HORIZONTAL) {
                     map.put("class", "radio-inline");
@@ -39,13 +40,11 @@ public class RadioMapper extends SelectMapper {
                 } else if (radioView.getLayout() == MSelecaoPorRadioView.Layout.VERTICAL) {
                     map.put("style", "position:relative;top:-1px;padding-left:3px;padding-right:10px;display:table-cell;");
                 }
-
                 return map;
             }
 
             @Override
-            protected IValueMap getAdditionalAttributes(int index,
-                                                        SelectOption choice) {
+            protected IValueMap getAdditionalAttributes(int index, SelectOption choice) {
                 IValueMap map = new ValueMap();
                 map.put("style", "left:20px;");
                 return map;
@@ -65,7 +64,7 @@ public class RadioMapper extends SelectMapper {
         if (!(view instanceof MSelecaoPorRadioView)) {
             throw new SingularFormException("View não suportada", model.getObject());
         }
-        MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
+        final MSelecaoPorRadioView radioView = (MSelecaoPorRadioView) view;
         final RadioChoice<String> choices = retrieveChoices(model, opcoesValue, view);
         if (radioView.getLayout() == MSelecaoPorRadioView.Layout.HORIZONTAL) {
             choices.setPrefix("<span style=\"display: inline-block;white-space: nowrap;\">");
