@@ -409,7 +409,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             private STypeAttachment createArquivoField() {
                 STypeAttachment f = type.addCampo("arquivo", STypeAttachment.class);
                 f.as(AtrBasic.class).label("Informe o caminho do arquivo para o anexo")
-                        .as(AtrBootstrap::new).colPreference(3);
+                        .as(AtrBootstrap::new).colPreference(9);
                 return f;
             }
 
