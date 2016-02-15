@@ -66,7 +66,7 @@ public class HybridIdentityOrSequenceGenerator implements PostInsertIdentifierGe
             if (value != null) {
                 params.put(SEQUENCE, value);
             } else {
-                logger.warn("Property %s não foi definida.  Utilizando nome default de sequence do hibernate. ", key);
+                logger.warn("Property {} não foi definida.  Utilizando nome default de sequence do hibernate. ", key);
             }
             ((Configurable) getDelegate()).configure(type, params, d);
         }
