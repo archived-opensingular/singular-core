@@ -8,7 +8,7 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 
-public abstract class SingularValidationButton extends AjaxButton {
+public abstract class SingularValidationButton extends SingularButton {
 
     public SingularValidationButton(String id) {
         super(id);
@@ -26,12 +26,6 @@ public abstract class SingularValidationButton extends AjaxButton {
             onValidationError(target, form, getCurrentInstance());
         }
         target.add(form);
-    }
-
-    @Override
-    protected void onError(AjaxRequestTarget target, Form<?> form) {
-        super.onError(target, form);
-        WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
     }
 
     public abstract IModel<? extends SInstance>  getCurrentInstance();

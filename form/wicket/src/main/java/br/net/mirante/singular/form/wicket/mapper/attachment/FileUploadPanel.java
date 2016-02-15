@@ -128,6 +128,7 @@ public class FileUploadPanel extends Panel {
         fileName.setOutputMarkupId(true);
         chooseFieldButton.setOutputMarkupId(true);
         removeFileButton.setOutputMarkupId(true);
+        fileName.add($b.onConfigure(c -> c.add($b.attr("title", c.getDefaultModel()))));
         configureBehaviours();
     }
 

@@ -21,25 +21,23 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 public class SelectMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
-
-        return formGroupAppender(formGroup, model, getOpcoesValue(view, model), view);
+    public Component appendInput(MView view, BSContainer bodyContainer,
+                                 BSControls formGroup, IModel<? extends SInstance> model,
+                                 IModel<String> labelModel) {
+        return formGroupAppender(formGroup, model, getOpcoesValue(model), view);
     }
 
-    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(MView view, IModel<? extends SInstance> model) {
-        return new IReadOnlyModel<List<SelectOption>>() {
-            @Override
-            public List<SelectOption> getObject() {
-                SType<?> type = model.getObject().getMTipo();
-                List<SelectOption> opcoesValue = WicketSelectionUtils.createOptions(model, type);
-                return opcoesValue;
-            }
+    public IReadOnlyModel<List<SelectOption>> getOpcoesValue(IModel<? extends SInstance> model) {
+        return () -> {
+            SType<?> type = model.getObject().getMTipo();
+            return WicketSelectionUtils.createOptions(model, type);
         };
     }
 
-    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model, final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
+    protected Component formGroupAppender(BSControls formGroup, IModel<? extends SInstance> model,
+                                          final IModel<? extends List<SelectOption>> opcoesValue, MView view) {
         final AbstractSingleSelectChoice<SelectOption> choices = retrieveChoices(model, opcoesValue, view);
-        formGroup.appendSelect(choices.setNullValid(true), isMultiple(model), isBSSelect(model));
+        formGroup.appendSelect(choices.setNullValid(true), isMultiple(), isBSSelect(model));
         return choices;
     }
 
@@ -56,7 +54,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
         return StringUtils.EMPTY;
     }
 
-    protected boolean isMultiple(IModel<? extends SInstance> model) {
+    protected boolean isMultiple() {
         return false;
     }
 
