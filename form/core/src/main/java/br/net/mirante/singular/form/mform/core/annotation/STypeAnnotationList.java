@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.core.annotation;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 /**
@@ -17,8 +17,8 @@ public class STypeAnnotationList extends STypeLista {
     public static final String NAME = "AnnotationList";
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
-        setTipoElementos(tb.getTipo().getDicionario().getTipo(STypeAnnotation.class));
+        setTipoElementos(tb.getTipo().getDictionary().getType(STypeAnnotation.class));
     }
 }

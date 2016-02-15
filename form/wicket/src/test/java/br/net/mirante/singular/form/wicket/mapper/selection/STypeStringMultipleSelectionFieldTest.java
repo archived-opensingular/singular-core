@@ -55,9 +55,9 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     public void rendersAListWithDanglingOptions() {
         setupPage();
         SIComposite instance = page.getCurrentInstance();
-        SList campo = (SList) instance.getCampo(fieldType.getNomeSimples());
+        SList campo = (SList) instance.getCampo(fieldType.getSimpleName());
         SInstance element = campo.addNovo();
-        element.setValor("avocado");
+        element.setValue("avocado");
 
         selectBaseType.withSelectionOf("strawberry", "apple");
 
@@ -84,14 +84,14 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
         buildPage();
         form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
         form.submit("save-btn");
-        List value = (List) page.getCurrentInstance().getValor(fieldType.getNomeSimples());
+        List value = (List) page.getCurrentInstance().getValor(fieldType.getSimpleName());
         assertThat(value).containsOnly("orange");
     }
 
 
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectBaseType.novaInstancia();
-        mvalue.setValor(value);
+        mvalue.setValue(value);
         return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
     }
 

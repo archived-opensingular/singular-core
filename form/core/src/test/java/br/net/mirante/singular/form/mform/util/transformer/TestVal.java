@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
@@ -52,7 +52,7 @@ public class TestVal {
     @Before
     public void setup() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         _descricao = _raiz.addCampo("descricao", STypeString.class);
@@ -77,54 +77,54 @@ public class TestVal {
 
         // descricao
         evento.setValor(_descricao, DESCRICAO);
-        valorEsperado.put(_descricao.getNomeSimples(), DESCRICAO);
+        valorEsperado.put(_descricao.getSimpleName(), DESCRICAO);
         // perido
-        SIComposite periodo = (SIComposite) evento.getCampo(_periodo.getNomeSimples());
-        valorEsperado.put(_periodo.getNomeSimples(), new LinkedHashMap<String, Object>());
+        SIComposite periodo = (SIComposite) evento.getCampo(_periodo.getSimpleName());
+        valorEsperado.put(_periodo.getSimpleName(), new LinkedHashMap<String, Object>());
         //dt inicial
         periodo.setValor(_dataInicial, DT_INICIAL);
-        ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).put(_dataInicial.getNomeSimples(), DT_INICIAL);
+        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_dataInicial.getSimpleName(), DT_INICIAL);
         //dt final
         periodo.setValor(_dataFinal, DT_FINAL);
-        ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).put(_dataFinal.getNomeSimples(), DT_FINAL);
+        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_dataFinal.getSimpleName(), DT_FINAL);
         //alertas
-        listaAlertas = (SList) periodo.getCampo(_alertas.getNomeSimples());
-        ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).put(_alertas.getNomeSimples(), new ArrayList<Map<String, Date>>());
+        listaAlertas = (SList) periodo.getCampo(_alertas.getSimpleName());
+        ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_alertas.getSimpleName(), new ArrayList<Map<String, Date>>());
 
         //Alerta Data 1
         alerta1 = _alerta.novaInstancia();
-        alerta1.getCampo(_alerta_data.getNomeSimples()).setValor(DT_1);
+        alerta1.getCampo(_alerta_data.getSimpleName()).setValue(DT_1);
         listaAlertas.addElement(alerta1);
         Map<String, Date> alertaMap1 = new LinkedHashMap<>();
-        alertaMap1.put(_alerta_data.getNomeSimples(), DT_1);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).get(_alertas.getNomeSimples())).add(alertaMap1);
+        alertaMap1.put(_alerta_data.getSimpleName(), DT_1);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap1);
 
         //Alerta Data 2
         alerta2 = _alerta.novaInstancia();
-        alerta2.getCampo(_alerta_data.getNomeSimples()).setValor(DT_2);
+        alerta2.getCampo(_alerta_data.getSimpleName()).setValue(DT_2);
         listaAlertas.addElement(alerta2);
         Map<String, Date> alertaMap2 = new LinkedHashMap<>();
-        alertaMap2.put(_alerta_data.getNomeSimples(), DT_2);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).get(_alertas.getNomeSimples())).add(alertaMap2);
+        alertaMap2.put(_alerta_data.getSimpleName(), DT_2);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap2);
 
         //Alerta Data 3
         alerta3 = _alerta.novaInstancia();
-        data3 = (SISimple) alerta3.getCampo(_alerta_data.getNomeSimples());
-        data3.setValor(DT_3);
+        data3 = (SISimple) alerta3.getCampo(_alerta_data.getSimpleName());
+        data3.setValue(DT_3);
         listaAlertas.addElement(alerta3);
         Map<String, Date> alertaMap3 = new LinkedHashMap<>();
-        alertaMap3.put(_alerta_data.getNomeSimples(), DT_3);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).get(_alertas.getNomeSimples())).add(alertaMap3);
+        alertaMap3.put(_alerta_data.getSimpleName(), DT_3);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaMap3);
 
         //Alerta Vazio
         alertaVazio = _alerta.novaInstancia();
-        dataVazia = (SISimple) alertaVazio.getCampo(_alerta_data.getNomeSimples());
-        dataVazia.setValor(null);
+        dataVazia = (SISimple) alertaVazio.getCampo(_alerta_data.getSimpleName());
+        dataVazia.setValue(null);
 
         listaAlertas.addElement(alertaVazio);
         Map<String, Date> alertaVazioMap = new LinkedHashMap<>();
-        alertaVazioMap.put(_alerta_data.getNomeSimples(), null);
-        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getNomeSimples())).get(_alertas.getNomeSimples())).add(alertaVazioMap);
+        alertaVazioMap.put(_alerta_data.getSimpleName(), null);
+        ((List<Map<String, Date>>) ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).get(_alertas.getSimpleName())).add(alertaVazioMap);
 
     }
 

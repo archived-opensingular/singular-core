@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -25,7 +25,7 @@ public class TestViewResolver {
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static STypeLista<?, ?> createSimpleList(PacoteBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
+    private static STypeLista<?, ?> createSimpleList(PackageBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
                                                      Function<Integer, Object> valueProvider) {
         STypeSimple<?, ?> simpleType = pb.createTipo(name, type);
         simpleType.withSelectionOf((Collection) repeate(valueProvider, size));
@@ -43,7 +43,7 @@ public class TestViewResolver {
     @SuppressWarnings("unchecked")
     private static void assertView(Class<?> expectedView, Class<?> type) {
         SDictionary dicionario = SDictionary.create();
-        assertView(expectedView, dicionario.getTipo((Class<SType<?>>) type));
+        assertView(expectedView, dicionario.getType((Class<SType<?>>) type));
     }
 
     private static void assertView(Class<?> expectedView, SType<?> newInstance) {
@@ -71,7 +71,7 @@ public class TestViewResolver {
     @Test
     public void testTipoSimplesSelectOf() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeSimple<?, ?> tipoInteger = pb.createTipo("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
         STypeSimple<?, ?> tipoDate = pb.createTipo("Date", STypeData.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10 * i), 2).toArray(new Date[]{}));
         STypeSimple<?, ?> tipoString = pb.createTipo("String", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
@@ -96,7 +96,7 @@ public class TestViewResolver {
     @Test
     public void testListTipoSimplesSelectOf() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeLista<?, ?> listInteger3 = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
         STypeLista<?, ?> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
         STypeLista<?, ?> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);

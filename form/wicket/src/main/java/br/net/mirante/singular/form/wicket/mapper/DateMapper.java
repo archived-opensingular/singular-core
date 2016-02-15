@@ -78,8 +78,8 @@ public class DateMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instancia = model.getObject();
-            if (instancia.getValor() instanceof Date) {
-                Date dt = (Date) instancia.getValor();
+            if (instancia.getValue() instanceof Date) {
+                Date dt = (Date) instancia.getValue();
                 final SimpleDateFormat formattter = new SimpleDateFormat(STypeData.FORMAT);
                 return formattter.format(dt);
             }

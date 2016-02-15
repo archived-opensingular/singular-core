@@ -70,7 +70,7 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
     @Test public void rendersAnDropDownWithDanglingOptions(){
         setupPage();
         page.getCurrentInstance()
-                .setValor(selectType.getNomeSimples(), "avocado");;
+                .setValor(selectType.getSimpleName(), "avocado");;
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
         
@@ -97,13 +97,13 @@ public class STypeStringSelectionFieldTest extends SelectionFieldBaseTest{
         buildPage();
         form.select(findId(form.getForm(), "favoriteFruit").get(), 2);
         form.submit("save-btn");
-        Object value = page.getCurrentInstance().getValor(selectType.getNomeSimples());
+        Object value = page.getCurrentInstance().getValor(selectType.getSimpleName());
         assertThat(value).isEqualTo("orange");
     }
 
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectType.novaInstancia();
-        mvalue.setValor(value);
+        mvalue.setValue(value);
         return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
     }
 

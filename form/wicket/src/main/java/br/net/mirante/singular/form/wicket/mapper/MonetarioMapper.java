@@ -76,11 +76,11 @@ public class MonetarioMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
 
-        if ((mi != null) && (mi.getValor() != null)) {
+        if ((mi != null) && (mi.getValue() != null)) {
 
             final NumberFormat numberFormat = NumberFormat.getInstance(new Locale("pt", "BR"));
             final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
-            final BigDecimal valor = (BigDecimal) mi.getValor();
+            final BigDecimal valor = (BigDecimal) mi.getValue();
             final Map<String, Object> options = withOptionsOf(model);
             final Integer digitos = (int) options.get(PRECISION);
             final StringBuilder pattern = new StringBuilder();

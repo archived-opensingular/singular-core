@@ -13,10 +13,10 @@ class MapaAtributos implements Iterable<MAtributo> {
     final void add(MAtributo atributo) {
         if (atributos == null) {
             atributos = new LinkedHashMap<>();
-        } else if (atributos.containsKey(atributo.getNome())) {
-            throw new RuntimeException("Já existe um atributo '" + atributo.getNome() + "' definido");
+        } else if (atributos.containsKey(atributo.getName())) {
+            throw new RuntimeException("Já existe um atributo '" + atributo.getName() + "' definido");
         }
-        atributos.put(atributo.getNome(), atributo);
+        atributos.put(atributo.getName(), atributo);
     }
 
     public MAtributo get(String nome) {

@@ -38,7 +38,7 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
 
     @Before
     public void setupPage() {
-        pacote = dicionario.carregarPacote(TestPackage.class);
+        pacote = dicionario.loadPackage(TestPackage.class);
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setDicionario(dicionario);
@@ -164,7 +164,7 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         form.setValue(findId(form.getForm(), "file_id_fileField").get(), "1020304050");
         form.submit("save-btn");
 
-        String attachmentName = pacote.attachmentFileField.getNomeSimples();
+        String attachmentName = pacote.attachmentFileField.getSimpleName();
         List<SISimple> values = (List) page.getCurrentInstance().getValor(attachmentName);
         assertThat(findValueInList(values, "name")).isEqualTo("abacate.png");
         assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
@@ -183,7 +183,7 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
     private Object findValueInList(List<SISimple> list, String propName) {
         for (SISimple m : list) {
             if (m.getNome().equals(propName))
-                return m.getValor();
+                return m.getValue();
         }
         return null;
     }

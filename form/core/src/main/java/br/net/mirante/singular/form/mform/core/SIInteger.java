@@ -6,6 +6,6 @@ public class SIInteger extends SIComparable<Integer> {
     }
 
     public Integer getInteger() {
-        return (Integer) getValor();
+        return (Integer) getValue();
     }
 }

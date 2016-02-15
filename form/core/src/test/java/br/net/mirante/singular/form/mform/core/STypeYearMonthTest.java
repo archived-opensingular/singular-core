@@ -26,7 +26,7 @@ public class STypeYearMonthTest {
     public STypeYearMonthTest(String input, YearMonth result, String persistent){
 
         this.value = type.novaInstancia();
-        this.value.setValor(input);
+        this.value.setValue(input);
         this.result = result;
         this.persistent = persistent;
     }
@@ -34,7 +34,7 @@ public class STypeYearMonthTest {
     @BeforeClass
     public static void setupType(){
         SDictionary dict = SDictionary.create();
-        type = dict.getTipo(STypeAnoMes.class);
+        type = dict.getType(STypeAnoMes.class);
     }
 
     @Parameterized.Parameters(name = "{index}: ({0})")
@@ -49,7 +49,7 @@ public class STypeYearMonthTest {
     }
 
     @Test public void convertInputToData() {
-        assertThat(value.getValor()).isEqualTo(result);
+        assertThat(value.getValue()).isEqualTo(result);
     }
 
     @Test public void convertInputToPersistent(){

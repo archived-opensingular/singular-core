@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -17,7 +17,7 @@ import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 public abstract class SelectionFieldBaseTest extends AbstractWicketFormTest {
 
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -27,11 +27,11 @@ public abstract class SelectionFieldBaseTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setDicionario(dicionario);
-        localPackage = dicionario.criarNovoPacote("test"+(index.getAndIncrement()));
+        localPackage = dicionario.createNewPackage("test"+(index.getAndIncrement()));
         STypeComposite<? extends SIComposite> group = localPackage.createTipoComposto("group");
         createSelectionType(group);
 
-        page.setNewInstanceOfType(group.getNome());
+        page.setNewInstanceOfType(group.getName());
     }
 
     @SuppressWarnings("rawtypes")

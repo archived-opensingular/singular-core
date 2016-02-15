@@ -4,7 +4,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -20,7 +20,7 @@ import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 public class MasterDetailMapperTest extends AbstractWicketFormTest {
 
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     private STypeComposite<?> baseCompositeField;
@@ -40,7 +40,7 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     }
 
     private void createBaseType() {
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -49,7 +49,7 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
 
         page = new TestPage();
         page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
     }
 
     protected void build() {
@@ -73,9 +73,9 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
         setup();
         SList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
         SIComposite e = list.addNovo();
-        e.getDescendant(date).setValor(java.time.YearMonth.of(2016,01));
-        e.getDescendant(number).setValor(2.5);
-        e.getDescendant(cpf).setValor("000.111.222-33");
+        e.getDescendant(date).setValue(java.time.YearMonth.of(2016,01));
+        e.getDescendant(number).setValue(2.5);
+        e.getDescendant(cpf).setValue("000.111.222-33");
         build();
 
         driver.assertContains("01/2016");

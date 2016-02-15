@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.core.attachment;
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -24,7 +24,7 @@ public class STypeAttachment extends STypeComposite<SIAttachment> {
     }
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         addCampoString(FIELD_FILE_ID);

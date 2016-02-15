@@ -37,7 +37,7 @@ public class MTabView extends MView {
     }
 
     public MTab addTab(SType<?> tipo) {
-        return addTab(tipo.getNomeSimples(), tipo.as(AtrBasic.class).getLabel())
+        return addTab(tipo.getSimpleName(), tipo.as(AtrBasic.class).getLabel())
             .add(tipo);
     }
 
@@ -56,7 +56,7 @@ public class MTabView extends MView {
         }
 
         public MTab add(SType<?> campo) {
-            nomesTipo.add(campo.getNomeSimples());
+            nomesTipo.add(campo.getSimpleName());
             return this;
         }
 

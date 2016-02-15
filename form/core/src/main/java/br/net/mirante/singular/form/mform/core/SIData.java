@@ -9,7 +9,7 @@ public class SIData extends SIComparable<Date> {
     }
 
     public Date getDate() {
-        return (Date) getValor();
+        return (Date) getValue();
     }
 
     public YearMonth getJavaYearMonth() {

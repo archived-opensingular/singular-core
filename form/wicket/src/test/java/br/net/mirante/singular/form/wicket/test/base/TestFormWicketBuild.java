@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -54,25 +54,25 @@ public class TestFormWicketBuild extends AbstractWicketFormTest {
         IModel<STypeString> tCidade = new LoadableDetachableModel<STypeString>() {
             @Override
             protected STypeString load() {
-                PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+                PackageBuilder pb = dicionario.createNewPackage("teste");
                 STypeString tipoCidade = pb.createTipo("cidade", STypeString.class);
                 tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
                 return tipoCidade;
             }
         };
         IModel<SIString> mCidade = new MInstanceRootModel<SIString>(tCidade.getObject().novaInstancia());
-        mCidade.getObject().setValor("Brasilia");
+        mCidade.getObject().setValue("Brasilia");
         WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
         singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
-        Assertions.assertThat("Brasilia").isEqualTo(mCidade.getObject().getValor());
+        Assertions.assertThat("Brasilia").isEqualTo(mCidade.getObject().getValue());
 
         FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
 
-        Assertions.assertThat("Guará").isEqualTo(mCidade.getObject().getValor());
+        Assertions.assertThat("Guará").isEqualTo(mCidade.getObject().getValue());
     }
 
     @Test
@@ -84,8 +84,8 @@ public class TestFormWicketBuild extends AbstractWicketFormTest {
             @Override
             @SuppressWarnings("unchecked")
             protected STypeComposite<SIComposite> load() {
-                dicionario.carregarPacote(SPackageCurriculo.class);
-                return (STypeComposite<SIComposite>) dicionario.getTipo(SPackageCurriculo.TIPO_CURRICULO);
+                dicionario.loadPackage(SPackageCurriculo.class);
+                return (STypeComposite<SIComposite>) dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
             }
         };
         IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(tCurriculo.getObject().novaInstancia());

@@ -26,8 +26,8 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     private final String valorInicialPath, valorFinalPath;
 
     public RangeSliderMapper(STypeInteger valorInicial, STypeInteger valorFinal) {
-        this.valorInicialPath = valorInicial.getNomeSimples();
-        this.valorFinalPath = valorFinal.getNomeSimples();
+        this.valorInicialPath = valorInicial.getSimpleName();
+        this.valorFinalPath = valorFinal.getSimpleName();
     }
 
     @Override

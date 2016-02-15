@@ -16,7 +16,7 @@ public interface MSelectionableCompositeType<BASE extends SType> extends MSelect
      * @return
      */
     default public BASE withSelectionFromProvider(STypeSimple label, MOptionsCompositeProvider provider) {
-        this.setSelectLabel(label.getNomeSimples());
+        this.setSelectLabel(label.getSimpleName());
         this.setProviderOpcoes(provider);
         return (BASE) this;
     }
@@ -37,7 +37,7 @@ public interface MSelectionableCompositeType<BASE extends SType> extends MSelect
     }
 
     default public BASE withSelectionFromProvider(STypeSimple label, MOptionsProvider provider) {
-        this.setSelectLabel(label.getNomeSimples());
+        this.setSelectLabel(label.getSimpleName());
         this.setProviderOpcoes(provider);
         return (BASE) this;
     }

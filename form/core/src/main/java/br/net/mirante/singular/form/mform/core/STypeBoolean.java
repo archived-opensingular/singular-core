@@ -59,7 +59,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
         return new MOptionsProvider() {
             @Override
             public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                STypeBoolean type = getDicionario().getTipo(STypeBoolean.class);
+                STypeBoolean type = getDictionary().getType(STypeBoolean.class);
                 SList<?> r = type.novaLista();
                 r.addElement(SIBoolean(type, true, yesLabel));
                 r.addElement(SIBoolean(type, false, noLabel));
@@ -68,7 +68,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
 
             private SIBoolean SIBoolean(STypeBoolean type, boolean value, String label) {
                 SIBoolean e = type.novaInstancia();
-                e.setValor(value);
+                e.setValue(value);
                 e.setSelectLabel(label);
                 return e;
             }

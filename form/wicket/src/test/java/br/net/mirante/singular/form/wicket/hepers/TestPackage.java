@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.hepers;
 
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
@@ -21,7 +21,7 @@ public class TestPackage extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
         baseType = pb.createTipoComposto("Test");
         baseType.as(AtrBasic::new).label("Testing Stuff");

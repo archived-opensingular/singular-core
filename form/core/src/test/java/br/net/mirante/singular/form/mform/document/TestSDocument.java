@@ -8,10 +8,10 @@ public class TestSDocument extends TestCaseForm {
 
     public void testCriacaoImplicitaPacoteCore() {
         SDictionary dicionario = SDictionary.create();
-        SIString instancia1 = dicionario.novaInstancia(STypeString.class);
+        SIString instancia1 = dicionario.newInstance(STypeString.class);
         assertFilhos(instancia1, 0);
 
-        SIString instancia2 = dicionario.novaInstancia(STypeString.class);
+        SIString instancia2 = dicionario.newInstance(STypeString.class);
         assertFilhos(instancia2, 0);
 
         assertNotSame(instancia1.getDocument(), instancia2.getDocument());
@@ -19,7 +19,7 @@ public class TestSDocument extends TestCaseForm {
 
     public void testCriacaoImplicitaPacoteNovo() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeComposite<?> tipo = pb.createTipo("nome", STypeComposite.class);
 
         SInstance instancia1 = tipo.novaInstancia();
@@ -33,7 +33,7 @@ public class TestSDocument extends TestCaseForm {
 
     public void testHerancaPelosSubcampos() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         STypeLista<STypeComposite<SIComposite>, SIComposite> tipoLista = pb.createTipoListaOfNovoTipoComposto("pessoas", "pessoa");
         STypeComposite<?> tipoComposto = tipoLista.getTipoElementos();
         tipoComposto.addCampoString("nome");

@@ -7,7 +7,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
@@ -25,7 +25,7 @@ public abstract class MapperBaseTest extends AbstractWicketFormTest {
     @Before
     public void setUp() {
         wicketTester = new WicketTester(new TestApp());
-        PacoteBuilder pacoteBuilder = dicionario.criarNovoPacote("MonetarioMapperPackage");
+        PackageBuilder pacoteBuilder = dicionario.createNewPackage("MonetarioMapperPackage");
         form = pacoteBuilder.createTipoComposto("form");
         appendPackageFields(form);
     }
@@ -34,7 +34,7 @@ public abstract class MapperBaseTest extends AbstractWicketFormTest {
         testPage = new TestPage(new PageParameters().add("viewMode", viewMode));
         testPage.setDicionario(dicionario);
 
-        SIComposite formInstance = (SIComposite) dicionario.getTipo(form.getNome()).novaInstancia();
+        SIComposite formInstance = (SIComposite) dicionario.getType(form.getName()).novaInstancia();
         assertNotNull(formInstance);
         mockFormValues(formInstance);
         testPage.setCurrentInstance(formInstance);

@@ -36,7 +36,7 @@ public class TestMoptionsConfigTipoLista {
     @Before
     public void setup() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         
@@ -53,7 +53,7 @@ public class TestMoptionsConfigTipoLista {
         evento = _raiz.novaInstancia();
 
         //alertas
-        listaAlertas = (SList) evento.getCampo(_alertas.getNomeSimples());
+        listaAlertas = (SList) evento.getCampo(_alertas.getSimpleName());
 
         _alerta.withSelectionFromProvider(_alerta_data, new MOptionsCompositeProvider() {
             @Override
@@ -141,6 +141,6 @@ public class TestMoptionsConfigTipoLista {
         for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
             Assert.assertEquals(String.valueOf(Value.of(instancia, _alerta_data)), instancia.getSelectLabel());
         }
-        Assert.assertEquals(_alerta_data.getNomeSimples(), _alerta.getSelectLabel());
+        Assert.assertEquals(_alerta_data.getSimpleName(), _alerta.getSelectLabel());
     }
 }

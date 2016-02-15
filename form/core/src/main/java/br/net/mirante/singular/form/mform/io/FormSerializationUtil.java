@@ -85,13 +85,13 @@ public class FormSerializationUtil {
         }
 
         SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
-        FormSerialized fs = new FormSerialized(root.getMTipo().getNome(), xml, annotations, dicionaryRef);
+        FormSerialized fs = new FormSerialized(root.getMTipo().getName(), xml, annotations, dicionaryRef);
         serializeServices(document, fs);
         return fs;
     }
 
     final static SDictionaryRef verificarDicionaryRef(SInstance instance) {
-        Optional<SDictionaryRef> dicionaryRef = instance.getDicionario().getSerializableDictionarySelfReference();
+        Optional<SDictionaryRef> dicionaryRef = instance.getDictionary().getSerializableDictionarySelfReference();
         if (! dicionaryRef.isPresent()) {
             throw new SingularFormException("Não foi configurado o dicionaryRef no dicionário da instância, o que impedirá a "
                     + "serialização/deserialização do mesmo.(ver " + SDictionaryRef.class.getName()
@@ -148,7 +148,7 @@ public class FormSerializationUtil {
             throw new SingularFormException(
                     "O DicionaryRef '" + fs.getDictionaryRef().getClass().getName() + "' retornou null para o dicionário");
         }
-        return d.getTipo(rootType);
+        return d.getType(rootType);
     }
 
     private static void deserializeServices(Map<String, Pair> services, SDocument document) {

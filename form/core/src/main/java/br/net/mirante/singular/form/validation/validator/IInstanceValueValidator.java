@@ -9,7 +9,7 @@ public interface IInstanceValueValidator<I extends SInstance, V> extends IInstan
     @Override
     @SuppressWarnings("unchecked")
     default void validate(IInstanceValidatable<I> validatable) {
-        V value = (V) validatable.getInstance().getValor();
+        V value = (V) validatable.getInstance().getValue();
         if (value == null)
             return;
         validate(validatable, value);

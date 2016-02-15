@@ -71,10 +71,10 @@ public class CaseBase implements Serializable {
     public SType<?> getCaseType() {
         if(caseType == null){
             SDictionary dicionario = SDictionary.create();
-            SPackage p = dicionario.carregarPacote(getPackage());
+            SPackage p = dicionario.loadPackage(getPackage());
             
-            caseType = p.getTipoLocalOpcional("testForm")
-                .orElseThrow(() -> new SingularFormException("O pacote " + p.getNome() + " não define o tipo para exibição 'testForm'"));
+            caseType = p.getLocalTypeOptional("testForm")
+                .orElseThrow(() -> new SingularFormException("O pacote " + p.getName() + " não define o tipo para exibição 'testForm'"));
         }
         return caseType;
     }

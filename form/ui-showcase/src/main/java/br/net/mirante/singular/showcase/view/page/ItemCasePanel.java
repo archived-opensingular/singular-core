@@ -112,7 +112,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         singularFormPanel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
             protected SType<?> getTipo() {
-                String typeName = caseBase.getObject().getCaseType().getNome();
+                String typeName = caseBase.getObject().getCaseType().getName();
                 return TemplateRepository.create().loadType(typeName, typeName);
             }
 

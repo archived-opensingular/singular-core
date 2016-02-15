@@ -43,7 +43,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
     @BeforeClass
     public static void createDicionario() {
         dicionario = SDictionary.create();
-        testPackage = dicionario.carregarPacote(TestPackage.class);
+        testPackage = dicionario.loadPackage(TestPackage.class);
     }
     
 

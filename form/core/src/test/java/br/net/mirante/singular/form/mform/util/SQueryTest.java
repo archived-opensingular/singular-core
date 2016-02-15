@@ -16,7 +16,7 @@ public class SQueryTest {
     @Test
     public void test() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.novaInstancia();
 
@@ -41,7 +41,7 @@ public class SQueryTest {
     @Test
     public void testList() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.novaInstancia();
 
@@ -52,17 +52,17 @@ public class SQueryTest {
             .each(it -> it.addNovo())
             .each(it -> $(it)
                 .find(pacote.enderecoNumero)
-                .each((num, idx) -> num.setValor(idx)));
+                .each((num, idx) -> num.setValue(idx)));
 
         Assert.assertEquals(
             Arrays.asList(0, 1, 2, 3),
-            $(contato).find(pacote.enderecoNumero).list(it -> it.getValor().intValue()));
+            $(contato).find(pacote.enderecoNumero).list(it -> it.getValue().intValue()));
 
         $(contato).find(pacote.enderecoCidade)
-            .each(cid -> cid.setValor("C" + $(cid).parent().find(pacote.enderecoNumero).val(Integer.class)));
+            .each(cid -> cid.setValue("C" + $(cid).parent().find(pacote.enderecoNumero).val(Integer.class)));
 
         Assert.assertEquals(
             Arrays.asList("C0", "C1", "C2", "C3"),
-            $(contato).find(pacote.enderecoCidade).list(it -> it.getValor()));
+            $(contato).find(pacote.enderecoCidade).list(it -> it.getValue()));
     }
 }

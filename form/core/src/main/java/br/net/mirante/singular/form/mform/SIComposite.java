@@ -20,7 +20,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    public Object getValor() {
+    public Object getValue() {
         return getCampos();
     }
 
@@ -51,7 +51,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      */
     public Collection<SInstance> getAllFields() {
         for (SType<?> field : getMTipo().getFields())
-            getCampo(field.getNomeSimples());
+            getCampo(field.getSimpleName());
         return getCampos();
     }
 
@@ -72,11 +72,11 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public SInstance getCampo(String path) {
-        return getCampo(new LeitorPath(path));
+        return getCampo(new PathReader(path));
     }
 
     @Override
-    final SInstance getCampoLocal(LeitorPath leitor) {
+    final SInstance getCampoLocal(PathReader leitor) {
         int fieldIndex = findIndexTrecho(leitor);
         SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
@@ -86,7 +86,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    final SInstance getCampoLocalSemCriar(LeitorPath leitor) {
+    final SInstance getCampoLocalSemCriar(PathReader leitor) {
         int fieldIndex = findIndexTrecho(leitor);
         return (fields == null) ? null : fields.getByIndex(fieldIndex);
     }
@@ -96,7 +96,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    public void setValor(Object obj) {
+    public void setValue(Object obj) {
         if(obj instanceof SIComposite){
             clearInstance();
             fields = ((SIComposite)obj).fields;
@@ -108,7 +108,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public final void setValor(String pathCampo, Object valor) {
-        setValor(new LeitorPath(pathCampo), valor);
+        setValor(new PathReader(pathCampo), valor);
     }
 
     /**
@@ -122,7 +122,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * @param valor Valor para o mtipo referenciado.
      */
     public final void setValor(SType<?> campo, Object valor) {
-        setValor(new LeitorPath(campo.getNomeSimples()), valor);
+        setValor(new PathReader(campo.getSimpleName()), valor);
     }
 
     /**
@@ -133,7 +133,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * @return
      */
     public Object getValor(SType<?> campo) {
-        return getValor(campo.getNomeSimples());
+        return getValor(campo.getSimpleName());
     }
 
     private FieldMapOfRecordType getFieldsDef() {
@@ -141,7 +141,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     @Override
-    void setValor(LeitorPath leitorPath, Object valor) {
+    void setValor(PathReader leitorPath, Object valor) {
         int fieldIndex = findIndexTrecho(leitorPath);
         SInstance instancia = (fields == null) ? null : fields.getByIndex(fieldIndex);
         if (instancia == null) {
@@ -158,7 +158,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
                     fields.remove(fieldIndex);
                 }
             } else {
-                instancia.setValor(valor);
+                instancia.setValue(valor);
             }
         } else {
             instancia.setValor(leitorPath.proximo(), valor);
@@ -169,7 +169,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         SInstance instancia;
         SType<?> tipoCampo = getFieldsDef().getByIndex(fieldIndex);
         instancia = tipoCampo.newInstance(getDocument());
-        instancia.setPai(this);
+        instancia.setParent(this);
         if (fields == null) {
             fields = new FieldMapOfRecordInstance(getFieldsDef());
         }
@@ -177,7 +177,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         return instancia;
     }
 
-    private int findIndexTrecho(LeitorPath leitor) {
+    private int findIndexTrecho(PathReader leitor) {
         if (leitor.isIndice()) {
             throw new SingularFormException(leitor.getTextoErro(this, "Não é uma lista"));
         }
@@ -190,11 +190,11 @@ public class SIComposite extends SInstance implements ICompositeInstance {
 
     @Override
     public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new LeitorPath(pathCampo), classeDestino);
+        return getValor(new PathReader(pathCampo), classeDestino);
     }
 
     @Override
-    final <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
+    final <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (fields != null) {
             SInstance instancia = fields.getByIndex(findIndexTrecho(leitor));
             if (instancia != null) {

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -22,7 +22,7 @@ public class STypeCompositeTest {
 
     @Before public void setup() {
         SDictionary dict = SDictionary.create();
-        PacoteBuilder pkt = dict.criarNovoPacote("pkt");
+        PackageBuilder pkt = dict.createNewPackage("pkt");
         baseType = pkt.createTipoComposto("baseType");
         name = baseType.addCampoString("name");
         subStuff = baseType.addCampoComposto("subStuff");
@@ -31,8 +31,8 @@ public class STypeCompositeTest {
 
     @Test public void setCompositeValue() throws Exception{
         SIComposite original = baseType.novaInstancia();
-        original.getDescendant(name).setValor("My first name");
-        original.getDescendant(content).setValor("My first content");
+        original.getDescendant(name).setValue("My first name");
+        original.getDescendant(content).setValue("My first content");
 
         assertThat(xml(original)).contains("My first name").contains("My first content");
 
@@ -41,17 +41,17 @@ public class STypeCompositeTest {
         assertThat(xml(original.getDescendant(subStuff)))
                 .doesNotContain("My first name").contains("My first content");
 
-        original.getDescendant(name).setValor("My second name");
-        original.getDescendant(content).setValor("My second content");
+        original.getDescendant(name).setValue("My second name");
+        original.getDescendant(content).setValue("My second content");
 
-        assertThat(original.getDescendant(name).getValor()).isEqualTo("My second name");
-        assertThat(original.getDescendant(content).getValor()).isEqualTo("My second content");
+        assertThat(original.getDescendant(name).getValue()).isEqualTo("My second name");
+        assertThat(original.getDescendant(content).getValue()).isEqualTo("My second content");
 
         original.getDescendant(subStuff)
-                .setValor(MformPersistenciaXML.fromXML(subStuff, MParser.parse(backup)));
+                .setValue(MformPersistenciaXML.fromXML(subStuff, MParser.parse(backup)));
 
-        assertThat(original.getDescendant(name).getValor()).isEqualTo("My second name");
-        assertThat(original.getDescendant(content).getValor()).isEqualTo("My first content");
+        assertThat(original.getDescendant(name).getValue()).isEqualTo("My second name");
+        assertThat(original.getDescendant(content).getValue()).isEqualTo("My first content");
 
     }
 

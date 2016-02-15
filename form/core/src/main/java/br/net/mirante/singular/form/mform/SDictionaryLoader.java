@@ -70,6 +70,6 @@ public abstract class SDictionaryLoader<KEY extends Serializable> {
      *                Senão encontrar o dicionário ou o tipo no dicionário.
      */
     public final SType<?> loadType(KEY dictionatyId, String typeName) {
-        return loadDictionaryOrException(dictionatyId).getTipo(typeName);
+        return loadDictionaryOrException(dictionatyId).getType(typeName);
     }
 }

@@ -21,14 +21,14 @@ public class SIAnoMes extends SIComparable<YearMonth> {
         if (isEmptyOfData()) {
             return null;
         }
-        return getValor().getYear();
+        return getValue().getYear();
     }
 
     public Integer getMes() {
         if (isEmptyOfData()) {
             return null;
         }
-        return getValor().getMonthValue();
+        return getValue().getMonthValue();
     }
 
     @Override

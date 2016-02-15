@@ -16,7 +16,7 @@ public class FormVO implements Serializable, IModel<String> {
     public FormVO(String key, SType<?> value) {
         this.key = key;
         this.value = value;
-        if(value != null) this.typeName = value.getNome();
+        if(value != null) this.typeName = value.getName();
     }
 
     public FormVO(TemplateEntry t) {

@@ -125,7 +125,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                         final String annotations = currentModel.getAnnnotations();
                         if(StringUtils.isNotBlank(annotations)){
                             MElement xmlAnnotations = MParser.parse(annotations);
-                            STypeAnnotationList tipoAnnotation = tipo.getDicionario().getTipo(STypeAnnotationList.class);
+                            STypeAnnotationList tipoAnnotation = tipo.getDictionary().getType(STypeAnnotationList.class);
 
                             SList iAnnotations =
                                     (SList) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);

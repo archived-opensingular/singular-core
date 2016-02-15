@@ -44,7 +44,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     @BeforeClass
     public static void createDicionario() {
         dicionario = SDictionary.create();
-        tpackage = dicionario.carregarPacote(TestPackage.class);
+        tpackage = dicionario.loadPackage(TestPackage.class);
     }
 
     @Before

@@ -32,7 +32,7 @@ public class MSelecaoPorModalBuscaView extends MView {
 
     public void setAdditionalFields(STypeSimple... tipos) {
         for(STypeSimple f : tipos){
-            searchFields.add(f.getNomeSimples());
+            searchFields.add(f.getSimpleName());
         }
     }
 

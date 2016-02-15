@@ -51,19 +51,19 @@ public class TemplateRepository extends SDictionaryLoader<String> {
 
     private void add(Class<? extends SPackage> packageClass, String typeName) {
         SDictionary d = SDictionary.create();
-        d.carregarPacote(packageClass);
-        add(d.getTipo(typeName));
+        d.loadPackage(packageClass);
+        add(d.getType(typeName));
     }
 
     public void add(SType<?> type) {
-        add(type.getNomeSimples(), type);
+        add(type.getSimpleName(), type);
     }
 
     public void add(String displayName, SType<?> type) {
-        ShowcaseDicionaryRef ref = new ShowcaseDicionaryRef(type.getNome());
-        type.getDicionario().setSerializableDictionarySelfReference(ref);
+        ShowcaseDicionaryRef ref = new ShowcaseDicionaryRef(type.getName());
+        type.getDictionary().setSerializableDictionarySelfReference(ref);
 
-        entries.put(type.getNome(), new TemplateEntry(displayName, type));
+        entries.put(type.getName(), new TemplateEntry(displayName, type));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class TemplateRepository extends SDictionaryLoader<String> {
 
     public TemplateEntry findEntryByType(String type) {
         for(TemplateEntry t : entries.values()){
-            if(t.getType().getNome().equals(type)){
+            if(t.getType().getName().equals(type)){
                 return t;
             }
         }
@@ -107,7 +107,7 @@ public class TemplateRepository extends SDictionaryLoader<String> {
         }
 
         public SDictionary getDictionary() {
-            return type.getDicionario();
+            return type.getDictionary();
         }
     }
 

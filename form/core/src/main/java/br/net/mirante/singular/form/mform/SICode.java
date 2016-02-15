@@ -7,19 +7,19 @@ public class SICode<T> extends SInstance {
     public SICode() {}
 
     @Override
-    public T getValor() {
+    public T getValue() {
         return code;
     }
 
     @Override
     public void clearInstance() {
-       setValor(null);
+       setValue(null);
     }
 
     @Override
     public Object getValorWithDefault() {
         // TODO ??? não sei como implementar isso...
-        return getValor();
+        return getValue();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class SICode<T> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setValor(Object valor) {
+    public void setValue(Object valor) {
         this.code = (T) valor;
     }
 
@@ -41,6 +41,6 @@ public class SICode<T> extends SInstance {
 
     @Override
     public String getDisplayString() {
-        return getMTipo().getNomeSimples();
+        return getMTipo().getSimpleName();
     }
 }

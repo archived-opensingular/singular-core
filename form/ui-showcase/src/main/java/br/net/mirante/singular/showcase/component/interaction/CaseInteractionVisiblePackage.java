@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -19,7 +19,7 @@ public class CaseInteractionVisiblePackage extends SPackage {
     public STypeData recordDate;
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
         testForm = pb.createTipoComposto("testForm");

@@ -83,7 +83,7 @@ public abstract class SQuery<MI extends SInstance> {
     }
     private static Stream<SInstance> _fields(SIComposite composto) {
         return composto.getMTipo().getFields().stream()
-            .map(f -> composto.getCampo(f.getNomeSimples()));
+            .map(f -> composto.getCampo(f.getSimpleName()));
     }
     private static Stream<SInstance> _elements(SList<SInstance> lista) {
         return lista.stream();
@@ -231,14 +231,14 @@ public abstract class SQuery<MI extends SInstance> {
         return this;
     }
     public Object val() {
-        return stream().findFirst().map(it -> it.getValor()).orElse(null);
+        return stream().findFirst().map(it -> it.getValue()).orElse(null);
     }
     @SuppressWarnings("unchecked")
     public <T> T val(Class<T> type) {
-        return stream().map(it -> it.getValor()).map(it -> (T) it).findFirst().orElse(null);
+        return stream().map(it -> it.getValue()).map(it -> (T) it).findFirst().orElse(null);
     }
     public <T> SQuery<MI> val(T value) {
-        stream().forEach(it -> it.setValor(value));
+        stream().forEach(it -> it.setValue(value));
         return this;
     }
     public long count() {

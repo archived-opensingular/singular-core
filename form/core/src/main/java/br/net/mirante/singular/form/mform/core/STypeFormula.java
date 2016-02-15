@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 
 @MInfoTipo(nome = "Formula", pacote = SPackageCore.class)
 public class STypeFormula extends STypeComposite<SIFormula> {
@@ -15,7 +15,7 @@ public class STypeFormula extends STypeComposite<SIFormula> {
     }
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         addCampoString(CAMPO_SCRIPT);
         STypeString tipo = addCampoString(CAMPO_TIPO_SCRIPT);
         tipo.withSelectionOf(TipoScript.class);

@@ -11,7 +11,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
@@ -26,7 +26,7 @@ import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
 
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -38,7 +38,7 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         page = new TestPage();
         page.setDicionario(dicionario);
         page.enableAnnotation();
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
 
         tipoDeMedia = baseCompositeField.addCampoString("tipoDeMedia");
@@ -46,7 +46,7 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         tipoDeMedia.withSelectionFromProvider(new MOptionsProvider() {
             @Override
             public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                STypeString type = dicionario.getTipo(STypeString.class);
+                STypeString type = dicionario.getType(STypeString.class);
                 SList<?> r = type.novaLista();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
@@ -56,14 +56,14 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
 
             private SIString newElement(STypeString type, String id, String label) {
                 SIString e = type.novaInstancia();
-                e.setValor(id);
+                e.setValue(id);
                 e.setSelectLabel(label);
                 return e;
             }
         });
         tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
 
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
     }
 
     protected void buildPage() {
@@ -87,7 +87,7 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
 
     @Test public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection(){
         setupPage();
-        page.getCurrentInstance().getDescendant(tipoDeMedia).setValor("TXT");
+        page.getCurrentInstance().getDescendant(tipoDeMedia).setValue("TXT");
         buildPage();
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);

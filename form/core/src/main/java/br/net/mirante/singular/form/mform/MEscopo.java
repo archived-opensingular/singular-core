@@ -4,11 +4,11 @@ import java.util.Optional;
 
 public interface MEscopo {
 
-    public String getNome();
+    public String getName();
 
-    public Optional<SType<?>> getTipoLocalOpcional(String nomeSimples);
+    public Optional<SType<?>> getLocalTypeOptional(String nomeSimples);
 
-    public SType<?> getTipoLocal(String nomeSimples);
+    public SType<?> getLocalType(String nomeSimples);
 
     public MEscopo getEscopoPai();
 
@@ -20,5 +20,5 @@ public interface MEscopo {
         return (SPackage) atual;
     }
 
-    public SDictionary getDicionario();
+    public SDictionary getDictionary();
 }

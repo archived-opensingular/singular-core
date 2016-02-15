@@ -72,7 +72,7 @@ public class ViewResolver {
      * caso então cabe a cada gerador decidir como criar o componente na tela.
      */
     public static MView resolve(SInstance instance) {
-        return instance.getDicionario().getViewResolver().resolveInternal(instance);
+        return instance.getDictionary().getViewResolver().resolveInternal(instance);
     }
 
     private MView resolveInternal(SInstance instance) {

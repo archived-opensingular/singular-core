@@ -25,7 +25,7 @@ public class TestSDocumentEvents extends TestCaseForm {
     @Before
     public void setUp() {
         dicionario = SDictionary.create();
-        root = dicionario.novaInstancia(STypeString.class);
+        root = dicionario.newInstance(STypeString.class);
         doc = root.getDocument();
 
         globalCollector = new IMInstanceListener.EventCollector();
@@ -36,13 +36,13 @@ public class TestSDocumentEvents extends TestCaseForm {
     public void testValueChanges() {
         doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, globalCollector);
 
-        root.setValor("ABC");
+        root.setValue("ABC");
         assertEventsCount(1, globalCollector);
 
-        root.setValor("ABC");
+        root.setValue("ABC");
         assertEventsCount(1, globalCollector);
 
-        root.setValor("CCC");
+        root.setValue("CCC");
         assertEventsCount(2, globalCollector);
     }
 
@@ -64,12 +64,12 @@ public class TestSDocumentEvents extends TestCaseForm {
         doc.getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, attributeCollector);
         doc.getInstanceListeners().add(MInstanceEventType.VALUE_CHANGED, valueCollector);
 
-        root.setValor("ABC");
+        root.setValue("ABC");
         assertEventsCount(1, globalCollector);
         assertEventsCount(0, attributeCollector);
         assertEventsCount(1, valueCollector);
 
-        root.setValor("CCC");
+        root.setValue("CCC");
         assertEventsCount(2, globalCollector);
         assertEventsCount(0, attributeCollector);
         assertEventsCount(2, valueCollector);

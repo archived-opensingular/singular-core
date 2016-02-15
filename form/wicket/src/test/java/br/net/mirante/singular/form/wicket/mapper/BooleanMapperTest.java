@@ -13,7 +13,7 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -24,7 +24,7 @@ import br.net.mirante.singular.form.wicket.test.base.TestPage;
 public class BooleanMapperTest extends AbstractWicketFormTest {
 
     //TODO: Fabs: Genralizar esses testes
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -32,7 +32,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
     private STypeBoolean field1;
 
     protected void setupPage() {
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
 
         field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
@@ -42,7 +42,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
         page = new TestPage();
         page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
 
         page.enableAnnotation();
     }
@@ -80,7 +80,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
     @Test public void rendersACheckBoxCheckedWhenValueIsTrue(){
         setupPage();
-        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        page.getCurrentInstance().getDescendant(field1).setValue(true);
         buildPage();
 
         List<CheckBox> inputs = (List)findTag(form.getForm(), CheckBox.class);
@@ -97,7 +97,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isFalse();
     }
 
     @Test public void submitsTrueThroutghTheCheckbox(){
@@ -111,7 +111,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isTrue();
     }
 
     @Test public void rendersARadioChoiceIfAsked(){
@@ -140,7 +140,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
     @Test public void rendersFalseChoiceIfFalseIsSelected(){
         setupPage();
         field1.withRadioView();
-        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        page.getCurrentInstance().getDescendant(field1).setValue(true);
         buildPage();
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
@@ -159,7 +159,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isTrue();
     }
 
     @Test public void submitsTheValueThroughTheRadioNo(){
@@ -173,7 +173,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isFalse();
     }
 
     @Test public void rendersARadioChoiceWithPersonalizedLabel(){

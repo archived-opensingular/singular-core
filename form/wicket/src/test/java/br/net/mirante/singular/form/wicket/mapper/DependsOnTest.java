@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -29,7 +29,7 @@ import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
 public class DependsOnTest extends AbstractWicketFormTest {
 
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -44,7 +44,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
     }
 
     private void createBaseType() {
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -53,7 +53,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
         page = new TestPage();
         page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
     }
 
     protected void build() {
@@ -82,7 +82,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
                 .label("Word")
                 .dependsOn(category);
         element.withSelectionFromProvider(ins -> {
-            String prefix = ins.findNearest(category).get().getValor();
+            String prefix = ins.findNearest(category).get().getValue();
             return (prefix == null)
                     ? ins.getMTipo().novaLista()
                     : ins.getMTipo().novaLista()
@@ -124,8 +124,8 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
     @Test public void preloadSelectedValues() {
         setup();
-        page.getCurrentInstance().getDescendant(category).setValor("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValor("radish");
+        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
+        page.getCurrentInstance().getDescendant(element).setValue("radish");
         build();
 
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
@@ -142,8 +142,8 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
     @Test public void addPreloadedOptionsToLisIfNotPresent() {
         setup();
-        page.getCurrentInstance().getDescendant(category).setValor("special");
-        page.getCurrentInstance().getDescendant(element).setValor("gluten");
+        page.getCurrentInstance().getDescendant(category).setValue("special");
+        page.getCurrentInstance().getDescendant(element).setValue("gluten");
         build();
 
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
@@ -160,8 +160,8 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
     @Test public void addPreloadedOptionsToDependentLisIfNotPresent() {
         setup();
-        page.getCurrentInstance().getDescendant(category).setValor("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValor("gluten");
+        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
+        page.getCurrentInstance().getDescendant(element).setValue("gluten");
         build();
 
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
@@ -176,13 +176,13 @@ public class DependsOnTest extends AbstractWicketFormTest {
 
     @Test public void whenChangingValueRemovesDanglingOptions() {
         setup();
-        page.getCurrentInstance().getDescendant(category).setValor("vegetables");
-        page.getCurrentInstance().getDescendant(element).setValor("gluten");
+        page.getCurrentInstance().getDescendant(category).setValue("vegetables");
+        page.getCurrentInstance().getDescendant(element).setValue("gluten");
         build();
 
 //        form.select(findId(form.getForm(), "category").get(), 2);
 
-        page.getCurrentInstance().getDescendant(category).setValor("condiments");
+        page.getCurrentInstance().getDescendant(category).setValue("condiments");
 
         List<DropDownChoice> options = (List)findTag(form.getForm(), DropDownChoice.class);
         DropDownChoice categoryChoice = options.get(0), elementChoice = options.get(1);
