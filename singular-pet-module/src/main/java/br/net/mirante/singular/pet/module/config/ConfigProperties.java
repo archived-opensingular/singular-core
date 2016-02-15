@@ -2,6 +2,7 @@ package br.net.mirante.singular.pet.module.config;
 
 
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
+import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -21,13 +22,18 @@ public class ConfigProperties {
 
     static {
         try {
-            propertiesServer.load(ConfigProperties.class.getResource("/server.properties").openStream());
-            propertiesPet.load(ConfigProperties.class.getResource("/server.properties").openStream());
-            propertiesPet.load(ConfigProperties.class.getResource("/peticionamento.properties").openStream());
-            propertiesAnl.load(ConfigProperties.class.getResource("/server.properties").openStream());
-            propertiesAnl.load(ConfigProperties.class.getResource("/analise.properties").openStream());
+            String server = System.getProperty("singular.server.props.server", "classpath:server.properties");
+            String peticionamento = System.getProperty("singular.server.props.peticionamento", "classpath:peticionamento.properties");
+            String analise = System.getProperty("singular.server.props.analise", "classpath:analise.properties");
+            propertiesServer.load(ResourceUtils.getURL(server).openStream());
+            propertiesPet.load(ResourceUtils.getURL(server).openStream());
+            propertiesPet.load(ResourceUtils.getURL(peticionamento).openStream());
+            propertiesAnl.load(ResourceUtils.getURL(server).openStream());
+            propertiesAnl.load(ResourceUtils.getURL(analise).openStream());
         } catch (IOException e) {
-            throw new SingularServerException(e.getMessage(), e);
+            throw new SingularServerException(
+                    "É necessário que os arquivos server.properties, analise.properties e peticionamento.properties estejam disponíveis na raiz do classpath da aplicação." +
+                            " É possivel alterar o caminho dos arquivos utilizando as respectivas propriedades de sistema:  singular.server.props.server, singular.server.props.analise, singular.server.props.peticionamento : ", e);
         }
     }
 
