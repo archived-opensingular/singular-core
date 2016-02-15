@@ -1,12 +1,19 @@
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
-import br.net.mirante.singular.form.util.xml.MParser;
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MParser;
 
 public class STypeListTest {
 
@@ -35,16 +42,15 @@ public class STypeListTest {
 
         String backup = xml(original.getDescendant(listType));
 
-        assertThat(xml(original.getDescendant(listType)))
-                .doesNotContain("My first name").contains("My first content");
+        assertThat(backup).doesNotContain("My first name").contains("My first content");
 
         original.getDescendant(name).setValor("My second name");
         e1.getDescendant(content).setValor("My second content");
 
         assertThat(xml(original)).contains("My second name").contains("My second content");
 
-        original.getDescendant(listType)
-                .setValor(MformPersistenciaXML.fromXML(listType, MParser.parse(backup)));
+        SList<SIComposite> fromBackup = MformPersistenciaXML.fromXML(listType, MParser.parse(backup));
+        original.getDescendant(listType).setValor(fromBackup);
 
         assertThat(xml(original)).contains("My second name").contains("My first content");
 
