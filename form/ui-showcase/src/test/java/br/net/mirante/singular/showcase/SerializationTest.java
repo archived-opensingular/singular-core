@@ -32,7 +32,7 @@ public class SerializationTest {
 //    }
 
     @Test public void serializeAndDeserialize(){
-        TemplateRepository repo = TemplateRepository.get();
+        TemplateRepository repo = TemplateRepository.create();
 //        TemplateRepository.setDefault(TemplateRepository.get());
         ExamplePackage pacote = null;
         for(TemplateRepository.TemplateEntry entry: repo.getEntries()){

@@ -9,27 +9,28 @@ import java.util.function.Supplier;
 import br.net.mirante.singular.form.mform.SInstance;
 
 /**
+ * <p>
  * Referencia serializável para um instancia do form. Faz todos os controles
  * necessários para serialização e deserialização da instância.
+ * </p>
+ * <p>
+ * Espera que
+ * {@link br.net.mirante.singular.form.mform.SDictionary#setSerializableDictionarySelfReference(br.net.mirante.singular.form.mform.SDictionaryRef)}
+ * tenha sido corretamente configurado e não seja null.
+ * </p>
  *
  * @author Daniel C. Bordin
  */
 public class InstanceSerializableRef<I extends SInstance> implements Externalizable, Supplier<I> {
 
     private transient I instance;
-    private final MDicionarioResolverSerializable dicionarioResolverSerializable;
 
     public InstanceSerializableRef() {
-        this(null, null);
+        this(null);
     }
 
     public InstanceSerializableRef(I instance) {
-        this(instance, null);
-    }
-
-    public InstanceSerializableRef(I instance, MDicionarioResolverSerializable dicionarioResolverSerializable) {
         set(instance);
-        this.dicionarioResolverSerializable = dicionarioResolverSerializable;
     }
 
     /**
@@ -37,6 +38,9 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
      */
     public void set(I instance) {
         this.instance = instance;
+        if (instance != null) {
+            FormSerializationUtil.verificarDicionaryRef(instance);
+        }
     }
 
     @Override
@@ -46,7 +50,7 @@ public class InstanceSerializableRef<I extends SInstance> implements Externaliza
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        FormSerialized fs = FormSerializationUtil.toSerializedObject(instance, dicionarioResolverSerializable);
+        FormSerialized fs = FormSerializationUtil.toSerializedObject(instance);
         out.writeObject(fs);
     }
 
