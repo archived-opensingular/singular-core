@@ -1,41 +1,34 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateChoiceBehavior;
-import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
+
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.DropDownChoice;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
-import static java.util.stream.Collectors.toList;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
-import static org.junit.Assert.assertTrue;
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public class DependsOnTest {
-    protected SDictionary dict;
+public class DependsOnTest extends AbstractWicketFormTest {
+
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
@@ -51,8 +44,7 @@ public class DependsOnTest {
     }
 
     private void createBaseType() {
-        dict = SDictionary.create();
-        localPackage = dict.criarNovoPacote("test");
+        localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -60,7 +52,7 @@ public class DependsOnTest {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dict);
+        page.setDicionario(dicionario);
         page.setNewInstanceOfType(baseCompositeField.getNome());
     }
 

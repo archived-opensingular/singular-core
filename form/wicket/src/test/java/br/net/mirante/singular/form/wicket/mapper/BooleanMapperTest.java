@@ -1,32 +1,29 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class BooleanMapperTest {
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
+
+public class BooleanMapperTest extends AbstractWicketFormTest {
+
     //TODO: Fabs: Genralizar esses testes
-    protected SDictionary dicionario;
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
@@ -35,7 +32,6 @@ public class BooleanMapperTest {
     private STypeBoolean field1;
 
     protected void setupPage() {
-        dicionario = SDictionary.create();
         localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
 
@@ -128,7 +124,7 @@ public class BooleanMapperTest {
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
                 .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Sim", "Não");
+.containsOnly("Sim", "Não");
     }
 
     @Test public void rendersNoChoiceIfNoneIsSelected(){

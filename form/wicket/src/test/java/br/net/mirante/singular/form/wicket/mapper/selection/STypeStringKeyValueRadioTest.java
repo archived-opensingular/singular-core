@@ -1,38 +1,37 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class STypeStringKeyValueRadioTest {
-    protected static SDictionary dicionario;
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
+
+public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
+
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
     private STypeComposite<? extends SIComposite> baseCompositeField;
     private STypeString tipoDeMedia;
-
-    @Before
-    public void createDicionario() {
-        dicionario = SDictionary.create();
-    }
 
     protected void setupPage() {
         driver = new WicketTester(new TestApp());
@@ -83,7 +82,7 @@ public class STypeStringKeyValueRadioTest {
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
                 .containsOnly("IMG", "TXT", "BIN");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Imagem", "Texto", "Binário");
+.containsOnly("Imagem", "Texto", "Binário");
     }
 
     @Test public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection(){
@@ -96,7 +95,7 @@ public class STypeStringKeyValueRadioTest {
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
                 .containsOnly("IMG", "TXT", "BIN");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Imagem", "Texto", "Binário");
+.containsOnly("Imagem", "Texto", "Binário");
         assertThat(inputs.get(0).getValue()).isEqualTo("TXT");
     }
 }

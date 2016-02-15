@@ -1,19 +1,25 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.*;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Test;
 
-public class MasterDetailMapperTest {
-    protected SDictionary dict;
+public class MasterDetailMapperTest extends AbstractWicketFormTest {
+
     protected PacoteBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
@@ -34,8 +40,7 @@ public class MasterDetailMapperTest {
     }
 
     private void createBaseType() {
-        dict = SDictionary.create();
-        localPackage = dict.criarNovoPacote("test");
+        localPackage = dicionario.criarNovoPacote("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -43,7 +48,7 @@ public class MasterDetailMapperTest {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dict);
+        page.setDicionario(dicionario);
         page.setNewInstanceOfType(baseCompositeField.getNome());
     }
 
