@@ -371,7 +371,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     public void updateExists() {
         MInstances.updateBooleanAttribute(this, SPackageCore.ATR_EXISTS, SPackageCore.ATR_EXISTS_FUNCTION);
         if (!exists())
-            MInstances.visitAll(this, true, ins -> ins.resetValue());
+            MInstances.visitAll(this, true, SInstance::resetValue);
     }
 
     protected void resetValue() {}

@@ -27,7 +27,6 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     @Override
     public void onConfigure(Component component) {
         super.onConfigure(component);
-
         component.setEnabled(isInstanceEnabled(component));
         handleVisibility(component);
     }
@@ -38,15 +37,9 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
      * @param comp
      */
     private void handleVisibility(Component comp) {
-        boolean isInstanceVisible = isInstanceVisible(comp);
-
-        if (!isInstanceVisible) {
-            final IModel<?> model;
-            if (comp instanceof FormComponent) {
-                model = ((FormComponent) comp).getModel();
-            } else {
-                model = comp.getDefaultModel();
-            }
+        boolean isVisible = isInstanceVisible(comp);
+        if (!isVisible) {
+            final IModel<?> model = comp.getDefaultModel();
             if (model != null) {
                 if (IMInstanciaAwareModel.class.isAssignableFrom(model.getClass())) {
                     final SInstance instancia = ((IMInstanciaAwareModel) model).getMInstancia();
@@ -56,8 +49,7 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
                 }
             }
         }
-
-        comp.setVisible(isInstanceVisible);
+        comp.setVisible(isVisible);
     }
 
 
