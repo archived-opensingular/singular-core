@@ -1,22 +1,44 @@
 if( window.Annotation == undefined){
     window.Annotation = function (target_id, this_id, open_modal_id, comment, approved){
-        this.target_component = $(target_id);
-        this.this_component = $(this_id);
-        this.open_modal = $(open_modal_id);
-        this.comment = comment;
-        this.approved = approved;
+        this.init = function (target_id, this_id, open_modal_id, comment, approved){
+            this.target_id = target_id;
+            this.this_id = this_id;
+            this.open_modal_id = open_modal_id;
+            this.comment = comment;
+            this.approved = approved;
+            this.retry = false;
+        },
+        this.init(target_id, this_id, open_modal_id, comment, approved);
     }
 
     window.Annotation.prototype = {
-        setup : function(){
-            var thiz = this;
-            this.target_component.find('h3:first').append(
-                $('<div>').attr('style','position:absolute;top:10px;right: 15px;')
-                            .append(this.create_show_button())
-                            .click(function(){thiz.toggle_button_on_click()})
-            );
-            this.adjust_height_position();
+        build : function(){
+            this.update_references();
+            this.this_component.data('ctl',this);
+            if(! this.target_component || this.target_component.length == 0 || ! this.this_component){
+                console.log('Not possible to render annotation for ',
+                    this.target_component , this.this_component);
+                    if(!this.retry){
+                        var thiz = this;
+                        window.setTimeout(function(){thiz.build()},2000);
+                        this.retry = true;
+                    }else{
+                        this.retry = false;
+                    }
+                return;
+            }
+            this.toggle_container = this.create_toggle_container();
+            this.target_component.find('h3:first').append(this.toggle_container);
             if(this.is_blank()) {   this.this_component.hide(); }
+            if(this.this_component.is(':visible') ){
+                this.adjust_height_position();
+            }
+        },
+
+        update_references : function(){
+            this.target_component = $(this.target_id);
+            this.this_component = $(this.this_id);
+            this.open_modal = $(this.open_modal_id);
         },
 
         is_blank : function () {    return this.approved == null;   },
@@ -39,6 +61,13 @@ if( window.Annotation == undefined){
             return 'fa fa-comment-o';
         },
 
+        create_toggle_container: function(){
+            var thiz = this;
+            return $('<div>').attr('style','position:absolute;top:10px;right: 15px;')
+                        .append(this.create_show_button())
+                        .click(function(){thiz.toggle_button_on_click()})
+        },
+
         adjust_height_position: function(){
             this.this_component.css('position','absolute')
             var target_offset = this.target_component.parent().offset()['top'],
@@ -48,6 +77,7 @@ if( window.Annotation == undefined){
         },
 
         toggle_button_on_click: function(){
+            this.adjust_height_position();
             if(this.is_blank()){
                 this.open_modal[0].click();
                 this.this_component.fadeOut();
@@ -78,6 +108,19 @@ if( window.Annotation == undefined){
             var end = start+height;
             return {    'start' : start , 'end' : end   };
         }
-    }
+    };
+
+    window.Annotation.create_or_update = function(target_id, this_id, open_modal_id, comment, approved){
+        var this_component = $(this_id)
+        var target_component = $(target_id)
+        console.log('create_or_update', $(this_id), target_id, this_id, open_modal_id, comment, approved);
+        if(this_component && this_component.data('ctl')){
+            var ctl = this_component.data('ctl');
+            ctl.init(target_id, this_id, open_modal_id, comment, approved);
+            ctl.build();
+        }else{
+            new Annotation(target_id, this_id, open_modal_id, comment, approved).build();
+        }
+    };
 
 }

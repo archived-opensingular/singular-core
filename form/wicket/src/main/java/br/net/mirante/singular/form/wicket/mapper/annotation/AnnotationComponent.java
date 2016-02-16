@@ -1,7 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
+import static com.google.common.collect.Sets.newHashSet;
 
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
         import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -30,10 +32,15 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -42,7 +49,7 @@ import java.io.Serializable;
  */
 public class AnnotationComponent extends Panel {
     private final AbstractSInstanceModel referenced;
-    private final Component referencedComponent;
+    private Component referencedComponent;
     private final WicketBuildContext context;
     private MInstanciaValorModel textModel, approvedModel;
     private MInstanceRootModel model;
@@ -51,12 +58,17 @@ public class AnnotationComponent extends Panel {
     private ActionAjaxButton openModalButton;
 
     public AnnotationComponent(String id, AbstractSInstanceModel referenced,
-                               Component referencedComponent, WicketBuildContext context) {
+                                WicketBuildContext context) {
         super(id);
         this.referenced = referenced;
-        this.referencedComponent = referencedComponent;
         this.context = context;
         createModels(referenced);
+    }
+
+    public AbstractSInstanceModel referenced() {    return referenced;  }
+
+    public void setReferencedComponent(Component referencedComponent) {
+        this.referencedComponent = referencedComponent;
     }
 
     private void createModels(AbstractSInstanceModel referenced) {
@@ -188,7 +200,8 @@ public class AnnotationComponent extends Panel {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("annotation.js")));
         response.render(CssReferenceHeaderItem.forReference(resourceRef("annotation.css")));
-        response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),"updateAnnotation_"+this.getMarkupId()
+        response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),
+                        "updateAnnotation_"+this.getMarkupId()+"_"+ new Date().getTime()
         ));
     }
 
@@ -196,15 +209,17 @@ public class AnnotationComponent extends Panel {
         return new PackageResourceReference(getClass(), resourceName);
     }
 
+
     private String generateUpdateJS() {
+        if(referencedComponent == null) return "";
         return "$(function(){\n" +
-                "new Annotation(" +
+                "Annotation.create_or_update(" +
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
                     "'#"+openModalButton.getMarkupId()+"'," +
                     "`"+textModel.getObject()+"`," +
                     ""+approvedModel.getObject()+"" +
-                ").setup()\n" +
+                ");\n" +
                 "});\n";
     }
 

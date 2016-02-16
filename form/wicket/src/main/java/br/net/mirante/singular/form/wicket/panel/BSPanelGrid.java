@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.wicket.panel;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static com.google.common.collect.Lists.newArrayList;
 
 public abstract class BSPanelGrid extends Panel {
 
@@ -40,8 +42,7 @@ public abstract class BSPanelGrid extends Panel {
     }
 
     private void rebuildForm() {
-        add(form
-                .add(buildTabControl()));
+        add(form.add(buildTabControl()));
         buildTabContent();
     }
 
@@ -70,7 +71,9 @@ public abstract class BSPanelGrid extends Panel {
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
                         target.add(form);
-
+                        if(toUpdadeOnTab() != null){
+                            toUpdadeOnTab().forEach((c) -> target.add(c) );
+                        }
                     }
 
                 };
@@ -84,7 +87,9 @@ public abstract class BSPanelGrid extends Panel {
 
     public abstract void updateTab(List<String> subtree);
 
-    public void buildTabContent() {
+    public Collection<Component> toUpdadeOnTab(){   return newArrayList(); }
+
+        public void buildTabContent() {
         form.remove(container);
         container = new BSGrid("grid");
         form.add(container);
