@@ -1,7 +1,9 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+
 //TODO renomear para algo mais representativo para o singular.
-public interface MUser extends Comparable<MUser> {
+public interface MUser extends Comparable<MUser>, Serializable {
 
     Integer getCod();
 
