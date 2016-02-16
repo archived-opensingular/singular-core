@@ -113,7 +113,6 @@ if( window.Annotation == undefined){
     window.Annotation.create_or_update = function(target_id, this_id, open_modal_id, comment, approved){
         var this_component = $(this_id)
         var target_component = $(target_id)
-        console.log('create_or_update', $(this_id), target_id, this_id, open_modal_id, comment, approved);
         if(this_component && this_component.data('ctl')){
             var ctl = this_component.data('ctl');
             ctl.init(target_id, this_id, open_modal_id, comment, approved);

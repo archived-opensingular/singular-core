@@ -32,7 +32,7 @@ public class TabMapper extends DefaultCompostoMapper {
 
             public Collection<Component> toUpdadeOnTab(){
                 if(ctx.getRootContext().isAnnotationEnabled()){
-                    return newArrayList(ctx.allAnnotations());
+                    return newArrayList(ctx.updateOnRefresh());
                 }
                 return newArrayList();
             }

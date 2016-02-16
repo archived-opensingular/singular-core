@@ -38,6 +38,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
@@ -59,30 +60,52 @@ public class WicketBuildContext implements Serializable {
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
     private boolean annotationEnabled = false;
-    private List<AnnotationComponent> annotations = newArrayList();
+    private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
+    private List<Component> annotationsTargetBuffer = newArrayList();
     private BSContainer annotationContainer;
 
     private MView view;
 
-    public void setAnnotationContainer(BSContainer annotationContainer) {this.annotationContainer = annotationContainer;}
-    public void add(AnnotationComponent c){  annotations.add(c); }
+    public void setAnnotationContainer(BSContainer annotationContainer) {
+        this.annotationContainer = annotationContainer;
+    }
+    public void add(AnnotationComponent c){
+        Integer id = c.referenced().getMInstancia().getId();
+        annotations.put(id, c);
+    }
     public void updateAnnotations(Component c){
         if(c.getDefaultModel() != null && c.getDefaultModel().getObject() != null &&
                 c.getDefaultModel().getObject() instanceof SInstance){
             SInstance target = (SInstance) c.getDefaultModel().getObject();
 
             for(WicketBuildContext ctx : contextChain()){
-                for(AnnotationComponent a : ctx.annotations){
-                    if(a.referenced().getMInstancia().getId().equals(target.getId())){
-                        System.out.println("time to update #"+c.getMarkupId());
-                        a.setReferencedComponent(c);
-                        return;
-                    }
+                if(ctx.annotations.containsKey(target.getId())){
+                    ctx.annotations.get(target.getId()).setReferencedComponent(c);
+                    return;
+                }
+            }
+
+            annotationsTargetBuffer.add(c);
+        }
+    }
+
+    public Optional<Component> getAnnotationTargetFor(SInstance target){
+        for(Component c : annotationsTargetBuffer){
+            IModel<?> m = c.getDefaultModel();
+            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance) {
+                SInstance i = (SInstance) m.getObject();
+                if (i.getId().equals(target.getId())) {
+                    return Optional.of(c);
                 }
             }
         }
+        return Optional.empty();
     }
-    public List<Component> allAnnotations(){
+
+    /**
+     * @return Components that must be refreshed whent the context is changed
+     */
+    public List<Component> updateOnRefresh(){
         return newArrayList(annotationContainer.getParent());
     }
 

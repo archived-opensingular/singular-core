@@ -200,7 +200,8 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationComponent(BSGrid ngrid, SInstance instance,  WicketBuildContext ctx) {
-        Optional<Component> target = new ComponentFinder().find(ctx.getRootContainer().getItems(), instance);
+//        Optional<Component> target = new ComponentFinder().find(ctx.getRootContainer().getItems(), instance);
+        Optional<Component> target = ctx.getAnnotationTargetFor(instance);
         ngrid.newRow().appendTag("div", true, "",
             (id) -> {
                 AnnotationComponent component = new AnnotationComponent(id, modelFor(instance), ctx);
@@ -230,6 +231,7 @@ class AnnotationBuilder {
 /**
  * Finds a component in the Component tree which targets the criteria SInstance
  */
+/*
 class ComponentFinder {
 
     Set<BSContainer> searchCache = newHashSet();
@@ -259,4 +261,4 @@ class ComponentFinder {
         }
     }
 
-}
+}*/
