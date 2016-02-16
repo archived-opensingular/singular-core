@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.SType;
  */
 public interface MSelectionableInstance extends MSelectionable {
 
-    SType<?> getMTipo();
+    SType<?> getType();
 
     MOptionsConfig getOptionsConfig();
 

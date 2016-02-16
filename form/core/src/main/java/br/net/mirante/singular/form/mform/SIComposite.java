@@ -15,8 +15,8 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     private FieldMapOfRecordInstance fields;
 
     @Override
-    public STypeComposite<?> getMTipo() {
-        return (STypeComposite<?>) super.getMTipo();
+    public STypeComposite<?> getType() {
+        return (STypeComposite<?>) super.getType();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
      * @return instancias dos campos
      */
     public Collection<SInstance> getAllFields() {
-        for (SType<?> field : getMTipo().getFields())
+        for (SType<?> field : getType().getFields())
             getCampo(field.getSimpleName());
         return getCampos();
     }
@@ -137,7 +137,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
     }
 
     private FieldMapOfRecordType getFieldsDef() {
-        return getMTipo().getFieldsConsolidated();
+        return getType().getFieldsConsolidated();
     }
 
     @Override
@@ -201,7 +201,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
                 return instancia.getValorWithDefaultIfNull(leitor.proximo(), classeDestino);
             }
         }
-        SType<?> tipo = MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+        SType<?> tipo = MFormUtil.resolverTipoCampo(getType(), leitor);
         return tipo.getValorAtributoOrDefaultValueIfNull(classeDestino);
     }
 
@@ -222,7 +222,7 @@ public class SIComposite extends SInstance implements ICompositeInstance {
         if (getClass() != obj.getClass())
             return false;
         SIComposite other = (SIComposite) obj;
-        if (!getMTipo().equals(other.getMTipo())) {
+        if (!getType().equals(other.getType())) {
             return false;
         }
         return Objects.equals(fields, other.fields);

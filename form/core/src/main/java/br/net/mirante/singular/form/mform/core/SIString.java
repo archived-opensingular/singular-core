@@ -6,8 +6,8 @@ public class SIString extends SIComparable<String> {
     }
 
     @Override
-    public STypeString getMTipo() {
-        return (STypeString) super.getMTipo();
+    public STypeString getType() {
+        return (STypeString) super.getType();
     }
     
     @Override

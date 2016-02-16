@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 /**
  * <p>
@@ -76,11 +80,11 @@ public class ViewResolver {
     }
 
     private MView resolveInternal(SInstance instance) {
-        MView view = instance.getMTipo().getView();
+        MView view = instance.getType().getView();
         if (view != null) {
             return view;
         }
-        Class<?> classType = instance.getMTipo().getClass();
+        Class<?> classType = instance.getType().getClass();
         int priority = -1;
         while (classType != SType.class) {
             TreeSet<ViewRuleRef> list = rules.get(classType);

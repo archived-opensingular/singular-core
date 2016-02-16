@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform.util;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -13,9 +11,10 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
+import static java.util.stream.Collectors.toList;
 
 public abstract class SQuery<MI extends SInstance> {
 
@@ -54,7 +53,7 @@ public abstract class SQuery<MI extends SInstance> {
     }
     @SuppressWarnings("unchecked")
     public <T extends SInstance> SQuery<T> children(SType<T> type) {
-        return children(inst -> inst.getMTipo() == type)
+        return children(inst -> inst.getType() == type)
             .map(it -> (T) it);
     }
     /**
@@ -82,7 +81,7 @@ public abstract class SQuery<MI extends SInstance> {
         }
     }
     private static Stream<SInstance> _fields(SIComposite composto) {
-        return composto.getMTipo().getFields().stream()
+        return composto.getType().getFields().stream()
             .map(f -> composto.getCampo(f.getSimpleName()));
     }
     private static Stream<SInstance> _elements(SList<SInstance> lista) {
@@ -110,7 +109,7 @@ public abstract class SQuery<MI extends SInstance> {
             @SuppressWarnings("unchecked")
             public Stream<T> stream() {
                 return _parentQuery.find().stream()
-                    .filter(it -> it.getMTipo() == tipo)
+                    .filter(it -> it.getType() == tipo)
                     .map(it -> (T) it);
             }
         };
@@ -121,7 +120,7 @@ public abstract class SQuery<MI extends SInstance> {
             @SuppressWarnings("unchecked")
             public Stream<T> stream() {
                 return _parentQuery.stream()
-                    .filter(it -> it.getMTipo() == tipo)
+                    .filter(it -> it.getType() == tipo)
                     .map(it -> (T) it);
             }
         };

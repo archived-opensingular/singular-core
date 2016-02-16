@@ -107,7 +107,7 @@ public class SDocument {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        MTypes.streamDescendants(getRoot().getMTipo(), true).forEach(tipo -> {
+        MTypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
             final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {

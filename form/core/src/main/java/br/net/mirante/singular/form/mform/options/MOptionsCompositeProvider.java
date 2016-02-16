@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
@@ -26,7 +26,7 @@ public interface MOptionsCompositeProvider extends MOptionsProvider {
         if (optionsInstance instanceof SList){
             tipo = ((SList) optionsInstance).getTipoElementos();
         } else {
-            tipo = optionsInstance.getMTipo();
+            tipo = optionsInstance.getType();
         }
         MListaBuilder<STypeComposite> lb = new MListaBuilder<>((STypeComposite)tipo);
         listOptions(optionsInstance, lb);

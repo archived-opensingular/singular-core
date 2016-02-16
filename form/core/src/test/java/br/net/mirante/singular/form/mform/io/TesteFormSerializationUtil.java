@@ -1,13 +1,5 @@
 package br.net.mirante.singular.form.mform.io;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,6 +30,8 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.*;
 
 public class TesteFormSerializationUtil {
 
@@ -344,8 +338,8 @@ public class TesteFormSerializationUtil {
     private static void assertEquivalent(SInstance original, SInstance novo) {
         assertNotSame(original, novo);
         assertEquals(original.getClass(), novo.getClass());
-        assertEquals(original.getMTipo().getName(), novo.getMTipo().getName());
-        assertEquals(original.getMTipo().getClass(), novo.getMTipo().getClass());
+        assertEquals(original.getType().getName(), novo.getType().getName());
+        assertEquals(original.getType().getClass(), novo.getType().getClass());
         assertEquals(original.getNome(), novo.getNome());
         assertEquals(original.getId(), novo.getId());
         assertEquals(original.getPathFull(), novo.getPathFull());

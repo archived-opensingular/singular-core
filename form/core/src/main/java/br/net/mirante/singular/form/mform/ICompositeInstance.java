@@ -61,7 +61,7 @@ public interface ICompositeInstance {
         SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SIComposite)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getMTipo().getName() + " em vez de " + SIComposite.class.getName());
+                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIComposite.class.getName());
         }
         return (SIComposite) instancia;
     }
@@ -100,7 +100,7 @@ public interface ICompositeInstance {
         SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SList)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getMTipo().getName() + " em vez de " + SList.class.getName());
+                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SList.class.getName());
         }
         return (SList<?>) instancia;
     }
