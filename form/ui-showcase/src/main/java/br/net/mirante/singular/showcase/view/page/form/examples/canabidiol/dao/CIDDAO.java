@@ -6,6 +6,7 @@ import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.GrupoCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +67,10 @@ public class CIDDAO {
 
     private static <T extends AbstractDadoCID> List<T> readFile(String filename, Class<T> targetClass) throws Exception {
         List<T> cids = new ArrayList<>();
-        List<String> lines = IOUtils.readLines(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream());
-        for (String line : lines.subList(1, lines.size() - 1)) {
-            cids.add(readCidData(targetClass, line));
+        LineIterator lineIterator = IOUtils.lineIterator(CIDDAO.class.getClassLoader().getResource("data/cid/" + filename).openStream(), "UTF-8");
+        lineIterator.next();
+        for (; lineIterator.hasNext(); ) {
+            cids.add(readCidData(targetClass, lineIterator.next()));
         }
         return cids;
     }
