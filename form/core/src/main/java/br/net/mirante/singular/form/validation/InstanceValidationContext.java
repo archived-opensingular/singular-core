@@ -67,10 +67,10 @@ public class InstanceValidationContext {
 
         if (instance instanceof ICompositeInstance) {
             ICompositeInstance comp = (ICompositeInstance) instance;
-            return comp.streamDescendants(false).anyMatch(it -> it.getValor() != null);
+            return comp.streamDescendants(false).anyMatch(it -> it.getValue() != null);
 
         } else {
-            return (instance.getValor() != null);
+            return (instance.getValue() != null);
         }
     }
 

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.form.examples;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
@@ -40,7 +40,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
 
         final STypeComposite<?> peticionamento = pb.createTipoComposto(TIPO);
 
@@ -79,7 +79,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         final STypeComposite<SIComposite> root;
         final STypeString responsavelTecnico, representanteLegal, concordo;
 
-        DadosResponsavel(PacoteBuilder pb, STypeComposite<?> peticionamento) {
+        DadosResponsavel(PackageBuilder pb, STypeComposite<?> peticionamento) {
             root = peticionamento.addCampoComposto("dadosResponsavel");
 
             root.as(AtrBasic::new).label("Dados do Responsável");
@@ -125,7 +125,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         final TesteCaracteristicasFisicoQuimicas caracteristicasFisicoQuimicas;
         final TesteIrritacaoOcular irritacaoOcular;
 
-        Componente(PacoteBuilder pb, STypeComposite<?> peticionamento) {
+        Componente(PackageBuilder pb, STypeComposite<?> peticionamento) {
             root = peticionamento.addCampoListaOfComposto("componentes", "componente");
             root.as(AtrBasic::new).label("Componente");
             rootType = root.getTipoElementos();
@@ -153,7 +153,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final STypeComposite<SIComposite> root;
             final STypeString tipoComponente;
 
-            Identificacao(PacoteBuilder pb) {
+            Identificacao(PackageBuilder pb) {
                 root = rootType.addCampoComposto("identificacaoComponente");
                 root.as(AtrBasic::new).label("Identificação de Componente")
                         .as(AtrBootstrap::new).colPreference(4);
@@ -168,7 +168,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         class Restricao {
             final STypeComposite<SIComposite> root;
 
-            Restricao(PacoteBuilder pb) {
+            Restricao(PackageBuilder pb) {
                 root = rootType.addCampoComposto("restricoesComponente");
                 root.as(AtrBasic::new).label("Restrições")
                         .as(AtrBootstrap::new).colPreference(4);
@@ -193,7 +193,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final STypeLista<STypeString, SIString> lista;
             final STypeString sugerida;
 
-            Sinonimia(PacoteBuilder pb) {
+            Sinonimia(PackageBuilder pb) {
                 root = rootType.addCampoComposto("sinonimiaComponente");
                 root.as(AtrBasic::new).label("Sinonímia").as(AtrBootstrap::new).colPreference(4);
 
@@ -202,7 +202,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
 
             }
 
-            private STypeLista<STypeString, SIString> createListaField(PacoteBuilder pb) {
+            private STypeLista<STypeString, SIString> createListaField(PackageBuilder pb) {
                 STypeString sinonimia = pb.createTipo("sinonimia", STypeString.class)
                         .withSelectionOf("Sinonímia teste", "Sinonímia teste 2", "Sinonímia teste 3");
                 STypeLista<STypeString, SIString> field = root.addCampoListaOf("sinonimiaAssociada",
@@ -233,7 +233,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         class Finalidade {
             final STypeComposite<SIComposite> root;
 
-            Finalidade(PacoteBuilder pb) {
+            Finalidade(PackageBuilder pb) {
                 root = rootType.addCampoComposto("finalidadesComponente");
 
                 root.as(AtrBasic::new).label("Finalidades")
@@ -249,7 +249,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
         class UsoPretendido {
             final STypeComposite<SIComposite> root;
 
-            UsoPretendido(PacoteBuilder pb) {
+            UsoPretendido(PackageBuilder pb) {
                 //TODO falta criar modal para cadastrar novo uso pretendido
                 root = rootType.addCampoComposto("usosPretendidosComponente");
 
@@ -270,7 +270,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final STypeString nome;
             final Fabricante fabricante;
 
-            NomeComercial(PacoteBuilder pb) {
+            NomeComercial(PackageBuilder pb) {
                 root = rootType.addCampoListaOfComposto("nomesComerciais", "nomeComercial");
                 root.withView(MPanelListaView::new).as(AtrBasic::new).label("Nome comercial");
                 type = root.getTipoElementos();
@@ -287,7 +287,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeCNPJ cnpj;
                 final STypeString razaoSocial, cidade, pais;
 
-                Fabricante(PacoteBuilder pb) {
+                Fabricante(PackageBuilder pb) {
                     root = NomeComercial.this.type.addCampoListaOfComposto("fabricantes", "fabricante");
                     root.withView(MListMasterDetailView::new).as(AtrBasic::new).label("Fabricante(s)");
 
@@ -326,7 +326,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                     materiaisDisponiveis = new String[]{"Papel", "Alumínio", "Ferro", "Madeira"
                     };
 
-            Embalagem(PacoteBuilder pb) {
+            Embalagem(PackageBuilder pb) {
                 root = rootType.addCampoListaOfComposto("embalagens", "embalagem");
                 root.withView(MTableListaView::new).as(AtrBasic::new).label("Embalagem");
                 type = root.getTipoElementos();
@@ -390,7 +390,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final STypeAttachment arquivo;
             final STypeString tipo;
 
-            Anexo(PacoteBuilder pb) {
+            Anexo(PackageBuilder pb) {
                 root = rootType.addCampoListaOfComposto("anexos", "anexo");
                 root.as(AtrBasic::new).label("Anexos");
                 type = root.getTipoElementos();
@@ -433,7 +433,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final Solubilidade solubilidade;
             final PotenciaDeHidrogenio ph;
 
-            private TesteCaracteristicasFisicoQuimicas(PacoteBuilder pb) {
+            private TesteCaracteristicasFisicoQuimicas(PackageBuilder pb) {
                 root = rootType.addCampoListaOfComposto("testesCaracteristicasFisicoQuimicas", "caracteristicasFisicoQuimicas");
                 root.as(AtrBasic::new).label("Testes Características fisíco-químicas");
                 type = root.getTipoElementos();
@@ -539,7 +539,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeComposite<SIComposite> root;
                 final STypeDecimal pontoFusao, faixaFusaoDe, faixaFusaoA;
 
-                Faixa(PacoteBuilder pb, String prefix, String nome) {
+                Faixa(PackageBuilder pb, String prefix, String nome) {
                     root = type.addCampoComposto("faixa" + prefix);
                     root.as(AtrBootstrap::new).colPreference(6).as(AtrBasic::new).label(nome);
 
@@ -563,7 +563,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeDecimal valor;
                 final STypeString unidade;
 
-                PressaoDeValor(PacoteBuilder pb) {
+                PressaoDeValor(PackageBuilder pb) {
                     root = type.addCampoComposto("pressaoVapor");
                     root.as(AtrBasic::new).label("Pressão do vapor")
                             .as(AtrBootstrap::new).colPreference(6);
@@ -594,7 +594,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeComposite<SIComposite> root;
                 final STypeDecimal agua, outrosSolventes;
 
-                Solubilidade(PacoteBuilder pb) {
+                Solubilidade(PackageBuilder pb) {
                     root = type.addCampoComposto("solubilidade");
                     root.as(AtrBasic::new).label("Solubilidade")
                             .as(AtrBootstrap::new).colPreference(6);
@@ -617,7 +617,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeComposite<SIComposite> type;
                 final STypeDecimal valorPh, solucao, temperatura;
 
-                PotenciaDeHidrogenio(PacoteBuilder pb) {
+                PotenciaDeHidrogenio(PackageBuilder pb) {
                     root = TesteCaracteristicasFisicoQuimicas.this.type.addCampoListaOfComposto("phs", "ph");
                     root.withView(MPanelListaView::new).as(AtrBasic::new).label("Lista de pH");
                     type = root.getTipoElementos();
@@ -649,7 +649,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 final STypeString cornea, tempoReversibilidadeCornea, conjuntiva, tempoReversibilidadeConjuntiva,
                         iris, tempoReversibilidadeIris;
 
-                Alteracao(PacoteBuilder pb) {
+                Alteracao(PackageBuilder pb) {
                     root = type.addCampoComposto("alteracoes");
                     root.as(AtrBasic::new).label("Alterações");
 
@@ -679,7 +679,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 }
             }
 
-            private TesteIrritacaoOcular(PacoteBuilder pb) {
+            private TesteIrritacaoOcular(PackageBuilder pb) {
                 //TODO criar regra para pelo menos um campo preenchido
                 root = rootType.addCampoListaOfComposto("testesIrritacaoOcular", "irritacaoOcular");
                 root.as(AtrBasic::new).label("Testes Irritação / Corrosão ocular");

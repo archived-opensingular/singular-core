@@ -12,7 +12,7 @@ public class SIString extends SIComparable<String> {
     
     @Override
     public String toString() {
-        return String.format("MIString('%s')", getValor());
+        return String.format("MIString('%s')", getValue());
     }
 
 }

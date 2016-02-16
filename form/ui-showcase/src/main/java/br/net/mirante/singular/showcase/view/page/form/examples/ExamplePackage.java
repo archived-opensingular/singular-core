@@ -5,7 +5,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -51,11 +51,11 @@ public class ExamplePackage extends SPackage {
     }
 
     @Override
-    public void carregarDefinicoes(PacoteBuilder pb) {
+    public void carregarDefinicoes(PackageBuilder pb) {
         buildOrderType(pb);
     }
 
-    private void buildOrderType(PacoteBuilder pb) {
+    private void buildOrderType(PackageBuilder pb) {
         this.order = pb.createTipoComposto("Order");
         this.order.as(AtrBasic::new).label("Pedido");
 

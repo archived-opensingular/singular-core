@@ -15,11 +15,11 @@ public class TestMPacoteBasic{
 
     @Test public void testCargaSimples() {
         SDictionary dicionario = SDictionary.create();
-        dicionario.carregarPacote(SPackageBasic.class);
+        dicionario.loadPackage(SPackageBasic.class);
 
 //        dicionario.debug();
 
-        STypeInteger mtInt = dicionario.getTipo(STypeInteger.class);
+        STypeInteger mtInt = dicionario.getType(STypeInteger.class);
         Assert.assertEquals(Integer.valueOf(1), mtInt.converter("1"));
         Assert.assertEquals(Integer.valueOf(-1), mtInt.converter("-1"));
         Assert.assertEquals(Integer.valueOf(10), mtInt.converter("010"));
@@ -27,11 +27,11 @@ public class TestMPacoteBasic{
 
     @Test public void tipoDate(){
         SDictionary dicionario = SDictionary.create();
-        dicionario.carregarPacote(SPackageBasic.class);
+        dicionario.loadPackage(SPackageBasic.class);
 
-        STypeData mData = dicionario.getTipo(STypeData.class);
+        STypeData mData = dicionario.getType(STypeData.class);
         SIData miData = mData.novaInstancia();
-        miData.setValor("");
-        assertThat(miData.getValor()).isNull();
+        miData.setValue("");
+        assertThat(miData.getValue()).isNull();
     }
 }

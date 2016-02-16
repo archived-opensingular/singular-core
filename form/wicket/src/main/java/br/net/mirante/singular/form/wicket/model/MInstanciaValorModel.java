@@ -30,7 +30,7 @@ public class MInstanciaValorModel<T>
     @Override
     @SuppressWarnings("unchecked")
     public T getObject() {
-        return (T) getTarget().getValor();
+        return (T) getTarget().getValue();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class MInstanciaValorModel<T>
             ((SList) target).clear();
             ((List) object).forEach(((SList) target)::addValor);
         } else {
-            target.setValor(object);
+            target.setValue(object);
         }
     }
 

@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
@@ -18,7 +18,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
 
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
 

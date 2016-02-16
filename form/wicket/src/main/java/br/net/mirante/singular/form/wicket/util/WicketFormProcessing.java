@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,7 +60,7 @@ public class WicketFormProcessing {
     public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
         return processAndPrepareForm(container, Optional.empty(), baseInstance, validate);
     }
-    
+
     private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
         if (baseInstanceModel == null)
             return false;
@@ -84,6 +86,27 @@ public class WicketFormProcessing {
         return true;
     }
 
+    /**
+     * Forma uma chava apartir dos indexes de lista
+     *
+     * @param path da instancia
+     * @return chaves concatenadas
+     */
+    protected static String getIndexsKey(String path) {
+
+        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
+        final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
+
+        final Matcher matcher = indexFinder.matcher(path);
+        final StringBuilder key = new StringBuilder();
+
+        while (matcher.find()) {
+            key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
+        }
+
+        return key.toString();
+    }
+
     public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
         if (fieldInstance == null || fieldInstance.getObject() == null)
             return;
@@ -97,31 +120,43 @@ public class WicketFormProcessing {
             return;
         }
 
+        refreshComponents(formComponent, target, fieldInstance);
+
+    }
+
+    private static void refreshComponents(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance){
+
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
         fieldInstance.getObject().getDocument().updateAttributes(eventCollector);
+
+        final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
 
         refresh(target, formComponent);
         target.ifPresent(t -> {
 
             final Set<Integer> updatedInstanceIds = eventCollector.getEvents().stream()
-                .map(SInstanceEvent::getSource)
-                .map(SInstance::getId)
-                .collect(toSet());
+                    .map(SInstanceEvent::getSource)
+                    .map(SInstance::getId)
+                    .collect(toSet());
 
             final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
                 SType<?> insTipo = ins.getMTipo();
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
-                boolean dependsOnField = fieldInstance.getObject().getMTipo().getDependentTypes().contains(insTipo);
-                return wasUpdated || (hasOptions && dependsOnField);
+                boolean dependsOnType = fieldInstance.getObject().getMTipo().getDependentTypes().contains(insTipo);
+                boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
+                return wasUpdated || (hasOptions && dependsOnType && isInTheSameIndexOfList);
             };
 
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
                 IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     if (predicate.test(c, model.getMInstancia())) {
-                        (model).getMInstancia().clearInstance();
+                        model.getMInstancia().clearInstance();
+                        if (c instanceof FormComponent) {
+                            refreshComponents((FormComponent) c, target, IMInstanciaAwareModel.getInstanceModel(model));
+                        }
                         refresh(Optional.of(t), c);
                     }
                 });
@@ -145,14 +180,14 @@ public class WicketFormProcessing {
                 visit.dontGoDeeper();
             } else {
                 WicketFormUtils.resolveInstance(component.getDefaultModel())
-                    .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
-                    .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
+                        .map(componentInstance -> instanceErrors.remove(componentInstance.getId()))
+                        .ifPresent(errors -> associateErrorsTo(component, baseInstance, false, errors));
             }
         });
 
         // associate remaining errors to container
         instanceErrors.values().stream()
-            .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
+                .forEach(it -> associateErrorsTo(container, baseInstance, true, it));
     }
 
     private static void associateErrorsTo(Component component, IModel<? extends SInstance> baseInstance,
@@ -167,9 +202,9 @@ public class WicketFormProcessing {
             Integer instanceId = error.getInstance().getId();
 
             final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                .filter(it -> Objects.equals(it.getId(), instanceId))
-                .findFirst()
-                .orElse(null);
+                    .filter(it -> Objects.equals(it.getId(), instanceId))
+                    .findFirst()
+                    .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 

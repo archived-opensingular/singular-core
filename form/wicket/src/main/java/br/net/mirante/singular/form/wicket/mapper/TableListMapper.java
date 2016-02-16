@@ -180,7 +180,7 @@ public class TableListMapper extends AbstractListaMapper {
                 final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getMTipo();
                 for (SType<?> tCampo : tComposto.getFields()) {
                     final SInstanceCampoModel<SInstance> mCampo;
-                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
+                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getSimpleName());
                     wicketBuilder.build(ctx.createChild(row.newCol(), true, mCampo), viewMode);
                 }
             } else {

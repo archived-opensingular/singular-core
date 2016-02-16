@@ -28,7 +28,7 @@ public class SPackageTesteContatos extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         contato = pb.createTipoComposto("Contato");
 
         identificacao = contato.addCampoComposto("identificacao");

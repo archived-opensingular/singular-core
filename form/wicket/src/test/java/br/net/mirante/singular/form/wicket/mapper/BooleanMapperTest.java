@@ -1,33 +1,30 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class BooleanMapperTest {
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
+
+public class BooleanMapperTest extends AbstractWicketFormTest {
+
     //TODO: Fabs: Genralizar esses testes
-    protected SDictionary dicionario;
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -35,8 +32,7 @@ public class BooleanMapperTest {
     private STypeBoolean field1;
 
     protected void setupPage() {
-        dicionario = SDictionary.create();
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
 
         field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
@@ -46,7 +42,7 @@ public class BooleanMapperTest {
 
         page = new TestPage();
         page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
 
         page.enableAnnotation();
     }
@@ -84,7 +80,7 @@ public class BooleanMapperTest {
 
     @Test public void rendersACheckBoxCheckedWhenValueIsTrue(){
         setupPage();
-        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        page.getCurrentInstance().getDescendant(field1).setValue(true);
         buildPage();
 
         List<CheckBox> inputs = (List)findTag(form.getForm(), CheckBox.class);
@@ -101,7 +97,7 @@ public class BooleanMapperTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isFalse();
     }
 
     @Test public void submitsTrueThroutghTheCheckbox(){
@@ -115,7 +111,7 @@ public class BooleanMapperTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isTrue();
     }
 
     @Test public void rendersARadioChoiceIfAsked(){
@@ -128,7 +124,7 @@ public class BooleanMapperTest {
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
                 .containsOnly("true", "false");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-                .containsOnly("Sim", "Não");
+.containsOnly("Sim", "Não");
     }
 
     @Test public void rendersNoChoiceIfNoneIsSelected(){
@@ -144,7 +140,7 @@ public class BooleanMapperTest {
     @Test public void rendersFalseChoiceIfFalseIsSelected(){
         setupPage();
         field1.withRadioView();
-        page.getCurrentInstance().getDescendant(field1).setValor(true);
+        page.getCurrentInstance().getDescendant(field1).setValue(true);
         buildPage();
 
         List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
@@ -163,7 +159,7 @@ public class BooleanMapperTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isTrue();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isTrue();
     }
 
     @Test public void submitsTheValueThroughTheRadioNo(){
@@ -177,7 +173,7 @@ public class BooleanMapperTest {
 
         form.submit("save-btn");
 
-        assertThat(page.getCurrentInstance().getDescendant(field1).getValor()).isFalse();
+        assertThat(page.getCurrentInstance().getDescendant(field1).getValue()).isFalse();
     }
 
     @Test public void rendersARadioChoiceWithPersonalizedLabel(){

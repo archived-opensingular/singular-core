@@ -1,5 +1,9 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -13,38 +17,28 @@ import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.fest.assertions.core.Condition;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings("rawtypes")
-public class AttachmentFieldTest {
+public class AttachmentFieldTest extends AbstractWicketFormTest {
 
-    private static SDictionary dicionario;
     private static TestPackage pacote;
     private WicketTester driver;
     private TestPage page;
     private FormTester form;
 
-    @BeforeClass
-    public static void createDicionario() {
-        dicionario = SDictionary.create();
-        pacote = dicionario.carregarPacote(TestPackage.class);
-    }
-
     @Before
     public void setupPage() {
+        pacote = dicionario.loadPackage(TestPackage.class);
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setDicionario(dicionario);
@@ -76,11 +70,11 @@ public class AttachmentFieldTest {
         //Recupera o model do fileupload
         IMInstanciaAwareModel model = (IMInstanciaAwareModel) uploadField.getModel();
 
-        //Verifica se a visibilidade está ok
+        // Verifica se a visibilidade está ok
         driver.assertVisible(choose.getPageRelativePath());
         driver.assertInvisible(removeFileButton.getPageRelativePath());
 
-        //Verifica se não existe arqiovps
+        // Verifica se não existe arqiovps
         assertThat(model.getMInstancia().isEmptyOfData()).isTrue();
 
         File file = createTempFileAndSetOnField(uploadField);
@@ -111,7 +105,7 @@ public class AttachmentFieldTest {
         //Executa o evento que configura o model
         executeAjaxFormSubmitBehavior(uploadField);
 
-        //Verifica se é instancia de SInstance
+        // Verifica se é instancia de SInstance
         assertThat(model.getMInstancia()).is(new Condition<SInstance>() {
             @Override
             public boolean matches(SInstance value) {
@@ -170,7 +164,7 @@ public class AttachmentFieldTest {
         form.setValue(findId(form.getForm(), "file_id_fileField").get(), "1020304050");
         form.submit("save-btn");
 
-        String attachmentName = pacote.attachmentFileField.getNomeSimples();
+        String attachmentName = pacote.attachmentFileField.getSimpleName();
         List<SISimple> values = (List) page.getCurrentInstance().getValor(attachmentName);
         assertThat(findValueInList(values, "name")).isEqualTo("abacate.png");
         assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
@@ -189,7 +183,7 @@ public class AttachmentFieldTest {
     private Object findValueInList(List<SISimple> list, String propName) {
         for (SISimple m : list) {
             if (m.getNome().equals(propName))
-                return m.getValor();
+                return m.getValue();
         }
         return null;
     }

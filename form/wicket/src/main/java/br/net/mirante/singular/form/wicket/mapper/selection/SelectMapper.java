@@ -48,7 +48,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
-        if (mi != null && mi.getValor() != null) {
+        if (mi != null && mi.getValue() != null) {
             return mi.getSelectLabel();
         }
         return StringUtils.EMPTY;

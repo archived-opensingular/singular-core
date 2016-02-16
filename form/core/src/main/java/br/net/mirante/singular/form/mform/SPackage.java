@@ -12,7 +12,7 @@ public class SPackage extends MEscopoBase {
 
     private final String nome;
 
-    private SDictionary dicionario;
+    private SDictionary dictionary;
 
     public SPackage() {
         this.nome = getClass().getName();
@@ -29,11 +29,11 @@ public class SPackage extends MEscopoBase {
     }
 
     @Override
-    public String getNome() {
+    public String getName() {
         return nome;
     }
 
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
     }
 
     @Override
@@ -41,7 +41,7 @@ public class SPackage extends MEscopoBase {
         return null;
     }
 
-    public <T extends SType<?>> T createTipo(String nomeSimplesNovoTipo, Class<T> tipoBase) {
+    public <T extends SType<?>> T createType(String nomeSimplesNovoTipo, Class<T> tipoBase) {
         // TODO implementar
         throw new NotImplementedException("TODO implementar");
     }
@@ -49,7 +49,7 @@ public class SPackage extends MEscopoBase {
     @Override
     protected void debug(Appendable appendable, int nivel) {
         try {
-            pad(appendable, nivel).append(getNome()).append("\n");
+            pad(appendable, nivel).append(getName()).append("\n");
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -72,12 +72,12 @@ public class SPackage extends MEscopoBase {
     }
 
     @Override
-    public SDictionary getDicionario() {
-        return dicionario;
+    public SDictionary getDictionary() {
+        return dictionary;
     }
 
-    final void setDicionario(SDictionary dicionario) {
-        this.dicionario = dicionario;
+    final void setDictionary(SDictionary dictionary) {
+        this.dictionary = dictionary;
     }
 
 }

@@ -32,8 +32,8 @@ public class MultipleSelectMapperTest extends MapperBaseTest {
     @Override
     public void mockFormValues(SIComposite formInstance) {
         SList gadgets = (SList) formInstance.getCampo("gadgets");
-        gadgets.addNovo().setValor("iPod");
-        gadgets.addNovo().setValor("iPhone");
+        gadgets.addNovo().setValue("iPod");
+        gadgets.addNovo().setValue("iPhone");
     }
 
     @Test

@@ -16,7 +16,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoSimples() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeLista<STypeString, SIString> nomes = pb.createTipoListaOf("nomes", STypeString.class);
 
@@ -38,7 +38,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
 
-        SList<SIInteger> listaInt = (SList<SIInteger>) dicionario.getTipo(STypeInteger.class).novaLista();
+        SList<SIInteger> listaInt = (SList<SIInteger>) dicionario.getType(STypeInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] { 10 });
         listaInt.addValor("20");
@@ -52,12 +52,12 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     private static void assertLista(SList<?> lista, Object[] valoresEsperados) {
-        assertEqualsList(lista.getValor(), valoresEsperados);
+        assertEqualsList(lista.getValue(), valoresEsperados);
     }
 
     public void testTipoListaCriacaoOfTipoComposto() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
         tipoPedidos.getTipoElementos().addCampoString("descricao");
@@ -103,7 +103,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeLista<STypeFormula, SIFormula> tipoFormulas = pb.createTipoListaOf("formulas", STypeFormula.class);
 
@@ -119,14 +119,14 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     public void testeOnCargaTipoDireto() {
         SDictionary dicionario = SDictionary.create();
-        TestTipoListaComCargaInterna tipo = dicionario.getTipo(TestTipoListaComCargaInterna.class);
+        TestTipoListaComCargaInterna tipo = dicionario.getType(TestTipoListaComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertEquals((Boolean) true, tipo.isObrigatorio());
     }
 
     public void testeOnCargaTipoChamadaSubTipo() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         TestTipoListaComCargaInterna tipo = pb.createTipo("arquivo", TestTipoListaComCargaInterna.class);
 
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
@@ -140,14 +140,14 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PacoteBuilder pb) {
+        protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createTipo(TestTipoListaComCargaInterna.class);
         }
 
         @MInfoTipo(nome = "TestTipoListaComCargaInterna", pacote = TestPacoteListaA.class)
         public static final class TestTipoListaComCargaInterna extends STypeLista<STypeString, SIString> {
             @Override
-            protected void onLoadType(TipoBuilder tb) {
+            protected void onLoadType(TypeBuilder tb) {
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
             }

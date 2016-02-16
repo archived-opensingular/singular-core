@@ -35,8 +35,8 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
             SInstance instancia = model.getObject();
-            if (instancia.getValor() instanceof YearMonth) {
-                YearMonth ym = (YearMonth) instancia.getValor();
+            if (instancia.getValue() instanceof YearMonth) {
+                YearMonth ym = (YearMonth) instancia.getValue();
                 return String.format("%02d/%04d", ym.getMonthValue(), ym.getYear());
             }
         }

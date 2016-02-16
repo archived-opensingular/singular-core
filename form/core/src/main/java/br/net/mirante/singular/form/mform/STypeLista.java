@@ -58,11 +58,11 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
     @Override
     SList<I> newInstance(SDocument owner) {
         if (tipoElementos == null) {
-            throw new RuntimeException("Não é possível instanciar o tipo '" + getNome()
+            throw new RuntimeException("Não é possível instanciar o tipo '" + getName()
                     + "' pois o tipo da lista (o tipo de seus elementos) não foram definidos");
         }
         SList<I> lista = new SList<>();
-        lista.setTipo(this);
+        lista.setType(this);
         lista.setDocument(owner);
         return lista;
     }
@@ -81,7 +81,7 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
      */
     @SuppressWarnings("unchecked")
     void setTipoElementosNovoTipoComposto(String nomeSimplesNovoTipoComposto) {
-        STypeComposite<?> tipo = extenderTipo(nomeSimplesNovoTipoComposto, STypeComposite.class);
+        STypeComposite<?> tipo = extenderType(nomeSimplesNovoTipoComposto, STypeComposite.class);
         setTipoElementos((E) tipo);
     }
 

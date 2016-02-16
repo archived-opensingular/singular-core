@@ -36,7 +36,7 @@ public interface MOptionsProvider extends Serializable {
     }
 
     public default void checkForDanglingValues(SInstance selectedValueInstance, SList<? extends SInstance> defaultOptions) {
-        Object value = selectedValueInstance.getValor();
+        Object value = selectedValueInstance.getValue();
         if (value == null) return;
         if (value instanceof Collection && ((Collection<?>) value).isEmpty()) return;
         addNotPresentElement(selectedValueInstance, defaultOptions);
@@ -82,12 +82,12 @@ public interface MOptionsProvider extends Serializable {
             SIComposite newComposto = (SIComposite) newValue;
             SIComposite currentComposto = (SIComposite) currentValue;
             currentComposto.getCampos().forEach(c ->
-                            newComposto.getCampo(c.getNome()).setValor(c.getValor())
+                            newComposto.getCampo(c.getNome()).setValue(c.getValue())
             );
         } else if (currentValue instanceof SISimple) {
             SISimple newComposto = (SISimple) newValue;
             SISimple currentComposto = (SISimple) currentValue;
-            newComposto.setValor(currentComposto.getValor());
+            newComposto.setValue(currentComposto.getValue());
         }
     }
 

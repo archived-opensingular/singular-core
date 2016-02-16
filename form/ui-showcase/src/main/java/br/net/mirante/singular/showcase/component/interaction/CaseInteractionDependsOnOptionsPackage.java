@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
@@ -46,7 +46,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
     public STypeString word;
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
         testForm = pb.createTipoComposto("testForm");
@@ -61,7 +61,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
             .label("Word")
             .dependsOn(letter);
         word.withSelectionFromProvider(ins -> {
-            String prefix = ins.findNearest(letter).get().getValor();
+            String prefix = ins.findNearest(letter).get().getValue();
             return (prefix == null)
                 ? ins.getMTipo().novaLista()
                 : ins.getMTipo().novaLista()

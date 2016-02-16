@@ -7,12 +7,12 @@ public interface MAtributoEnabled {
     }
 
     public default <V extends Object> void setValorAtributo(AtrRef<?, ?, V> atr, String subPath, V valor) {
-        getDicionario().carregarPacote(atr.getClassePacote());
+        getDictionary().loadPackage(atr.getClassePacote());
         setValorAtributo(atr.getNomeCompleto(), subPath, valor);
     }
 
     public default <V extends Object> void setValorAtributo(MAtributo defAtributo, Object valor) {
-        setValorAtributo(defAtributo.getNome(), null, valor);
+        setValorAtributo(defAtributo.getName(), null, valor);
     }
 
     public default void setValorAtributo(String nomeAtributo, Object valor) {
@@ -24,12 +24,12 @@ public interface MAtributoEnabled {
     public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino);
 
     public default <T extends Object> T getValorAtributo(AtrRef<?, ?, ?> atr, Class<T> classeDestino) {
-        getDicionario().carregarPacote(atr.getClassePacote());
+        getDictionary().loadPackage(atr.getClassePacote());
         return getValorAtributo(atr.getNomeCompleto(), classeDestino);
     }
 
     public default <V extends Object> V getValorAtributo(AtrRef<?, ?, V> atr) {
-        getDicionario().carregarPacote(atr.getClassePacote());
+        getDictionary().loadPackage(atr.getClassePacote());
         return getValorAtributo(atr.getNomeCompleto(), atr.getClasseValor());
     }
 
@@ -37,6 +37,6 @@ public interface MAtributoEnabled {
         return getValorAtributo(nomeCompleto, null);
     }
 
-    public SDictionary getDicionario();
+    public SDictionary getDictionary();
 
 }

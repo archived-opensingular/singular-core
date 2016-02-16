@@ -75,7 +75,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
-            return new SInstanceCampoModel<>(model, tCampo.getNomeSimples());
+            return new SInstanceCampoModel<>(model, tCampo.getSimpleName());
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
@@ -112,8 +112,8 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
             */
             final int colPref;
 
-            if (hintColWidths.containsKey(tCampo.getNome())) {
-                colPref = hintColWidths.get(tCampo.getNome());
+            if (hintColWidths.containsKey(tCampo.getName())) {
+                colPref = hintColWidths.get(tCampo.getName());
             } else {
                 colPref = iCampo.as(AtrBootstrap::new).getColPreference(BSCol.MAX_COLS);
             }

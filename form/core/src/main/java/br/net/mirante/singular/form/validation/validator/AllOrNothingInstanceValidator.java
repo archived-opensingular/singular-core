@@ -15,7 +15,7 @@ public enum AllOrNothingInstanceValidator implements IInstanceValidator<SICompos
     public void validate(IInstanceValidatable<SIComposite> v) {
         Set<Boolean> nullValues = v.getInstance().streamDescendants(false)
             .filter(it -> it.getMTipo() instanceof STypeSimple<?, ?>)
-            .map(it -> it.getValor() == null)
+            .map(it -> it.getValue() == null)
             .collect(toSet());
         
         // os campos devem ser todos nulos ou todos preenchidos

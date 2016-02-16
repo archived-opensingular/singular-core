@@ -191,7 +191,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             }
         } else {
-            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDicionario().getTipo(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
+            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDictionary().getType(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
         for (ColumnType columnType : columnTypes) {
@@ -343,7 +343,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 if (instanceBackupXml != null) {
                     MElement xml = MParser.parse(instanceBackupXml);
                     SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
-                    currentInstance.getObject().setValor(i);
+                    currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

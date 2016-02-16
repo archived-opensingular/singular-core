@@ -12,7 +12,7 @@ import static org.fest.assertions.groups.Properties.extractProperty;
 
 public class STypeAnnotationTest {
     protected static SDictionary dicionario;
-    protected PacoteBuilder localPackage;
+    protected PackageBuilder localPackage;
     private STypeComposite<? extends SIComposite> baseCompositeField, annotated1, annotated2,
             notAnnotated, annotated4;
     private STypeString field11;
@@ -21,7 +21,7 @@ public class STypeAnnotationTest {
     public void createDicionario() {
         dicionario = SDictionary.create();
 
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
         baseCompositeField.addCampoString("notAnnotated");
 

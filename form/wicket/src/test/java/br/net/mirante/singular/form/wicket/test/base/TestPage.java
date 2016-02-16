@@ -117,7 +117,7 @@ public class TestPage extends WebPage {
     }
 
     private SType<?> type(String type) {
-        return dicionario.getTipo(type);
+        return dicionario.getType(type);
     }
 
     public Form<?> getSubmittedForm() {

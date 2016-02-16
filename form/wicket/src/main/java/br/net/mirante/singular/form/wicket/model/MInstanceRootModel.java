@@ -4,16 +4,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.form.mform.io.InstanceSerializableRef;
-import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
 
 /**
  * <p>
@@ -21,20 +17,8 @@ import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
  * a raiz do Document) que já faz a correta serialização de MInstancia e
  * posterior resolução do respectivo Dicionário para viabilziar deserialziação.
  * </p>
- * <p>
- * Há duas formas de resolver a questão do dicionário usando esse model:
- * <ul>
- * <li>Setar o MDicionarioResolver default (singleton) em
- * {@link MDicionarioResolver#setDefault(MDicionarioResolver)}</li>
- * <li>Ao criar o model, passar um {@link MDicionarioResolverSerializable}
- * serializável para também ser serializado junto com os dados. Na volta
- * (deserialziação) usa esse resolver que foi serializado junto com os dados:
- * {@link FormSerializationUtil#toInstance(FormSerialized, MDicionarioResolverSerializable)}
- * </li>
- * </ul >
- * </p>
  *
- * @see {@link br.net.mirante.singular.form.mform.io.FormSerializationUtil}
+ * @see {@link br.net.mirante.singular.form.mform.io.InstanceSerializableRef}
  * @author Daniel C. Bordin
  */
 public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements IMInstanceEventCollector<I> {
@@ -47,16 +31,8 @@ public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceMo
         instanceRef = new InstanceSerializableRef<I>();
     }
 
-    public MInstanceRootModel(MDicionarioResolverSerializable dicionarioResolverSerializable) {
-        instanceRef = new InstanceSerializableRef<I>(null, dicionarioResolverSerializable);
-    }
-
     public MInstanceRootModel(I object) {
         instanceRef = new InstanceSerializableRef<I>(object);
-    }
-
-    public MInstanceRootModel(I object, MDicionarioResolverSerializable dicionarioResolverSerializable) {
-        instanceRef = new InstanceSerializableRef<I>(object, dicionarioResolverSerializable);
     }
 
     @Override

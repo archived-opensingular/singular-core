@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.core;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 
 /**
  * Created by danilo.mesquita on 04/01/2016.
@@ -18,7 +18,7 @@ public class STypeLatitudeLongitude extends STypeComposite<SILatitudeLongitude> 
     }
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
         addCampoString(FIELD_LATITUDE);
         addCampoString(FIELD_LONGITUDE);

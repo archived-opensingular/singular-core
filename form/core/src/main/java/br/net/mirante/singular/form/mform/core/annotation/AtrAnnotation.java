@@ -113,7 +113,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     private SIAnnotation newAnnotation() {  return type().novaInstancia();}
 
     private STypeAnnotation type() {
-        return getAlvo().getDicionario().getTipo(STypeAnnotation.class);
+        return getAlvo().getDictionary().getType(STypeAnnotation.class);
     }
 
     private void setAnnotation(SIAnnotation annotation) {
@@ -205,11 +205,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private STypeAnnotationList annotationListType() {
-        return dictionary().getTipo(STypeAnnotationList.class);
+        return dictionary().getType(STypeAnnotationList.class);
     }
 
     private SDictionary dictionary() {
-        return target().getMTipo().getDicionario();
+        return target().getMTipo().getDictionary();
     }
 
     private SInstance target() {

@@ -20,7 +20,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
 
     private SInstance attributeOwner;
 
-    private SType<?> SType;
+    private SType<?> type;
 
     private Map<String, SInstance> atributos;
 
@@ -34,12 +34,12 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      */
     private MOptionsConfig optionsConfig;
 
-    /** Mapa de bits de flags. Veja {@link FlagsInstancia} */
+    /** Mapa de bits de flags. Veja {@link InstanceFlags} */
     private int flags;
 
     @Override
     public SType<?> getMTipo() {
-        return SType;
+        return type;
     }
 
     @Override
@@ -67,11 +67,11 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
             if (getMTipo() instanceof MSelectionableType) {
                 MSelectionableType type = (MSelectionableType) getMTipo();
                 String label =  type.getSelectLabel();
-                Object valor = this.getValor();
+                Object valor = this.getValue();
                 if (valor instanceof Iterable) {
                     for (SInstance mi : (Iterable<SInstance>)valor) {
                         if (label.equals(mi.getNome())) {
-                            Object valorCampo = mi.getValor();
+                            Object valorCampo = mi.getValue();
                             return valorCampo == null ? "" : valorCampo.toString();
                         }
                     }
@@ -119,8 +119,8 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     }
 
     @Override
-    public SDictionary getDicionario() {
-        return getMTipo().getDicionario();
+    public SDictionary getDictionary() {
+        return getMTipo().getDictionary();
     }
 
     /**
@@ -131,11 +131,11 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * retornam true.
      */
     public boolean isAttribute() {
-        return getFlag(FlagsInstancia.IsAtributo);
+        return getFlag(InstanceFlags.IsAtributo);
     }
 
     final void setAsAttribute(SInstance attributeOwner) {
-        setFlag(FlagsInstancia.IsAtributo, true);
+        setFlag(InstanceFlags.IsAtributo, true);
         this.attributeOwner = attributeOwner;
     }
 
@@ -149,7 +149,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         return attributeOwner;
     }
 
-    final void setPai(SInstance pai) {
+    final void setParent(SInstance pai) {
         /* exceção adicionada por vinicius nunes, para adicionar uma instancia a outra hierarquia deveria haver
         * uma chamada para 'destacar' a minstancia da sua hierarquia atual*/
         if (this.parent != null && pai != null){
@@ -167,15 +167,15 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    final void setTipo(SType<?> tipo) {
-        this.SType = tipo;
+    final void setType(SType<?> tipo) {
+        this.type = tipo;
     }
 
-    public void setValor(Object valor) {
+    public void setValue(Object valor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
-    public abstract Object getValor();
+    public abstract Object getValue();
 
     public abstract void clearInstance();
 
@@ -208,7 +208,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     @SuppressWarnings("unchecked")
     public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
         if (classeDestino == null) {
-            return (T) getValor();
+            return (T) getValue();
         }
         return getMTipo().converter(getValorWithDefault(), classeDestino);
     }
@@ -216,12 +216,12 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     @SuppressWarnings("unchecked")
     public final <T extends Object> T getValor(Class<T> classeDestino) {
         if (classeDestino == null) {
-            return (T) getValor();
+            return (T) getValue();
         }
-        return getMTipo().converter(getValor(), classeDestino);
+        return getMTipo().converter(getValue(), classeDestino);
     }
 
-    final <T extends Object> T getValor(LeitorPath leitor, Class<T> classeDestino) {
+    final <T extends Object> T getValor(PathReader leitor, Class<T> classeDestino) {
         SInstance instancia = this;
         while (true) {
             if (leitor.isEmpty()) {
@@ -237,19 +237,19 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    <T extends Object> SInstance getCampoLocalSemCriar(LeitorPath leitor) {
+    <T extends Object> SInstance getCampoLocalSemCriar(PathReader leitor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
-    <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
+    <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
-    void setValor(LeitorPath leitorPath, Object valor) {
+    void setValor(PathReader leitorPath, Object valor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
-    final SInstance getCampo(LeitorPath leitor) {
+    final SInstance getCampo(PathReader leitor) {
         SInstance instancia = this;
         while (true) {
             instancia = instancia.getCampoLocal(leitor);
@@ -262,7 +262,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    SInstance getCampoLocal(LeitorPath leitor) {
+    SInstance getCampoLocal(PathReader leitor) {
         throw new RuntimeException(erroMsgMetodoNaoSuportado());
     }
 
@@ -285,9 +285,9 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
             atributos.put(nomeCompletoAtributo, instanciaAtr);
         }
         if (subPath != null) {
-            instanciaAtr.setValor(new LeitorPath(subPath), valor);
+            instanciaAtr.setValor(new PathReader(subPath), valor);
         } else {
-            instanciaAtr.setValor(valor);
+            instanciaAtr.setValue(valor);
         }
     }
 
@@ -377,7 +377,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     protected void resetValue() {}
 
     public String getNome() {
-        return getMTipo().getNomeSimples();
+        return getMTipo().getSimpleName();
     }
 
     /**
@@ -438,7 +438,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * mensagem fornecida.
      */
     protected final String errorMsg(String msgToBeAppended) {
-        return "'" + getPathFull() + "' do tipo " + getMTipo().getNome() + "(" + getMTipo().getClass().getSimpleName() + ") : "
+        return "'" + getPathFull() + "' do tipo " + getMTipo().getName() + "(" + getMTipo().getClass().getSimpleName() + ") : "
             + msgToBeAppended;
     }
 
@@ -446,13 +446,13 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * Signals this Component that it is removed from the Component hierarchy.
      */
     final void internalOnRemove() {
-        setFlag(FlagsInstancia.RemovendoInstancia, true);
+        setFlag(InstanceFlags.RemovendoInstancia, true);
         onRemove();
-        if (getFlag(FlagsInstancia.RemovendoInstancia)) {
+        if (getFlag(InstanceFlags.RemovendoInstancia)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
                 + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
-        this.setPai(null);
+        this.setParent(null);
         removeChildren();
     }
 
@@ -477,10 +477,10 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * </p>
      */
     protected void onRemove() {
-        setFlag(FlagsInstancia.RemovendoInstancia, false);
+        setFlag(InstanceFlags.RemovendoInstancia, false);
     }
 
-    final void setFlag(FlagsInstancia flag, boolean value) {
+    final void setFlag(InstanceFlags flag, boolean value) {
         if (value) {
             flags |= flag.bit();
         } else {
@@ -488,7 +488,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    final boolean getFlag(FlagsInstancia flag) {
+    final boolean getFlag(InstanceFlags flag) {
         return (flags & flag.bit()) != 0;
     }
 

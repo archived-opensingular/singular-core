@@ -56,8 +56,8 @@ public class BooleanMapper implements IWicketComponentMapper {
         final Boolean checked;
 
         final SInstance mi = model.getObject();
-        if ((mi != null) && (mi.getValor() != null)) {
-            checked = (Boolean) mi.getValor();
+        if ((mi != null) && (mi.getValue() != null)) {
+            checked = (Boolean) mi.getValue();
         } else {
             checked = false;
         }

@@ -138,7 +138,7 @@ public class TestViewMapperRegistry {
     private void assertResult(String expected, Class<? extends SType> type, Class<? extends MView> view) {
         try {
             SDictionary dicionario = SDictionary.create();
-            assertResult(expected, dicionario.novaInstancia(type), view.newInstance());
+            assertResult(expected, dicionario.newInstance(type), view.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw Throwables.propagate(e);
         }

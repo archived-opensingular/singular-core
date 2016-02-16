@@ -16,7 +16,7 @@ final class MapaResolvedorDefinicaoAtributo {
 
     public void set(String pathAtributo, Object valor) {
         SInstance instancia = getCriando(pathAtributo);
-        instancia.setValor(valor);
+        instancia.setValue(valor);
     }
 
     public SInstance getCriando(String pathAtributo) {
@@ -25,7 +25,7 @@ final class MapaResolvedorDefinicaoAtributo {
             return entrada;
         }
 
-        for (SType<?> atual = dono; atual != null; atual = atual.getSuperTipo()) {
+        for (SType<?> atual = dono; atual != null; atual = atual.getSuperType()) {
             MAtributo atributo = atual.getAtributoDefinidoLocal(pathAtributo);
             if (atributo != null) {
                 SInstance novo = atributo.novaInstanciaPara(dono);
@@ -36,7 +36,7 @@ final class MapaResolvedorDefinicaoAtributo {
                 return novo;
             }
         }
-        throw new RuntimeException("Não existe o atributo '" + pathAtributo + "' definido em '" + dono.getNome()
+        throw new RuntimeException("Não existe o atributo '" + pathAtributo + "' definido em '" + dono.getName()
                 + "' ou nos tipos extendidos");
     }
 

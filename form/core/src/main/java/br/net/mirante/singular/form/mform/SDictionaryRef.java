@@ -5,7 +5,8 @@ import java.io.Serializable;
 /**
  * Representa uma referência serializável a um dicionário. Deve ser derivado de
  * modo que ao ser deserializado seja capaz de recuperar ou recontruir o
- * dicionário.
+ * dicionário. OS métodos mais comuns seria recriar o dicionário do zero ou
+ * recuperar de algum cache estátivo em memória.
  *
  * @author Daniel C. Bordin
  */
@@ -22,18 +23,25 @@ public abstract class SDictionaryRef implements Serializable {
 
     /**
      * Obtem o dicionário mantido em memória ou força a recuperação mediante
-     * {@link #reloadDictionary()} se a referência tiver sido deserializada
+     * {@link #retrieveDictionary()} se a referência tiver sido deserializada
      * recentemente.
      *
      * @return Nunca null
      */
     public final SDictionary getDictionary() {
         if (dictionary == null) {
-            dictionary = reloadDictionary();
+            dictionary = retrieveDictionary();
+            if (dictionary == null) {
+                throw new SingularFormException(getClass().getName() + ".findDictionary() retornou null");
+            }
         }
         return dictionary;
     }
 
+    /**
+     * Altera o dicionário referenciado, se o mesmo ainda estiver null. Caso
+     * contrário dispara exception.
+     */
     public final void setDicionary(SDictionary dictionary) {
         if (this.dictionary != null) {
             throw new SingularFormException("Dicionario ja definido. Não pode ser trocado");
@@ -43,21 +51,8 @@ public abstract class SDictionaryRef implements Serializable {
 
     /**
      * Método chamado para recupera o dicionário depois de uma deserialização.
-     * Não pode retorna null.
+     * Não pode retornar null.
      */
-    public abstract SDictionary reloadDictionary();
+    public abstract SDictionary retrieveDictionary();
 
-    /**
-     * Devolve uma referencia que não é capaz de se auto recuperar apos a
-     * deserialização, mas garante que todas as referencias deserializadas ao
-     * mesmo tempo vão apontar para o mesmo dicionário.
-     */
-    final static SDictionaryRef referenceUnifier(SDictionary sDictionary) {
-        return new SDictionaryRef(sDictionary) {
-            @Override
-            public SDictionary reloadDictionary() {
-                return null;
-            }
-        };
-    }
 }

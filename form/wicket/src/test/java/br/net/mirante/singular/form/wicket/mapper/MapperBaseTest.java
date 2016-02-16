@@ -1,23 +1,23 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 
-import static org.junit.Assert.assertNotNull;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
-public abstract class MapperBaseTest {
+public abstract class MapperBaseTest extends AbstractWicketFormTest {
 
     protected WicketTester wicketTester;
-    protected SDictionary dicionario;
 
     protected STypeComposite<? extends SIComposite> form;
     protected TestPage testPage;
@@ -25,8 +25,7 @@ public abstract class MapperBaseTest {
     @Before
     public void setUp() {
         wicketTester = new WicketTester(new TestApp());
-        dicionario = SDictionary.create();
-        PacoteBuilder pacoteBuilder = dicionario.criarNovoPacote("MonetarioMapperPackage");
+        PackageBuilder pacoteBuilder = dicionario.createNewPackage("MonetarioMapperPackage");
         form = pacoteBuilder.createTipoComposto("form");
         appendPackageFields(form);
     }
@@ -35,7 +34,7 @@ public abstract class MapperBaseTest {
         testPage = new TestPage(new PageParameters().add("viewMode", viewMode));
         testPage.setDicionario(dicionario);
 
-        SIComposite formInstance = (SIComposite) dicionario.getTipo(form.getNome()).novaInstancia();
+        SIComposite formInstance = (SIComposite) dicionario.getType(form.getName()).novaInstancia();
         assertNotNull(formInstance);
         mockFormValues(formInstance);
         testPage.setCurrentInstance(formInstance);

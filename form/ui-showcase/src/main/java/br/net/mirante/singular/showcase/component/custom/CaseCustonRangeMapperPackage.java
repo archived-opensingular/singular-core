@@ -3,14 +3,14 @@ package br.net.mirante.singular.showcase.component.custom;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 
 public class CaseCustonRangeMapperPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
         final STypeComposite<?> testForm = pb.createTipoComposto("testForm");

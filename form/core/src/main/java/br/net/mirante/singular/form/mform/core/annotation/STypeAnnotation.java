@@ -22,7 +22,7 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
     }
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         addCampoString(FIELD_TEXT);

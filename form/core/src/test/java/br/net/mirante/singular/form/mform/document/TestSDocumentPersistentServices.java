@@ -24,13 +24,13 @@ public class TestSDocumentPersistentServices {
 
     @Before public void setup(){
         SDictionary dicionario = SDictionary.create();
-        createTypes(dicionario.criarNovoPacote("teste"));
+        createTypes(dicionario.createNewPackage("teste"));
         createInstances();
         setupServices();
         
     }
 
-    private void createTypes(PacoteBuilder pb) {
+    private void createTypes(PackageBuilder pb) {
         groupingType = pb.createTipoComposto("Grouping");
         groupingType.addCampo("anexo", STypeAttachment.class);
         groupingType.addCampoInteger("justIgnoreThis");

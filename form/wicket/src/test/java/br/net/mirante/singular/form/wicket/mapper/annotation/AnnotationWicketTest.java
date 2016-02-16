@@ -1,39 +1,39 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
-import br.net.mirante.singular.form.wicket.test.base.TestApp;
-import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import com.google.common.collect.Lists;
-import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.TextArea;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
-public class AnnotationWicketTest {
-    protected static SDictionary dicionario;
-    protected PacoteBuilder localPackage;
+import java.util.List;
+
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import com.google.common.collect.Lists;
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.test.base.TestApp;
+import br.net.mirante.singular.form.wicket.test.base.TestPage;
+
+public class AnnotationWicketTest extends AbstractWicketFormTest {
+
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
     private STypeComposite<? extends SIComposite> baseCompositeField, annotated1, annotated2,
                                                 notAnnotated, annotated4;
-
-    @Before
-    public void createDicionario() {
-        dicionario = SDictionary.create();
-    }
 
     protected void setupPage() {
         driver = new WicketTester(new TestApp());
@@ -41,7 +41,7 @@ public class AnnotationWicketTest {
         page.setAsVisualizationView();
         page.setDicionario(dicionario);
         page.enableAnnotation();
-        localPackage = dicionario.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
         baseCompositeField.addCampoString("notAnnotated");
 
@@ -60,7 +60,7 @@ public class AnnotationWicketTest {
         annotated4.addCampoString("field341");
         annotated4.as(AtrAnnotation::new).setAnnotated();
 
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setNewInstanceOfType(baseCompositeField.getName());
     }
 
     protected void buildPage() {
@@ -170,11 +170,11 @@ public class AnnotationWicketTest {
                 .containsOnly( "Something to comment or not. Who knows.",
                         "Something very very very important, but I forgot what.",
                         "I'm tired, just go on your way.");
-        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getNomeSimples());
+        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
         assertThat(extractProperty("targetId").from(all)).containsOnly(
-                current.getCampo(annotated1.getNomeSimples()).getId(),
-                current.getCampo(annotated2.getNomeSimples()).getId(),
-                iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId());
+                current.getCampo(annotated1.getSimpleName()).getId(),
+                current.getCampo(annotated2.getSimpleName()).getId(),
+                iNotAnnotated.getCampo(annotated4.getSimpleName()).getId());
 
     }
 
@@ -182,15 +182,15 @@ public class AnnotationWicketTest {
         setupPage();
 
         SIComposite current = page.getCurrentInstance();
-        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getNomeSimples());
+        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
 
-        System.out.println(iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId());
+        System.out.println(iNotAnnotated.getCampo(annotated4.getSimpleName()).getId());
         SIAnnotation annotation2 = newAnnotation(
-                            current.getCampo(annotated1.getNomeSimples()).getId(),
+                            current.getCampo(annotated1.getSimpleName()).getId(),
                             "It is funny how hard it is to come up with these texts",
                             false),
                     annotation4 = newAnnotation(
-                            iNotAnnotated.getCampo(annotated4.getNomeSimples()).getId(),
+                            iNotAnnotated.getCampo(annotated4.getSimpleName()).getId(),
                             "But I never give up. I keep on trying.",
                             true);
 
@@ -214,7 +214,7 @@ public class AnnotationWicketTest {
     }
 
     private SIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
-        STypeAnnotation type = dicionario.getTipo(STypeAnnotation.class);
+        STypeAnnotation type = dicionario.getType(STypeAnnotation.class);
         SIAnnotation annotation = type.novaInstancia();
         annotation.setTargetId(targetId);
         annotation.setText(text);
@@ -223,7 +223,7 @@ public class AnnotationWicketTest {
     }
 
     private AtrAnnotation currentAnnotation(SType field) {
-        return page.getCurrentInstance().getCampo(field.getNomeSimples()).as(AtrAnnotation::new);
+        return page.getCurrentInstance().getCampo(field.getSimpleName()).as(AtrAnnotation::new);
     }
 
     protected String formField(FormTester form, String leafName) {

@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -16,7 +16,7 @@ import org.apache.commons.lang3.BooleanUtils;
 public class STypePrescricao extends STypeComposite<SIComposite> {
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         this.addCampo("medico", STypeMedico.class)

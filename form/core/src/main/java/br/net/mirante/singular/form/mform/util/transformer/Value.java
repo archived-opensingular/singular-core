@@ -81,7 +81,7 @@ public class Value {
      */
     public static <T> T of(SISimple<?> instanciaSimples) {
         if (instanciaSimples != null) {
-            return (T) instanciaSimples.getValor();
+            return (T) instanciaSimples.getValue();
         }
         return null;
     }
@@ -130,7 +130,7 @@ public class Value {
             if (instancia instanceof SIComposite) {
                 fromMap((Map<String, Object>) value, (SIComposite) instancia);
             } else if (instancia instanceof SISimple) {
-                ((SISimple) instancia).setValor(value);
+                ((SISimple) instancia).setValue(value);
             } else if (instancia instanceof SList) {
                 fromList((List<Object>) value, (SList) instancia);
             } else {
@@ -167,7 +167,7 @@ public class Value {
                 toMap(map, (SInstance) value);
                 return map;
             } else if (value instanceof SISimple) {
-                return ((SISimple) value).getValor();
+                return ((SISimple) value).getValue();
             } else if (value instanceof SList) {
                 List<Object> list = new ArrayList<>();
                 toList(list, (SInstance) value);
