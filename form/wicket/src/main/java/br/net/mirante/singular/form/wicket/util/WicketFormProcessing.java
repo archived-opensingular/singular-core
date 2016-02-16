@@ -141,10 +141,10 @@ public class WicketFormProcessing {
                     .collect(toSet());
 
             final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
-                SType<?> insTipo = ins.getMTipo();
+                SType<?> insTipo = ins.getType();
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
-                boolean dependsOnType = fieldInstance.getObject().getMTipo().getDependentTypes().contains(insTipo);
+                boolean dependsOnType = fieldInstance.getObject().getType().getDependentTypes().contains(insTipo);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
                 return wasUpdated || (hasOptions && dependsOnType && isInTheSameIndexOfList);
             };

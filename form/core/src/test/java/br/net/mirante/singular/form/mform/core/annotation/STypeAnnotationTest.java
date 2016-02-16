@@ -1,12 +1,16 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.STypeString;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.groups.Properties.extractProperty;
 
@@ -66,7 +70,7 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
         SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
-        assertThat(persistent.getMTipo()).isInstanceOf(STypeAnnotationList.class);
+        assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
         assertThat(persistent.getTipoElementos()).isInstanceOf(STypeAnnotation.class);
         assertThat(extractProperty("text").from(persistent.getValores()))
                 .containsOnly("Abacate","Avocado","ukwatapheya");

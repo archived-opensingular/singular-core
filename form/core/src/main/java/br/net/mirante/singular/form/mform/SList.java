@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,6 +9,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
@@ -30,14 +30,14 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     @Override
-    public STypeLista<?, ?> getMTipo() {
-        return (STypeLista<?, ?>) super.getMTipo();
+    public STypeLista<?, ?> getType() {
+        return (STypeLista<?, ?>) super.getType();
     }
 
     @SuppressWarnings("unchecked")
     public SType<E> getTipoElementos() {
         if (tipoElementos == null) {
-            tipoElementos = (SType<E>) getMTipo().getTipoElementos();
+            tipoElementos = (SType<E>) getType().getTipoElementos();
         }
         return tipoElementos;
     }
@@ -156,7 +156,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         }
         SInstance instancia = isEmpty() ? null : valores.get(leitor.getIndice());
         if (instancia == null) {
-            MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+            MFormUtil.resolverTipoCampo(getType(), leitor);
         }
         return instancia;
     }
@@ -279,7 +279,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         SList<?> other = (SList<?>) obj;
         if (size() != other.size()) {
             return false;
-        } else if (!getMTipo().equals(other.getMTipo())) {
+        } else if (!getType().equals(other.getType())) {
             return false;
         } else if (!Objects.equals(getTipoElementos(), other.getTipoElementos()))
             return false;

@@ -38,7 +38,7 @@ public class MOptionsConfig {
         if (instancia instanceof SList) {
             return ((SList) instancia).getTipoElementos().getProviderOpcoes();
         }
-        return instancia.getMTipo().getProviderOpcoes();
+        return instancia.getType().getProviderOpcoes();
     }
 
     private BiMap<String, SInstance> getOptions() {

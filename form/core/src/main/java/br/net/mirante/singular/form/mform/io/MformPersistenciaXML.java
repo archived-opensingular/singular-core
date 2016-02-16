@@ -65,11 +65,11 @@ public class MformPersistenciaXML {
         lerAtributos(instancia, xml);
         if (instancia instanceof SISimple) {
             SISimple<?> instanciaS = (SISimple<?>) instancia;
-            STypeSimple<?, ?> tipos = instanciaS.getMTipo();
+            STypeSimple<?, ?> tipos = instanciaS.getType();
             instancia.setValue(tipos.fromStringPersistencia(xml.getTextContent()));
         } else if (instancia instanceof SIComposite) {
             SIComposite instc = (SIComposite) instancia;
-            for (SType<?> campo : instc.getMTipo().getFields()) {
+            for (SType<?> campo : instc.getType().getFields()) {
                 MElement xmlFilho = xml.getElement(campo.getSimpleName());
                 if (xmlFilho != null) {
                     fromXML(instc.getCampo(campo.getSimpleName()), xmlFilho);
@@ -77,7 +77,7 @@ public class MformPersistenciaXML {
             }
         } else if (instancia instanceof SList) {
             SList<?> lista = (SList<?>) instancia;
-            String nomeFilhos = lista.getMTipo().getTipoElementos().getSimpleName();
+            String nomeFilhos = lista.getType().getTipoElementos().getSimpleName();
             for (MElement xmlFilho : xml.getElements(nomeFilhos)) {
                 SInstance filho = lista.addNovo();
                 fromXML(filho, xmlFilho);
@@ -201,11 +201,11 @@ public class MformPersistenciaXML {
         }
 
         public MElement createMElement(SInstance instancia) {
-            return complement(instancia, xmlDocument.createMElement(instancia.getMTipo().getSimpleName()));
+            return complement(instancia, xmlDocument.createMElement(instancia.getType().getSimpleName()));
         }
 
         public MElement createMElementComValor(SInstance instancia, String valorPersistencia) {
-            return complement(instancia, xmlDocument.createMElementComValor(instancia.getMTipo().getSimpleName(), valorPersistencia));
+            return complement(instancia, xmlDocument.createMElementComValor(instancia.getType().getSimpleName(), valorPersistencia));
         }
 
         private MElement complement(SInstance instancia, MElement element) {

@@ -22,7 +22,7 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     public TIPO_NATIVO getValorWithDefault() {
         TIPO_NATIVO v = getValue();
         if (v == null) {
-            return getMTipo().converter(getMTipo().getValorAtributoOrDefaultValueIfNull());
+            return getType().converter(getType().getValorAtributoOrDefaultValueIfNull());
         }
         return v;
     }
@@ -54,7 +54,7 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     @Override
     public final void setValue(Object valor) {
         TIPO_NATIVO oldValue = this.getValue();
-        TIPO_NATIVO newValue = getMTipo().converter(valor);
+        TIPO_NATIVO newValue = getType().converter(valor);
         this.valor = onSetValor(oldValue, newValue);
         if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
@@ -71,27 +71,27 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public STypeSimple<?, TIPO_NATIVO> getMTipo() {
-        return (STypeSimple<?, TIPO_NATIVO>) super.getMTipo();
+    public STypeSimple<?, TIPO_NATIVO> getType() {
+        return (STypeSimple<?, TIPO_NATIVO>) super.getType();
     }
 
     @Override
     public String getDisplayString() {
-        return getMTipo().toStringDisplay(getValue());
+        return getType().toStringDisplay(getValue());
     }
 
     public String toStringPersistencia() {
         if (getValue() == null) {
             return null;
         }
-        return getMTipo().toStringPersistencia(getValue());
+        return getType().toStringPersistencia(getValue());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getMTipo() == null) ? 0 : getMTipo().hashCode());
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
         return result;
     }
@@ -105,8 +105,8 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
         if (getClass() != obj.getClass())
             return false;
         SISimple<?> other = (SISimple<?>) obj;
-        if (!getMTipo().equals(other.getMTipo())
-                && !getMTipo().getName().equals(other.getMTipo().getName())) {
+        if (!getType().equals(other.getType())
+                && !getType().getName().equals(other.getType().getName())) {
             return false;
         }
         if (getValue() == null) {

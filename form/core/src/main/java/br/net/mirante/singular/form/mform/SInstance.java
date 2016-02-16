@@ -38,7 +38,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     private int flags;
 
     @Override
-    public SType<?> getMTipo() {
+    public SType<?> getType() {
         return type;
     }
 
@@ -64,8 +64,8 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     @Override
     public String getSelectLabel() {
         if (selectLabel == null) {
-            if (getMTipo() instanceof MSelectionableType) {
-                MSelectionableType type = (MSelectionableType) getMTipo();
+            if (getType() instanceof MSelectionableType) {
+                MSelectionableType type = (MSelectionableType) getType();
                 String label =  type.getSelectLabel();
                 Object valor = this.getValue();
                 if (valor instanceof Iterable) {
@@ -120,7 +120,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
 
     @Override
     public SDictionary getDictionary() {
-        return getMTipo().getDictionary();
+        return getType().getDictionary();
     }
 
     /**
@@ -210,7 +210,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         if (classeDestino == null) {
             return (T) getValue();
         }
-        return getMTipo().converter(getValorWithDefault(), classeDestino);
+        return getType().converter(getValorWithDefault(), classeDestino);
     }
 
     @SuppressWarnings("unchecked")
@@ -218,7 +218,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         if (classeDestino == null) {
             return (T) getValue();
         }
-        return getMTipo().converter(getValue(), classeDestino);
+        return getType().converter(getValue(), classeDestino);
     }
 
     final <T extends Object> T getValor(PathReader leitor, Class<T> classeDestino) {
@@ -229,7 +229,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
             }
             SInstance instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
             if (instanciaFilha == null) {
-                MFormUtil.resolverTipoCampo(instancia.getMTipo(), leitor);
+                MFormUtil.resolverTipoCampo(instancia.getType(), leitor);
                 return null;
             }
             instancia = instanciaFilha;
@@ -279,7 +279,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
             instanciaAtr = atributos.get(nomeCompletoAtributo);
         }
         if (instanciaAtr == null) {
-            MAtributo tipoAtributo = getMTipo().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
+            MAtributo tipoAtributo = getType().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
             instanciaAtr = tipoAtributo.newInstance(getDocument());
             instanciaAtr.setAsAttribute(this);
             atributos.put(nomeCompletoAtributo, instanciaAtr);
@@ -299,7 +299,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
                 return inst.getValor(classeDestino);
             }
         }
-        return getMTipo().getValorAtributo(nomeCompleto, classeDestino);
+        return getType().getValorAtributo(nomeCompleto, classeDestino);
     }
 
     public Map<String, SInstance> getAtributos() {
@@ -377,7 +377,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     protected void resetValue() {}
 
     public String getNome() {
-        return getMTipo().getSimpleName();
+        return getType().getSimpleName();
     }
 
     /**
@@ -438,7 +438,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * mensagem fornecida.
      */
     protected final String errorMsg(String msgToBeAppended) {
-        return "'" + getPathFull() + "' do tipo " + getMTipo().getName() + "(" + getMTipo().getClass().getSimpleName() + ") : "
+        return "'" + getPathFull() + "' do tipo " + getType().getName() + "(" + getType().getClass().getSimpleName() + ") : "
             + msgToBeAppended;
     }
 

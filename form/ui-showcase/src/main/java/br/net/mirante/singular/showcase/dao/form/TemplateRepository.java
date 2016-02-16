@@ -68,7 +68,7 @@ public class TemplateRepository extends SDictionaryLoader<String> {
 
     @Override
     public Optional<SDictionary> loadDictionaryImpl(String typeName) {
-        return Optional.ofNullable(entries.get(typeName)).map(e -> e.getDictionary());
+        return Optional.ofNullable(entries.get(typeName)).map(TemplateEntry::getDictionary);
     }
 
     public Collection<TemplateEntry> getEntries() {

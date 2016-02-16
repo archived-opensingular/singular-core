@@ -1,15 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
+import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class TestMoptionsConfigTipoLista {
 
@@ -123,7 +123,7 @@ public class TestMoptionsConfigTipoLista {
     @Test
     public void testMTipoOpcoes(){
         for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
-            Assert.assertEquals(_alerta, instancia.getMTipo());
+            Assert.assertEquals(_alerta, instancia.getType());
         }
     }
 

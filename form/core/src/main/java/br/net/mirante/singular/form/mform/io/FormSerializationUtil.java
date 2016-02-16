@@ -85,7 +85,7 @@ public class FormSerializationUtil {
         }
 
         SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
-        FormSerialized fs = new FormSerialized(root.getMTipo().getName(), xml, annotations, dicionaryRef);
+        FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef);
         serializeServices(document, fs);
         return fs;
     }

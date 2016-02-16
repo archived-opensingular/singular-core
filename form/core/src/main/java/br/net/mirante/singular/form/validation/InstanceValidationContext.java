@@ -54,7 +54,7 @@ public class InstanceValidationContext {
             return;
         }
 
-        final SType<I> tipo = (SType<I>) instance.getMTipo();
+        final SType<I> tipo = (SType<I>) instance.getType();
         for (IInstanceValidator<I> validator : tipo.getValidators()) {
             validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
             validator.validate((IInstanceValidatable) validatable);

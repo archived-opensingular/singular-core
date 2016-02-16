@@ -17,7 +17,7 @@ public class TabMapper extends DefaultCompostoMapper {
     public void buildView(WicketBuildContext ctx) {
 
         final SIComposite instance = (SIComposite) ctx.getModel().getObject();
-        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) instance.getMTipo();
+        final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) instance.getType();
         MTabView tabView = (MTabView) tComposto.getView();
 
         BSPanelGrid panel = new BSPanelGrid("panel") {

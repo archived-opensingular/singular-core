@@ -1,10 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
-
 import java.util.List;
 import java.util.Map;
 
@@ -24,8 +19,12 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class DependsOnTest extends AbstractWicketFormTest {
 
@@ -84,8 +83,8 @@ public class DependsOnTest extends AbstractWicketFormTest {
         element.withSelectionFromProvider(ins -> {
             String prefix = ins.findNearest(category).get().getValue();
             return (prefix == null)
-                    ? ins.getMTipo().novaLista()
-                    : ins.getMTipo().novaLista()
+                    ? ins.getType().novaLista()
+                    : ins.getType().novaLista()
                     .addValores(OPTIONS.getOrDefault(prefix, Lists.newArrayList()));
         });
     }

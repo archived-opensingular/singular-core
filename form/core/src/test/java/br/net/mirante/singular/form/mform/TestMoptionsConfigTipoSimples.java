@@ -1,10 +1,11 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMoptionsConfigTipoSimples {
 
@@ -63,7 +64,7 @@ public class TestMoptionsConfigTipoSimples {
     @Test
     public void testMTipoOpcoes() {
         for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
-            Assert.assertEquals(_descricao, instancia.getMTipo());
+            Assert.assertEquals(_descricao, instancia.getType());
         }
     }
 
