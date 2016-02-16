@@ -7,6 +7,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
+import java.io.Serializable;
+
 public class MetronicStatusColumn<T, S> extends BSPropertyColumn<T, S> {
 
     public static enum BagdeType {
@@ -73,7 +75,7 @@ public class MetronicStatusColumn<T, S> extends BSPropertyColumn<T, S> {
     }
 
     @FunctionalInterface
-    public static interface BadgeTypeMapper<T> {
+    public static interface BadgeTypeMapper<T> extends Serializable {
 
         MetronicStatusColumn.BagdeType getType(IModel<Object> cellModel, IModel<T> rowModel);
 
