@@ -27,8 +27,6 @@ public abstract class SingularMiranteADSpringSecurityConfig extends AbstractSing
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin()
                 .and()
-                .rememberMe().key("mirante").tokenValiditySeconds(604800).rememberMeParameter("remember")
-                .and()
                 .authorizeRequests()
                 .antMatchers(getDefaultPublicUrls()).permitAll()
                 .antMatchers(getContext().getUrlPath() + "/login*").permitAll()
