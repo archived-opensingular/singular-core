@@ -3,7 +3,7 @@ package br.net.mirante.singular.form;
 import java.util.List;
 
 import br.net.mirante.singular.bamclient.portlet.FilterConfig;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SType;
@@ -26,7 +26,7 @@ public class FilterPackageFactory {
     }
 
     public SType<?> createFilterPackage() {
-        final PacoteBuilder builder = SDictionary.create().criarNovoPacote("FilterPackage");
+        final PackageBuilder builder = SDictionary.create().createNewPackage("FilterPackage");
         final STypeComposite<? extends SIComposite> filtro = builder.createTipoComposto("filter");
         appendFilters(filtro);
         return filtro;
