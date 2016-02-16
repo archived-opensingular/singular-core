@@ -78,18 +78,35 @@ public class SDocument {
         return ++lastId;
     }
 
-    public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+    /**
+     * Registra a persistência temporária de anexos. A persistência temporária
+     * guarda os anexos em quanto o documento não é saldo.
+     */
+    public void setAttachmentPersistenceTemporaryHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, ref);
     }
 
-    public IAttachmentPersistenceHandler getAttachmentPersistenceHandler(boolean temporary) {
-        String serviceName = temporary ? FILE_TEMPORARY_SERVICE : FILE_PERSISTENCE_SERVICE;
-        IAttachmentPersistenceHandler ref = lookupService(serviceName, IAttachmentPersistenceHandler.class);
-        if (ref == null && temporary) {
+    /**
+     * Registra a persistência permanente de anexo. É usada para consultar
+     * anexos salvos anteriormente e no momento de salvar o anexos que estavam
+     * na persitência temporária.
+     */
+    public void setAttachmentPersistencePermanentHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+        bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, ref);
+
+    }
+
+    public IAttachmentPersistenceHandler getAttachmentPersistenceTemporaryHandler() {
+        IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(serviceName, IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
         }
         return ref;
+    }
+
+    public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
+        return lookupService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
     }
 
     /**
@@ -187,7 +204,7 @@ public class SDocument {
             this.instanceListeners = new MInstanceListeners();
         return this.instanceListeners;
     }
-    
+
     public void updateAttributes(IMInstanceListener listener) {
         updateAttributes(getRoot(), listener);
     }
@@ -214,9 +231,8 @@ public class SDocument {
     //  intercept the persist call and do this job before the model
     //  would be persisted.
     public void persistFiles() {
-        IAttachmentPersistenceHandler persistent = lookupService(
-            SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler(true);
+        IAttachmentPersistenceHandler persistent = getAttachmentPersistencePermanentHandler();
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceTemporaryHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
