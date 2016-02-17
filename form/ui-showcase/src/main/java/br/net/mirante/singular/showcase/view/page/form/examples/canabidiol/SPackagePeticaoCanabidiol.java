@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
@@ -40,7 +41,8 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             final STypePessoa paciente = canabis.addCampo("paciente", STypePessoa.class);
             paciente
                     .as(AtrBasic::new)
-                    .label("Dados do Paciente");
+                    .label("Dados do Paciente")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             final STypeBoolean possuiResponsavelLegal = canabis.addCampoBoolean("possuiResponsavelLegal");
             possuiResponsavelLegal
@@ -90,21 +92,24 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addCampo("importacao", STypeImportacao.class);
             modalidadeImportacao
                     .as(AtrBasic::new)
-                    .label("Importação");
+                    .label("Importação")
+                    .as(AtrAnnotation::new).setAnnotated();
 
 
             STypeProdutos produtos = canabis
                     .addCampo("produtos", STypeProdutos.class);
             produtos
                     .as(AtrBasic::new)
-                    .label("Produtos");
+                    .label("Produtos")
+                    .as(AtrAnnotation::new).setAnnotated();
 
 
             STypePrescricao prescricao = canabis
                     .addCampo("prescricao", STypePrescricao.class);
             prescricao
                     .as(AtrBasic::new)
-                    .label("Prescrição Médica");
+                    .label("Prescrição Médica")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             STypeBoolean aceitoTudo = canabis.addCampoBoolean("aceitoTudo");
 
@@ -125,7 +130,8 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .obrigatorio()
                     .as(AtrBasic::new)
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
-                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
+                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);

@@ -1,14 +1,17 @@
 package br.net.mirante.singular.form.mform.io;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -16,16 +19,54 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.util.xml.MDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.util.xml.MParser;
 
+/**
+ * Métodos utilitários para converter instancias e anotaçãoes para e de XML.
+ *
+ * @author Daniel C. Bordin
+ */
 public class MformPersistenciaXML {
 
     public static final String ATRIBUTO_ID = "id";
     public static final String ATRIBUTO_LAST_ID = "lastId";
 
+    /**
+     * Cria uma instância para do tipo informado com o conteúdo persistido no
+     * XML informado.
+     */
+    public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString) {
+        return fromXML(tipo, parseXml(xmlString), null);
+    }
+
+    /**
+     * Cria uma instância para do tipo informado com o conteúdo persistido no
+     * XML informado.
+     */
+    public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString, SDocumentFactory documentFactory) {
+        return fromXML(tipo, parseXml(xmlString), documentFactory);
+    }
+
+    /**
+     * Cria uma instância para do tipo informado com o conteúdo persistido no
+     * XML informado.
+     */
     public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml) {
-        T novo = tipo.novaInstancia();
+        return fromXML(tipo, xml, null);
+    }
+
+    /**
+     * Cria uma instância para do tipo informado com o conteúdo persistido no
+     * XML informado.
+     */
+    public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml, SDocumentFactory documentFactory) {
+        T novo = documentFactory == null ? tipo.novaInstancia() : documentFactory.createInstance(tipo);
         Integer lastId = 0;
         if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
 
@@ -141,6 +182,67 @@ public class MformPersistenciaXML {
         }
 
         return xmlResultado;
+    }
+
+    private static MElement parseXml(String xmlString) {
+        try {
+            if (StringUtils.isBlank(xmlString)) {
+                return null;
+            }
+            return MParser.parse(xmlString);
+        } catch (Exception e) {
+            throw new SingularFormException("Erro fazendo parde do xml", e);
+        }
+    }
+
+    /**
+     * Carrega na instancia informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlString
+     *            Se nulo ou em branco, não faz carga
+     */
+    public static void annotationLoadFromXml(SInstance instance, String xmlString) {
+        annotationLoadFromXml(instance, parseXml(xmlString));
+    }
+
+    /**
+     * Carrega na instancia informada as anotação contidas no xml, fazendo
+     * parser do mesmo antes.
+     *
+     * @param xmlAnnotations
+     *            Se nulo, não faz carga
+     */
+    public static void annotationLoadFromXml(SInstance instance, MElement xmlAnnotations) {
+        if (xmlAnnotations == null) {
+            return;
+        }
+        SList<SIAnnotation> iAnnotations = annotationFromXml(instance.getDictionary(), xmlAnnotations);
+        instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
+    }
+
+    /**
+     * Recupera as anotações gravas em um XML para o contexto do dicionário
+     * informado.
+     */
+    private static SList<SIAnnotation> annotationFromXml(SDictionary dictionary, MElement xmlAnnotations) {
+        STypeAnnotationList tipoAnnotation = dictionary.getType(STypeAnnotationList.class);
+        return (SList<SIAnnotation>) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);
+    }
+
+    /** Gera um XML representando as anotações se existirem. */
+    public static Optional<String> annotationToXmlString(SInstance instance) {
+        return annotationToXml(instance).map(xml -> xml.toStringExato());
+    }
+
+    /** Gera um XML representando as anotações se existirem. */
+    public static Optional<MElement> annotationToXml(SInstance instance) {
+        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
+        List<SIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
+        if (!allAnnotations.isEmpty()) {
+            return Optional.of(MformPersistenciaXML.toXML(annotatedInstance.persistentAnnotations()));
+        }
+        return Optional.empty();
     }
 
     private static MElement toXML(ConfXMLGeneration conf, SInstance instancia) {

@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 @MInfoTipo(nome = "MTipoPaciente", pacote = SPackagePeticaoCanabidiol.class)
@@ -86,9 +87,11 @@ public class STypePessoa extends STypeComposite<SIComposite> {
 
         this.addCampo("endereco", STypeEndereco.class)
                 .as(AtrBasic::new)
-                .label("Endereço");
+                .label("Endereço")
+                .as(AtrAnnotation::new).setAnnotated();
 
-        this.addCampo("contato", STypeContato.class);
+        this.addCampo("contato", STypeContato.class)
+                .as(AtrAnnotation::new).setAnnotated();
     }
 
 }

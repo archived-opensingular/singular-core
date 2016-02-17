@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -36,7 +37,6 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 
@@ -55,7 +55,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     private ViewMode viewMode = ViewMode.EDITION;
 
     @Inject
-    private SpringServiceRegistry springServiceRegistry;
+    private SDocumentFactory documentFactory;
 
     public ItemCasePanel(String id, IModel<CaseBase> caseBase) {
         super(id);
@@ -109,7 +109,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
 
 
     private SingularFormPanel buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
+        singularFormPanel = new SingularFormPanel("singularFormPanel", documentFactory.getDocumentFactoryRef()) {
             @Override
             protected SType<?> getTipo() {
                 String typeName = caseBase.getObject().getCaseType().getName();

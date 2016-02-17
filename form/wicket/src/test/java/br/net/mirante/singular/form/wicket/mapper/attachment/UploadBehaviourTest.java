@@ -1,5 +1,13 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
@@ -22,11 +30,6 @@ import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
 
 public class UploadBehaviourTest extends WebBehaviourBaseTest {
     private static SDictionary dicionario;
@@ -127,36 +130,36 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
 
         assertThat(instance.isTemporary()).isTrue();
     }
-    
+
     @Test public void storesInTheTemporaryServiceHandler() throws Exception {
         SIAttachment instance = (SIAttachment) setupInstance();
         setupDriver(instance);
-        
+
         FileItem f1 = file("my.file.ext", new byte[] { 0 });
         when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(f1));
 
         b.onResourceRequested();
-        
-        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler(true);
-        
+
+        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceTemporaryHandler();
+
         assertThat(handler.getAttachment("5ba93c9db0cff93f52b521d7420e43f6eda2784f"))
             .isNotNull();
     }
-    
+
     @Test public void removesOlderTemporaryFilesIfNewOneIsUploaded() throws Exception {
         SIAttachment instance = (SIAttachment) setupInstance();
         setupDriver(instance);
-        
+
         FileItem f1 = file("my.file.ext", new byte[] { 0 });
         when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(f1));
         b.onResourceRequested();
-        
+
         FileItem f2 = file("my.file.ext", new byte[] { 1 });
         when(multipart.getFile("FILE-UPLOAD")).thenReturn(newArrayList(f2));
         b.onResourceRequested();
-        
-        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceHandler(true);
-        
+
+        IAttachmentPersistenceHandler handler = instance.getDocument().getAttachmentPersistenceTemporaryHandler();
+
         assertThat(handler.getAttachments()).hasSize(1);
         assertThat(handler.getAttachment("bf8b4530d8d246dd74ac53a13471bba17941dff7"))
             .isNotNull();

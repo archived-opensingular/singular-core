@@ -1,7 +1,5 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,27 +17,20 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
-import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.showcase.view.template.Content;
 
 public class FormContent extends Content implements SingularWicketContainer<CrudContent, Void> {
@@ -62,7 +53,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private ExampleDataDAO dao;
 
     @Inject
-    private SpringServiceRegistry serviceRegistry;
+    private SDocumentFactory documentFactory;
+
     private boolean enableAnnotation;
 
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode,
@@ -103,7 +95,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private SingularFormPanel buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel("singular-panel", serviceRegistry) {
+        singularFormPanel = new SingularFormPanel("singular-panel", documentFactory.getDocumentFactoryRef()) {
 
             @Override
             protected SType<?> getTipo() {
@@ -111,34 +103,17 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            protected MInstanceRootModel<SInstance> populateInstance(SType<?> tipo) {
-                try {
-                    loadOrbuildModel();
+            protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
+                loadOrbuildModel();
 
-                    final String xml = currentModel.getXml();
-                    if (xml == null || xml.isEmpty()) {
-                        return super.populateInstance(tipo);
-                    } else {
-                        MElement xmlElement = MParser.parse(xml);
-                        SInstance instance = MformPersistenciaXML.fromXML(tipo, xmlElement);
-
-                        final String annotations = currentModel.getAnnnotations();
-                        if(StringUtils.isNotBlank(annotations)){
-                            MElement xmlAnnotations = MParser.parse(annotations);
-                            STypeAnnotationList tipoAnnotation = tipo.getDictionary().getType(STypeAnnotationList.class);
-
-                            SList iAnnotations =
-                                    (SList) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);
-                            instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
-                        }
-
-                        return new MInstanceRootModel<>(instance);
-                    }
-
-                } catch (SAXException | IOException e) {
-                    logger.error(e.getMessage(), e);
+                String xml = currentModel.getXml();
+                if (StringUtils.isBlank(xml)) {
+                    return super.createInstance(tipo, documentFactory);
+                } else {
+                    SInstance instance = MformPersistenciaXML.fromXML(tipo, xml, documentFactory);
+                    MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());
+                    return instance;
                 }
-                return null;
             }
 
             @Override
@@ -218,16 +193,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     }
 
     private void addAnnotationsToModel(SInstance instancia) {
-        AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
-        List<SIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
-        if(!allAnnotations.isEmpty()){
-            Optional<String> annXml = annotationsToXml( annotatedInstance );
-            currentModel.setAnnotations(annXml.orElse(""));
-        }
-    }
-
-    private Optional<String> annotationsToXml(AtrAnnotation annotatedInstance) {
-        return MformPersistenciaXML.toStringXML(annotatedInstance.persistentAnnotations());
+        Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(instancia);
+        currentModel.setAnnotations(xmlAnnotation.orElse(null));
     }
 
     private Component buildSaveWithoutValidateButton() {

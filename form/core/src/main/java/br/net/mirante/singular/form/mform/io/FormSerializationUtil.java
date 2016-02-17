@@ -11,12 +11,9 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SDictionaryLoader;
 import br.net.mirante.singular.form.mform.SDictionaryRef;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -85,7 +82,8 @@ public class FormSerializationUtil {
         }
 
         SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
-        FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef);
+        FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef,
+                root.getDocument().getDocumentFactoryRef());
         serializeServices(document, fs);
         return fs;
     }
@@ -126,13 +124,12 @@ public class FormSerializationUtil {
         try {
             SType<?> rootType = loadType(fs, fs.getRootType());
             SInstance root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
+            if (fs.getsDocumentFactoryRef() != null) {
+                root.getDocument().setDocumentFactory(fs.getsDocumentFactoryRef().get());
+            }
 
             deserializeServices(fs.getServices(), root.getDocument());
-            if(fs.getAnnotations() != null){
-                SType<?> annotationsList = loadType(fs, SPackageCore.NOME + "." + STypeAnnotationList.NAME);
-                SList persisted = (SList<?>) MformPersistenciaXML.fromXML(annotationsList, fs.getAnnotations());
-                root.as(AtrAnnotation::new).loadAnnotations(persisted);
-            }
+            MformPersistenciaXML.annotationLoadFromXml(root, fs.getAnnotations());
             return defineRoot(fs, root);
         } catch (Exception e) {
             throw deserializingError(fs, e);

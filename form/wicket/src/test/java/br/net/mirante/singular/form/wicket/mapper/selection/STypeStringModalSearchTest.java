@@ -20,13 +20,10 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
-//    MTipoSelectItem selectType;
     protected STypeString selectType;
 
     @Override @SuppressWarnings({ "unchecked", "rawtypes" })
     SType createSelectionType(STypeComposite group) {
-//        selectType = (MTipoSelectItem) group.addCampo("originUF",MTipoSelectItem.class);
-//        selectType.configureKeyValueFields();
         selectType = group.addCampoString("favoriteFruit");
         selectType.withView(MSelecaoPorModalBuscaView::new);
         return selectType;

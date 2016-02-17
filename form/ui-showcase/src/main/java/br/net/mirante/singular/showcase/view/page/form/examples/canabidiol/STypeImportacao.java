@@ -10,6 +10,7 @@ import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeDataHora;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 @MInfoTipo(nome = "MTipoImportacao", pacote = SPackagePeticaoCanabidiol.class)
@@ -100,7 +101,8 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .label("Endereço do Intermediador")
                 // Isso é um bug não sei como descrever
                 .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
-                .dependsOn(modalidade);
+                .dependsOn(modalidade)
+                .as(AtrAnnotation::new).setAnnotated();
 
 
         STypeContato tipoContato = this.addCampo("contato", STypeContato.class);
@@ -109,7 +111,8 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .label("Contato do Intermediador")
                 // Isso é um bug não sei como descrever
                 .visivel(instancia -> aquisicaoIntermediada.equals(Value.of(instancia, modalidade)))
-                .dependsOn(modalidade);
+                .dependsOn(modalidade)
+                .as(AtrAnnotation::new).setAnnotated();
         tipoContato
                 .telefoneFixo
                 .as(AtrCore::new)

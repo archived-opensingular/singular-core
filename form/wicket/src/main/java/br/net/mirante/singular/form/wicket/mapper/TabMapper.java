@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import java.util.Collection;
 import java.util.List;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -9,6 +10,9 @@ import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
+import org.apache.wicket.Component;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 public class TabMapper extends DefaultCompostoMapper {
 
@@ -24,6 +28,13 @@ public class TabMapper extends DefaultCompostoMapper {
             @Override
             public void updateTab(List<String> subtree) {
                 renderTab(subtree, this, ctx);
+            }
+
+            public Collection<Component> toUpdadeOnTab(){
+                if(ctx.getRootContext().isAnnotationEnabled()){
+                    return newArrayList(ctx.updateOnRefresh());
+                }
+                return newArrayList();
             }
         };
 

@@ -46,7 +46,7 @@ public class TestSDocumentPersistentServices {
         
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
-        document.setAttachmentPersistenceHandler(ServiceRef.of(tempHandler));
+        document.setAttachmentPersistenceTemporaryHandler(ServiceRef.of(tempHandler));
         document.bindLocalService("filePersistence", 
             IAttachmentPersistenceHandler.class, ServiceRef.of(persistentHandler));
     }

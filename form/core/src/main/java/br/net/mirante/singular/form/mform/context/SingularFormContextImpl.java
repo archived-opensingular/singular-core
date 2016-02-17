@@ -2,12 +2,12 @@ package br.net.mirante.singular.form.mform.context;
 
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
-public abstract class SingularFormContextImpl<T extends UIBuilder<K>, K extends UIComponentMapper> implements SingularFormContext<T, K> {
+public abstract class SingularFormContextImpl<K extends UIComponentMapper> implements SingularFormContext<K> {
 
-    private InternalSingularFormConfig<T, K> config;
+    private InternalSingularFormConfig<K> config;
 
 
-    public SingularFormContextImpl(InternalSingularFormConfig<T, K> config) {
+    public SingularFormContextImpl(InternalSingularFormConfig<K> config) {
         this.config = config;
     }
 

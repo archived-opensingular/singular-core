@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MetaDataKey;
@@ -35,6 +37,9 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
 @SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
 
@@ -44,6 +49,7 @@ public class WicketBuildContext implements Serializable {
     public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
 
     private final WicketBuildContext parent;
+    private final List<WicketBuildContext> children = newArrayList();
     private final BSContainer<?> container;
     private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
     private final boolean hintsInherited;
@@ -54,7 +60,64 @@ public class WicketBuildContext implements Serializable {
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
     private boolean annotationEnabled = false;
+    private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
+    private List<Component> annotationsTargetBuffer = newArrayList();
+    private BSContainer annotationContainer;
+
     private MView view;
+
+    public void setAnnotationContainer(BSContainer annotationContainer) {
+        this.annotationContainer = annotationContainer;
+    }
+    public void add(AnnotationComponent c){
+        Integer id = c.referenced().getMInstancia().getId();
+        annotations.put(id, c);
+    }
+    public void updateAnnotations(Component c){
+        if(c.getDefaultModel() != null && c.getDefaultModel().getObject() != null &&
+                c.getDefaultModel().getObject() instanceof SInstance){
+            SInstance target = (SInstance) c.getDefaultModel().getObject();
+
+            for(WicketBuildContext ctx : contextChain()){
+                if(ctx.annotations.containsKey(target.getId())){
+                    ctx.annotations.get(target.getId()).setReferencedComponent(c);
+                    return;
+                }
+            }
+
+            annotationsTargetBuffer.add(c);
+        }
+    }
+
+    public Optional<Component> getAnnotationTargetFor(SInstance target){
+        for(Component c : annotationsTargetBuffer){
+            IModel<?> m = c.getDefaultModel();
+            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance) {
+                SInstance i = (SInstance) m.getObject();
+                if (i.getId().equals(target.getId())) {
+                    return Optional.of(c);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @return Components that must be refreshed whent the context is changed
+     */
+    public List<Component> updateOnRefresh(){
+        return newArrayList(annotationContainer.getParent());
+    }
+
+    private List<WicketBuildContext> contextChain() {
+        List<WicketBuildContext> contextChain = newArrayList(this);
+        WicketBuildContext ctx = this;
+        while(ctx.getParent() != null){
+            ctx = ctx.getParent();
+            contextChain.add(ctx);
+        }
+        return contextChain;
+    }
 
     public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
         this(null, container, bodyContainer, false, model);
@@ -63,6 +126,9 @@ public class WicketBuildContext implements Serializable {
     public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
                               boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
+        if(parent != null){
+            parent.children.add(this);
+        }
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
@@ -214,9 +280,9 @@ public class WicketBuildContext implements Serializable {
         return rootContainer;
     }
 
-    public WicketBuildContext getParent() {
-        return parent;
-    }
+    public WicketBuildContext getParent() { return parent;  }
+
+    public List<WicketBuildContext> getChildren() { return newArrayList(children);}
 
     public BSContainer<?> getContainer() {
         return container;

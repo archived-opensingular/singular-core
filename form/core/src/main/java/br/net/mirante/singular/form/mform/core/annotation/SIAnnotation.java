@@ -37,4 +37,9 @@ public class SIAnnotation extends SIComposite {
     public Object getValue() {
         return this;
     }
+
+    public void clear() {
+        setText(null);
+        setApproved(null);
+    }
 }
