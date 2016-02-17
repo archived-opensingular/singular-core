@@ -44,7 +44,7 @@ class AttachmentDocumentService {
     }
 
     private IAttachmentPersistenceHandler getTemporaryAttachmentHandler() {
-        return document.getAttachmentPersistenceHandler(true);
+        return document.getAttachmentPersistenceTemporaryHandler();
     }
 
     public int countDistinctFiles() {

@@ -51,6 +51,8 @@ public class SDocument {
 
     private Map<Integer, SIAnnotation> annotationMap = new HashMap<>();
 
+    private SDocumentFactory documentFactory;
+
     public SDocument() {}
 
     /**
@@ -78,18 +80,53 @@ public class SDocument {
         return ++lastId;
     }
 
-    public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
-        bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, ref);
+    /**
+     * Registra a persistência temporária de anexos. A persistência temporária
+     * guarda os anexos em quanto o documento não é saldo.
+     */
+    public void setAttachmentPersistenceTemporaryHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+        bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
-    public IAttachmentPersistenceHandler getAttachmentPersistenceHandler(boolean temporary) {
-        String serviceName = temporary ? FILE_TEMPORARY_SERVICE : FILE_PERSISTENCE_SERVICE;
-        IAttachmentPersistenceHandler ref = lookupService(serviceName, IAttachmentPersistenceHandler.class);
-        if (ref == null && temporary) {
+    /**
+     * Registra a persistência permanente de anexo. É usada para consultar
+     * anexos salvos anteriormente e no momento de salvar o anexos que estavam
+     * na persitência temporária.
+     */
+    public void setAttachmentPersistencePermanentHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+        bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
+
+    }
+
+    /**
+     * Retorna o serviço responsável por persistir temporáriamente os novos
+     * anexos incluidos durante a edição. Se o formulário não for salvo, então
+     * os anexos adicionados nesse serviços deverão ser descartados pelo mesmo.
+     *
+     * @return Nunca null. Retorna {@link InMemoryAttachmentPersitenceHandler}
+     *         por default.
+     */
+    public IAttachmentPersistenceHandler getAttachmentPersistenceTemporaryHandler() {
+        IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(serviceName, IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
         }
         return ref;
+    }
+
+    /**
+     * Retorna o serviço responsável por consultar os anexos já salvos
+     * anteriormente e responsável por gravar os novos anexos, que estavam na
+     * persistencia temporária, no momento de salvar o formulário.
+     */
+    public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
+        IAttachmentPersistenceHandler h = lookupService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        if (h == null) {
+            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
+                    + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+        }
+        return h;
     }
 
     /**
@@ -115,6 +152,27 @@ public class SDocument {
                     dependency.getDependentTypes().add(tipo);
             }
         });
+    }
+
+    /** USO INTERNO. */
+    public SDocumentFactoryRef getDocumentFactoryRef() {
+        return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
+    }
+
+    /** USO INTERNO. */
+    public final void setDocumentFactory(SDocumentFactory context) {
+        if (documentFactory != null) {
+            throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
+        }
+        documentFactory = context;
+        if (context.getDocumentFactoryRef() == null) {
+            throw new SingularFormException(
+                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
+        }
+        ServiceRegistry sr = documentFactory.getServiceRegistry();
+        if (sr != null) {
+            addServiceRegistry(sr);
+        }
     }
 
     /**
@@ -187,7 +245,7 @@ public class SDocument {
             this.instanceListeners = new MInstanceListeners();
         return this.instanceListeners;
     }
-    
+
     public void updateAttributes(IMInstanceListener listener) {
         updateAttributes(getRoot(), listener);
     }
@@ -214,9 +272,8 @@ public class SDocument {
     //  intercept the persist call and do this job before the model
     //  would be persisted.
     public void persistFiles() {
-        IAttachmentPersistenceHandler persistent = lookupService(
-            SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler(true);
+        IAttachmentPersistenceHandler persistent = getAttachmentPersistencePermanentHandler();
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceTemporaryHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
@@ -236,8 +293,8 @@ class AttachmentPersistenceHelper {
 
     public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
         IAttachmentPersistenceHandler persistent) {
-        this.temporary = temporary;
-        this.persistent = persistent;
+        this.temporary = Objects.requireNonNull(temporary);
+        this.persistent = Objects.requireNonNull(persistent);
     }
 
     public void doPersistence(SInstance element) {

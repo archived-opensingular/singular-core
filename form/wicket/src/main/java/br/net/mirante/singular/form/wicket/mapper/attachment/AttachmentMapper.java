@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -25,7 +27,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 public class AttachmentMapper implements ControlsFieldComponentMapper {
 
@@ -100,12 +101,12 @@ public class AttachmentMapper implements ControlsFieldComponentMapper {
     }
 
     private IAttachmentRef getAttachmentRef(final SDocument document, final String fileId) {
-        final IAttachmentPersistenceHandler temporaryHandler = document.lookupService(SDocument.FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
-        final IAttachmentPersistenceHandler persistenceHandler = document.lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler temporaryHandler = document.getAttachmentPersistenceTemporaryHandler();
 
         if (temporaryHandler.getAttachment(fileId) != null) {
             return temporaryHandler.getAttachment(fileId);
         } else {
+            IAttachmentPersistenceHandler persistenceHandler = document.getAttachmentPersistencePermanentHandler();
             return persistenceHandler.getAttachment(fileId);
         }
     }

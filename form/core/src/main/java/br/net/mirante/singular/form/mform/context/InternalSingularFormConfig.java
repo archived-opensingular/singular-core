@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
  * @param <T>
  * @param <K>
  */
-public interface InternalSingularFormConfig<T extends UIBuilder<K>, K extends UIComponentMapper> extends SingularFormConfig<T, K> {
+public interface InternalSingularFormConfig<K extends UIComponentMapper> extends SingularFormConfig<K> {
 
 
     public ServiceRegistry getServiceRegistry();
