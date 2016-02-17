@@ -167,6 +167,7 @@ class AnnotationBuilder {
         final BSContainer<?> parentCol = ctx.getContainer();
         BSRow superRow = parentCol.newGrid().newRow();
 
+        superRow.setCssClass("sannotation-form-row");
         WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
         executeMainMapper(viewMode, mapper, mainCtx);
 
@@ -180,14 +181,14 @@ class AnnotationBuilder {
     }
 
     private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
-        BSCol supercol = superRow.newCol(9).setCssClass("col-sm-9");
+        BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
         final BSGrid formGrid = supercol.newGrid();
         return new WicketBuildContext(ctx, formGrid, ctx.getExternalContainer(),
                 false, ctx.getModel());
     }
 
     private BSGrid createAnnotationColumn(BSRow superRow) {
-        return superRow.newCol(3).setCssClass("col-sm-3 hidden-xs").newGrid();
+        return superRow.newCol(0).setCssClass("sannotation-master-col").newGrid();
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {

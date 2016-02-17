@@ -1,3 +1,19 @@
+.sannotation-form-row {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.sannotation-form-col {
+    -webkit-flex: 1;
+    flex: 1;
+}
+
+.sannotation-master-col {
+    width: 300px;
+    margin: 30px;
+    height: 100%;
+}
+
 .sannotation-snipet-box {
     background: white;
 }
