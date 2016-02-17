@@ -187,7 +187,7 @@ class AnnotationBuilder {
     }
 
     private BSGrid createAnnotationColumn(BSRow superRow) {
-        return superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
+        return superRow.newCol(3).setCssClass("col-sm-3 hidden-xs").newGrid();
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
