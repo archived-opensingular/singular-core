@@ -108,19 +108,23 @@ public class WicketFormProcessing {
     }
 
     public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
-        if (fieldInstance == null || fieldInstance.getObject() == null)
+
+        if (fieldInstance == null || fieldInstance.getObject() == null) {
             return;
+        }
+
+        /**
+         * A ordem foi alterada para garantir que os componentes dependentes serão atualizados,
+         * já que o valor é submetido.
+         */
+        refreshComponents(formComponent, target, fieldInstance);
 
         // Validação do valor do componente
         final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
         validationContext.validateSingle();
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, formComponent, fieldInstance);
-            refresh(target, formComponent.getParent());
-            return;
         }
-
-        refreshComponents(formComponent, target, fieldInstance);
 
     }
 
