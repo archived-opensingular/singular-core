@@ -5,7 +5,7 @@ import java.util.Map;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
-public interface SingularFormConfig<T  extends UIBuilder<K>, K extends UIComponentMapper>  {
+public interface SingularFormConfig<K extends UIComponentMapper> {
 
 
     public void setServiceRegistry(ServiceRegistry serviceRegistry);
@@ -14,7 +14,7 @@ public interface SingularFormConfig<T  extends UIBuilder<K>, K extends UICompone
      * Método factory para criar novo contexto de montagem ou manipulação de
      * formulário.
      */
-    public SingularFormContext<T, K> createContext();
+    public SingularFormContext<K> createContext();
 
     public void setCustomMappers(Map<Class<? extends SType>, Class<K>> customMappers);
 

@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 
-public class DefaultServiceRegistry implements ServiceRegistry {
+final class DefaultServiceRegistry implements ServiceRegistry {
 
     private Map<String, Pair> servicesByName = newHashMap();
     private Map<Class<?>, List<ServiceRef<?>>> servicesByClass = newHashMap();
