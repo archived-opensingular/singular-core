@@ -24,8 +24,8 @@ public class SICode<T> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public STypeCode<SICode<T>, T> getMTipo() {
-        return (STypeCode<SICode<T>, T>) super.getMTipo();
+    public STypeCode<SICode<T>, T> getType() {
+        return (STypeCode<SICode<T>, T>) super.getType();
     }
 
     @Override
@@ -41,6 +41,6 @@ public class SICode<T> extends SInstance {
 
     @Override
     public String getDisplayString() {
-        return getMTipo().getSimpleName();
+        return getType().getSimpleName();
     }
 }

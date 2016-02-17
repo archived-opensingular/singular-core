@@ -30,8 +30,8 @@ public class MultipleSelectMapper implements ControlsFieldComponentMapper {
                                  IModel<String> labelModel) {
         final List<SelectOption> opcoesValue;
         final STypeLista tipoLista;
-        if (model.getObject().getMTipo() instanceof STypeLista) {
-            tipoLista = (STypeLista) model.getObject().getMTipo();
+        if (model.getObject().getType() instanceof STypeLista) {
+            tipoLista = (STypeLista) model.getObject().getType();
             SType elementType = tipoLista.getTipoElementos();
             opcoesValue = WicketSelectionUtils.createOptions(model, elementType);
         } else {

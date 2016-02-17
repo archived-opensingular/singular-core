@@ -1,5 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
 
+import javax.inject.Inject;
+
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -15,8 +17,6 @@ import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CategoriaCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.GrupoCID;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
-
-import javax.inject.Inject;
 
 @MInfoTipo(nome = "MTipoCID", pacote = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
@@ -43,7 +43,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addCampoString("descricao");
         STypeString descricaoAbreviadaCapitulo = capitulo
                 .addCampoString("descricaoAbreviada");
-        capitulo
+        capitulo.withSelectView()
                 .withSelectionFromProvider(descricaoCapitulo, (instancia, listBuilder) -> {
                     for (CapituloCID cap : ciddao.listCapitulos()) {
                         listBuilder.add()
@@ -71,6 +71,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoAbreviadaGrupo = grupo
                 .addCampoString("descricaoAbreviada");
         grupo
+                .withSelectView()
                 .withSelectionFromProvider(descricaoGrupo, (instancia, listaBuilder) -> {
                     for (GrupoCID g : ciddao.listGrupoByIdCapitulo(Value.of(instancia, idCapitulo))) {
                         listaBuilder.add()
@@ -100,6 +101,7 @@ public class STypeCID extends STypeComposite<SIComposite> {
                 .addCampoString("descricaoAbreviada");
 
         categoria
+                .withSelectView()
                 .withSelectionFromProvider(descricaoCategoria, (instancia, listaBuilder) -> {
                     for (CategoriaCID c : ciddao.listCategoriasByIdGrupo(Value.of(instancia, idGrupo))) {
                         listaBuilder.add()
@@ -128,14 +130,16 @@ public class STypeCID extends STypeComposite<SIComposite> {
         STypeString descricaoSubAbreviadaCategoria = subcategoria
                 .addCampoString("descricaoAbreviada");
 
-        subcategoria.withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
-            for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
-                listaBuilder.add()
-                        .set(idSubCategoria, c.getId())
-                        .set(descricaoSubCategoria, c.getDescricao())
-                        .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
-            }
-        });
+        subcategoria
+                .withSelectView()
+                .withSelectionFromProvider(descricaoSubCategoria, (instancia, listaBuilder) -> {
+                    for (SubCategoriaCID c : ciddao.listSubCategoriasByIdCategoria(Value.of(instancia, idCategoria))) {
+                        listaBuilder.add()
+                                .set(idSubCategoria, c.getId())
+                                .set(descricaoSubCategoria, c.getDescricao())
+                                .set(descricaoSubAbreviadaCategoria, c.getDescricaoAbreviada());
+                    }
+                });
 
     }
 

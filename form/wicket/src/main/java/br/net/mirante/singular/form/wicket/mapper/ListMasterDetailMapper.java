@@ -342,7 +342,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             try {
                 if (instanceBackupXml != null) {
                     MElement xml = MParser.parse(instanceBackupXml);
-                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
+                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getType(), xml);
                     currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {

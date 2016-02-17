@@ -119,8 +119,8 @@ public class TestMInstanciaDescendants {
 
         contato.streamDescendants(true)
             .forEachOrdered(instancia -> Assert.assertTrue(
-                "Tipo não encontrado: " + instancia.getMTipo(),
-                tipos.remove(instancia.getMTipo())));
+                "Tipo não encontrado: " + instancia.getType(),
+                tipos.remove(instancia.getType())));
 
         Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());
     }

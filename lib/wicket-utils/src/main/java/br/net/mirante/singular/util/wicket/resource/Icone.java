@@ -34,6 +34,7 @@ public enum Icone {
     MINUS /*            */("fa fa-minus"),
     MONEY /*            */("fa fa-money"),
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
+    PENCIL/*            */("fa fa-pencil"),
     PIN /*              */("icon-pin"),
     PIE /*              */("icon-pie-chart"),
     PLUS /*             */("fa fa-plus"),

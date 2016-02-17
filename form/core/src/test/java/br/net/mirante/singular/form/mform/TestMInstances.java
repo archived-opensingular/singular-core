@@ -16,7 +16,7 @@ public class TestMInstances {
         MInstances.listDescendants(contato, pacote.enderecoEstado).stream();
 
         Assert.assertTrue(MInstances.findCommonAncestor(contato, pacote.contato)
-            .filter(it -> it.getMTipo() == pacote.contato)
+            .filter(it -> it.getType() == pacote.contato)
             .isPresent());
     }
 }

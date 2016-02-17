@@ -107,14 +107,14 @@ public class TestMPacoteCore extends TestCaseForm {
             Object resultado = instancia.getValue();
             Assert.assertEquals(valorFinalEsperado, resultado);
 
-            Object resultado2 = instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo());
+            Object resultado2 = instancia.getType().converter(valor, instancia.getType().getClasseTipoNativo());
             Assert.assertEquals(resultado, resultado2);
         } else {
             assertException(() -> instancia.setValue(valor), "não consegue converter", "Deveria dar erro de conversão");
 
             Assert.assertEquals(valorFinalEsperado, instancia.getValue());
 
-            assertException(() -> instancia.getMTipo().converter(valor, instancia.getMTipo().getClasseTipoNativo()),
+            assertException(() -> instancia.getType().converter(valor, instancia.getType().getClasseTipoNativo()),
                     "não consegue converter", "Deveria dar erro de conversão");
         }
     }

@@ -29,7 +29,7 @@ public class SelectMapper implements ControlsFieldComponentMapper {
 
     public IReadOnlyModel<List<SelectOption>> getOpcoesValue(IModel<? extends SInstance> model) {
         return () -> {
-            SType<?> type = model.getObject().getMTipo();
+            SType<?> type = model.getObject().getType();
             return WicketSelectionUtils.createOptions(model, type);
         };
     }

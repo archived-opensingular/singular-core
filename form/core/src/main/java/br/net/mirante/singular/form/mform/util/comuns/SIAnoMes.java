@@ -32,7 +32,7 @@ public class SIAnoMes extends SIComparable<YearMonth> {
     }
 
     @Override
-    public STypeAnoMes getMTipo() {
-        return (STypeAnoMes) super.getMTipo();
+    public STypeAnoMes getType() {
+        return (STypeAnoMes) super.getType();
     }
 }

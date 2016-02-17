@@ -462,7 +462,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     @SuppressWarnings("unchecked")
     public I castInstancia(SInstance instancia) {
         // TODO verificar se essa é a verificação correta
-        if (instancia.getMTipo() != this)
+        if (instancia.getType() != this)
             throw new IllegalArgumentException("A instância " + instancia + " não é do tipo " + this);
         return (I) instancia;
     }

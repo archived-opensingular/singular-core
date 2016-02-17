@@ -1,8 +1,8 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -26,7 +26,7 @@ public class PageWithAnnotation {
     }
 
     public void saveAnnotations(SIComposite pedido){
-        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getMTipo().getPacote();
+        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getType().getPacote();
 
         /**
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.
