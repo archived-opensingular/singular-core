@@ -122,4 +122,30 @@ if( window.Annotation == undefined){
         }
     };
 
+    window.Annotation.update_comment_box = function(event){
+        if(event.keyCode == 13) {
+            event.preventDefault();
+            var target = $(event.target);
+//          "$(event.target).val($(event.target).val()+'\\n'); " +
+            var pos = target[0].selectionStart;
+            target.val(target.val().substring(0, pos) + '\n'+ target.val().substring(pos));
+            target.setCursorPosition(pos + 1);
+        }
+    }
+
+    $(function(){
+        new function($) {
+            $.fn.setCursorPosition = function(pos) {
+                if ($(this).get(0).setSelectionRange) {
+                    $(this).get(0).setSelectionRange(pos, pos);
+                } else if ($(this).get(0).createTextRange) {
+                    var range = $(this).get(0).createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            }
+        }(jQuery);
+    })
 }

@@ -283,15 +283,9 @@ public class AnnotationComponent extends Panel {
             modalText.add(new Behavior(){
                 public void bind( Component component ){
                     super.bind( component );
-                    component.add( AttributeModifier.replace( "onkeydown",
-                            Model.of( "if(event.keyCode == 13) { " +
-                                    "event.preventDefault();" +
-                                    "var $this = $(event.target);" +
-//                                        "$(event.target).val($(event.target).val()+'\\n'); " +
-                                    "var pos = $this[0].selectionStart;\n" +
-                                    "$this.val($this.val().substring(0, pos) + '\n'+ $this.val().substring(pos));\n" +
-                                    "$this.setCursorPosition(pos + 1);"+
-                                        "}" ) ) );
+                    component.add(
+                        AttributeModifier.replace( "onkeydown",
+                                    Model.of( "window.Annotation.update_comment_box(event);")));
                 }
             });
             modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
