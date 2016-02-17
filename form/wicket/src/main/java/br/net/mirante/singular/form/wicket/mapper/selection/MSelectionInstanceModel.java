@@ -55,9 +55,9 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
 //            String key = provider.getKeyFromOptions(target);
 //            String label = provider.getLabelFromKey(key);
 //            return (T) new SelectOption(label, key);
-            SInstance v = provider.getValueFromKey(String.valueOf(target.getValor()));
+            SInstance v = provider.getValueFromKey(String.valueOf(target.getValue()));
             if(v!= null){
-                return (T) new SelectOption(v.getSelectLabel(), v.getValor());
+                return (T) new SelectOption(v.getSelectLabel(), v.getValue());
             }
             return (T) new SelectOption(null, null);
         }

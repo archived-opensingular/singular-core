@@ -30,7 +30,7 @@ public final class MFormUtil {
         }
     }
 
-    public static SType<?> resolverTipoCampo(SType<?> tipo, LeitorPath leitor) {
+    public static SType<?> resolverTipoCampo(SType<?> tipo, PathReader leitor) {
         while (!leitor.isEmpty()) {
             tipo = resolverTipoCampoInterno(tipo, leitor);
             leitor = leitor.proximo();
@@ -38,7 +38,7 @@ public final class MFormUtil {
         return tipo;
     }
 
-    private static SType<?> resolverTipoCampoInterno(SType<?> tipo, LeitorPath leitor) {
+    private static SType<?> resolverTipoCampoInterno(SType<?> tipo, PathReader leitor) {
         if (tipo instanceof STypeComposite) {
             if (leitor.isIndice()) {
                 throw new RuntimeException(leitor.getTextoErro(tipo, "Índice de lista não se aplica a um tipo composto"));

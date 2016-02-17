@@ -1,20 +1,26 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.*;
+import org.apache.wicket.util.tester.FormTester;
+import org.apache.wicket.util.tester.WicketTester;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import org.apache.wicket.util.tester.FormTester;
-import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Test;
 
-public class MasterDetailMapperTest {
-    protected SDictionary dict;
-    protected PacoteBuilder localPackage;
+public class MasterDetailMapperTest extends AbstractWicketFormTest {
+
+    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     private STypeComposite<?> baseCompositeField;
@@ -34,8 +40,7 @@ public class MasterDetailMapperTest {
     }
 
     private void createBaseType() {
-        dict = SDictionary.create();
-        localPackage = dict.criarNovoPacote("test");
+        localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -43,8 +48,8 @@ public class MasterDetailMapperTest {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dict);
-        page.setNewInstanceOfType(baseCompositeField.getNome());
+        page.setDicionario(dicionario);
+        page.setNewInstanceOfType(baseCompositeField.getName());
     }
 
     protected void build() {
@@ -68,9 +73,9 @@ public class MasterDetailMapperTest {
         setup();
         SList<SIComposite> list = page.getCurrentInstance().getDescendant(listBaseType);
         SIComposite e = list.addNovo();
-        e.getDescendant(date).setValor(java.time.YearMonth.of(2016,01));
-        e.getDescendant(number).setValor(2.5);
-        e.getDescendant(cpf).setValor("000.111.222-33");
+        e.getDescendant(date).setValue(java.time.YearMonth.of(2016,01));
+        e.getDescendant(number).setValue(2.5);
+        e.getDescendant(cpf).setValue("000.111.222-33");
         build();
 
         driver.assertContains("01/2016");

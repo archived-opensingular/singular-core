@@ -24,7 +24,7 @@ public class SIAnnotation extends SIComposite {
     }
 
     @Override
-    public void setValor(Object valor) {
+    public void setValue(Object valor) {
         if(valor instanceof SIAnnotation){
             SIAnnotation other = (SIAnnotation) valor;
             this.setText(other.getText());
@@ -34,7 +34,7 @@ public class SIAnnotation extends SIComposite {
     }
 
     @Override
-    public Object getValor() {
+    public Object getValue() {
         return this;
     }
 

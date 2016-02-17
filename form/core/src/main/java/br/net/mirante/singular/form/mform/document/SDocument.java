@@ -107,7 +107,7 @@ public class SDocument {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        MTypes.streamDescendants(getRoot().getMTipo(), true).forEach(tipo -> {
+        MTypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
             final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
@@ -187,17 +187,17 @@ public class SDocument {
             this.instanceListeners = new MInstanceListeners();
         return this.instanceListeners;
     }
-
-    /**
-     *
-     * @return eventos coletados
-     */
+    
     public void updateAttributes(IMInstanceListener listener) {
+        updateAttributes(getRoot(), listener);
+    }
+
+    public void updateAttributes(SInstance root, IMInstanceListener listener) {
         if (listener != null)
             getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
         try {
-            MInstances.visitAll(getRoot(), true, instance -> {
+            MInstances.visitAll(root, true, instance -> {
                 instance.updateExists();
                 instance.updateObrigatorio();
                 MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);

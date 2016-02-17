@@ -77,9 +77,9 @@ public class DecimalMapper extends StringMapper {
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
 
-        if ((mi != null) && (mi.getValor() != null)) {
+        if ((mi != null) && (mi.getValue() != null)) {
 
-            final BigDecimal valor = (BigDecimal) mi.getValor();
+            final BigDecimal valor = (BigDecimal) mi.getValue();
             return formatDecimal(valor);
         }
 

@@ -1,10 +1,11 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.STypeString;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMoptionsConfigTipoSimples {
 
@@ -19,7 +20,7 @@ public class TestMoptionsConfigTipoSimples {
     @Before
     public void setup() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         _descricao = _raiz.addCampo("descricao", STypeString.class);
@@ -37,9 +38,9 @@ public class TestMoptionsConfigTipoSimples {
 
 
         // descricao
-        descricao = (SISimple) evento.getCampo(_descricao.getNomeSimples());
+        descricao = (SISimple) evento.getCampo(_descricao.getSimpleName());
         opcaoDescricao = _descricao.getProviderOpcoes().listAvailableOptions(descricao).get(0);
-        descricao.setValor(opcaoDescricao.getValor());
+        descricao.setValue(opcaoDescricao.getValue());
 
 
     }
@@ -50,7 +51,7 @@ public class TestMoptionsConfigTipoSimples {
         String keyFromOption = descricao.getOptionsConfig().getKeyFromOptions(opcaoDescricao);
         Assert.assertNotNull(keyFromOption);
         Assert.assertEquals(descricao, descricao.getOptionsConfig().getValueFromKey(keyFromOption));
-        Assert.assertEquals(opcaoDescricao.getValor(), descricao.getValor());
+        Assert.assertEquals(opcaoDescricao.getValue(), descricao.getValue());
     }
 
     @Test
@@ -63,7 +64,7 @@ public class TestMoptionsConfigTipoSimples {
     @Test
     public void testMTipoOpcoes() {
         for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
-            Assert.assertEquals(_descricao, instancia.getMTipo());
+            Assert.assertEquals(_descricao, instancia.getType());
         }
     }
 
@@ -79,7 +80,7 @@ public class TestMoptionsConfigTipoSimples {
     @Test
     public void testSelectLabel() {
         for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
-            Assert.assertEquals(StringUtils.capitalize((String) instancia.getValor()), instancia.getSelectLabel());
+            Assert.assertEquals(StringUtils.capitalize((String) instancia.getValue()), instancia.getSelectLabel());
         }
         Assert.assertNull(_descricao.getSelectLabel());
     }

@@ -1,14 +1,23 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import java.util.HashSet;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.MAtributoEnabled;
+import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
@@ -117,7 +126,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     private SIAnnotation newAnnotation() {  return type().novaInstancia();}
 
     private STypeAnnotation type() {
-        return getAlvo().getDicionario().getTipo(STypeAnnotation.class);
+        return getAlvo().getDictionary().getType(STypeAnnotation.class);
     }
 
     private void setAnnotation(SIAnnotation annotation) {
@@ -209,11 +218,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private STypeAnnotationList annotationListType() {
-        return dictionary().getTipo(STypeAnnotationList.class);
+        return dictionary().getType(STypeAnnotationList.class);
     }
 
     private SDictionary dictionary() {
-        return target().getMTipo().getDicionario();
+        return target().getType().getDictionary();
     }
 
     private SInstance target() {

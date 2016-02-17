@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,7 +11,7 @@ public class TestMInstance {
 
     @Test public void testIncrementoId() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
@@ -27,12 +26,12 @@ public class TestMInstance {
         assertId(pedido, 1, 1);
         assertId(pedido.getCampo("nome"), 2, 2);
         assertId(pedido.getCampo("descr"), 3, 3);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("A")), 5, 5);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("A")), 5, 5);
         assertId(pedido.getCampo("clientes"), 4, 5);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("B")), 6, 6);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("B")), 6, 6);
 
         pedido.getFieldList("clientes").remove(1);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("C")), 7, 7);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("C")), 7, 7);
 
         pedido.setValor("prioridade", "X");
         assertId(pedido.getCampo("prioridade"), 8, 8);
@@ -58,19 +57,4 @@ public class TestMInstance {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }
-
-    @Test public void testSerialializeEmptyObject() {
-        SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-
-        STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
-        tipoPedido.addCampoString("nome");
-        tipoPedido.addCampoString("descr");
-        tipoPedido.addCampoString("prioridade");
-        tipoPedido.addCampoListaOf("clientes", STypeString.class);
-
-        SIComposite instance = tipoPedido.novaInstancia();
-        FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(instance));
-    }
-
 }

@@ -52,7 +52,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
 
     private <I extends SInstance, T extends SType<I>> T addInterno(String localName, T type) {
         if (instanceCount > 0){
-            throw new SingularFormException("O MTipo '"+type.getNome()+"' já possui instancias associadas, não é seguro alterar sua definição. ");
+            throw new SingularFormException("O MTipo '"+type.getName()+"' já possui instancias associadas, não é seguro alterar sua definição. ");
         }
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -66,17 +66,17 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     final FieldMapOfRecordType getFieldsConsolidated() {
         if (fieldsConsolidated == null) {
             if (fieldsLocal == null) {
-                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposite) {
+                if (getSuperType() != null && getSuperType() instanceof STypeComposite) {
                     // Busca reaproveitar, pois muitas extensões são locais e
                     // não acrescentam campso
-                    fieldsConsolidated = ((STypeComposite<?>) getSuperTipo()).getFieldsConsolidated();
+                    fieldsConsolidated = ((STypeComposite<?>) getSuperType()).getFieldsConsolidated();
                 } else {
                     fieldsConsolidated = new FieldMapOfRecordType();
                 }
             } else {
                 fieldsConsolidated = new FieldMapOfRecordType();
-                if (getSuperTipo() != null && getSuperTipo() instanceof STypeComposite) {
-                    fieldsConsolidated.addAll(((STypeComposite<?>) getSuperTipo()).getFieldsConsolidated());
+                if (getSuperType() != null && getSuperType() instanceof STypeComposite) {
+                    fieldsConsolidated.addAll(((STypeComposite<?>) getSuperType()).getFieldsConsolidated());
                 }
                 fieldsConsolidated.addAll(fieldsLocal);
             }
@@ -97,7 +97,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     @Deprecated
     public <I extends SInstance, T extends SType<I>> T addCampo(Class<T> classeTipo) {
         T tipo = resolverTipo(classeTipo);
-        return addCampo(tipo.getNomeSimples(), classeTipo);
+        return addCampo(tipo.getSimpleName(), classeTipo);
     }
 
     public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> tipo, boolean obrigatorio) {
@@ -107,7 +107,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     }
 
     public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> classeTipo) {
-        T novo = extenderTipo(nomeCampo, classeTipo);
+        T novo = extenderType(nomeCampo, classeTipo);
         return addInterno(nomeCampo, novo);
     }
 
@@ -251,7 +251,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     }
 
     public SType<?> getCampo(STypeString siglaUF) {
-        return getCampo(siglaUF.getNomeSimples());
+        return getCampo(siglaUF.getSimpleName());
     }
 
     /**
@@ -301,7 +301,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
             if (fields == null) {
                 fields = new LinkedHashMap<>();
             }
-            fields.put(field.getNomeSimples(), new FieldRef(field));
+            fields.put(field.getSimpleName(), new FieldRef(field));
         }
 
         public int findIndex(String fieldName) {

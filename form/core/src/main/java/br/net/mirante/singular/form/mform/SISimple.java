@@ -9,26 +9,26 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     protected SISimple() {}
 
     @Override
-    public TIPO_NATIVO getValor() {
+    public TIPO_NATIVO getValue() {
         return valor;
     }
 
     @Override
     public void clearInstance() {
-        setValor(null);
+        setValue(null);
     }
 
     @Override
     public TIPO_NATIVO getValorWithDefault() {
-        TIPO_NATIVO v = getValor();
+        TIPO_NATIVO v = getValue();
         if (v == null) {
-            return getMTipo().converter(getMTipo().getValorAtributoOrDefaultValueIfNull());
+            return getType().converter(getType().getValorAtributoOrDefaultValueIfNull());
         }
         return v;
     }
 
     @Override
-    final <T extends Object> T getValorWithDefaultIfNull(LeitorPath leitor, Class<T> classeDestino) {
+    final <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
             throw new RuntimeException("Não ser aplica path a um tipo simples");
         }
@@ -37,24 +37,24 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     protected void resetValue() {
-        setValor(null);
+        setValue(null);
     }
     
     /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
-        return getValor() == null;
+        return getValue() == null;
     }
 
     @Override
     public boolean isEmptyOfData() {
-        return getValor() == null;
+        return getValue() == null;
     }
 
 
     @Override
-    public final void setValor(Object valor) {
-        TIPO_NATIVO oldValue = this.getValor();
-        TIPO_NATIVO newValue = getMTipo().converter(valor);
+    public final void setValue(Object valor) {
+        TIPO_NATIVO oldValue = this.getValue();
+        TIPO_NATIVO newValue = getType().converter(valor);
         this.valor = onSetValor(oldValue, newValue);
         if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
@@ -71,28 +71,28 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     @SuppressWarnings("unchecked")
-    public STypeSimple<?, TIPO_NATIVO> getMTipo() {
-        return (STypeSimple<?, TIPO_NATIVO>) super.getMTipo();
+    public STypeSimple<?, TIPO_NATIVO> getType() {
+        return (STypeSimple<?, TIPO_NATIVO>) super.getType();
     }
 
     @Override
     public String getDisplayString() {
-        return getMTipo().toStringDisplay(getValor());
+        return getType().toStringDisplay(getValue());
     }
 
     public String toStringPersistencia() {
-        if (getValor() == null) {
+        if (getValue() == null) {
             return null;
         }
-        return getMTipo().toStringPersistencia(getValor());
+        return getType().toStringPersistencia(getValue());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getMTipo() == null) ? 0 : getMTipo().hashCode());
-        result = prime * result + ((getValor() == null) ? 0 : getValor().hashCode());
+        result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+        result = prime * result + ((getValue() == null) ? 0 : getValue().hashCode());
         return result;
     }
 
@@ -105,14 +105,14 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
         if (getClass() != obj.getClass())
             return false;
         SISimple<?> other = (SISimple<?>) obj;
-        if (!getMTipo().equals(other.getMTipo())
-                && !getMTipo().getNome().equals(other.getMTipo().getNome())) {
+        if (!getType().equals(other.getType())
+                && !getType().getName().equals(other.getType().getName())) {
             return false;
         }
-        if (getValor() == null) {
-            if (other.getValor() != null)
+        if (getValue() == null) {
+            if (other.getValue() != null)
                 return false;
-        } else if (!getValor().equals(other.getValor()))
+        } else if (!getValue().equals(other.getValue()))
             return false;
         return true;
     }

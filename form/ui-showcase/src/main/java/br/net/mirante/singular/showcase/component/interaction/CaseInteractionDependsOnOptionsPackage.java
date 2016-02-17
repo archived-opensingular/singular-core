@@ -1,14 +1,13 @@
 package br.net.mirante.singular.showcase.component.interaction;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.stream.Stream;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import static java.util.stream.Collectors.toList;
 
 public class CaseInteractionDependsOnOptionsPackage extends SPackage {
 
@@ -46,7 +45,7 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
     public STypeString word;
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
         testForm = pb.createTipoComposto("testForm");
@@ -61,10 +60,10 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
             .label("Word")
             .dependsOn(letter);
         word.withSelectionFromProvider(ins -> {
-            String prefix = ins.findNearest(letter).get().getValor();
+            String prefix = ins.findNearest(letter).get().getValue();
             return (prefix == null)
-                ? ins.getMTipo().novaLista()
-                : ins.getMTipo().novaLista()
+                ? ins.getType().novaLista()
+                : ins.getType().novaLista()
                     .addValores(Stream.of(WORDS)
                         .filter(s -> s.startsWith(prefix))
                         .collect(toList()));

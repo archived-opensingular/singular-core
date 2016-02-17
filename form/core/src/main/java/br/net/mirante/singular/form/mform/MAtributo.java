@@ -24,9 +24,9 @@ public class MAtributo extends SType<SInstance> {
     final SInstance novaInstanciaPara(SType<?> dono) {
         SInstance instance;
         if (selfReference) {
-            instance = dono.newInstance(getDicionario().getInternalDicionaryDocument());
+            instance = dono.newInstance(getDictionary().getInternalDicionaryDocument());
         } else {
-            instance = super.newInstance(getDicionario().getInternalDicionaryDocument());
+            instance = super.newInstance(getDictionary().getInternalDicionaryDocument());
         }
         instance.setAsAttribute(null);
         return instance;

@@ -27,7 +27,7 @@ public class TestMFormUtilUserFriendlyPath {
     @Before
     public void setUp() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _evento = pb.createTipoComposto("evento");
         _descricao = _evento.addCampo("descricao", STypeString.class);

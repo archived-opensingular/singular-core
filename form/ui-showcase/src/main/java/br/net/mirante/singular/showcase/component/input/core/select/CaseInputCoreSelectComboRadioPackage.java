@@ -2,7 +2,7 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -11,7 +11,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
     //@formatter:off
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         //@destacar:bloco

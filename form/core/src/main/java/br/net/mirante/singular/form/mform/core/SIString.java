@@ -6,13 +6,13 @@ public class SIString extends SIComparable<String> {
     }
 
     @Override
-    public STypeString getMTipo() {
-        return (STypeString) super.getMTipo();
+    public STypeString getType() {
+        return (STypeString) super.getType();
     }
     
     @Override
     public String toString() {
-        return String.format("MIString('%s')", getValor());
+        return String.format("MIString('%s')", getValue());
     }
 
 }

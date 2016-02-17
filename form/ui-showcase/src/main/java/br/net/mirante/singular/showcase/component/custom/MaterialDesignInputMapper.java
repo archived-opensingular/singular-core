@@ -37,8 +37,8 @@ public class MaterialDesignInputMapper implements IWicketComponentMapper {
     }
 
     private IModel<String> getOutputString(SInstance mi) {
-        if (mi.getValor() != null) {
-            return Model.of(String.valueOf(mi.getValor()));
+        if (mi.getValue() != null) {
+            return Model.of(String.valueOf(mi.getValue()));
         } else {
             return Model.of(StringUtils.EMPTY);
         }

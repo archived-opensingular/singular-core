@@ -1,10 +1,11 @@
 package br.net.mirante.singular.form.mform.io;
 
-import br.net.mirante.singular.form.mform.document.ServiceRegistry;
-import br.net.mirante.singular.form.util.xml.MElement;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.document.ServiceRegistry;
+import br.net.mirante.singular.form.util.xml.MElement;
 
 /**
  * Objeto transitório para guardar uma versão serilizável de MInstance ou
@@ -14,16 +15,14 @@ import java.util.Map;
  */
 public final class FormSerialized implements Serializable {
 
-    private final MDicionarioResolverSerializable dicionarioResolver;
+    private final SDictionaryRef dictionaryRef;
     private final String rootType;
     private final MElement xml, annotations;
     private String focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
-    private Integer dictionaryId;
 
-    public FormSerialized(String rootType, MElement xml, MElement annotations,
-                          MDicionarioResolverSerializable dicionarioResolver) {
-        this.dicionarioResolver = dicionarioResolver;
+    public FormSerialized(String rootType, MElement xml, MElement annotations, SDictionaryRef dictionaryRef) {
+        this.dictionaryRef = dictionaryRef;
         this.rootType = rootType;
         this.xml = xml;
         this.annotations = annotations;
@@ -55,15 +54,7 @@ public final class FormSerialized implements Serializable {
         this.services = services;
     }
 
-    public MDicionarioResolverSerializable getDicionarioResolver() {
-        return dicionarioResolver;
-    }
-
-    public void setDictionaryId(Integer dictionaryId) {
-        this.dictionaryId = dictionaryId;
-    }
-
-    public Integer getDictionaryId() {
-        return dictionaryId;
+    public SDictionaryRef getDictionaryRef() {
+        return dictionaryRef;
     }
 }

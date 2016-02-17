@@ -78,7 +78,7 @@ public class ViewMapperRegistry<T> implements Serializable {
      *            Pode ser null
      */
     public Optional<T> getMapper(SInstance instance, MView view) {
-        Class<? extends SType> type = instance.getMTipo().getClass();
+        Class<? extends SType> type = instance.getType().getClass();
         if (view.getClass() == MView.class) {
             view = null;
         }

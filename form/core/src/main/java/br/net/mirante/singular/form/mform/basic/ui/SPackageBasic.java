@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeBehavior;
 import br.net.mirante.singular.form.mform.STypePredicate;
 import br.net.mirante.singular.form.mform.STypeSupplier;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -60,7 +60,7 @@ public class SPackageBasic extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
 
         pb.createTipo(STypeBehavior.class);
         pb.createTipo(STypeSupplier.class);

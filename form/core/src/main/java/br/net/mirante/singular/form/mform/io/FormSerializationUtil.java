@@ -2,13 +2,21 @@ package br.net.mirante.singular.form.mform.io;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 
-import br.net.mirante.singular.form.mform.*;
+import org.apache.commons.lang3.StringUtils;
+
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SDictionaryLoader;
+import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
-import org.apache.commons.lang3.StringUtils;
-
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -25,21 +33,13 @@ import br.net.mirante.singular.form.util.xml.MElement;
  * definições dos tipos. Há três formas de resolver a questão:
  * <ul>
  * <li>Setar o MDicionarioResolver default (singleton) em
- * {@link MDicionarioResolver#setDefault(MDicionarioResolver)}</li>
- * <li>Ao deserializar informar MDicionarioResolver a ser utilizado:
- * {@link #toInstance(FormSerialized, MDicionarioResolver)}</li>
- * <li>Ao gerar a versão serialização, passar um
- * {@link MDicionarioResolverSerializable} para também ser serializado junto com
- * os dados. Na volta (deserialização) usa esse resolver que foi serializado
- * junto com os dados:
+ * {@link SDictionaryLoader#setDefault(SDictionaryLoader)}</li>
  * </ul >
  * </p>
  *
  * @author Daniel C. Bordin
  */
 public class FormSerializationUtil {
-
-    private static DictionaryCache dictionaries = new DictionaryCache();
 
     private FormSerializationUtil() {
     }
@@ -56,42 +56,14 @@ public class FormSerializationUtil {
      * </p>
      */
     public static FormSerialized toSerializedObject(SInstance instance) {
-        return toSerializedObject(instance, null);
-    }
-
-    /**
-     * <p>
-     * Gera uma vesão serializável da instancia incluindo com resolvedor para
-     * recuperação do dicionário quando a instância for deserializada. Implica
-     * em serializar todo o documento associado a instância, contudo guarda o
-     * path da instancia alvo para poder recuperar corretamente depois.
-     * </p>
-     * <p>
-     * Não serializa a definição do tipo (dicionário). Guarda apenas o nome do
-     * tipo.
-     *
-     * @param dicionarioResolverSerializable
-     *            Pode ser null. Se for passado também serializa o dicionário
-     *            resolver para facilitar a recuperação.
-     *            </p>
-     */
-    public static FormSerialized toSerializedObject(SInstance instance,
-                                                    MDicionarioResolverSerializable dicionarioResolverSerializable) {
-        FormSerialized fs = toSerialized(instance.getDocument(), dicionarioResolverSerializable);
+        FormSerialized fs = toSerialized(instance.getDocument());
         defineFocusField(instance, fs);
-        setDictionaryIfAny(instance, dicionarioResolverSerializable, fs);
         return fs;
     }
 
     private static void defineFocusField(SInstance instance, FormSerialized fs) {
         if (instance.getDocument().getRoot() != instance) {
             fs.setFocusFieldPath(instance.getPathFromRoot());
-        }
-    }
-
-    private static void setDictionaryIfAny(SInstance instance, MDicionarioResolverSerializable dicionarioResolverSerializable, FormSerialized fs) {
-        if (dicionarioResolverSerializable == null) {
-            fs.setDictionaryId(dictionaries.put(instance.getDicionario()));
         }
     }
 
@@ -104,18 +76,28 @@ public class FormSerializationUtil {
      * tipo.
      * </p>
      */
-    private static FormSerialized toSerialized(SDocument document,
-                                  MDicionarioResolverSerializable dicionaroResolverSerializable) {
+    private static FormSerialized toSerialized(SDocument document) {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
         if(root.as(AtrAnnotation::new).hasAnnotation()){
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
         }
-        FormSerialized fs = new FormSerialized(root.getMTipo().getNome(), xml, annotations,
-                                                dicionaroResolverSerializable);
+
+        SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
+        FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef);
         serializeServices(document, fs);
         return fs;
+    }
+
+    final static SDictionaryRef verificarDicionaryRef(SInstance instance) {
+        Optional<SDictionaryRef> dicionaryRef = instance.getDictionary().getSerializableDictionarySelfReference();
+        if (! dicionaryRef.isPresent()) {
+            throw new SingularFormException("Não foi configurado o dicionaryRef no dicionário da instância, o que impedirá a "
+                    + "serialização/deserialização do mesmo.(ver " + SDictionaryRef.class.getName()
+                    + " e SDicionary.setSerializableDictionarySelfReference()).", instance);
+        }
+        return dicionaryRef.get();
     }
 
     private static void serializeServices(SDocument document, FormSerialized fs) {
@@ -141,35 +123,14 @@ public class FormSerializationUtil {
      *                Senão encontrar o dicionário ou tipo necessário.
      */
     public static SInstance toInstance(FormSerialized fs) {
-        return toInstance(fs, null);
-    }
-
-    /**
-     * Recupera a instância e o documento que foi serializado. Se foi
-     * originalmente serializado um documento, então retorna a instância raiz do
-     * documento. Se foi serialziado um sub parte do documento, retorna a
-     * instancia da sub parte, mas na prática deserializa todo o documento.
-     *
-     * @param fs
-     *            Dado a ser deserializado
-     * @param dictionaryResolver
-     *            Fornece as definições dos tipos (dicionário) para ser usado no
-     *            contexto da recuperação. Senão for informado, tenta usar a
-     *            versão serializada ou versão default
-     *            {@link MDicionarioResolver#getDefault()}
-     * @return Sempre diferente de Null
-     * @exception SingularFormException
-     *                Senão encontrar o dicionário ou tipo necessário.
-     */
-    public static SInstance toInstance(FormSerialized fs, MDicionarioResolver dictionaryResolver) {
         try {
-            SType<?> rootType = loaType(fs, dictionaryResolver, fs.getRootType());
+            SType<?> rootType = loadType(fs, fs.getRootType());
             SInstance root = MformPersistenciaXML.fromXML(rootType, fs.getXml());
 
             deserializeServices(fs.getServices(), root.getDocument());
             if(fs.getAnnotations() != null){
-                SType<?> annotationsList = loaType(fs, dictionaryResolver, SPackageCore.NOME+"."+ STypeAnnotationList.NAME);
-                SList persisted = (SList) MformPersistenciaXML.fromXML(annotationsList, fs.getAnnotations());
+                SType<?> annotationsList = loadType(fs, SPackageCore.NOME + "." + STypeAnnotationList.NAME);
+                SList persisted = (SList<?>) MformPersistenciaXML.fromXML(annotationsList, fs.getAnnotations());
                 root.as(AtrAnnotation::new).loadAnnotations(persisted);
             }
             return defineRoot(fs, root);
@@ -178,16 +139,16 @@ public class FormSerializationUtil {
         }
     }
 
-    private static SType<?> loaType(FormSerialized fs, MDicionarioResolver dicionaryResolver, String rootType) {
-        dicionaryResolver = (dicionaryResolver != null) ? dicionaryResolver : fs.getDicionarioResolver();
-        if (dicionaryResolver == null) {
-            if(fs.getDictionaryId() != null && dictionaries.has(fs.getDictionaryId())){
-                return dictionaries.get(fs.getDictionaryId()).getTipo(rootType);
-            }else{
-                dicionaryResolver = MDicionarioResolver.getDefault();
-            }
+    private static SType<?> loadType(FormSerialized fs, String rootType) {
+        if (fs.getDictionaryRef() == null) {
+            throw new SingularFormException("O DicionaryRef não foi serializado");
         }
-        return dicionaryResolver.loadType(rootType);
+        SDictionary d = fs.getDictionaryRef().getDictionary();
+        if (d == null) {
+            throw new SingularFormException(
+                    "O DicionaryRef '" + fs.getDictionaryRef().getClass().getName() + "' retornou null para o dicionário");
+        }
+        return d.getType(rootType);
     }
 
     private static void deserializeServices(Map<String, Pair> services, SDocument document) {

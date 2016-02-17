@@ -12,7 +12,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testTipoCompostoCriacao() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<?> tipoEndereco = pb.createTipoComposto("endereco");
         tipoEndereco.addCampo("rua", STypeString.class);
@@ -23,16 +23,16 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         tipoClassificacao.addCampoInteger("prioridade");
         tipoClassificacao.addCampoString("descricao");
 
-        assertTipo(tipoEndereco.getTipoLocal("rua"), "rua", STypeString.class);
+        assertTipo(tipoEndereco.getLocalType("rua"), "rua", STypeString.class);
         assertTipo(tipoEndereco.getCampo("rua"), "rua", STypeString.class);
-        assertEquals((Object) false, tipoEndereco.getTipoLocal("rua").isObrigatorio());
-        assertEquals((Object) true, tipoEndereco.getTipoLocal("cep").isObrigatorio());
+        assertEquals((Object) false, tipoEndereco.getLocalType("rua").isObrigatorio());
+        assertEquals((Object) true, tipoEndereco.getLocalType("cep").isObrigatorio());
 
-        assertTipo(tipoEndereco.getTipoLocal("classificacao"), "classificacao", STypeComposite.class);
-        assertTipo(tipoEndereco.getTipoLocal("classificacao.prioridade"), "prioridade", STypeInteger.class);
+        assertTipo(tipoEndereco.getLocalType("classificacao"), "classificacao", STypeComposite.class);
+        assertTipo(tipoEndereco.getLocalType("classificacao.prioridade"), "prioridade", STypeInteger.class);
 
-        assertNull(tipoEndereco.getTipoLocalOpcional("classificacao.prioridade.x.y").orElse(null));
-        assertException(() -> tipoEndereco.getTipoLocal("classificacao.prioridade.x.y"), "Não existe o tipo");
+        assertNull(tipoEndereco.getLocalTypeOptional("classificacao.prioridade.x.y").orElse(null));
+        assertException(() -> tipoEndereco.getLocalType("classificacao.prioridade.x.y"), "Não existe o tipo");
 
         SIComposite endereco = tipoEndereco.novaInstancia();
         assertFilhos(endereco, 0);
@@ -45,7 +45,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         assertNull(endereco.getValor("classificacao.descricao"));
         assertFilhos(endereco, 0);
 
-        assertException(() -> endereco.setValor(100), "SIComposite só suporta valores de mesmo tipo");
+        assertException(() -> endereco.setValue(100), "SIComposite só suporta valores de mesmo tipo");
 
         testAtribuicao(endereco, "rua", "Pontes", 1);
         testAtribuicao(endereco, "bairro", "Norte", 2);
@@ -71,13 +71,13 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     private static void assertTipo(SType<?> tipo, String nomeEsperado, Class<?> classeEsperadaDoTipo) {
         assertNotNull(tipo);
-        assertEquals(nomeEsperado, tipo.getNomeSimples());
+        assertEquals(nomeEsperado, tipo.getSimpleName());
         assertEquals(classeEsperadaDoTipo, tipo.getClass());
     }
 
     public void testeComposicaoCamposQuandoUmCompostoExtendeOutroComposto() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<?> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoString("nome");
@@ -100,16 +100,16 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         testAtribuicao(subBloco, "endereco", "Rua 1", 3);
         testAtribuicao(subBloco, "nome", "Paulo", 4);
 
-        assertEqualsList(subBloco.getCampos().stream().map(c -> c.getValor()).collect(Collectors.toList()), "Paulo", "Rua 1", 10, "sul");
+        assertEqualsList(subBloco.getCampos().stream().map(c -> c.getValue()).collect(Collectors.toList()), "Paulo", "Rua 1", 10, "sul");
     }
 
     private static void assertOrdemCampos(Collection<SType<?>> fields, String... nomesEsperados) {
-        assertEqualsList(fields.stream().map(f -> f.getNomeSimples()).collect(Collectors.toList()), (Object[]) nomesEsperados);
+        assertEqualsList(fields.stream().map(f -> f.getSimpleName()).collect(Collectors.toList()), (Object[]) nomesEsperados);
     }
 
     public void testCriacaoDinamicaDeCamposNaInstancia() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoInteger("inicio");
@@ -169,12 +169,12 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoSimples() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         tipoBloco.addCampoListaOf("enderecos", STypeString.class);
 
-        assertTipo(tipoBloco.getTipoLocal("enderecos"), "enderecos", STypeLista.class);
+        assertTipo(tipoBloco.getLocalType("enderecos"), "enderecos", STypeLista.class);
         assertTipo(tipoBloco.getCampo("enderecos"), "enderecos", STypeLista.class);
         assertTipo(((STypeLista<?, ?>) tipoBloco.getCampo("enderecos")).getTipoElementos(), "String", STypeString.class);
 
@@ -207,7 +207,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testTipoCompostoCriacaoComAtributoDoTipoListaDeTipoComposto() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeComposite<? extends SIComposite> tipoBloco = pb.createTipoComposto("bloco");
         STypeLista<STypeComposite<SIComposite>, SIComposite> tipoEnderecos = tipoBloco.addCampoListaOfComposto("enderecos", "endereco");
@@ -263,7 +263,7 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testeOnCargaTipoDireto() {
         SDictionary dicionario = SDictionary.create();
-        TestTipoCompositeComCargaInterna tipo = dicionario.getTipo(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipo = dicionario.getType(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertNotNull(tipo.getCampo("nome"));
         assertEquals((Boolean) true, tipo.isObrigatorio());
@@ -271,10 +271,10 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
 
     public void testeOnCargaTipoChamadaSubTipo() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         TestTipoCompositeComCargaInterna tipo = pb.createTipo("derivado", TestTipoCompositeComCargaInterna.class);
 
-        TestTipoCompositeComCargaInterna tipoPai = dicionario.getTipo(TestTipoCompositeComCargaInterna.class);
+        TestTipoCompositeComCargaInterna tipoPai = dicionario.getType(TestTipoCompositeComCargaInterna.class);
         assertEquals("xxx", tipoPai.as(AtrBasic.class).getLabel());
         assertNotNull(tipoPai.getCampo("nome"));
         assertEquals((Boolean) true, tipoPai.isObrigatorio());
@@ -291,14 +291,14 @@ public class TestMPacoteCoreTipoComposto extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PacoteBuilder pb) {
+        protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createTipo(TestTipoCompositeComCargaInterna.class);
         }
 
         @MInfoTipo(nome = "TestTipoCompostoComCargaInterna", pacote = TestPacoteCompostoA.class)
         public static final class TestTipoCompositeComCargaInterna extends STypeComposite<SIComposite> {
             @Override
-            protected void onLoadType(TipoBuilder tb) {
+            protected void onLoadType(TypeBuilder tb) {
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
                 addCampoString("nome");

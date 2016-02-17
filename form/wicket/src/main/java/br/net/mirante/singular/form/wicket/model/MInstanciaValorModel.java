@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
@@ -30,7 +30,7 @@ public class MInstanciaValorModel<T>
     @Override
     @SuppressWarnings("unchecked")
     public T getObject() {
-        return (T) getTarget().getValor();
+        return (T) getTarget().getValue();
     }
 
     @Override
@@ -41,14 +41,14 @@ public class MInstanciaValorModel<T>
             ((SList) target).clear();
             ((List) object).forEach(((SList) target)::addValor);
         } else {
-            target.setValor(object);
+            target.setValue(object);
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Class<T> getObjectClass() {
-        SType<?> mtipo = getTarget().getMTipo();
+        SType<?> mtipo = getTarget().getType();
         if (mtipo instanceof STypeSimple<?, ?>) {
             return (Class<T>) ((STypeSimple<?, ?>) mtipo).getClasseTipoNativo();
         }

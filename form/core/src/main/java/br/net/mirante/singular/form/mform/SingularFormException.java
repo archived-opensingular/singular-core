@@ -46,8 +46,8 @@ public class SingularFormException extends SingularException {
                 StringBuilder sb = new StringBuilder(msg);
                 sb.append(" (instancia=").append(instance.getPathFull());
                 sb.append(", classeInstancia=").append(instance.getClass());
-                sb.append(", tipo=").append(instance.getMTipo().getNome());
-                sb.append(", classeTipo=").append(instance.getMTipo().getClass().getName());
+                sb.append(", tipo=").append(instance.getType().getName());
+                sb.append(", classeTipo=").append(instance.getType().getClass().getName());
                 if (complemento != null) {
                     sb.append(", ").append(complemento);
                 }

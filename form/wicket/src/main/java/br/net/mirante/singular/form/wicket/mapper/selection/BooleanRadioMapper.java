@@ -1,16 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import br.net.mirante.singular.form.mform.SingularFormException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class BooleanRadioMapper extends RadioMapper {
 
@@ -36,7 +30,7 @@ public class BooleanRadioMapper extends RadioMapper {
         final SInstance mi = model.getObject();
         Boolean valor = mi.getValor(Boolean.class);
         if(valor != null) {
-            MBooleanRadioView booleanRadioView = (MBooleanRadioView) mi.getMTipo().getView();
+            MBooleanRadioView booleanRadioView = (MBooleanRadioView) mi.getType().getView();
             if(valor){
                 return booleanRadioView.labelTrue();
             } else {

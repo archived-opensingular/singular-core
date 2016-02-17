@@ -38,6 +38,7 @@ import br.net.mirante.singular.form.wicket.mapper.components.MetronicPanel;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.model.MTipoModel;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -190,7 +191,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
             }
         } else {
-            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDicionario().getTipo(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
+            mapColumns.forEach((col) -> columnTypes.add(new ColumnType(model.getObject().getDictionary().getType(col.getTypeName()), col.getCustomLabel(), col.getDisplayValueFunction())));
         }
 
         for (ColumnType columnType : columnTypes) {
@@ -341,8 +342,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             try {
                 if (instanceBackupXml != null) {
                     MElement xml = MParser.parse(instanceBackupXml);
-                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getMTipo(), xml);
-                    currentInstance.getObject().setValor(i);
+                    SInstance i = MformPersistenciaXML.fromXML(currentInstance.getObject().getType(), xml);
+                    currentInstance.getObject().setValue(i);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -384,7 +385,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 viewModeModal = ViewMode.VISUALIZATION;
             }
 
-            wicketBuilder.build(new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance), viewModeModal);
+            final WicketBuildContext context = new WicketBuildContext(ctx, modalBody, containerExterno, true, currentInstance);
+
+            wicketBuilder.build(context, viewModeModal);
+            WicketFormProcessing.onFormPrepare(modalBody, currentInstance, false);
+            context.initContainerBehavior();
+
             target.add(ctx.getExternalContainer());
             target.add(containerExterno);
 

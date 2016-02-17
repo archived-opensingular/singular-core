@@ -32,16 +32,16 @@ public class SerializationTest {
 //    }
 
     @Test public void serializeAndDeserialize(){
-        TemplateRepository repo = TemplateRepository.get();
+        TemplateRepository repo = TemplateRepository.create();
 //        TemplateRepository.setDefault(TemplateRepository.get());
         ExamplePackage pacote = null;
         for(TemplateRepository.TemplateEntry entry: repo.getEntries()){
-            if(entry.getType().getNome().equals(ExamplePackage.Types.ORDER.name)){
+            if(entry.getType().getName().equals(ExamplePackage.Types.ORDER.name)){
                 pacote = (ExamplePackage) entry.getType().getPacote();
             }
         }
         SIComposite order = pacote.order.novaInstancia();
-        order.setValor(pacote.orderNumber.getNomeSimples(),1);
+        order.setValor(pacote.orderNumber.getSimpleName(),1);
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(order));
     }
 

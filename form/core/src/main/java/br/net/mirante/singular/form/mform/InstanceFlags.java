@@ -6,7 +6,7 @@ package br.net.mirante.singular.form.mform;
  *
  * @author Daniel C. Bordin
  */
-public enum FlagsInstancia {
+public enum InstanceFlags {
 
     RemovendoInstancia, IsAtributo;
 
@@ -19,7 +19,7 @@ public enum FlagsInstancia {
     static {
         // Escolha um bit para flag
         int pos = 0;
-        for (FlagsInstancia flag : FlagsInstancia.values()) {
+        for (InstanceFlags flag : InstanceFlags.values()) {
             flag.bit = 1 << pos;
             pos++;
         }

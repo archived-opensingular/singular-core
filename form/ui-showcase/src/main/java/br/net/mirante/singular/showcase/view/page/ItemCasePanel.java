@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase.view.page;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -8,6 +9,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
@@ -31,12 +34,11 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
+import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.services.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 
 public class ItemCasePanel extends Panel implements SingularWicketContainer<ItemCasePanel, Void> {
@@ -110,7 +112,8 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         singularFormPanel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
             @Override
             protected SType<?> getTipo() {
-                return caseBase.getObject().getCaseType();
+                String typeName = caseBase.getObject().getCaseType().getName();
+                return TemplateRepository.create().loadType(typeName, typeName);
             }
 
             @Override
@@ -118,6 +121,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
                 return viewMode;
             }
 
+            @Override
             public boolean annotationEnabled(){ return caseBase.getObject().annotationEnabled(); }
         };
 

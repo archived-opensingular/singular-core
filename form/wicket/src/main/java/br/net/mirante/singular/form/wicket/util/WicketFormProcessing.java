@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,7 @@ import br.net.mirante.singular.form.mform.MFormUtil;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
 import br.net.mirante.singular.form.mform.options.MSelectionableType;
@@ -51,44 +54,87 @@ public class WicketFormProcessing {
     }
 
     public static boolean onFormSubmit(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstance, boolean validate) {
-        if (baseInstance == null)
+        return processAndPrepareForm(container, target, baseInstance, validate);
+    }
+
+    public static boolean onFormPrepare(MarkupContainer container, IModel<? extends SInstance> baseInstance, boolean validate) {
+        return processAndPrepareForm(container, Optional.empty(), baseInstance, validate);
+    }
+
+    private static boolean processAndPrepareForm(MarkupContainer container, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> baseInstanceModel, boolean validate) {
+        if (baseInstanceModel == null)
             return false;
 
         // Validação do valor do componente
         if (validate) {
-            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstance.getObject());
+            InstanceValidationContext validationContext = new InstanceValidationContext(baseInstanceModel.getObject());
             validationContext.validateAll();
             if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
-                associateErrorsToComponents(validationContext, container, baseInstance);
+                associateErrorsToComponents(validationContext, container, baseInstanceModel);
                 refresh(target, container);
                 return false;
             }
         }
 
         // atualizar documento e recuperar instancias com atributos alterados
-        baseInstance.getObject().getDocument().updateAttributes(null);
+        SInstance baseInstance = baseInstanceModel.getObject();
+        SDocument document = baseInstance.getDocument();
+        document.updateAttributes(baseInstance, null);
 
         // re-renderizar form
         refresh(target, container);
         return true;
     }
 
+    /**
+     * Forma uma chava apartir dos indexes de lista
+     *
+     * @param path da instancia
+     * @return chaves concatenadas
+     */
+    protected static String getIndexsKey(String path) {
+
+        final Pattern indexFinder = Pattern.compile("(\\[\\d\\])");
+        final Pattern bracketsFinder = Pattern.compile("[\\[\\]]");
+
+        final Matcher matcher = indexFinder.matcher(path);
+        final StringBuilder key = new StringBuilder();
+
+        while (matcher.find()) {
+            key.append(bracketsFinder.matcher(matcher.group()).replaceAll(StringUtils.EMPTY));
+        }
+
+        return key.toString();
+    }
+
     public static void onFieldUpdate(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance) {
-        if (fieldInstance == null || fieldInstance.getObject() == null)
+
+        if (fieldInstance == null || fieldInstance.getObject() == null) {
             return;
+        }
+
+        /**
+         * A ordem foi alterada para garantir que os componentes dependentes serão atualizados,
+         * já que o valor é submetido.
+         */
+        refreshComponents(formComponent, target, fieldInstance);
 
         // Validação do valor do componente
         final InstanceValidationContext validationContext = new InstanceValidationContext(fieldInstance.getObject());
         validationContext.validateSingle();
         if (validationContext.hasErrorsAboveLevel(ValidationErrorLevel.ERROR)) {
             associateErrorsToComponents(validationContext, formComponent, fieldInstance);
-            refresh(target, formComponent.getParent());
-            return;
         }
+
+    }
+
+    private static void refreshComponents(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance){
 
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
         final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
         fieldInstance.getObject().getDocument().updateAttributes(eventCollector);
+
+        final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
 
         refresh(target, formComponent);
         target.ifPresent(t -> {
@@ -99,34 +145,29 @@ public class WicketFormProcessing {
                     .collect(toSet());
 
             final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
-                SType<?> insTipo = ins.getMTipo();
+                SType<?> insTipo = ins.getType();
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
                 boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
-                boolean dependsOnField = fieldInstance.getObject().getMTipo().getDependentTypes().contains(insTipo);
-                return wasUpdated || (hasOptions && dependsOnField);
+                boolean dependsOnType = fieldInstance.getObject().getType().getDependentTypes().contains(insTipo);
+                boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
+                return wasUpdated || (hasOptions && dependsOnType && isInTheSameIndexOfList);
             };
 
             //re-renderizar componentes
             formComponent.getPage().visitChildren(Component.class, (c, visit) -> {
-                if (c.getDefaultModel() != null && IMInstanciaAwareModel.class.isAssignableFrom(c.getDefaultModel().getClass())) {
-                    IMInstanciaAwareModel model = (IMInstanciaAwareModel) c.getDefaultModel();
+                IMInstanciaAwareModel.optionalCast(c.getDefaultModel()).ifPresent(model -> {
                     if (predicate.test(c, model.getMInstancia())) {
-                        (model).getMInstancia().clearInstance();
+                        model.getMInstancia().clearInstance();
+                        if (c instanceof FormComponent) {
+                            refreshComponents((FormComponent) c, target, IMInstanciaAwareModel.getInstanceModel(model));
+                        }
                         refresh(Optional.of(t), c);
                     }
-                }
+                });
             });
 
-//           // re-renderizar componentes
-//            WicketFormUtils.streamComponentsByInstance(formComponent, predicate)
-//                    .map(WicketFormUtils::findCellContainer)
-//                    .filter(Optional::isPresent)
-//                    .map(Optional::get)
-//                    .filter(c -> c != null)
-//                    .forEach(t::add);
         });
     }
-
 
     private static void refresh(Optional<AjaxRequestTarget> target, Component component) {
         if (target.isPresent() && component != null) {
@@ -164,11 +205,10 @@ public class WicketFormProcessing {
             }
             Integer instanceId = error.getInstance().getId();
 
-            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () ->
-                    MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
-                            .filter(it -> Objects.equals(it.getId(), instanceId))
-                            .findFirst()
-                            .orElse(null);
+            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
+                    .filter(it -> Objects.equals(it.getId(), instanceId))
+                    .findFirst()
+                    .orElse(null);
 
             final FeedbackMessages feedbackMessages = component.getFeedbackMessages();
 

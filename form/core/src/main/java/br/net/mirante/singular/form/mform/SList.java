@@ -23,41 +23,43 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     static <I extends SInstance> SList<I> of(SType<I> tipoElementos) {
         //        MILista<I> lista = new MILista<>();
         //TODO: FABS: Evaluate this case, sin it impacts in the serialization process.
-        SList<I> lista = (SList<I>) tipoElementos.getDicionario().getTipo(STypeLista.class).novaInstancia();
-        lista.setTipo(tipoElementos.getDicionario().getTipo(STypeLista.class));
+        SList<I> lista = (SList<I>) tipoElementos.getDictionary().getType(STypeLista.class).novaInstancia();
+        lista.setType(tipoElementos.getDictionary().getType(STypeLista.class));
         lista.tipoElementos = tipoElementos;
         return lista;
     }
 
     @Override
-    public STypeLista<?, ?> getMTipo() {
-        return (STypeLista<?, ?>) super.getMTipo();
+    public STypeLista<?, ?> getType() {
+        return (STypeLista<?, ?>) super.getType();
     }
 
     @SuppressWarnings("unchecked")
     public SType<E> getTipoElementos() {
         if (tipoElementos == null) {
-            tipoElementos = (SType<E>) getMTipo().getTipoElementos();
+            tipoElementos = (SType<E>) getType().getTipoElementos();
         }
         return tipoElementos;
     }
 
     @Override
-    public List<Object> getValor() {
+    public List<Object> getValue() {
         if (valores == null) {
             return Collections.emptyList();
         }
-        return valores.stream().map(v -> v.getValor()).collect(Collectors.toList());
+        return valores.stream().map(SInstance::getValue).collect(Collectors.toList());
     }
 
     @Override
     public void clearInstance() {
-        getValor().clear();
+        if (valores != null) {
+            valores.forEach(SInstance::clearInstance);
+        }
     }
 
     @Override
-    public final <T extends Object> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new LeitorPath(pathCampo), classeDestino);
+    public final <T> T getValor(String pathCampo, Class<T> classeDestino) {
+        return getValor(new PathReader(pathCampo), classeDestino);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     @Override
     public boolean isEmptyOfData() {
-        return isEmpty() || valores.stream().allMatch(i -> i.isEmptyOfData());
+        return isEmpty() || valores.stream().allMatch(SInstance::isEmptyOfData);
     }
 
     public E addNovo() {
@@ -87,8 +89,8 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         return addInterno(element);
     }
 
-    public E addElementAt(int index, Object e) {
-        E element = (E) e;
+    public E addElementAt(int index, E e) {
+        E element = e;
         element.setDocument(getDocument());
         addAtInterno(index, element);
         return element;
@@ -102,7 +104,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     public E addValor(Object valor) {
         E instancia = getTipoElementos().newInstance(getDocument());
-        instancia.setValor(valor);
+        instancia.setValue(valor);
         return addInterno(instancia);
     }
 
@@ -117,7 +119,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
             valores = new ArrayList<>();
         }
         valores.add(instancia);
-        instancia.setPai(this);
+        instancia.setParent(this);
         return instancia;
     }
 
@@ -126,7 +128,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
             valores = new ArrayList<>();
         }
         valores.add(index, instancia);
-        instancia.setPai(this);
+        instancia.setParent(this);
     }
 
     public void clear() {
@@ -144,23 +146,23 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     @Override
     public SInstance getCampo(String path) {
-        return getCampo(new LeitorPath(path));
+        return getCampo(new PathReader(path));
     }
 
     @Override
-    final SInstance getCampoLocal(LeitorPath leitor) {
+    final SInstance getCampoLocal(PathReader leitor) {
         if (!leitor.isIndice()) {
             throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
         SInstance instancia = isEmpty() ? null : valores.get(leitor.getIndice());
         if (instancia == null) {
-            MFormUtil.resolverTipoCampo(getMTipo(), leitor);
+            MFormUtil.resolverTipoCampo(getType(), leitor);
         }
         return instancia;
     }
 
     @Override
-    final SInstance getCampoLocalSemCriar(LeitorPath leitor) {
+    final SInstance getCampoLocalSemCriar(PathReader leitor) {
         if (!leitor.isIndice()) {
             throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
@@ -168,29 +170,29 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     @Override
-    public void setValor(Object obj) {
+    public void setValue(Object obj) {
         if(obj instanceof SList){
             clearInstance();
             valores = newArrayList(((SList)obj).valores);
             tipoElementos = ((SList)obj).tipoElementos;
-            ((SList)obj).clearInstance();
+            ((SList) obj).getValue().clear();
         }else{
             throw new RuntimeException("SList só suporta valores de mesmo tipo");
         }
     }
     @Override
     public final void setValor(String pathCampo, Object valor) {
-        setValor(new LeitorPath(pathCampo), valor);
+        setValor(new PathReader(pathCampo), valor);
     }
 
     @Override
-    void setValor(LeitorPath leitorPath, Object valor) {
+    void setValor(PathReader leitorPath, Object valor) {
         if (!leitorPath.isIndice()) {
             throw new RuntimeException(leitorPath.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
         SInstance instancia = get(leitorPath.getIndice());
         if (leitorPath.isUltimo()) {
-            instancia.setValor(valor);
+            instancia.setValue(valor);
         } else {
             instancia.setValor(leitorPath.proximo(), valor);
         }
@@ -206,7 +208,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     public Object getValorAt(int index) {
-        return get(index).getValor();
+        return get(index).getValue();
     }
 
     /**
@@ -230,7 +232,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     public boolean isEmpty() {
-        return (valores == null) ? true : valores.isEmpty();
+        return (valores == null) || valores.isEmpty();
     }
 
     public List<E> getValores() {
@@ -253,7 +255,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
     }
 
     public String toDebug() {
-        return stream().map(i -> i.getDisplayString()).collect(Collectors.joining("; "));
+        return stream().map(SInstance::getDisplayString).collect(Collectors.joining("; "));
     }
 
     @Override
@@ -277,7 +279,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         SList<?> other = (SList<?>) obj;
         if (size() != other.size()) {
             return false;
-        } else if (!getMTipo().equals(other.getMTipo())) {
+        } else if (!getType().equals(other.getType())) {
             return false;
         } else if (!Objects.equals(getTipoElementos(), other.getTipoElementos()))
             return false;

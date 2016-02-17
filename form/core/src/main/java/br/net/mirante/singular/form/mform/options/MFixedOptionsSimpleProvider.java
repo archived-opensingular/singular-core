@@ -55,7 +55,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
      */
     public MFixedOptionsSimpleProvider add(Object o){
         SInstance e = opcoes.addNovo();
-        e.setValor(o);
+        e.setValue(o);
         return this;
     }
 
@@ -69,7 +69,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         SInstance instancia = opcoes.addNovo();
         MSelectionableInstance e = (MSelectionableInstance)instancia;
         e.setSelectLabel(selectLabel);
-        instancia.setValor(value);
+        instancia.setValue(value);
         return this;
     }
 

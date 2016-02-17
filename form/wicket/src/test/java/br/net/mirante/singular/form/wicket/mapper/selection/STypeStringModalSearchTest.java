@@ -57,7 +57,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     @Test public void showPreviousValueWhenRendering(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"apple");
+        page.getCurrentInstance().setValor(selectType.getSimpleName(),"apple");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
 
@@ -68,7 +68,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
 
     @Test public void showDanglingValueOnOptions(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"avocado");
+        page.getCurrentInstance().setValor(selectType.getSimpleName(),"avocado");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
 
@@ -85,7 +85,7 @@ public class STypeStringModalSearchTest extends SelectionFieldBaseTest {
     @Ignore("Must understand how to handle the ajax modal and its actions")
     @Test public void changeValueWhenSelected(){
         setupPage();
-        page.getCurrentInstance().setValor(selectType.getNomeSimples(),"orange");
+        page.getCurrentInstance().setValor(selectType.getSimpleName(),"orange");
         selectType.withSelectionOf("strawberry","apple","orange","banana");
         buildPage();
         assertThat(page.size()).isEqualTo(3);

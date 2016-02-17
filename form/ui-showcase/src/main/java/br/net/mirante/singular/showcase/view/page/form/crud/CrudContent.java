@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -89,7 +89,7 @@ public class CrudContent extends Content
     private void setActiveTemplate(StringValue pType) {
         if (!pType.isEmpty()) {
             String strType = pType.toString();
-            TemplateEntry t = TemplateRepository.get().findEntryByType(strType);
+            TemplateEntry t = TemplateRepository.create().findEntryByType(strType);
             selectedTemplate = new FormVO(t);
         } else {
             selectedTemplate = new FormVO(null, null);
@@ -135,7 +135,7 @@ public class CrudContent extends Content
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.get().getEntries().stream()
+        List<SelectOption> options = TemplateRepository.create().getEntries().stream()
             .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
             .collect(Collectors.toList());
 
@@ -305,7 +305,7 @@ public class CrudContent extends Content
     }
 
     private String getDefinicao(String typeName) {
-        final SPackage pacote = TemplateRepository.get().loadType(typeName).getPacote();
+        final SPackage pacote = TemplateRepository.create().loadType(typeName, typeName).getPacote();
         StringBuilder definicaoOutput = new StringBuilder();
         pacote.debug(definicaoOutput);
         return definicaoOutput.toString();

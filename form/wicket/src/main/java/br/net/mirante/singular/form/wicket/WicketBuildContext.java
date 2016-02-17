@@ -201,7 +201,7 @@ public class WicketBuildContext implements Serializable {
                 formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
             }
             final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
-            final SType<?> tipo = model.getMInstancia().getMTipo();
+            final SType<?> tipo = model.getMInstancia().getType();
             if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
                 mapper.addAjaxUpdate(
                         formComponent,

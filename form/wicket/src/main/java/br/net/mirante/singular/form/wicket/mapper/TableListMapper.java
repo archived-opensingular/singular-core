@@ -65,7 +65,7 @@ public class TableListMapper extends AbstractListaMapper {
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
-        final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getMTipo().asAtrBasic().getLabel());
+        final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtrBasic().getLabel());
 
         ctx.configureContainer(label);
 
@@ -177,10 +177,10 @@ public class TableListMapper extends AbstractListaMapper {
 
             if (instancia instanceof SIComposite) {
                 final SIComposite composto = (SIComposite) instancia;
-                final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getMTipo();
+                final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getType();
                 for (SType<?> tCampo : tComposto.getFields()) {
                     final SInstanceCampoModel<SInstance> mCampo;
-                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getNomeSimples());
+                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getSimpleName());
                     wicketBuilder.build(ctx.createChild(row.newCol(), true, mCampo), viewMode);
                 }
             } else {

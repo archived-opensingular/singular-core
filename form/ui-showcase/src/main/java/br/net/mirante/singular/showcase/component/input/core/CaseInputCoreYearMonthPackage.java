@@ -1,6 +1,6 @@
 package br.net.mirante.singular.showcase.component.input.core;
 
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 public class CaseInputCoreYearMonthPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
         tipoMyForm.addCampo("inicio", STypeAnoMes.class)
                 .as(AtrBasic.class)

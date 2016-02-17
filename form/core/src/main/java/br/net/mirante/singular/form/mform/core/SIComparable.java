@@ -8,11 +8,11 @@ public abstract class SIComparable<TIPO_NATIVO extends Comparable<TIPO_NATIVO>> 
     }
 
     public int compareTo(SIComparable<TIPO_NATIVO> outro) {
-        return compareTo(outro.getValor());
+        return compareTo(outro.getValue());
     }
 
     public int compareTo(TIPO_NATIVO outro) {
-        return getValor().compareTo(outro);
+        return getValue().compareTo(outro);
     }
 
     public boolean isAfter(SIComparable<TIPO_NATIVO> outro) {
@@ -27,10 +27,10 @@ public abstract class SIComparable<TIPO_NATIVO extends Comparable<TIPO_NATIVO>> 
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof SIComparable) {
             final SIComparable other = (SIComparable) obj;
-            if (this.getValor() != null && other.getValor() != null) {
+            if (this.getValue() != null && other.getValue() != null) {
                 return compareTo(other) == 0;
             } else {
-                return this.getValor() == null && other.getValor() == null;
+                return this.getValue() == null && other.getValue() == null;
             }
         }
         return false;
@@ -38,8 +38,8 @@ public abstract class SIComparable<TIPO_NATIVO extends Comparable<TIPO_NATIVO>> 
 
     @Override
     public int hashCode() {
-        if (getValor() != null) {
-            return getValor().hashCode();
+        if (getValue() != null) {
+            return getValue().hashCode();
         } else {
             return super.hashCode();
         }

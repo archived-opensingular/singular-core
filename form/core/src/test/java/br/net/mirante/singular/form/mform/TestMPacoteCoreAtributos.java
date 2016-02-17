@@ -30,7 +30,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         }
 
         @Override
-        protected void carregarDefinicoes(PacoteBuilder pb) {
+        protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createTipoAtributo(ATR_XX);
             pb.addAtributo(SType.class, ATR_XX);
 
@@ -46,16 +46,16 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public void testValorDefaultEInicialDeAtributos() {
         SDictionary dicionario = SDictionary.create();
-        dicionario.carregarPacote(TestPacoteAA.class);
+        dicionario.loadPackage(TestPacoteAA.class);
 
         // Teste no tipo
-        assertLeituraAtributo(dicionario.getTipo(STypeInteger.class), 15, 15);
-        assertLeituraAtributo(dicionario.getTipo(STypeString.class), 17, 17);
+        assertLeituraAtributo(dicionario.getType(STypeInteger.class), 15, 15);
+        assertLeituraAtributo(dicionario.getType(STypeString.class), 17, 17);
         // Os tipos a seguir extends MTipoString
-        assertLeituraAtributo(dicionario.getTipo(STypeEMail.class), 17, 17);
-        assertLeituraAtributo(dicionario.getTipo(STypeCPF.class), 19, 19);
-        assertLeituraAtributo(dicionario.getTipo(STypeCEP.class), 21, 21);
-        assertLeituraAtributo(dicionario.getTipo(STypeCNPJ.class), 23, 23);
+        assertLeituraAtributo(dicionario.getType(STypeEMail.class), 17, 17);
+        assertLeituraAtributo(dicionario.getType(STypeCPF.class), 19, 19);
+        assertLeituraAtributo(dicionario.getType(STypeCEP.class), 21, 21);
+        assertLeituraAtributo(dicionario.getType(STypeCNPJ.class), 23, 23);
     }
 
     private static void assertLeituraAtributo(SType<?> alvo, Object esperadoGetValor, Object esperadoGetValorWithDefault) {
@@ -75,10 +75,10 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public void testAdicionarAtributoEmOutroPacote() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         pb.addAtributo(STypeString.class, TestPacoteAA.ATR_XX, 17);
 
-        STypeString tipo = dicionario.getTipo(STypeString.class);
+        STypeString tipo = dicionario.getType(STypeString.class);
         assertEquals(tipo.getValorAtributo(TestPacoteAA.ATR_XX), (Object) 17);
         SIString instancia = tipo.novaInstancia();
         assertEquals(instancia.getValorAtributo(TestPacoteAA.ATR_XX), (Object) 17);
@@ -86,42 +86,42 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public void testAtributoValorInicial() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         SType<SIString> tipo = pb.createTipo("local", STypeString.class).withValorInicial("aqui");
-        STypeString tipoString = dicionario.getTipoOpcional(STypeString.class);
+        STypeString tipoString = dicionario.getTypeOptional(STypeString.class);
 
         assertEquals("aqui", tipo.getValorAtributoValorInicial());
         assertEquals(null, tipoString.getValorAtributoValorInicial());
 
         SIString i1 = tipo.novaInstancia();
-        assertEquals("aqui", i1.getValor());
+        assertEquals("aqui", i1.getValue());
 
         tipo.withValorInicial("la");
-        assertEquals("aqui", i1.getValor());
+        assertEquals("aqui", i1.getValue());
         assertEquals("la", tipo.getValorAtributoValorInicial());
-        assertEquals("la", tipo.novaInstancia().getValor());
+        assertEquals("la", tipo.novaInstancia().getValue());
 
         tipo.withValorInicial("none");
         assertEquals("none", tipo.getValorAtributoValorInicial());
-        assertEquals("none", tipo.novaInstancia().getValor());
+        assertEquals("none", tipo.novaInstancia().getValue());
 
         tipo.withValorInicial(null);
         assertEquals(null, tipo.getValorAtributoValorInicial());
-        assertEquals(null, tipo.novaInstancia().getValor());
+        assertEquals(null, tipo.novaInstancia().getValue());
 
         tipoString.withValorInicial("X");
-        assertEquals("X", tipoString.novaInstancia().getValor());
-        assertEquals(null, tipo.novaInstancia().getValor());
+        assertEquals("X", tipoString.novaInstancia().getValue());
+        assertEquals(null, tipo.novaInstancia().getValue());
 
         tipo.withValorInicial("Y");
-        assertEquals("X", tipoString.novaInstancia().getValor());
-        assertEquals("Y", tipo.novaInstancia().getValor());
+        assertEquals("X", tipoString.novaInstancia().getValue());
+        assertEquals("Y", tipo.novaInstancia().getValue());
     }
 
     public void testCriarDoisAtributosComMesmoNome() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
         STypeString tipo = pb.createTipo("X", STypeString.class);
         pb.createTipoAtributo(tipo, "a", STypeInteger.class);
@@ -131,41 +131,41 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public void testCriarDoisAtributosDePacotesDiferentesComMesmoNome() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
+        PackageBuilder pb1 = dicionario.createNewPackage("teste1");
 
         STypeSimple<?, ?> tipo = pb1.createTipo("X", STypeSimple.class);
         MAtributo at1 = pb1.createTipoAtributo(tipo, "a", STypeInteger.class);
 
-        PacoteBuilder pb2 = dicionario.criarNovoPacote("teste2");
+        PackageBuilder pb2 = dicionario.createNewPackage("teste2");
         MAtributo at2 = pb2.createTipoAtributo(tipo, "a", STypeInteger.class);
 
-        assertException(() -> pb2.createTipoAtributo(dicionario.getTipo(STypeSimple.class), "a", STypeInteger.class), "já está criada");
+        assertException(() -> pb2.createTipoAtributo(dicionario.getType(STypeSimple.class), "a", STypeInteger.class), "já está criada");
 
-        assertEquals("teste1.X.a", at1.getNome());
-        assertEquals("teste2.a", at2.getNome());
+        assertEquals("teste1.X.a", at1.getName());
+        assertEquals("teste2.a", at2.getName());
 
-        tipo.setValorAtributo(at1.getNome(), 1);
-        tipo.setValorAtributo(at2.getNome(), 2);
-        assertEquals((Integer) 1, tipo.getValorAtributo(at1.getNome()));
-        assertEquals((Integer) 2, tipo.getValorAtributo(at2.getNome()));
+        tipo.setValorAtributo(at1.getName(), 1);
+        tipo.setValorAtributo(at2.getName(), 2);
+        assertEquals((Integer) 1, tipo.getValorAtributo(at1.getName()));
+        assertEquals((Integer) 2, tipo.getValorAtributo(at2.getName()));
 
         tipo.setValorAtributo(at1, 10);
         tipo.setValorAtributo(at2, 20);
-        assertEquals((Integer) 10, tipo.getValorAtributo(at1.getNome()));
-        assertEquals((Integer) 20, tipo.getValorAtributo(at2.getNome()));
+        assertEquals((Integer) 10, tipo.getValorAtributo(at1.getName()));
+        assertEquals((Integer) 20, tipo.getValorAtributo(at2.getName()));
     }
 
     public void testCriacaoNovosAtributosNosPacotesCerto() {
         SDictionary dicionario = SDictionary.create();
-        dicionario.carregarPacote(TestPacoteB.class);
+        dicionario.loadPackage(TestPacoteB.class);
 
         assertEquals("teste.pacoteB.yy", TestPacoteB.ATR_LABEL_Y.getNomeCompleto());
 
-        SType<?> tipoAtributo = dicionario.getTipo(TestPacoteB.ATR_LABEL_Y.getNomeCompleto());
+        SType<?> tipoAtributo = dicionario.getType(TestPacoteB.ATR_LABEL_Y.getNomeCompleto());
         assertNotNull(tipoAtributo);
-        assertEquals("teste.pacoteB.yy", tipoAtributo.getNome());
-        assertEquals("teste.pacoteB", tipoAtributo.getPacote().getNome());
-        assertEquals("teste.pacoteB", tipoAtributo.getEscopoPai().getNome());
+        assertEquals("teste.pacoteB.yy", tipoAtributo.getName());
+        assertEquals("teste.pacoteB", tipoAtributo.getPacote().getName());
+        assertEquals("teste.pacoteB", tipoAtributo.getEscopoPai().getName());
     }
 
     public void testCriacaoAtributoDentroDaClasseDoTipo() {
@@ -173,10 +173,10 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         // onLoadType()
 
         SDictionary dicionario = SDictionary.create();
-        TestPacoteCAI pkg = dicionario.carregarPacote(TestPacoteCAI.class);
+        TestPacoteCAI pkg = dicionario.loadPackage(TestPacoteCAI.class);
 
-        TipoComAtributoInterno1 tipo1 = dicionario.getTipo(TipoComAtributoInterno1.class);
-        TipoComAtributoInterno2 tipo2 = dicionario.getTipo(TipoComAtributoInterno2.class);
+        TipoComAtributoInterno1 tipo1 = dicionario.getType(TipoComAtributoInterno1.class);
+        TipoComAtributoInterno2 tipo2 = dicionario.getType(TipoComAtributoInterno2.class);
         TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
 
         assertNull(tipo1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
@@ -208,8 +208,8 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         assertEquals("B2", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID2));
         assertEquals("B3", tipo2.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
 
-        SIComposite instancia1 = dicionario.novaInstancia(TipoComAtributoInterno1.class);
-        SIComposite instancia2 = dicionario.novaInstancia(TipoComAtributoInterno2.class);
+        SIComposite instancia1 = dicionario.newInstance(TipoComAtributoInterno1.class);
+        SIComposite instancia2 = dicionario.newInstance(TipoComAtributoInterno2.class);
 
         assertEquals("A1", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID1));
         assertEquals("A3", instancia1.getValorAtributo(TestPacoteCAI.ATR_REF_ID3));
@@ -247,7 +247,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
     
     public void testAtribuicaoDeValoresDeAtributosPorString() {
         SDictionary dicionario = SDictionary.create();
-        TestPacoteCAI pkg = dicionario.carregarPacote(TestPacoteCAI.class);
+        TestPacoteCAI pkg = dicionario.loadPackage(TestPacoteCAI.class);
 
         TipoComAtributoInterno1 fieldOfTipo1 = pkg.fieldOfTipoComAtributoInterno1;
         
@@ -259,7 +259,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 //        System.out.println(pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome());
         
         
-        String basePath = pkg.fieldOfTipoComAtributoInterno1.getSuperTipo().getNome()+".";
+        String basePath = pkg.fieldOfTipoComAtributoInterno1.getSuperType().getName()+".";
         instanceOfFieldOfTipo1.setValorAtributo(basePath+TestPacoteCAI.ATR_KEY_ID4,"what");
         assertThat(instanceOfFieldOfTipo1.getValorAtributo(basePath+TestPacoteCAI.ATR_KEY_ID4))
             .isEqualTo("what");
@@ -281,7 +281,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         TipoComAtributoInterno1 fieldOfTipoComAtributoInterno1;
 
         @Override
-        protected void carregarDefinicoes(PacoteBuilder pb) {
+        protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createTipo(TipoComAtributoInterno1.class);
             pb.createTipo(TipoComAtributoInterno2.class);
             pb.createTipoAtributo(TipoComAtributoInterno1.class, ATR_REF_ID1);
@@ -297,7 +297,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         public static class TipoComAtributoInterno1 extends STypeComposite<SIComposite> {
 
             @Override
-            protected void onLoadType(TipoBuilder tb) {
+            protected void onLoadType(TypeBuilder tb) {
                 addCampoString("nome");
             }
         }
@@ -306,7 +306,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         public static class TipoComAtributoInterno2 extends TipoComAtributoInterno1 {
 
             @Override
-            protected void onLoadType(TipoBuilder tb) {
+            protected void onLoadType(TypeBuilder tb) {
                 addCampoString("endereco");
             }
         }
@@ -314,7 +314,7 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
 
     public void testIsAttributeETestAtributoComposto() {
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb1 = dicionario.criarNovoPacote("teste1");
+        PackageBuilder pb1 = dicionario.createNewPackage("teste1");
 
         STypeComposite<?> tipoPosicao = pb1.createTipoComposto("posicao");
         tipoPosicao.addCampoString("cor");
@@ -325,27 +325,27 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
         MAtributo at2 = pb1.createTipoAtributo(tipo, "b", tipoPosicao);
 
         tipo.setValorAtributo("a", "a1");
-        assertIsAtributo(tipo.getInstanciaAtributoInterno(at1.getNome()), null);
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at1.getName()), null);
 
         tipo.setValorAtributo("b", "cor", "b1");
         tipo.setValorAtributo("b", "linha", 1);
-        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getNome()), null);
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("cor"), null);
-        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getNome())).getCampo("linha"), null);
+        assertIsAtributo(tipo.getInstanciaAtributoInterno(at2.getName()), null);
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getName())).getCampo("cor"), null);
+        assertIsAtributo(((ICompositeInstance) tipo.getInstanciaAtributoInterno(at2.getName())).getCampo("linha"), null);
 
         SIString instancia = (SIString) tipo.novaInstancia();
         assertEquals(false, instancia.isAttribute());
         assertEquals(0, instancia.getAtributos().size());
 
-        instancia.setValorAtributo(at1.getNome(), "a2");
-        instancia.setValorAtributo(at2.getNome(), "cor", "b2");
-        instancia.setValorAtributo(at2.getNome(), "linha", 2);
+        instancia.setValorAtributo(at1.getName(), "a2");
+        instancia.setValorAtributo(at2.getName(), "cor", "b2");
+        instancia.setValorAtributo(at2.getName(), "linha", 2);
 
         assertEquals(2, instancia.getAtributos().size());
-        assertIsAtributo(instancia.getAtributos().get(at1.getNome()), instancia);
-        assertIsAtributo(instancia.getAtributos().get(at2.getNome()), instancia);
-        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getNome())).getCampo("cor"), instancia);
-        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getNome())).getCampo("linha"), instancia);
+        assertIsAtributo(instancia.getAtributos().get(at1.getName()), instancia);
+        assertIsAtributo(instancia.getAtributos().get(at2.getName()), instancia);
+        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getName())).getCampo("cor"), instancia);
+        assertIsAtributo(((ICompositeInstance) instancia.getAtributos().get(at2.getName())).getCampo("linha"), instancia);
         instancia.getAtributos().values().stream().forEach(a -> assertIsAtributo(a, instancia));
     }
 
@@ -366,27 +366,27 @@ public class TestMPacoteCoreAtributos extends TestCaseForm {
     private static <T extends SType<?>> void testInicialEDefault(Class<T> tipo, Object valorInicial, Object valorIfNull) {
         assertTrue(!valorInicial.equals(valorIfNull));
         SDictionary dicionario = SDictionary.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         SType<?> tx = pb.createTipo("x", tipo).withValorInicial(valorInicial);
         SType<?> ty = pb.createTipo("y", tipo).withDefaultValueIfNull(valorIfNull);
         SType<?> tz = pb.createTipo("z", tipo).withValorInicial(valorInicial).withDefaultValueIfNull(valorIfNull);
 
         SInstance instX = tx.novaInstancia();
-        assertEquals(valorInicial, instX.getValor());
+        assertEquals(valorInicial, instX.getValue());
         assertEquals(valorInicial, instX.getValorWithDefault());
 
         SInstance instY = ty.novaInstancia();
-        assertNull(instY.getValor());
+        assertNull(instY.getValue());
         assertEquals(valorIfNull, instY.getValorWithDefault());
-        instY.setValor(valorInicial);
+        instY.setValue(valorInicial);
         assertEquals(valorInicial, instY.getValorWithDefault());
-        instY.setValor(null);
+        instY.setValue(null);
         assertEquals(valorIfNull, instY.getValorWithDefault());
 
         SInstance instZ = tz.novaInstancia();
-        assertEquals(valorInicial, instZ.getValor());
+        assertEquals(valorInicial, instZ.getValue());
         assertEquals(valorInicial, instZ.getValorWithDefault());
-        instZ.setValor(null);
+        instZ.setValue(null);
         assertEquals(valorIfNull, instZ.getValorWithDefault());
     }
 }

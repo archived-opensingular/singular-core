@@ -38,7 +38,7 @@ public class MOptionsConfig {
         if (instancia instanceof SList) {
             return ((SList) instancia).getTipoElementos().getProviderOpcoes();
         }
-        return instancia.getMTipo().getProviderOpcoes();
+        return instancia.getType().getProviderOpcoes();
     }
 
     private BiMap<String, SInstance> getOptions() {
@@ -88,7 +88,7 @@ public class MOptionsConfig {
     }
 
     private String newUniqueKey(SInstance SInstance){
-        if(SInstance.getValor() != null) return String.valueOf(SInstance.getValor()); //TODO: this should be re-evaluated
+        if(SInstance.getValue() != null) return String.valueOf(SInstance.getValue()); //TODO: this should be re-evaluated
         keySeed = keySeed.add(BigInteger.ONE);
         return String.valueOf(keySeed);
     }

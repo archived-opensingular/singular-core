@@ -1,15 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
+import br.net.mirante.singular.form.mform.util.transformer.MListaBuilder;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class TestMoptionsConfigTipoLista {
 
@@ -36,7 +36,7 @@ public class TestMoptionsConfigTipoLista {
     @Before
     public void setup() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         
@@ -53,7 +53,7 @@ public class TestMoptionsConfigTipoLista {
         evento = _raiz.novaInstancia();
 
         //alertas
-        listaAlertas = (SList) evento.getCampo(_alertas.getNomeSimples());
+        listaAlertas = (SList) evento.getCampo(_alertas.getSimpleName());
 
         _alerta.withSelectionFromProvider(_alerta_data, new MOptionsCompositeProvider() {
             @Override
@@ -123,7 +123,7 @@ public class TestMoptionsConfigTipoLista {
     @Test
     public void testMTipoOpcoes(){
         for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
-            Assert.assertEquals(_alerta, instancia.getMTipo());
+            Assert.assertEquals(_alerta, instancia.getType());
         }
     }
 
@@ -141,6 +141,6 @@ public class TestMoptionsConfigTipoLista {
         for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
             Assert.assertEquals(String.valueOf(Value.of(instancia, _alerta_data)), instancia.getSelectLabel());
         }
-        Assert.assertEquals(_alerta_data.getNomeSimples(), _alerta.getSelectLabel());
+        Assert.assertEquals(_alerta_data.getSimpleName(), _alerta.getSelectLabel());
     }
 }

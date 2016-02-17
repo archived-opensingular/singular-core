@@ -12,7 +12,9 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
 
     @Override
     public String getScript(Component component) {
+
         String js = "";
+
         js += " $('#%s').datepicker({ ";
         js += "     rtl: App.isRTL(), ";
         js += "     orientation: 'right', ";
@@ -20,18 +22,30 @@ public class DatePickerInitBehaviour extends InitScriptBehaviour {
         js += "     language: 'pt-BR' ";
         js += " }) ";
 
-        if(component instanceof MarkupContainer){
+        String idDatepicker = component.getMarkupId();
+        String idInput = component.getMarkupId();
+
+        if (component instanceof MarkupContainer) {
             FormComponent fc = ((MarkupContainer) component).visitChildren(FormComponent.class, new IVisitor<FormComponent, FormComponent>() {
                 @Override
                 public void component(FormComponent object, IVisit<FormComponent> visit) {
                     visit.stop(object);
-
                 }
             });
-            js += String.format(".on('changeDate', function(){ $('#%s').trigger('"+ BSDatepickerConstants.JS_CHANGE_EVENT+"'); });", fc.getMarkupId(true));
+            if (fc != null) {
+                idInput = fc.getMarkupId();
+            }
         }
-        js += ";";
 
-        return String.format(js, component.getMarkupId(true));
+        js += ".on('changeDate', function(){";
+        js += String.format("var input = $('#%s');", idInput);
+        js += String.format("var format = $('#%s').attr('data-date-format').toUpperCase();", idDatepicker);
+        js += "     if( format == 'DD/MM/YYYY' && /\\d{1,2}\\/\\d{1,2}\\/\\d{4}/.test(input.val()) ";
+        js += "         || format == 'DD/MM' && /\\d{1,2}\\/\\d{1,2}/.test(input.val())) { ";
+        js += "         input.trigger('" + BSDatepickerConstants.JS_CHANGE_EVENT + "');";
+        js += "     } ";
+        js += " }); ";
+
+        return String.format(js, idDatepicker);
     }
 }

@@ -5,13 +5,13 @@
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
 
     <div class="input-group">
-        <div class="form-control uneditable-input input-fixed">
-            <div wicket:id="fileDummyField" style="white-space: nowrap;">
+        <div class="form-control" style="white-space: nowrap;">
+            <div wicket:id="fileDummyField">
                 <i class="fa fa-file"></i>&nbsp;
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>
             </div>
         </div>
-        <span class="input-group-btn">
+        <span class="input-group-btn" >
             <button wicket:id="choose" class="btn btn-sm blue"
                     style="padding: 7px 5px;" type="button">
                 <span class="glyphicon glyphicon-plus"></span> Escolher

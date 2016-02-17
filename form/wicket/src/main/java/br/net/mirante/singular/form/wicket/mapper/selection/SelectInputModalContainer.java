@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -37,12 +35,14 @@ import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSControls;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -189,7 +189,7 @@ public class SelectInputModalContainer extends BSContainer {
     private void appendAdditionalSearchFields(BSDataTableBuilder<SelectOption, Void, IColumn<SelectOption, Void>> builder) {
         for (String field : view.searchFields()) {
             builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
-                final STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
+                final STypeComposite selectType = (STypeComposite) model.getObject().getType();
                 final SType<?> fieldType = selectType.getCampo(field);
                 final MOptionsConfig provider = model.getObject().getOptionsConfig();
                 final SInstance instance = provider.getValueFromKey(String.valueOf(m.getValue()));
@@ -199,7 +199,7 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private String getAdditionalSearchFieldLabel(String searchField) {
-        STypeComposite selectType = (STypeComposite) model.getObject().getMTipo();
+        STypeComposite selectType = (STypeComposite) model.getObject().getType();
         SType<?> fieldType = selectType.getCampo(searchField);
         if (!(fieldType instanceof STypeSimple)) {
             throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
@@ -237,7 +237,7 @@ public class SelectInputModalContainer extends BSContainer {
 
     public SortableDataProvider<SelectOption, Void> buildDataProvider(
             IModel<? extends SInstance> model, final IModel<String> filtro) {
-        SType<?> type = model.getObject().getMTipo();
+        SType<?> type = model.getObject().getType();
         final List<SelectOption> options = WicketSelectionUtils.createOptions(model, type);
         return new SortableDataProvider<SelectOption, Void>() {
             @Override

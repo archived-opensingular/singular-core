@@ -285,12 +285,12 @@ public class AnnotationComponent extends Panel {
                     super.bind( component );
                     component.add( AttributeModifier.replace( "onkeydown",
                             Model.of( "if(event.keyCode == 13) { " +
-                                        "var $this = $(this);" +
+                                    "event.preventDefault();" +
+                                    "var $this = $(event.target);" +
 //                                        "$(event.target).val($(event.target).val()+'\\n'); " +
-                                        "var pos = $this[0].selectionStart;\n" +
-                                        "$this.val($this.val().substring(0, pos) + '\n'+ $this.val().substring(pos));\n" +
-                                        "$this.setCursorPosition(pos + 1);"+
-                                        "event.preventDefault();" +
+                                    "var pos = $this[0].selectionStart;\n" +
+                                    "$this.val($this.val().substring(0, pos) + '\n'+ $this.val().substring(pos));\n" +
+                                    "$this.setCursorPosition(pos + 1);"+
                                         "}" ) ) );
                 }
             });

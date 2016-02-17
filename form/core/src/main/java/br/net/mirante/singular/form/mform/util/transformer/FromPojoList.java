@@ -50,7 +50,7 @@ public class FromPojoList<T> extends FromPojo<T> {
         for (T pojo : pojoList) {
             SIComposite instancia = target.novaInstancia();
             for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
-                instancia.setValor(e.getKey().getNome(), e.getValue().value(pojo));
+                instancia.setValor(e.getKey().getName(), e.getValue().value(pojo));
             }
             lista.addElement(instancia);
         }

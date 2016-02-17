@@ -8,7 +8,7 @@ public class TestMPacoteUtil extends TestCase {
 
     public void testCargaSimples() {
         SDictionary dicionario = SDictionary.create();
-        dicionario.carregarPacote(SPackageUtil.class);
+        dicionario.loadPackage(SPackageUtil.class);
 
 //        dicionario.debug();
     }

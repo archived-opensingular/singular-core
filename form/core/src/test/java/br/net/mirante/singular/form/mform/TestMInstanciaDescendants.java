@@ -14,19 +14,19 @@ public class TestMInstanciaDescendants {
     @Test
     public void test() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.novaInstancia();
 
-        contato.getDescendant(pacote.nome).setValor("Fulano");
-        contato.getDescendant(pacote.sobrenome).setValor("de Tal");
+        contato.getDescendant(pacote.nome).setValue("Fulano");
+        contato.getDescendant(pacote.sobrenome).setValue("de Tal");
 
         SIComposite endereco = contato.getDescendant(pacote.enderecos).addNovo();
-        endereco.getDescendant(pacote.enderecoLogradouro).setValor("QI 25");
-        endereco.getDescendant(pacote.enderecoComplemento).setValor("Bloco G");
-        endereco.getDescendant(pacote.enderecoNumero).setValor(402);
-        endereco.getDescendant(pacote.enderecoCidade).setValor("Guará II");
-        endereco.getDescendant(pacote.enderecoEstado).setValor("DF");
+        endereco.getDescendant(pacote.enderecoLogradouro).setValue("QI 25");
+        endereco.getDescendant(pacote.enderecoComplemento).setValue("Bloco G");
+        endereco.getDescendant(pacote.enderecoNumero).setValue(402);
+        endereco.getDescendant(pacote.enderecoCidade).setValue("Guará II");
+        endereco.getDescendant(pacote.enderecoEstado).setValue("DF");
 
         SList<SIString> telefones = contato.getDescendant(pacote.telefones);
         telefones.addValor("8888-8888");
@@ -46,13 +46,13 @@ public class TestMInstanciaDescendants {
     @Test
     public void testList() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
         SIComposite contato = pacote.contato.novaInstancia();
 
         for (int i = 0; i < 4; i++) {
             SIComposite endereco = (SIComposite) contato.getDescendant(pacote.enderecos).addNovo();
-            endereco.getDescendant(pacote.enderecoNumero).setValor(Integer.valueOf(i));
+            endereco.getDescendant(pacote.enderecoNumero).setValue(Integer.valueOf(i));
         }
 
         Assert.assertEquals(
@@ -60,7 +60,7 @@ public class TestMInstanciaDescendants {
             contato.listDescendantValues(pacote.enderecoNumero, Integer.class));
 
         for (SInstance cid : contato.listDescendants(pacote.enderecoCidade))
-            cid.setValor("C" + cid.getAncestor(pacote.endereco).getDescendant(pacote.enderecoNumero).getValor());
+            cid.setValue("C" + cid.getAncestor(pacote.endereco).getDescendant(pacote.enderecoNumero).getValue());
 
         Assert.assertEquals(
             Arrays.asList("C0", "C1", "C2", "C3"),
@@ -70,7 +70,7 @@ public class TestMInstanciaDescendants {
     @Test
     public void testIncorrectAncestor() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
         SIComposite contato = pacote.contato.novaInstancia();
 
         Assert.assertFalse(contato.getDescendant(pacote.telefones).findAncestor(pacote.enderecos).isPresent());
@@ -80,7 +80,7 @@ public class TestMInstanciaDescendants {
     @Test
     public void testIncorrectDescendant() {
         SDictionary dic = SDictionary.create();
-        SPackageTesteContatos pac = dic.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pac = dic.loadPackage(SPackageTesteContatos.class);
         SIComposite contato = pac.contato.novaInstancia();
 
         Assert.assertFalse(contato.getDescendant(pac.telefones).findDescendant(pac.endereco).isPresent());
@@ -93,7 +93,7 @@ public class TestMInstanciaDescendants {
     @Test
     public void testStream() {
         SDictionary dicionario = SDictionary.create();
-        SPackageTesteContatos pacote = dicionario.carregarPacote(SPackageTesteContatos.class);
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
         Set<SType<?>> tipos = new HashSet<>(Arrays.asList(
             pacote.contato,
@@ -119,8 +119,8 @@ public class TestMInstanciaDescendants {
 
         contato.streamDescendants(true)
             .forEachOrdered(instancia -> Assert.assertTrue(
-                "Tipo não encontrado: " + instancia.getMTipo(),
-                tipos.remove(instancia.getMTipo())));
+                "Tipo não encontrado: " + instancia.getType(),
+                tipos.remove(instancia.getType())));
 
         Assert.assertTrue("Não percorreu o(s) tipo(s) " + tipos, tipos.isEmpty());
     }

@@ -1,14 +1,15 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Date;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class TestMoptionsConfigTipoComposto {
 
@@ -35,7 +36,7 @@ public class TestMoptionsConfigTipoComposto {
     @Before
     public void setup() {
         _dicionario = SDictionary.create();
-        PacoteBuilder pb = _dicionario.criarNovoPacote("teste");
+        PackageBuilder pb = _dicionario.createNewPackage("teste");
 
         _raiz = pb.createTipoComposto("_raiz");
         _periodo = _raiz.addCampoComposto("periodo");
@@ -66,7 +67,7 @@ public class TestMoptionsConfigTipoComposto {
         evento = _raiz.novaInstancia();
 
         // perido
-        periodo = (SIComposite) evento.getCampo(_periodo.getNomeSimples());
+        periodo = (SIComposite) evento.getCampo(_periodo.getSimpleName());
         opcaoPeriodo = _periodo.getProviderOpcoes().listAvailableOptions(periodo).get(0);
         Value.hydrate(periodo, Value.dehydrate(opcaoPeriodo));
     }
@@ -77,7 +78,7 @@ public class TestMoptionsConfigTipoComposto {
         String keyFromOption = periodo.getOptionsConfig().getKeyFromOptions(opcaoPeriodo);
         Assert.assertNotNull(keyFromOption);
         Assert.assertEquals(periodo, opcaoPeriodo.getOptionsConfig().getValueFromKey(keyFromOption));
-        Assert.assertEquals(opcaoPeriodo.getValor(), periodo.getValor());
+        Assert.assertEquals(opcaoPeriodo.getValue(), periodo.getValue());
     }
 
     @Test
@@ -90,7 +91,7 @@ public class TestMoptionsConfigTipoComposto {
     @Test
     public void testMTipoOpcoes(){
         for(SInstance instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
-            Assert.assertEquals(_periodo, instancia.getMTipo());
+            Assert.assertEquals(_periodo, instancia.getType());
         }
     }
 

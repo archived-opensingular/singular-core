@@ -102,7 +102,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
 
-        final UIComponentMapper customMapper = instancia.getMTipo().getCustomMapper();
+        final UIComponentMapper customMapper = instancia.getType().getCustomMapper();
         final MView view = ViewResolver.resolve(instancia);
 
         if (customMapper != null) {

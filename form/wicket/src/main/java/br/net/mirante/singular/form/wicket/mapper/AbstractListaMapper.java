@@ -9,7 +9,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
-import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
@@ -64,9 +63,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected static abstract class ElementsView extends RefreshingView<SInstance> {
+
         public ElementsView(String id, IModel<SList<SInstance>> model) {
             super(id, model);
-            setItemReuseStrategy(ReuseIfModelsEqualStrategy.getInstance());
         }
 
         @Override
@@ -163,7 +162,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            SList<SInstance> lista = modelLista.getObject();
+            final SList<SInstance> lista = modelLista.getObject();
             lista.addNovo();
             target.add(form);
             target.focusComponent(this);

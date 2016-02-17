@@ -1,17 +1,17 @@
 package br.net.mirante.singular.form.mform;
 
-class LeitorPath {
+class PathReader {
 
     private final String path;
     private final String trecho;
     private final int fim;
     private final boolean indiceLista;
 
-    public LeitorPath(String path) {
+    public PathReader(String path) {
         this(path, 0);
     }
 
-    private LeitorPath(String path, int inicio) {
+    private PathReader(String path, int inicio) {
         if (path == null){
             throw new SingularFormException("O path do campo não pode ser nulo.");
         }
@@ -69,11 +69,11 @@ class LeitorPath {
         return trecho;
     }
 
-    public LeitorPath proximo() {
+    public PathReader proximo() {
         if (trecho == null) {
             throw new RuntimeException("Leitura já está no fim");
         }
-        return new LeitorPath(path, fim);
+        return new PathReader(path, fim);
     }
 
     public boolean isEmpty() {
@@ -104,17 +104,17 @@ class LeitorPath {
 
     String getTextoErro(SInstance instanciaContexto, String msg) {
         if (path.length() == trecho.length()) {
-            return "Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getMTipo().getNome()
+            return "Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getType().getName()
                     + "' para o path '" + path + "': " + msg;
         }
         return "Ao tentar resolver '" + trecho + "' na instancia '" + instanciaContexto.getPathFull() + "' do tipo '"
-                + instanciaContexto.getMTipo().getNome() + "' referent ao path '" + path + "' ocorreu o erro: " + msg;
+                + instanciaContexto.getType().getName() + "' referent ao path '" + path + "' ocorreu o erro: " + msg;
     }
 
     public String getTextoErro(MEscopo escopo, String msg) {
         if (path.length() == trecho.length()) {
-            return "No tipo '" + escopo.getNome() + "' para o path '" + path + "': " + msg;
+            return "No tipo '" + escopo.getName() + "' para o path '" + path + "': " + msg;
         }
-        return "No tipo '" + escopo.getNome() + "' para o trecho '" + trecho + "' do path '" + path + "': " + msg;
+        return "No tipo '" + escopo.getName() + "' para o trecho '" + trecho + "' do path '" + path + "': " + msg;
     }
 }

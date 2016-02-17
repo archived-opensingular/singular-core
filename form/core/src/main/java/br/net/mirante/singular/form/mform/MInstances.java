@@ -130,7 +130,7 @@ public abstract class MInstances {
     @SuppressWarnings("unchecked")
     public static <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SInstance node, SType<A> ancestorType) {
         for (SInstance parent = node.getParent(); parent != null; parent = parent.getParent()) {
-            if (parent.getMTipo() == ancestorType) {
+            if (parent.getType() == ancestorType) {
                 return Optional.of((A) parent);
             }
         }
@@ -148,7 +148,7 @@ public abstract class MInstances {
     public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
             for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
-                if (ancestor.getMTipo() == type) {
+                if (ancestor.getType() == type) {
                     return Optional.of((CA) ancestor);
                 }
             }
@@ -185,7 +185,7 @@ public abstract class MInstances {
     public static List<SInstance> listAscendants(SInstance instance, SType<?> limitInclusive) {
         List<SInstance> list = new ArrayList<>();
         SInstance node = instance.getParent();
-        while (node != null && node.getMTipo() != limitInclusive) {
+        while (node != null && node.getType() != limitInclusive) {
             list.add(node);
             node = node.getParent();
         }
@@ -215,7 +215,7 @@ public abstract class MInstances {
         deque.add(instancia);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
-            if (node.getMTipo() == descendantType) {
+            if (node.getType() == descendantType) {
                 return Optional.of((D) node);
             } else {
                 deque.addAll(children(node));
@@ -247,7 +247,7 @@ public abstract class MInstances {
         deque.add(instance);
         while (!deque.isEmpty()) {
             final SInstance node = deque.removeFirst();
-            if (node.getMTipo() == descendantType) {
+            if (node.getType() == descendantType) {
                 result.add(function.apply((D) node));
             } else {
                 deque.addAll(children(node));
@@ -265,7 +265,7 @@ public abstract class MInstances {
     @SuppressWarnings("unchecked")
     public static <D extends SInstance> Stream<D> streamDescendants(SInstance root, boolean includeRoot, SType<D> descendantType) {
         return streamDescendants(root, includeRoot)
-            .filter(it -> it.getMTipo() == descendantType)
+            .filter(it -> it.getType() == descendantType)
             .map(it -> (D) it);
     }
 

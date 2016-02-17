@@ -7,7 +7,7 @@ import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.TipoBuilder;
+import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
@@ -50,7 +50,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
     private STypeString outroComposicao;
 
     @Override
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
         nomeComercial = this.addCampoInteger("nomeComercial");
@@ -83,11 +83,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .obrigatorio()
                 .as(AtrBasic::new)
                 .label("Composição")
-
-                .visivel(instancia -> {
-                    boolean truth = Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8;
-                    return truth;
-                })
+                .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
                 .colPreference(6);

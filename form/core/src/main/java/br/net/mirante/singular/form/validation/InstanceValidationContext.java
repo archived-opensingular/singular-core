@@ -37,12 +37,10 @@ public class InstanceValidationContext {
     }
 
     public void validateAll() {
-        MInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> {
-            validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
-        });
+        MInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> validateInstance(new InstanceValidatable<>(inst, errors::add)));
     }
     public void validateSingle() {
-        validateInstance(new InstanceValidatable<>(rootInstance, e -> errors.add(e)));
+        validateInstance(new InstanceValidatable<>(rootInstance, errors::add));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -54,7 +52,7 @@ public class InstanceValidationContext {
             return;
         }
 
-        final SType<I> tipo = (SType<I>) instance.getMTipo();
+        final SType<I> tipo = (SType<I>) instance.getType();
         for (IInstanceValidator<I> validator : tipo.getValidators()) {
             validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
             validator.validate((IInstanceValidatable) validatable);
@@ -67,23 +65,23 @@ public class InstanceValidationContext {
 
         if (instance instanceof ICompositeInstance) {
             ICompositeInstance comp = (ICompositeInstance) instance;
-            return comp.streamDescendants(false).anyMatch(it -> it.getValor() != null);
+            return comp.streamDescendants(false).anyMatch(it -> it.getValue() != null);
 
         } else {
-            return (instance.getValor() != null);
+            return (instance.getValue() != null);
         }
     }
 
     protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
-            .anyMatch(it -> Boolean.FALSE.equals(it));
+            .anyMatch(Boolean.FALSE::equals);
     }
 
     protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
-            .anyMatch(it -> Boolean.FALSE.equals(it));
+            .anyMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {

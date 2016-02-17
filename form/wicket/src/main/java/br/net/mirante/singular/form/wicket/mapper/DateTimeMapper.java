@@ -36,8 +36,8 @@ public class DateTimeMapper implements ControlsFieldComponentMapper {
     @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SimpleDateFormat format = new SimpleDateFormat(STypeDataHora.FORMAT);
-        if (model.getObject().getValor() instanceof Date) {
-            return format.format(model.getObject().getValor());
+        if (model.getObject().getValue() instanceof Date) {
+            return format.format(model.getObject().getValue());
         }
         return StringUtils.EMPTY;
     }

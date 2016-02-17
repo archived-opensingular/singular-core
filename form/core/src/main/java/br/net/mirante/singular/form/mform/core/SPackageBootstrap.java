@@ -5,7 +5,7 @@ import java.util.Optional;
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
 public class SPackageBootstrap extends SPackage {
@@ -26,7 +26,7 @@ public class SPackageBootstrap extends SPackage {
     }
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         adicionarDefinicaoColuna(pb, ATR_COL_PREFERENCE, null);
         adicionarDefinicaoColuna(pb, ATR_COL_XS_PREFERENCE, "XS");
         adicionarDefinicaoColuna(pb, ATR_COL_SM_PREFERENCE, "SM");
@@ -34,7 +34,7 @@ public class SPackageBootstrap extends SPackage {
         adicionarDefinicaoColuna(pb, ATR_COL_LG_PREFERENCE, "LG");
     }
 
-    private void adicionarDefinicaoColuna(PacoteBuilder pb, AtrRef<?,?,?> atrRef, String label){
+    private void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<?,?,?> atrRef, String label){
         Optional<String> labelOp = Optional.ofNullable(label);
         pb.createTipoAtributo(atrRef);
         pb.addAtributo(SType.class, atrRef);

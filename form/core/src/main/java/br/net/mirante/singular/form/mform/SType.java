@@ -102,26 +102,26 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         this.superTipo = superTipo;
     }
 
-    protected void onLoadType(TipoBuilder tb) {
+    protected void onLoadType(TypeBuilder tb) {
     }
 
     final MInfoTipo getAnotacaoMFormTipo() {
         return SDictionary.getAnotacaoMFormTipo(getClass());
     }
 
-    private final <TT extends SType<I>> TipoBuilder extender(String nomeSimples, Class<TT> classePai) {
+    private final <TT extends SType<I>> TypeBuilder extender(String nomeSimples, Class<TT> classePai) {
         MFormUtil.checkNomeSimplesValido(nomeSimples);
         if (!classePai.equals(getClass())) {
             throw new RuntimeException("Erro Interno");
         }
-        TipoBuilder tb = new TipoBuilder(classePai);
+        TypeBuilder tb = new TypeBuilder(classePai);
         ((SType<I>) tb.getTipo()).nomeSimples = nomeSimples;
         ((SType<I>) tb.getTipo()).superTipo = this;
         return tb;
     }
 
-    final <TT extends SType<?>> TipoBuilder extender(String nomeSimples) {
-        return (TipoBuilder) extender(nomeSimples, getClass());
+    final <TT extends SType<?>> TypeBuilder extender(String nomeSimples) {
+        return (TypeBuilder) extender(nomeSimples, getClass());
     }
 
     @SuppressWarnings("unchecked")
@@ -131,20 +131,20 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         }
         Class<SType> c = (Class<SType>) getClass().getSuperclass();
         if (c != null) {
-            this.superTipo = dicionario.getTipo(c);
+            this.superTipo = dicionario.getType(c);
         }
     }
 
     @Override
-    public String getNome() {
+    public String getName() {
         return nomeCompleto;
     }
 
-    public String getNomeSimples() {
+    public String getSimpleName() {
         return nomeSimples;
     }
 
-    public SType<I> getSuperTipo() {
+    public SType<I> getSuperType() {
         return superTipo;
     }
 
@@ -161,7 +161,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
 
     final void setEscopo(MEscopo pacote) {
         this.escopo = pacote;
-        this.nomeCompleto = pacote.getNome() + "." + nomeSimples;
+        this.nomeCompleto = pacote.getName() + "." + nomeSimples;
     }
 
     @Override
@@ -175,9 +175,9 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     @Override
-    public SDictionary getDicionario() {
+    public SDictionary getDictionary() {
         if (dicionario == null) {
-            dicionario = getPacote().getDicionario();
+            dicionario = getPacote().getDictionary();
         }
         return dicionario;
     }
@@ -214,8 +214,8 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
 
     final void addAtributo(MAtributo atributo) {
         if (atributo.getTipoDono() != null && atributo.getTipoDono() != this) {
-            throw new SingularFormException("O Atributo '" + atributo.getNome() + "' pertence excelusivamente ao tipo '"
-                    + atributo.getTipoDono().getNome() + "'. Assim não pode ser reassociado a classe '" + getNome());
+            throw new SingularFormException("O Atributo '" + atributo.getName() + "' pertence excelusivamente ao tipo '"
+                    + atributo.getTipoDono().getName() + "'. Assim não pode ser reassociado a classe '" + getName());
         }
 
         atributosDefinidos.add(atributo);
@@ -232,7 +232,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
                 return att;
             }
         }
-        throw new SingularFormException("Não existe atributo '" + nomeCompleto + "' em " + getNome());
+        throw new SingularFormException("Não existe atributo '" + nomeCompleto + "' em " + getName());
     }
 
     public <MI extends SInstance> MI getInstanciaAtributo(AtrRef<?, MI, ?> atr) {
@@ -255,9 +255,9 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     public void setValorAtributo(String nomeAtributo, String subPath, Object valor) {
         SInstance instancia = atributosResolvidos.getCriando(mapearNome(nomeAtributo));
         if (subPath != null) {
-            instancia.setValor(new LeitorPath(subPath), valor);
+            instancia.setValor(new PathReader(subPath), valor);
         } else {
-            instancia.setValor(valor);
+            instancia.setValue(valor);
         }
     }
 
@@ -266,7 +266,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         nomeCompleto = mapearNome(nomeCompleto);
         SInstance instancia = getInstanciaAtributoInterno(nomeCompleto);
         if (instancia != null) {
-            return (classeDestino == null) ? (V) instancia.getValor() : instancia.getValorWithDefault(classeDestino);
+            return (classeDestino == null) ? (V) instancia.getValue() : instancia.getValorWithDefault(classeDestino);
         }
         MAtributo atr = getAtributoDefinidoHierarquia(nomeCompleto);
         if (classeDestino == null) {
@@ -277,7 +277,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
 
     private String mapearNome(String nomeOriginal) {
         if (nomeOriginal.indexOf('.') == -1) {
-            return getNome() + '.' + nomeOriginal;
+            return getName() + '.' + nomeOriginal;
         }
         return nomeOriginal;
     }
@@ -462,7 +462,7 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     @SuppressWarnings("unchecked")
     public I castInstancia(SInstance instancia) {
         // TODO verificar se essa é a verificação correta
-        if (instancia.getMTipo() != this)
+        if (instancia.getType() != this)
             throw new IllegalArgumentException("A instância " + instancia + " não é do tipo " + this);
         return (I) instancia;
     }
@@ -491,23 +491,23 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
             return superTipo.newInstance(original, owner);
         }
         if (classeInstancia == null) {
-            throw new SingularFormException("O tipo '" + original.getNome() + (original == this ? "" : "' que é do tipo '" + getNome())
+            throw new SingularFormException("O tipo '" + original.getName() + (original == this ? "" : "' que é do tipo '" + getName())
                     + "' não pode ser instanciado por esse ser abstrato (classeInstancia==null)");
         }
         try {
             I novo = classeInstancia.newInstance();
             novo.setDocument(owner);
-            novo.setTipo(this);
+            novo.setType(this);
             if (novo instanceof SISimple) {
                 Object valorInicial = original.getValorAtributoValorInicial();
                 if (valorInicial != null) {
-                    novo.setValor(valorInicial);
+                    novo.setValue(valorInicial);
                 }
             }
             instanceCount++;
             return novo;
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new SingularFormException("Erro instanciando o tipo '" + getNome() + "' para o tipo '" + original.getNome() + "'", e);
+            throw new SingularFormException("Erro instanciando o tipo '" + getName() + "' para o tipo '" + original.getName() + "'", e);
         }
     }
 
@@ -521,10 +521,10 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         try {
             MAtributo at = this instanceof MAtributo ? (MAtributo) this : null;
             pad(appendable, nivel).append(at == null ? "def " : "defAtt ");
-            appendable.append(getNomeSimples());
+            appendable.append(getSimpleName());
             if (at != null) {
                 if (at.getTipoDono() != null && at.getTipoDono() != at.getEscopoPai()) {
-                    appendable.append(" for ").append(suprimirPacote(at.getTipoDono().getNome()));
+                    appendable.append(" for ").append(suprimirPacote(at.getTipoDono().getName()));
                 }
             }
             if (at == null) {
@@ -539,11 +539,11 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
                 appendable.append(" (SELF)");
             }
             if (superTipo != null && (at == null || !at.isSelfReference())) {
-                appendable.append(" extend ").append(suprimirPacote(superTipo.getNome()));
+                appendable.append(" extend ").append(suprimirPacote(superTipo.getName()));
                 if (this instanceof STypeLista) {
                     STypeLista<?, ?> lista = (STypeLista<?, ?>) this;
                     if (lista.getTipoElementos() != null) {
-                        appendable.append(" of ").append(suprimirPacote(lista.getTipoElementos().getNome()));
+                        appendable.append(" of ").append(suprimirPacote(lista.getTipoElementos().getName()));
                     }
                 }
             }
@@ -557,15 +557,15 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
             atributosDefinidos
                     .getAtributos()
                     .stream()
-                    .filter(att -> !getTipoLocalOpcional(att.getNomeSimples()).isPresent())
+                    .filter(att -> !getLocalTypeOptional(att.getSimpleName()).isPresent())
                     .forEach(att -> {
                         try {
                             pad(appendable, nivel + 1)
                                     .append("att ")
                                     .append("\n")
-                                    .append(suprimirPacote(att.getNome()))
+                                    .append(suprimirPacote(att.getName()))
                                     .append(":")
-                                    .append(suprimirPacote(att.getSuperTipo().getNome()))
+                                    .append(suprimirPacote(att.getSuperType().getName()))
                                     .append(att.isSelfReference() ? " SELF" : "");
                         } catch (IOException ex) {
                             LOGGER.log(Level.SEVERE, ex.getMessage(), ex);
@@ -605,10 +605,10 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     private String suprimirPacote(String nome, boolean agressivo) {
-        if (isInicioIgual(nome, getNome())) {
-            return nome.substring(getNome().length() + 1);
-        } else if (isInicioIgual(nome, escopo.getNome())) {
-            return nome.substring(escopo.getNome().length() + 1);
+        if (isInicioIgual(nome, getName())) {
+            return nome.substring(getName().length() + 1);
+        } else if (isInicioIgual(nome, escopo.getName())) {
+            return nome.substring(escopo.getName().length() + 1);
         } else if (isInicioIgual(nome, SPackageCore.NOME)) {
             String v = nome.substring(SPackageCore.NOME.length() + 1);
             if (agressivo) {

@@ -23,17 +23,17 @@ public class MListMasterDetailView extends MView {
     }
 
     public MListMasterDetailView col(STypeSimple tipo) {
-        columns.add(new Column(tipo.getNome(), null, null));
+        columns.add(new Column(tipo.getName(), null, null));
         return this;
     }
 
     public MListMasterDetailView col(STypeSimple tipo, String customLabel) {
-        columns.add(new Column(tipo.getNome(), customLabel, null));
+        columns.add(new Column(tipo.getName(), customLabel, null));
         return this;
     }
 
     public MListMasterDetailView col(STypeSimple tipo, IFunction<SInstance, String> displayFunction) {
-        columns.add(new Column(tipo.getNome(), null, displayFunction));
+        columns.add(new Column(tipo.getName(), null, displayFunction));
         return this;
     }
 

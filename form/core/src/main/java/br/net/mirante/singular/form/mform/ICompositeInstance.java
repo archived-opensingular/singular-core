@@ -61,7 +61,7 @@ public interface ICompositeInstance {
         SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SIComposite)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + SIComposite.class.getName());
+                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIComposite.class.getName());
         }
         return (SIComposite) instancia;
     }
@@ -100,7 +100,7 @@ public interface ICompositeInstance {
         SInstance instancia = getCampo(path);
         if (instancia != null && !(instancia instanceof SList)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getMTipo().getNome() + " em vez de " + SList.class.getName());
+                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SList.class.getName());
         }
         return (SList<?>) instancia;
     }
@@ -136,7 +136,7 @@ public interface ICompositeInstance {
     }
     @SuppressWarnings("unchecked")
     public default <V> List<V> listDescendantValues(SType<?> descendantType, Class<V> valueType) {
-        return MInstances.listDescendants((SInstance) this, descendantType, node -> (V) node.getValor());
+        return MInstances.listDescendants((SInstance) this, descendantType, node -> (V) node.getValue());
     }
     public default Stream<SInstance> streamDescendants(boolean includeRoot) {
         return MInstances.streamDescendants((SInstance) this, includeRoot);

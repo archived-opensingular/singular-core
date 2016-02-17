@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 public class CaseInputCoreSelectProviderPackage extends SPackage {
 
     @Override
-    protected void carregarDefinicoes(PacoteBuilder pb) {
+    protected void carregarDefinicoes(PackageBuilder pb) {
         STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
 
         /*
@@ -26,7 +26,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
         tipoDeMedia.withSelectionFromProvider(new MOptionsProvider() {
             @Override
             public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                STypeString type = getDicionario().getTipo(STypeString.class);
+                STypeString type = getDictionary().getType(STypeString.class);
                 SList<?> r = type.novaLista();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
@@ -36,7 +36,7 @@ public class CaseInputCoreSelectProviderPackage extends SPackage {
 
             private SIString newElement(STypeString type, String id, String label) {
                 SIString e = type.novaInstancia();
-                e.setValor(id);
+                e.setValue(id);
                 e.setSelectLabel(label);
                 return e;
             }
