@@ -28,7 +28,7 @@ if( window.Annotation == undefined){
                 return;
             }
             this.toggle_container = this.create_toggle_container();
-            this.target_component.find('h3:first').append(this.toggle_container);
+            this.target_component/*.find('h3:first')*/.append(this.toggle_container);
             if(this.is_blank()) {   this.this_component.hide(); }
             if(this.this_component.is(':visible') ){
                 this.adjust_height_position();
@@ -63,7 +63,7 @@ if( window.Annotation == undefined){
 
         create_toggle_container: function(){
             var thiz = this;
-            return $('<div>').attr('style','position:absolute;top:10px;right: 15px;')
+            return $('<div>').attr('style','position:absolute;top:15px;right: 15px;')
                         .append(this.create_show_button())
                         .click(function(){thiz.toggle_button_on_click()})
         },
@@ -126,7 +126,6 @@ if( window.Annotation == undefined){
         if(event.keyCode == 13) {
             event.preventDefault();
             var target = $(event.target);
-//          "$(event.target).val($(event.target).val()+'\\n'); " +
             var pos = target[0].selectionStart;
             target.val(target.val().substring(0, pos) + '\n'+ target.val().substring(pos));
             target.setCursorPosition(pos + 1);

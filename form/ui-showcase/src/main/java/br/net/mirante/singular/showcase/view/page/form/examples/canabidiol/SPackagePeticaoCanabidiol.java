@@ -100,14 +100,16 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addCampo("produtos", STypeProdutos.class);
             produtos
                     .as(AtrBasic::new)
-                    .label("Produtos");
+                    .label("Produtos")
+                    .as(AtrAnnotation::new).setAnnotated();
 
 
             STypePrescricao prescricao = canabis
                     .addCampo("prescricao", STypePrescricao.class);
             prescricao
                     .as(AtrBasic::new)
-                    .label("Prescrição Médica");
+                    .label("Prescrição Médica")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             STypeBoolean aceitoTudo = canabis.addCampoBoolean("aceitoTudo");
 
@@ -128,7 +130,8 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .obrigatorio()
                     .as(AtrBasic::new)
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
-                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
+                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
