@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,12 +22,14 @@ public class STypePrescricao extends STypeComposite<SIComposite> {
 
         this.addCampo("medico", STypeMedico.class)
                 .as(AtrBasic::new)
-                .label("Médico Prescritor");
+                .label("Médico Prescritor")
+                .as(AtrAnnotation::new).setAnnotated();
 
         this.addCampo("cid", STypeCID.class)
                 .as(AtrBasic::new)
                 .label("CID-10")
-                .subtitle("selecione CID-10 da doença de base, ou seja o motivo principal da solicitação do produto");
+                .subtitle("selecione CID-10 da doença de base, ou seja o motivo principal da solicitação do produto")
+                .as(AtrAnnotation::new).setAnnotated();
 
         STypeBoolean outrosCids = this.addCampoBoolean("outrosCids");
         outrosCids

@@ -6,10 +6,11 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
 public class CaseAnnotationPackage extends SPackage {
 
-    public STypeComposite<?> pedido, cliente, endereco, request;
+    public STypeComposite<?> pedido, cliente, endereco, request, id;
 
     /*
      * Observe que as anotações só estão disponíveis quando devidamente configuradas no contexto.
@@ -19,6 +20,12 @@ public class CaseAnnotationPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         pedido = pb.createTipoComposto("testForm");
         pedido.as(AtrBasic::new).label("Pedido");
+
+
+        id = pedido.addCampoComposto("id");
+        id.asAtrBasic().label("Identificador");
+        id.addCampoInteger("Número");
+        id.as(AtrAnnotation::new).setAnnotated();
 
         cliente = pedido.addCampoComposto("Cliente");
         cliente.asAtrBasic().label("Dados do Cliente");
