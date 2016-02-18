@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.repeater.IItemFactory;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
@@ -15,6 +16,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.resource.Icone;
@@ -85,6 +87,18 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @SuppressWarnings("unchecked")
         public IModel<SList<SInstance>> getModel() {
             return (IModel<SList<SInstance>>) getDefaultModel();
+        }
+        @Override
+        protected IItemFactory<SInstance> newItemFactory() {
+            IItemFactory<SInstance> factory = super.newItemFactory();
+            return new IItemFactory<SInstance>() {
+                @Override
+                public Item<SInstance> newItem(int index, IModel<SInstance> model) {
+                    Item<SInstance> item = factory.newItem(index, model);
+                    WicketFormProcessing.onFormPrepare(item, model, false);
+                    return item;
+                }
+            };
         }
     }
 
