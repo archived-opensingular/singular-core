@@ -4,7 +4,6 @@ import br.net.mirante.singular.flow.core.MUser;
 
 public interface IUserService {
 
-
     /**
      * Retorna o usuário logado na aplicação caso exista, caso contrário retorna null
      *
@@ -19,5 +18,7 @@ public interface IUserService {
      * @return Retorna true caso possa e false caso contrário
      */
     public boolean canBeAllocated(MUser user);
+
+    public MUser findUserByCod(String username);
 
 }
