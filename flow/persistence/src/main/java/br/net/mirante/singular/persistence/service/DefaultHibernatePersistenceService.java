@@ -1,13 +1,10 @@
 package br.net.mirante.singular.persistence.service;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import br.net.mirante.singular.commons.base.SingularProperties;
 import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.entity.IEntityExecutionVariable;
 import br.net.mirante.singular.flow.core.entity.IEntityTaskHistoricType;
@@ -30,11 +27,6 @@ import br.net.mirante.singular.persistence.entity.TaskVersionEntity;
 import br.net.mirante.singular.persistence.entity.VariableInstanceEntity;
 import br.net.mirante.singular.persistence.entity.VariableTypeInstance;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
-import br.net.mirante.singular.persistence.util.Constants;
-import org.hibernate.LockMode;
-import org.hibernate.criterion.Restrictions;
-
-import javax.xml.transform.Result;
 
 public class DefaultHibernatePersistenceService extends
         AbstractHibernatePersistenceService<CategoryEntity, ProcessDefinitionEntity,
@@ -73,38 +65,6 @@ public class DefaultHibernatePersistenceService extends
         entityRole.setAllocatorUser((Actor) allocator);
         entityRole.setCreateDate(new Date());
         return entityRole;
-    }
-
-    @Override
-    protected MUser saveUserIfNeeded(MUser mUser) {
-        MUser result = null;
-
-        if (result == null &&mUser != null && mUser.getCod() != null) {
-            result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("cod", mUser.getCod())).uniqueResult();
-        }
-
-        if (result == null &&mUser != null && ((Actor) mUser).getCodUsuario() != null ){
-            result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", ((Actor) mUser).getCodUsuario())).uniqueResult();
-        }
-
-        if (result == null && mUser != null && mUser.getCod() == null){
-            if ("sequence".equals(SingularProperties.INSTANCE.getProperty(SingularProperties.HIBERNATE_GENERATOR))){
-                getSession().getSession().doWork(connection -> {
-                    PreparedStatement ps = connection.prepareStatement("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_ATOR, CO_USUARIO) VALUES (" + Constants.SCHEMA + ".SQ_CO_ATOR.NEXTVAL, ? )");
-                    ps.setString(1, ((Actor)mUser).getCodUsuario());
-                    ps.execute();
-                });
-            } else {
-                getSession().getSession().doWork(connection -> {
-                    PreparedStatement ps = connection.prepareStatement("insert into " + Constants.SCHEMA + ".TB_ATOR (CO_USUARIO) VALUES (?)");
-                    ps.setString(1, ((Actor)mUser).getCodUsuario());
-                    ps.execute();
-                });
-            }
-            getSession().flush();
-            result =  (MUser) getSession().createCriteria(Actor.class).add(Restrictions.eq("codUsuario", ((Actor) mUser).getCodUsuario())).uniqueResult();
-        }
-        return result;
     }
 
     // -------------------------------------------------------

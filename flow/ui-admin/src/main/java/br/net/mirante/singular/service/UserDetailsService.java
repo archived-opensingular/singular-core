@@ -115,6 +115,11 @@ public class UserDetailsService extends BaseDAO implements org.springframework.s
         }
 
         @Override
+        public String getCodUsuario() {
+            return username;
+        }
+
+        @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return authoritiesnew;
         }

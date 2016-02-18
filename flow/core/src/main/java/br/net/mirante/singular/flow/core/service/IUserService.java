@@ -21,4 +21,12 @@ public interface IUserService {
 
     public MUser findUserByCod(String username);
 
+    default MUser saveUserIfNeeded(MUser mUser) {
+        return mUser;
+    }
+
+    default MUser saveUserIfNeeded(String codUsuario) {
+        return null;
+    }
+
 }

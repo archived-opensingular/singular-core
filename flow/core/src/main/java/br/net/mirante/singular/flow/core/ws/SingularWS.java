@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceException;
 
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.MUser;
@@ -45,7 +46,10 @@ public class SingularWS {
                                   @WebParam(name = "codProcessInstance") Long codProcessInstance,
                                   @WebParam(name = "username") String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
-        MUser user = Flow.getConfigBean().getUserService().findUserByCod(username);
+        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
+        if (user == null) {
+            throw new WebServiceException("Usuário não encontrado");
+        }
         processInstance.getCurrentTask().relocateTask(user, user, false, "");
     }
 

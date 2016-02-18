@@ -22,6 +22,11 @@ public class ActorWrapper {
             public String getEmail() {
                 return null;
             }
+
+            @Override
+            public String getCodUsuario() {
+                return actor.getCodUsuario();
+            }
         };
     }
 }
