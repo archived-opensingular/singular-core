@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
  */
 class SpringFormUtil {
 
-    private static ApplicationContext applicationContext;
+    private static volatile ApplicationContext applicationContext;
 
     public static void setApplicationContext(ApplicationContext ctx) {
         if (ctx != null) {
