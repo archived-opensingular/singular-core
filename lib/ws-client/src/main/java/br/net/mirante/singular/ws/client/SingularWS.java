@@ -68,6 +68,23 @@ public interface SingularWS {
     /**
      * 
      * @param processAbbreviation
+     * @param codProcessInstance
+     * @param username
+     */
+    @WebMethod(action = "relocateTask")
+    @RequestWrapper(localName = "relocateTask", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.RelocateTask")
+    @ResponseWrapper(localName = "relocateTaskResponse", targetNamespace = "http://ws.core.flow.singular.mirante.net.br/", className = "br.net.mirante.singular.ws.client.RelocateTaskResponse")
+    public void relocateTask(
+        @WebParam(name = "processAbbreviation", targetNamespace = "")
+        String processAbbreviation,
+        @WebParam(name = "codProcessInstance", targetNamespace = "")
+        Long codProcessInstance,
+        @WebParam(name = "username", targetNamespace = "")
+        String username);
+
+    /**
+     * 
+     * @param processAbbreviation
      * @return
      *     returns java.lang.Long
      */
