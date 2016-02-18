@@ -54,3 +54,6 @@ out/**
 flow/ui-admin/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (1).launch
 form/ui-showcase/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator.launch
 common/ui-static-resources/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator (3).launch
+
+# outros #
+buildall.sh

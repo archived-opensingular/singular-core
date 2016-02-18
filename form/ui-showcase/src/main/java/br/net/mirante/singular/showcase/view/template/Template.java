@@ -35,7 +35,6 @@ public abstract class Template extends WebPage {
         super.onInitialize();
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody")
-                .add($b.attrAppender("class", "page-sidebar-fixed", " ", $m.ofValue(withMenu())))
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
         queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
 //        queue(new WebMarkupContainer("_Menu"));
