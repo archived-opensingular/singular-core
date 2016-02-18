@@ -130,6 +130,11 @@
             <artifactId>flow-persistence</artifactId>
             <version>${singular.version}</version>
         </dependency>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-ws-client</artifactId>
+            <version>${singular.version}</version>
+        </dependency>
 
         <!-- Spring Security -->
         <dependency>
