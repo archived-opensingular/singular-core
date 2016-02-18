@@ -1,4 +1,4 @@
-package br.net.mirante.singular.spring;
+package br.net.mirante.singular.form.spring;
 
 import java.util.Collections;
 import java.util.Map;
@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
@@ -16,11 +15,17 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
  *
  * @author Fabricio Buzeto
  */
-@Component
 public class SpringServiceRegistry implements ServiceRegistry,
         ApplicationContextAware {
 
     private ApplicationContext applicationContext;
+
+    public SpringServiceRegistry() {
+    }
+
+    public SpringServiceRegistry(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public Map<String, Pair> services() {
@@ -45,6 +50,7 @@ public class SpringServiceRegistry implements ServiceRegistry,
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        SpringFormUtil.setApplicationContext(applicationContext);
     }
 
 }

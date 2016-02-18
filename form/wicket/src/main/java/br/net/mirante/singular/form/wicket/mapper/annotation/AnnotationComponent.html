@@ -8,24 +8,25 @@
             </span>
         </div>
         <div class="actions">
-            <a class="btn btn-circle btn-icon-only btn-default fullscreen"
-               style="padding: 8px;" wicket:id="open_modal"> </a>
+            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
+               style="padding: 5px; width: 27px; height: 27px;" wicket:id="open_modal">
+                <i class="fa fa-expand"></i>
+            </a>
+            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
+               style="padding: 5px; width: 27px; height: 27px;" wicket:id="trash_modal" >
+                <i class="icon-trash"></i>
+            </a>
         </div>
     </div>
     <div class="portlet-body" style="height: auto;">
 
             <div class="col-md-12 col-sm-12">
                 <div class="can-have-error form-group form-group-sm">
-                    <textarea wicket:id="comment_field" class="form-control" cols="15" rows="3"/>
+                    <label wicket:id="comment_field" />
                 </div>
             </div>
             <div class="col-md-12 col-sm-12">
-                <label class="control-label" >Aprovado? </label>
-                <input wicket:id="approval_field"  type="checkbox" class="make-switch"
-                               data-on-color="info" data-on-text="Sim"
-                               data-off-color="danger" data-off-text="Não"
-                                onSwitchChange=""
-                />
+                <label wicket:id="approval_field" />
             </div>
     </div>
 </wicket:panel>

@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.IResourceListener;
@@ -64,13 +64,13 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
     }
 
     private void writeFileFromPersistent(SIAttachment attachment, SDocument document) throws IOException {
-        IAttachmentPersistenceHandler handler = document.lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistencePermanentHandler();
         IAttachmentRef data = handler.getAttachment(attachment.getFileId());
         writeFileToResponse(attachment.getFileName(), data, w.response());
     }
 
     private void writeFileFromTemporary(SDocument document, String fileId, String fileName) throws IOException {
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler(true);
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceTemporaryHandler();
         IAttachmentRef data = handler.getAttachment(fileId);
         writeFileToResponse(fileName, data, w.response());
     }

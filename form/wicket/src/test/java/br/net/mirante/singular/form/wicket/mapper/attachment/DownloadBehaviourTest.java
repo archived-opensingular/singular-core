@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+
 import java.io.File;
 
 import org.apache.commons.fileupload.FileUploadException;
@@ -22,13 +24,12 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.wicket.hepers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
     @Rule
     public TemporaryFolder rootTmp = new TemporaryFolder();
-    
+
     private static SDictionary dicionario;
     private static TestPackage testPackage;
 
@@ -45,7 +46,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         dicionario = SDictionary.create();
         testPackage = dicionario.loadPackage(TestPackage.class);
     }
-    
+
 
     @Before
     public void setup() throws Exception {
@@ -55,7 +56,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         b.bind(new TestPage());
         createPersistentHandler();
     }
-    
+
     public void createPersistentHandler() throws Exception {
         File tmpFolder =  rootTmp.newFolder("tempSingular" + Math.random());
         persistentHandler = new FileSystemAttachmentHandler(tmpFolder);
@@ -72,18 +73,16 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         w.setResponse(mockResponse());
         return w;
     }
-    
+
     private IAttachmentRef setupTemporaryDummyFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler(true);
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceTemporaryHandler();
         return addFile(fileName, content, handler);
     }
-    
+
     private IAttachmentRef setupPersistenceFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, 
-            IAttachmentPersistenceHandler.class, ServiceRef.of(persistentHandler)
-        );
+        document.setAttachmentPersistencePermanentHandler(ServiceRef.of(persistentHandler));
         return addFile(fileName, content, persistentHandler);
     }
 
@@ -94,32 +93,32 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         instance.setFileHashSHA1(ref.getHashSHA1());
         return ref;
     }
-    
+
     @Test public void setHeadersAccodingly(){
         setupPersistenceFile("abacate.txt", new byte[]{1,2,3,4,5,6});
-        
+
         b.onResourceRequested();
-        
+
         response.addHeader("Content-Type", "application/octet-stream");
         response.addHeader("Content-disposition", "attachment; filename=\"abacate.txt\"");
     }
-    
+
     @Test public void respondsWithTheFileContentFromTheInstance(){
         setupPersistenceFile("abacate.txt", new byte[]{1,2,3,4,5,6});
-        
+
         b.onResourceRequested();
-        
+
         byte[] byteResponse = response.getBinaryResponse();
         assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
-    
+
     @Test public void respondsWithTheFileFromParametersIfAny(){
         IAttachmentRef r = setupTemporaryDummyFile("abacate.txt", new byte[]{1,2,3,4,5,6});
         setupTemporaryDummyFile("avocado.dat", new byte[]{6,5,4,3,2,1});
-        
+
         parameters.addParameterValue("fileId", r.getId());
         parameters.addParameterValue("fileName", "anything.i.want");
-        
+
         b.onResourceRequested();
 
         response.addHeader("Content-disposition", "attachment; filename=\"anything.i.want\"");
@@ -137,6 +136,6 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
         assertThat(byteResponse).isEqualTo(new byte[]{1,2,3,4,5,6});
     }
 
-    
+
 
 }

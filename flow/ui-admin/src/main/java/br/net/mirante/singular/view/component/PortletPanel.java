@@ -1,10 +1,13 @@
 package br.net.mirante.singular.view.component;
 
-import javax.inject.Inject;
+import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -26,20 +29,15 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
-import static br.net.mirante.singular.form.FilterPackageFactory.ROOT;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.service.FlowMetadataFacade;
-import br.net.mirante.singular.spring.SpringServiceRegistry;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import br.net.mirante.singular.wicket.UIAdminSession;
 
 public class PortletPanel<C extends PortletConfig> extends Panel {
@@ -48,7 +46,8 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private FlowMetadataFacade flowMetadataFacade;
 
     @Inject
-    private SpringServiceRegistry springServiceRegistry;
+    private SDocumentFactory documentFactory;
+
 
     private final IModel<C> config;
     private final IModel<PortletContext> context;
@@ -116,17 +115,11 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     }
 
     private void buildFilters() {
-        final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", springServiceRegistry) {
+        final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", documentFactory.getDocumentFactoryRef()) {
             @Override
             protected SType<?> getTipo() {
                 return new FilterPackageFactory(config.getObject().getFilterConfigs(),
                         getServiceRegistry(), context.getObject().getProcessDefinitionCode()).createFilterPackage();
-            }
-
-            @Override
-            protected void bindDefaultServices(SDocument document) {
-                document.setAttachmentPersistenceHandler(ServiceRef.of(new InMemoryAttachmentPersitenceHandler()));
-                document.addServiceRegistry(getServiceRegistry());
             }
         };
 

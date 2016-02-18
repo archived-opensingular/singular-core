@@ -8,6 +8,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
 
@@ -58,13 +59,15 @@ public class STypeMedico extends STypeComposite<SIComposite> {
 
         this.addCampo("endereco", STypeEndereco.class)
                 .as(AtrBasic::new)
-                .label("Endereço");
+                .label("Endereço")
+                .as(AtrAnnotation::new).setAnnotated();
 
         STypeContato tipoTelefone = this.addCampo("contato", STypeContato.class);
         tipoTelefone
                 .telefoneFixo
                 .as(AtrCore::new)
-                .obrigatorio();
+                .obrigatorio()
+                .as(AtrAnnotation::new).setAnnotated();
 
     }
 }

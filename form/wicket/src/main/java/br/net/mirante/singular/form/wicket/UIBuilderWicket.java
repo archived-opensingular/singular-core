@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.wicket.Component;
@@ -75,6 +76,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+
+import static com.google.common.collect.Sets.newHashSet;
 
 public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
 
@@ -164,65 +167,52 @@ class AnnotationBuilder {
         final BSContainer<?> parentCol = ctx.getContainer();
         BSRow superRow = parentCol.newGrid().newRow();
 
+        superRow.setCssClass("sannotation-form-row");
         WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        addAnnotationsFor(ctx, createAnnotationColumn(superRow), (SInstance) ctx.getCurrentInstance());
+        BSGrid annotationColumn = createAnnotationColumn(superRow);
+        mainCtx.setAnnotationContainer(annotationColumn);
+        addAnnotationsFor(ctx, annotationColumn, (SInstance) ctx.getCurrentInstance());
     }
 
     private void executeMainMapper(ViewMode viewMode, IWicketComponentMapper mapper, WicketBuildContext mainCtx) {
         mapper.buildView(mainCtx.init(parent, viewMode));
-//        mainCtx.configure(mapper);
     }
 
     private WicketBuildContext createMainColumn(WicketBuildContext ctx, BSRow superRow) {
-        BSCol supercol = superRow.newCol(9).setCssClass("col-sm-9");
+        BSCol supercol = superRow.newCol(0).setCssClass("sannotation-form-col");
         final BSGrid formGrid = supercol.newGrid();
         return new WicketBuildContext(ctx, formGrid, ctx.getExternalContainer(),
                 false, ctx.getModel());
     }
 
     private BSGrid createAnnotationColumn(BSRow superRow) {
-        return superRow.newCol(3).setCssClass("col-sm-3 .hidden-xs").newGrid();
+        return superRow.newCol(0).setCssClass("sannotation-master-col").newGrid();
     }
 
     private void addAnnotationsFor(WicketBuildContext ctx, BSGrid ngrid, SInstance instance) {
         if(instance.as(AtrAnnotation::new).isAnnotated()){
-            BSContainer rootContainer = ctx.getRootContainer();
-            Optional<Component> referenced = find(rootContainer.getItems(), instance);
-            addAnnotationComponent(ngrid, instance, referenced, ctx);
+            addAnnotationComponent(ngrid, instance, ctx);
         }
         if(instance instanceof SIComposite){
             addAnnotationsFor(ctx, ngrid, ((SIComposite) instance).getAllFields());
         }
     }
 
-    private void addAnnotationComponent(BSGrid ngrid, SInstance instance,
-                                        Optional<Component> targetComponent, WicketBuildContext ctx) {
-        if(targetComponent.isPresent()){
-            ngrid.newRow().appendTag("div", true, "",
-                    (id) -> {
-                        return new AnnotationComponent(id, modelFor(instance),
-                                targetComponent.get(), ctx);
-                    });
-            ;
-        }else{
-            LOGGER.warning("Not possible to render Annotation Component since Target Component was not found.");
-        }
-    }
-
-    private Optional<Component> find(RepeatingView children, final SInstance target) {
-        final Optional<Component>[] result = new Optional[]{Optional.empty()};
-        children.visitChildren((x, y) -> {
-            IModel<?> m = x.getDefaultModel();
-            if(m != null && m.getObject() == target){
-                result[0] = Optional.of(x);
-            }
-            if(!result[0].isPresent() && x instanceof BSContainer){
-                result[0] = find(((BSContainer) x).getItems(), target);
-            }
-        });
-        return result[0];
+    private void addAnnotationComponent(BSGrid ngrid, SInstance instance,  WicketBuildContext ctx) {
+//        Optional<Component> target = new ComponentFinder().find(ctx.getRootContainer().getItems(), instance);
+        Optional<Component> target = ctx.getAnnotationTargetFor(instance);
+        ngrid.newRow().appendTag("div", true, "",
+            (id) -> {
+                AnnotationComponent component = new AnnotationComponent(id, modelFor(instance), ctx);
+                if(target.isPresent()){
+                    component.setReferencedComponent(target.get());
+                }
+                ctx.add(component);
+                return component;
+            });
+        ;
     }
 
     private MInstanceRootModel<SInstance> modelFor(SInstance instance) {
@@ -238,3 +228,38 @@ class AnnotationBuilder {
     }
 
 }
+
+/**
+ * Finds a component in the Component tree which targets the criteria SInstance
+ */
+/*
+class ComponentFinder {
+
+    Set<BSContainer> searchCache = newHashSet();
+    Optional<Component> result = Optional.empty();
+
+    public Optional<Component> find(RepeatingView children, final SInstance target) {
+        children.visitChildren((x, y) -> {
+            IModel<?> m = x.getDefaultModel();
+            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance){
+                SInstance i = (SInstance) m.getObject();
+                if(i.getId().equals(target.getId())){
+                    System.out.println(i.getId()+" . "+target.getId());
+                    System.out.println("match");
+                    result = Optional.of(x);
+                }
+            }
+            visitChildrenIfAny(target, x);
+        });
+        return result;
+    }
+
+    private void visitChildrenIfAny(SInstance target, Component x) {
+        if(!result.isPresent() && x instanceof BSContainer && !searchCache.contains(x)){
+            RepeatingView items = ((BSContainer) x).getItems();
+            searchCache.add((BSContainer) x);
+            result = find(items, target);
+        }
+    }
+
+}*/

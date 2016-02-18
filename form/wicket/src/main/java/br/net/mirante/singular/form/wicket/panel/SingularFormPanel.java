@@ -8,10 +8,9 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -24,11 +23,6 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
  * Painel que encapusla a lógica de criação de forms dinâmicos
  */
 public abstract class SingularFormPanel extends Panel {
-
-    /**
-     * Referência  ao ServiceRegistry utilizado na aplicação cliente
-     */
-    private final ServiceRegistry serviceRegistry;
 
     /**
      * Container onde os componentes serão adicionados
@@ -50,19 +44,24 @@ public abstract class SingularFormPanel extends Panel {
      */
     private boolean annotationEnabled = false;
 
+    private SDocumentFactoryRef documentFactoryRef;
+
     /**
      * Construtor principal do painel
-     * @param id o markup id wicket
-     * @param serviceRegistry utilizado para lookup de serviços
+     *
+     * @param id
+     *            o markup id wicket
+     * @param serviceRegistry
+     *            utilizado para lookup de serviços
      */
-    public SingularFormPanel(final String id,
-                             final ServiceRegistry serviceRegistry) {
+    public SingularFormPanel(String id, SDocumentFactoryRef documentFactoryRef) {
         super(id);
-        this.serviceRegistry = serviceRegistry;
+        this.documentFactoryRef = documentFactoryRef;
     }
 
     /**
      * Método abstrato utilizado para recuperar o tipo root
+     *
      * @return o tipo root para criação do form
      */
     protected abstract SType<?> getTipo();
@@ -77,13 +76,17 @@ public abstract class SingularFormPanel extends Panel {
     }
 
     /**
-     * Implementação padrão para popular a instancia, caso seja necessário popular a partir de banco de dados
-     * é necessário sobrescrever este método
-     * @param tipo o tipo 'root'
+     * Implementação padrão para popular a instancia, caso seja necessário
+     * popular a partir de banco de dados é necessário sobrescrever este método
+     *
+     * @param tipo
+     *            o tipo 'root'
+     * @param sDocumentFactory
      * @return instancia criada e populada
      */
-    protected MInstanceRootModel<SInstance> populateInstance(final SType<?> tipo) {
-        return new MInstanceRootModel<>(tipo.novaInstancia());
+    protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
+        SDocument novo = documentFactory.create(tipo);
+        return novo.getRoot();
     }
 
     /**
@@ -91,27 +94,8 @@ public abstract class SingularFormPanel extends Panel {
      */
     private void createInstance() {
         SType<?> tipo = getTipo();
-        rootInstance = populateInstance(tipo);
-        bindDefaultServices(getRootInstance().getObject().getDocument());
-        bindAdditionalServices(getRootInstance().getObject().getDocument());
+        rootInstance = new MInstanceRootModel<>(createInstance(tipo, documentFactoryRef.get()));
     }
-
-    /**
-     * Faz o bind dos serviços padrões
-     * @param document o document
-     */
-    protected void bindDefaultServices(final SDocument document) {
-        document.setAttachmentPersistenceHandler(ServiceRef.of(new InMemoryAttachmentPersitenceHandler()));
-        document.addServiceRegistry(getServiceRegistry());
-        document.bindLocalService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class,
-                ServiceRef.of(getServiceRegistry().lookupService(IAttachmentPersistenceHandler.class)));
-    }
-
-    /**
-     * Método chamado após criação da instancia, deve ser sobrescrito para incluir services adicionais
-     * @param document o document
-     */
-    protected void bindAdditionalServices(final SDocument document) {}
 
     /**
      * Método wicket, local onde os componentes são adicionados
@@ -140,6 +124,7 @@ public abstract class SingularFormPanel extends Panel {
 
     /**
      * Constrói o body container
+     *
      * @return body container utilizado no builder
      */
     private BSContainer<?> buildBodyContainer() {
@@ -163,9 +148,10 @@ public abstract class SingularFormPanel extends Panel {
 
     /**
      * recupera o formcontext
+     *
      * @return implementação de form context
      */
-    public SingularFormContextWicket getSingularFormContext() {
+    private SingularFormContextWicket getSingularFormContext() {
         return getServiceRegistry().lookupService(SingularFormContextWicket.class);
     }
 
@@ -174,7 +160,7 @@ public abstract class SingularFormPanel extends Panel {
     }
 
     public ServiceRegistry getServiceRegistry() {
-        return serviceRegistry;
+        return documentFactoryRef.get().getServiceRegistry();
     }
 
     public ViewMode getViewMode() {

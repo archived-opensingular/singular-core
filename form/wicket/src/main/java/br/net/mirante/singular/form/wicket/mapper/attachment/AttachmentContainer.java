@@ -20,29 +20,27 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 
 /**
  * AttachmentContainer is the class responsible for rendering a upload field
- *         using the jquery-file-upload javascript plugin. Even though it creates
- *         a file input it is not used by the singular-form to submit the file
- *         information to the {@link SInstance} representing it. Instead, it
- *         populates the instance with a composite type containing the file
- *         descriptor.
- *         The workings of this component is as follows:
+ * using the jquery-file-upload javascript plugin. Even though it creates a file
+ * input it is not used by the singular-form to submit the file information to
+ * the {@link SInstance} representing it. Instead, it populates the instance
+ * with a composite type containing the file descriptor. The workings of this
+ * component is as follows:
  *
- *         1 - Whem a file is uploaded it uses the UploadBehaviour to call the
- *                 {@link IAttachmentPersistenceHandler} registered in the
- *                 {@link SDocument#getAttachmentPersistenceHandler(boolean)}. It has a
- *                 default handler, but you can personalize as desired by using
- *                 the {@link SDocument#setAttachmentPersistenceHandler(br.net.mirante.singular.form.mform.ServiceRef)}
- *                 register method.
- *         2 - The information returne by the persistence handler is stored in the
- *                 file field as its descriptor. Using the handler is possible
- *                 to retrieve the proper information about the file.
+ * 1 - Whem a file is uploaded it uses the UploadBehaviour to call the
+ * {@link IAttachmentPersistenceHandler} registered in the
+ * {@link SDocument#getAttachmentPersistenceTemporaryHandler()}. It has a
+ * default handler, but you can personalize as desired by using the
+ * {@link SDocument#setAttachmentPersistenceTemporaryHandler(br.net.mirante.singular.form.mform.ServiceRef)}
+ * register method. 2 - The information returne by the persistence handler is
+ * stored in the file field as its descriptor. Using the handler is possible to
+ * retrieve the proper information about the file.
  *
- *         Since only the descriptor is stored in the Instance, it's advised to
- *         use different handlers for the upload (default) and submission
- *         (persistent) of the form.
+ * Since only the descriptor is stored in the Instance, it's advised to use
+ * different handlers for the upload (default) and submission (persistent) of
+ * the form.
  *
- *         OBS: Remember that each {@link SInstance} has its own {@link SDocument}
- *                 making each handler configuration unique for its own instance.
+ * OBS: Remember that each {@link SInstance} has its own {@link SDocument}
+ * making each handler configuration unique for its own instance.
  *
  * @author Fabricio Buzeto
  *
@@ -66,12 +64,16 @@ class AttachmentContainer extends BSContainer {
     protected FormComponent setupFields(IModel<? extends SInstance> model) {
         String name = model.getObject().getNome();
         fileField = new FileUploadField(name, new IMInstanciaAwareModel() {
+            @Override
             public Object getObject() {return null;}
 
+            @Override
             public void setObject(Object object) {}
 
+            @Override
             public void detach() {}
 
+            @Override
             public SInstance getMInstancia() {
                 return model.getObject();
             }
@@ -179,10 +181,12 @@ class AttachmentContainer extends BSContainer {
             setBody(model);
         }
 
+        @Override
         protected CharSequence getURL() {
             return downloader.getUrl();
         }
 
+        @Override
         public void onClick() {}
     }
 

@@ -17,6 +17,12 @@ public abstract class SingularButton extends AjaxButton {
     }
 
     @Override
+    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+        super.onSubmit(target, form);
+        WicketFormProcessing.onFormSubmit(form, Optional.of(target), getCurrentInstance(), false);
+    }
+
+    @Override
     protected void onError(AjaxRequestTarget target, Form<?> form) {
         super.onError(target, form);
         WicketFormProcessing.onFormError(form, Optional.of(target), getCurrentInstance());
