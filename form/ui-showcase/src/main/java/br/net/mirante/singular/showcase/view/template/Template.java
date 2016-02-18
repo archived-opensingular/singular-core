@@ -3,7 +3,9 @@ package br.net.mirante.singular.showcase.view.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import br.net.mirante.singular.showcase.view.skin.SkinOptions;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,10 +14,7 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.*;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -54,6 +53,12 @@ public abstract class Template extends WebPage {
         for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
+        setSkin(response);
+    }
+
+    private void setSkin(IHeaderResponse response) {
+        Optional<SkinOptions.Skin> skin = SkinOptions.currentSkin(getSession());
+        if(skin.isPresent()){   response.render(skin.get().ref);    }
     }
 
     protected boolean withTopAction() {
@@ -116,4 +121,5 @@ public abstract class Template extends WebPage {
             });
         }
     }
+
 }

@@ -1,12 +1,18 @@
 package br.net.mirante.singular.showcase.view.template;
 
+import java.io.Serializable;
 import java.util.Optional;
 
+import br.net.mirante.singular.showcase.view.skin.SkinOptions;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.StatelessLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
 import br.net.mirante.singular.showcase.wicket.UIAdminSession;
+import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
@@ -35,5 +41,40 @@ public class TopMenu extends Panel {
         Optional<String> logoutHref = Optional.ofNullable(UIAdminSession.get().getLogout());
         logoutHref.ifPresent(href -> logout.add($b.attr("href", href)));
         queue(logout);
+
+
+        queue(buildDefaultSkinLink());
+        queue(buildSkinOptions());
     }
+
+    private StatelessLink buildDefaultSkinLink() {
+        return new StatelessLink("clear_skin") {
+            public void onClick() {
+                SkinOptions.clearSelection(getSession());
+                refreshPage();
+            }
+        };
+    }
+
+    private ListView buildSkinOptions() {
+        return new ListView("skin_options", SkinOptions.options()) {
+            @Override
+            protected void populateItem(ListItem item) {
+                final SkinOptions.Skin skin = (SkinOptions.Skin) item.getModel().getObject();
+                item.add(buildSelectSkinLink(skin));
+                item.queue(new Label("label", skin.name));
+            }
+        };
+    }
+
+    private StatelessLink buildSelectSkinLink(final SkinOptions.Skin skin) {
+        return new StatelessLink("change_action") {
+            public void onClick() {
+                SkinOptions.selectSkin(getSession(), skin);
+                refreshPage();
+            }
+        };
+    }
+
+    private void refreshPage() {    setResponsePage(getPage()); }
 }

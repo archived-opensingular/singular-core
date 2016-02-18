@@ -8,3 +8,7 @@
         width: 900px;
     }
 }
+
+.logo-default {
+    content: url("/singular-static/resources/singular/img/brand.png");
+}

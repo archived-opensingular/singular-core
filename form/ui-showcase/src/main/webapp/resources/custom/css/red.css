@@ -1,0 +1,8 @@
+.page-header.navbar {
+    background: red;
+}
+
+.logo-default {
+    content:url("http://imgur.com/SZ8Cm.jpg");
+    height: 45px;
+}
