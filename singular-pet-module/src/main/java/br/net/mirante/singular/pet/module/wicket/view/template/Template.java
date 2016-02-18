@@ -1,6 +1,9 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
-import br.net.mirante.singular.pet.module.wicket.PetModulePage;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -16,10 +19,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import br.net.mirante.singular.pet.module.wicket.PetModulePage;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -32,7 +32,6 @@ public abstract class Template extends PetModulePage {
         super.onInitialize();
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody")
-                .add($b.attrAppender("class", "page-sidebar-fixed", " ", $m.ofValue(withMenu())))
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
 //        queue(new HeaderResponseContainer("css", "css"));
         queue(new HeaderResponseContainer("scripts", "scripts"));
