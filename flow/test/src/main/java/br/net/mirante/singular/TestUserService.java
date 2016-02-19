@@ -25,4 +25,9 @@ public class TestUserService implements IUserService {
     public boolean canBeAllocated(MUser user) {
         return false;
     }
+
+    @Override
+    public MUser findUserByCod(String username) {
+        return (MUser)testDAO.getSomeUser(1);
+    }
 }

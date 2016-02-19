@@ -106,8 +106,10 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
         sw.refresh(processInstance);
     }
 
-    protected abstract MUser saveUserIfNeeded(MUser mUser);
-    
+    public MUser saveUserIfNeeded(MUser mUser) {
+        return Flow.getConfigBean().getUserService().saveUserIfNeeded(mUser);
+    }
+
     protected abstract Class<TASK_INSTANCE> getClassTaskInstance();
     
     /**
@@ -177,6 +179,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
 
     @Override
     public void relocateTask(TASK_INSTANCE taskInstance, MUser user) {
+        user = saveUserIfNeeded(user);
         taskInstance.setAllocatedUser(user);
 
         updateTask(taskInstance);
@@ -190,6 +193,7 @@ public abstract class AbstractHibernatePersistenceService<DEFINITION_CATEGORY ex
             MUser responsibleUser, Date dateHour, PROCESS_INSTANCE generatedProcessInstance) {
         IEntityTaskHistoricType taskHistoryType = retrieveOrCreateTaskHistoricType(typeDescription);
 
+        responsibleUser = saveUserIfNeeded(responsibleUser);
         IEntityTaskInstanceHistory history = newTaskInstanceHistory(task, taskHistoryType, allocatedUser, responsibleUser);
 
         if (dateHour == null) {

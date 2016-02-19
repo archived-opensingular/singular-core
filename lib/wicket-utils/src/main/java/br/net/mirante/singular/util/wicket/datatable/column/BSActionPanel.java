@@ -35,11 +35,11 @@ public class BSActionPanel<T> extends Panel {
     }
 
     public BSActionPanel<T> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, MarkupContainer link) {
-        return appendAction(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel)
+        return appendAction(new ActionConfig<>().labelModel(labelModel).iconeModel(iconeModel)
                 .stripeModel(null).link(link).buttonModel($m.ofValue("black")).withText(true));
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig actionConfig) {
+    public BSActionPanel<T> appendAction(ActionConfig<?> actionConfig) {
 
         actions.add(new WebMarkupContainer(actions.newChildId())
                 .add(actionConfig.link.add($b.attrAppender("class", actionConfig.buttonModel, " "))));
@@ -63,15 +63,15 @@ public class BSActionPanel<T> extends Panel {
         return this;
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig actionConfig, IFunction<String, MarkupContainer> linkFactory) {
+    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig, IFunction<String, MarkupContainer> linkFactory) {
         return appendAction(actionConfig.link(linkFactory.apply(LINK_ID)));
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig actionConfig, IBiFunction<T, String, MarkupContainer> linkFactory, IModel<T> model) {
+    public BSActionPanel<T> appendAction(ActionConfig<T> actionConfig, IBiFunction<T, String, MarkupContainer> linkFactory, IModel<T> model) {
         return appendAction(actionConfig.link(linkFactory.apply(model.getObject(), LINK_ID)));
     }
 
-    public BSActionPanel<T> appendAction(ActionConfig config, IBSAction<T> action, IModel<T> model) {
+    public BSActionPanel<T> appendAction(ActionConfig<T> config, IBSAction<T> action, IModel<T> model) {
         if (config.linkFactory == null) {
             return appendAction(config, childId -> new ActionAjaxLink<T>(childId, model) {
                 @Override
@@ -121,42 +121,42 @@ public class BSActionPanel<T> extends Panel {
         protected boolean withText = true;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
 
-        public ActionConfig labelModel(IModel<?> labelModel) {
+        public ActionConfig<T> labelModel(IModel<?> labelModel) {
             this.labelModel = labelModel;
             return this;
         }
 
-        public ActionConfig iconeModel(IModel<Icone> iconeModel) {
+        public ActionConfig<T> iconeModel(IModel<Icone> iconeModel) {
             this.iconeModel = iconeModel;
             return this;
         }
 
-        public ActionConfig stripeModel(IModel<String> stripeModel) {
+        public ActionConfig<T> stripeModel(IModel<String> stripeModel) {
             this.stripeModel = stripeModel;
             return this;
         }
 
-        public ActionConfig link(MarkupContainer link) {
+        public ActionConfig<T> link(MarkupContainer link) {
             this.link = link;
             return this;
         }
 
-        public ActionConfig buttonModel(IModel<String> buttonModel) {
+        public ActionConfig<T> buttonModel(IModel<String> buttonModel) {
             this.buttonModel = buttonModel;
             return this;
         }
 
-        public ActionConfig withText(boolean withText) {
+        public ActionConfig<T> withText(boolean withText) {
             this.withText = withText;
             return this;
         }
 
-        public ActionConfig style(IModel<String> style) {
+        public ActionConfig<T> style(IModel<String> style) {
             this.style = style;
             return this;
         }
 
-        public ActionConfig linkFactory(IBiFunction<T, String, MarkupContainer> linkFactory) {
+        public ActionConfig<T> linkFactory(IBiFunction<T, String, MarkupContainer> linkFactory) {
             this.linkFactory = linkFactory;
             return this;
         }
