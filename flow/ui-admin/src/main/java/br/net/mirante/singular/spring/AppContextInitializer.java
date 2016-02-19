@@ -23,8 +23,9 @@ public class AppContextInitializer implements ApplicationContextInitializer<Conf
     public void initialize(ConfigurableWebApplicationContext applicationContext) {
         try {
             Resource resource = getResource(applicationContext, FLOW_BAM_CONFIG);
-            Properties props = PropertiesLoaderUtils.loadProperties(resource);
-            
+            Properties props = PropertiesLoaderUtils.loadAllProperties("/"+FLOW_BAM_CONFIG);
+            PropertiesLoaderUtils.fillProperties(props, resource);
+
             props.put("FLOW_BAM_CONFIG", resource.getURL());
             
             resource = getResource(applicationContext, FLOW_BAM_SECURITY);
@@ -44,9 +45,9 @@ public class AppContextInitializer implements ApplicationContextInitializer<Conf
         if(StringUtils.isBlank(singularHome)){
             singularHome = "classpath:"+fileName;
         } else if(singularHome.endsWith(File.separator)){
-            singularHome = "file:"+singularHome+ fileName;
+            singularHome = "file:"+singularHome+"conf"+File.separator+ fileName;
         } else {
-            singularHome = "file:"+singularHome+ File.separator+ fileName;
+            singularHome = "file:"+singularHome+ File.separator+"conf"+File.separator+ fileName;
         }
         Resource resource = applicationContext.getResource(singularHome);
         if(!resource.exists()){
