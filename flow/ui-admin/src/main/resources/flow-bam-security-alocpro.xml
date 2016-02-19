@@ -8,6 +8,8 @@
                            http://www.springframework.org/schema/security
                            http://www.springframework.org/schema/security/spring-security-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 	
+	<!-- Arquivo de segurança para o Alocpro -->
+	
 	<security:ldap-server manager-dn="tomcatLogin"
 		manager-password="jnditomcat"
 		root="DC=miranteinfo,DC=com" 
