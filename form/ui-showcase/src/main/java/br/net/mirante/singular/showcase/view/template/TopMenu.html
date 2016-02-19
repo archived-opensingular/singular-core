@@ -9,6 +9,24 @@
                 <img wicket:id="codrh" src="/singular-static/resources/metronic/layout4/img/avatar.png" class="img-circle"/>
             </a>
             <ul class="dropdown-menu dropdown-menu-default">
+                <li style="text-align: center;">
+                    <a href="#">
+                        <wicket:message key="top.menu.skins"/>
+                    </a>
+                </li>
+                <li>
+                    <a wicket:id="clear_skin" href="#">
+                        <i class="fa fa-paint-brush"></i> <wicket:message key="top.menu.default_skin"/>
+                    </a>
+                </li>
+                <li wicket:id="skin_options">
+                    <a wicket:id="change_action" href="#">
+                        <i class="fa fa-paint-brush"></i> <span wicket:id="label">skin</span>
+                    </a>
+                </li>
+                <li>
+                    <hr />
+                </li>
                 <li>
                     <a wicket:id="logout" href="#">
                         <i class="icon-key"></i> <wicket:message key="top.menu.logout"/>

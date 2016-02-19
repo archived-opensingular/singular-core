@@ -22,11 +22,18 @@
             <property name="serviceRegistry" ref="springServiceRegistry"/>
         </bean>
 
-        <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
+	    <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
 
         <bean id="singularFormContext" class="br.net.mirante.singular.form.wicket.SingularFormContextWicketImpl"
               factory-bean="singularFormConfig" factory-method="createContext">
         </bean>
+
+		<bean id="bamFilterformConfig" class="br.net.mirante.singular.form.spring.SpringFormConfig">
+			<!-- 
+	        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+	        <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
+	         -->
+		</bean>
     </beans>
 
 </beans>

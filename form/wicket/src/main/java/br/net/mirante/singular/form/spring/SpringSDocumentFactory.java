@@ -2,10 +2,10 @@ package br.net.mirante.singular.form.spring;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
@@ -19,11 +19,9 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware {
+public abstract class SpringSDocumentFactory extends SDocumentFactory implements ApplicationContextAware, BeanNameAware, NamedBean {
 
     private String springBeanName;
-
-    private ServiceRegistry serviceRegistry;
 
     /**
      * Retorna como registro de serviço um proxy para o próprio
@@ -31,10 +29,7 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
      */
     @Override
     public ServiceRegistry getServiceRegistry() {
-        if (serviceRegistry == null) {
-            serviceRegistry = new SpringServiceRegistry(SpringFormUtil.getApplicationContext());
-        }
-        return serviceRegistry;
+        return new SpringServiceRegistry(SpringFormUtil.getApplicationContext());
     }
 
     /**
@@ -44,10 +39,7 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
      */
     @Override
     public SDocumentFactoryRef getDocumentFactoryRef() {
-        if (springBeanName == null) {
-            throw new SingularFormException("O nome do bean não foi configurado");
-        }
-        return new SpringSDocumentFactoryRef(springBeanName);
+        return new SpringSDocumentFactoryRef(SpringFormUtil.checkBeanName(this));
     }
 
     @Override
@@ -58,5 +50,10 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
     @Override
     public void setBeanName(String springBeanName) {
         this.springBeanName = springBeanName;
+    }
+
+    @Override
+    public String getBeanName() {
+        return springBeanName;
     }
 }

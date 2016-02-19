@@ -107,7 +107,7 @@ public class SDocument {
      *         por default.
      */
     public IAttachmentPersistenceHandler getAttachmentPersistenceTemporaryHandler() {
-        IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
             setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
@@ -121,7 +121,7 @@ public class SDocument {
      * persistencia temporária, no momento de salvar o formulário.
      */
     public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
-        IAttachmentPersistenceHandler h = lookupService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        IAttachmentPersistenceHandler h = lookupLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
         if (h == null) {
             throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
                     + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());

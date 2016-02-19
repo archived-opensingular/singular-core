@@ -28,5 +28,18 @@
 
     <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
 
+    <bean id="showcaseDictionaryLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader"/>
+    
+	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
+        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+	</bean>
+	
+	<bean id="showcaseDatabaseDocumentFactory" 
+		  class="br.net.mirante.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
+
+	<bean id="formConfigWithDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
+        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+        <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
+	</bean>
 
 </beans>

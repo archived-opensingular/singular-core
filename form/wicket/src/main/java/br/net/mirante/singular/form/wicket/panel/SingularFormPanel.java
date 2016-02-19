@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.wicket.panel;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -8,6 +11,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
@@ -22,7 +26,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 /**
  * Painel que encapusla a lógica de criação de forms dinâmicos
  */
-public abstract class SingularFormPanel extends Panel {
+public abstract class SingularFormPanel<KEY extends Serializable> extends Panel {
 
     /**
      * Container onde os componentes serão adicionados
@@ -46,6 +50,8 @@ public abstract class SingularFormPanel extends Panel {
 
     private SDocumentFactoryRef documentFactoryRef;
 
+    private transient SFormConfig<KEY> singularFormConfig;
+
     /**
      * Construtor principal do painel
      *
@@ -54,9 +60,10 @@ public abstract class SingularFormPanel extends Panel {
      * @param serviceRegistry
      *            utilizado para lookup de serviços
      */
-    public SingularFormPanel(String id, SDocumentFactoryRef documentFactoryRef) {
+    public SingularFormPanel(String id, SFormConfig<KEY> singularFormConfig) {
         super(id);
-        this.documentFactoryRef = documentFactoryRef;
+        this.singularFormConfig = Objects.requireNonNull(singularFormConfig);
+        this.documentFactoryRef = singularFormConfig.getDocumentFactory().getDocumentFactoryRef();
     }
 
     /**
@@ -64,7 +71,7 @@ public abstract class SingularFormPanel extends Panel {
      *
      * @return o tipo root para criação do form
      */
-    protected abstract SType<?> getTipo();
+    protected abstract SType<?> getTipo(SFormConfig<KEY> singularFormConfig);
 
     /**
      * Cria ou substitui o container
@@ -93,7 +100,7 @@ public abstract class SingularFormPanel extends Panel {
      * Cria a instancia a partir do tipo.
      */
     private void createInstance() {
-        SType<?> tipo = getTipo();
+        SType<?> tipo = getTipo(singularFormConfig);
         rootInstance = new MInstanceRootModel<>(createInstance(tipo, documentFactoryRef.get()));
     }
 

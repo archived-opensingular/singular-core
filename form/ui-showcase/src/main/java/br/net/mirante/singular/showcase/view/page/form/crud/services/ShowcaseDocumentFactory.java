@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttac
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.spring.SpringSDocumentFactory;
 
-@Component
+@Component("showcaseDocumentFactory")
 public class ShowcaseDocumentFactory extends SpringSDocumentFactory {
 
     @Override

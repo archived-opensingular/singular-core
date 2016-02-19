@@ -1,6 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -22,23 +23,30 @@ public abstract class SDictionaryLoader<KEY extends Serializable> {
      * @param dictionatyId
      *            Identificador do dicionário a ser carregado.
      */
-    public final Optional<SDictionary> loadDictionary(KEY dictionatyId) {
-        Optional<SDictionary> d = loadDictionaryImpl(dictionatyId);
-        if (d.isPresent() && d.get().getSerializableDictionarySelfReference() == null) {
-            throw new SingularFormException(getClass().getName() + " devolveu um dicionário para o id=" + dictionatyId
-                    + ", mas não configurou SDictionary.setSerializableDictionarySelfReference(), "
-                    + "o que impedirá a serialização de instâncias desse dicionário. Recomenda-se usar "
-                    + SDictionaryRefByLoader.class.getName());
+    public final Optional<SDictionary> loadDictionary(KEY dictionaryId) {
+        Optional<SDictionary> d = loadDictionaryImpl(Objects.requireNonNull(dictionaryId));
+        if (d.isPresent() && !d.get().getSerializableDictionarySelfReference().isPresent()) {
+            SDictionaryRef ref = createDictionaryRef(dictionaryId);
+            if (ref == null) {
+                throw new SingularFormException(getClass().getName() + " devolveu um dicionário para o id=" + dictionaryId
+                        + ", mas não configurou SDictionary.setSerializableDictionarySelfReference(), "
+                        + "o que impedirá a serialização de instâncias desse dicionário. Recomenda-se usar "
+                        + SDictionaryRefByLoader.class.getName() + " ou implementar createDictionaryRef()");
+            } else {
+                d.get().setSerializableDictionarySelfReference(ref);
+            }
         }
         return d;
     }
+
+    protected abstract SDictionaryRef createDictionaryRef(KEY dictionaryId);
 
     /**
      * Implementa a efetiva recuperação do dicionário. O dicionário retornado
      * deve configurar
      * {@link SDictionary#setSerializableDictionarySelfReference(SDictionaryRef)}
      * .
-     * 
+     *
      * @param dictionatyId
      *            Identificador do dicionário a ser carregado.
      */
@@ -48,14 +56,14 @@ public abstract class SDictionaryLoader<KEY extends Serializable> {
      * Retorna o dicionário para o tipo informado ou dispara exception se não
      * encontrar.
      *
-     * @param dictionatyId
+     * @param dictionaryId
      *            Identificador do dicionário a ser carregado.
      * @exception SingularFormException
      *                Senão encontrar o dicionário.
      */
-    public final SDictionary loadDictionaryOrException(KEY dictionatyId) throws SingularFormException {
-        return loadDictionary(dictionatyId)
-                .orElseThrow(() -> new SingularFormException("Não foi encontrado dicionário para o o id=" + dictionatyId));
+    public final SDictionary loadDictionaryOrException(KEY dictionaryId) throws SingularFormException {
+        return loadDictionary(dictionaryId)
+                .orElseThrow(() -> new SingularFormException("Não foi encontrado dicionário para o o id=" + dictionaryId));
     }
 
     /**
