@@ -10,6 +10,7 @@ public enum Icone {
     CHECK /*            */("fa fa-check"),
     CHECK_CIRCLE /*     */("fa-check-circle-o"),
     COGS /*             */("fa fa-cogs"),
+    COMMENT /*          */("fa fa-comment"),
     CREDIT_CARD /*      */("icon-credit-card"),
     CUP /*              */("icon-cup"),
     DIRECTIONS /*       */("icon-directions"),
@@ -33,6 +34,7 @@ public enum Icone {
     MINUS /*            */("fa fa-minus"),
     MONEY /*            */("fa fa-money"),
     PENCIL_SQUARE /*    */("fa fa-pencil-square-o"),
+    PENCIL/*            */("fa fa-pencil"),
     PIN /*              */("icon-pin"),
     PIE /*              */("icon-pie-chart"),
     PLUS /*             */("fa fa-plus"),
@@ -53,7 +55,13 @@ public enum Icone {
     VERTICAL_ELLIPSIS /**/("fa fa-ellipsis-v"),
     WALLET /*           */("icon-wallet"),
     PUZZLE /*           */("icon-puzzle"),
-    FOLDER /*           */("icon-folder");
+    FOLDER /*           */("icon-folder"),
+    WRENCH /*           */("icon-wrench"),
+    MAP /*              */("icon-map"),
+    NOTE /*             */("icon-note"),
+    DOCS /*             */("icon-docs"),
+    CLOCK /*            */("icon-clock"),
+    LAYERS/*            */("icon-layers");
 
     private final String cssClass;
 

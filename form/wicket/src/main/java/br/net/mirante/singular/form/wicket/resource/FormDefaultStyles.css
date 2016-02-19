@@ -1,0 +1,4 @@
+.singular-form-required:before {
+    content: "* ";
+    color: red;
+}

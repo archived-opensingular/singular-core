@@ -19,7 +19,7 @@
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSourceSingular"/>
         <!-- Incluir o pacote quando tiver um -->
-        <property name="packagesToScan" value="br.net.mirante.singular.dao.form" />
+        <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form" />
 
         <property name="hibernateProperties">
             <props>

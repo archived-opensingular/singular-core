@@ -32,6 +32,7 @@ public interface ServiceRef<T> extends Serializable, Supplier<T> {
      * recuperar o serviço. Faz sentido o seu uso se houver algum custo de
      * performance em chamar get() no supplier original.
      */
+    @SuppressWarnings("serial")
     public static <T> ServiceRef<T> cached(ServiceRef<T> supplier) {
         return new ServiceRef<T>() {
 
@@ -50,6 +51,7 @@ public interface ServiceRef<T> extends Serializable, Supplier<T> {
     /**
      * Retorna um novo Supplier que sempre retorna o valor informado.
      */
+    @SuppressWarnings("serial")
     public static <T extends Serializable> ServiceRef<T> of(T value) {
         return new ServiceRef<T>() {
             @Override

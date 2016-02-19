@@ -1,8 +1,7 @@
 package br.net.mirante.singular.util.wicket.bootstrap.layout;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -10,13 +9,14 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
+import br.net.mirante.singular.lambda.IFunction;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     private String tagName;
-    private String cssClass = null;
+    private String cssClass = null, innerStyle = null;
     protected final RepeatingView items = new RepeatingView("_");
 
     public BSContainer(String id) {
@@ -45,6 +45,12 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
             @Override
             public String getObject() {
                 return getCssClass();
+            }
+        }, " "));
+        add(new AttributeAppender("style", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return getInnerStyle();
             }
         }, " "));
     }
@@ -137,6 +143,10 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
         this.cssClass = cssClass;
         return (THIS) this;
     }
+    public THIS setInnerStyle(String innerStyle) {
+        this.innerStyle = innerStyle;
+        return (THIS) this;
+    }
 
     public String getTagName() {
         return tagName;
@@ -144,5 +154,16 @@ public class BSContainer<THIS extends BSContainer<THIS>> extends Panel {
 
     public String getCssClass() {
         return cssClass;
+    }
+
+    public String getInnerStyle() {return innerStyle; }
+
+    public RepeatingView getItems() {return items;}
+
+    public void addInfoMessage(String message) {
+        final AjaxRequestTarget target = getRequestCycle().find(AjaxRequestTarget.class);
+        if (target != null) {
+            target.appendJavaScript(";bootbox.alert('" + message + "');");
+        }
     }
 }

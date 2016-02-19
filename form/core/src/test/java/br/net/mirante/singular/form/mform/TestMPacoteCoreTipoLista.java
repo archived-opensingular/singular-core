@@ -4,23 +4,23 @@ import java.util.Collection;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCoreTipoLista.TestPacoteListaA.TestTipoListaComCargaInterna;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MIFormula;
-import br.net.mirante.singular.form.mform.core.MIInteger;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoFormula;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.SIFormula;
+import br.net.mirante.singular.form.mform.core.SIInteger;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeFormula;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     @SuppressWarnings("unchecked")
     public void testTipoListaCriacaoOfTipoSimples() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        MTipoLista<MTipoString, MIString> nomes = pb.createTipoListaOf("nomes", MTipoString.class);
+        STypeLista<STypeString, SIString> nomes = pb.createTipoListaOf("nomes", STypeString.class);
 
-        MILista<MIString> lista = (MILista<MIString>) nomes.novaInstancia();
+        SList<SIString> lista = (SList<SIString>) nomes.novaInstancia();
         lista.addValor("Paulo");
         assertLista(lista, new String[] { "Paulo" });
         lista.addValor("Joao");
@@ -38,7 +38,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
 
-        MILista<MIInteger> listaInt = (MILista<MIInteger>) dicionario.getTipo(MTipoInteger.class).novaLista();
+        SList<SIInteger> listaInt = (SList<SIInteger>) dicionario.getType(STypeInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] { 10 });
         listaInt.addValor("20");
@@ -51,26 +51,26 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     }
 
-    private static void assertLista(MILista<?> lista, Object[] valoresEsperados) {
-        assertEqualsList(lista.getValor(), valoresEsperados);
+    private static void assertLista(SList<?> lista, Object[] valoresEsperados) {
+        assertEqualsList(lista.getValue(), valoresEsperados);
     }
 
     public void testTipoListaCriacaoOfTipoComposto() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        MTipoLista<MTipoComposto<MIComposto>, MIComposto> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
+        STypeLista<STypeComposite<SIComposite>, SIComposite> tipoPedidos = pb.createTipoListaOfNovoTipoComposto("pedidos", "pedido");
         tipoPedidos.getTipoElementos().addCampoString("descricao");
         tipoPedidos.getTipoElementos().addCampoInteger("qtd");
 
-        MILista<MIComposto> pedidos = (MILista<MIComposto>) tipoPedidos.novaInstancia();
-        MIComposto pedido;
-        assertException(() -> pedidos.addValor("Paulo"), "Método não suportado");
+        SList<SIComposite> pedidos = (SList<SIComposite>) tipoPedidos.novaInstancia();
+        SIComposite pedido;
+        assertException(() -> pedidos.addValor("Paulo"), "SIComposite só suporta valores de mesmo tipo");
         pedido = pedidos.addNovo();
         assertFilhos(pedidos, 1);
         assertNotNull(pedido);
         assertEquals(1, pedidos.size());
-        assertTrue((pedidos.get(0)) instanceof MIComposto);
+        assertTrue((pedidos.get(0)) instanceof SIComposite);
         assertTrue((pedidos.getValorAt(0)) instanceof Collection);
 
         assertException(() -> pedidos.get(10), IndexOutOfBoundsException.class);
@@ -102,52 +102,52 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
     }
 
     public void testTipoListaCriacaoOfTipoCompostoTipado() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        MTipoLista<MTipoFormula, MIFormula> tipoFormulas = pb.createTipoListaOf("formulas", MTipoFormula.class);
+        STypeLista<STypeFormula, SIFormula> tipoFormulas = pb.createTipoListaOf("formulas", STypeFormula.class);
 
-        MILista<MIFormula> formulas = (MILista<MIFormula>) tipoFormulas.novaInstancia();
+        SList<SIFormula> formulas = (SList<SIFormula>) tipoFormulas.novaInstancia();
 
-        MIFormula formula = formulas.addNovo();
+        SIFormula formula = formulas.addNovo();
         formula.setSciptJS("XXX");
-        assertEquals(MTipoFormula.TipoScript.JS, formula.getTipoScriptEnum());
+        assertEquals(STypeFormula.TipoScript.JS, formula.getTipoScriptEnum());
 
         assertEquals("XXX", formulas.getValorString("[0].script"));
         assertEquals("JS", formulas.getValorString("[0].tipoScript"));
     }
 
     public void testeOnCargaTipoDireto() {
-        MDicionario dicionario = MDicionario.create();
-        TestTipoListaComCargaInterna tipo = dicionario.getTipo(TestTipoListaComCargaInterna.class);
+        SDictionary dicionario = SDictionary.create();
+        TestTipoListaComCargaInterna tipo = dicionario.getType(TestTipoListaComCargaInterna.class);
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertEquals((Boolean) true, tipo.isObrigatorio());
     }
 
     public void testeOnCargaTipoChamadaSubTipo() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
         TestTipoListaComCargaInterna tipo = pb.createTipo("arquivo", TestTipoListaComCargaInterna.class);
 
         assertEquals("xxx", tipo.as(AtrBasic.class).getLabel());
         assertEquals((Boolean) true, tipo.isObrigatorio());
     }
 
-    public static final class TestPacoteListaA extends MPacote {
+    public static final class TestPacoteListaA extends SPackage {
 
         protected TestPacoteListaA() {
             super("teste.pacoteListaA");
         }
 
         @Override
-        protected void carregarDefinicoes(PacoteBuilder pb) {
+        protected void carregarDefinicoes(PackageBuilder pb) {
             pb.createTipo(TestTipoListaComCargaInterna.class);
         }
 
         @MInfoTipo(nome = "TestTipoListaComCargaInterna", pacote = TestPacoteListaA.class)
-        public static final class TestTipoListaComCargaInterna extends MTipoLista<MTipoString, MIString> {
+        public static final class TestTipoListaComCargaInterna extends STypeLista<STypeString, SIString> {
             @Override
-            protected void onCargaTipo(TipoBuilder tb) {
+            protected void onLoadType(TypeBuilder tb) {
                 withObrigatorio(true);
                 as(AtrBasic.class).label("xxx");
             }

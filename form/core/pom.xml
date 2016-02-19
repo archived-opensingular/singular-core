@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.5.4-SNAPSHOT</version>
+        <version>0.5.10</version>
     </parent>
 
     <artifactId>form-core</artifactId>
@@ -17,7 +17,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>0.5.4-SNAPSHOT</version>
+            <version>0.5.10</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.11.0</version>
         </dependency>
         <dependency>
           <groupId>org.easytesting</groupId>
@@ -36,6 +41,11 @@
           <artifactId>mockito-all</artifactId>
           <version>1.10.19</version>
           <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20151123</version>
         </dependency>
     
     </dependencies>

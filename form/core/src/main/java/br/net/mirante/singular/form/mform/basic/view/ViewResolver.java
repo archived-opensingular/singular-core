@@ -4,10 +4,11 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimple;
 
 /**
  * <p>
@@ -30,20 +31,21 @@ public class ViewResolver {
 
     private int nextId = 1;
 
-    private final HashMap<Class<? extends MTipo>, TreeSet<ViewRuleRef>> rules = new HashMap<>();
+    private final HashMap<Class<? extends SType>, TreeSet<ViewRuleRef>> rules = new HashMap<>();
 
     public ViewResolver() {
         // Registro das regas de escolha de view.
-        addRule(MTipoLista.class, MPanelListaView.class);
-        addRule(MTipoLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
-        addRule(MTipoSimples.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeLista.class, MPanelListaView.class);
+        addRule(STypeLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
+        addRule(STypeSimple.class, new ViewRuleTypeSimpleSelectionOf());
+        addRule(STypeComposite.class, new ViewRuleTypeSimpleSelectionOf());
     }
 
     /**
      * Definie a view default para um dado componente. Essa regra tem menor
      * prioridade em relação com lógica explicitas.
      */
-    public void addRule(Class<? extends MTipo> type, Class<? extends MView> view) {
+    public void addRule(Class<? extends SType> type, Class<? extends MView> view) {
         addRule(type, 100, new ViewRuleSimple(view));
     }
 
@@ -53,11 +55,11 @@ public class ViewResolver {
      * da instância antes de decidir a melhor view. Essa regra tem maior
      * prioriade em relação as regras de componentes default.
      */
-    public void addRule(Class<? extends MTipo> type, ViewRule viewRule) {
+    public void addRule(Class<? extends SType> type, ViewRule viewRule) {
         addRule(type, 1000, viewRule);
     }
 
-    private void addRule(Class<? extends MTipo> type, int priority, ViewRule viewRule) {
+    private void addRule(Class<? extends SType> type, int priority, ViewRule viewRule) {
         ViewRuleRef rule = new ViewRuleRef(nextId++, priority, Objects.requireNonNull(viewRule));
 
         TreeSet<ViewRuleRef> list = rules.get(Objects.requireNonNull(type));
@@ -73,18 +75,18 @@ public class ViewResolver {
      * MView.DEFAULT, se não houver nenhum direcionamento específico e nesse
      * caso então cabe a cada gerador decidir como criar o componente na tela.
      */
-    public static MView resolve(MInstancia instance) {
-        return instance.getDicionario().getViewResolver().resolveInternal(instance);
+    public static MView resolve(SInstance instance) {
+        return instance.getDictionary().getViewResolver().resolveInternal(instance);
     }
 
-    private MView resolveInternal(MInstancia instance) {
-        MView view = instance.getMTipo().getView();
+    private MView resolveInternal(SInstance instance) {
+        MView view = instance.getType().getView();
         if (view != null) {
             return view;
         }
-        Class<?> classType = instance.getMTipo().getClass();
+        Class<?> classType = instance.getType().getClass();
         int priority = -1;
-        while (classType != MTipo.class) {
+        while (classType != SType.class) {
             TreeSet<ViewRuleRef> list = rules.get(classType);
             if (list != null) {
                 for (ViewRuleRef rule : list) {
@@ -111,7 +113,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(MInstancia instance) {
+        public MView apply(SInstance instance) {
             return newInstance(view);
         }
     }
@@ -136,7 +138,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(MInstancia instance) {
+        public MView apply(SInstance instance) {
             return viewRule.apply(instance);
         }
 

@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,6 +23,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+
+import br.net.mirante.singular.form.mform.util.json.JSONToolkit;
 
 /**
  * Representa um Element com diversos métodos utilitários para
@@ -1901,5 +1904,11 @@ public abstract class MElement implements Element, Serializable {
         print(pw);
         pw.flush();
         return out.toByteArray();
+    }
+
+    public String toJSONString() {
+        final StringWriter sw = new StringWriter();
+        JSONToolkit.printJSON(new PrintWriter(sw), this);
+        return sw.toString();
     }
 }

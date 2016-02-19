@@ -1,7 +1,9 @@
 package br.net.mirante.singular.flow.core;
 
+import java.io.Serializable;
+
 //TODO renomear para algo mais representativo para o singular.
-public interface MUser extends Comparable<MUser> {
+public interface MUser extends Comparable<MUser>, Serializable {
 
     Integer getCod();
 
@@ -14,6 +16,8 @@ public interface MUser extends Comparable<MUser> {
     String getSimpleName();
 
     String getEmail();
+
+    String getCodUsuario();
 
     default boolean is(MUser user2) {
         return (user2 != null) && getCod().equals(user2.getCod());

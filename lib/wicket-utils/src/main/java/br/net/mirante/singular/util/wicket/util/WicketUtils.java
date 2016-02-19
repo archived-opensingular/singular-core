@@ -1,5 +1,13 @@
 package br.net.mirante.singular.util.wicket.util;
 
+
+import br.net.mirante.singular.util.wicket.lambda.ILambdasMixin;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.feedback.FeedbackCollector;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.visit.IVisit;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -10,20 +18,12 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.feedback.FeedbackCollector;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.visit.IVisit;
-
-import br.net.mirante.singular.util.wicket.lambda.ILambdasMixin;
-
 public final class WicketUtils {
 
-    public static final IBehaviorsMixin  $b = new IBehaviorsMixin() {};
-    public static final IModelsMixin     $m = new IModelsMixin() {};
+    public static final IBehaviorsMixin $b = new IBehaviorsMixin() {};
+    public static final IModelsMixin $m = new IModelsMixin() {};
     public static final IValidatorsMixin $v = new IValidatorsMixin() {};
-    public static final ILambdasMixin    $L = new ILambdasMixin() {};
+    public static final ILambdasMixin $L = new ILambdasMixin() {};
 
     private WicketUtils() {}
 
@@ -53,20 +53,60 @@ public final class WicketUtils {
 
     public static void clearMessagesForComponent(Component component) {
         new FeedbackCollector(component.getPage())
-            .collect(message -> Objects.equals(message.getReporter(), component)).stream()
-            .forEach(it -> it.markRendered());
+                .collect(message -> Objects.equals(message.getReporter(), component)).stream()
+                .forEach(it -> it.markRendered());
     }
 
+    /**
+     * Retorna uma lista de parent containers, ordenados do filho para o pai.
+     * @param child
+     * @return lista de parent containers, ordenados do filho para o pai
+     */
     public static List<MarkupContainer> listParents(Component reporter) {
-        List<MarkupContainer> list = new ArrayList<MarkupContainer>();
-        if (reporter != null) {
-            MarkupContainer container = reporter.getParent();
+        return listParents(reporter, null);
+    }
+
+    /**
+     * Retorna uma lista de parent containers, ordenados do filho para o pai.
+     * @param child
+     * @param topParentInclusive parent mais alto na hierarquia a ser incluído na lista
+     * @return 
+     */
+    public static List<MarkupContainer> listParents(Component child, MarkupContainer topParentInclusive) {
+        List<MarkupContainer> list = new ArrayList<>();
+        if (child != null) {
+            MarkupContainer container = child.getParent();
             while (container != null) {
                 list.add(container);
+                if (container == topParentInclusive)
+                    break;
                 container = container.getParent();
+            }
+            if (topParentInclusive != container) {
+                throw new IllegalArgumentException("Top parent not found");
             }
         }
         return list;
+    }
+
+    /**
+     * Adiciona os parent containers à lista, ordenados do filho para o pai.
+     * @param child
+     * @param topParentInclusive parent mais alto na hierarquia a ser incluído na lista
+     */
+    public static void appendListOfParents(List<? super MarkupContainer> list, Component child, Component topParentInclusive) {
+        if (child != null) {
+            MarkupContainer container = child.getParent();
+            while (container != null) {
+                list.add(container);
+                if (container == topParentInclusive)
+                    break;
+                container = container.getParent();
+            }
+            if (topParentInclusive != container) {
+                throw new IllegalArgumentException("Top parent not found");
+            }
+        }
     }
 
     public static boolean nullOrEmpty(Object obj) {
@@ -87,11 +127,12 @@ public final class WicketUtils {
 
     public static Optional<String> findPageRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class,
-            it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
+                it -> it.getId().equals(childId)).map(it -> it.getPageRelativePath());
     }
+
     public static Optional<String> findContainerRelativePath(MarkupContainer container, String childId) {
         return WicketUtils.findFirstChild(container, Component.class, it -> it.getId().equals(childId))
-            .map(it -> it.getPageRelativePath())
-            .map(it -> it.substring(container.getPageRelativePath().length() + 1));
+                .map(it -> it.getPageRelativePath())
+                .map(it -> it.substring(container.getPageRelativePath().length() + 1));
     }
 }

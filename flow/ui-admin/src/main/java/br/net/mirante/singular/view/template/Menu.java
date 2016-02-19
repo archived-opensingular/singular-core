@@ -1,6 +1,8 @@
 package br.net.mirante.singular.view.template;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -13,15 +15,19 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 
 import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.flow.core.dto.IMenuItemDTO;
+import br.net.mirante.singular.persistence.entity.Dashboard;
+import br.net.mirante.singular.service.FlowMetadataFacade;
 import br.net.mirante.singular.service.UIAdminFacade;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import br.net.mirante.singular.view.page.dashboard.DashboardPage;
 import br.net.mirante.singular.wicket.UIAdminSession;
-public class Menu extends Panel {
 
+public class Menu extends Panel {
 
     @Inject
     private UIAdminFacade uiAdminFacade;
+
+    @Inject
+    private FlowMetadataFacade flowMetadataFacade;
 
     public Menu(String id) {
         super(id);
@@ -32,7 +38,39 @@ public class Menu extends Panel {
         super.onInitialize();
         queue(new WebMarkupContainer("dashboard").add(
                 WicketUtils.$b.attr("href", "dashboard")));
+        queueCustomDashboards();
         queue(mountCategories());
+    }
+
+    private void queueCustomDashboards() {
+        List<Dashboard> dashboards = getAuthorizedDashboards(uiAdminFacade.retrieveCustomDashboards());
+
+        RepeatingView repeatingView = new RepeatingView("customDashboards");
+        for (Dashboard dashboard : dashboards) {
+            repeatingView.add(
+                    new WebMarkupContainer(repeatingView.newChildId()).add(
+                        new WebMarkupContainer("link")
+                        .add(new Label("customDashboardLabel", dashboard.getName()))
+                        .add(WicketUtils.$b.attr("href", "dashboard"
+                                .concat("?").concat(Content.CUSTOM_DASHBOARD_COD_PARAM)
+                                .concat("=").concat(dashboard.getCod().toString())))
+                        )
+                    .setMarkupId(String.format("_dashboardMenu_%d", dashboard.getCod()))
+                    .setOutputMarkupId(true)
+            );
+        }
+
+        queue(repeatingView);
+    }
+
+    private List<Dashboard> getAuthorizedDashboards(List<Dashboard> dashboards) {
+        return dashboards.stream()
+                .filter(dashboard -> !flowMetadataFacade.getAuthorizedPortlets(dashboard, getUserId()).isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    protected String getUserId() {
+        return UIAdminSession.get().getUserId();
     }
 
     private MarkupContainer mountCategories() {
@@ -63,7 +101,7 @@ public class Menu extends Panel {
                     .add(new Label("definitionLabel", item.getName()))
                     .add(WicketUtils.$b.attr("href", (item.getCode() == null ? "#"
                             : "dashboard"
-                            .concat("?").concat(DashboardPage.PROCESS_DEFINITION_COD_PARAM)
+                            .concat("?").concat(Content.PROCESS_DEFINITION_COD_PARAM)
                             .concat("=").concat(item.getCode())))));
             definitionsMenu.add(definitionMenu);
         }

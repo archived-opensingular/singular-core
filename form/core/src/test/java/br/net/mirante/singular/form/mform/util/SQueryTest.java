@@ -7,18 +7,18 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MPacoteTesteContatos;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SPackageTesteContatos;
 
 public class SQueryTest {
 
     @Test
     public void test() {
-        MDicionario dicionario = MDicionario.create();
-        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        SDictionary dicionario = SDictionary.create();
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        MIComposto contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.novaInstancia();
 
         $(contato)
             .find(pacote.nome).val("Fulano").end()
@@ -33,17 +33,17 @@ public class SQueryTest {
             .find(pacote.telefones).addVal("8888-8888").addVal("9999-8888").addVal("9999-9999").end()
             .find(pacote.emails).addVal("fulano@detal.com").end();
 
-        System.out.println($(contato).find(pacote.telefones).children().val());
-
+//        System.out.println($(contato).find(pacote.telefones).children().val());
+//
 //        contato.debug();
     }
 
     @Test
     public void testList() {
-        MDicionario dicionario = MDicionario.create();
-        MPacoteTesteContatos pacote = dicionario.carregarPacote(MPacoteTesteContatos.class);
+        SDictionary dicionario = SDictionary.create();
+        SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        MIComposto contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.novaInstancia();
 
         $(contato).find(pacote.enderecos)
             .each(it -> it.addNovo())
@@ -52,17 +52,17 @@ public class SQueryTest {
             .each(it -> it.addNovo())
             .each(it -> $(it)
                 .find(pacote.enderecoNumero)
-                .each((num, idx) -> num.setValor(idx)));
+                .each((num, idx) -> num.setValue(idx)));
 
         Assert.assertEquals(
             Arrays.asList(0, 1, 2, 3),
-            $(contato).find(pacote.enderecoNumero).list(it -> it.getValor().intValue()));
+            $(contato).find(pacote.enderecoNumero).list(it -> it.getValue().intValue()));
 
         $(contato).find(pacote.enderecoCidade)
-            .each(cid -> cid.setValor("C" + $(cid).parent().find(pacote.enderecoNumero).val(Integer.class)));
+            .each(cid -> cid.setValue("C" + $(cid).parent().find(pacote.enderecoNumero).val(Integer.class)));
 
         Assert.assertEquals(
             Arrays.asList("C0", "C1", "C2", "C3"),
-            $(contato).find(pacote.enderecoCidade).list(it -> it.getValor()));
+            $(contato).find(pacote.enderecoCidade).list(it -> it.getValue()));
     }
 }

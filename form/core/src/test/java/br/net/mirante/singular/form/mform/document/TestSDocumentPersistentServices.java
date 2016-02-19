@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.mform.document;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -17,28 +17,28 @@ import static org.mockito.Mockito.*;
 
 public class TestSDocumentPersistentServices {
     
-    private MTipoComposto<?> groupingType;
-    private MIAttachment fileFieldInstance;
+    private STypeComposite<?> groupingType;
+    private SIAttachment fileFieldInstance;
     private SDocument document;
     private IAttachmentPersistenceHandler tempHandler, persistentHandler;
 
     @Before public void setup(){
-        MDicionario dicionario = MDicionario.create();
-        createTypes(dicionario.criarNovoPacote("teste"));
+        SDictionary dicionario = SDictionary.create();
+        createTypes(dicionario.createNewPackage("teste"));
         createInstances();
         setupServices();
         
     }
 
-    private void createTypes(PacoteBuilder pb) {
+    private void createTypes(PackageBuilder pb) {
         groupingType = pb.createTipoComposto("Grouping");
-        groupingType.addCampo("anexo", MTipoAttachment.class);
+        groupingType.addCampo("anexo", STypeAttachment.class);
         groupingType.addCampoInteger("justIgnoreThis");
     }
     
     private void createInstances() {
-        MIComposto instance = (MIComposto) groupingType.novaInstancia();
-        fileFieldInstance = (MIAttachment) instance.getAllChildren().iterator().next();
+        SIComposite instance = (SIComposite) groupingType.novaInstancia();
+        fileFieldInstance = (SIAttachment) instance.getAllChildren().iterator().next();
     }
     
     private void setupServices() {
@@ -46,9 +46,9 @@ public class TestSDocumentPersistentServices {
         
         tempHandler = mock(IAttachmentPersistenceHandler.class);
         persistentHandler = mock(IAttachmentPersistenceHandler.class);
-        document.setAttachmentPersistenceHandler(serviceRef(tempHandler));
+        document.setAttachmentPersistenceTemporaryHandler(ServiceRef.of(tempHandler));
         document.bindLocalService("filePersistence", 
-            IAttachmentPersistenceHandler.class, serviceRef(persistentHandler));
+            IAttachmentPersistenceHandler.class, ServiceRef.of(persistentHandler));
     }
     
     @Test public void deveMigrarOsAnexosParaAPersistencia(){
@@ -127,15 +127,6 @@ public class TestSDocumentPersistentServices {
         verify(tempHandler, never()).deleteAttachment(Matchers.any());
     }
     
-    @SuppressWarnings("serial")
-    private ServiceRef<IAttachmentPersistenceHandler> serviceRef(IAttachmentPersistenceHandler handler) {
-        return new ServiceRef<IAttachmentPersistenceHandler>() {
-            public IAttachmentPersistenceHandler get() {
-                return handler;
-            }
-        };
-    }
-
     private IAttachmentRef attachmentRef(String hash, byte[] content) {
         return new IAttachmentRef() {
             

@@ -7,115 +7,235 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormChoiceComponentUpdatingBehavior;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.CheckBoxMultipleChoice;
-import org.apache.wicket.markup.html.form.CheckGroup;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.markup.html.form.FormComponentPanel;
-import org.apache.wicket.markup.html.form.RadioChoice;
-import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
-import org.slf4j.LoggerFactory;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
-import br.net.mirante.singular.form.wicket.behavior.IAjaxUpdateListener;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.form.wicket.resource.FormDefaultStyles;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.form.wicket.util.WicketFormUtils;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
-@SuppressWarnings({ "serial", "rawtypes" })
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
+@SuppressWarnings({"serial", "rawtypes"})
 public class WicketBuildContext implements Serializable {
 
-    private final WicketBuildContext                parent;
-    private final BSContainer<?>                    container;
-    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
-    private final boolean                           hintsInherited;
-    private final BSContainer                       externalContainer;
-    private final BSContainer                       rootContainer;
+    public static final MetaDataKey<WicketBuildContext> METADATA_KEY = new MetaDataKey<WicketBuildContext>() {};
 
-    public WicketBuildContext(BSCol container, BSContainer bodyContainer) {
-        this(null, container, bodyContainer, false);
+    public static final HintKey<IModel<String>> TITLE_KEY                                     = () -> null;
+    public static final HintKey<Boolean>        RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY = () -> null;
+
+    private final WicketBuildContext parent;
+    private final List<WicketBuildContext> children = newArrayList();
+    private final BSContainer<?> container;
+    private final HashMap<HintKey<?>, Serializable> hints = new HashMap<>();
+    private final boolean hintsInherited;
+    private final BSContainer externalContainer;
+    private final BSContainer rootContainer;
+
+    private IModel<? extends SInstance> model;
+    private UIBuilderWicket uiBuilderWicket;
+    private ViewMode viewMode;
+    private boolean annotationEnabled = false;
+    private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
+    private List<Component> annotationsTargetBuffer = newArrayList();
+    private BSContainer annotationContainer;
+
+    private MView view;
+
+    public void setAnnotationContainer(BSContainer annotationContainer) {
+        this.annotationContainer = annotationContainer;
+    }
+    public void add(AnnotationComponent c){
+        Integer id = c.referenced().getMInstancia().getId();
+        annotations.put(id, c);
+    }
+    public void updateAnnotations(Component c){
+        if(c.getDefaultModel() != null && c.getDefaultModel().getObject() != null &&
+                c.getDefaultModel().getObject() instanceof SInstance){
+            SInstance target = (SInstance) c.getDefaultModel().getObject();
+
+            for(WicketBuildContext ctx : contextChain()){
+                if(ctx.annotations.containsKey(target.getId())){
+                    ctx.annotations.get(target.getId()).setReferencedComponent(c);
+                    return;
+                }
+            }
+
+            annotationsTargetBuffer.add(c);
+        }
     }
 
-    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer, boolean hintsInherited) {
+    public Optional<Component> getAnnotationTargetFor(SInstance target){
+        for(Component c : annotationsTargetBuffer){
+            IModel<?> m = c.getDefaultModel();
+            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance) {
+                SInstance i = (SInstance) m.getObject();
+                if (i.getId().equals(target.getId())) {
+                    return Optional.of(c);
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @return Components that must be refreshed whent the context is changed
+     */
+    public List<Component> updateOnRefresh(){
+        return newArrayList(annotationContainer.getParent());
+    }
+
+    private List<WicketBuildContext> contextChain() {
+        List<WicketBuildContext> contextChain = newArrayList(this);
+        WicketBuildContext ctx = this;
+        while(ctx.getParent() != null){
+            ctx = ctx.getParent();
+            contextChain.add(ctx);
+        }
+        return contextChain;
+    }
+
+    public WicketBuildContext(BSCol container, BSContainer bodyContainer, IModel<? extends SInstance> model) {
+        this(null, container, bodyContainer, false, model);
+    }
+
+    public WicketBuildContext(WicketBuildContext parent, BSContainer<?> container, BSContainer externalContainer,
+                              boolean hintsInherited, IModel<? extends SInstance> model) {
         this.parent = parent;
+        if(parent != null){
+            parent.children.add(this);
+        }
         this.container = container;
         this.hintsInherited = hintsInherited;
         this.externalContainer = externalContainer;
         this.rootContainer = ObjectUtils.defaultIfNull((parent == null) ? null : parent.getRootContainer(), container);
+        this.model = model;
         WicketFormUtils.markAsCellContainer(container);
         container.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
     }
 
-    public void init(IModel<? extends MInstancia> instanceModel) {
-        MInstancia instance = instanceModel.getObject();
+    public WicketBuildContext init(UIBuilderWicket uiBuilderWicket, ViewMode viewMode) {
+
+        final SInstance instance = getCurrentInstance();
+
+        this.view = ViewResolver.resolve(instance);
+        this.uiBuilderWicket = uiBuilderWicket;
+        this.viewMode = viewMode;
+
         if (isRootContext()) {
-            getContainer().add(new InitRootContainerBehavior(instanceModel));
+            initContainerBehavior();
         }
+
         if (getContainer().getDefaultModel() == null) {
-            getContainer().setDefaultModel(instanceModel);
+            getContainer().setDefaultModel(getModel());
         }
+
         WicketFormUtils.setInstanceId(getContainer(), instance);
         WicketFormUtils.setRootContainer(getContainer(), getRootContainer());
+
+        if (getContainer() != null) {
+            getContainer().add(new Behavior() {
+                @Override
+                public void renderHead(Component component, IHeaderResponse response) {
+                    super.renderHead(component, response);
+                    response.render(CssReferenceHeaderItem.forReference(FormDefaultStyles.RESOURCE_REFERENCE));
+                }
+            });
+        }
+
+        return this;
     }
 
-    // TODO refatorar este método para ele ser estensível e configurável de forma global
-    protected void addAjaxUpdateToComponent(Component component, IModel<MInstancia> model, IAjaxUpdateListener listener) {
-        if ((component instanceof RadioChoice) ||
-            (component instanceof CheckBoxMultipleChoice) ||
-            (component instanceof RadioGroup) ||
-            (component instanceof CheckGroup)) {
-            component.add(new AjaxUpdateChoiceBehavior(model, listener));
+    /**
+     * Adiciona um behavior que executa o update atributes do SDocument em toda requisição.
+     *
+     * Normalmente este método não deve ser chamado externamente,
+     * porem pode existir situações em que o container root não é atualizado
+     * e novos componentes filhos são adicionados.
+     *
+     * @see br.net.mirante.singular.form.mform.document.SDocument
+     * @see br.net.mirante.singular.form.wicket.mapper.TabMapper
+     */
+    public void initContainerBehavior(){
+        getContainer().add(new InitRootContainerBehavior(getModel()));
+    }
 
-        } else if (!(component instanceof FormComponentPanel<?>)) {
-            component.add(new AjaxUpdateInputBehavior("change", model, listener));
-        } else {
-            LoggerFactory.getLogger(WicketBuildContext.class).warn("Atualização ajax não suportada para " + component);
+    /**
+     * Configura formComponentes, adicionando comportamentos de acordo com sua definição.
+     *
+     * @param mapper o mapper
+     * @param formComponent o componente que tem como model IMInstanciaAwareModel
+     *
+     */
+    public void configure(IWicketComponentMapper mapper, FormComponent<?> formComponent) {
+        final IModel defaultModel = formComponent.getDefaultModel();
+        if (defaultModel != null && IMInstanciaAwareModel.class.isAssignableFrom(defaultModel.getClass())) {
+            WicketFormUtils.setCellContainer(formComponent, getContainer());
+            formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
+            if (formComponent.getLabel() == null) {
+                // formComponent.setDescription(IReadOnlyModel.of(() -> resolveSimpleLabel(formComponent)));
+                formComponent.setLabel(IReadOnlyModel.of(() -> resolveFullPathLabel(formComponent)));
+            }
+            final IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) defaultModel;
+            final SType<?> tipo = model.getMInstancia().getType();
+            if (tipo.hasDependentTypes() || tipo.dependsOnAnyTypeInHierarchy()) {
+                mapper.addAjaxUpdate(
+                        formComponent,
+                        IMInstanciaAwareModel.getInstanceModel(model),
+                        new OnFieldUpdatedListener());
+            }
         }
     }
 
-    public <T, FC extends FormComponent<T>> FC configure(FC formComponent) {
-        WicketFormUtils.setCellContainer(formComponent, getContainer());
+    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited, IModel<? extends SInstance> model) {
+        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited, model);
+    }
 
-        formComponent.add(ConfigureByMInstanciaAttributesBehavior.getInstance());
-
-        if (formComponent.getLabel() == null)
-            formComponent.setLabel(IReadOnlyModel.of(() -> getLabel(formComponent)));
-
-        IMInstanciaAwareModel<?> model = (IMInstanciaAwareModel<?>) formComponent.getDefaultModel();
-        MTipo<?> tipo = model.getMInstancia().getMTipo();
-        if (tipo.hasDependentTypes()) {
-            addAjaxUpdateToComponent(
-                formComponent,
-                IMInstanciaAwareModel.getInstanceModel(model),
-                new OnFieldUpdatedListener());
-        }
-
-        return formComponent;
+    public void configureContainer(IModel<String> title) {
+        setHint(TITLE_KEY, title);
     }
     
-    public WicketBuildContext createChild(BSContainer<?> childContainer, boolean hintsInherited) {
-        return new WicketBuildContext(this, childContainer, getExternalContainer(), hintsInherited);
+    public Optional<IModel<String>> resolveContainerTitle() {
+        return Optional.ofNullable(getHint(TITLE_KEY));
+    }
+    
+//    public boolean resolveReceivesInvisibleInnerComponentErrors() {
+//        return Boolean.TRUE.equals(getHint(RECEIVES_INVISIBLE_INNER_COMPONENT_ERRORS_KEY));
+//    }
+
+    public static Optional<WicketBuildContext> get(Component comp) {
+        return Optional.ofNullable(comp.getMetaData(METADATA_KEY));
     }
 
-    protected static <T> String getLabel(FormComponent<?> formComponent) {
+    protected static <T> String resolveSimpleLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
-            MInstancia instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
-            return instancia.as(MPacoteBasic.aspect()).getLabel();
+            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            return instancia.as(SPackageBasic.aspect()).getLabel();
         }
         return "[" + formComponent.getId() + "]";
     }
@@ -125,14 +245,14 @@ public class WicketBuildContext implements Serializable {
      * para ser usado em mensagens de erro.
      * Exemplo: "O campo 'Contato > Endereços > Endereço > Logradouro' é obrigatório"
      */
-    protected static <T> String getLabelFullPath(FormComponent<?> formComponent) {
+    protected static <T> String resolveFullPathLabel(FormComponent<?> formComponent) {
         IModel<?> model = formComponent.getModel();
         if (model instanceof IMInstanciaAwareModel<?>) {
-            MInstancia instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
+            SInstance instancia = ((IMInstanciaAwareModel<?>) model).getMInstancia();
             List<String> labels = new ArrayList<>();
             while (instancia != null) {
-                labels.add(instancia.as(MPacoteBasic.aspect()).getLabel());
-                instancia = instancia.getPai();
+                labels.add(instancia.as(SPackageBasic.aspect()).getLabel());
+                instancia = instancia.getParent();
             }
             labels.removeIf(it -> Strings.defaultIfEmpty(it, "").trim().isEmpty());
             Collections.reverse(labels);
@@ -148,16 +268,21 @@ public class WicketBuildContext implements Serializable {
             ctx = ctx.getParent();
         return ctx;
     }
+
+    /**
+     * @return true if this is the root of a Context tree.
+     */
     public boolean isRootContext() {
         return (this.getParent() == null);
     }
+
     public BSContainer getRootContainer() {
         return rootContainer;
     }
 
-    public WicketBuildContext getParent() {
-        return parent;
-    }
+    public WicketBuildContext getParent() { return parent;  }
+
+    public List<WicketBuildContext> getChildren() { return newArrayList(children);}
 
     public BSContainer<?> getContainer() {
         return container;
@@ -171,6 +296,7 @@ public class WicketBuildContext implements Serializable {
         hints.put(key, value);
         return this;
     }
+
     @SuppressWarnings("unchecked")
     public <T> T getHint(HintKey<T> key) {
         if (hints.containsKey(key)) {
@@ -182,49 +308,70 @@ public class WicketBuildContext implements Serializable {
         }
     }
 
+    public void rebuild(List<String> nomesTipo) {
+        IModel<? extends SInstance> originalModel = getModel();
+        for (String nomeTipo : nomesTipo) {
+            SInstanceCampoModel<SInstance> subtree = new SInstanceCampoModel<>(originalModel, nomeTipo);
+            setModel(subtree);
+            getUiBuilderWicket().build(this, viewMode);
+        }
+
+        setModel(originalModel);
+
+    }
+
     private static final class InitRootContainerBehavior extends Behavior {
-        private final IModel<? extends MInstancia> instanceModel;
-        public InitRootContainerBehavior(IModel<? extends MInstancia> instanceModel) {
+        private final IModel<? extends SInstance> instanceModel;
+
+        public InitRootContainerBehavior(IModel<? extends SInstance> instanceModel) {
             this.instanceModel = instanceModel;
         }
+
         @Override
         public void onConfigure(Component component) {
             instanceModel.getObject().getDocument().updateAttributes(null);
         }
     }
 
-    private static final class AjaxUpdateChoiceBehavior extends AjaxFormChoiceComponentUpdatingBehavior {
-        private final IAjaxUpdateListener listener;
-        private final IModel<MInstancia>  model;
-        public AjaxUpdateChoiceBehavior(IModel<MInstancia> model, IAjaxUpdateListener listener) {
-            this.listener = listener;
-            this.model = model;
-        }
-        @Override
-        protected void onUpdate(AjaxRequestTarget target) {
-            listener.onUpdate(this.getComponent(), target, model);
-        }
-    }
-
-    private static final class AjaxUpdateInputBehavior extends AjaxFormComponentUpdatingBehavior {
-        private final IAjaxUpdateListener listener;
-        private final IModel<MInstancia>  model;
-        private AjaxUpdateInputBehavior(String event, IModel<MInstancia> model, IAjaxUpdateListener listener) {
-            super(event);
-            this.listener = listener;
-            this.model = model;
-        }
-        @Override
-        protected void onUpdate(AjaxRequestTarget target) {
-            listener.onUpdate(this.getComponent(), target, model);
-        }
-    }
-
     private static final class OnFieldUpdatedListener implements IAjaxUpdateListener {
         @Override
-        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends MInstancia> m) {
-            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m.getObject());
+        public void onUpdate(Component s, AjaxRequestTarget t, IModel<? extends SInstance> m) {
+            WicketFormProcessing.onFieldUpdate((FormComponent<?>) s, Optional.of(t), m);
+        }
+
+        @Override
+        public void onError(Component source, AjaxRequestTarget target, IModel<? extends SInstance> instanceModel) {
+            WicketFormProcessing.onFormError((FormComponent<?>) source, Optional.of(target), instanceModel);
         }
     }
 
+    public UIBuilderWicket getUiBuilderWicket() {
+        return uiBuilderWicket;
+    }
+
+    public ViewMode getViewMode() {
+        return viewMode;
+    }
+
+    public MView getView() {
+        return view;
+    }
+
+    public IModel<? extends SInstance> getModel() {
+        return model;
+    }
+
+    public void setModel(IModel<? extends SInstance> model) {
+        this.model = model;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends SInstance> T getCurrentInstance() {
+        return (T) getModel().getObject();
+    }
+
+    public boolean isAnnotationEnabled() {  return annotationEnabled;   }
+
+    public void enableAnnotation() {   this.annotationEnabled = true;}
+    public void disableAnnotation() {   this.annotationEnabled = false;}
 }

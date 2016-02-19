@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import org.apache.wicket.Component;
@@ -17,12 +17,12 @@ import static org.junit.Assert.*;
 public class DateMapperTest extends MapperBaseTest {
 
     @Override
-    public void appendPackageFields(MTipoComposto<? extends MIComposto> form) {
+    public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
         form.addCampoData("data");
     }
 
     @Override
-    public void mockFormValues(MIComposto formInstance) {
+    public void mockFormValues(SIComposite formInstance) {
        formInstance.setValor("data", "01/07/1991");
     }
 

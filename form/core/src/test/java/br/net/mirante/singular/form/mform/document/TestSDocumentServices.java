@@ -1,36 +1,38 @@
 package br.net.mirante.singular.form.mform.document;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.core.attachment.MTipoAttachment;
-import org.junit.Before;
-import org.junit.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import br.net.mirante.singular.form.mform.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
+
 public class TestSDocumentServices {
-    private MTipoComposto<?> groupingType;
-    private MIAttachment fileFieldInstance;
+    private STypeComposite<?> groupingType;
+    private SIAttachment fileFieldInstance;
     private SDocument document;
 
     @Before public void setup(){
-        MDicionario dicionario = MDicionario.create();
-        createTypes(dicionario.criarNovoPacote("teste"));
+        SDictionary dicionario = SDictionary.create();
+        createTypes(dicionario.createNewPackage("teste"));
         createInstances();
     }
 
-    private void createTypes(PacoteBuilder pb) {
+    private void createTypes(PackageBuilder pb) {
         groupingType = pb.createTipoComposto("Grouping");
-        groupingType.addCampo("anexo", MTipoAttachment.class);
+        groupingType.addCampo("anexo", STypeAttachment.class);
         groupingType.addCampoInteger("justIgnoreThis");
     }
     
     private void createInstances() {
-        MIComposto instance = (MIComposto) groupingType.novaInstancia();
+        SIComposite instance = (SIComposite) groupingType.novaInstancia();
         document = instance.getDocument();
-        fileFieldInstance = (MIAttachment) instance.getAllChildren().iterator().next();
+        fileFieldInstance = (SIAttachment) instance.getAllChildren().iterator().next();
     }
     
     @SuppressWarnings({ "rawtypes", "serial" })

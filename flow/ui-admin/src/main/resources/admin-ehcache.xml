@@ -11,6 +11,33 @@
                   transactionalMode="off"
                   memoryStoreEvictionPolicy="LFU"/>
 
+    <cache name="retrieveGroup" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveGroupByProcess" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
+    <cache name="retrieveProcessDefinitionByKey" eternal="false"
+                  maxEntriesLocalHeap="10000"
+                  timeToIdleSeconds="300"
+                  timeToLiveSeconds="600"
+                  transactionalMode="off"
+                  memoryStoreEvictionPolicy="LFU">
+        <persistence strategy="none" synchronousWrites="false"/>
+    </cache>
+
     <cache name="listProcessDefinitionKeysWithAccess" eternal="false"
                   maxEntriesLocalHeap="10000"
                   timeToIdleSeconds="300"
@@ -181,5 +208,4 @@
            memoryStoreEvictionPolicy="LFU">
         <persistence strategy="none" synchronousWrites="false"/>
     </cache>
-
 </ehcache>

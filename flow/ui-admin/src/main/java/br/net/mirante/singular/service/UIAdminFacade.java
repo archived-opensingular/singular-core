@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import br.net.mirante.singular.dto.DefinitionDTO;
@@ -17,6 +18,7 @@ import br.net.mirante.singular.dto.MenuItemDTO;
 import br.net.mirante.singular.dto.MetaDataDTO;
 import br.net.mirante.singular.dto.StatusDTO;
 import br.net.mirante.singular.flow.core.service.IUIAdminService;
+import br.net.mirante.singular.persistence.entity.Dashboard;
 
 @Service("uiAdminFacade")
 public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO, MetaDataDTO, StatusDTO,
@@ -34,19 +36,33 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Inject
     private MenuService menuService;
 
+    @Inject
+    private DashboardService dashboardService;
+
+    @Value("#{singularAdmin['user.avatar.url']}")
+    private String userAvatar;
+
+    @Value("#{singularAdmin['springsecurity.logout']}")
+    private String logoutUrl;
+
     @Override
     public DefinitionDTO retrieveDefinitionById(Integer processDefinitionCod) {
         return processDefinitionService.retrieveById(processDefinitionCod);
     }
 
     @Override
-    public List<DefinitionDTO> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc) {
-        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc);
+    public DefinitionDTO retrieveDefinitionByKey(String processDefinitionKey) {
+        return processDefinitionService.retrieveByKey(processDefinitionKey);
     }
 
     @Override
-    public int countAllDefinition() {
-        return processDefinitionService.countAll();
+    public List<DefinitionDTO> retrieveAllDefinition(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess) {
+        return processDefinitionService.retrieveAll(first, size, orderByProperty, asc, processCodeWithAccess);
+    }
+
+    @Override
+    public int countAllDefinition(Set<String> processCodeWithAccess) {
+        return processDefinitionService.countAll(processCodeWithAccess);
     }
 
     @Override
@@ -57,11 +73,6 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     @Override
     public int countAllInstance(Integer processDefinitionCod) {
         return processDefinitionService.countAll(processDefinitionCod);
-    }
-
-    @Override
-    public byte[] retrieveProcessDiagram(String sigla) {
-        return processDefinitionService.retrieveProcessDiagram(sigla);
     }
 
     @Override
@@ -143,9 +154,25 @@ public class UIAdminFacade implements IUIAdminService<DefinitionDTO, InstanceDTO
     public List<MenuItemDTO> retrieveAllCategoriesWithAcces(String userId) {
         return menuService.retrieveAllCategoriesWithAcces(userId);
     }
-    
+
     @Override
     public Pair<Long, Long> retrieveCategoryDefinitionIdsByCode(String code) {
         return menuService.retrieveCategoryDefinitionIdsByCode(code);
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
+
+    public String getLogoutUrl() {
+        return logoutUrl;
+    }
+
+    public List<Dashboard> retrieveCustomDashboards() {
+        return dashboardService.retrieveCustomDashboards();
+    }
+
+    public Dashboard retrieveDashboardById(String customDashboardCode) {
+        return dashboardService.retrieveDashboardById(customDashboardCode);
     }
 }

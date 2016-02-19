@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
 
 import com.google.common.collect.Lists;
 
@@ -13,6 +15,8 @@ public class TestFinders {
 
     public static Optional<String> findId(MarkupContainer container, String leafName) {
         Iterator<Component> it = container.iterator();
+//        System.out.println(container);
+//        System.out.println(container.getId());
         while (it.hasNext()) {
             Optional<String> found = findInComponent(leafName, it.next());
             if (found.isPresent()) {
@@ -54,5 +58,16 @@ public class TestFinders {
             findTag(tag, result, (MarkupContainer) c);
         }
     }
-    
+
+    public static Component findFirstComponentWithId(MarkupContainer container, String id) {
+        return container.visitChildren(Component.class, new IVisitor<Component, Component>() {
+            @Override
+            public void component(Component object, IVisit<Component> visit) {
+                if (object.getId().equals(id)) {
+                    visit.stop(object);
+                }
+            }
+        });
+    }
+
 }

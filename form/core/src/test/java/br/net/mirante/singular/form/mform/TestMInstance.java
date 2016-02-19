@@ -3,36 +3,35 @@ package br.net.mirante.singular.form.mform;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.MTipoString;
+import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 public class TestMInstance {
 
-    @Test
-    public void testIncrementoId() {
-        MDicionario dicionario = MDicionario.create();
-        PacoteBuilder pb = dicionario.criarNovoPacote("teste");
+    @Test public void testIncrementoId() {
+        SDictionary dicionario = SDictionary.create();
+        PackageBuilder pb = dicionario.createNewPackage("teste");
 
-        MTipoComposto<?> tipoPedido = pb.createTipoComposto("pedido");
+        STypeComposite<?> tipoPedido = pb.createTipoComposto("pedido");
         tipoPedido.addCampoString("nome");
         tipoPedido.addCampoString("descr");
         tipoPedido.addCampoString("prioridade");
-        tipoPedido.addCampoListaOf("clientes", MTipoString.class);
-        MTipoComposto<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
+        tipoPedido.addCampoListaOf("clientes", STypeString.class);
+        STypeComposite<?> tipoItem = tipoPedido.addCampoListaOfComposto("itens", "item").getTipoElementos();
         tipoItem.addCampoString("nome");
         tipoItem.addCampoBoolean("urgente");
 
-        MIComposto pedido = tipoPedido.novaInstancia();
+        SIComposite pedido = tipoPedido.novaInstancia();
         assertId(pedido, 1, 1);
         assertId(pedido.getCampo("nome"), 2, 2);
         assertId(pedido.getCampo("descr"), 3, 3);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("A")), 5, 5);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("A")), 5, 5);
         assertId(pedido.getCampo("clientes"), 4, 5);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("B")), 6, 6);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("B")), 6, 6);
 
         pedido.getFieldList("clientes").remove(1);
-        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValor("C")), 7, 7);
+        assertId(pedido.getFieldList("clientes").addNovo(c -> c.setValue("C")), 7, 7);
 
         pedido.setValor("prioridade", "X");
         assertId(pedido.getCampo("prioridade"), 8, 8);
@@ -46,7 +45,7 @@ public class TestMInstance {
 //        pedido.debug();
         MElement xml = MformPersistenciaXML.toXML(pedido);
 
-        MIComposto pedido2 = MformPersistenciaXML.fromXML(tipoPedido, xml);
+        SIComposite pedido2 = (SIComposite) MformPersistenciaXML.fromXML(tipoPedido, xml);
         assertId(pedido2, 1, 12);
         assertId(pedido2.getCampo("nome"), 13, 13);
         assertId(pedido2.getCampo("prioridade"), 8, 13);
@@ -54,9 +53,8 @@ public class TestMInstance {
         assertId(pedido2.getCampo("itens[0].nome"), 14, 14);
     }
 
-    private static void assertId(MInstancia pedido, int idInstancia, int lastId) {
+    private static void assertId(SInstance pedido, int idInstancia, int lastId) {
         Assert.assertEquals((Integer) idInstancia, pedido.getId());
         Assert.assertEquals(lastId, pedido.getDocument().getLastId());
     }
-
 }

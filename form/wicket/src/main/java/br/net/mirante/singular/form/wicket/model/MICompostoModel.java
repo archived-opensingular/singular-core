@@ -6,11 +6,11 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 
-public class MICompostoModel<T extends MIComposto>
-    extends AbstractMInstanciaModel<T>
+public class MICompostoModel<T extends SIComposite>
+    extends AbstractSInstanceModel<T>
     implements IComponentInheritedModel<T> {
 
     private Object target;
@@ -46,8 +46,8 @@ public class MICompostoModel<T extends MIComposto>
     public <W> IWrapModel<W> wrapOnInheritance(Component component) {
         return new AttachedCompoundPropertyModel(component);
     }
-    public <S extends MInstancia> IModel<S> bind(String property) {
-        return new MInstanciaCampoModel<S>(this, property);
+    public <S extends SInstance> IModel<S> bind(String property) {
+        return new SInstanceCampoModel<S>(this, property);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class MICompostoModel<T extends MIComposto>
         return true;
     }
 
-    private class AttachedCompoundPropertyModel<C extends MInstancia> extends AbstractMInstanciaCampoModel<C>
+    private class AttachedCompoundPropertyModel<C extends SInstance> extends AbstractSInstanceCampoModel<C>
         implements IWrapModel<C> {
         private final Component owner;
         public AttachedCompoundPropertyModel(Component owner) {

@@ -4,34 +4,39 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.findContainer
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.fest.assertions.api.Assertions;
+import org.junit.Before;
+import org.junit.Test;
 
-import br.net.mirante.singular.form.curriculo.mform.MPacoteCurriculo;
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.PacoteBuilder;
+import br.net.mirante.singular.form.curriculo.mform.SPackageCurriculo;
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.MIString;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
+import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.panel.FormPanel;
-import junit.framework.TestCase;
 
-public class TestFormWicketBuild extends TestCase {
+public class TestFormWicketBuild extends AbstractWicketFormTest {
 
     WicketTester tester;
+    private SingularFormContextWicket singularFormContext = new SingularFormConfigWicketImpl().createContext();
 
+    @Before
     public void setUp() {
         tester = new WicketTester(new WebApplication() {
             @Override
@@ -41,51 +46,51 @@ public class TestFormWicketBuild extends TestCase {
         });
     }
 
+    @Test
     public void testBasic() {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
-        IModel<MTipoString> tCidade = new LoadableDetachableModel<MTipoString>() {
+        IModel<STypeString> tCidade = new LoadableDetachableModel<STypeString>() {
             @Override
-            protected MTipoString load() {
-                MDicionario dicionario = MDicionario.create();
-                PacoteBuilder pb = dicionario.criarNovoPacote("teste");
-                MTipoString tipoCidade = pb.createTipo("cidade", MTipoString.class);
+            protected STypeString load() {
+                PackageBuilder pb = dicionario.createNewPackage("teste");
+                STypeString tipoCidade = pb.createTipo("cidade", STypeString.class);
                 tipoCidade.as(AtrBasic.class).label("Cidade").tamanhoEdicao(21);
                 return tipoCidade;
             }
         };
-        IModel<MIString> mCidade = new MInstanceRootModel<MIString>(tCidade.getObject().novaInstancia());
-        mCidade.getObject().setValor("Brasilia");
-        UIBuilderWicket.buildForEdit(ctx, mCidade);
+        IModel<SIString> mCidade = new MInstanceRootModel<SIString>(tCidade.getObject().novaInstancia());
+        mCidade.getObject().setValue("Brasilia");
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCidade);
+        singularFormContext.getUIBuilder().build(ctx, ViewMode.EDITION);
 
         tester.startComponentInPage(testPanel);
-        assertEquals("Brasilia", mCidade.getObject().getValor());
+        Assertions.assertThat("Brasilia").isEqualTo(mCidade.getObject().getValue());
 
         FormTester formTester = tester.newFormTester("body-child:container:form");
         formTester.setValue(findContainerRelativePath(formTester.getForm(), "cidade").get(), "Guará");
         formTester.submit();
 
-        assertEquals("Guará", mCidade.getObject().getValor());
+        Assertions.assertThat("Guará").isEqualTo(mCidade.getObject().getValue());
     }
 
+    @Test
     public void testCurriculo() {
         BSGrid rootContainer = new BSGrid("teste");
         TestPanel testPanel = buildTestPanel(rootContainer);
 
-        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer());
-        IModel<MTipoComposto<MIComposto>> tCurriculo = new LoadableDetachableModel<MTipoComposto<MIComposto>>() {
+        IModel<STypeComposite<SIComposite>> tCurriculo = new LoadableDetachableModel<STypeComposite<SIComposite>>() {
             @Override
             @SuppressWarnings("unchecked")
-            protected MTipoComposto<MIComposto> load() {
-                MDicionario dicionario = MDicionario.create();
-                dicionario.carregarPacote(MPacoteCurriculo.class);
-                return (MTipoComposto<MIComposto>) dicionario.getTipo(MPacoteCurriculo.TIPO_CURRICULO);
+            protected STypeComposite<SIComposite> load() {
+                dicionario.loadPackage(SPackageCurriculo.class);
+                return (STypeComposite<SIComposite>) dicionario.getType(SPackageCurriculo.TIPO_CURRICULO);
             }
         };
-        IModel<MIComposto> mCurriculo = new MInstanceRootModel<MIComposto>(tCurriculo.getObject().novaInstancia());
-        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
+        IModel<SIComposite> mCurriculo = new MInstanceRootModel<SIComposite>(tCurriculo.getObject().novaInstancia());
+        WicketBuildContext ctx = new WicketBuildContext(rootContainer.newColInRow(), testPanel.getBodyContainer(), mCurriculo);
+//        UIBuilderWicket.buildForEdit(ctx, mCurriculo);
 
 
         tester.startComponentInPage(testPanel);

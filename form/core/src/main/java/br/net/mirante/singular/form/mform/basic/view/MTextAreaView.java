@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.basic.view;
 
 public class MTextAreaView extends MView {
 
-    private Integer linhas = 4;
+    private Integer linhas = 3;
 
     public MTextAreaView() {
     }

@@ -1,6 +1,5 @@
 package br.net.mirante.singular.util.wicket.modal;
 
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -10,6 +9,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.lambda.IConsumer;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
@@ -22,8 +22,9 @@ public class BSModalWindow extends Panel {
     private static final String MODAL_ID = "_m";
     private static final String FORM_ID = "_f";
 
-    private final BSModalBorder modalBorder = new BSModalBorder(MODAL_ID);
-    private final TemplatePanel bodyContainer = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.get(0).getId() + "'></div>");
+    private final BSModalBorder modalBorder = newModalBorder(MODAL_ID);
+
+    private final TemplatePanel bodyContainer = new TemplatePanel(BODY_CONTAINER_ID, p -> "<div wicket:id='" + p.iterator().next().getId() + "'></div>");
     private MarkupContainer form;
     private boolean resetOnBodySwitch = true;
 
@@ -55,6 +56,9 @@ public class BSModalWindow extends Panel {
         doInit(wrapBodyWithForm);
     }
 
+    protected BSModalBorder newModalBorder(String id) {
+        return new BSModalBorder(id);
+    }
     private void doInit(boolean wrapBodyWithForm) {
         form = (wrapBodyWithForm) ? new Form<>(FORM_ID) : new NonForm(FORM_ID);
         this

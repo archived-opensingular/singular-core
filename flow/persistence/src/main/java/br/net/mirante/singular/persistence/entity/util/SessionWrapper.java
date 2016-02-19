@@ -16,6 +16,7 @@ import org.hibernate.ObjectNotFoundException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionImpl;
+import org.hibernate.jdbc.Work;
 
 @SuppressWarnings("unchecked")
 public class SessionWrapper {
@@ -301,5 +302,9 @@ public class SessionWrapper {
         if (o != null) {
             getSession().evict(o);
         }
+    }
+
+    public void doWork(Work work) {
+        getSession().doWork(work);
     }
 }

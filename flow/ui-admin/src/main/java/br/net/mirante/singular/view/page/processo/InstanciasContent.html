@@ -1,75 +1,20 @@
 <html xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
 <wicket:extend>
+    <div wicket:id="feedback" class="row" />
     <div class="row">
         <div class="col-md-12">
             <div class="portlet light">
                 <div class="portlet-body">
-                    <div class="tabbable-custom ">
-                        <ul class="nav nav-tabs ">
-                            <li class="active">
-                                <a aria-expanded="true" href="#tab_1" data-toggle="tab">
-                                    <wicket:message key="label.tab.instance"/>
-                                </a>
-                            </li>
-                            <li>
-                                <a aria-expanded="false" href="#tab_2" data-toggle="tab">
-                                    <wicket:message key="label.tab.metadata"/>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active" id="tab_1">
-                                <div class="table-scrollable">
-                                    <table wicket:id="processos"></table>
-                                </div>
-                            </div>
-                            <div class="tab-pane" id="tab_2">
-                                <img wicket:id="tabImage"/>
-                                <div class="table-scrollable">
-                                    <table class="table table-bordered table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th><wicket:message key="label.table.column.task"/></th>
-                                            <th><wicket:message key="label.table.column.type"/></th>
-                                            <th><wicket:message key="label.table.column.executor"/></th>
-                                            <th><wicket:message key="label.table.column.transaction"/></th>
-                                            <th><wicket:message key="label.table.column.parameter"/></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr wicket:id="metadatasRow">
-                                            <td wicket:id="metadatasCol">
-                                                <wicket:container wicket:id="metadataLabel"/>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="table-scrollable">
+                        <table wicket:id="processos"></table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <wicket:fragment wicket:id="breadcrumbProcess">
-        <li>
-            <a href="#">
-                <wicket:message key="breadcrumb.flow"/>
-            </a><i class="fa fa-circle"></i>
-        </li>
-        <li>
-            <a wicket:id="processListLink">
-                <wicket:message key="breadcrumb.flow.process"/>
-            </a><i class="fa fa-circle"></i>
-        </li>
-        <li class="active">
-            <wicket:message key="breadcrumb.flow.process.instance"/>
-        </li>
-    </wicket:fragment>
-    <wicket:fragment wicket:id="parameterFragment">
-        <span wicket:id="parameterLabel" class="label label-sm"></span>
-    </wicket:fragment>
+    <wicket:fragment wicket:id="todoBreadcrumb">
+		<li><a wicket:id="breadcrumbLink"></a></li>
+	</wicket:fragment>
 </wicket:extend>
 </html>

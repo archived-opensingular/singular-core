@@ -22,6 +22,7 @@ public class GroupDAO extends BaseDAO {
         Query hqlQuery = getSession().createQuery("select cod as cod, name as name, connectionURL as connectionURL from ProcessGroupEntity where cod = :cod");
         hqlQuery.setResultTransformer(Transformers.aliasToBean(GroupDTO.class));
         hqlQuery.setParameter("cod", id);
+        hqlQuery.setCacheable(true);
         return (GroupDTO) hqlQuery.uniqueResult();
     }
 }

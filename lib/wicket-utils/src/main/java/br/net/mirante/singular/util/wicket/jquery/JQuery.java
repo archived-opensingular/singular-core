@@ -1,6 +1,6 @@
 package br.net.mirante.singular.util.wicket.jquery;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$L;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,6 +26,13 @@ public class JQuery {
             + "});");
     }
 
+    public static CharSequence redirectEvent(
+        Component originalComponent, String originalEvent,
+        Component newComponent, String newEvent) {
+
+        return on(originalComponent, originalEvent, $(newComponent) + ".trigger('" + newEvent + "');");
+    }
+
     public static StringBuilder $(Component component, Component... moreComponents) {
         String selector = Stream.concat(Stream.of(component), Stream.of(moreComponents))
             .filter($L.notNull())
@@ -49,5 +56,13 @@ public class JQuery {
 
     public static String ready(CharSequence script) {
         return "$(function(){" + script + ";})";
+    }
+
+    public static String on(Component component, String event, CharSequence script) {
+        final String scriptString = script.toString();
+        final String function = (scriptString.startsWith("function"))
+            ? scriptString
+            : "function(e){" + scriptString + ";}";
+        return $(component) + ".on('" + event + "'," + function + ");";
     }
 }

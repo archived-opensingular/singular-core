@@ -1,34 +1,41 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoLista;
-import br.net.mirante.singular.form.mform.MTipoSimples;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.lambda.IFunction;
 
 public class MListMasterDetailView extends MView {
 
     private boolean editElementEnabled = true;
     private boolean newElementEnabled = true;
     private boolean deleteElementsEnabled = true;
-    private Map<String, String> columns = new LinkedHashMap<>();
+    private List<Column> columns = new ArrayList<>();
 
     @Override
-    public boolean aplicavelEm(MTipo<?> tipo) {
-        return tipo instanceof MTipoLista;
+    public boolean aplicavelEm(SType<?> tipo) {
+        return tipo instanceof STypeLista;
     }
 
-    public MListMasterDetailView col(MTipoSimples tipo) {
-        columns.put(tipo.getNome(), null);
+    public MListMasterDetailView col(STypeSimple tipo) {
+        columns.add(new Column(tipo.getName(), null, null));
         return this;
     }
 
-    public MListMasterDetailView col(MTipoSimples tipo, String customLabel) {
-        columns.put(tipo.getNome(), customLabel);
+    public MListMasterDetailView col(STypeSimple tipo, String customLabel) {
+        columns.add(new Column(tipo.getName(), customLabel, null));
         return this;
     }
 
+    public MListMasterDetailView col(STypeSimple tipo, IFunction<SInstance, String> displayFunction) {
+        columns.add(new Column(tipo.getName(), null, displayFunction));
+        return this;
+    }
 
     public MListMasterDetailView disableEdit() {
         this.editElementEnabled = false;
@@ -57,7 +64,35 @@ public class MListMasterDetailView extends MView {
         return deleteElementsEnabled;
     }
 
-    public Map<String, String> getColumns() {
+    public List<Column> getColumns() {
         return columns;
+    }
+
+    public class Column implements Serializable {
+
+        private String typeName;
+        private String customLabel;
+        private IFunction<SInstance, String> displayValueFunction;
+
+        public Column() {
+        }
+
+        public Column(String typeName, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+            this.typeName = typeName;
+            this.customLabel = customLabel;
+            this.displayValueFunction = displayValueFunction;
+        }
+
+        public String getTypeName() {
+            return typeName;
+        }
+
+        public String getCustomLabel() {
+            return customLabel;
+        }
+
+        public IFunction<SInstance, String> getDisplayValueFunction() {
+            return displayValueFunction;
+        }
     }
 }

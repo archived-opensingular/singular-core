@@ -6,7 +6,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -30,48 +30,46 @@ class AttachmentDocumentService {
     private AttachmentDocumentService(SDocument document) {
         this.document = document;
         MInstances.visitAll(document.getRoot(), i -> {
-            if (i instanceof MIAttachment) {
-                addReference((MIAttachment) i);
+            if (i instanceof SIAttachment) {
+                addReference((SIAttachment) i);
             }
         });
     }
 
-    private void addReference(MIAttachment attachment) {
+    private void addReference(SIAttachment attachment) {
         String id = attachment.getFileId();
         if (id != null) {
             contador.add(id);
         }
     }
 
-    private IAttachmentPersistenceHandler getAttachmentHandler() {
-        return document.getAttachmentPersistenceHandler();
+    private IAttachmentPersistenceHandler getTemporaryAttachmentHandler() {
+        return document.getAttachmentPersistenceTemporaryHandler();
     }
 
     public int countDistinctFiles() {
-        return getAttachmentHandler().getAttachments().size();
+        return getTemporaryAttachmentHandler().getAttachments().size();
     }
 
-    public static AttachmentDocumentService lookup(MInstancia ref) {
+    public static AttachmentDocumentService lookup(SInstance ref) {
         return lookup(ref.getDocument());
     }
 
     private static AttachmentDocumentService lookup(SDocument document) {
-        AttachmentDocumentService aService = document.lookupService(ATTACHMENT_DOCUMENT_SERVICE,
-            AttachmentDocumentService.class);
-        if (aService == null) {
-            aService = new AttachmentDocumentService(document);
-            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, 
-                ServiceRef.ofToBeDescartedIfSerialized(aService));
+        AttachmentDocumentService service = document.lookupLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
+        if (service == null) {
+            service = new AttachmentDocumentService(document);
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, ServiceRef.ofToBeDescartedIfSerialized(service));
         }
-        return aService;
+        return service;
     }
 
     public IAttachmentRef addContent(String oldReferenceId, byte[] content) {
-        return addContent(oldReferenceId, getAttachmentHandler().addAttachment(content));
+        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(content));
     }
 
     public IAttachmentRef addContent(String oldReferenceId, InputStream in) {
-        return addContent(oldReferenceId, getAttachmentHandler().addAttachment(in));
+        return addContent(oldReferenceId, getTemporaryAttachmentHandler().addAttachment(in));
     }
 
     private IAttachmentRef addContent(String oldReferenceId, IAttachmentRef newRef) {
@@ -91,7 +89,7 @@ class AttachmentDocumentService {
         if (fileId != null) {
             contador.remove(fileId);
             if (contador.count(fileId) == 0) {
-                getAttachmentHandler().deleteAttachment(fileId);
+                getTemporaryAttachmentHandler().deleteAttachment(fileId);
             }
         }
     }

@@ -8,25 +8,31 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.extensions.markup.html.repeater.tree.ISortableTreeProvider;
 import org.apache.wicket.model.IModel;
 
+import br.net.mirante.singular.lambda.IConsumer;
+import br.net.mirante.singular.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.datatable.column.BSActionColumn;
 import br.net.mirante.singular.util.wicket.datatable.column.BSPropertyColumn;
-import br.net.mirante.singular.util.wicket.lambda.IConsumer;
-import br.net.mirante.singular.util.wicket.lambda.IFunction;
 
+/**
+ * @param <T> Tipo de objeto que sera renderizado pelas celulas da coluna
+ * @param <S> Propriedade de Ordenacao
+ * @param <PREVCOL> Coluna
+ */
 public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
 
     public interface BSActionColumnCallback<T, S> extends IConsumer<BSActionColumn<T, S>> {}
 
-    private final List<? extends IColumn<T, S>> columns        = new ArrayList<>();
+    private final List<? extends IColumn<T, S>> columns              = new ArrayList<>();
     private ISortableDataProvider<T, S>         dataProvider;
     private ISortableTreeProvider<T, S>         treeProvider;
-    private Long                                rowsPerPage    = null;
+    private Long                                rowsPerPage          = null;
 
-    private boolean                             stripedRows    = true;
-    private boolean                             hoverRows      = true;
-    private boolean                             borderedTable  = true;
-    private boolean                             advanceTable   = false;
-    private boolean                             condensedTable = false;
+    private boolean                             stripedRows          = true;
+    private boolean                             hoverRows            = true;
+    private boolean                             borderedTable        = true;
+    private boolean                             advanceTable         = false;
+    private boolean                             condensedTable       = false;
+    private boolean                             showNoRecordsToolbar = true;
 
     public BSDataTableBuilder() {}
 
@@ -126,14 +132,20 @@ public class BSDataTableBuilder<T, S, PREVCOL extends IColumn<T, S>> {
         return this;
     }
 
+    public BSDataTableBuilder<T, S, ?> withNoRecordsToolbar(){
+        showNoRecordsToolbar = false;
+        return this;
+    }
+
     public BSDataTable<T, S> build(String id) {
         return new BSDataTable<>(id, new ArrayList<>(columns), dataProvider)
-            .setRowsPerPage(rowsPerPage)
-            .setStripedRows(stripedRows)
-            .setHoverRows(hoverRows)
-            .setAdvanceTable(advanceTable)
-            .setBorderedTable(borderedTable)
-            .setCondensedTable(condensedTable);
+                .setRowsPerPage(rowsPerPage)
+                .setStripedRows(stripedRows)
+                .setHoverRows(hoverRows)
+                .setAdvanceTable(advanceTable)
+                .setBorderedTable(borderedTable)
+                .setCondensedTable(condensedTable)
+                .setShowNoRecordsToolbar(showNoRecordsToolbar);
     }
 
     public BSFlexDataTable<T, S> buildFlex(String id) {

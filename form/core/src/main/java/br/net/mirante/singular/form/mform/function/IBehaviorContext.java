@@ -1,16 +1,16 @@
 package br.net.mirante.singular.form.mform.function;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 
 public interface IBehaviorContext {
 
-    public IBehaviorContext update(MTipo<?>... fields);
+    public IBehaviorContext update(SType<?>... fields);
 
-    public default IBehaviorContext update(MInstancia... fields) {
-        MTipo<?>[] tipos = new MTipo<?>[fields.length];
+    public default IBehaviorContext update(SInstance... fields) {
+        SType<?>[] tipos = new SType<?>[fields.length];
         for (int i = 0; i < fields.length; i++)
-            tipos[i] = fields[i].getMTipo();
+            tipos[i] = fields[i].getType();
         update(tipos);
         return this;
     }

@@ -3,8 +3,10 @@ package br.net.mirante.singular.flow.core.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceException;
 
 import br.net.mirante.singular.flow.core.Flow;
+import br.net.mirante.singular.flow.core.MUser;
 import br.net.mirante.singular.flow.core.ProcessDefinition;
 import br.net.mirante.singular.flow.core.ProcessInstance;
 
@@ -25,15 +27,30 @@ public class SingularWS {
     }
 
     @WebMethod(action = "executeDefaultTransition")
-    public void executeDefaultTransition(@WebParam(name = "processAbbreviation") String processAbbreviation, @WebParam(name = "codProcessInstance") Long codProcessInstance) {
+    public void executeDefaultTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
+                                         @WebParam(name = "codProcessInstance") Long codProcessInstance) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition();
     }
 
     @WebMethod(action = "executeTransition")
-    public void executeTransition(@WebParam(name = "processAbbreviation") String processAbbreviation, @WebParam(name = "codProcessInstance") Long codProcessInstance, @WebParam(name = "transitionName") String transitionName) {
+    public void executeTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
+                                  @WebParam(name = "codProcessInstance") Long codProcessInstance,
+                                  @WebParam(name = "transitionName") String transitionName) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition(transitionName);
+    }
+
+    @WebMethod(action = "relocateTask")
+    public void relocateTask(@WebParam(name = "processAbbreviation") String processAbbreviation,
+                                  @WebParam(name = "codProcessInstance") Long codProcessInstance,
+                                  @WebParam(name = "username") String username) {
+        ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
+        MUser user = Flow.getConfigBean().getUserService().saveUserIfNeeded(username);
+        if (user == null) {
+            throw new WebServiceException("Usuário não encontrado");
+        }
+        processInstance.getCurrentTask().relocateTask(user, user, false, "");
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {

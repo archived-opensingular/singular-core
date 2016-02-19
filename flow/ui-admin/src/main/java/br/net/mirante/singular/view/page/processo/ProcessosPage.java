@@ -11,15 +11,13 @@ import br.net.mirante.singular.view.template.Template;
 @MountPath("process")
 public class ProcessosPage extends Template {
 
-    public static final String PROCESS_DEFINITION_ID_PARAM = "pdId";
-
     @Override
     protected Content getContent(String id) {
-        StringValue processDefinitionId = getPageParameters().get(PROCESS_DEFINITION_ID_PARAM);
-        if (processDefinitionId.isNull()) {
+        StringValue processDefinitionCode = getPageParameters().get(Content.PROCESS_DEFINITION_COD_PARAM);
+        if (processDefinitionCode.isNull()) {
             return new ProcessosContent(id, withSideBar());
         } else {
-            return new InstanciasContent(id, withSideBar(), processDefinitionId.toInteger());
+            return new InstanciasContent(id, withSideBar(), processDefinitionCode.toString());
         }
     }
 

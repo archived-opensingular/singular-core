@@ -7,17 +7,17 @@ import org.junit.Test;
 
 import com.google.common.base.Throwables;
 
-import br.net.mirante.singular.form.mform.MDicionario;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
-import br.net.mirante.singular.form.mform.MTipoSimples;
-import br.net.mirante.singular.form.mform.core.MTipoData;
-import br.net.mirante.singular.form.mform.core.MTipoInteger;
-import br.net.mirante.singular.form.mform.core.MTipoString;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCEP;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.MTipoCPF;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCNPJ;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
 
 public class TestViewMapperRegistry {
 
@@ -30,102 +30,102 @@ public class TestViewMapperRegistry {
 
     @Test
     public void testBuscaHierarquiaTipo() {
-        mapper.register(MTipoSimples.class, () -> "A");
-        mapper.register(MTipoString.class, () -> "B");
-        mapper.register(MTipoData.class, () -> "C");
+        mapper.register(STypeSimple.class, () -> "A");
+        mapper.register(STypeString.class, () -> "B");
+        mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", MTipoInteger.class, MView.class);
-        assertResult("B", MTipoString.class, MView.class);
-        assertResult("B", MTipoCPF.class, MView.class);
-        assertResult("C", MTipoData.class, MView.class);
-        assertResult(null, MTipoComposto.class, MView.class);
+        assertResult("A", STypeInteger.class, MView.class);
+        assertResult("B", STypeString.class, MView.class);
+        assertResult("B", STypeCPF.class, MView.class);
+        assertResult("C", STypeData.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
     }
 
     @Test
     public void testBuscaEspecificoDepoisDefault() {
-        mapper.register(MTipoSimples.class, () -> "A");
-        mapper.register(MTipoString.class, () -> "B");
-        mapper.register(MTipoString.class, ViewX.class, () -> "D");
-        mapper.register(MTipoCNPJ.class, ViewX.class, () -> "E");
-        mapper.register(MTipoData.class, () -> "C");
+        mapper.register(STypeSimple.class, () -> "A");
+        mapper.register(STypeString.class, () -> "B");
+        mapper.register(STypeString.class, ViewX.class, () -> "D");
+        mapper.register(STypeCNPJ.class, ViewX.class, () -> "E");
+        mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", MTipoInteger.class, MView.class);
-        assertResult("B", MTipoString.class, MView.class);
-        assertResult("B", MTipoCPF.class, MView.class);
-        assertResult("B", MTipoCNPJ.class, MView.class);
-        assertResult("C", MTipoData.class, MView.class);
-        assertResult(null, MTipoComposto.class, MView.class);
+        assertResult("A", STypeInteger.class, MView.class);
+        assertResult("B", STypeString.class, MView.class);
+        assertResult("B", STypeCPF.class, MView.class);
+        assertResult("B", STypeCNPJ.class, MView.class);
+        assertResult("C", STypeData.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
 
-        assertResult("A", MTipoInteger.class, ViewX.class);
-        assertResult("D", MTipoString.class, ViewX.class);
-        assertResult("D", MTipoCPF.class, ViewX.class);
-        assertResult("E", MTipoCNPJ.class, ViewX.class);
-        assertResult("C", MTipoData.class, ViewX.class);
-        assertResult(null, MTipoComposto.class, ViewX.class);
+        assertResult("A", STypeInteger.class, ViewX.class);
+        assertResult("D", STypeString.class, ViewX.class);
+        assertResult("D", STypeCPF.class, ViewX.class);
+        assertResult("E", STypeCNPJ.class, ViewX.class);
+        assertResult("C", STypeData.class, ViewX.class);
+        assertResult(null, STypeComposite.class, ViewX.class);
 
-        assertResult("A", MTipoInteger.class, ViewY.class);
-        assertResult("B", MTipoString.class, ViewY.class);
-        assertResult("B", MTipoCPF.class, ViewY.class);
-        assertResult("B", MTipoCNPJ.class, ViewY.class);
-        assertResult("C", MTipoData.class, ViewY.class);
-        assertResult(null, MTipoComposto.class, ViewY.class);
+        assertResult("A", STypeInteger.class, ViewY.class);
+        assertResult("B", STypeString.class, ViewY.class);
+        assertResult("B", STypeCPF.class, ViewY.class);
+        assertResult("B", STypeCNPJ.class, ViewY.class);
+        assertResult("C", STypeData.class, ViewY.class);
+        assertResult(null, STypeComposite.class, ViewY.class);
     }
 
     @Test
     public void testAceitarViewDerivada() {
-        mapper.register(MTipoSimples.class, () -> "A");
-        mapper.register(MTipoString.class, () -> "B");
-        mapper.register(MTipoString.class, ViewY.class, () -> "D");
-        mapper.register(MTipoCNPJ.class, ViewY.class, () -> "E");
-        mapper.register(MTipoData.class, () -> "C");
+        mapper.register(STypeSimple.class, () -> "A");
+        mapper.register(STypeString.class, () -> "B");
+        mapper.register(STypeString.class, ViewY.class, () -> "D");
+        mapper.register(STypeCNPJ.class, ViewY.class, () -> "E");
+        mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", MTipoInteger.class, MView.class);
-        assertResult("B", MTipoString.class, MView.class);
-        assertResult("B", MTipoCPF.class, MView.class);
-        assertResult("B", MTipoCNPJ.class, MView.class);
-        assertResult("C", MTipoData.class, MView.class);
-        assertResult(null, MTipoComposto.class, MView.class);
+        assertResult("A", STypeInteger.class, MView.class);
+        assertResult("B", STypeString.class, MView.class);
+        assertResult("B", STypeCPF.class, MView.class);
+        assertResult("B", STypeCNPJ.class, MView.class);
+        assertResult("C", STypeData.class, MView.class);
+        assertResult(null, STypeComposite.class, MView.class);
 
-        assertResult("A", MTipoInteger.class, ViewX.class);
-        assertResult("D", MTipoString.class, ViewX.class);
-        assertResult("D", MTipoCPF.class, ViewX.class);
-        assertResult("E", MTipoCNPJ.class, ViewX.class);
-        assertResult("C", MTipoData.class, ViewX.class);
-        assertResult(null, MTipoComposto.class, ViewX.class);
+        assertResult("A", STypeInteger.class, ViewX.class);
+        assertResult("D", STypeString.class, ViewX.class);
+        assertResult("D", STypeCPF.class, ViewX.class);
+        assertResult("E", STypeCNPJ.class, ViewX.class);
+        assertResult("C", STypeData.class, ViewX.class);
+        assertResult(null, STypeComposite.class, ViewX.class);
 
-        assertResult("A", MTipoInteger.class, ViewY.class);
-        assertResult("D", MTipoString.class, ViewY.class);
-        assertResult("D", MTipoCPF.class, ViewY.class);
-        assertResult("E", MTipoCNPJ.class, ViewY.class);
-        assertResult("C", MTipoData.class, ViewY.class);
-        assertResult(null, MTipoComposto.class, ViewY.class);
+        assertResult("A", STypeInteger.class, ViewY.class);
+        assertResult("D", STypeString.class, ViewY.class);
+        assertResult("D", STypeCPF.class, ViewY.class);
+        assertResult("E", STypeCNPJ.class, ViewY.class);
+        assertResult("C", STypeData.class, ViewY.class);
+        assertResult(null, STypeComposite.class, ViewY.class);
     }
 
     @Test
     public void testPrioridadeDeAcordoComDerivacao() {
-        mapper.register(MTipoSimples.class, () -> "A");
-        mapper.register(MTipoString.class, () -> "B");
-        mapper.register(MTipoString.class, ViewY.class, () -> "C");
-        mapper.register(MTipoString.class, ViewX.class, () -> "D");
+        mapper.register(STypeSimple.class, () -> "A");
+        mapper.register(STypeString.class, () -> "B");
+        mapper.register(STypeString.class, ViewY.class, () -> "C");
+        mapper.register(STypeString.class, ViewX.class, () -> "D");
         // Adiciona em ondem invertida do anterior para ver se dá diferença
-        mapper.register(MTipoCNPJ.class, ViewX.class, () -> "E");
-        mapper.register(MTipoCNPJ.class, ViewY.class, () -> "F");
-        mapper.register(MTipoCEP.class, ViewY.class, () -> "G");
+        mapper.register(STypeCNPJ.class, ViewX.class, () -> "E");
+        mapper.register(STypeCNPJ.class, ViewY.class, () -> "F");
+        mapper.register(STypeCEP.class, ViewY.class, () -> "G");
 
-        assertResult("B", MTipoString.class, MView.class);
-        assertResult("B", MTipoCPF.class, MView.class);
-        assertResult("B", MTipoCNPJ.class, MView.class);
-        assertResult("B", MTipoCEP.class, MView.class);
+        assertResult("B", STypeString.class, MView.class);
+        assertResult("B", STypeCPF.class, MView.class);
+        assertResult("B", STypeCNPJ.class, MView.class);
+        assertResult("B", STypeCEP.class, MView.class);
 
-        assertResult("D", MTipoString.class, ViewX.class);
-        assertResult("D", MTipoCPF.class, ViewX.class);
-        assertResult("E", MTipoCNPJ.class, ViewX.class);
-        assertResult("G", MTipoCEP.class, ViewX.class);
+        assertResult("D", STypeString.class, ViewX.class);
+        assertResult("D", STypeCPF.class, ViewX.class);
+        assertResult("E", STypeCNPJ.class, ViewX.class);
+        assertResult("G", STypeCEP.class, ViewX.class);
 
-        assertResult("C", MTipoString.class, ViewY.class);
-        assertResult("C", MTipoCPF.class, ViewY.class);
-        assertResult("F", MTipoCNPJ.class, ViewY.class);
-        assertResult("G", MTipoCEP.class, ViewY.class);
+        assertResult("C", STypeString.class, ViewY.class);
+        assertResult("C", STypeCPF.class, ViewY.class);
+        assertResult("F", STypeCNPJ.class, ViewY.class);
+        assertResult("G", STypeCEP.class, ViewY.class);
     }
 
     public static class ViewX extends MView {
@@ -135,16 +135,16 @@ public class TestViewMapperRegistry {
 
     }
 
-    private void assertResult(String expected, Class<? extends MTipo> type, Class<? extends MView> view) {
+    private void assertResult(String expected, Class<? extends SType> type, Class<? extends MView> view) {
         try {
-            MDicionario dicionario = MDicionario.create();
-            assertResult(expected, dicionario.novaInstancia(type), view.newInstance());
+            SDictionary dicionario = SDictionary.create();
+            assertResult(expected, dicionario.newInstance(type), view.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw Throwables.propagate(e);
         }
     }
 
-    private void assertResult(String expected, MInstancia instance, MView view) {
+    private void assertResult(String expected, SInstance instance, MView view) {
         assertEquals(expected, mapper.getMapper(instance, view).orElse(null));
 
     }

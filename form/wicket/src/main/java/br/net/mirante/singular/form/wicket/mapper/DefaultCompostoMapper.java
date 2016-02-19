@@ -1,28 +1,28 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
-import br.net.mirante.singular.form.mform.MTipoComposto;
+import java.util.HashMap;
+import java.util.Optional;
+
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.model.IModel;
+
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
-import br.net.mirante.singular.form.wicket.AtrWicket;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.behavior.DisabledClassBehavior;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.form.wicket.model.MInstanciaCampoModel;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -30,66 +30,106 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @SuppressWarnings("serial")
 public class DefaultCompostoMapper implements IWicketComponentMapper {
 
-    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = HashMap::new;
-    static final HintKey<Boolean> INLINE = () -> false;
+    static final HintKey<HashMap<String, Integer>> COL_WIDTHS = () -> new HashMap<>();
+    static final HintKey<Boolean>                  INLINE     = () -> false;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void buildView(WicketBuildContext ctx, MView view, IModel<? extends MInstancia> model, ViewMode viewMode) {
-        final MIComposto instance = (MIComposto) model.getObject();
-        final MTipoComposto<MIComposto> tComposto = (MTipoComposto<MIComposto>) instance.getMTipo();
-
-        final BSContainer<?> parentCol = ctx.getContainer();
-        final BSGrid grid = parentCol.newGrid();
-
-        addLabelIfNeeded(instance, grid);
-
-        final BSRow row = grid.newRow();
-
-        grid.add(DisabledClassBehavior.getInstance());
-        grid.setDefaultModel(model);
-
-        for (MTipo<?> tCampo : tComposto.getFields()) {
-            buildField(ctx, row, new MInstanciaCampoModel<>(model, tCampo.getNomeSimples()), viewMode);
-        }
+    public void buildView(WicketBuildContext ctx) {
+        new CompostoViewBuilder(ctx).buildView();
     }
 
-    private void addLabelIfNeeded(final MInstancia instancia, final BSGrid grid) {
-        IModel<String> label = $m.ofValue(trimToEmpty(instancia.as(AtrBasic::new).getLabel()));
-        if (isNotBlank(label.getObject())) {
-            BSCol column = grid.newColInRow();
-            column.appendTag("h3", new Label("_title", label));
+    public static class CompostoViewBuilder {
+
+        protected WicketBuildContext                          ctx;
+        protected AbstractSInstanceModel<? extends SInstance> model;
+        protected SIComposite                                 instance;
+        protected STypeComposite<SIComposite>                 type;
+
+        @SuppressWarnings("unchecked")
+        public CompostoViewBuilder(WicketBuildContext ctx) {
+            this.ctx = ctx;
+            model = (AbstractSInstanceModel<? extends SInstance>) this.ctx.getModel();
+            instance = ctx.getCurrentInstance();
+            type = (STypeComposite<SIComposite>) instance.getType();
         }
-    }
 
-    private void buildField(WicketBuildContext ctx, final BSRow row, final MInstanciaCampoModel<MInstancia> mCampo,
-                            ViewMode viewMode) {
-        MTipo<?> type = mCampo.getMInstancia().getMTipo();
-        final MInstancia iCampo = mCampo.getObject();
-        if (iCampo instanceof MIComposto) {
-            final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
-            UIBuilderWicket.build(ctx.createChild(col.newGrid().newColInRow(), true), mCampo, viewMode);
-        } else {
-            UIBuilderWicket.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true), mCampo, viewMode);
+        public void buildView() {
+            final BSGrid grid = createCompositeGrid(ctx);
+            buildFields(ctx, grid.newRow());
+            ctx.getRootContext().updateAnnotations(grid);
         }
-    }
 
-    private BSCol configureColspan(WicketBuildContext ctx, MTipo<?> tCampo, final MInstancia iCampo, BSCol col) {
-        final Map<String, Integer> hintColWidths = ctx.getHint(COL_WIDTHS);
-        /*
-        * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
-        * parametrizado ou transoformado em uma configuracao
-        */
-        final int colspanLG = (hintColWidths.containsKey(tCampo.getNome()))
-                ? hintColWidths.get(tCampo.getNome())
-                : iCampo.as(AtrWicket::new).getLarguraPref(BSCol.MAX_COLS);
-        final int colspanMD = Integer.min(colspanLG * 2, BSCol.MAX_COLS);
-        final int colspanSM = Integer.min(colspanLG * 3, BSCol.MAX_COLS);
+        protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
+            final BSContainer<?> parentCol = ctx.getContainer();
+            final BSGrid grid = parentCol.newGrid();
 
-        col.lg(colspanLG);
-        col.md(colspanMD);
-        col.sm(colspanSM);
+            addLabelIfNeeded(ctx, grid);
 
-        return col;
+            grid.add(DisabledClassBehavior.getInstance());
+            grid.setDefaultModel(model);
+            return grid;
+        }
+
+        protected void buildFields(WicketBuildContext ctx, BSRow row) {
+            for (SType<?> tCampo : type.getFields()) {
+                buildField(ctx.getUiBuilderWicket(), row, fieldModel(tCampo));
+            }
+        }
+
+        protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
+            return new SInstanceCampoModel<>(model, tCampo.getSimpleName());
+        }
+
+        protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {
+            IModel<String> label = $m.ofValue(trimToEmpty(instance.as(AtrBasic::new).getLabel()));
+            if (isNotBlank(label.getObject())) {
+                BSCol column = grid.newColInRow();
+                column.appendTag("h3", new Label("_title", label));
+                ctx.configureContainer(label);
+                return column;
+            }
+            return null;
+        }
+
+        protected void buildField(UIBuilderWicket wicketBuilder, final BSRow row,
+                                  final SInstanceCampoModel<SInstance> mCampo) {
+
+            final SType<?> type = mCampo.getMInstancia().getType();
+            final SInstance iCampo = mCampo.getObject();
+            final ViewMode viewMode = ctx.getViewMode();
+
+            if (iCampo instanceof SIComposite) {
+                final BSCol col = configureColspan(ctx, type, iCampo, row.newCol());
+                wicketBuilder.build(ctx.createChild(col.newGrid().newColInRow(), true, mCampo), viewMode);
+            } else {
+                wicketBuilder.build(ctx.createChild(configureColspan(ctx, type, iCampo, row.newCol()), true, mCampo), viewMode);
+            }
+        }
+
+        protected BSCol configureColspan(WicketBuildContext ctx, SType<?> tCampo, final SInstance iCampo, BSCol col) {
+            final HashMap<String, Integer> hintColWidths = ctx.getHint(DefaultCompostoMapper.COL_WIDTHS);
+            /*
+            * Heuristica de distribuicao de tamanho das colunas, futuramente pode ser
+            * parametrizado ou transoformado em uma configuracao
+            */
+            final int colPref;
+
+            if (hintColWidths.containsKey(tCampo.getName())) {
+                colPref = hintColWidths.get(tCampo.getName());
+            } else {
+                colPref = iCampo.as(AtrBootstrap::new).getColPreference(BSCol.MAX_COLS);
+            }
+
+            final Optional<Integer> colXs = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColXs());
+            final Optional<Integer> colSm = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColSm());
+            final Optional<Integer> colMd = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColMd());
+            final Optional<Integer> colLg = Optional.ofNullable(iCampo.as(AtrBootstrap::new).getColLg());
+
+            col.xs(colXs.orElse(Integer.min(colPref * 4, BSCol.MAX_COLS)));
+            col.sm(colSm.orElse(Integer.min(colPref * 3, BSCol.MAX_COLS)));
+            col.md(colMd.orElse(Integer.min(colPref * 2, BSCol.MAX_COLS)));
+            col.lg(colLg.orElse(Integer.min(colPref, BSCol.MAX_COLS)));
+
+            return col;
+        }
     }
 }

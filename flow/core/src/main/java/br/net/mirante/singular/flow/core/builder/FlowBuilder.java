@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core.builder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import br.net.mirante.singular.flow.core.DashboardView;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
 import br.net.mirante.singular.flow.core.IRoleChangeListener;
@@ -174,5 +175,10 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
 
     public void addTasksVisualizeStrategy(TaskAccessStrategy<?> accessVisualizeStrategy, Predicate<MTask<?>> applyToPredicate) {
         getFlowMap().getAllTasks().stream().filter(applyToPredicate).forEach(t -> t.addVisualizeStrategy(accessVisualizeStrategy));
+    }
+
+    public FlowBuilder<DEF, MAPA, BUILDER_TASK, BUILDER_JAVA, BUILDER_PEOPLE, BUILDER_WAIT, BUILDER_END, BUILDER_TRANSITION, BUILDER_PAPEL, TASK_DEF> addDashboardView(DashboardView dashboardView) {
+        getFlowMap().addDashboardView(dashboardView);
+        return this;
     }
 }

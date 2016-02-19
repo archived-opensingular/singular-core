@@ -1,22 +1,15 @@
 package br.net.mirante.singular.form.wicket.model;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import br.net.mirante.singular.form.mform.MDicionarioResolver;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.mform.event.MInstanceEvent;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil.FormSerialized;
-import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
+import br.net.mirante.singular.form.mform.event.SInstanceEvent;
+import br.net.mirante.singular.form.mform.io.InstanceSerializableRef;
 
 /**
  * <p>
@@ -24,62 +17,40 @@ import br.net.mirante.singular.form.mform.io.MDicionarioResolverSerializable;
  * a raiz do Document) que já faz a correta serialização de MInstancia e
  * posterior resolução do respectivo Dicionário para viabilziar deserialziação.
  * </p>
- * <p>
- * Há duas formas de resolver a questão do dicionário usando esse model:
- * <ul>
- * <li>Setar o MDicionarioResolver default (singleton) em
- * {@link MDicionarioResolver#setDefault(MDicionarioResolver)}</li>
- * <li>Ao criar o model, passar um {@link MDicionarioResolverSerializable}
- * serializável para também ser serializado junto com os dados. Na volta
- * (deserialziação) usa esse resolver que foi serializado junto com os dados:
- * {@link FormSerializationUtil#toInstance(FormSerialized, MDicionarioResolverSerializable)}
- * </li>
- * </ul >
- * </p>
  *
- * @see {@link br.net.mirante.singular.form.mform.io.FormSerializationUtil}
+ * @see {@link br.net.mirante.singular.form.mform.io.InstanceSerializableRef}
  * @author Daniel C. Bordin
  */
-public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstanciaModel<I>
-    implements Externalizable,
-    IMInstanceEventCollector<I> {
+public class MInstanceRootModel<I extends SInstance> extends AbstractSInstanceModel<I> implements IMInstanceEventCollector<I> {
 
-    private transient I                                 object;
+    private final InstanceSerializableRef<I> instanceRef;
+
     private transient IMInstanceListener.EventCollector instanceListener;
 
-    private MDicionarioResolverSerializable dicionarioResolverSerializable;
-
-    public MInstanceRootModel() {}
-
-    public MInstanceRootModel(MDicionarioResolverSerializable dicionarioResolverSerializable) {
-        this.dicionarioResolverSerializable = dicionarioResolverSerializable;
+    public MInstanceRootModel() {
+        instanceRef = new InstanceSerializableRef<I>();
     }
 
     public MInstanceRootModel(I object) {
-        setObject(object);
-    }
-
-    public MInstanceRootModel(I object, MDicionarioResolverSerializable dicionarioResolverSerializable) {
-        setObject(object);
-        this.dicionarioResolverSerializable = dicionarioResolverSerializable;
+        instanceRef = new InstanceSerializableRef<I>(object);
     }
 
     @Override
     public I getObject() {
-        if (this.object != null && this.instanceListener == null) {
+        if (instanceRef.get() != null && this.instanceListener == null) {
             this.instanceListener = new IMInstanceListener.EventCollector();
-            MInstanceListeners listeners = this.object.getDocument().getInstanceListeners();
+            MInstanceListeners listeners = instanceRef.get().getDocument().getInstanceListeners();
             listeners.add(MInstanceEventType.VALUE_CHANGED, this.instanceListener);
             listeners.add(MInstanceEventType.LIST_ELEMENT_ADDED, this.instanceListener);
             listeners.add(MInstanceEventType.LIST_ELEMENT_REMOVED, this.instanceListener);
         }
-        return this.object;
+        return instanceRef.get();
     }
 
     @Override
     public void setObject(I object) {
         detachListener();
-        this.object = object;
+        instanceRef.set(object);
     }
 
     @Override
@@ -89,14 +60,14 @@ public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstancia
     }
 
     protected void detachListener() {
-        if (this.object != null && this.instanceListener != null) {
-            this.object.getDocument().getInstanceListeners().remove(MInstanceEventType.values(), this.instanceListener);
+        if (instanceRef.get() != null && this.instanceListener != null) {
+            instanceRef.get().getDocument().getInstanceListeners().remove(MInstanceEventType.values(), this.instanceListener);
         }
         this.instanceListener = null;
     }
 
     @Override
-    public List<MInstanceEvent> getInstanceEvents() {
+    public List<SInstanceEvent> getInstanceEvents() {
         return (instanceListener == null) ? Collections.emptyList() : instanceListener.getEvents();
     }
     @Override
@@ -109,7 +80,7 @@ public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstancia
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((object == null) ? 0 : object.hashCode());
+        result = prime * result + ((instanceRef.get() == null) ? 0 : instanceRef.get().hashCode());
         return result;
     }
 
@@ -122,20 +93,6 @@ public class MInstanceRootModel<I extends MInstancia> extends AbstractMInstancia
         if (getClass() != obj.getClass())
             return false;
         MInstanceRootModel<?> other = (MInstanceRootModel<?>) obj;
-        return Objects.equals(object, other.object);
+        return Objects.equals(instanceRef.get(), other.instanceRef.get());
     }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        FormSerialized fs = FormSerializationUtil.toSerializedObject(object, dicionarioResolverSerializable);
-        out.writeObject(fs);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        FormSerialized fs = (FormSerialized) in.readObject();
-        object = (I) FormSerializationUtil.toInstance(fs);
-    }
-
 }

@@ -14,19 +14,19 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
 @SuppressWarnings("serial")
 public class DownloadBehaviour extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private MInstancia instance;
+    transient private SInstance instance;
 
-    public DownloadBehaviour(MInstancia instance) {
+    public DownloadBehaviour(SInstance instance) {
         this.instance = instance;
     }
 
@@ -42,33 +42,35 @@ public class DownloadBehaviour extends Behavior implements IResourceListener {
     @Override
     public void onResourceRequested() {
         try {
-            handleRequest((MIAttachment) instance, instance.getDocument());
+            handleRequest((SIAttachment) instance, instance.getDocument());
         } catch (IOException e) {
             throw new AbortWithHttpErrorCodeException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    private void handleRequest(MIAttachment attachment, SDocument document) throws IOException {
+    private void handleRequest(SIAttachment attachment, SDocument document) throws IOException {
         ServletWebRequest request = w.request();
         IRequestParameters parameters = request.getRequestParameters();
         StringValue id = parameters.getParameterValue("fileId");
         StringValue name = parameters.getParameterValue("fileName");
-        if (id.isEmpty() || name.isEmpty()) {
+        if ((id.isEmpty() || name.isEmpty() )&& !attachment.isTemporary()) {
             writeFileFromPersistent(attachment, document);
+        }else if(attachment.isTemporary()){
+            writeFileFromTemporary(document, attachment.getFileId(), attachment.getFileName());
         } else {
             writeFileFromTemporary(document, id.toString(), name.toString());
         }
     }
 
-    private void writeFileFromPersistent(MIAttachment attachment, SDocument document) throws IOException {
-        IAttachmentPersistenceHandler handler = document.lookupService(SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+    private void writeFileFromPersistent(SIAttachment attachment, SDocument document) throws IOException {
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistencePermanentHandler();
         IAttachmentRef data = handler.getAttachment(attachment.getFileId());
         writeFileToResponse(attachment.getFileName(), data, w.response());
     }
 
     private void writeFileFromTemporary(SDocument document, String fileId, String fileName) throws IOException {
-        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler handler = document.getAttachmentPersistenceTemporaryHandler();
         IAttachmentRef data = handler.getAttachment(fileId);
         writeFileToResponse(fileName, data, w.response());
     }

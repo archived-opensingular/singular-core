@@ -7,6 +7,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import java.util.ArrayList;
 import java.util.List;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 public class MetronicMenu extends Panel {
 
     public List<AbstractMenuItem> itens = new ArrayList<>();
@@ -16,6 +18,9 @@ public class MetronicMenu extends Panel {
     }
 
     public void addItem(AbstractMenuItem item) {
+        if(itens.isEmpty()){
+            item.add($b.classAppender("start"));
+        }
         itens.add(item);
     }
 

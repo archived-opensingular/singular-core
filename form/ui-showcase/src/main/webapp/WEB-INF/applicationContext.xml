@@ -16,6 +16,17 @@
     <import resource="conf/cache.xml"/>
     <context:component-scan base-package="br.net.mirante.singular"/>
 
-    <bean id="uiAdminWicketFilterContext" class="br.net.mirante.singular.wicket.UIAdminWicketFilterContext"/>
+    <bean id="uiAdminWicketFilterContext" class="br.net.mirante.singular.showcase.wicket.UIAdminWicketFilterContext"/>
+
+
+    <bean id="singularFormConfig" class="br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl">
+        <property name="serviceRegistry" ref="springServiceRegistry"/>
+    </bean>
+
+    <bean id="singularFormContext" class="br.net.mirante.singular.form.wicket.SingularFormContextWicketImpl"
+          factory-bean="singularFormConfig" factory-method="createContext"/>
+
+    <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
+
 
 </beans>

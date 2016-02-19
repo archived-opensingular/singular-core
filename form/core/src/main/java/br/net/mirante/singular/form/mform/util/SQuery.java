@@ -1,7 +1,5 @@
 package br.net.mirante.singular.form.mform.util;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -12,16 +10,17 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import br.net.mirante.singular.form.mform.MIComposto;
-import br.net.mirante.singular.form.mform.MILista;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import static java.util.stream.Collectors.toList;
 
-public abstract class SQuery<MI extends MInstancia> {
+public abstract class SQuery<MI extends SInstance> {
 
-    protected final SQuery<? extends MInstancia> _parentQuery;
+    protected final SQuery<? extends SInstance> _parentQuery;
 
-    private SQuery(SQuery<? extends MInstancia> parentQuery) {
+    private SQuery(SQuery<? extends SInstance> parentQuery) {
         this._parentQuery = parentQuery;
     }
     //    public SQuery() {
@@ -32,7 +31,7 @@ public abstract class SQuery<MI extends MInstancia> {
     public abstract Stream<MI> stream();
     //====================================================================================
 
-    public static <MI extends MInstancia> SQuery<MI> $ss(Supplier<Stream<MI>> supplier) {
+    public static <MI extends SInstance> SQuery<MI> $ss(Supplier<Stream<MI>> supplier) {
         return new SQuery<MI>(null) {
             @Override
             public Stream<MI> stream() {
@@ -40,30 +39,30 @@ public abstract class SQuery<MI extends MInstancia> {
             }
         };
     }
-    public static <MI extends MInstancia> SQuery<MI> $(MI raiz) {
+    public static <MI extends SInstance> SQuery<MI> $(MI raiz) {
         return $ss(() -> Stream.of(raiz));
     }
-    public static <MI extends MInstancia> SQuery<MI> $si(Supplier<MI> raiz) {
+    public static <MI extends SInstance> SQuery<MI> $si(Supplier<MI> raiz) {
         return $ss(() -> Stream.of(raiz.get()));
     }
 
     //====================================================================================
 
-    public SQuery<MInstancia> children() {
-        return children((Predicate<MInstancia>) null);
+    public SQuery<SInstance> children() {
+        return children((Predicate<SInstance>) null);
     }
     @SuppressWarnings("unchecked")
-    public <T extends MInstancia> SQuery<T> children(MTipo<T> type) {
-        return children(inst -> inst.getMTipo() == type)
+    public <T extends SInstance> SQuery<T> children(SType<T> type) {
+        return children(inst -> inst.getType() == type)
             .map(it -> (T) it);
     }
     /**
      * Get the children of each element in the set of matched elements, optionally filtered by a selector.
      */
-    public SQuery<MInstancia> children(Predicate<MInstancia> selector) {
-        return new SQuery<MInstancia>(this) {
+    public SQuery<SInstance> children(Predicate<SInstance> selector) {
+        return new SQuery<SInstance>(this) {
             @Override
-            public Stream<MInstancia> stream() {
+            public Stream<SInstance> stream() {
                 return (selector == null)
                     ? _parentQuery.stream().flatMap(SQuery::_children)
                     : _parentQuery.stream().flatMap(SQuery::_children).filter(selector);
@@ -72,20 +71,20 @@ public abstract class SQuery<MI extends MInstancia> {
     }
 
     @SuppressWarnings({ "unchecked" })
-    private static Stream<MInstancia> _children(MInstancia o) {
-        if (o instanceof MIComposto) {
-            return _fields((MIComposto) o);
-        } else if (o instanceof MILista) {
-            return _elements((MILista<MInstancia>) o);
+    private static Stream<SInstance> _children(SInstance o) {
+        if (o instanceof SIComposite) {
+            return _fields((SIComposite) o);
+        } else if (o instanceof SList) {
+            return _elements((SList<SInstance>) o);
         } else {
             return Stream.empty();
         }
     }
-    private static Stream<MInstancia> _fields(MIComposto composto) {
-        return composto.getMTipo().getFields().stream()
-            .map(f -> composto.getCampo(f.getNomeSimples()));
+    private static Stream<SInstance> _fields(SIComposite composto) {
+        return composto.getType().getFields().stream()
+            .map(f -> composto.getCampo(f.getSimpleName()));
     }
-    private static Stream<MInstancia> _elements(MILista<MInstancia> lista) {
+    private static Stream<SInstance> _elements(SList<SInstance> lista) {
         return lista.stream();
     }
 
@@ -93,10 +92,10 @@ public abstract class SQuery<MI extends MInstancia> {
      * Get the descendants of each element in the current set of matched elements.
      * @return
      */
-    public SQuery<MInstancia> find() {
-        return new SQuery<MInstancia>(this) {
+    public SQuery<SInstance> find() {
+        return new SQuery<SInstance>(this) {
             @Override
-            public Stream<MInstancia> stream() {
+            public Stream<SInstance> stream() {
                 return _parentQuery.stream()
                     .flatMap(c -> Stream.concat(
                         $(c).children().stream(),
@@ -104,29 +103,29 @@ public abstract class SQuery<MI extends MInstancia> {
             }
         };
     }
-    public <T extends MInstancia> SQuery<T> find(MTipo<T> tipo) {
+    public <T extends SInstance> SQuery<T> find(SType<T> tipo) {
         return new SQuery<T>(this) {
             @Override
             @SuppressWarnings("unchecked")
             public Stream<T> stream() {
                 return _parentQuery.find().stream()
-                    .filter(it -> it.getMTipo() == tipo)
+                    .filter(it -> it.getType() == tipo)
                     .map(it -> (T) it);
             }
         };
     }
-    public <T extends MInstancia> SQuery<T> filter(MTipo<T> tipo) {
+    public <T extends SInstance> SQuery<T> filter(SType<T> tipo) {
         return new SQuery<T>(this) {
             @Override
             @SuppressWarnings("unchecked")
             public Stream<T> stream() {
                 return _parentQuery.stream()
-                    .filter(it -> it.getMTipo() == tipo)
+                    .filter(it -> it.getType() == tipo)
                     .map(it -> (T) it);
             }
         };
     }
-    public <T extends MInstancia> SQuery<MI> has(MTipo<T> tipo, Predicate<T> test) {
+    public <T extends SInstance> SQuery<MI> has(SType<T> tipo, Predicate<T> test) {
         return new SQuery<MI>(this) {
             @Override
             @SuppressWarnings("unchecked")
@@ -143,26 +142,26 @@ public abstract class SQuery<MI extends MInstancia> {
             @SuppressWarnings("unchecked")
             public Stream<MI> stream() {
                 return _parentQuery.children().stream()
-                    .filter((Predicate<? super MInstancia>) filter)
+                    .filter((Predicate<? super SInstance>) filter)
                     .map(it -> (MI) it);
             }
         };
     }
-    public SQuery<MInstancia> parent() {
-        return new SQuery<MInstancia>(this) {
+    public SQuery<SInstance> parent() {
+        return new SQuery<SInstance>(this) {
             @Override
-            public Stream<MInstancia> stream() {
+            public Stream<SInstance> stream() {
                 return _parentQuery.stream()
-                    .map(it -> it.getPai());
+                    .map(it -> it.getParent());
             }
         };
     }
-    public SQuery<MInstancia> parents() {
-        return new SQuery<MInstancia>(this) {
+    public SQuery<SInstance> parents() {
+        return new SQuery<SInstance>(this) {
             @Override
-            public Stream<MInstancia> stream() {
+            public Stream<SInstance> stream() {
                 return _parentQuery.stream()
-                    .map(it -> it.getPai())
+                    .map(it -> it.getParent())
                     .flatMap(c -> (c == null) //
                         ? Stream.empty() //
                         : Stream.concat(
@@ -172,7 +171,7 @@ public abstract class SQuery<MI extends MInstancia> {
             }
         };
     }
-    public <T extends MInstancia> SQuery<T> parents(Class<T> type, Predicate<T> filter) {
+    public <T extends SInstance> SQuery<T> parents(Class<T> type, Predicate<T> filter) {
         return new SQuery<T>(this) {
             @Override
             public Stream<T> stream() {
@@ -183,11 +182,11 @@ public abstract class SQuery<MI extends MInstancia> {
             }
         };
     }
-    public SQuery<? extends MInstancia> end() {
+    public SQuery<? extends SInstance> end() {
         return _parentQuery;
     }
     @SuppressWarnings("unchecked")
-    public <O extends MInstancia> SQuery<O> map(Function<MI, O> function) {
+    public <O extends SInstance> SQuery<O> map(Function<MI, O> function) {
         return new SQuery<O>(this) {
             @Override
             @SuppressWarnings("rawtypes")
@@ -219,26 +218,26 @@ public abstract class SQuery<MI extends MInstancia> {
     public SQuery<MI> addNew() {
         return addNew(it -> {});
     }
-    public SQuery<MI> addNew(Consumer<MInstancia> consumer) {
-        map(it -> (MILista<?>) it).each(it -> {
-            MInstancia novo = it.addNovo();
+    public SQuery<MI> addNew(Consumer<SInstance> consumer) {
+        map(it -> (SList<?>) it).each(it -> {
+            SInstance novo = it.addNovo();
             consumer.accept(novo);
         });
         return this;
     }
     public SQuery<MI> addVal(Object value) {
-        map(it -> (MILista<?>) it).each(it -> it.addValor(value));
+        map(it -> (SList<?>) it).each(it -> it.addValor(value));
         return this;
     }
     public Object val() {
-        return stream().findFirst().map(it -> it.getValor()).orElse(null);
+        return stream().findFirst().map(it -> it.getValue()).orElse(null);
     }
     @SuppressWarnings("unchecked")
     public <T> T val(Class<T> type) {
-        return stream().map(it -> it.getValor()).map(it -> (T) it).findFirst().orElse(null);
+        return stream().map(it -> it.getValue()).map(it -> (T) it).findFirst().orElse(null);
     }
     public <T> SQuery<MI> val(T value) {
-        stream().forEach(it -> it.setValor(value));
+        stream().forEach(it -> it.setValue(value));
         return this;
     }
     public long count() {

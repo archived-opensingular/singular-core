@@ -1,23 +1,23 @@
 package br.net.mirante.singular.form.mform.document;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
 import br.net.mirante.singular.form.mform.MTypes;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.ServiceRef;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
-import br.net.mirante.singular.form.mform.core.MPacoteCore;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
@@ -41,13 +41,17 @@ public class SDocument {
     public static final String FILE_TEMPORARY_SERVICE   = "fileTemporary";
     public static final String FILE_PERSISTENCE_SERVICE = "filePersistence";
 
-    private MInstancia root;
+    private SInstance root;
 
     private int lastId = 0;
 
     private MInstanceListeners instanceListeners;
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
+
+    private Map<Integer, SIAnnotation> annotationMap = new HashMap<>();
+
+    private SDocumentFactory documentFactory;
 
     public SDocument() {}
 
@@ -76,57 +80,116 @@ public class SDocument {
         return ++lastId;
     }
 
-    public void setAttachmentPersistenceHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
-        bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, ref);
+    /**
+     * Registra a persistência temporária de anexos. A persistência temporária
+     * guarda os anexos em quanto o documento não é saldo.
+     */
+    public void setAttachmentPersistenceTemporaryHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+        bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
-    public IAttachmentPersistenceHandler getAttachmentPersistenceHandler() {
+    /**
+     * Registra a persistência permanente de anexo. É usada para consultar
+     * anexos salvos anteriormente e no momento de salvar o anexos que estavam
+     * na persitência temporária.
+     */
+    public void setAttachmentPersistencePermanentHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+        bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
+
+    }
+
+    /**
+     * Retorna o serviço responsável por persistir temporáriamente os novos
+     * anexos incluidos durante a edição. Se o formulário não for salvo, então
+     * os anexos adicionados nesse serviços deverão ser descartados pelo mesmo.
+     *
+     * @return Nunca null. Retorna {@link InMemoryAttachmentPersitenceHandler}
+     *         por default.
+     */
+    public IAttachmentPersistenceHandler getAttachmentPersistenceTemporaryHandler() {
         IAttachmentPersistenceHandler ref = lookupService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            bindLocalService(FILE_TEMPORARY_SERVICE,
-                IAttachmentPersistenceHandler.class, ServiceRef.of(ref));
+            setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
         }
         return ref;
     }
 
     /**
+     * Retorna o serviço responsável por consultar os anexos já salvos
+     * anteriormente e responsável por gravar os novos anexos, que estavam na
+     * persistencia temporária, no momento de salvar o formulário.
+     */
+    public IAttachmentPersistenceHandler getAttachmentPersistencePermanentHandler() {
+        IAttachmentPersistenceHandler h = lookupService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
+        if (h == null) {
+            throw new SingularFormException("Não foi configurado o serviço de persitência permanente de anexo. Veja os métodos "
+                    + SDocument.class.getName() + ".setAttachmentPersistencePermanentHandler() e " + SDocumentFactory.class.getName());
+        }
+        return h;
+    }
+
+    /**
      * Obtêm a instância que representa o documento com um todo.
      */
-    public MInstancia getRoot() {
+    public SInstance getRoot() {
         if (root == null) {
             throw new SingularFormException("Instancia raiz não foi configurada");
         }
         return root;
     }
 
-    public final void setRoot(MInstancia root) {
+    public final void setRoot(SInstance root) {
         if (this.root != null) {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        MTypes.streamDescendants(getRoot().getMTipo(), true).forEach(tipo -> {
+        MTypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
-            final Supplier<Collection<MTipo<?>>> func = tipo.getValorAtributo(MPacoteBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
-                for (MTipo<?> dependency : func.get())
+                for (SType<?> dependency : func.get())
                     dependency.getDependentTypes().add(tipo);
             }
         });
     }
 
+    /** USO INTERNO. */
+    public SDocumentFactoryRef getDocumentFactoryRef() {
+        return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
+    }
+
+    /** USO INTERNO. */
+    public final void setDocumentFactory(SDocumentFactory context) {
+        if (documentFactory != null) {
+            throw new SingularFormException("O contexto do documento não pode ser alteado depois de definido");
+        }
+        documentFactory = context;
+        if (context.getDocumentFactoryRef() == null) {
+            throw new SingularFormException(
+                    context.getClass().getName() + ".getDocumentContextRef() retorna null. Isso provocará erro de serialização.");
+        }
+        ServiceRegistry sr = documentFactory.getServiceRegistry();
+        if (sr != null) {
+            addServiceRegistry(sr);
+        }
+    }
+
     /**
      * Stablishes a new registry where to look for services, which is chained
-     *  to the default one. 
+     *  to the default one.
      */
     public void addServiceRegistry(ServiceRegistry registry) {
         this.registry.addRegistry(registry);
     }
 
     /**
-     * @see  ServiceRegistry#services()
+     * USO INTERNO APENAS. Retorna os serviços registrados diretamente no
+     * documento.
+     *
+     * @see ServiceRegistry#services()
      */
-    public Map<String, Pair> getServices() {
+    public Map<String, Pair> getLocalServices() {
         return registry.services();
     }
 
@@ -142,13 +205,24 @@ public class SDocument {
 
     /**
      * Tenta encontrar um serviço registrado com o nome informado. Se o
-     * resultado náo for null e náo implementar a classe solicitada, dispara
+     * resultado não for null e não implementar a classe solicitada, dispara
      * exception.
      *
      * @return Null se não encontrado ou se o conteúdo do registro for null.
      */
     public <T> T lookupService(String name, Class<T> targetClass) {
         return registry.lookupService(name, targetClass);
+    }
+
+    /**
+     * Tenta encontrar um serviço registrado <u>diretamente no documento</u> com
+     * o nome informado. Se o resultado não for null e não implementar a classe
+     * solicitada, dispara exception.
+     *
+     * @return Null se não encontrado ou se o conteúdo do registro for null.
+     */
+    public <T> T lookupLocalService(String name, Class<T> targetClass) {
+        return registry.lookupLocalService(name, targetClass);
     }
 
     /**
@@ -162,7 +236,7 @@ public class SDocument {
     /**
      * Registar um serviço com o nome informado.
      */
-    public void bindLocalService(String serviceName, Class<?> registerClass, ServiceRef<?> provider) {
+    public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<? extends T> provider) {
         registry.bindLocalService(serviceName, registerClass, provider);
     }
 
@@ -172,50 +246,44 @@ public class SDocument {
         return this.instanceListeners;
     }
 
-    /**
-     * 
-     * @return eventos coletados
-     */
     public void updateAttributes(IMInstanceListener listener) {
+        updateAttributes(getRoot(), listener);
+    }
+
+    public void updateAttributes(SInstance root, IMInstanceListener listener) {
         if (listener != null)
             getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
         try {
-            MInstances.visitAll(getRoot(), true, instance -> {
-                Predicate<MInstancia> requiredFunc = instance.getValorAtributo(MPacoteCore.ATR_OBRIGATORIO_FUNCTION);
-                if (requiredFunc != null)
-                    instance.setValorAtributo(MPacoteCore.ATR_OBRIGATORIO, requiredFunc.test(instance));
-
-                Predicate<MInstancia> enabledFunc = instance.getValorAtributo(MPacoteBasic.ATR_ENABLED_FUNCTION);
-                if (enabledFunc != null)
-                    instance.setValorAtributo(MPacoteBasic.ATR_ENABLED, enabledFunc.test(instance));
-
-                Predicate<MInstancia> visibleFunc = instance.getValorAtributo(MPacoteBasic.ATR_VISIBLE_FUNCTION);
-                if (visibleFunc != null)
-                    instance.setValorAtributo(MPacoteBasic.ATR_VISIVEL, visibleFunc.test(instance));
+            MInstances.visitAll(root, true, instance -> {
+                instance.updateExists();
+                instance.updateObrigatorio();
+                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
+                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIVEL, SPackageBasic.ATR_VISIBLE_FUNCTION);
             });
         } finally {
             getInstanceListeners().remove(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
         }
     }
 
-    //TODO: Review how this method works. It'd be better if the developer did 
+    //TODO: Review how this method works. It'd be better if the developer did
     //  not had to remember to call this before saving in the database.
     //  Maybe if the document worked as an Active Record, we'd be able to
     //  intercept the persist call and do this job before the model
     //  would be persisted.
     public void persistFiles() {
-        IAttachmentPersistenceHandler persistent = lookupService(
-            SDocument.FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class);
-        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceHandler();
+        IAttachmentPersistenceHandler persistent = getAttachmentPersistencePermanentHandler();
+        IAttachmentPersistenceHandler temporary = getAttachmentPersistenceTemporaryHandler();
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
+    public SIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
+    public void annotation(Integer id, SIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
 }
 
 /**
  * Responsible for moving files from temporary state to persistent.
- * 
+ *
  * @author Fabricio Buzeto
  *
  */
@@ -225,23 +293,23 @@ class AttachmentPersistenceHelper {
 
     public AttachmentPersistenceHelper(IAttachmentPersistenceHandler temporary,
         IAttachmentPersistenceHandler persistent) {
-        this.temporary = temporary;
-        this.persistent = persistent;
+        this.temporary = Objects.requireNonNull(temporary);
+        this.persistent = Objects.requireNonNull(persistent);
     }
 
-    public void doPersistence(MInstancia element) {
-        if (element instanceof MIAttachment) {
-            handleAttachment((MIAttachment) element);
+    public void doPersistence(SInstance element) {
+        if (element instanceof SIAttachment) {
+            handleAttachment((SIAttachment) element);
         } else if (element instanceof ICompositeInstance) {
             visitChildrenIfAny((ICompositeInstance) element);
         }
     }
 
-    private void handleAttachment(MIAttachment attachment) {
+    private void handleAttachment(SIAttachment attachment) {
         moveFromTemporaryToPersistentIfNeeded(attachment);
     }
 
-    private void moveFromTemporaryToPersistentIfNeeded(MIAttachment attachment) {
+    private void moveFromTemporaryToPersistentIfNeeded(SIAttachment attachment) {
         if (!Objects.equals(attachment.getFileId(), attachment.getOriginalFileId())) {
             IAttachmentRef fileRef = temporary.getAttachment(attachment.getFileId());
             if (fileRef != null) {
@@ -252,12 +320,12 @@ class AttachmentPersistenceHelper {
         }
     }
 
-    private void deleteOldFiles(MIAttachment attachment, IAttachmentRef fileRef) {
+    private void deleteOldFiles(SIAttachment attachment, IAttachmentRef fileRef) {
         temporary.deleteAttachment(fileRef.getId());
         persistent.deleteAttachment(attachment.getOriginalFileId());
     }
 
-    private void updateFileId(MIAttachment attachment, IAttachmentRef newRef) {
+    private void updateFileId(SIAttachment attachment, IAttachmentRef newRef) {
         attachment.setFileId(newRef.getId());
         attachment.setOriginalFileId(newRef.getId());
     }
@@ -269,7 +337,7 @@ class AttachmentPersistenceHelper {
     }
 
     private void visitAllChildren(ICompositeInstance composite) {
-        for (MInstancia child : composite.getAllChildren()) {
+        for (SInstance child : composite.getAllChildren()) {
             doPersistence(child);
         }
     }

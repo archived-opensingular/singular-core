@@ -14,8 +14,8 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.basic.ui.MPacoteBasic;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -28,7 +28,7 @@ public class DecimalMapper extends StringMapper {
     private static final int DEFAULT_DIGITS = 2;
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         Integer decimalMaximo = getDecimalMaximo(model);
         TextField<String> comp = new TextField<String>(model.getObject().getNome(),
                 new MInstanciaValorModel<>(model), String.class) {
@@ -42,9 +42,9 @@ public class DecimalMapper extends StringMapper {
         return comp;
     }
 
-    private Map<String, Object> withOptionsOf(IModel<? extends MInstancia> model) {
+    private Map<String, Object> withOptionsOf(IModel<? extends SInstance> model) {
         Optional<Integer> inteiroMaximo = Optional.ofNullable(
-                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
+                model.getObject().getValorAtributo(SPackageBasic.ATR_TAMANHO_INTEIRO_MAXIMO));
         Integer decimal = getDecimalMaximo(model);
         Map<String, Object> options = defaultOptions();
         options.put("integerDigits", inteiroMaximo.orElse(DEFAULT_INTEGER_DIGITS));
@@ -52,9 +52,9 @@ public class DecimalMapper extends StringMapper {
         return options;
     }
 
-    private Integer getDecimalMaximo(IModel<? extends MInstancia> model) {
+    private Integer getDecimalMaximo(IModel<? extends SInstance> model) {
         Optional<Integer> decimalMaximo = Optional.ofNullable(
-                model.getObject().getValorAtributo(MPacoteBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
+                model.getObject().getValorAtributo(SPackageBasic.ATR_TAMANHO_DECIMAL_MAXIMO));
         return (Integer) decimalMaximo.orElse(DEFAULT_DIGITS);
     }
 
@@ -74,12 +74,12 @@ public class DecimalMapper extends StringMapper {
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
-        final MInstancia mi = model.getObject();
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
+        final SInstance mi = model.getObject();
 
-        if ((mi != null) && (mi.getValor() != null)) {
+        if ((mi != null) && (mi.getValue() != null)) {
 
-            final BigDecimal valor = (BigDecimal) mi.getValor();
+            final BigDecimal valor = (BigDecimal) mi.getValue();
             return formatDecimal(valor);
         }
 

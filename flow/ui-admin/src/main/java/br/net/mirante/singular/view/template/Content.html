@@ -5,10 +5,15 @@
             <!-- BEGIN PAGE HEAD -->
             <div class="page-head">
                 <!-- BEGIN PAGE TITLE -->
-                <div class="page-title">
-                    <h1><wicket:container wicket:id="contentTitle"/>
+                <div class="todo-main-header">
+                    <h3><wicket:container wicket:id="contentTitle"/>
                         <small><wicket:container wicket:id="contentSubtitle"/></small>
-                    </h1>
+                    </h3>
+                    <!-- BEGIN PAGE BREADCRUMB -->
+                    <ul class="todo-breadcrumb" wicket:id="breadcrumb">
+		                <wicket:container wicket:id="_BreadcrumbLinks"/>
+                    </ul>
+                    <!-- END PAGE BREADCRUMB -->
                 </div>
                 <!-- END PAGE TITLE -->
                 <!-- BEGIN PAGE TOOLBAR -->
@@ -25,14 +30,6 @@
                 <!-- END PAGE TOOLBAR -->
             </div>
             <!-- END PAGE HEAD -->
-            <!-- BEGIN PAGE BREADCRUMB -->
-            <ul wicket:id="breadcrumb" class="page-breadcrumb breadcrumb">
-                <li>
-                    <a wicket:id="breadcrumbDashboard"><wicket:message key="breadcrumb.home"/></a><i class="fa fa-circle"></i>
-                </li>
-                <wicket:container wicket:id="_BreadcrumbLinks"/>
-            </ul>
-            <!-- END PAGE BREADCRUMB -->
             <!-- BEGIN PAGE CONTENT INNER -->
             <wicket:child/>
             <!-- END PAGE CONTENT INNER -->
@@ -42,5 +39,8 @@
         <wicket:container wicket:id="_SideBar"/>
         <!-- END QUICK SIDEBAR -->
     </div>
+    <wicket:fragment wicket:id="todoBreadcrumb">
+		<li><a wicket:id="breadcrumbLink"></a></li>
+	</wicket:fragment>
 </wicket:panel>
 </html>

@@ -1,9 +1,12 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
-import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
-import br.net.mirante.singular.form.mform.core.attachment.MIAttachment;
-import br.net.mirante.singular.form.mform.document.SDocument;
+import static java.util.Collections.synchronizedList;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.Component;
@@ -20,11 +23,10 @@ import org.apache.wicket.request.http.flow.AbortWithHttpErrorCodeException;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.lang.Bytes;
 
-import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedList;
-import java.util.List;
-
-import static java.util.Collections.synchronizedList;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
+import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
+import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.mform.document.SDocument;
 
 /**
  * Class responsible for handling the temporary upload of files inside the
@@ -38,10 +40,10 @@ import static java.util.Collections.synchronizedList;
 class UploadBehavior extends Behavior implements IResourceListener {
     transient protected WebWrapper w = new WebWrapper();
     private Component component;
-    transient private MIAttachment instance;
-    private List<String> temporaryIds = synchronizedList(new LinkedList<String>());
+    transient private SIAttachment instance;
+    private List<String> temporaryIds = synchronizedList(new LinkedList<>());
 
-    public UploadBehavior(MIAttachment instance) {
+    public UploadBehavior(SIAttachment instance) {
         this.instance = instance;
     }
 
@@ -109,6 +111,11 @@ class UploadBehavior extends Behavior implements IResourceListener {
         if (!item.isFormField()) {
             IAttachmentRef ref = temporaryHandler().addAttachment(item.getInputStream());
             fileGroup.put(createJsonFile(item, ref));
+            instance.setFileName(item.getName());
+            instance.setFileId(ref.getId());
+            instance.setFileHashSHA1(ref.getHashSHA1());
+            instance.setFileSize(ref.getSize());
+            instance.setTemporary();
             synchronized(temporaryIds){
                 temporaryIds.add(ref.getId());
             }
@@ -117,7 +124,7 @@ class UploadBehavior extends Behavior implements IResourceListener {
 
     private IAttachmentPersistenceHandler temporaryHandler() {
         SDocument rootDocument = instance.getDocument();
-        return rootDocument.getAttachmentPersistenceHandler();
+        return rootDocument.getAttachmentPersistenceTemporaryHandler();
     }
 
     private JSONObject createJsonFile(FileItem item, IAttachmentRef ref) {

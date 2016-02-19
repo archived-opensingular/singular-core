@@ -1,18 +1,20 @@
 package br.net.mirante.singular.form.validation;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 
-public interface IInstanceValidatable<I extends MInstancia> {
+public interface IInstanceValidatable<I extends SInstance> {
 
     I getInstance();
 
-    void setDefaultLevel(ValidationErrorLevel level);
+    IInstanceValidatable<I> setDefaultLevel(ValidationErrorLevel level);
 
-    void error(IValidationError error);
+    ValidationErrorLevel getDefaultLevel();
+
+    IValidationError error(IValidationError error);
 
     IValidationError error(String msg);
 
-    void error(ValidationErrorLevel level, IValidationError error);
+    IValidationError error(ValidationErrorLevel level, IValidationError error);
 
     IValidationError error(ValidationErrorLevel level, String msg);
 }

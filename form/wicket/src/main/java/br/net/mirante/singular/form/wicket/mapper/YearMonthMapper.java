@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.MView;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -16,8 +16,8 @@ import java.util.HashMap;
 
 public class YearMonthMapper implements ControlsFieldComponentMapper {
 
-    @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends MInstancia> model, IModel<String> labelModel) {
+    @Override @SuppressWarnings("rawtypes")
+    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         YearMonthField comp = new YearMonthField(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendDatepicker(comp.setLabel(labelModel)
                         .setOutputMarkupId(true).add(new InputMaskBehavior(InputMaskBehavior.Masks.SHORT_DATE)),
@@ -25,16 +25,18 @@ public class YearMonthMapper implements ControlsFieldComponentMapper {
                     put("data-date-format", "mm/yyyy");
                     put("data-date-start-view", "months");
                     put("data-date-min-view-mode", "months");
+                    put("data-date-start-date", "01/1900");
+                    put("data-date-end-date", "12/2999");
                 }});
         return comp;
     }
 
     @Override
-    public String getReadOnlyFormattedText(IModel<? extends MInstancia> model) {
+    public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         if ((model != null) && (model.getObject() != null)) {
-            MInstancia instancia = model.getObject();
-            if (instancia.getValor() instanceof YearMonth) {
-                YearMonth ym = (YearMonth) instancia.getValor();
+            SInstance instancia = model.getObject();
+            if (instancia.getValue() instanceof YearMonth) {
+                YearMonth ym = (YearMonth) instancia.getValue();
                 return String.format("%02d/%04d", ym.getMonthValue(), ym.getYear());
             }
         }

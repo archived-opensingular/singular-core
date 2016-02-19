@@ -29,7 +29,7 @@ public class TestLeitorPath extends TestCaseForm {
 
     private static void assertPathException(String path, String trechoMsgEsperada) {
         assertException(() -> {
-            LeitorPath leitor = new LeitorPath(path);
+            PathReader leitor = new PathReader(path);
             while (!leitor.isEmpty()) {
                 leitor = leitor.proximo();
             }
@@ -38,7 +38,7 @@ public class TestLeitorPath extends TestCaseForm {
     }
 
     private static void assertPath(String path, Object... resultadoEsperado) {
-        LeitorPath leitor = new LeitorPath(path);
+        PathReader leitor = new PathReader(path);
 
         for (int i = 0; i < resultadoEsperado.length; i++) {
             Object esperado = resultadoEsperado[i];
@@ -58,7 +58,7 @@ public class TestLeitorPath extends TestCaseForm {
         if (!leitor.isEmpty()) {
             fail("Ainda há item no leitor para ler: " + leitor.getTrecho());
         }
-        final LeitorPath leitor2 = leitor;
+        final PathReader leitor2 = leitor;
         assertException(() -> leitor2.isIndice(), "Leitura já está no fim");
         assertException(() -> leitor2.getTrecho(), "Leitura já está no fim");
         assertException(() -> leitor2.proximo(), "Leitura já está no fim");

@@ -7,8 +7,8 @@ import java.util.Objects;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.behavior.Behavior;
-
-import br.net.mirante.singular.util.wicket.jquery.JQuery;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 
 /**
  * <p>Classe responsável por adicionar máscara a um {@code input}.</p>
@@ -31,7 +31,7 @@ import br.net.mirante.singular.util.wicket.jquery.JQuery;
  */
 public class InputMaskBehavior extends Behavior {
 
-    public static final String MASK_ATTR = "mask";
+    public static final String MASK_ATTR       = "mask";
     public static final String MAX_LENGTH_ATTR = "repeat";
 
     private String jsonOptions;
@@ -44,26 +44,33 @@ public class InputMaskBehavior extends Behavior {
          * <p>Máscara que permite apenas valores numéricos: [0-9].</p>
          */
         NUMERIC("9"),
+
         /**
          * <p>Máscara para datas do tipo DD/MM/AAAA.</p>
          */
         FULL_DATE("99/99/9999"),
+
         /**
          * <p>Máscara para datas do tipo MM/AAAA.</p>
          */
         SHORT_DATE("99/9999"),
+
         /**
          * <p>Máscara para CPF.</p>
          */
         CPF("999.999.999-99"),
+
         /**
          * <p>Máscara para CNPJ.</p>
          */
         CNPJ("99-999.999/9999-99"),
+
         /**
          * <p>Máscara para CEP.</p>
          */
-        CEP("99.999-999");
+        CEP("99.999-999"),
+
+        TIME("99:99");
 
         private String mask;
 
@@ -197,8 +204,9 @@ public class InputMaskBehavior extends Behavior {
     }
 
     @Override
-    public void afterRender(Component component) {
-        component.getResponse().write("<script>" + JQuery.ready(getScript(component)) + "</script>");
+    public void renderHead(Component component, IHeaderResponse response) {
+        super.renderHead(component, response);
+        response.render(OnDomReadyHeaderItem.forScript("(function(){" + getScript(component) + ";})()"));
     }
 
     /**
@@ -209,13 +217,13 @@ public class InputMaskBehavior extends Behavior {
      */
     protected String getScript(Component component) {
         return "var $this = $('#" + component.getMarkupId() + "');"
-//                + "$this.on('paste', function(event) {console.log(event); setTimeout(function(){$this.change();},1);});"
-                + "$this.on('drop', function(event) {"
-                + "  event.preventDefault();"
-                + "  $this.val(event.originalEvent.dataTransfer.getData('text'));"
-                + "  $this.inputmask(" + jsonOptions + ");"
-                + "  setTimeout(function(){$this.change();},1);"
-                + "});"
-                + "$this.inputmask(" + jsonOptions + ");";
+        //  + "$this.on('paste', function(event) {console.log(event); setTimeout(function(){$this.change();},1);});"
+            + "$this.on('drop', function(event) {"
+            + "  event.preventDefault();"
+            + "  $this.val(event.originalEvent.dataTransfer.getData('text'));"
+            + "  $this.inputmask('remove').inputmask(" + jsonOptions + ");"
+            + "  setTimeout(function(){$this.change();},1);"
+            + "});"
+            + "$this.inputmask('remove').inputmask(" + jsonOptions + ");";
     }
 }

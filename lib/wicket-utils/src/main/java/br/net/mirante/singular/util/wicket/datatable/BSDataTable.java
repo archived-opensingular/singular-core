@@ -3,25 +3,21 @@ package br.net.mirante.singular.util.wicket.datatable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.*;
 import org.apache.wicket.markup.ComponentTag;
 
 public class BSDataTable<T, S> extends DataTable<T, S> {
 
     public static final Long DEFAULT_ROWS_PER_PAGE = 10L;
 
-    private boolean stripedRows    = true;
-    private boolean hoverRows      = true;
-    private boolean borderedTable  = true;
-    private boolean advanceTable   = false;
-    private boolean condensedTable = false;
+    private boolean stripedRows          = true;
+    private boolean hoverRows            = true;
+    private boolean borderedTable        = true;
+    private boolean advanceTable         = false;
+    private boolean condensedTable       = false;
+    private boolean showNoRecordsToolbar = true;
 
     public BSDataTable(String id, List<? extends IColumn<T, S>> columns, ISortableDataProvider<T, S> dataProvider) {
         super(id, ensureSerializable(columns), dataProvider, DEFAULT_ROWS_PER_PAGE);
@@ -53,7 +49,11 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     }
 
     protected AbstractToolbar newNoRecordsToolbar() {
-        return new NoRecordsToolbar(this);
+        if(showNoRecordsToolbar) {
+            return new NoRecordsToolbar(this);
+        } else {
+            return null;
+        }
     }
 
     protected AbstractToolbar newPaginationToolbar() {
@@ -136,5 +136,14 @@ public class BSDataTable<T, S> extends DataTable<T, S> {
     }
     public long getRowsPerPage() {
         return getItemsPerPage();
+    }
+
+    public boolean isShowNoRecordsToolbar() {
+        return showNoRecordsToolbar;
+    }
+
+    public BSDataTable<T, S> setShowNoRecordsToolbar(boolean showNoRecordsToolbar) {
+        this.showNoRecordsToolbar = showNoRecordsToolbar;
+        return this;
     }
 }

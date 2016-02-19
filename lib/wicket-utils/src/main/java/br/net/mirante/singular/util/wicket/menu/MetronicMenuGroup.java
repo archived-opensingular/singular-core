@@ -65,6 +65,7 @@ public class MetronicMenuGroup extends AbstractMenuItem {
         for (AbstractMenuItem i : itens) {
             if (i.configureActiveItem()) {
                 subMenu.add($b.attr("style", "display: block;"));
+                menuGroup.add($b.classAppender("active"));
                 menuGroup.add($b.classAppender("open"));
                 arrow.add($b.classAppender("open"));
                 return true;

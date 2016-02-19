@@ -4,5 +4,5 @@ import java.util.Collection;
 
 public interface ICompositeType {
 
-    public Collection<MTipo<?>> getContainedTypes();
+    public Collection<SType<?>> getContainedTypes();
 }

@@ -1,0 +1,33 @@
+<html xmlns:wicket="http://wicket.apache.org">
+<wicket:panel xmlns:wicket="http://wicket.apache.org">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-comment-o"></i>
+            <span class="caption-subject font-dark bold uppercase" style="font-size: x-small;">
+                <wicket:container wicket:id="target_label" />
+            </span>
+        </div>
+        <div class="actions">
+            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
+               style="padding: 5px; width: 27px; height: 27px;" wicket:id="open_modal">
+                <i class="fa fa-expand"></i>
+            </a>
+            <a class="btn btn-circle btn-icon-only btn-default small-ann-button"
+               style="padding: 5px; width: 27px; height: 27px;" wicket:id="trash_modal" >
+                <i class="icon-trash"></i>
+            </a>
+        </div>
+    </div>
+    <div class="portlet-body" style="height: auto;">
+
+            <div class="col-md-12 col-sm-12">
+                <div class="can-have-error form-group form-group-sm">
+                    <label wicket:id="comment_field" />
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <label wicket:id="approval_field" />
+            </div>
+    </div>
+</wicket:panel>
+</html>

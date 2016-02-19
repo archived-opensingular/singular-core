@@ -1,9 +1,12 @@
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,6 +44,8 @@ public class FlowMap implements Serializable {
     private MTask<?> startTask;
 
     private IRoleChangeListener roleChangeListener;
+
+    private final Map<String, DashboardView> dashboardViews = new LinkedHashMap<>();
 
     /**
      * <p>Instancia um novo mapa para a definição de processo especificado.</p>
@@ -492,5 +497,17 @@ public class FlowMap implements Serializable {
     @Override
     public String toString() {
         return "FlowMap [processDefinition=" + processDefinition.getName() + "]";
+    }
+
+    public void addDashboardView(DashboardView dashboardView) {
+        dashboardViews.put(dashboardView.getName(), dashboardView);
+    }
+
+    public List<DashboardView> getDashboardViews() {
+        return new ArrayList<>(dashboardViews.values());
+    }
+
+    public DashboardView getDashboardViewWithName(String name) {
+        return dashboardViews.get(name);
     }
 }

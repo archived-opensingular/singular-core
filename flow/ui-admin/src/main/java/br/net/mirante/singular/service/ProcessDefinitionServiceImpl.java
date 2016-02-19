@@ -1,24 +1,20 @@
 package br.net.mirante.singular.service;
 
-import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import br.net.mirante.singular.dao.DefinitionDAO;
 import br.net.mirante.singular.dao.InstanceDAO;
 import br.net.mirante.singular.dto.DefinitionDTO;
 import br.net.mirante.singular.dto.InstanceDTO;
 import br.net.mirante.singular.dto.MetaDataDTO;
-import br.net.mirante.singular.flow.core.Flow;
-import br.net.mirante.singular.flow.core.ProcessDefinition;
-import br.net.mirante.singular.flow.core.renderer.FlowRendererFactory;
 
 @Service("processDefinitionService")
 public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
@@ -38,16 +34,23 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         return definitionDAO.retrieveById(processDefinitionCod);
     }
 
+    @Cacheable(value = "retrieveProcessDefinitionByKey", cacheManager = "cacheManager")
     @Override
     @Transactional
-    public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc) {
-        return definitionDAO.retrieveAll(first, size, orderByProperty, asc);
+    public DefinitionDTO retrieveByKey(String processDefinitionKey) {
+        return definitionDAO.retrieveByKey(processDefinitionKey);
+    }
+    
+    @Override
+    @Transactional
+    public List<DefinitionDTO> retrieveAll(int first, int size, String orderByProperty, boolean asc, Set<String> processCodeWithAccess) {
+        return definitionDAO.retrieveAll(first, size, orderByProperty, asc, processCodeWithAccess);
     }
 
     @Override
     @Transactional
-    public int countAll() {
-        return definitionDAO.countAll();
+    public int countAll(Set<String> processCodeWithAccess) {
+        return definitionDAO.countAll(processCodeWithAccess);
     }
 
     @Override
@@ -68,21 +71,4 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
         return definitionDAO.retrieveMetaData(processDefinitionCod);
     }
 
-    @Override
-    public byte[] retrieveProcessDiagramFromRestURL(String sigla) {
-        RestTemplate restTemplate = new RestTemplate();
-        UriComponentsBuilder uriComponentsBuilder =
-                UriComponentsBuilder.fromHttpUrl(retrieveProcessDiagramRestURL).queryParam("sigla", sigla);
-        String encodedImage = restTemplate.getForObject(uriComponentsBuilder.build().encode().toUri(), String.class);
-        return Base64.getDecoder().decode(encodedImage);
-    }
-
-    @Override
-    public byte[] retrieveProcessDiagram(String sigla) {
-        ProcessDefinition<?> definicao = Flow.getProcessDefinitionWith(sigla);
-        if (definicao != null) {
-            return FlowRendererFactory.generateImageFor(definicao);
-        }
-        return null;
-    }
 }

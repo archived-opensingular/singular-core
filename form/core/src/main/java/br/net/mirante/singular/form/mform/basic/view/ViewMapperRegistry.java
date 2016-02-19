@@ -1,14 +1,15 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.mform.MInstancia;
-import br.net.mirante.singular.form.mform.MTipo;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.lambda.ISupplier;
 
 /**
  * <p>
@@ -23,16 +24,17 @@ import br.net.mirante.singular.form.mform.MTipo;
  *
  * @author Daniel C. Bordin
  */
-public class ViewMapperRegistry<T> {
+public class ViewMapperRegistry<T> implements Serializable {
 
-    private final HashMap<Class<? extends MTipo>, List<RegisterEntry<T>>> registry = new HashMap<>();
+    private final HashMap<Class<? extends SType>, List<RegisterEntry<T>>> registry = new HashMap<>();
 
     /**
      * Registra o fornecedor para o tipo para quando não for solicitado um view
      * especifica. Seria a factory default.
+     * @return 
      */
-    public void register(Class<? extends MTipo> type, Supplier<T> factory) {
-        register(type, null, factory);
+    public ViewMapperRegistry<T> register(Class<? extends SType> type, ISupplier<T> factory) {
+        return register(type, null, factory);
     }
 
     /**
@@ -41,8 +43,9 @@ public class ViewMapperRegistry<T> {
      *
      * @param viewType
      *            Pode ser null
+     * @return 
      */
-    public void register(Class<? extends MTipo> type, Class<? extends MView> viewType, Supplier<T> factory) {
+    public ViewMapperRegistry<T> register(Class<? extends SType> type, Class<? extends MView> viewType, ISupplier<T> factory) {
         Objects.requireNonNull(factory);
         List<RegisterEntry<T>> list = registry.get(Objects.requireNonNull(type));
         if (list == null) {
@@ -50,6 +53,7 @@ public class ViewMapperRegistry<T> {
             registry.put(type, list);
         }
         list.add(new RegisterEntry<T>(viewType, factory, 100));
+        return this;
     }
 
     /**
@@ -73,8 +77,8 @@ public class ViewMapperRegistry<T> {
      * @param view
      *            Pode ser null
      */
-    public Optional<T> getMapper(MInstancia instance, MView view) {
-        Class<? extends MTipo> type = instance.getMTipo().getClass();
+    public Optional<T> getMapper(SInstance instance, MView view) {
+        Class<? extends SType> type = instance.getType().getClass();
         if (view.getClass() == MView.class) {
             view = null;
         }
@@ -88,7 +92,7 @@ public class ViewMapperRegistry<T> {
     private T getMapper(Class<?> type, MView view) {
         RegisterEntry<T> selected = null;
         int score = -1;
-        while (type != MTipo.class) {
+        while (type != SType.class) {
             List<RegisterEntry<T>> list = registry.get(type);
             if (list != null) {
                 for (RegisterEntry<T> entry : list) {
@@ -115,12 +119,12 @@ public class ViewMapperRegistry<T> {
      *
      * @author Daniel C. Bordin
      */
-    private static final class RegisterEntry<T> {
+    private static final class RegisterEntry<T> implements Serializable {
         final Class<? extends MView> view;
-        final Supplier<T> factory;
+        final ISupplier<T> factory;
         final int priority;
 
-        RegisterEntry(Class<? extends MView> view, Supplier<T> factory, int priority) {
+        RegisterEntry(Class<? extends MView> view, ISupplier<T> factory, int priority) {
             this.view = view;
             this.factory = factory;
             this.priority = priority;

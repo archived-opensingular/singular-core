@@ -9,16 +9,20 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MInstancia;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public class InstanceValidationContext {
 
-    private MInstancia             instance;
+    private SInstance rootInstance;
     private List<IValidationError> errors = new ArrayList<>();
 
-    public InstanceValidationContext(MInstancia instance) {
-        this.instance = instance;
+    public InstanceValidationContext(SInstance instance) {
+        this.rootInstance = instance;
     }
 
     public List<IValidationError> getErrors() {
@@ -33,51 +37,51 @@ public class InstanceValidationContext {
     }
 
     public void validateAll() {
-        MInstances.visitAllChildrenIncludingEmpty(instance, inst -> {
-            inst.getMTipo().validateInstance(new InstanceValidatable<>(inst, e -> errors.add(e)));
-        });
+        MInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> validateInstance(new InstanceValidatable<>(inst, errors::add)));
     }
     public void validateSingle() {
-        instance.getMTipo().validateInstance(new InstanceValidatable<>(instance, e -> errors.add(e)));
+        validateInstance(new InstanceValidatable<>(rootInstance, errors::add));
     }
 
-    private static class InstanceValidatable<I extends MInstancia> implements IInstanceValidatable<I> {
-        private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
-        private final I                         instance;
-        private final Consumer<ValidationError> onError;
-        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
-            this.instance = instance;
-            this.onError = onError;
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <I extends SInstance> void validateInstance(IInstanceValidatable<I> validatable) {
+        final I instance = validatable.getInstance();
+
+        if (isEnabledInHierarchy(instance) && isVisibleInHierarchy(instance) && !checkRequired(instance, true)) {
+            validatable.error(new ValidationError(instance, ValidationErrorLevel.ERROR, "Campo obrigatório"));
+            return;
         }
-        @Override
-        public void setDefaultLevel(ValidationErrorLevel defaultLevel) {
-            this.defaultLevel = defaultLevel;
+
+        final SType<I> tipo = (SType<I>) instance.getType();
+        for (IInstanceValidator<I> validator : tipo.getValidators()) {
+            validatable.setDefaultLevel(tipo.getValidatorErrorLevel(validator));
+            validator.validate((IInstanceValidatable) validatable);
         }
-        @Override
-        public I getInstance() {
-            return instance;
+    }
+
+    protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
+        if (!Boolean.TRUE.equals(instance.getValorAtributo(SPackageCore.ATR_OBRIGATORIO)))
+            return true;
+
+        if (instance instanceof ICompositeInstance) {
+            ICompositeInstance comp = (ICompositeInstance) instance;
+            return comp.streamDescendants(false).anyMatch(it -> it.getValue() != null);
+
+        } else {
+            return (instance.getValue() != null);
         }
-        @Override
-        public void error(IValidationError error) {
-            errorInternal(defaultLevel, error.getMessage());
-        }
-        @Override
-        public IValidationError error(String msg) {
-            return errorInternal(defaultLevel, msg);
-        }
-        @Override
-        public void error(ValidationErrorLevel level, IValidationError error) {
-            errorInternal(level, error.getMessage());
-        }
-        @Override
-        public IValidationError error(ValidationErrorLevel level, String msg) {
-            return errorInternal(level, msg);
-        }
-        private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
-            ValidationError error = new ValidationError(instance, level, msg);
-            onError.accept(error);
-            return error;
-        }
+    }
+
+    protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
+        return !MInstances.listAscendants(instance).stream()
+            .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
+            .anyMatch(Boolean.FALSE::equals);
+    }
+
+    protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
+        return !MInstances.listAscendants(instance).stream()
+            .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
+            .anyMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
@@ -85,5 +89,31 @@ public class InstanceValidationContext {
             .filter(it -> it.getErrorLevel().compareTo(minErrorLevel) >= 0)
             .findAny()
             .isPresent();
+    }
+
+    private static class InstanceValidatable<I extends SInstance> implements IInstanceValidatable<I> {
+        private ValidationErrorLevel            defaultLevel = ValidationErrorLevel.ERROR;
+        private final I                         instance;
+        private final Consumer<ValidationError> onError;
+        public InstanceValidatable(I instance, Consumer<ValidationError> onError) {
+            this.instance = instance;
+            this.onError = onError;
+        }
+
+        private IValidationError errorInternal(ValidationErrorLevel level, String msg) {
+            ValidationError error = new ValidationError(instance, level, msg);
+            onError.accept(error);
+            return error;
+        }
+
+        //@formatter:off
+        @Override public I getInstance()                                                            { return instance; }
+        @Override public ValidationErrorLevel    getDefaultLevel()                                  { return defaultLevel; }
+        @Override public IInstanceValidatable<I> setDefaultLevel(ValidationErrorLevel defaultLevel) { this.defaultLevel = defaultLevel; return this; }
+        @Override public IValidationError error(                            String msg)             { return errorInternal(defaultLevel, msg); }
+        @Override public IValidationError error(                            IValidationError error) { return errorInternal(defaultLevel, error.getMessage()); }
+        @Override public IValidationError error(ValidationErrorLevel level, String msg)             { return errorInternal(level, msg); }
+        @Override public IValidationError error(ValidationErrorLevel level, IValidationError error) { return errorInternal(level, error.getMessage()); }
+        //@formatter:on
     }
 }

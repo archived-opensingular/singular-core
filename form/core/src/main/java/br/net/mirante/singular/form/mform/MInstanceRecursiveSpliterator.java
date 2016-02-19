@@ -5,26 +5,26 @@ import java.util.Deque;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class MInstanceRecursiveSpliterator implements Spliterator<MInstancia> {
-    private final Deque<MInstancia> deque = new ArrayDeque<>();
-    public MInstanceRecursiveSpliterator(MInstancia root, boolean includeRoot) {
+public class MInstanceRecursiveSpliterator implements Spliterator<SInstance> {
+    private final Deque<SInstance> deque = new ArrayDeque<>();
+    public MInstanceRecursiveSpliterator(SInstance root, boolean includeRoot) {
         if (includeRoot)
             this.deque.add(root);
         else
             this.deque.addAll(MInstances.children(root));
     }
     @Override
-    public boolean tryAdvance(Consumer<? super MInstancia> action) {
+    public boolean tryAdvance(Consumer<? super SInstance> action) {
         if (deque.isEmpty())
             return false;
 
-        final MInstancia node = deque.removeFirst();
+        final SInstance node = deque.removeFirst();
         deque.addAll(MInstances.children(node));
         action.accept(node);
         return true;
     }
     @Override
-    public Spliterator<MInstancia> trySplit() {
+    public Spliterator<SInstance> trySplit() {
         return new MInstanceRecursiveSpliterator(deque.removeFirst(), true);
     }
     @Override
