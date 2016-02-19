@@ -61,6 +61,7 @@ public class Actor extends BaseEntity<Integer> implements MUser {
         this.email = email;
     }
 
+    @Override
     public String getCodUsuario() {
         return codUsuario;
     }

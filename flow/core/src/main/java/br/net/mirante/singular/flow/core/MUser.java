@@ -17,6 +17,8 @@ public interface MUser extends Comparable<MUser>, Serializable {
 
     String getEmail();
 
+    String getCodUsuario();
+
     default boolean is(MUser user2) {
         return (user2 != null) && getCod().equals(user2.getCod());
     }

@@ -27,10 +27,12 @@ public class ObjectFactory {
     private final static QName _ExecuteDefaultTransition_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "executeDefaultTransition");
     private final static QName _Ping_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "ping");
     private final static QName _ExecuteTransition_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "executeTransition");
+    private final static QName _RelocateTaskResponse_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "relocateTaskResponse");
     private final static QName _StartInstanceResponse_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "startInstanceResponse");
     private final static QName _ExecuteDefaultTransitionResponse_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "executeDefaultTransitionResponse");
     private final static QName _ExecuteTransitionResponse_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "executeTransitionResponse");
     private final static QName _PingResponse_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "pingResponse");
+    private final static QName _RelocateTask_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "relocateTask");
     private final static QName _StartInstance_QNAME = new QName("http://ws.core.flow.singular.mirante.net.br/", "startInstance");
 
     /**
@@ -73,11 +75,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RelocateTask }
+     * 
+     */
+    public RelocateTask createRelocateTask() {
+        return new RelocateTask();
+    }
+
+    /**
      * Create an instance of {@link StartInstance }
      * 
      */
     public StartInstance createStartInstance() {
         return new StartInstance();
+    }
+
+    /**
+     * Create an instance of {@link RelocateTaskResponse }
+     * 
+     */
+    public RelocateTaskResponse createRelocateTaskResponse() {
+        return new RelocateTaskResponse();
     }
 
     /**
@@ -132,6 +150,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RelocateTaskResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.core.flow.singular.mirante.net.br/", name = "relocateTaskResponse")
+    public JAXBElement<RelocateTaskResponse> createRelocateTaskResponse(RelocateTaskResponse value) {
+        return new JAXBElement<RelocateTaskResponse>(_RelocateTaskResponse_QNAME, RelocateTaskResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link StartInstanceResponse }{@code >}}
      * 
      */
@@ -165,6 +192,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.core.flow.singular.mirante.net.br/", name = "pingResponse")
     public JAXBElement<PingResponse> createPingResponse(PingResponse value) {
         return new JAXBElement<PingResponse>(_PingResponse_QNAME, PingResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RelocateTask }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.core.flow.singular.mirante.net.br/", name = "relocateTask")
+    public JAXBElement<RelocateTask> createRelocateTask(RelocateTask value) {
+        return new JAXBElement<RelocateTask>(_RelocateTask_QNAME, RelocateTask.class, null, value);
     }
 
     /**

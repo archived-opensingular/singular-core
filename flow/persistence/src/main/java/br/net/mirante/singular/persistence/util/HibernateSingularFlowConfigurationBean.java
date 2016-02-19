@@ -39,7 +39,7 @@ public class HibernateSingularFlowConfigurationBean extends SingularFlowConfigur
     }
 
     @Override
-    protected IUserService getUserService() {
+    public IUserService getUserService() {
         return this.userService;
     }
 
