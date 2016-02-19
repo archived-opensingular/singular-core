@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import javax.lang.model.SourceVersion;
 
@@ -15,7 +16,8 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 public final class MFormUtil {
 
     public static boolean isNomeSimplesValido(String nome) {
-        return SourceVersion.isIdentifier(nome);
+        Pattern idPattern = Pattern.compile("[_a-zA-Z][_a-zA-Z0-9]*");
+        return idPattern.matcher(nome).matches();
     }
 
     public static void checkNomeSimplesValido(String nome) {
