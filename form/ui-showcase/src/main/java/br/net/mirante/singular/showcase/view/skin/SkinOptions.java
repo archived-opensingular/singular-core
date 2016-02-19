@@ -57,9 +57,6 @@ public class SkinOptions implements Serializable{
         cookie.setPath("/");
         if(selection != null)   {
             cookie.setValue(selection.name());
-//            Session.get().setAttribute("skin","");
-        }else{
-//            Session.get().setAttribute("skin",selection);
         }
         response().addCookie(cookie);
         current = selection;
@@ -70,10 +67,6 @@ public class SkinOptions implements Serializable{
     }
 
     public Optional<Skin> currentSkin(){
-//        if(Session.get().getAttribute("skin") == "") return Optional.empty();
-//        Skin skin = (Skin) Session.get().getAttribute("skin");
-//        if(skin != null) return Optional.of(skin);
-//        return skinInCookie(request().getCookie("skin"));
         if(current == null) return Optional.empty();
         return Optional.of(current);
     }
