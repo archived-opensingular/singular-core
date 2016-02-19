@@ -8,6 +8,11 @@ AmChartViewResultPanel = (function () {
                 definition.startDuration = 0
             }
             AmCharts.makeChart(idChartDiv, definition);
+            $('a').each(function(){
+                if( $(this).attr("href") === "http://www.amcharts.com/javascript-charts/"){
+                    $(this).hide();
+                }
+            });
         });
     }
 
