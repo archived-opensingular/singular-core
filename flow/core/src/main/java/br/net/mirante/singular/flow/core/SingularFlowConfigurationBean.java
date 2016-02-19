@@ -218,7 +218,7 @@ public abstract class SingularFlowConfigurationBean {
     }
 
     // ------- Manipulação de Usuário ---------------------------------
-    protected abstract IUserService getUserService();
+    public abstract IUserService getUserService();
 
     /**
      * Notifica os listeners registrados sobre um evento.

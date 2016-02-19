@@ -221,7 +221,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
         builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
-                actionColumn.appendAction(new ActionConfig()
+                actionColumn.appendAction(new ActionConfig<>()
                                 .iconeModel(Model.of(Icone.MINUS))
                                 .buttonModel(Model.of("red"))
                                 .style($m.ofValue("padding:5px 3px;")),
@@ -233,7 +233,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
             final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
             actionColumn.appendAction(
-                    new ActionConfig()
+                    new ActionConfig<>()
                             .iconeModel(Model.of(openModalIcon))
                             .buttonModel(Model.of("blue-madison"))
                             .style($m.ofValue("padding:5px 3px;")),
@@ -423,14 +423,14 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
 
     public static class ColumnType {
 
-        private SType type;
+        private SType<?> type;
         private String customLabel;
         private IFunction<SInstance, String> displayValueFunction = SInstance::getDisplayString;
 
         public ColumnType() {
         }
 
-        public ColumnType(SType type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
+        public ColumnType(SType<?> type, String customLabel, IFunction<SInstance, String> displayValueFunction) {
             this.type = type;
             this.customLabel = customLabel;
             if (displayValueFunction != null) {
@@ -438,12 +438,12 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             }
         }
 
-        public ColumnType(SType type, String customLabel) {
+        public ColumnType(SType<?> type, String customLabel) {
             this.type = type;
             this.customLabel = customLabel;
         }
 
-        public SType getType() {
+        public SType<?> getType() {
             return type;
         }
 

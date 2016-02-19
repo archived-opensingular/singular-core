@@ -1,69 +1,85 @@
 <?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.core.flow.singular.mirante.net.br/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="SingularWSService" targetNamespace="http://ws.core.flow.singular.mirante.net.br/">
   <wsdl:types>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.core.flow.singular.mirante.net.br/" elementFormDefault="unqualified" targetNamespace="http://ws.core.flow.singular.mirante.net.br/" version="1.0">
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://ws.core.flow.singular.mirante.net.br/" elementFormDefault="unqualified" targetNamespace="http://ws.core.flow.singular.mirante.net.br/" version="1.0">
 
-  <xs:element name="executeDefaultTransition" type="tns:executeDefaultTransition"/>
+      <xs:element name="executeDefaultTransition" type="tns:executeDefaultTransition"/>
 
-  <xs:element name="executeDefaultTransitionResponse" type="tns:executeDefaultTransitionResponse"/>
+      <xs:element name="executeDefaultTransitionResponse" type="tns:executeDefaultTransitionResponse"/>
 
-  <xs:element name="executeTransition" type="tns:executeTransition"/>
+      <xs:element name="executeTransition" type="tns:executeTransition"/>
 
-  <xs:element name="executeTransitionResponse" type="tns:executeTransitionResponse"/>
+      <xs:element name="executeTransitionResponse" type="tns:executeTransitionResponse"/>
 
-  <xs:element name="ping" type="tns:ping"/>
+      <xs:element name="ping" type="tns:ping"/>
 
-  <xs:element name="pingResponse" type="tns:pingResponse"/>
+      <xs:element name="pingResponse" type="tns:pingResponse"/>
 
-  <xs:element name="startInstance" type="tns:startInstance"/>
+      <xs:element name="relocateTask" type="tns:relocateTask"/>
 
-  <xs:element name="startInstanceResponse" type="tns:startInstanceResponse"/>
+      <xs:element name="relocateTaskResponse" type="tns:relocateTaskResponse"/>
 
-  <xs:complexType name="executeDefaultTransition">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
-      <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:element name="startInstance" type="tns:startInstance"/>
 
-  <xs:complexType name="executeDefaultTransitionResponse">
-    <xs:sequence/>
-  </xs:complexType>
+      <xs:element name="startInstanceResponse" type="tns:startInstanceResponse"/>
 
-  <xs:complexType name="executeTransition">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
-      <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
-      <xs:element minOccurs="0" name="transitionName" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:complexType name="executeDefaultTransition">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
+          <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
 
-  <xs:complexType name="executeTransitionResponse">
-    <xs:sequence/>
-  </xs:complexType>
+      <xs:complexType name="executeDefaultTransitionResponse">
+        <xs:sequence/>
+      </xs:complexType>
 
-  <xs:complexType name="ping">
-    <xs:sequence/>
-  </xs:complexType>
+      <xs:complexType name="executeTransition">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
+          <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
+          <xs:element minOccurs="0" name="transitionName" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
 
-  <xs:complexType name="pingResponse">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="return" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:complexType name="executeTransitionResponse">
+        <xs:sequence/>
+      </xs:complexType>
 
-  <xs:complexType name="startInstance">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:complexType name="ping">
+        <xs:sequence/>
+      </xs:complexType>
 
-  <xs:complexType name="startInstanceResponse">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="return" type="xs:long"/>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:complexType name="pingResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
 
-</xs:schema>
+      <xs:complexType name="relocateTask">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
+          <xs:element minOccurs="0" name="codProcessInstance" type="xs:long"/>
+          <xs:element minOccurs="0" name="username" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="relocateTaskResponse">
+        <xs:sequence/>
+      </xs:complexType>
+
+      <xs:complexType name="startInstance">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="processAbbreviation" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+
+      <xs:complexType name="startInstanceResponse">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="return" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+
+    </xs:schema>
   </wsdl:types>
   <wsdl:message name="executeDefaultTransition">
     <wsdl:part element="tns:executeDefaultTransition" name="parameters">
@@ -75,6 +91,10 @@
   </wsdl:message>
   <wsdl:message name="executeTransition">
     <wsdl:part element="tns:executeTransition" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="relocateTaskResponse">
+    <wsdl:part element="tns:relocateTaskResponse" name="parameters">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="startInstanceResponse">
@@ -93,6 +113,10 @@
     <wsdl:part element="tns:pingResponse" name="parameters">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="relocateTask">
+    <wsdl:part element="tns:relocateTask" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="startInstance">
     <wsdl:part element="tns:startInstance" name="parameters">
     </wsdl:part>
@@ -100,27 +124,33 @@
   <wsdl:portType name="SingularWS">
     <wsdl:operation name="executeDefaultTransition">
       <wsdl:input message="tns:executeDefaultTransition" name="executeDefaultTransition">
-    </wsdl:input>
+      </wsdl:input>
       <wsdl:output message="tns:executeDefaultTransitionResponse" name="executeDefaultTransitionResponse">
-    </wsdl:output>
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="executeTransition">
       <wsdl:input message="tns:executeTransition" name="executeTransition">
-    </wsdl:input>
+      </wsdl:input>
       <wsdl:output message="tns:executeTransitionResponse" name="executeTransitionResponse">
-    </wsdl:output>
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="ping">
       <wsdl:input message="tns:ping" name="ping">
-    </wsdl:input>
+      </wsdl:input>
       <wsdl:output message="tns:pingResponse" name="pingResponse">
-    </wsdl:output>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="relocateTask">
+      <wsdl:input message="tns:relocateTask" name="relocateTask">
+      </wsdl:input>
+      <wsdl:output message="tns:relocateTaskResponse" name="relocateTaskResponse">
+      </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="startInstance">
       <wsdl:input message="tns:startInstance" name="startInstance">
-    </wsdl:input>
+      </wsdl:input>
       <wsdl:output message="tns:startInstanceResponse" name="startInstanceResponse">
-    </wsdl:output>
+      </wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SingularWSServiceSoapBinding" type="tns:SingularWS">
@@ -152,6 +182,15 @@
         <soap:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="relocateTask">
+      <soap:operation soapAction="relocateTask" style="document"/>
+      <wsdl:input name="relocateTask">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="relocateTaskResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="startInstance">
       <soap:operation soapAction="startInstance" style="document"/>
       <wsdl:input name="startInstance">
@@ -164,7 +203,7 @@
   </wsdl:binding>
   <wsdl:service name="SingularWSService">
     <wsdl:port binding="tns:SingularWSServiceSoapBinding" name="SingularWSPort">
-      <soap:address location="http://localhost:8080/sgas/singularWS"/>
+      <soap:address location="http://localhost:8080/canabidiol/SingularWS"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
