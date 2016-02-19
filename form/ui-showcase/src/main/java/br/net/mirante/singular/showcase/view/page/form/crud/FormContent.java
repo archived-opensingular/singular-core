@@ -277,7 +277,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public void onConfigure(Component component) {
                 super.onConfigure(component);
 
-                component.setVisible(enableAnnotation);
+                component.setVisible(enableAnnotation && viewMode.isVisualization());
             }
         };
     }
