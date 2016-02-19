@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 import br.net.mirante.singular.showcase.view.skin.SkinOptions;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.StatelessLink;
@@ -20,10 +21,12 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 public class TopMenu extends Panel {
 
     private boolean withSideBar;
+    private SkinOptions option;
 
-    public TopMenu(String id, boolean withSideBar) {
+    public TopMenu(String id, boolean withSideBar, SkinOptions option) {
         super(id);
         this.withSideBar = withSideBar;
+        this.option = option;
     }
 
     @Override
@@ -42,15 +45,19 @@ public class TopMenu extends Panel {
         logoutHref.ifPresent(href -> logout.add($b.attr("href", href)));
         queue(logout);
 
-
         queue(buildDefaultSkinLink());
         queue(buildSkinOptions());
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
     }
 
     private StatelessLink buildDefaultSkinLink() {
         return new StatelessLink("clear_skin") {
             public void onClick() {
-                SkinOptions.clearSelection(getSession());
+                option.clearSelection();
                 refreshPage();
             }
         };
@@ -70,7 +77,7 @@ public class TopMenu extends Panel {
     private StatelessLink buildSelectSkinLink(final SkinOptions.Skin skin) {
         return new StatelessLink("change_action") {
             public void onClick() {
-                SkinOptions.selectSkin(getSession(), skin);
+                option.selectSkin( skin);
                 refreshPage();
             }
         };

@@ -1,8 +1,15 @@
 .page-header.navbar {
-    background: green;
+    background: #2ecc71;
 }
 
+.page-header.navbar .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:hover {
+    background-color: #27ae60;
+}
+
+
 .logo-default {
-    content:url("http://imgur.com/SZ8Cm.jpg");
-    height: 45px;
+    content:url("/showcase/resources//custom/img/green-logo.png");
+    position: absolute;
+    height: 33px;
+    top: -6px;
 }

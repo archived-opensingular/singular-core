@@ -1,9 +1,14 @@
 package br.net.mirante.singular.showcase.view.skin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
 
+import javax.servlet.http.Cookie;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +20,9 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * @author Fabricio Buzeto
  */
-public class SkinOptions {
+public class SkinOptions implements Serializable{
+
+    private Skin current = null;
 
     public enum Skin implements Serializable{
         RED("Red",CssReferenceHeaderItem.forUrl("resources/custom/css/red.css")),
@@ -34,18 +41,56 @@ public class SkinOptions {
         return newArrayList(Skin.values());
     }
 
-    public static void selectSkin(Session session, Skin selection){
-        session.setAttribute("skin", selection);
+    private SkinOptions(){}
+
+    public static SkinOptions op(){
+        SkinOptions skinOptions = new SkinOptions();
+        Optional<Skin> skin = skinInCookie(request().getCookie("skin"));
+        if(skin.isPresent()){
+            skinOptions.current = skin.get();
+        }
+        return skinOptions;
     }
 
-    public static void clearSelection(Session session){
-        selectSkin(session,null);
+    public void selectSkin(Skin selection){
+        Cookie cookie = new Cookie("skin","");
+        cookie.setPath("/");
+        if(selection != null)   {
+            cookie.setValue(selection.name());
+//            Session.get().setAttribute("skin","");
+        }else{
+//            Session.get().setAttribute("skin",selection);
+        }
+        response().addCookie(cookie);
+        current = selection;
     }
 
-    public static Optional<Skin> currentSkin(Session session){
-        SkinOptions.Skin skin = (SkinOptions.Skin) session.getAttribute("skin");
-        if(skin != null) return Optional.of(skin);
-        return Optional.empty();
+    public void clearSelection(){
+        selectSkin(null);
+    }
+
+    public Optional<Skin> currentSkin(){
+//        if(Session.get().getAttribute("skin") == "") return Optional.empty();
+//        Skin skin = (Skin) Session.get().getAttribute("skin");
+//        if(skin != null) return Optional.of(skin);
+//        return skinInCookie(request().getCookie("skin"));
+        if(current == null) return Optional.empty();
+        return Optional.of(current);
+    }
+
+    private static Optional<Skin> skinInCookie(Cookie cookie) {
+        if(cookie == null || StringUtils.isBlank(cookie.getValue())) return Optional.empty();
+        Skin skin = Skin.valueOf(cookie.getValue());
+        if(skin == null) return Optional.empty();
+        return Optional.of(skin);
+    }
+
+    private static WebRequest request(){
+        return (WebRequest) RequestCycle.get().getRequest();
+    }
+
+    private static WebResponse response(){
+        return (WebResponse)RequestCycle.get().getResponse();
     }
 
 }

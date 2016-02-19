@@ -1,8 +1,14 @@
 .page-header.navbar {
-    background: red;
+    background: #e74c3c;
+}
+
+.page-header.navbar .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:hover {
+    background-color: #c0392b;
 }
 
 .logo-default {
-    content:url("http://imgur.com/SZ8Cm.jpg");
+    content: url("/showcase/resources/custom/img/red-logo.png");
     height: 45px;
+    top: -11px;
+    position: absolute;
 }
