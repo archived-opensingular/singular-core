@@ -73,13 +73,13 @@ public class InstanceValidationContext {
     }
 
     protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
-        return !MInstances.listAscendants(instance).stream()
+        return !MInstances.listAscendants(instance, true).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
             .anyMatch(Boolean.FALSE::equals);
     }
 
     protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
-        return !MInstances.listAscendants(instance).stream()
+        return !MInstances.listAscendants(instance, true).stream()
             .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
             .anyMatch(Boolean.FALSE::equals);
     }
