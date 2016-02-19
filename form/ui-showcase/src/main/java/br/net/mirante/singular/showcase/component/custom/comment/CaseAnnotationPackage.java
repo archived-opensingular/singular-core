@@ -24,7 +24,7 @@ public class CaseAnnotationPackage extends SPackage {
 
         id = pedido.addCampoComposto("id");
         id.asAtrBasic().label("Identificador");
-        id.addCampoInteger("Número");
+        id.addCampoInteger("number");
         id.as(AtrAnnotation::new).setAnnotated();
 
         cliente = pedido.addCampoComposto("Cliente");
