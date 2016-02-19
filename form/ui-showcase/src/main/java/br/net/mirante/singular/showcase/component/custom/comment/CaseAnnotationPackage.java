@@ -13,6 +13,9 @@ public class CaseAnnotationPackage extends SPackage {
 
     /*
      * Observe que as anotações só estão disponíveis quando devidamente configuradas no contexto.
+     *
+     * Quando em modo de edição, as anotações estão em modo de leitura,
+     * já quando em modo de visualização, o caso contrário.
      */
 
     @Override
