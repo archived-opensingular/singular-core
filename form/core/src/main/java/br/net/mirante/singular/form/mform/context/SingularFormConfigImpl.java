@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.context;
 
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
-public abstract class SingularFormConfigImpl<K extends UIComponentMapper> implements InternalSingularFormConfig<K> {
+public abstract class SingularFormConfigImpl implements InternalSingularFormConfig {
 
     private ServiceRegistry serviceRegistry;
 

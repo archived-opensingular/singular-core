@@ -4,6 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -12,7 +15,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -26,14 +29,21 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
 @SuppressWarnings("serial")
 class ListContent extends Content implements SingularWicketContainer<ListContent, Void> {
 
-    final static List<FormVO> formTypes;
+    private List<FormVO> formTypes;
 
-    static {
-        formTypes = TemplateRepository.create().getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
-    }
+    @Inject
+    @Named("showcaseDictionaryLoader")
+    ShowcaseDictionaryLoader showcaseDictionaryLoader;
 
     public ListContent(String id) {
         super(id, false, true);
+    }
+
+    private List<FormVO> getFormTypes() {
+        if (formTypes == null) {
+            formTypes = showcaseDictionaryLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+        }
+        return formTypes;
     }
 
     @Override
@@ -50,13 +60,13 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
                     @Override
                     public long size() {
-                        return formTypes.size();
+                return getFormTypes().size();
                     }
 
                     @Override
                     public Iterator<? extends FormVO> iterator(int first, int count,
                             String sortProperty, boolean ascending) {
-                        return formTypes.iterator();
+                return getFormTypes().iterator();
                     }
                 };
 

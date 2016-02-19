@@ -1,5 +1,7 @@
 package br.net.mirante.singular.form.spring;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -26,5 +28,27 @@ class SpringFormUtil {
             throw new SingularFormException("ApplicationContext ainda não foi configurado (null)");
         }
         return applicationContext;
+    }
+
+    /**
+     * Verificar se o nome do bean foi configurado. Ou seja, se o bean foi
+     * carregado via Spring.
+     */
+    public static String checkBeanName(NamedBean bean) {
+        if (StringUtils.isBlank(bean.getBeanName())) {
+            throw new SingularFormException("O nome do bean no spring não foi configurado para a classe " + bean.getClass().getName()
+                    + ". Verifique se o bean foi corretamente registrado no Spring antes de ser utilizado.");
+        }
+        return bean.getBeanName();
+    }
+
+    public static String erroMsg(NamedBean bean, String msg) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        if (bean.getBeanName() != null) {
+            sb.append("bean=").append(bean.getBeanName()).append("; ");
+        }
+        sb.append("class=").append(bean.getClass()).append("]: ").append(msg);
+        return msg.toString();
     }
 }

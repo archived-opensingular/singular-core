@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
@@ -45,8 +46,8 @@ import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository.TemplateEntry;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader.TemplateEntry;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.FormVO;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -79,6 +80,10 @@ public class CrudContent extends Content
     @Inject
     FileDao filePersistence;
 
+    @Inject
+    @Named("showcaseDictionaryLoader")
+    ShowcaseDictionaryLoader dictionaryLoader;
+
     private ExampleDataDTO currentModel;
 
     public CrudContent(String id, StringValue pType) {
@@ -89,7 +94,7 @@ public class CrudContent extends Content
     private void setActiveTemplate(StringValue pType) {
         if (!pType.isEmpty()) {
             String strType = pType.toString();
-            TemplateEntry t = TemplateRepository.create().findEntryByType(strType);
+            TemplateEntry t = dictionaryLoader.findEntryByType(strType);
             selectedTemplate = new FormVO(t);
         } else {
             selectedTemplate = new FormVO(null, null);
@@ -135,7 +140,7 @@ public class CrudContent extends Content
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private DropDownChoice setUpTemplatesOptions() {
-        List<SelectOption> options = TemplateRepository.create().getEntries().stream()
+        List<SelectOption> options = dictionaryLoader.getEntries().stream()
             .map(t -> new SelectOption(t.getDisplayName(), new FormVO(t)))
             .collect(Collectors.toList());
 
@@ -305,7 +310,7 @@ public class CrudContent extends Content
     }
 
     private String getDefinicao(String typeName) {
-        final SPackage pacote = TemplateRepository.create().loadType(typeName, typeName).getPacote();
+        final SPackage pacote = dictionaryLoader.loadType(typeName, typeName).getPacote();
         StringBuilder definicaoOutput = new StringBuilder();
         pacote.debug(definicaoOutput);
         return definicaoOutput.toString();

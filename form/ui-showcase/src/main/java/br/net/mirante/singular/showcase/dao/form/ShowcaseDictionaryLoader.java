@@ -4,12 +4,14 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
+
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryLoader;
-import br.net.mirante.singular.form.mform.SDictionaryRefByLoader;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.spring.SpringDictionaryLoader;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
@@ -19,51 +21,45 @@ import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurricul
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
 import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
 
-public class TemplateRepository extends SDictionaryLoader<String> {
+public class ShowcaseDictionaryLoader extends SpringDictionaryLoader<String> {
 
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
-    public static TemplateRepository create() {
-        return novoTemplate();
-    }
-
-    private static TemplateRepository novoTemplate() {
-        TemplateRepository novo = new TemplateRepository();
-        novo.add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
-        novo.add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
-        novo.add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
-        novo.add(SPackagePeticaoCanabidiol.class, SPackagePeticaoCanabidiol.NOME_COMPLETO);
+    public ShowcaseDictionaryLoader() {
+        add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
+        add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
+        add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
+        add(SPackagePeticaoCanabidiol.class, SPackagePeticaoCanabidiol.NOME_COMPLETO);
 
         for (ShowCaseGroup group : new ShowCaseTable().getGroups()) {
             for (ShowCaseItem item : group.getItens()) {
                 String itemName = group.getGroupName() + " - " + item.getComponentName();
                 for (CaseBase c : item.getCases()) {
                     if (c.getSubCaseName() == null) {
-                        novo.add(itemName, c.getCaseType());
+                        add(itemName, c);
                     } else {
-                        novo.add(itemName + " - " + c.getSubCaseName(), c.getCaseType());
+                        add(itemName + " - " + c.getSubCaseName(), c);
                     }
                 }
             }
         }
-        return novo;
     }
 
     private void add(Class<? extends SPackage> packageClass, String typeName) {
-        SDictionary d = SDictionary.create();
-        d.loadPackage(packageClass);
-        add(d.getType(typeName));
+        String simpleName = StringUtils.defaultIfBlank(StringUtils.substringAfterLast(typeName, "."), typeName);
+        add(typeName, simpleName, () -> {
+            SDictionary d = SDictionary.create();
+            d.loadPackage(packageClass);
+            return d.getType(typeName);
+        });
     }
 
-    public void add(SType<?> type) {
-        add(type.getSimpleName(), type);
+    private void add(String displayName, CaseBase c) {
+        add(c.getTypeName(), displayName, () -> c.getCaseType());
     }
 
-    public void add(String displayName, SType<?> type) {
-        ShowcaseDicionaryRef ref = new ShowcaseDicionaryRef(type.getName());
-        type.getDictionary().setSerializableDictionarySelfReference(ref);
-
-        entries.put(type.getName(), new TemplateEntry(displayName, type));
+    private void add(String typeName, String displayName, Supplier<SType<?>> typeSupplier) {
+        entries.put(typeName, new TemplateEntry(displayName, typeSupplier));
     }
 
     @Override
@@ -73,10 +69,6 @@ public class TemplateRepository extends SDictionaryLoader<String> {
 
     public Collection<TemplateEntry> getEntries() {
         return entries.values();
-    }
-
-    private TemplateEntry get(String name) {
-        return entries.get(name);
     }
 
     public TemplateEntry findEntryByType(String type) {
@@ -91,11 +83,11 @@ public class TemplateRepository extends SDictionaryLoader<String> {
     public static class TemplateEntry {
 
         private final String displayName;
-        private final SType<?> type;
+        private final Supplier<SType<?>> typeSupplier;
 
-        public TemplateEntry(String displayName, SType<?> type) {
+        public TemplateEntry(String displayName, Supplier<SType<?>> typeSupplier) {
             this.displayName = displayName;
-            this.type = type;
+            this.typeSupplier = typeSupplier;
         }
 
         public String getDisplayName() {
@@ -103,23 +95,11 @@ public class TemplateRepository extends SDictionaryLoader<String> {
         }
 
         public SType<?> getType() {
-            return type;
+            return typeSupplier.get();
         }
 
         public SDictionary getDictionary() {
-            return type.getDictionary();
-        }
-    }
-
-    final static class ShowcaseDicionaryRef extends SDictionaryRefByLoader<String> {
-
-        ShowcaseDicionaryRef(String typeName) {
-            super(typeName);
-        }
-
-        @Override
-        public SDictionaryLoader<String> getDictionaryLoader() {
-            return TemplateRepository.create();
+            return getType().getDictionary();
         }
     }
 }

@@ -3,7 +3,9 @@ package br.net.mirante.singular.showcase.view.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import br.net.mirante.singular.showcase.view.skin.SkinOptions;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -12,10 +14,7 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
-import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
+import org.apache.wicket.markup.head.*;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,14 +28,17 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public abstract class Template extends WebPage {
 
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
+    private SkinOptions option;
 
     @Override
     protected void onInitialize() {
+        this.option = SkinOptions.op();
+
         super.onInitialize();
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody")
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
-        queue(new Header("_Header", withMenu(), withTopAction(), withSideBar()));
+        queue(new Header("_Header", withMenu(), withTopAction(), withSideBar(), option));
 //        queue(new WebMarkupContainer("_Menu"));
         queue(withMenu() ? new Menu("_Menu") : new WebMarkupContainer("_Menu"));
         queue(configureContent("_Content"));
@@ -53,6 +55,13 @@ public abstract class Template extends WebPage {
         for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
+
+        setSkin(response);
+    }
+
+    private void setSkin(IHeaderResponse response) {
+        Optional<SkinOptions.Skin> skin = option.currentSkin();
+        if(skin.isPresent()){   response.render(skin.get().ref);    }
     }
 
     protected boolean withTopAction() {
@@ -115,4 +124,5 @@ public abstract class Template extends WebPage {
             });
         }
     }
+
 }
