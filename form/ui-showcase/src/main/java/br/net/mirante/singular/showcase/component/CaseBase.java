@@ -68,6 +68,10 @@ public class CaseBase implements Serializable {
         }
     }
 
+    public String getTypeName() {
+        return getPackage().getName() + ".testForm"; 
+    }
+    
     public SType<?> getCaseType() {
         if(caseType == null){
             SDictionary dicionario = SDictionary.create();

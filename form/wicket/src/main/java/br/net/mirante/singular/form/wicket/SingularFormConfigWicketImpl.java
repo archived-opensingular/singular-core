@@ -7,11 +7,10 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.context.SingularFormConfigImpl;
 
 
-public class SingularFormConfigWicketImpl extends SingularFormConfigImpl<IWicketComponentMapper> implements SingularFormConfigWicket {
+public class SingularFormConfigWicketImpl extends SingularFormConfigImpl implements SingularFormConfigWicket {
 
     private UIBuilderWicket buildContext = new UIBuilderWicket();
 
-    @Override
     public void setCustomMappers(Map<Class<? extends SType>, Class<IWicketComponentMapper>> customMappers) {
         if (customMappers != null) {
             for (Map.Entry<Class<? extends SType>, Class<IWicketComponentMapper>> entry : customMappers.entrySet()) {

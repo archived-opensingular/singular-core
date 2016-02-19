@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.wicket.ClassAttributeModifier;
 import org.apache.wicket.Component;
@@ -29,9 +30,11 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SDictionaryRef;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -46,8 +49,8 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     private FlowMetadataFacade flowMetadataFacade;
 
     @Inject
-    private SDocumentFactory documentFactory;
-
+    @Named("bamFilterformConfig")
+    private SFormConfig<String> singularFormConfig;
 
     private final IModel<C> config;
     private final IModel<PortletContext> context;
@@ -114,12 +117,25 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
         }
     }
 
+    private SType<?> createPortletFilterType() {
+        SType<?> type = new FilterPackageFactory(config.getObject().getFilterConfigs(), singularFormConfig.getServiceRegistry(),
+                context.getObject().getProcessDefinitionCode())
+                .createFilterPackage();
+        return type;
+    }
+
     private void buildFilters() {
-        final SingularFormPanel panel = new SingularFormPanel("singularFormPanel", documentFactory.getDocumentFactoryRef()) {
+        final SingularFormPanel<?> panel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
-            protected SType<?> getTipo() {
-                return new FilterPackageFactory(config.getObject().getFilterConfigs(),
-                        getServiceRegistry(), context.getObject().getProcessDefinitionCode()).createFilterPackage();
+            protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
+                SType<?> type = createPortletFilterType();
+                type.getDictionary().setSerializableDictionarySelfReference( new SDictionaryRef() {
+                    @Override
+                    public SDictionary retrieveDictionary() {
+                        return PortletPanel.this.createPortletFilterType().getDictionary();
+                    }
+                });
+                return type;
             }
         };
 
