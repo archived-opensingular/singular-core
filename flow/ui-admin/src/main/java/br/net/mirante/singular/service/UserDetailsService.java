@@ -25,7 +25,7 @@ import br.net.mirante.singular.persistence.entity.Actor;
 @Transactional(readOnly = true)
 public class UserDetailsService extends BaseDAO implements org.springframework.security.core.userdetails.UserDetailsService, UserDetailsContextMapper {
 
-    @Value("#{singularAdmin['springsecurity.username.prefix']}")
+    @Value("${springsecurity.username.prefix}")
     private String usernamePrefix;
 
     @Override
