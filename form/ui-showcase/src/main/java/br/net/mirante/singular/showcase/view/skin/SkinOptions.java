@@ -1,17 +1,17 @@
 package br.net.mirante.singular.showcase.view.skin;
 
+import javax.servlet.http.Cookie;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
-
-import javax.servlet.http.Cookie;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -80,9 +80,7 @@ public class SkinOptions implements Serializable{
 
     private static Optional<Skin> skinInCookie(Cookie cookie) {
         if(cookie == null || StringUtils.isBlank(cookie.getValue())) return Optional.empty();
-        Skin skin = Skin.valueOf(cookie.getValue());
-        if(skin == null) return Optional.empty();
-        return Optional.of(skin);
+        return Optional.of(Skin.valueOf(cookie.getValue()));
     }
 
     private static WebRequest request(){
