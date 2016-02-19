@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -29,7 +31,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
-import br.net.mirante.singular.showcase.dao.form.TemplateRepository;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.template.Content;
 
@@ -53,7 +54,8 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private ExampleDataDAO dao;
 
     @Inject
-    private SDocumentFactory documentFactory;
+    @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
 
     private boolean enableAnnotation;
 
@@ -94,12 +96,12 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         return form;
     }
 
-    private SingularFormPanel buildSingularBasePanel() {
-        singularFormPanel = new SingularFormPanel("singular-panel", documentFactory.getDocumentFactoryRef()) {
+    private SingularFormPanel<String> buildSingularBasePanel() {
+        singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
 
             @Override
-            protected SType<?> getTipo() {
-                return TemplateRepository.create().loadType(typeName, typeName);
+            protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
+                return singularFormConfig.getDictionaryLoader().loadType(typeName, typeName);
             }
 
             @Override

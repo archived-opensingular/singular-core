@@ -22,6 +22,10 @@ public class AmPieChartBuilder extends AmChartBuilder<AmPieChartBuilder> {
         return writeField("marginTop", value);
     }
 
+    public AmPieChartBuilder minRadius(Number value) {
+        return writeField("minRadius", value);
+    }
+
     public AmPieChartBuilder balloonText(String value) {
         return writeField("balloonText", value);
     }

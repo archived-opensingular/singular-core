@@ -89,7 +89,11 @@ public class FormSerializationUtil {
     }
 
     final static SDictionaryRef verificarDicionaryRef(SInstance instance) {
-        Optional<SDictionaryRef> dicionaryRef = instance.getDictionary().getSerializableDictionarySelfReference();
+        return verificarDicionaryRef(instance.getDictionary(), instance);
+    }
+
+    private final static SDictionaryRef verificarDicionaryRef(SDictionary dicionary, SInstance instance) {
+        Optional<SDictionaryRef> dicionaryRef = dicionary.getSerializableDictionarySelfReference();
         if (! dicionaryRef.isPresent()) {
             throw new SingularFormException("Não foi configurado o dicionaryRef no dicionário da instância, o que impedirá a "
                     + "serialização/deserialização do mesmo.(ver " + SDictionaryRef.class.getName()

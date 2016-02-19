@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
  * @param <K>
  *            tipo do mapper que o builder utiliza
  */
-public interface SingularFormContext<K extends UIComponentMapper> {
+public interface SingularFormContext {
 
     public ServiceRegistry getServiceRegistry();
 

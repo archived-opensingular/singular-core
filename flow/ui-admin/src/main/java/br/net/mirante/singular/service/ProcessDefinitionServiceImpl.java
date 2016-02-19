@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +23,6 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     @Inject
     private InstanceDAO instanceDAO;
-
-    @Value("#{singularAdmin['retrieve.process.diagram.restful.url']}")
-    private String retrieveProcessDiagramRestURL;
 
     @Override
     @Transactional
