@@ -1,14 +1,15 @@
 if( window.Annotation == undefined){
-    window.Annotation = function (target_id, this_id, open_modal_id, comment, approved){
-        this.init = function (target_id, this_id, open_modal_id, comment, approved){
+    window.Annotation = function (target_id, this_id, open_modal_id, comment, approved, readOnly){
+        this.init = function (target_id, this_id, open_modal_id, comment, approved, readOnly){
             this.target_id = target_id;
             this.this_id = this_id;
             this.open_modal_id = open_modal_id;
             this.comment = comment;
             this.approved = approved;
+            this.readOnly = readOnly;
             this.retry = false;
         },
-        this.init(target_id, this_id, open_modal_id, comment, approved);
+        this.init(target_id, this_id, open_modal_id, comment, approved, readOnly);
     }
 
     window.Annotation.prototype = {
@@ -30,6 +31,7 @@ if( window.Annotation == undefined){
             this.toggle_container = this.create_toggle_container();
             this.target_component/*.find('h3:first')*/.append(this.toggle_container);
             if(this.is_blank()) {   this.this_component.hide(); }
+            if(this.is_blank() && this.readOnly) {   this.toggle_container.hide(); }
             if(this.this_component.is(':visible') ){
                 this.adjust_height_position();
             }
@@ -110,15 +112,16 @@ if( window.Annotation == undefined){
         }
     };
 
-    window.Annotation.create_or_update = function(target_id, this_id, open_modal_id, comment, approved){
+    window.Annotation.create_or_update = function(target_id, this_id, open_modal_id,
+                                                  comment, approved, readOnly){
         var this_component = $(this_id)
         var target_component = $(target_id)
         if(this_component && this_component.data('ctl')){
             var ctl = this_component.data('ctl');
-            ctl.init(target_id, this_id, open_modal_id, comment, approved);
+            ctl.init(target_id, this_id, open_modal_id, comment, approved, readOnly);
             ctl.build();
         }else{
-            new Annotation(target_id, this_id, open_modal_id, comment, approved).build();
+            new Annotation(target_id, this_id, open_modal_id, comment, approved, readOnly).build();
         }
     };
 

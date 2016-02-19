@@ -217,8 +217,9 @@ public class AnnotationComponent extends Panel {
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
                     "'#"+openModalButton.getMarkupId()+"'," +
-                    "`"+textModel.getObject()+"`," +
-                    ""+approvedModel.getObject()+"" +
+                    "`"+textModel.getObject()+"`, " +
+                    " "+approvedModel.getObject()+", " +
+                    " "+context.getViewMode().isEdition()+" "+
                 ");\n" +
                 "});\n";
     }
