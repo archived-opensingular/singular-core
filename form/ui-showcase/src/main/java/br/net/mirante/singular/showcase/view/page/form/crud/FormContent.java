@@ -110,7 +110,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
                 String xml = currentModel.getXml();
                 if (StringUtils.isBlank(xml)) {
-                    return super.createInstance(tipo, documentFactory);
+                    return documentFactory.createInstance(tipo);
                 } else {
                     SInstance instance = MformPersistenciaXML.fromXML(tipo, xml, documentFactory);
                     MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());

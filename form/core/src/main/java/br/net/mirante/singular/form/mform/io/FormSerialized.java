@@ -3,8 +3,8 @@ package br.net.mirante.singular.form.mform.io;
 import java.io.Serializable;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.SDictionaryRef;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.util.xml.MElement;
 
@@ -16,15 +16,15 @@ import br.net.mirante.singular.form.util.xml.MElement;
  */
 public final class FormSerialized implements Serializable {
 
-    private final SDictionaryRef dictionaryRef;
-    private final SDocumentFactoryRef sDocumentFactoryRef;
+    private final RefSDictionary dictionaryRef;
+    private final RefSDocumentFactory sDocumentFactoryRef;
     private final String rootType;
     private final MElement xml, annotations;
     private String focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
 
-    public FormSerialized(String rootType, MElement xml, MElement annotations, SDictionaryRef dictionaryRef,
-            SDocumentFactoryRef sDocumentFactoryRef) {
+    public FormSerialized(String rootType, MElement xml, MElement annotations, RefSDictionary dictionaryRef,
+            RefSDocumentFactory sDocumentFactoryRef) {
         this.dictionaryRef = dictionaryRef;
         this.sDocumentFactoryRef = sDocumentFactoryRef;
         this.rootType = rootType;
@@ -58,11 +58,11 @@ public final class FormSerialized implements Serializable {
         this.services = services;
     }
 
-    public SDictionaryRef getDictionaryRef() {
+    public RefSDictionary getDictionaryRef() {
         return dictionaryRef;
     }
 
-    public SDocumentFactoryRef getsDocumentFactoryRef() {
+    public RefSDocumentFactory getsDocumentFactoryRef() {
         return sDocumentFactoryRef;
     }
 }

@@ -31,7 +31,7 @@ import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
@@ -129,9 +129,9 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
             @Override
             protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
                 SType<?> type = createPortletFilterType();
-                type.getDictionary().setSerializableDictionarySelfReference( new SDictionaryRef() {
+                type.getDictionary().setSerializableDictionarySelfReference( new RefSDictionary() {
                     @Override
-                    public SDictionary retrieveDictionary() {
+                    public SDictionary retrieve() {
                         return PortletPanel.this.createPortletFilterType().getDictionary();
                     }
                 });

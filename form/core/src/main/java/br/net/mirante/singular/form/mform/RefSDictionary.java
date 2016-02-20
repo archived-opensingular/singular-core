@@ -1,0 +1,21 @@
+package br.net.mirante.singular.form.mform;
+
+import br.net.mirante.singular.form.util.SerializableReference;
+
+/**
+ * Representa uma referência serializável a um dicionário. Deve ser derivado de
+ * modo que ao ser deserializado seja capaz de recuperar ou recontruir o
+ * dicionário. OS métodos mais comuns seria recriar o dicionário do zero ou
+ * recuperar de algum cache estátivo em memória.
+ *
+ * @author Daniel C. Bordin
+ */
+public abstract class RefSDictionary extends SerializableReference<SDictionary> {
+
+    public RefSDictionary() {
+    }
+
+    public RefSDictionary(SDictionary dictionary) {
+        super(dictionary);
+    }
+}

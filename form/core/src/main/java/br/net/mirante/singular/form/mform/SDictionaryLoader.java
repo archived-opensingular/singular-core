@@ -26,12 +26,12 @@ public abstract class SDictionaryLoader<KEY extends Serializable> {
     public final Optional<SDictionary> loadDictionary(KEY dictionaryId) {
         Optional<SDictionary> d = loadDictionaryImpl(Objects.requireNonNull(dictionaryId));
         if (d.isPresent() && !d.get().getSerializableDictionarySelfReference().isPresent()) {
-            SDictionaryRef ref = createDictionaryRef(dictionaryId);
+            RefSDictionary ref = createDictionaryRef(dictionaryId);
             if (ref == null) {
                 throw new SingularFormException(getClass().getName() + " devolveu um dicionário para o id=" + dictionaryId
                         + ", mas não configurou SDictionary.setSerializableDictionarySelfReference(), "
                         + "o que impedirá a serialização de instâncias desse dicionário. Recomenda-se usar "
-                        + SDictionaryRefByLoader.class.getName() + " ou implementar createDictionaryRef()");
+                        + RefSDictionaryByLoader.class.getName() + " ou implementar createDictionaryRef()");
             } else {
                 d.get().setSerializableDictionarySelfReference(ref);
             }
@@ -39,12 +39,12 @@ public abstract class SDictionaryLoader<KEY extends Serializable> {
         return d;
     }
 
-    protected abstract SDictionaryRef createDictionaryRef(KEY dictionaryId);
+    protected abstract RefSDictionary createDictionaryRef(KEY dictionaryId);
 
     /**
      * Implementa a efetiva recuperação do dicionário. O dicionário retornado
      * deve configurar
-     * {@link SDictionary#setSerializableDictionarySelfReference(SDictionaryRef)}
+     * {@link SDictionary#setSerializableDictionarySelfReference(RefSDictionary)}
      * .
      *
      * @param dictionatyId

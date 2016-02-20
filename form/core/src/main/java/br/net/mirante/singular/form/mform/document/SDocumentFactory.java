@@ -47,7 +47,7 @@ public abstract class SDocumentFactory {
      * posteriomente recupere a referência a fábrica a atual, que em geral não
      * faz sentido ser serializada em sim.
      */
-    public abstract SDocumentFactoryRef getDocumentFactoryRef();
+    public abstract RefSDocumentFactory getDocumentFactoryRef();
 
     /**
      * Retorna o registro de serviços para busca de serviços pelo documento que

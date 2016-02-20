@@ -9,11 +9,11 @@ import java.util.Objects;
  *
  * @author Daniel C. Bordin
  */
-public abstract class SDictionaryRefByLoader<KEY extends Serializable> extends SDictionaryRef {
+public abstract class RefSDictionaryByLoader<KEY extends Serializable> extends RefSDictionary {
 
     private final KEY dictionatyId;
 
-    public SDictionaryRefByLoader(KEY dictionatyId) {
+    public RefSDictionaryByLoader(KEY dictionatyId) {
         this.dictionatyId = Objects.requireNonNull(dictionatyId);
     }
 
@@ -23,7 +23,7 @@ public abstract class SDictionaryRefByLoader<KEY extends Serializable> extends S
     }
 
     @Override
-    public final SDictionary retrieveDictionary() {
+    public final SDictionary retrieve() {
         SDictionaryLoader<KEY> loader = getDictionaryLoader();
         return loader.loadDictionaryOrException(dictionatyId);
     }

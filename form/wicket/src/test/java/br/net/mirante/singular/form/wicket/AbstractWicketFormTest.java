@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket;
 import org.junit.Before;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
 
 public abstract class AbstractWicketFormTest {
 
@@ -12,9 +12,9 @@ public abstract class AbstractWicketFormTest {
     @Before
     public void setUpDicionario() {
         dicionario = SDictionary.create();
-        dicionario.setSerializableDictionarySelfReference(new SDictionaryRef() {
+        dicionario.setSerializableDictionarySelfReference(new RefSDictionary() {
             @Override
-            public SDictionary retrieveDictionary() {
+            public SDictionary retrieve() {
                 throw new RuntimeException("Não deveria ter chamado. Era apenas para cumprir tabela.");
             }
         });

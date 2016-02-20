@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SDictionaryLoader;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -81,22 +81,22 @@ public class FormSerializationUtil {
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
         }
 
-        SDictionaryRef dicionaryRef = verificarDicionaryRef(root);
+        RefSDictionary dicionaryRef = verificarDicionaryRef(root);
         FormSerialized fs = new FormSerialized(root.getType().getName(), xml, annotations, dicionaryRef,
                 root.getDocument().getDocumentFactoryRef());
         serializeServices(document, fs);
         return fs;
     }
 
-    final static SDictionaryRef verificarDicionaryRef(SInstance instance) {
+    final static RefSDictionary verificarDicionaryRef(SInstance instance) {
         return verificarDicionaryRef(instance.getDictionary(), instance);
     }
 
-    private final static SDictionaryRef verificarDicionaryRef(SDictionary dicionary, SInstance instance) {
-        Optional<SDictionaryRef> dicionaryRef = dicionary.getSerializableDictionarySelfReference();
+    private final static RefSDictionary verificarDicionaryRef(SDictionary dicionary, SInstance instance) {
+        Optional<RefSDictionary> dicionaryRef = dicionary.getSerializableDictionarySelfReference();
         if (! dicionaryRef.isPresent()) {
             throw new SingularFormException("Não foi configurado o dicionaryRef no dicionário da instância, o que impedirá a "
-                    + "serialização/deserialização do mesmo.(ver " + SDictionaryRef.class.getName()
+                    + "serialização/deserialização do mesmo.(ver " + RefSDictionary.class.getName()
                     + " e SDicionary.setSerializableDictionarySelfReference()).", instance);
         }
         return dicionaryRef.get();
@@ -144,7 +144,7 @@ public class FormSerializationUtil {
         if (fs.getDictionaryRef() == null) {
             throw new SingularFormException("O DicionaryRef não foi serializado");
         }
-        SDictionary d = fs.getDictionaryRef().getDictionary();
+        SDictionary d = fs.getDictionaryRef().get();
         if (d == null) {
             throw new SingularFormException(
                     "O DicionaryRef '" + fs.getDictionaryRef().getClass().getName() + "' retornou null para o dicionário");

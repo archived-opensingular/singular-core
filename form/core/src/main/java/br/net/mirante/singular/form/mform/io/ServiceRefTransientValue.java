@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.io;
 
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 
 /**
  * Faz referência para um serviço que não deverá ser serializado, ou seja, o
@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.ServiceRef;
  *
  * @author Daniel C. Bordin
  */
-public class ServiceRefTransientValue<T> implements ServiceRef<T> {
+public class ServiceRefTransientValue<T> implements RefService<T> {
 
     private final transient T value;
 

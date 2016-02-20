@@ -16,13 +16,13 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -161,13 +161,13 @@ public class TesteFormSerializationUtil {
         SInstance instancia = dicionary.getType("teste.endereco").novaInstancia();
 
         instancia.getDocument().bindLocalService("A", String.class,
-            ServiceRef.of("AA"));
+            RefService.of("AA"));
         SInstance instancia2 = testSerializacao(instancia);
         assertEquals("AA", instancia2.getDocument().lookupService("A", String.class));
 
         // Testa itens não mantido entre serializações
         instancia.getDocument().bindLocalService("B", String.class,
-            ServiceRef.ofToBeDescartedIfSerialized("BB"));
+            RefService.ofToBeDescartedIfSerialized("BB"));
         instancia2 = serializarEDeserializar(instancia);
         assertNull(instancia2.getDocument().lookupService("B", String.class));
 
@@ -300,16 +300,16 @@ public class TesteFormSerializationUtil {
     }
 
     public static SDictionary createSerializableTestDictionary(ConfiguradorDicionarioTeste setupCode) {
-        SDictionaryRef ref = new SDictionaryRef() {
+        RefSDictionary ref = new RefSDictionary() {
             @Override
-            public SDictionary retrieveDictionary() {
+            public SDictionary retrieve() {
                 SDictionary novo = SDictionary.create();
                 setupCode.setup(novo.createNewPackage("teste"));
                 novo.setSerializableDictionarySelfReference(this);
                 return novo;
             }
         };
-        return ref.getDictionary();
+        return ref.get();
     }
 
     public interface ConfiguradorDicionarioTeste extends Serializable {

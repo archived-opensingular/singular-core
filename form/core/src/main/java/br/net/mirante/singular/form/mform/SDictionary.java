@@ -21,7 +21,7 @@ public class SDictionary implements ITypeContext {
      * Refência a si próprio que pode ser serializada. Pode ser null. É
      * configurada pelo {{@link SDictionaryLoader} se o mesmo der suporte.
      */
-    private SDictionaryRef serializableDictionarySelfReference;
+    private RefSDictionary serializableDictionarySelfReference;
 
     private SDictionary() {
     }
@@ -167,7 +167,7 @@ public class SDictionary implements ITypeContext {
      * recriando-o (nova instância) ou recuperando de algum cache em memória
      * (ex. referência estáticas).
      */
-    public final Optional<SDictionaryRef> getSerializableDictionarySelfReference() {
+    public final Optional<RefSDictionary> getSerializableDictionarySelfReference() {
         return Optional.ofNullable(serializableDictionarySelfReference);
     }
 
@@ -177,7 +177,7 @@ public class SDictionary implements ITypeContext {
      * recriando-o (nova instância) ou recuperando de algum cache em memória
      * (ex. referência estáticas).
      */
-    public final void setSerializableDictionarySelfReference(SDictionaryRef serializableDictionarySelfReference) {
+    public final void setSerializableDictionarySelfReference(RefSDictionary serializableDictionarySelfReference) {
         this.serializableDictionarySelfReference = serializableDictionarySelfReference;
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SDictionaryLoader;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
+import br.net.mirante.singular.form.mform.RefSDictionary;
 
 /**
  * Loader de dicionário baseado no Spring. Espera que o mesmo será um bean do
@@ -26,8 +26,8 @@ public abstract class SpringDictionaryLoader<KEY extends Serializable> extends S
     private String springBeanName;
 
     @Override
-    protected SDictionaryRef createDictionaryRef(KEY dictionaryId) {
-        return new SpringDictionaryRef<KEY>(SpringFormUtil.checkBeanName(this), dictionaryId);
+    protected RefSDictionary createDictionaryRef(KEY dictionaryId) {
+        return new SpringRefSDictionary<KEY>(SpringFormUtil.checkBeanName(this), dictionaryId);
     }
 
     @Override
@@ -45,18 +45,18 @@ public abstract class SpringDictionaryLoader<KEY extends Serializable> extends S
         return springBeanName;
     }
 
-    final static class SpringDictionaryRef<KEY extends Serializable> extends SDictionaryRef {
+    final static class SpringRefSDictionary<KEY extends Serializable> extends RefSDictionary {
 
         private final String springBeanName;
         private final KEY dictionaryId;
 
-        private SpringDictionaryRef(String springBeanName, KEY dictionaryId) {
+        private SpringRefSDictionary(String springBeanName, KEY dictionaryId) {
             this.springBeanName = springBeanName;
             this.dictionaryId = dictionaryId;
         }
 
         @Override
-        public SDictionary retrieveDictionary() {
+        public SDictionary retrieve() {
             SDictionaryLoader<KEY> loader = SpringFormUtil.getApplicationContext().getBean(springBeanName, SDictionaryLoader.class);
             return loader.loadDictionaryOrException(dictionaryId);
         }

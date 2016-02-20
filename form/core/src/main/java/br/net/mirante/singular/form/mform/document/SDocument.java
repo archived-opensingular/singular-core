@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -84,7 +84,7 @@ public class SDocument {
      * Registra a persistência temporária de anexos. A persistência temporária
      * guarda os anexos em quanto o documento não é saldo.
      */
-    public void setAttachmentPersistenceTemporaryHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistenceTemporaryHandler(RefService<IAttachmentPersistenceHandler> ref) {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
@@ -93,7 +93,7 @@ public class SDocument {
      * anexos salvos anteriormente e no momento de salvar o anexos que estavam
      * na persitência temporária.
      */
-    public void setAttachmentPersistencePermanentHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistencePermanentHandler(RefService<IAttachmentPersistenceHandler> ref) {
         bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
 
     }
@@ -110,7 +110,7 @@ public class SDocument {
         IAttachmentPersistenceHandler ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
+            setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
         }
         return ref;
     }
@@ -155,7 +155,7 @@ public class SDocument {
     }
 
     /** USO INTERNO. */
-    public SDocumentFactoryRef getDocumentFactoryRef() {
+    public RefSDocumentFactory getDocumentFactoryRef() {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 
@@ -229,14 +229,14 @@ public class SDocument {
      * Registar um serviço com o nome da classe informada. O provider pode ser
      * uma classe derivada da registerClass.
      */
-    public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
+    public <T> void bindLocalService(Class<T> registerClass, RefService<? extends T> provider) {
         registry.bindLocalService(registerClass, provider);
     }
 
     /**
      * Registar um serviço com o nome informado.
      */
-    public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<? extends T> provider) {
+    public <T> void bindLocalService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
         registry.bindLocalService(serviceName, registerClass, provider);
     }
 

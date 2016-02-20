@@ -12,9 +12,8 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -48,7 +47,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      */
     private boolean annotationEnabled = false;
 
-    private SDocumentFactoryRef documentFactoryRef;
+    private RefSDocumentFactory documentFactoryRef;
 
     private transient SFormConfig<KEY> singularFormConfig;
 
@@ -92,8 +91,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      * @return instancia criada e populada
      */
     protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
-        SDocument novo = documentFactory.create(tipo);
-        return novo.getRoot();
+        return documentFactory.createInstance(tipo);
     }
 
     /**
