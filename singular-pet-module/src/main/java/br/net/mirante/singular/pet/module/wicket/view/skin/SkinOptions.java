@@ -76,7 +76,7 @@ public class SkinOptions implements Serializable{
 
     private static Optional<Skin> skinInCookie(Cookie cookie) {
         if(cookie == null || StringUtils.isBlank(cookie.getValue())) return Optional.empty();
-        return Optional.of(skinMap.get(cookie.getValue()));
+        return Optional.ofNullable(skinMap.get(cookie.getValue()));
     }
 
     private static WebRequest request(){
