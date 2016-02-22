@@ -12,9 +12,9 @@
 
     <util:properties id="admin" location="classpath:/admin-config.properties"/>
 
+    <context:component-scan base-package="br.net.mirante.singular"/>
     <import resource="conf/database.xml"/>
     <import resource="conf/cache.xml"/>
-    <context:component-scan base-package="br.net.mirante.singular"/>
 
     <bean id="uiAdminWicketFilterContext" class="br.net.mirante.singular.showcase.wicket.UIAdminWicketFilterContext"/>
 
@@ -28,17 +28,17 @@
 
     <bean id="springServiceRegistry" class="br.net.mirante.singular.form.spring.SpringServiceRegistry"/>
 
-    <bean id="showcaseDictionaryLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader"/>
-    
+    <bean id="showcaseTypeLoader" class="br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader"/>
+
 	<bean id="formConfigWithoutDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
-        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+        <property name="typeLoader" ref="showcaseTypeLoader"/>
 	</bean>
 	
 	<bean id="showcaseDatabaseDocumentFactory" 
 		  class="br.net.mirante.singular.showcase.view.page.form.crud.services.ShowcaseDocumentFactory"/>
 
-	<bean id="formConfigWithDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig">
-        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+	<bean id="formConfigWithDatabase" class="br.net.mirante.singular.form.spring.SpringFormConfig" >
+        <property name="typeLoader" ref="showcaseTypeLoader"/>
         <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	</bean>
 

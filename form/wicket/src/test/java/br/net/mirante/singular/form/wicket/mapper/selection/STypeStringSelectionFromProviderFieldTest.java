@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.document.SDocument;
@@ -56,7 +56,7 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService("fruitProvider", MOptionsProvider.class, ServiceRef.of(provider));
+        document.bindLocalService("fruitProvider", MOptionsProvider.class, RefService.of(provider));
         
         buildPage();
         
@@ -76,7 +76,7 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
         
         MOptionsProvider provider = createProviderWithOptions(referenceOptions);
         SDocument document = page.getCurrentInstance().getDocument();
-        document.bindLocalService(MOptionsProvider.class, ServiceRef.of(provider));
+        document.bindLocalService(MOptionsProvider.class, RefService.of(provider));
         buildPage();
         
         driver.assertEnabled(formField(form, "favoriteFruit"));

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 /**
@@ -38,8 +38,8 @@ public abstract class SpringSDocumentFactory extends SDocumentFactory implements
      * deserialização.
      */
     @Override
-    public SDocumentFactoryRef getDocumentFactoryRef() {
-        return new SpringSDocumentFactoryRef(SpringFormUtil.checkBeanName(this));
+    public RefSDocumentFactory getDocumentFactoryRef() {
+        return new SpringRefSDocumentFactory(this);
     }
 
     @Override

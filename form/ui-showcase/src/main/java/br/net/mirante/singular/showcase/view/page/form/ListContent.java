@@ -15,7 +15,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -32,8 +32,8 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     private List<FormVO> formTypes;
 
     @Inject
-    @Named("showcaseDictionaryLoader")
-    ShowcaseDictionaryLoader showcaseDictionaryLoader;
+    @Named("showcaseTypeLoader")
+    ShowcaseTypeLoader showcaseTypeLoader;
 
     public ListContent(String id) {
         super(id, false, true);
@@ -41,7 +41,7 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
 
     private List<FormVO> getFormTypes() {
         if (formTypes == null) {
-            formTypes = showcaseDictionaryLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
+            formTypes = showcaseTypeLoader.getEntries().stream().map(t -> new FormVO(t)).collect(Collectors.toList());
         }
         return formTypes;
     }

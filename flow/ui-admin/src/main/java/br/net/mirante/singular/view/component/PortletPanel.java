@@ -30,11 +30,10 @@ import br.net.mirante.singular.bamclient.portlet.PortletContext;
 import br.net.mirante.singular.bamclient.portlet.PortletQuickFilter;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import br.net.mirante.singular.form.FilterPackageFactory;
-import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.SDictionaryRef;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
@@ -125,17 +124,17 @@ public class PortletPanel<C extends PortletConfig> extends Panel {
     }
 
     private void buildFilters() {
+
         final SingularFormPanel<?> panel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
-            protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
-                SType<?> type = createPortletFilterType();
-                type.getDictionary().setSerializableDictionarySelfReference( new SDictionaryRef() {
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
+                RefType refType = new RefType() {
                     @Override
-                    public SDictionary retrieveDictionary() {
-                        return PortletPanel.this.createPortletFilterType().getDictionary();
+                    protected SType<?> retrieve() {
+                        return PortletPanel.this.createPortletFilterType();
                     }
-                });
-                return type;
+                };
+                return singularFormConfig.getDocumentFactory().createInstance(refType);
             }
         };
 

@@ -4,17 +4,23 @@ import java.util.Objects;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 
 /**
  * <p>
- * Constroi novos documentos ou intancias já configurando-os com os serviços e
+ * Constroi novos documentos ou instâncias já configurando-os com os serviços e
  * ligações necessárias. Cada sistema deve prover ao menos uma implementação de
- * fábrica de acordo com suas necessidades.
+ * fábrica de acordo com suas necessidades ou usar
+ * {@link SDocumentFactory#empty()}.
+ * </p>
+ * >p> As instâncias criadas já estarão preparadas para serialização se
+ * necessário (ver {@link FormSerializationUtil#checkIfSerializable(SInstance)}
+ * ).
  * </p>
  * <p>
  * O método {@link #setupDocument(SDocument)} deve ser implementando com as
  * configurações necessárias pela aplicação. Na maior parte dos casos
- * provavelmente será utilizada a class
+ * provavelmente será utilizada a classe
  * {@link br.net.mirante.singular.form.spring.SpringSDocumentFactory}.
  * </p>
  *
@@ -23,16 +29,24 @@ import br.net.mirante.singular.form.mform.SType;
 public abstract class SDocumentFactory {
 
     /**
-     * Cria um novo documento configurado pela fábrica e cuja a raiz é do tipo
-     * informado.
+     * Cria um nova instancia configurada pela fábrica e já preparada para
+     * serialização se necessário (ver
+     * {@link FormSerializationUtil#checkIfSerializable(SInstance)}).
      */
-    public final SDocument create(SType<?> rootType) {
-        return createInstance(rootType).getDocument();
+    public final SInstance createInstance(RefType rootType) {
+        SInstance instance = createIntanceWithoutSetup(rootType);
+        setupDocument(instance.getDocument());
+        return instance;
     }
 
-    /**
-     * Cria um nova instancia configurada pela fábrica.
-     */
+    private final SInstance createIntanceWithoutSetup(RefType rootType) {
+        SInstance instance = Objects.requireNonNull(rootType).get().novaInstancia();
+        instance.getDocument().setRootRefType(rootType);
+        instance.getDocument().setDocumentFactory(this);
+        return instance;
+    }
+
+    @Deprecated
     public final <T extends SInstance> T createInstance(SType<T> rootType) {
         T instance = Objects.requireNonNull(rootType).novaInstancia();
         SDocument document = instance.getDocument();
@@ -44,10 +58,10 @@ public abstract class SDocumentFactory {
     /**
      * Retorna uma referência serializável a fábrica atual, de modo que a mesma
      * possa ser serializada (provavelmente durante uma tela de edição) e
-     * posteriomente recupere a referência a fábrica a atual, que em geral não
+     * posteriomente recupere a referência à fábrica a atual, que em geral não
      * faz sentido ser serializada em sim.
      */
-    public abstract SDocumentFactoryRef getDocumentFactoryRef();
+    public abstract RefSDocumentFactory getDocumentFactoryRef();
 
     /**
      * Retorna o registro de serviços para busca de serviços pelo documento que
@@ -67,4 +81,12 @@ public abstract class SDocumentFactory {
      * e outros parâmetros do mesmo.
      */
     protected abstract void setupDocument(SDocument document);
+
+    /**
+     * Fábrica de conveniência que não faz nenhuma configuração na instância ou
+     * documento ao criá-los.
+     */
+    public static final SDocumentFactory empty() {
+        return new SDocumentFactoryEmpty();
+    }
 }

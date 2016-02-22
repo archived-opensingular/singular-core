@@ -2,7 +2,9 @@ package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
+import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
@@ -16,6 +18,8 @@ import br.net.mirante.singular.form.mform.document.SDocument;
 public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<SList<I>> implements ICompositeType {
 
     private E tipoElementos;
+    private Integer minimumSize;
+    private Integer maximumSize;
 
     @SuppressWarnings("unchecked")
     public STypeLista() {
@@ -29,12 +33,12 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
     public Collection<SType<?>> getContainedTypes() {
         return Collections.singleton(getTipoElementos());
     }
-    
+
     /**
      * Cria a nova instância de lista com o cast para o generic tipo de
      * instancia informado. Se o tipo do conteudo não for compatível dispara
      * exception.
-     *
+     * <p>
      * <pre>
      * MTipoLista&lt;MTipoString> tipoLista = ...
      *
@@ -85,8 +89,49 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
         setTipoElementos((E) tipo);
     }
 
-    /** Retorna o tipo do elementos contido na lista. */
+    /**
+     * Retorna o tipo do elementos contido na lista.
+     */
     public E getTipoElementos() {
         return tipoElementos;
+    }
+
+    public STypeLista<E, I> withMiniumSizeOf(Integer size) {
+        this.minimumSize = size;
+        return this;
+    }
+
+    public STypeLista<E, I> withMaximumSizeOf(Integer size) {
+        this.maximumSize = size;
+        return this;
+    }
+
+    @Override
+    protected void onLoadType(TypeBuilder tb) {
+        super.onLoadType(tb);
+        addInstanceValidator(validatable -> {
+            final Integer minimumSize = validatable.getInstance().getType().minimumSize;
+            if (minimumSize != null && validatable.getInstance().getValue().size() < minimumSize) {
+                validatable.error("A Quantidade mínima de " + getLabel(validatable.getInstance()) + " é " + minimumSize);
+            }
+        });
+        addInstanceValidator(validatable -> {
+            final Integer maximumSize = validatable.getInstance().getType().maximumSize;
+            if (maximumSize != null && validatable.getInstance().getValue().size() > maximumSize) {
+                validatable.error("A Quantidade máxima " + getLabel(validatable.getInstance()) + " é " + maximumSize);
+            }
+        });
+    }
+
+    private String getLabel(SInstance ins) {
+        return Optional.ofNullable(ins.getValorAtributo(SPackageBasic.ATR_LABEL)).orElse("valores");
+    }
+
+    public Integer getMinimumSize() {
+        return minimumSize;
+    }
+
+    public Integer getMaximumSize() {
+        return maximumSize;
     }
 }

@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.document;
 import java.io.Serializable;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 
 /**
  * Service Registry which provides a ḿeans to register and lookup for services.
@@ -16,8 +16,8 @@ public interface ServiceRegistry {
     @SuppressWarnings("serial")
     public static class Pair implements Serializable{
         final public Class<?> type;
-        final public ServiceRef<?> provider;
-        public Pair(Class<?> type, ServiceRef<?> provider) {
+        final public RefService<?> provider;
+        public Pair(Class<?> type, RefService<?> provider) {
             this.type = type;
             this.provider = provider;
         }

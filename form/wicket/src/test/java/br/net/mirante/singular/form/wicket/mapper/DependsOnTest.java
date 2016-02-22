@@ -1,5 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,16 +24,11 @@ import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class DependsOnTest extends AbstractWicketFormTest {
 
-    protected PackageBuilder localPackage;
     protected WicketTester driver;
     protected TestPage page;
     protected FormTester form;
@@ -43,7 +43,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
     }
 
     private void createBaseType() {
-        localPackage = dicionario.createNewPackage("test");
+        PackageBuilder localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
     }
 
@@ -51,8 +51,7 @@ public class DependsOnTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void build() {

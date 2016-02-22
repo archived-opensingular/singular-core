@@ -46,8 +46,8 @@ import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDAO;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader.TemplateEntry;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
 import br.net.mirante.singular.showcase.view.page.form.FormVO;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -81,8 +81,8 @@ public class CrudContent extends Content
     FileDao filePersistence;
 
     @Inject
-    @Named("showcaseDictionaryLoader")
-    ShowcaseDictionaryLoader dictionaryLoader;
+    @Named("showcaseTypeLoader")
+    ShowcaseTypeLoader dictionaryLoader;
 
     private ExampleDataDTO currentModel;
 
@@ -244,6 +244,7 @@ public class CrudContent extends Content
 
     private void addAnnotationEditColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
+                    @Override
                     public String getCssClass() {   return hasAnnotations() ? "" : "hidden";}
                 }
             .appendAction(getMessage("label.table.column.exigencia"),
@@ -328,7 +329,7 @@ public class CrudContent extends Content
     }
 
     private String getDefinicao(String typeName) {
-        final SPackage pacote = dictionaryLoader.loadType(typeName, typeName).getPacote();
+        final SPackage pacote = dictionaryLoader.loadTypeOrException(typeName).getPacote();
         StringBuilder definicaoOutput = new StringBuilder();
         pacote.debug(definicaoOutput);
         return definicaoOutput.toString();

@@ -17,7 +17,7 @@ import br.net.mirante.singular.form.mform.io.ServiceRefTransientValue;
  *
  * @author Daniel C. Bordin
  */
-public interface ServiceRef<T> extends Serializable, Supplier<T> {
+public interface RefService<T> extends Serializable, Supplier<T> {
 
     /**
      * Recupera a referência do serviço desejado. Garantido a disponibilidade
@@ -33,8 +33,8 @@ public interface ServiceRef<T> extends Serializable, Supplier<T> {
      * performance em chamar get() no supplier original.
      */
     @SuppressWarnings("serial")
-    public static <T> ServiceRef<T> cached(ServiceRef<T> supplier) {
-        return new ServiceRef<T>() {
+    public static <T> RefService<T> cached(RefService<T> supplier) {
+        return new RefService<T>() {
 
             private transient T value;
 
@@ -52,8 +52,8 @@ public interface ServiceRef<T> extends Serializable, Supplier<T> {
      * Retorna um novo Supplier que sempre retorna o valor informado.
      */
     @SuppressWarnings("serial")
-    public static <T extends Serializable> ServiceRef<T> of(T value) {
-        return new ServiceRef<T>() {
+    public static <T extends Serializable> RefService<T> of(T value) {
+        return new RefService<T>() {
             @Override
             public T get() {
                 return value;

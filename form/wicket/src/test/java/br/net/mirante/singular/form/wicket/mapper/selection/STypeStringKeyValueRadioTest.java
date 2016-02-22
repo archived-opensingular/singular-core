@@ -36,7 +36,6 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
     protected void setupPage() {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
-        page.setDicionario(dicionario);
         page.enableAnnotation();
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
@@ -63,7 +62,7 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         });
         tipoDeMedia.as(AtrBasic::new).label("Tipo do Arquivo");
 
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void buildPage() {

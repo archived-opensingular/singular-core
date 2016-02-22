@@ -7,7 +7,7 @@ import com.google.common.collect.Multiset;
 
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
@@ -59,7 +59,7 @@ class AttachmentDocumentService {
         AttachmentDocumentService service = document.lookupLocalService(ATTACHMENT_DOCUMENT_SERVICE, AttachmentDocumentService.class);
         if (service == null) {
             service = new AttachmentDocumentService(document);
-            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, ServiceRef.ofToBeDescartedIfSerialized(service));
+            document.bindLocalService(ATTACHMENT_DOCUMENT_SERVICE,AttachmentDocumentService.class, RefService.ofToBeDescartedIfSerialized(service));
         }
         return service;
     }

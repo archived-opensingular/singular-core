@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.spring.SpringDictionaryLoader;
+import br.net.mirante.singular.form.spring.SpringTypeLoader;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseGroup;
@@ -22,11 +22,11 @@ import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurricul
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
 
 
-public class ShowcaseDictionaryLoader extends SpringDictionaryLoader<String> {
+public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 
     private final Map<String, TemplateEntry> entries = new LinkedHashMap<>();
 
-    public ShowcaseDictionaryLoader() {
+    public ShowcaseTypeLoader() {
         add(SPackageCurriculo.class, SPackageCurriculo.TIPO_CURRICULO);
         add(ExamplePackage.class, ExamplePackage.Types.ORDER.name);
         add(SPackagePeticaoGGTOX.class, SPackagePeticaoGGTOX.NOME_COMPLETO);
@@ -64,8 +64,8 @@ public class ShowcaseDictionaryLoader extends SpringDictionaryLoader<String> {
     }
 
     @Override
-    public Optional<SDictionary> loadDictionaryImpl(String typeName) {
-        return Optional.ofNullable(entries.get(typeName)).map(TemplateEntry::getDictionary);
+    protected Optional<SType<?>> loadTypeImpl(String typeName) {
+        return Optional.ofNullable(entries.get(typeName)).map(e -> e.getType());
     }
 
     public Collection<TemplateEntry> getEntries() {
@@ -97,10 +97,6 @@ public class ShowcaseDictionaryLoader extends SpringDictionaryLoader<String> {
 
         public SType<?> getType() {
             return typeSupplier.get();
-        }
-
-        public SDictionary getDictionary() {
-            return getType().getDictionary();
         }
     }
 }
