@@ -1,5 +1,6 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
+import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -10,6 +11,7 @@ public class Header extends Panel {
 
     private boolean withTogglerButton;
     private boolean withSideBar;
+    private SkinOptions option;
 
     public Header(String id) {
         super(id);
@@ -17,10 +19,11 @@ public class Header extends Panel {
         this.withSideBar = false;
     }
 
-    public Header(String id, boolean withTogglerButton, boolean withTopAction, boolean withSideBar) {
+    public Header(String id, boolean withTogglerButton, boolean withTopAction, boolean withSideBar, SkinOptions option) {
         super(id);
         this.withTogglerButton = withTogglerButton;
         this.withSideBar = withSideBar;
+        this.option = option;
     }
 
     @Override
@@ -34,6 +37,6 @@ public class Header extends Panel {
     }
 
     protected TopMenu configureTopMenu(String id) {
-        return new TopMenu(id, withSideBar);
+        return new TopMenu(id, withSideBar, option);
     }
 }

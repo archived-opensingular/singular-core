@@ -32,7 +32,14 @@
             </resource>
         </resources>
     </build>
-
+	
+    <dependencies>
+        <dependency>
+            <groupId>br.net.mirante</groupId>
+            <artifactId>singular-commons</artifactId>
+            <version>0.5.12-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>
