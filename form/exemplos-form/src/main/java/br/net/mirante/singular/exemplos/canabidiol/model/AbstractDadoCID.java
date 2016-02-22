@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model;
+package br.net.mirante.singular.exemplos.canabidiol.model;
 
 public abstract class AbstractDadoCID {
 

@@ -1,5 +1,6 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
+package br.net.mirante.singular.exemplos.canabidiol;
 
+import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -10,7 +11,7 @@ import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
+
 
 @MInfoTipo(nome = "MTipoMedico", pacote = SPackagePeticaoCanabidiol.class)
 public class STypeMedico extends STypeComposite<SIComposite> {

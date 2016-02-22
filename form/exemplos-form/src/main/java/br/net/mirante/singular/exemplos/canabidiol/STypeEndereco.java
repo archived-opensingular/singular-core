@@ -1,5 +1,6 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
+package br.net.mirante.singular.exemplos.canabidiol;
 
+import br.net.mirante.singular.exemplos.SelectBuilder;
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -11,7 +12,7 @@ import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import br.net.mirante.singular.showcase.view.page.form.examples.SelectBuilder;
+
 
 @MInfoTipo(nome = "MTipoEndereco", pacote = SPackagePeticaoCanabidiol.class)
 public class STypeEndereco extends STypeComposite<SIComposite> {
@@ -66,7 +67,7 @@ public class STypeEndereco extends STypeComposite<SIComposite> {
         STypeString nomeUF = estado.addCampoString("nome");
         estado
                 .withSelectionFromProvider(nomeUF,
-                        (MOptionsProvider) optionsInstance ->SelectBuilder.buildEstados(estado)
+                        (MOptionsProvider) optionsInstance -> SelectBuilder.buildEstados(estado)
                 );
 
         STypeComposite<?> cidade = this.addCampoComposto("cidade");
