@@ -1,9 +1,14 @@
 package br.net.mirante.singular.form.wicket;
 
+import java.util.function.Supplier;
+
 import org.junit.Before;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.RefSDictionary;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 
 public abstract class AbstractWicketFormTest {
 
@@ -12,12 +17,16 @@ public abstract class AbstractWicketFormTest {
     @Before
     public void setUpDicionario() {
         dicionario = SDictionary.create();
-        dicionario.setSerializableDictionarySelfReference(new RefSDictionary() {
+    }
+
+    protected static SInstance createIntance(Supplier<SType<?>> typeSupplier) {
+        RefType ref = new RefType() {
             @Override
-            public SDictionary retrieve() {
-                throw new RuntimeException("Não deveria ter chamado. Era apenas para cumprir tabela.");
+            protected SType<?> retrieve() {
+                return typeSupplier.get();
             }
-        });
+        };
+        return SDocumentFactory.empty().createInstance(ref);
     }
 
 }

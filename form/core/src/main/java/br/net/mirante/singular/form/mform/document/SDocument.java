@@ -4,14 +4,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.MTypes;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -50,6 +51,8 @@ public class SDocument {
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
     private Map<Integer, SIAnnotation> annotationMap = new HashMap<>();
+
+    private RefType rootRefType;
 
     private SDocumentFactory documentFactory;
 
@@ -154,7 +157,10 @@ public class SDocument {
         });
     }
 
-    /** USO INTERNO. */
+    /**
+     * USO INTERNO. Retorna a fábrica reponsável pela criação do documento atual
+     * (se tiver sido utilizada uma fábrica ao criar o documento).
+     */
     public RefSDocumentFactory getDocumentFactoryRef() {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
@@ -279,6 +285,21 @@ public class SDocument {
 
     public SIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
     public void annotation(Integer id, SIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
+
+    /**
+     * Referência serializável ao tipo raiz do documento, se o documento tiver
+     * sido criada usando uma referência em vez de diretamente com o tipo.
+     */
+    public final Optional<RefType> getRootRefType() {
+        return Optional.ofNullable(rootRefType);
+    }
+
+    final void setRootRefType(RefType rootRefType) {
+        if (this.rootRefType != null) {
+            throw new SingularFormException("Não pode ser trocado");
+        }
+        this.rootRefType = rootRefType;
+    }
 }
 
 /**

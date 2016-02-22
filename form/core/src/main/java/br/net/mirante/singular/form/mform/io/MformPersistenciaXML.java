@@ -22,6 +22,7 @@ import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.util.xml.MDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -38,35 +39,40 @@ public class MformPersistenciaXML {
     public static final String ATRIBUTO_LAST_ID = "lastId";
 
     /**
-     * Cria uma instância para do tipo informado com o conteúdo persistido no
-     * XML informado.
+     * Cria uma instância não passível de serialização para do tipo com o
+     * conteúdo persistido no XML informado.
      */
     public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString) {
-        return fromXML(tipo, parseXml(xmlString), null);
+        return fromXMLInterno(tipo.novaInstancia(), parseXml(xmlString));
     }
 
     /**
-     * Cria uma instância para do tipo informado com o conteúdo persistido no
-     * XML informado.
-     */
-    public static <T extends SInstance> T fromXML(SType<T> tipo, String xmlString, SDocumentFactory documentFactory) {
-        return fromXML(tipo, parseXml(xmlString), documentFactory);
-    }
-
-    /**
-     * Cria uma instância para do tipo informado com o conteúdo persistido no
-     * XML informado.
+     * Cria uma instância não passível de serialização para do tipo com o
+     * conteúdo persistido no XML informado.
      */
     public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml) {
-        return fromXML(tipo, xml, null);
+        return fromXMLInterno(tipo.novaInstancia(), xml);
     }
 
     /**
-     * Cria uma instância para do tipo informado com o conteúdo persistido no
-     * XML informado.
+     * Cria uma instância passível de serialização para o tipo referenciado e a
+     * factory de documento informada.
      */
-    public static <T extends SInstance> T fromXML(SType<T> tipo, MElement xml, SDocumentFactory documentFactory) {
-        T novo = documentFactory == null ? tipo.novaInstancia() : documentFactory.createInstance(tipo);
+    public static <T extends SInstance> T fromXML(RefType refType, String xmlString, SDocumentFactory documentFactory) {
+        return fromXML(refType, parseXml(xmlString), documentFactory);
+    }
+
+    /**
+     * Cria uma instância passível de serialização para o tipo referenciado e a
+     * factory de documento informada.
+     */
+    public static <T extends SInstance> T fromXML(RefType refType, MElement xml, SDocumentFactory documentFactory) {
+        SInstance novo = documentFactory.createInstance(refType);
+        return (T) fromXMLInterno(novo, xml);
+    }
+
+    /** Preenche a instância criada com o xml fornecido. */
+    private static <T extends SInstance> T fromXMLInterno(T novo, MElement xml) {
         Integer lastId = 0;
         if(xml !=  null) {  lastId = xml.getInteger("@" + ATRIBUTO_LAST_ID); }
 
@@ -144,7 +150,8 @@ public class MformPersistenciaXML {
 
     /**
      * Gera uma string XML representando a instância de forma apropriada para
-     * persitência. Já trata escapes de caracteres especiais dentro dos valores.
+     * persitência permanente (ex: para armazenamento em banco de dados). Já
+     * trata escapes de caracteres especiais dentro dos valores.
      */
     public static Optional<String> toStringXML(SInstance instancia) {
         MElement xml = toXML(instancia);
@@ -155,6 +162,11 @@ public class MformPersistenciaXML {
         return new PersistenceBuilderXML().withPersistNull(false).toXML(instancia);
     }
 
+    /**
+     * Gera uma string XML representando os dados da instância e o atributos de
+     * runtime para persistência temporária (provavelemnte temporariamente
+     * durante a tela de edição).
+     */
     public static MElement toXMLPreservingRuntimeEdition(SInstance instancia) {
         return new PersistenceBuilderXML().withPersistNull(true).withPersistAttributes(true).toXML(instancia);
     }

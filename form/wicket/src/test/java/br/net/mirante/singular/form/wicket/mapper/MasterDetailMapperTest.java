@@ -34,22 +34,19 @@ public class MasterDetailMapperTest extends AbstractWicketFormTest {
     private STypeCPF cpf;
 
     protected void setup() {
-        createBaseType();
-        loadTestType(baseCompositeField);
-        setupPage();
-    }
-
-    private void createBaseType() {
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
+
+        loadTestType(baseCompositeField);
+
+        setupPage();
     }
 
     private void setupPage() {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void build() {

@@ -41,8 +41,7 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
 
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
 
         page.enableAnnotation();
     }

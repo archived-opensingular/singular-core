@@ -1,7 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -16,12 +15,6 @@ public class SDictionary implements ITypeContext {
     private final SDocument internalDocument = new SDocument();
 
     private ViewResolver viewResolver;
-
-    /**
-     * Refência a si próprio que pode ser serializada. Pode ser null. É
-     * configurada pelo {{@link SDictionaryLoader} se o mesmo der suporte.
-     */
-    private RefSDictionary serializableDictionarySelfReference;
 
     private SDictionary() {
     }
@@ -159,25 +152,5 @@ public class SDictionary implements ITypeContext {
         System.out.println("=======================================================");
         pacotes.forEach(p -> p.debug());
         System.out.println("=======================================================");
-    }
-
-    /**
-     * Obtem referência serializável ao dicionário atual. Essa referência deve
-     * ser capaz, depois de ser deserializada, recarregar o dicionário, ou
-     * recriando-o (nova instância) ou recuperando de algum cache em memória
-     * (ex. referência estáticas).
-     */
-    public final Optional<RefSDictionary> getSerializableDictionarySelfReference() {
-        return Optional.ofNullable(serializableDictionarySelfReference);
-    }
-
-    /**
-     * Define a referência serializável ao dicionário atual. Essa referência
-     * deve ser capaz, depois de ser deserializada, recarregar o dicionário, ou
-     * recriando-o (nova instância) ou recuperando de algum cache em memória
-     * (ex. referência estáticas).
-     */
-    public final void setSerializableDictionarySelfReference(RefSDictionary serializableDictionarySelfReference) {
-        this.serializableDictionarySelfReference = serializableDictionarySelfReference;
     }
 }

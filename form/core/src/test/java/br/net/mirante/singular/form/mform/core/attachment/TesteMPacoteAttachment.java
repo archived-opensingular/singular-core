@@ -209,7 +209,7 @@ public class TesteMPacoteAttachment extends TestCaseForm {
     }
 
     public void testSerializacaoDeserializacaoComAnexo() {
-        SDictionary dicionary = TesteFormSerializationUtil.createSerializableTestDictionary(pacote -> {
+        SIComposite bloco = (SIComposite) TesteFormSerializationUtil.createSerializableTestInstance("teste.bloco", pacote -> {
             STypeComposite<? extends SIComposite> tipoBloco = pacote.createTipoComposto("bloco");
             tipoBloco.addCampo("arquivo1", STypeAttachment.class);
             tipoBloco.addCampo("arquivo2", STypeAttachment.class);
@@ -217,7 +217,6 @@ public class TesteMPacoteAttachment extends TestCaseForm {
         final byte[] conteudo1 = new byte[] { 1, 2, 3 };
         final byte[] conteudo2 = new byte[] { 4, 5, 6 };
 
-        SIComposite bloco = (SIComposite) dicionary.getType("teste.bloco").novaInstancia();
 
         final SIAttachment arquivo1 = bloco.getField("arquivo1", SIAttachment.class);
         final SIAttachment arquivo2 = bloco.getField("arquivo2", SIAttachment.class);

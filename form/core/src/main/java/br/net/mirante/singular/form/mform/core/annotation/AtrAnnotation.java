@@ -16,7 +16,11 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocument;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 /**
@@ -30,7 +34,8 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         super(alvo);
     }
 
-    //TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou não.
+    // TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou
+    // não.
     // Ou seja, não tem mais a view
 
     /**
@@ -123,10 +128,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         }
     }
 
-    private SIAnnotation newAnnotation() {  return type().novaInstancia();}
-
-    private STypeAnnotation type() {
-        return getAlvo().getDictionary().getType(STypeAnnotation.class);
+    private SIAnnotation newAnnotation() {
+        if (!(getAlvo() instanceof SInstance)) {
+            throw new SingularFormException("Apenas é possível adicionar conteúdo de anotações em instâncias.");
+        }
+        SDocument document = ((SInstance) getAlvo()).getDocument();
+        if (document.getRootRefType().isPresent()) {
+            RefType refTypeAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotation.class);
+            if (document.getDocumentFactoryRef() != null) {
+                return (SIAnnotation) document.getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+            }
+            return (SIAnnotation) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+        }
+        return getAlvo().getDictionary().getType(STypeAnnotation.class).novaInstancia();
     }
 
     private void setAnnotation(SIAnnotation annotation) {

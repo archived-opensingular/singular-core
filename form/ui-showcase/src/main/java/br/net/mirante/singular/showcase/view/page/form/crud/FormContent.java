@@ -20,9 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -48,7 +47,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private ViewMode viewMode = ViewMode.EDITION;
 
     private ExampleDataDTO currentModel;
-    private SingularFormPanel singularFormPanel;
+    private SingularFormPanel<String> singularFormPanel;
 
     @Inject
     private ExampleDataDAO dao;
@@ -100,19 +99,16 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
         singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
 
             @Override
-            protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
-                return singularFormConfig.getDictionaryLoader().loadType(typeName, typeName);
-            }
-
-            @Override
-            protected SInstance createInstance(SType<?> tipo, SDocumentFactory documentFactory) {
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 loadOrbuildModel();
+
+                RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
                 String xml = currentModel.getXml();
                 if (StringUtils.isBlank(xml)) {
-                    return documentFactory.createInstance(tipo);
+                    return singularFormConfig.getDocumentFactory().createInstance(refType);
                 } else {
-                    SInstance instance = MformPersistenciaXML.fromXML(tipo, xml, documentFactory);
+                    SInstance instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
                     MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());
                     return instance;
                 }

@@ -29,7 +29,7 @@
 
 		<bean id="bamFilterformConfig" class="br.net.mirante.singular.form.spring.SpringFormConfig">
 			<!-- 
-	        <property name="dictionaryLoader" ref="showcaseDictionaryLoader"/>
+	        <property name="typeLoader" ref="showcaseTypeLoader"/>
 	        <property name="documentFactory" ref="showcaseDatabaseDocumentFactory"/>
 	         -->
 		</bean>

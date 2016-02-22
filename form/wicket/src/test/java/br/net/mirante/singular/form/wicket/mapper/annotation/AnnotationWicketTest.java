@@ -40,7 +40,6 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         driver = new WicketTester(new TestApp());
         page = new TestPage();
         page.setAsVisualizationView();
-        page.setDicionario(dicionario);
         page.enableAnnotation();
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
@@ -61,7 +60,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         annotated4.addCampoString("field341");
         annotated4.as(AtrAnnotation::new).setAnnotated();
 
-        page.setNewInstanceOfType(baseCompositeField.getName());
+        page.setIntance(createIntance(() -> baseCompositeField));
     }
 
     protected void buildPage() {
