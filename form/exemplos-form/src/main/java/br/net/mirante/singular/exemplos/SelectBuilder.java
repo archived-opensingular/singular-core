@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.form.examples;
+package br.net.mirante.singular.exemplos;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;

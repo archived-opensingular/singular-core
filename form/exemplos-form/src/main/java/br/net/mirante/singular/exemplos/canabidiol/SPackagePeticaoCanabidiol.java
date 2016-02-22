@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
+package br.net.mirante.singular.exemplos.canabidiol;
 
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
