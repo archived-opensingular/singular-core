@@ -14,6 +14,24 @@
                         <i class="icon-key"></i> <wicket:message key="top.menu.logout"/>
                     </a>
                 </li>
+                <li>
+                    <hr />
+                </li>
+                <li style="text-align: center;">
+                    <a href="#">
+                        <wicket:message key="top.menu.skins"/>
+                    </a>
+                </li>
+                <li>
+                    <a wicket:id="clear_skin" href="#">
+                        <i class="fa fa-paint-brush"></i> <wicket:message key="top.menu.default_skin"/>
+                    </a>
+                </li>
+                <li wicket:id="skin_options">
+                    <a wicket:id="change_action" href="#">
+                        <i class="fa fa-paint-brush"></i> <span wicket:id="label">skin</span>
+                    </a>
+                </li>
             </ul>
         </li>
         <!-- END USER LOGIN DROPDOWN -->

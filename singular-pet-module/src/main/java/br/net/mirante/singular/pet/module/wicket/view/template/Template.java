@@ -3,7 +3,9 @@ package br.net.mirante.singular.pet.module.wicket.view.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -26,10 +28,14 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public abstract class Template extends PetModulePage {
 
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
+    protected SkinOptions option;
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
+
+        this.option = SkinOptions.op();
+
         add(new Label("pageTitle", new ResourceModel(getPageTitleLocalKey())));
         add(new WebMarkupContainer("pageBody")
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
@@ -50,7 +56,7 @@ public abstract class Template extends PetModulePage {
     }
 
     protected Header configureHeader(String id){
-        return new Header(id, withMenu(), withTopAction(), withSideBar());
+        return new Header(id, withMenu(), withTopAction(), withSideBar(), option);
     }
 
     @Override
@@ -63,6 +69,12 @@ public abstract class Template extends PetModulePage {
         for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
         }
+        setSkin(response);
+    }
+
+    private void setSkin(IHeaderResponse response) {
+        Optional<SkinOptions.Skin> skin = option.currentSkin();
+        if(skin.isPresent()){   response.render(skin.get().ref);    }
     }
 
     protected boolean withTopAction() {
