@@ -16,7 +16,7 @@ AmChartViewResultPanel = (function () {
                 })
             };
             chart.addListener('drawn', rmc);
-            rm();
+            rmc();
         });
     }
 

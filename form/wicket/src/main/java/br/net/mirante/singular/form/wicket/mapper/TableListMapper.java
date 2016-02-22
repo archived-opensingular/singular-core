@@ -50,15 +50,19 @@ public class TableListMapper extends AbstractListaMapper {
             final IModel<SList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
             final MTableListaView view = (MTableListaView) ctx.getView();
             final boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
+            final SList<SInstance> iLista = list.getObject();
+            final SType<?> currentType = ctx.getCurrentInstance().getType();
+
+            addMinimumSize(currentType, iLista);
 
             ctx.setHint(ControlsFieldComponentMapper.NO_DECORATION, true);
             ctx.getContainer().appendComponent(id -> MetronicPanel.MetronicPanelBuilder.build(
-                id,
-                (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
-                (content, form) -> builContent(content, form, list, ctx, view, isEdition),
-                (footer, form) -> {
-                    footer.setVisible(false);
-                }));
+                    id,
+                    (header, form) -> buildHeader(header, form, list, ctx, view, isEdition),
+                    (content, form) -> builContent(content, form, list, ctx, view, isEdition),
+                    (footer, form) -> {
+                        footer.setVisible(false);
+                    }));
         }
     }
 
@@ -82,13 +86,13 @@ public class TableListMapper extends AbstractListaMapper {
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final String markup = ""
-            + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
-            + "      <thead wicket:id='_h'></thead>                                                              "
-            + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
-            + "      <tfoot wicket:id='_ft'>                                                                     "
-            + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
-            + "      </tfoot>                                                                                    "
-            + " </table>                                                                                         ";
+                + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
+                + "      <thead wicket:id='_h'></thead>                                                              "
+                + "      <tbody><wicket:container wicket:id='_e'><tr wicket:id='_r'></tr></wicket:container></tbody> "
+                + "      <tfoot wicket:id='_ft'>                                                                     "
+                + "          <tr><td colspan='99' wicket:id='_fb'></td></tr>                                         "
+                + "      </tfoot>                                                                                    "
+                + " </table>                                                                                         ";
 
         final TemplatePanel template = content.newTemplateTag(tp -> markup);
         template.add($b.onConfigure(c -> c.setVisible(!list.getObject().isEmpty())));
@@ -188,7 +192,7 @@ public class TableListMapper extends AbstractListaMapper {
             }
 
             if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
-                && viewMode.isEdition()) {
+                    && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, row.newCol());
             }
 
