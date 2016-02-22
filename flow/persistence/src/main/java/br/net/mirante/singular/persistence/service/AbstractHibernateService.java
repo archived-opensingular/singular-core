@@ -1,12 +1,17 @@
 package br.net.mirante.singular.persistence.service;
 
+import java.util.Objects;
+
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.persistence.entity.util.SessionLocator;
 import br.net.mirante.singular.persistence.entity.util.SessionWrapper;
 
 public abstract class AbstractHibernateService {
 
-    protected final SessionLocator sessionLocator;
+    protected SessionLocator sessionLocator;
+
+    public AbstractHibernateService() {
+    }
 
     public AbstractHibernateService(SessionLocator sessionLocator) {
         this.sessionLocator = sessionLocator;
@@ -17,6 +22,7 @@ public abstract class AbstractHibernateService {
     }
 
     protected SessionWrapper getSession() {
+        Objects.requireNonNull(getSessionLocator());
         return new SessionWrapper(getSessionLocator().getCurrentSession());
     }
 
