@@ -95,7 +95,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>exemplos-form</artifactId>
-            <version>0.5.11-SNAPSHOT</version>
+            <version>0.5.12-SNAPSHOT</version>
         </dependency>
 
 
