@@ -3,7 +3,6 @@ package br.net.mirante.singular.form.wicket.mapper.annotation;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static com.google.common.collect.Sets.newHashSet;
 
-import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
         import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -32,15 +31,11 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.RepeatingView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -90,7 +85,7 @@ public class AnnotationComponent extends Panel {
 
         this.queue(new Label("target_label",$m.ofValue(title(referenced))));
         this.queue(comment_field = createCommentSnippet());
-        this.queue(approval_field = createApprovalLabel());
+        this.queue(approval_field = createApprovalLabel(approvedModel));
         this.queue(openModalButton = createOpenModalButton(createEditModal()));
         this.queue(createDeleteModalButton());
     }
@@ -106,12 +101,12 @@ public class AnnotationComponent extends Panel {
         });
     }
 
-    private Label createApprovalLabel() {
+    private static Label createApprovalLabel(final MInstanciaValorModel model) {
         return new Label("approval_field", new Model(){
             public Serializable getObject() {
-                if(Boolean.TRUE.equals(approvedModel.getObject())){
+                if(Boolean.TRUE.equals(model.getObject())){
                     return "Aprovado";
-                }else if(Boolean.FALSE.equals(approvedModel.getObject())) {
+                }else if(Boolean.FALSE.equals(model.getObject())) {
                     return "Rejeitado";
                 }
                 return "";
@@ -119,9 +114,9 @@ public class AnnotationComponent extends Panel {
         }){
             protected void onConfigure() {
                 super.onConfigure();
-                if(Boolean.TRUE.equals(approvedModel.getObject())){
+                if(Boolean.TRUE.equals(model.getObject())){
                     this.add(WicketUtils.$b.attr("class", "list-group-item bg-blue bg-font-blue"));
-                }else if(Boolean.FALSE.equals(approvedModel.getObject())) {
+                }else if(Boolean.FALSE.equals(model.getObject())) {
                     this.add(WicketUtils.$b.attr("class", "list-group-item bg-red bg-font-red"));
                 }
             }
@@ -177,6 +172,11 @@ public class AnnotationComponent extends Panel {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 deleteModal.show(target);
             }
+
+            @Override
+            public boolean isVisible() {
+                return context.getViewMode().isVisualization();
+            }
         };
     }
 
@@ -217,8 +217,9 @@ public class AnnotationComponent extends Panel {
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
                     "'#"+openModalButton.getMarkupId()+"'," +
-                    "`"+textModel.getObject()+"`," +
-                    ""+approvedModel.getObject()+"" +
+                    "`"+textModel.getObject()+"`, " +
+                    " "+approvedModel.getObject()+", " +
+                    " "+context.getViewMode().isEdition()+" "+
                 ");\n" +
                 "});\n";
     }
@@ -274,8 +275,13 @@ public class AnnotationComponent extends Panel {
         }
 
         private void createFields(BSContainer modalBody) {
-            createCommentField(modalBody);
-            createApprovedField(modalBody);
+            if(context.getViewMode().isVisualization()){
+                createCommentField(modalBody);
+                createApprovedField(modalBody);
+            }else{
+                modalBody.appendTag("pre", true, "", new Label("modalText",textModel));
+                modalBody.appendTag("div", true, "", createApprovalLabel(approvedModel));
+            }
         }
 
         private void createCommentField(BSContainer modalBody) {

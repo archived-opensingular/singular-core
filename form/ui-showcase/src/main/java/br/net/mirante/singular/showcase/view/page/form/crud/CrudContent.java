@@ -211,6 +211,7 @@ public class CrudContent extends Content
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                     }));
         addAnnotationColumnIfNeeded(builder);
+        addAnnotationEditColumnIfNeeded(builder);
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.delete"),
                     Icone.MINUS, this::deleteSelected))
@@ -236,6 +237,23 @@ public class CrudContent extends Content
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
                             .add(FormPage.MODEL_KEY, model.getObject().getKey())
                             .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
+                            .add(FormPage.ANNOTATION_ENABLED, true));
+                })
+        );
+    }
+
+    private void addAnnotationEditColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
+        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
+                    public String getCssClass() {   return hasAnnotations() ? "" : "hidden";}
+                }
+            .appendAction(getMessage("label.table.column.exigencia"),
+                Icone.PENCIL,
+                (target, model) -> {
+                    setResponsePage(FormPage.class,
+                        new PageParameters()
+                            .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                            .add(FormPage.VIEW_MODE, ViewMode.EDITION)
                             .add(FormPage.ANNOTATION_ENABLED, true));
                 })
         );

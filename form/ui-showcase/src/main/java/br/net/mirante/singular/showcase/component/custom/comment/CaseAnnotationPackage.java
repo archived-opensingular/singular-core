@@ -1,12 +1,11 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
 public class CaseAnnotationPackage extends SPackage {
 
@@ -14,6 +13,9 @@ public class CaseAnnotationPackage extends SPackage {
 
     /*
      * Observe que as anotações só estão disponíveis quando devidamente configuradas no contexto.
+     *
+     * Quando em modo de edição, as anotações estão em modo de leitura,
+     * já quando em modo de visualização, o caso contrário.
      */
 
     @Override
@@ -24,7 +26,7 @@ public class CaseAnnotationPackage extends SPackage {
 
         id = pedido.addCampoComposto("id");
         id.asAtrBasic().label("Identificador");
-        id.addCampoInteger("Número");
+        id.addCampoInteger("numero");
         id.as(AtrAnnotation::new).setAnnotated();
 
         cliente = pedido.addCampoComposto("Cliente");

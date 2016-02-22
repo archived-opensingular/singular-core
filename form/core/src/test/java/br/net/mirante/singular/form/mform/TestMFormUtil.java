@@ -16,11 +16,11 @@ public class TestMFormUtil extends TestCaseForm {
         testarNomeInvalido("*ss");
         testarNomeInvalido("@ss");
         testarNomeInvalido("ss.xx");
+        testarNomeInvalido("sã1");
         MFormUtil.checkNomeSimplesValido("long");
         MFormUtil.checkNomeSimplesValido("int");
         MFormUtil.checkNomeSimplesValido("ss");
         MFormUtil.checkNomeSimplesValido("s1");
-        MFormUtil.checkNomeSimplesValido("sã1");
     }
 
     private static void testarNomeInvalido(String nome) {

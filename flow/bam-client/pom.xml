@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.5.11-SNAPSHOT</version>
+        <version>0.5.12-SNAPSHOT</version>
     </parent>
 
     <artifactId>flow-bam-client</artifactId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.5.11-SNAPSHOT</version>
+            <version>0.5.12-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

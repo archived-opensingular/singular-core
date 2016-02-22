@@ -6,10 +6,14 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
 import com.google.common.base.Throwables;
@@ -22,15 +26,10 @@ public class AppContextInitializer implements ApplicationContextInitializer<Conf
     @Override
     public void initialize(ConfigurableWebApplicationContext applicationContext) {
         try {
-            Resource resource = getResource(applicationContext, FLOW_BAM_CONFIG);
-            Properties props = PropertiesLoaderUtils.loadAllProperties("/"+FLOW_BAM_CONFIG);
-            PropertiesLoaderUtils.fillProperties(props, resource);
+            Properties props = getFlowBamConfig(applicationContext);
 
-            props.put("FLOW_BAM_CONFIG", resource.getURL());
-            
-            resource = getResource(applicationContext, FLOW_BAM_SECURITY);
-            
-            props.put("FLOW_BAM_SECURITY", resource.exists() ? resource.getURL() : null);
+            Resource resource = getResource(applicationContext, FLOW_BAM_SECURITY);
+            props.put("FLOW_BAM_SECURITY", resource.exists() ? resource.getURL() : "");
             
             PropertiesPropertySource ps = new PropertiesPropertySource("singularAdmin", props);
             applicationContext.getEnvironment().getPropertySources().addFirst(ps);
@@ -40,7 +39,7 @@ public class AppContextInitializer implements ApplicationContextInitializer<Conf
         }
     }
 
-    private Resource getResource(ConfigurableWebApplicationContext applicationContext, String fileName) {
+    private static Resource getResource(ApplicationContext applicationContext, String fileName) {
         String singularHome = Optional.ofNullable(System.getenv("SINGULAR_HOME")).orElse(System.getProperty("SINGULAR_HOME"));
         if(StringUtils.isBlank(singularHome)){
             singularHome = "classpath:"+fileName;
@@ -56,4 +55,27 @@ public class AppContextInitializer implements ApplicationContextInitializer<Conf
         return resource;
     }
 
+    public static Properties getFlowBamConfig(ApplicationContext applicationContext){
+        try {
+            Resource resource = getResource(applicationContext, FLOW_BAM_CONFIG);
+            Properties props = PropertiesLoaderUtils.loadAllProperties("/"+FLOW_BAM_CONFIG);
+            PropertiesLoaderUtils.fillProperties(props, resource);
+            return props;
+        } catch (IOException e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    @Component("singularAdmin")
+    public static class SingularProperties extends Properties implements ApplicationContextAware{
+
+        public SingularProperties() {
+            super();
+        }
+        
+        @Override
+        public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+            putAll(getFlowBamConfig(applicationContext));
+        }
+    }
 }

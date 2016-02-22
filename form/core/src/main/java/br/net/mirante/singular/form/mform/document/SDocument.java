@@ -1,20 +1,12 @@
 package br.net.mirante.singular.form.mform.document;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MTypes;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.ServiceRef;
-import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
@@ -49,9 +41,9 @@ public class SDocument {
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
-    private Map<Integer, SIAnnotation> annotationMap = new HashMap<>();
-
     private SDocumentFactory documentFactory;
+
+    private SList annotations;
 
     public SDocument() {}
 
@@ -277,8 +269,38 @@ public class SDocument {
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
-    public SIAnnotation annotation(Integer id) {  return annotationMap.get(id);  }
-    public void annotation(Integer id, SIAnnotation annotation) {   this.annotationMap.put(id, annotation);}
+    public SIAnnotation annotation(Integer id) {
+        if(annotations == null) return null;
+        for(SIAnnotation a : (List<SIAnnotation>)annotations.getValores()){
+            if(id.equals(a.getTargetId())){
+                return a;
+            }
+        }
+        return null;
+    }
+
+    public void setAnnotations(SList annotations) {
+        this.annotations = annotations;
+    }
+
+    private SDictionary dictionary() {
+        return root.getDictionary();
+    }
+
+    private SList newAnnotationList() {
+        return dictionary().newInstance(STypeAnnotationList.class);
+    }
+
+    public SIAnnotation newAnnotation() {
+        createAnnotationsIfNeeded();
+        return (SIAnnotation) annotations.addNovo();
+    }
+
+    private void createAnnotationsIfNeeded() {
+        if(annotations == null) setAnnotations(newAnnotationList());
+    }
+
+    public SList annotations() { return annotations; }
 }
 
 /**

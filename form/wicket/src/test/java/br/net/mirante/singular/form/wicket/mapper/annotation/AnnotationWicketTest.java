@@ -199,7 +199,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
                             "But I never give up. I keep on trying.",
                             true);
 
-        current.as(AtrAnnotation::new).loadAnnotations(Lists.newArrayList(annotation2, annotation4));
+//        current.as(AtrAnnotation::new).loadAnnotations(Lists.newArrayList(annotation2, annotation4));
 
         buildPage();
 

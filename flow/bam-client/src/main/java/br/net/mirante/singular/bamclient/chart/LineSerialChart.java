@@ -25,7 +25,7 @@ public class LineSerialChart extends AbstractSerialChart {
         final List<AmChartGraph> graphs = new ArrayList<>();
         values.forEach(v -> {
             graphs.add(new AmChartGraph()
-                    .balloonText(String.format("[[category]]: <b>[[value]] %s </b>", v.getSuffix()))
+                    .balloonText(String.format("[[title]] em [[category]]: <b>[[value]] %s </b>", v.getSuffix()))
                     .type("smoothedLine")
                     .valueField(v.getPropertyName())
                     .title(v.getTitle())

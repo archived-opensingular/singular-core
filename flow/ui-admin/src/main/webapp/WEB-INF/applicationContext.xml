@@ -10,8 +10,7 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
     
-    <util:properties id="singularAdmin" location="${FLOW_BAM_CONFIG}"/>
-    <context:property-placeholder properties-ref="singularAdmin"/>
+    <context:property-placeholder properties-ref="singularAdmin" />
     
     <import resource="conf/adminDefault.xml"/>
 
