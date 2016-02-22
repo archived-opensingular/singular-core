@@ -16,11 +16,7 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.document.RefType;
-import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 /**
@@ -33,10 +29,6 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     public AtrAnnotation(MAtributoEnabled alvo) {
         super(alvo);
     }
-
-    // TODO: FABS: Deve informar se o campo é anotado/anotável/anotabilizado ou
-    // não.
-    // Ou seja, não tem mais a view
 
     /**
      * Marks this type as annotated
@@ -124,28 +116,14 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
 
     private void createAttributeIfNeeded() {
         if(target().getDocument().annotation(target().getId()) == null){
-            setAnnotation(newAnnotation());
+            newAnnotation();
         }
     }
 
     private SIAnnotation newAnnotation() {
-        if (!(getAlvo() instanceof SInstance)) {
-            throw new SingularFormException("Apenas é possível adicionar conteúdo de anotações em instâncias.");
-        }
-        SDocument document = ((SInstance) getAlvo()).getDocument();
-        if (document.getRootRefType().isPresent()) {
-            RefType refTypeAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotation.class);
-            if (document.getDocumentFactoryRef() != null) {
-                return (SIAnnotation) document.getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
-            }
-            return (SIAnnotation) SDocumentFactory.empty().createInstance(refTypeAnnotation);
-        }
-        return getAlvo().getDictionary().getType(STypeAnnotation.class).novaInstancia();
-    }
-
-    private void setAnnotation(SIAnnotation annotation) {
-        annotation.setTargetId(target().getId());
-        target().getDocument().annotation(target().getId(),annotation);
+        SIAnnotation a = target().getDocument().newAnnotation();
+        a.setTargetId(target().getId());
+        return a;
     }
 
     private void atrValue(AtrRef ref, Object value) {
@@ -164,11 +142,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         if(hasAnnotation()){
             result.add(annotation());
         }
-        gatherAnnottionsFromChildren(result);
+        gatherAnnotationsFromChildren(result);
         return Lists.newArrayList(result);
     }
 
-    private void gatherAnnottionsFromChildren(HashSet<SIAnnotation> result) {
+    private void gatherAnnotationsFromChildren(HashSet<SIAnnotation> result) {
         if(getAlvo() instanceof SIComposite){
             SIComposite target = (SIComposite) getAlvo();
             for(SInstance i : target.getAllFields()){
@@ -190,41 +168,15 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * is referring to.
      * @param annotations to be loaded into the instance.
      */
-    public void loadAnnotations(Iterable<SIAnnotation> annotations) {
-        ImmutableMap<Integer, SIAnnotation> annotationmap = Maps.uniqueIndex(annotations, (x) -> x.getTargetId());
-        loadAnnotations(annotationmap, target());
-    }
-
-    private void loadAnnotations(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
-        Integer thisId = target.getId();
-        if(annotationmap.containsKey(thisId)){
-            target.as(AtrAnnotation::new).setAnnotation(annotationmap.get(thisId));
-        }
-        loadAnnotationsForChidren(annotationmap, target);
-    }
-
-    private void loadAnnotationsForChidren(ImmutableMap<Integer, SIAnnotation> annotationmap, SInstance target) {
-        if(target instanceof SIComposite){
-            SIComposite ctarget = (SIComposite) target;
-            for(SInstance child : ctarget.getAllFields()){
-                loadAnnotations(annotationmap, child);
-            }
-        }
+    public void loadAnnotations(SList annotations) {
+        target().getDocument().setAnnotations(annotations);
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
     public SList persistentAnnotations() {
-        List<SIAnnotation> all = allAnnotations();
-        SList sList = newAnnotationList();
-        for(SIAnnotation a: all){
-            SIAnnotation detached = newAnnotation();
-            Value.hydrate(detached, Value.dehydrate(a));
-            sList.addElement(detached);
-        }
-
-        return sList;
+        return ((SInstance)getAlvo()).getDocument().annotations();
     }
 
     private SList newAnnotationList() {

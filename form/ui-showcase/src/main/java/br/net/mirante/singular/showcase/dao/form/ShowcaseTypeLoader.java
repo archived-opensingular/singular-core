@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.exemplos.canabidiol.SPackagePeticaoCanabidiol;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -19,7 +20,7 @@ import br.net.mirante.singular.showcase.component.ShowCaseTable.ShowCaseItem;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackageCurriculo;
 import br.net.mirante.singular.showcase.view.page.form.examples.SPackagePeticaoGGTOX;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.SPackagePeticaoCanabidiol;
+
 
 public class ShowcaseTypeLoader extends SpringTypeLoader<String> {
 

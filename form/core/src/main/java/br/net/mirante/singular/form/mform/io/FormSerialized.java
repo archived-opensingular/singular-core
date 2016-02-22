@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.util.xml.MElement;
  *
  * @author Daniel C. Bordin
  */
-final class FormSerialized implements Serializable {
+public final class FormSerialized implements Serializable {
 
     private final RefSDocumentFactory sDocumentFactoryRef;
     private final RefType refRootType;

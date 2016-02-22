@@ -1,4 +1,4 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol;
+package br.net.mirante.singular.exemplos.canabidiol;
 
 import java.util.HashMap;
 import java.util.Map;

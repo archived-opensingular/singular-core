@@ -1,10 +1,10 @@
-package br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.dao;
+package br.net.mirante.singular.exemplos.canabidiol.dao;
 
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.AbstractDadoCID;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CapituloCID;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.CategoriaCID;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.GrupoCID;
-import br.net.mirante.singular.showcase.view.page.form.examples.canabidiol.model.SubCategoriaCID;
+import br.net.mirante.singular.exemplos.canabidiol.model.AbstractDadoCID;
+import br.net.mirante.singular.exemplos.canabidiol.model.CapituloCID;
+import br.net.mirante.singular.exemplos.canabidiol.model.CategoriaCID;
+import br.net.mirante.singular.exemplos.canabidiol.model.GrupoCID;
+import br.net.mirante.singular.exemplos.canabidiol.model.SubCategoriaCID;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;

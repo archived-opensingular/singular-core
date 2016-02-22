@@ -11,7 +11,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.NamedNodeMap;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -23,6 +22,7 @@ import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.util.xml.MDocument;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -229,17 +229,13 @@ public class MformPersistenciaXML {
         if (xmlAnnotations == null) {
             return;
         }
-        SList<SIAnnotation> iAnnotations = annotationFromXml(instance.getDictionary(), xmlAnnotations);
-        instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
-    }
 
-    /**
-     * Recupera as anotações gravas em um XML para o contexto do dicionário
-     * informado.
-     */
-    private static SList<SIAnnotation> annotationFromXml(SDictionary dictionary, MElement xmlAnnotations) {
-        STypeAnnotationList tipoAnnotation = dictionary.getType(STypeAnnotationList.class);
-        return (SList<SIAnnotation>) MformPersistenciaXML.fromXML(tipoAnnotation, xmlAnnotations);
+        SDocument document = instance.getDocument();
+        RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
+        SList<SIAnnotation> iAnnotations = (SList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
+                document.getDocumentFactoryRef().get());
+
+        instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
     }
 
     /** Gera um XML representando as anotações se existirem. */

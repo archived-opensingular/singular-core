@@ -1,5 +1,8 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.groups.Properties.extractProperty;
+
 import java.util.List;
 
 import org.junit.Before;
@@ -9,10 +12,13 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.groups.Properties.extractProperty;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.mform.io.FormSerialized;
 
 public class STypeAnnotationTest {
     protected static SDictionary dicionario;
@@ -89,14 +95,46 @@ public class STypeAnnotationTest {
                 .containsOnly(null, true);
     }
 
-
-    @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+    @Test public void loadsAnnotationsToAnewObject(){
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        };
+        SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
         SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
-//        instance.as(AtrAnnotation::new).loadAnnotations(persistent);
+        FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
+        SList deserialized = (SList) FormSerializationUtil.toInstance(serialized);
+
+        SIComposite justCreated = baseCompositeField.novaInstancia();
+
+        justCreated.as(AtrAnnotation::new).loadAnnotations(deserialized);
+        SList anotherPersistent = justCreated.as(AtrAnnotation::new).persistentAnnotations();
+        assertThat(extractProperty("text").from(anotherPersistent.getValores()))
+                .containsOnly("Abacate");
+    }
+
+
+    @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        };
+        SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
+
+        asAnnotation(instance, annotated1).annotation().setText("Abacate");
+
+        SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
+        SList deserialized = (SList) FormSerializationUtil.toInstance(serialized);
+        asAnnotation(instance, annotated1).clear();
+        instance.as(AtrAnnotation::new).loadAnnotations(deserialized);
         SList anotherPersistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
     }

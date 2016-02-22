@@ -101,6 +101,16 @@ public class FormSerializationUtil {
                     + "serialização/deserialização do mesmo. " + "A instância deve ser criada usando " + SDocumentFactory.class.getName(),
                     instance);
         }
+        if (document.annotations() != null) {
+            if (!document.annotations().getDocument().getRootRefType().isPresent()) {
+                throw new SingularFormException("Não foi configurado o rootRefType nas anotações da instância, o que impedirá a "
+                        + "serialização/deserialização do mesmo. ", instance);
+            }
+            if (document.annotations().getDocument().getDocumentFactoryRef() == null) {
+                throw new SingularFormException("Não foi configurado o DocumentFactory nas anotações da instância, o que impedirá a "
+                        + "serialização/deserialização do mesmo. ", instance);
+            }
+        }
     }
 
     private static void serializeServices(SDocument document, FormSerialized fs) {
