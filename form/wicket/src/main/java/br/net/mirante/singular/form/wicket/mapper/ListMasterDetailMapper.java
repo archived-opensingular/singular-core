@@ -88,7 +88,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 heading.appendTag("span", new Label("_title", listaLabel));
                 heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(listaLabel.getObject()))));
                 if (viewMode.isEdition() && ((MListMasterDetailView) view).isNewElementEnabled()) {
-                    appendAddButton(heading, modal);
+                    appendAddButton(heading, modal, ctx.getModel());
                 }
             }
 
@@ -258,7 +258,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         });
     }
 
-    protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal) {
+    protected void appendAddButton(BSContainer<?> container, MasterDetailModal modal, IModel<? extends SInstance> m) {
         container
                 .newTemplateTag(t -> ""
                         + "<button"
@@ -266,13 +266,20 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                         + " class='btn btn-success btn-sm pull-right'"
                         + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
                         + "</button>")
-                .add(
-                        new AjaxLink<Void>("_add") {
-                            @Override
-                            public void onClick(AjaxRequestTarget target) {
+                .add(new AjaxLink<Void>("_add") {
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        final SInstance si = m.getObject();
+                        if (si instanceof SList) {
+                            final SList sil = (SList) si;
+                            if (sil.getType().getMaximumSize() != null && sil.getType().getMaximumSize() == sil.size()) {
+                                target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+                            } else {
                                 modal.showNew(target);
                             }
-                        });
+                        }
+                    }
+                });
     }
 
     private static class MasterDetailModal extends BFModalWindow {
