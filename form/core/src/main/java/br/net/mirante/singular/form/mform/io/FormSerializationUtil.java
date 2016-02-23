@@ -70,7 +70,7 @@ public class FormSerializationUtil {
         SInstance root = document.getRoot();
         MElement xml = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root);
         MElement annotations = null;
-        if(root.as(AtrAnnotation::new).hasAnnotation()){
+        if(!root.as(AtrAnnotation::new).allAnnotations().isEmpty()){
             annotations = MformPersistenciaXML.toXMLPreservingRuntimeEdition(root.as(AtrAnnotation::new).persistentAnnotations());
         }
 

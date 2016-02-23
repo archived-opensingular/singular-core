@@ -76,7 +76,8 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
         List<SIAnnotation> all = instance.as(AtrAnnotation::new).allAnnotations();
-        assertThat(extractProperty("text").from(all)).containsOnly("Abacate","ukwatapheya");
+        assertThat(extractProperty("text").from(all))
+                .containsOnly("Abacate",null, "ukwatapheya");
     }
 
     @Test public void returnAllAnnotationsInAPersitentObject(){
