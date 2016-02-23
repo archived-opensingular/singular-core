@@ -1,4 +1,3 @@
-
 package br.net.mirante.singular.ws.client;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,9 +7,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Classe Java de executeTransition complex type.
- * 
+ * <p>
  * <p>O seguinte fragmento do esquema especifica o conteúdo esperado contido dentro desta classe.
- * 
+ * <p>
  * <pre>
  * &lt;complexType name="executeTransition">
  *   &lt;complexContent>
@@ -24,28 +23,26 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "executeTransition", propOrder = {
-    "processAbbreviation",
-    "codProcessInstance",
-    "transitionName"
+        "processAbbreviation",
+        "codProcessInstance",
+        "transitionName",
+        "username"
 })
 public class ExecuteTransition {
 
     protected String processAbbreviation;
     protected Long codProcessInstance;
     protected String transitionName;
+    protected String username;
 
     /**
      * Obtém o valor da propriedade processAbbreviation.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getProcessAbbreviation() {
         return processAbbreviation;
@@ -53,11 +50,9 @@ public class ExecuteTransition {
 
     /**
      * Define o valor da propriedade processAbbreviation.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setProcessAbbreviation(String value) {
         this.processAbbreviation = value;
@@ -65,11 +60,9 @@ public class ExecuteTransition {
 
     /**
      * Obtém o valor da propriedade codProcessInstance.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
+     *
+     * @return possible object is
+     * {@link Long }
      */
     public Long getCodProcessInstance() {
         return codProcessInstance;
@@ -77,11 +70,9 @@ public class ExecuteTransition {
 
     /**
      * Define o valor da propriedade codProcessInstance.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Long }
      */
     public void setCodProcessInstance(Long value) {
         this.codProcessInstance = value;
@@ -89,11 +80,9 @@ public class ExecuteTransition {
 
     /**
      * Obtém o valor da propriedade transitionName.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getTransitionName() {
         return transitionName;
@@ -101,14 +90,19 @@ public class ExecuteTransition {
 
     /**
      * Define o valor da propriedade transitionName.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setTransitionName(String value) {
         this.transitionName = value;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }
