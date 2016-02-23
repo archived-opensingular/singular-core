@@ -6,8 +6,10 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader;
 import br.net.mirante.singular.showcase.view.page.form.examples.ExamplePackage;
 
 //@RunWith(value = Parameterized.class)
@@ -39,17 +41,19 @@ public class SerializationTest {
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
         xmlReader.loadBeanDefinitions(new ClassPathResource("applicationContext.xml"));
         ctx.refresh();
-        ctx.getBean(ShowcaseDictionaryLoader.class);
+        ctx.getBean(ShowcaseTypeLoader.class);
 
-        ShowcaseDictionaryLoader repo = ctx.getBean(ShowcaseDictionaryLoader.class);
+        ShowcaseTypeLoader repo = ctx.getBean(ShowcaseTypeLoader.class);
 //        TemplateRepository.setDefault(TemplateRepository.get());
         ExamplePackage pacote = null;
-        for(ShowcaseDictionaryLoader.TemplateEntry entry: repo.getEntries()){
+        for(ShowcaseTypeLoader.TemplateEntry entry: repo.getEntries()){
             if(entry.getType().getName().equals(ExamplePackage.Types.ORDER.name)){
                 pacote = (ExamplePackage) entry.getType().getPacote();
             }
         }
-        SIComposite order = (SIComposite) repo.loadType(pacote.order.getName(), pacote.order.getName()).novaInstancia();
+
+        RefType refType = repo.loadRefTypeOrException(pacote.order.getName());
+        SIComposite order = (SIComposite) SDocumentFactory.empty().createInstance(refType);
 
         order.setValor(pacote.orderNumber.getSimpleName(),1);
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(order));

@@ -26,8 +26,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -109,12 +109,13 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
     }
 
 
-    private SingularFormPanel buildSingularBasePanel() {
+    private SingularFormPanel<String> buildSingularBasePanel() {
         singularFormPanel = new SingularFormPanel<String>("singularFormPanel", singularFormConfig) {
             @Override
-            protected SType<?> getTipo(SFormConfig<String> singularFormConfig) {
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 String typeName = caseBase.getObject().getCaseType().getName();
-                return singularFormConfig.getDictionaryLoader().loadType(typeName, typeName);
+                RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
+                return singularFormConfig.getDocumentFactory().createInstance(refType);
             }
 
             @Override
@@ -148,7 +149,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
         viewXmlModal.show(target);
     }
 
-    private String getXmlOutput(MElement xml, boolean tabulado) {
+    private static String getXmlOutput(MElement xml, boolean tabulado) {
         if (xml == null) {
             return StringUtils.EMPTY;
         }

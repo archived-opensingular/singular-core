@@ -19,6 +19,7 @@ import org.fest.assertions.core.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
@@ -41,8 +42,9 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         pacote = dicionario.loadPackage(TestPackage.class);
         driver = new WicketTester(new TestApp());
         page = new TestPage();
-        page.setDicionario(dicionario);
-        page.setNewInstanceOfType(TestPackage.TIPO_ATTACHMENT);
+        page.setCurrentInstance((SIComposite) createIntance(() -> {
+            return dicionario.getType(TestPackage.TIPO_ATTACHMENT);
+        }));
         page.build();
         driver.startPage(page);
     }

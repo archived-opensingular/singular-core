@@ -1,16 +1,24 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.groups.Properties.extractProperty;
+
 import java.util.List;
 
-import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
-import br.net.mirante.singular.form.mform.io.FormSerialized;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.groups.Properties.extractProperty;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.mform.io.FormSerialized;
 
 public class STypeAnnotationTest {
     protected static SDictionary dicionario;
@@ -22,11 +30,6 @@ public class STypeAnnotationTest {
     @Before
     public void createDicionario() {
         dicionario = SDictionary.create();
-        dicionario.setSerializableDictionarySelfReference(new SDictionaryRef(){
-            public SDictionary retrieveDictionary() {
-                return dicionario;
-            }
-        });
 
         localPackage = dicionario.createNewPackage("test");
         baseCompositeField = localPackage.createTipoComposto("group");
@@ -93,7 +96,14 @@ public class STypeAnnotationTest {
     }
 
     @Test public void loadsAnnotationsToAnewObject(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        };
+        SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
+
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
         SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
@@ -110,7 +120,13 @@ public class STypeAnnotationTest {
 
 
     @Test public void youCanRePersistTheAnnotationAsMuchAsYouWant(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        RefType ref = new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        };
+        SIComposite instance = (SIComposite) SDocumentFactory.empty().createInstance(ref);
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 

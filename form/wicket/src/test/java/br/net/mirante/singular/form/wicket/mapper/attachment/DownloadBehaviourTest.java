@@ -14,7 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import br.net.mirante.singular.form.mform.SDictionary;
-import br.net.mirante.singular.form.mform.ServiceRef;
+import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentPersistenceHandler;
 import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
@@ -82,7 +82,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
     private IAttachmentRef setupPersistenceFile(String fileName, byte[] content) {
         SDocument document = instance.getDocument();
-        document.setAttachmentPersistencePermanentHandler(ServiceRef.of(persistentHandler));
+        document.setAttachmentPersistencePermanentHandler(RefService.of(persistentHandler));
         return addFile(fileName, content, persistentHandler);
     }
 

@@ -1,9 +1,21 @@
 package br.net.mirante.singular.form.mform.document;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MInstances;
+import br.net.mirante.singular.form.mform.MTypes;
+import br.net.mirante.singular.form.mform.RefService;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
@@ -41,6 +53,8 @@ public class SDocument {
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
+    private RefType rootRefType;
+
     private SDocumentFactory documentFactory;
 
     private SList annotations;
@@ -76,7 +90,7 @@ public class SDocument {
      * Registra a persistência temporária de anexos. A persistência temporária
      * guarda os anexos em quanto o documento não é saldo.
      */
-    public void setAttachmentPersistenceTemporaryHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistenceTemporaryHandler(RefService<IAttachmentPersistenceHandler> ref) {
         bindLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
     }
 
@@ -85,7 +99,7 @@ public class SDocument {
      * anexos salvos anteriormente e no momento de salvar o anexos que estavam
      * na persitência temporária.
      */
-    public void setAttachmentPersistencePermanentHandler(ServiceRef<IAttachmentPersistenceHandler> ref) {
+    public void setAttachmentPersistencePermanentHandler(RefService<IAttachmentPersistenceHandler> ref) {
         bindLocalService(FILE_PERSISTENCE_SERVICE, IAttachmentPersistenceHandler.class, Objects.requireNonNull(ref));
 
     }
@@ -102,7 +116,7 @@ public class SDocument {
         IAttachmentPersistenceHandler ref = lookupLocalService(FILE_TEMPORARY_SERVICE, IAttachmentPersistenceHandler.class);
         if (ref == null) {
             ref = new InMemoryAttachmentPersitenceHandler();
-            setAttachmentPersistenceTemporaryHandler(ServiceRef.of(ref));
+            setAttachmentPersistenceTemporaryHandler(RefService.of(ref));
         }
         return ref;
     }
@@ -146,8 +160,11 @@ public class SDocument {
         });
     }
 
-    /** USO INTERNO. */
-    public SDocumentFactoryRef getDocumentFactoryRef() {
+    /**
+     * USO INTERNO. Retorna a fábrica reponsável pela criação do documento atual
+     * (se tiver sido utilizada uma fábrica ao criar o documento).
+     */
+    public RefSDocumentFactory getDocumentFactoryRef() {
         return documentFactory == null ? null : documentFactory.getDocumentFactoryRef();
     }
 
@@ -221,14 +238,14 @@ public class SDocument {
      * Registar um serviço com o nome da classe informada. O provider pode ser
      * uma classe derivada da registerClass.
      */
-    public <T> void bindLocalService(Class<T> registerClass, ServiceRef<? extends T> provider) {
+    public <T> void bindLocalService(Class<T> registerClass, RefService<? extends T> provider) {
         registry.bindLocalService(registerClass, provider);
     }
 
     /**
      * Registar um serviço com o nome informado.
      */
-    public <T> void bindLocalService(String serviceName, Class<T> registerClass, ServiceRef<? extends T> provider) {
+    public <T> void bindLocalService(String serviceName, Class<T> registerClass, RefService<? extends T> provider) {
         registry.bindLocalService(serviceName, registerClass, provider);
     }
 
@@ -269,6 +286,21 @@ public class SDocument {
         new AttachmentPersistenceHelper(temporary, persistent).doPersistence(root);
     }
 
+    /**
+     * Referência serializável ao tipo raiz do documento, se o documento tiver
+     * sido criada usando uma referência em vez de diretamente com o tipo.
+     */
+    public final Optional<RefType> getRootRefType() {
+        return Optional.ofNullable(rootRefType);
+    }
+
+    final void setRootRefType(RefType rootRefType) {
+        if (this.rootRefType != null) {
+            throw new SingularFormException("Não pode ser trocado");
+        }
+        this.rootRefType = rootRefType;
+    }
+
     public SIAnnotation annotation(Integer id) {
         if(annotations == null) return null;
         for(SIAnnotation a : (List<SIAnnotation>)annotations.getValores()){
@@ -288,6 +320,13 @@ public class SDocument {
     }
 
     private SList newAnnotationList() {
+        if (getRootRefType().isPresent()) {
+            RefType refTypeAnnotation = getRootRefType().get().createSubReference(STypeAnnotationList.class);
+            if (getDocumentFactoryRef() != null) {
+                return (SList) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+            }
+            return (SList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+        }
         return dictionary().newInstance(STypeAnnotationList.class);
     }
 

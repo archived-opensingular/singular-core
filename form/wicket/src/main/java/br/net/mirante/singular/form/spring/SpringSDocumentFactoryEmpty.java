@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.spring;
 
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 
 /**
@@ -14,8 +14,8 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
 
     @Override
-    public SDocumentFactoryRef getDocumentFactoryRef() {
-        return new SDocumentFactoryRefEmpty();
+    public RefSDocumentFactory getDocumentFactoryRef() {
+        return new SpringRefEmptySDocumentFactory();
     }
 
     @Override
@@ -27,10 +27,10 @@ public class SpringSDocumentFactoryEmpty extends SDocumentFactory {
     protected void setupDocument(SDocument document) {
     }
 
-    private static final class SDocumentFactoryRefEmpty extends SDocumentFactoryRef {
+    private static final class SpringRefEmptySDocumentFactory extends RefSDocumentFactory {
 
         @Override
-        protected SDocumentFactory reloadFactory() {
+        protected SDocumentFactory retrieve() {
             return new SpringSDocumentFactoryEmpty();
         }
     }

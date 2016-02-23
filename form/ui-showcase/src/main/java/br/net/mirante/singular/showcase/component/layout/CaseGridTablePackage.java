@@ -28,6 +28,8 @@ public class CaseGridTablePackage extends SPackage {
         final STypeString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes
+                    .withMiniumSizeOf(2)
+                    .withMaximumSizeOf(3)
                     .withView(MTableListaView::new)
                     .as(AtrBasic::new).label("Certificações");
             certificacao

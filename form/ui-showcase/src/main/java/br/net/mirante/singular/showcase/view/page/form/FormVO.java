@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.showcase.dao.form.ShowcaseDictionaryLoader.TemplateEntry;
+import br.net.mirante.singular.showcase.dao.form.ShowcaseTypeLoader.TemplateEntry;
 import br.net.mirante.singular.form.mform.SType;
 
 @SuppressWarnings("serial")

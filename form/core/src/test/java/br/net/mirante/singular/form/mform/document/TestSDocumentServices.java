@@ -36,8 +36,8 @@ public class TestSDocumentServices {
     }
     
     @SuppressWarnings({ "rawtypes", "serial" })
-    private ServiceRef ref(final Object provider) {
-        return new ServiceRef() {
+    private RefService ref(final Object provider) {
+        return new RefService() {
             public Object get() {   return provider;    }
         };
     }

@@ -8,10 +8,10 @@ import org.springframework.beans.factory.NamedBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import br.net.mirante.singular.form.mform.SDictionaryLoader;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.document.TypeLoader;
 
 /**
  * Representa a configuração para funcionamento do formulário.
@@ -24,7 +24,7 @@ public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<K
 
     private SDocumentFactory documentFactory;
 
-    private SDictionaryLoader<KEY> dictionaryLoader;
+    private TypeLoader<KEY> typeLoader;
 
     @Override
     public SDocumentFactory getDocumentFactory() {
@@ -39,15 +39,15 @@ public class SpringFormConfig<KEY extends Serializable> implements SFormConfig<K
     }
 
     @Override
-    public SDictionaryLoader<KEY> getDictionaryLoader() {
-        if (dictionaryLoader == null) {
-            throw new SingularFormException(SpringFormUtil.erroMsg(this, "O atributo dictionaryLoader não foi configurado"));
+    public TypeLoader<KEY> getTypeLoader() {
+        if (typeLoader == null) {
+            throw new SingularFormException(SpringFormUtil.erroMsg(this, "O atributo typeLoader não foi configurado"));
         }
-        return dictionaryLoader;
+        return typeLoader;
     }
 
-    public void setDictionaryLoader(SDictionaryLoader<KEY> dictionaryLoader) {
-        this.dictionaryLoader = dictionaryLoader;
+    public void setTypeLoader(TypeLoader<KEY> typeLoader) {
+        this.typeLoader = typeLoader;
     }
 
     @Override

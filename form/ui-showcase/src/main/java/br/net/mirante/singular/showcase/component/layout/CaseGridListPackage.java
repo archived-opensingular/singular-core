@@ -1,10 +1,10 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
@@ -27,7 +27,10 @@ public class CaseGridListPackage extends SPackage {
         final STypeString atividades = experiencia.addCampoString("atividades");
 
         {
-            experiencias.withView(MPanelListaView::new)
+            experiencias
+                    .withMiniumSizeOf(1)
+                    .withMaximumSizeOf(5)
+                    .withView(MPanelListaView::new)
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")

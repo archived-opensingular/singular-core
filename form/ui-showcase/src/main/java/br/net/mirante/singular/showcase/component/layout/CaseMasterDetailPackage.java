@@ -1,10 +1,10 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
@@ -28,7 +28,10 @@ public class CaseMasterDetailPackage extends SPackage {
 
         {
             //@destacar:bloco
-            experiencias.withView(MListMasterDetailView::new)
+            experiencias
+                    .withMiniumSizeOf(1)
+                    .withMaximumSizeOf(3)
+                    .withView(MListMasterDetailView::new)
             //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia

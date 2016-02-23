@@ -3,37 +3,41 @@ package br.net.mirante.singular.form.mform.io;
 import java.io.Serializable;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.SDictionaryRef;
-import br.net.mirante.singular.form.mform.document.SDocumentFactoryRef;
+import br.net.mirante.singular.form.mform.document.RefSDocumentFactory;
+import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.util.xml.MElement;
 
 /**
- * Objeto transitório para guardar uma versão serilizável de MInstance ou
+ * Objeto transitório para guardar uma versão serializável de MInstance ou
  * MDocument.
  *
  * @author Daniel C. Bordin
  */
 public final class FormSerialized implements Serializable {
 
-    private final SDictionaryRef dictionaryRef;
-    private final SDocumentFactoryRef sDocumentFactoryRef;
-    private final String rootType;
+    private final RefSDocumentFactory sDocumentFactoryRef;
+    private final RefType refRootType;
+    private final String rootTypeName;
     private final MElement xml, annotations;
     private String focusFieldPath;
     private Map<String, ServiceRegistry.Pair> services;
 
-    public FormSerialized(String rootType, MElement xml, MElement annotations, SDictionaryRef dictionaryRef,
-            SDocumentFactoryRef sDocumentFactoryRef) {
-        this.dictionaryRef = dictionaryRef;
+    public FormSerialized(RefType refRootType, String rootTypeName, MElement xml, MElement annotations,
+            RefSDocumentFactory sDocumentFactoryRef) {
+        this.refRootType = refRootType;
+        this.rootTypeName = rootTypeName;
         this.sDocumentFactoryRef = sDocumentFactoryRef;
-        this.rootType = rootType;
         this.xml = xml;
         this.annotations = annotations;
     }
 
-    public String getRootType() {
-        return rootType;
+    public String getRootTypeName() {
+        return rootTypeName;
+    }
+
+    public RefType getRefRootType() {
+        return refRootType;
     }
 
     public String getFocusFieldPath() {
@@ -58,11 +62,7 @@ public final class FormSerialized implements Serializable {
         this.services = services;
     }
 
-    public SDictionaryRef getDictionaryRef() {
-        return dictionaryRef;
-    }
-
-    public SDocumentFactoryRef getsDocumentFactoryRef() {
+    public RefSDocumentFactory getSDocumentFactoryRef() {
         return sDocumentFactoryRef;
     }
 }

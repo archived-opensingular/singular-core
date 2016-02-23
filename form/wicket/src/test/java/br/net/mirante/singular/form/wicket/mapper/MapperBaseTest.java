@@ -32,9 +32,9 @@ public abstract class MapperBaseTest extends AbstractWicketFormTest {
 
     public FormTester startPage(ViewMode viewMode) {
         testPage = new TestPage(new PageParameters().add("viewMode", viewMode));
-        testPage.setDicionario(dicionario);
 
-        SIComposite formInstance = (SIComposite) dicionario.getType(form.getName()).novaInstancia();
+        SIComposite formInstance = (SIComposite) createIntance(() -> form);
+
         assertNotNull(formInstance);
         mockFormValues(formInstance);
         testPage.setCurrentInstance(formInstance);

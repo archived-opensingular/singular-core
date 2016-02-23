@@ -60,6 +60,11 @@ public class BSActionPanel<T> extends Panel {
                 actionConfig.link.add(new WebMarkupContainer(LABEL_ID));
             }
         }
+
+        actionConfig.link.add($b.attr("data-toggle", "tooltip"));
+        actionConfig.link.add($b.attr("data-placement", "bottom"));
+        actionConfig.link.add($b.attr("title", actionConfig.labelModel));
+
         return this;
     }
 
@@ -118,7 +123,7 @@ public class BSActionPanel<T> extends Panel {
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
         protected IModel<String> style;
-        protected boolean withText = true;
+        protected boolean withText = false;
         protected IBiFunction<T, String, MarkupContainer> linkFactory;
 
         public ActionConfig<T> labelModel(IModel<?> labelModel) {

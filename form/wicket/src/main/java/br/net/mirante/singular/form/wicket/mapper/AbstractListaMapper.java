@@ -14,6 +14,8 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
@@ -29,7 +31,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         cell.newTemplateTag(t -> ""
                         + "<button"
                         + " wicket:id='_add'"
-                        + " class='btn btn-success btn-sm " + (footer ? "" : "pull-right" ) + "'"
+                        + " class='btn btn-success btn-sm " + (footer ? "" : "pull-right") + "'"
                         + " style='padding:5px 3px 1px;"
                         + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i class='" + Icone.PLUS + "'></i>"
                         + "</button>"
@@ -88,6 +90,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         public IModel<SList<SInstance>> getModel() {
             return (IModel<SList<SInstance>>) getDefaultModel();
         }
+
         @Override
         protected IItemFactory<SInstance> newItemFactory() {
             IItemFactory<SInstance> factory = super.newItemFactory();
@@ -177,9 +180,25 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final SList<SInstance> lista = modelLista.getObject();
-            lista.addNovo();
-            target.add(form);
-            target.focusComponent(this);
+            if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
+                target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
+            } else {
+                lista.addNovo();
+                target.add(form);
+                target.focusComponent(this);
+            }
+        }
+
+    }
+
+    protected void addMinimumSize(SType<?> currentType, SList<?> list) {
+        if (currentType instanceof STypeLista && list.isEmpty()) {
+            final STypeLista tl = (STypeLista) currentType;
+            if (tl.getMinimumSize() != null) {
+                for (int i = 0; i < tl.getMinimumSize(); i++) {
+                    list.addNovo();
+                }
+            }
         }
     }
 }
