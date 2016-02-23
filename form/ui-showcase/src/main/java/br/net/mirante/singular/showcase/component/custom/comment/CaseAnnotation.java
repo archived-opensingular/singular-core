@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
 import br.net.mirante.singular.showcase.component.custom.MaterialDesignInputMapper;
@@ -20,5 +21,7 @@ public class CaseAnnotation extends CaseBase implements Serializable {
     }
 
     @Override
-    public boolean annotationEnabled() {    return true;    }
+    public WicketBuildContext.AnnotationMode annotation() {
+        return WicketBuildContext.AnnotationMode.EDIT;
+    }
 }

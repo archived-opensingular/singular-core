@@ -45,7 +45,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     /**
      * Permite apresentar anotações em conjunto.
      */
-    private boolean annotationEnabled = false;
+    private WicketBuildContext.AnnotationMode annotation = WicketBuildContext.AnnotationMode.NONE;
 
     private RefSDocumentFactory documentFactoryRef;
 
@@ -110,14 +110,14 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
      */
     private void buildContainer() {
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), buildBodyContainer(), getRootInstance());
-        if(annotationEnabled()){    ctx.enableAnnotation();}
+        ctx.annotation(annotation());
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
-    public boolean annotationEnabled(){return annotationEnabled;};
+    public WicketBuildContext.AnnotationMode annotation(){return annotation;};
 
-    public void enableAnnotation() {this.annotationEnabled = true;}
-    public void disableAnnotation() {this.annotationEnabled = false;}
+//    public void enableAnnotation() {this.annotationEnabled = true;}
+//    public void disableAnnotation() {this.annotationEnabled = false;}
 
     /**
      * Constrói o body container

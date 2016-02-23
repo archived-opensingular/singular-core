@@ -90,7 +90,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if(ctx.isRootContext() && ctx.isAnnotationEnabled()){ //TODO: Fabs: Check is is annotation enabled
+        if(ctx.isRootContext() && ctx.annotation().enabled()){ //TODO: Fabs: Check is is annotation enabled
             ctx.init(this, viewMode);
 
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
@@ -201,7 +201,6 @@ class AnnotationBuilder {
     }
 
     private void addAnnotationComponent(BSGrid ngrid, SInstance instance,  WicketBuildContext ctx) {
-//        Optional<Component> target = new ComponentFinder().find(ctx.getRootContainer().getItems(), instance);
         Optional<Component> target = ctx.getAnnotationTargetFor(instance);
         ngrid.newRow().appendTag("div", true, "",
             (id) -> {
@@ -228,38 +227,3 @@ class AnnotationBuilder {
     }
 
 }
-
-/**
- * Finds a component in the Component tree which targets the criteria SInstance
- */
-/*
-class ComponentFinder {
-
-    Set<BSContainer> searchCache = newHashSet();
-    Optional<Component> result = Optional.empty();
-
-    public Optional<Component> find(RepeatingView children, final SInstance target) {
-        children.visitChildren((x, y) -> {
-            IModel<?> m = x.getDefaultModel();
-            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance){
-                SInstance i = (SInstance) m.getObject();
-                if(i.getId().equals(target.getId())){
-                    System.out.println(i.getId()+" . "+target.getId());
-                    System.out.println("match");
-                    result = Optional.of(x);
-                }
-            }
-            visitChildrenIfAny(target, x);
-        });
-        return result;
-    }
-
-    private void visitChildrenIfAny(SInstance target, Component x) {
-        if(!result.isPresent() && x instanceof BSContainer && !searchCache.contains(x)){
-            RepeatingView items = ((BSContainer) x).getItems();
-            searchCache.add((BSContainer) x);
-            result = find(items, target);
-        }
-    }
-
-}*/

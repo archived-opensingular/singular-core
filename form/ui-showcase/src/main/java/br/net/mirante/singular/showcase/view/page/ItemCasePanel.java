@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -124,7 +125,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             }
 
             @Override
-            public boolean annotationEnabled(){ return caseBase.getObject().annotationEnabled(); }
+            public WicketBuildContext.AnnotationMode annotation(){ return caseBase.getObject().annotation(); }
         };
 
         return singularFormPanel;

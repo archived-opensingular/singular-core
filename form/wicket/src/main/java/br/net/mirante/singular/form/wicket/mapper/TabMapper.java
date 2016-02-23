@@ -31,7 +31,7 @@ public class TabMapper extends DefaultCompostoMapper {
             }
 
             public Collection<Component> toUpdadeOnTab(){
-                if(ctx.getRootContext().isAnnotationEnabled()){
+                if(ctx.getRootContext().annotation().enabled()){
                     return newArrayList(ctx.updateOnRefresh());
                 }
                 return newArrayList();

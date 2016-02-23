@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,7 +47,9 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private final String typeName;
     private ViewMode viewMode = ViewMode.EDITION;
 
+    private WicketBuildContext.AnnotationMode annotation = WicketBuildContext.AnnotationMode.NONE;
     private ExampleDataDTO currentModel;
+
     private SingularFormPanel<String> singularFormPanel;
 
     @Inject
@@ -56,13 +59,11 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
 
-    private boolean enableAnnotation;
-
     public FormContent(String id, StringValue type, StringValue key, StringValue viewMode,
-                       StringValue enableAnnotation) {
+                       StringValue annotation) {
         super(id, false, true);
         if (!viewMode.isNull()) {   this.viewMode = ViewMode.valueOf(viewMode.toString());  }
-        if (!enableAnnotation.isNull()) {   this.enableAnnotation = Boolean.valueOf(enableAnnotation.toString());  }
+        if (!annotation.isNull()) {   this.annotation = WicketBuildContext.AnnotationMode.valueOf(annotation.toString());  }
         this.typeName = type.toString();
         this.key = key.toString();
     }
@@ -120,7 +121,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public boolean annotationEnabled() {    return enableAnnotation;    }
+            public WicketBuildContext.AnnotationMode annotation() {    return annotation;    }
         };
 
         return singularFormPanel;
@@ -273,7 +274,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             public void onConfigure(Component component) {
                 super.onConfigure(component);
 
-                component.setVisible(enableAnnotation && viewMode.isVisualization());
+                component.setVisible(annotation.editable());
             }
         };
     }
