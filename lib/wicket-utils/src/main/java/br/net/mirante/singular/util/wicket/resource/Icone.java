@@ -4,6 +4,7 @@ public enum Icone {
     ARROW_DOWN /*              */("fa fa-arrow-down"),
     BAN /*              */("icon-ban"),
     BRIEFCASE /*        */("icon-briefcase"),
+    BUG /*              */("fa fa-bug"),
     CALENDAR /*         */("icon-calendar"),
     CAMERA /*           */("icon-camera"),
     CARET_SQUARE /*     */("fa fa-caret-square-o-up"),
