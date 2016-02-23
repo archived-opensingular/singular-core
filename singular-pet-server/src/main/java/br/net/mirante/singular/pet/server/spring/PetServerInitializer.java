@@ -26,6 +26,8 @@ import java.util.EnumSet;
  */
 public abstract class PetServerInitializer implements WebApplicationInitializer {
 
+    protected static final String SPRING_MVC_DISPATCHER_SERVLET = "Spring MVC Dispatcher Servlet";
+
     @Override
     public void onStartup(ServletContext ctx) throws ServletException {
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
@@ -55,7 +57,7 @@ public abstract class PetServerInitializer implements WebApplicationInitializer 
 
     protected void addSpringMVCServlet(ServletContext ctx, AnnotationConfigWebApplicationContext applicationContext) {
         //Servlet
-        ServletRegistration.Dynamic dispatcher = ctx.addServlet("Spring MVC Dispatcher Servlet", new DispatcherServlet(applicationContext));
+        ServletRegistration.Dynamic dispatcher = ctx.addServlet(SPRING_MVC_DISPATCHER_SERVLET, new DispatcherServlet(applicationContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping(getSpringMVServletMapping());
     }
