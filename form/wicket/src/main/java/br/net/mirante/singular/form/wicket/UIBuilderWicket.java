@@ -90,9 +90,8 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     public void build(WicketBuildContext ctx, ViewMode viewMode) {
         final IWicketComponentMapper mapper = resolveMapper(ctx.getCurrentInstance());
 
-        if(ctx.isRootContext() && ctx.annotation().enabled()){ //TODO: Fabs: Check is is annotation enabled
+        if(ctx.isRootContext() && ctx.annotation().enabled()){
             ctx.init(this, viewMode);
-
             new AnnotationBuilder(this).build(ctx, viewMode, mapper);
         }else{
             mapper.buildView(ctx.init(this, viewMode));

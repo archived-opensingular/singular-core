@@ -293,13 +293,11 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
     }
 
     public SType<I> with(String valuesExpression) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+        throw new NotImplementedException("Este tipo não implementa o método `with`");
     }
 
     public SType<I> withCode(String pathCampo, IBehavior<I> comportamento) {
-        // TODO implementar
-        throw new NotImplementedException("TODO implementar");
+        throw new NotImplementedException("Este tipo não implementa o método `withCode`");
     }
 
     public SType<I> withValorInicial(Object valor) {

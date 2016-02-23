@@ -22,7 +22,6 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     static <I extends SInstance> SList<I> of(SType<I> tipoElementos) {
         //        MILista<I> lista = new MILista<>();
-        //TODO: FABS: Evaluate this case, sin it impacts in the serialization process.
         SList<I> lista = (SList<I>) tipoElementos.getDictionary().getType(STypeLista.class).novaInstancia();
         lista.setType(tipoElementos.getDictionary().getType(STypeLista.class));
         lista.tipoElementos = tipoElementos;
