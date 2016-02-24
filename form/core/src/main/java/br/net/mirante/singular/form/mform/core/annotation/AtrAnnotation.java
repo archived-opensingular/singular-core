@@ -19,6 +19,8 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * Decorates an Instance as annotated enabling access to its anotations.
  *
@@ -138,28 +140,9 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * @return All annotations on this instance and its children.
      */
     public List<SIAnnotation> allAnnotations() {
-        HashSet<SIAnnotation> result = new HashSet<>();
-        if(hasAnnotation()){
-            result.add(annotation());
-        }
-        gatherAnnotationsFromChildren(result);
-        return Lists.newArrayList(result);
-    }
-
-    private void gatherAnnotationsFromChildren(HashSet<SIAnnotation> result) {
-        if(getAlvo() instanceof SIComposite){
-            SIComposite target = (SIComposite) getAlvo();
-            for(SInstance i : target.getAllFields()){
-                gatterAnnotationsFromChild(result, i);
-            }
-        }
-    }
-
-    private void gatterAnnotationsFromChild(HashSet<SIAnnotation> result, SInstance child) {
-        AtrAnnotation childAs = child.as(AtrAnnotation::new);
-        if(child instanceof SIComposite){
-            result.addAll(childAs.allAnnotations());
-        }
+        SList sList = persistentAnnotations();
+        if(sList == null) return newArrayList();
+        return sList.getValores();
     }
 
     /**

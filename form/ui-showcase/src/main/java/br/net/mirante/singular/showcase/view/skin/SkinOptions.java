@@ -5,6 +5,8 @@ import javax.servlet.http.Cookie;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -24,22 +26,24 @@ public class SkinOptions implements Serializable{
 
     private Skin current = null;
 
-    public enum Skin implements Serializable{
-        RED("Red",CssReferenceHeaderItem.forUrl("resources/custom/css/red.css")),
-        GREEN("Green",CssReferenceHeaderItem.forUrl("resources/custom/css/green.css"));
-
+    public static class Skin implements Serializable{
         public final String name;
         public final CssHeaderItem ref;
 
-        Skin(String name, CssHeaderItem ref){
+        public Skin(String name, CssHeaderItem ref){
             this.name = name;
             this.ref = ref;
         }
+
+        public String name() {return name ;}
+
+        public String toString() {  return name();}
     }
 
-    public static List<Skin> options(){
-        return newArrayList(Skin.values());
-    }
+    private static final ConcurrentHashMap<String, Skin> skinMap = new ConcurrentHashMap<>();
+
+    public static void addSkin(Skin s){  skinMap.put(s.name(), s); }
+    public static List<Skin> options(){ return newArrayList(skinMap.values());}
 
     private SkinOptions(){}
 
@@ -73,7 +77,7 @@ public class SkinOptions implements Serializable{
 
     private static Optional<Skin> skinInCookie(Cookie cookie) {
         if(cookie == null || StringUtils.isBlank(cookie.getValue())) return Optional.empty();
-        return Optional.of(Skin.valueOf(cookie.getValue()));
+        return Optional.ofNullable(skinMap.get(cookie.getValue()));
     }
 
     private static WebRequest request(){

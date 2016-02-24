@@ -120,7 +120,7 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
             input = appendReadOnlyInput(view, ctx.getExternalContainer(), controls, model, labelModel);
         }
 
-        if(ctx.isAnnotationEnabled()){
+        if(ctx.annotation().enabled()){
             ctx.updateAnnotations(input);
         }
 

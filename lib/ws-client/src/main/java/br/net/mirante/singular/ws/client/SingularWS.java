@@ -35,7 +35,9 @@ public interface SingularWS {
         @WebParam(name = "processAbbreviation", targetNamespace = "")
         String processAbbreviation,
         @WebParam(name = "codProcessInstance", targetNamespace = "")
-        Long codProcessInstance);
+        Long codProcessInstance,
+        @WebParam(name = "username", targetNamespace = "")
+        String username);
 
     /**
      * 
@@ -52,7 +54,8 @@ public interface SingularWS {
         @WebParam(name = "codProcessInstance", targetNamespace = "")
         Long codProcessInstance,
         @WebParam(name = "transitionName", targetNamespace = "")
-        String transitionName);
+        String transitionName,
+        @WebParam(name = "username", targetNamespace = "") String username);
 
     /**
      * 
