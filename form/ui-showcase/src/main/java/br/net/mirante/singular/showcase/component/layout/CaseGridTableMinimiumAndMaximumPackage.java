@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridTablePackage extends SPackage {
+public class CaseGridTableMinimiumAndMaximumPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
@@ -28,6 +28,10 @@ public class CaseGridTablePackage extends SPackage {
         final STypeString nomeCertificacao = certificacao.addCampoString("nome", true);
         {
             certificacoes
+                    //@destacar:bloco
+                    .withMiniumSizeOf(2)
+                    .withMaximumSizeOf(3)
+                     //@destacar:fim
                     .withView(MTableListaView::new)
                     .as(AtrBasic::new).label("Certificações");
             certificacao

@@ -29,8 +29,6 @@ public class CaseMasterDetailPackage extends SPackage {
         {
             //@destacar:bloco
             experiencias
-                    .withMiniumSizeOf(1)
-                    .withMaximumSizeOf(3)
                     .withView(MListMasterDetailView::new)
             //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");

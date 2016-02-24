@@ -7,11 +7,11 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridListPackage extends SPackage {
+public class CaseMasterDetailMiniumAndMaximumPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
@@ -28,7 +28,11 @@ public class CaseGridListPackage extends SPackage {
 
         {
             experiencias
-                    .withView(MPanelListaView::new)
+            //@destacar:bloco
+                    .withMiniumSizeOf(1)
+                    .withMaximumSizeOf(3)
+                            //@destacar:fim
+                    .withView(MListMasterDetailView::new)
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
