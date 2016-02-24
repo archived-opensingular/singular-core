@@ -1,11 +1,7 @@
 package br.net.mirante.singular.form.wicket;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import com.google.common.collect.Lists;
@@ -59,12 +55,24 @@ public class WicketBuildContext implements Serializable {
     private IModel<? extends SInstance> model;
     private UIBuilderWicket uiBuilderWicket;
     private ViewMode viewMode;
-    private boolean annotationEnabled = false;
+    private AnnotationMode annotation = AnnotationMode.NONE;
     private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
     private List<Component> annotationsTargetBuffer = newArrayList();
     private BSContainer annotationContainer;
 
     private MView view;
+
+    public enum AnnotationMode {NONE, EDIT, READ_ONLY;
+
+        public boolean editable(){  return this.equals(EDIT);   }
+        public boolean enabled(){  return !this.equals(NONE);   }
+    }
+
+    public AnnotationMode annotation(){ return annotation; }
+    public void annotation(AnnotationMode mode){
+        Objects.requireNonNull(mode);
+        annotation = mode;
+    }
 
     public void setAnnotationContainer(BSContainer annotationContainer) {
         this.annotationContainer = annotationContainer;
@@ -370,8 +378,4 @@ public class WicketBuildContext implements Serializable {
         return (T) getModel().getObject();
     }
 
-    public boolean isAnnotationEnabled() {  return annotationEnabled;   }
-
-    public void enableAnnotation() {   this.annotationEnabled = true;}
-    public void disableAnnotation() {   this.annotationEnabled = false;}
 }

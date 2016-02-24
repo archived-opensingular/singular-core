@@ -11,9 +11,11 @@ public class PageWithAnnotation {
 
     public void buildPage(WicketBuildContext ctx){
         /**
-         * Deve-se habilitar as anotações no contexto sendo utilizado para montar a página.
+         * Deve-se habilitar as anotações no contexto sendo utilizado
+         * para montar a página.
+         * Este pode ser tanto em modo de leitura como em modo de escrita
          */
-        ctx.enableAnnotation();
+        ctx.annotation(WicketBuildContext.AnnotationMode.EDIT);
     }
 
 

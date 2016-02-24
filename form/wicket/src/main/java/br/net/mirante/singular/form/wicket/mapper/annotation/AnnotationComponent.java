@@ -175,7 +175,7 @@ public class AnnotationComponent extends Panel {
 
             @Override
             public boolean isVisible() {
-                return context.getViewMode().isVisualization();
+                return context.annotation().editable();
             }
         };
     }
@@ -219,7 +219,7 @@ public class AnnotationComponent extends Panel {
                     "'#"+openModalButton.getMarkupId()+"'," +
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
-                    " "+context.getViewMode().isEdition()+" "+
+                    " "+!context.annotation().editable()+" "+
                 ");\n" +
                 "});\n";
     }
@@ -275,7 +275,7 @@ public class AnnotationComponent extends Panel {
         }
 
         private void createFields(BSContainer modalBody) {
-            if(context.getViewMode().isVisualization()){
+            if(context.annotation().editable()){
                 createCommentField(modalBody);
                 createApprovedField(modalBody);
             }else{

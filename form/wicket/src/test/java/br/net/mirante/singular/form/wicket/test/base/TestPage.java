@@ -86,7 +86,7 @@ public class TestPage extends WebPage {
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, new MInstanceRootModel(currentInstance));
-        if(annotationEnabled) ctx.enableAnnotation();
+        if(annotationEnabled) ctx.annotation(WicketBuildContext.AnnotationMode.EDIT);
         singularFormContext.getUIBuilder().build(ctx, viewMode);
         return container;
     }

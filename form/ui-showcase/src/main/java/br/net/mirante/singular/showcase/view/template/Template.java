@@ -30,6 +30,11 @@ public abstract class Template extends WebPage {
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
     private SkinOptions option;
 
+    static {
+        SkinOptions.addSkin(new SkinOptions.Skin("Red", CssReferenceHeaderItem.forUrl("resources/custom/css/red.css")));
+        SkinOptions.addSkin(new SkinOptions.Skin("Green",CssReferenceHeaderItem.forUrl("resources/custom/css/green.css")));
+    }
+
     @Override
     protected void onInitialize() {
         this.option = SkinOptions.op();

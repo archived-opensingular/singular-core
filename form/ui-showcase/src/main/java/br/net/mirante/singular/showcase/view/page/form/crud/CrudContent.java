@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -237,7 +238,7 @@ public class CrudContent extends Content
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
                             .add(FormPage.MODEL_KEY, model.getObject().getKey())
                             .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
-                            .add(FormPage.ANNOTATION_ENABLED, true));
+                            .add(FormPage.ANNOTATION, WicketBuildContext.AnnotationMode.EDIT));
                 })
         );
     }
@@ -255,7 +256,7 @@ public class CrudContent extends Content
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
                             .add(FormPage.MODEL_KEY, model.getObject().getKey())
                             .add(FormPage.VIEW_MODE, ViewMode.EDITION)
-                            .add(FormPage.ANNOTATION_ENABLED, true));
+                            .add(FormPage.ANNOTATION, WicketBuildContext.AnnotationMode.READ_ONLY));
                 })
         );
     }
