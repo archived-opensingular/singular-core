@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import br.net.mirante.singular.showcase.component.custom.comment.CaseAnnotation;
 import com.google.common.base.Throwables;
 
 import br.net.mirante.singular.showcase.component.custom.CaseCustomStringMapper;
 import br.net.mirante.singular.showcase.component.custom.CaseCustonRangeMapper;
+import br.net.mirante.singular.showcase.component.custom.comment.CaseAnnotation;
 import br.net.mirante.singular.showcase.component.file.CaseFileAttachment;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBasic;
 import br.net.mirante.singular.showcase.component.input.core.CaseInputCoreBoolean;
@@ -44,10 +44,13 @@ import br.net.mirante.singular.showcase.component.interaction.CaseInteractionReq
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionVisible;
 import br.net.mirante.singular.showcase.component.layout.CaseFineTunningGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseGridList;
+import br.net.mirante.singular.showcase.component.layout.CaseGridListMinimumAndMaximum;
 import br.net.mirante.singular.showcase.component.layout.CaseGridTable;
+import br.net.mirante.singular.showcase.component.layout.CaseGridTableMinimiumAndMaximum;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetail;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailButtons;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailColumns;
+import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailMiniumAndMaximum;
 import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailNested;
 import br.net.mirante.singular.showcase.component.layout.CaseSimpleGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseTabs;
@@ -101,6 +104,9 @@ public class ShowCaseTable {
             .addCase(CaseMasterDetailColumns.class)
             .addCase(CaseMasterDetailButtons.class)
             .addCase(CaseMasterDetailNested.class)
+            .addCase(CaseGridListMinimumAndMaximum.class)
+            .addCase(CaseGridTableMinimiumAndMaximum.class)
+            .addCase(CaseMasterDetailMiniumAndMaximum.class)
             .addCase(CaseTabs.class)
         ;
         group("Validation", Icone.BAN)

@@ -37,6 +37,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
         pb.createTipo(STypeProdutos.class);
 
         final STypeComposite<?> canabis = pb.createTipoComposto(TIPO);
+        canabis.as(AtrBasic.class).label("Peticionamento de Canabidiol");
         {
             final STypePessoa paciente = canabis.addCampo("paciente", STypePessoa.class);
             paciente
