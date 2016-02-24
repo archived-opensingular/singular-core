@@ -2,8 +2,8 @@
 <jboss-web>
     <session-config>
         <cookie-config>
-            <path>/sso/intranet</path>
+            <path>/sso/analise</path>
         </cookie-config>
     </session-config>
-    <context-root>/sso/intranet</context-root>
+    <context-root>/sso/analise</context-root>
 </jboss-web>

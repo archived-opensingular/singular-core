@@ -94,8 +94,9 @@ response.setHeader("Access-Control-Allow-Origin", "*");
             <input type="hidden" name="execution" value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
 			<div class="form-actions">
-				<button type="submit" class="btn btn-success uppercase">Login</button>
+				<button id="btnsubss" type="submit" class="btn btn-success uppercase">Login</button>
 			</div>
+
 		</form:form>
 		
 	</div>
@@ -136,9 +137,12 @@ response.setHeader("Access-Control-Allow-Origin", "*");
 	jQuery(document).ready(function() {     
 		App.init(); // init metronic core components
 		Layout.init(); // init current layout
-		Login.init();
+        $("input").keyup(function(event){
+            if(event.keyCode == 13){
+                $("#btnsubss").click();
+            }
+        });
 	});
-	
 /*]]>*/
 </script>
 	

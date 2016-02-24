@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	
 	<head>
-		<meta http-equiv="Refresh" content="0; URL=http://intravisa.anvisa.gov.br/" />
+		<meta http-equiv="Refresh" content="0; URL=/singular/analise" />
 	</head>
 
 </html>

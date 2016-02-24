@@ -12,12 +12,58 @@
 
     <artifactId>sso</artifactId>
     <name>[singular-server :: sso]</name>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <modules>
         <module>sso-desenv-analise</module>
         <module>sso-desenv-peticionamento</module>
     </modules>
+
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <dependencies>
+
+        <!-- CAS SERVER WEBAPP -->
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-webapp</artifactId>
+            <version>${cas.version}</version>
+            <type>war</type>
+            <scope>runtime</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-ldap</artifactId>
+            <version>${cas.version}</version>
+        </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>org.jasig.cas</groupId>-->
+        <!--<artifactId>cas-server-support-saml</artifactId>-->
+        <!--<version>${cas.version}</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.12</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

@@ -196,7 +196,7 @@
 
     <!-- Active Directory UPN format. -->
     <bean id="dnResolver" class="org.ldaptive.auth.FormatDnResolver"
-          c:format="%s@anvisa.gov.br"/>
+          c:format="%s@miranteinfo.com"/>
 
     <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
           p:connectionFactory-ref="pooledLdapConnectionFactory"/>
@@ -219,7 +219,7 @@
           p:connectionConfig-ref="connectionConfig"/>
 
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="ldap://10.103.2.34:389" p:connectTimeout="2000"
+          p:ldapUrl="ldap://10.0.0.10:389/" p:connectTimeout="2000"
             />
 
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
@@ -229,5 +229,5 @@
 
     <bean id="entryResolver"
           class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-          p:baseDn="DC=anvisa,DC=gov,DC=br"/>
+          p:baseDn="OU=Mirante User,DC=miranteinfo,DC=com"/>
 </beans>

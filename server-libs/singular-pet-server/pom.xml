@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>br.net.mirante</groupId>
-        <artifactId>singular-server</artifactId>
+        <artifactId>server-libs</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-pet-server</artifactId>
-    <name>[singular-server :: singular-pet-server]</name>
+    <name>[singular-server :: server-libs :: singular-pet-server]</name>
     <packaging>jar</packaging>
 
     <build>
