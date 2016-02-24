@@ -5,7 +5,7 @@ import br.net.mirante.singular.showcase.component.CaseBase;
 public class CaseGridList extends CaseBase {
 
     public CaseGridList() {
-        super("Grid List");
+        super("Grid List", "Default");
     }
 
 }

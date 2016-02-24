@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
@@ -11,11 +12,10 @@ import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridListPackage extends SPackage {
+public class CaseGridListMinimumAndMaximumPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-
         STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
         final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
@@ -28,6 +28,10 @@ public class CaseGridListPackage extends SPackage {
 
         {
             experiencias
+                    //@destacar:bloco
+                    .withMiniumSizeOf(1)
+                    .withMaximumSizeOf(3)
+                     //@destacar:fim
                     .withView(MPanelListaView::new)
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
