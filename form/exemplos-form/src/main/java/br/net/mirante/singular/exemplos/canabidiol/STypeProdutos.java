@@ -44,12 +44,13 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
         };
 
         experiencias
+                .withMiniumSizeOf(1)
                 .withView(new MListMasterDetailView()
                         .col(desc.getNomeComercial())
                         .col(desc.getComposicao(), customDisplayFunction)
                         .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
                 .as(AtrBasic::new)
-                .label("Descrição do Produto");
+.label("Descrição do Produto");
 
     }
 
