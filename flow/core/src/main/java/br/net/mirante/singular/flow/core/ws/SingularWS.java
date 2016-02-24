@@ -3,6 +3,7 @@ package br.net.mirante.singular.flow.core.ws;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
 
 import br.net.mirante.singular.flow.core.Flow;
@@ -28,7 +29,8 @@ public class SingularWS {
 
     @WebMethod(action = "executeDefaultTransition")
     public void executeDefaultTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
-                                         @WebParam(name = "codProcessInstance") Long codProcessInstance) {
+                                         @WebParam(name = "codProcessInstance") Long codProcessInstance,
+                                         @WebParam(name = "username") String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition();
     }
@@ -36,7 +38,8 @@ public class SingularWS {
     @WebMethod(action = "executeTransition")
     public void executeTransition(@WebParam(name = "processAbbreviation") String processAbbreviation,
                                   @WebParam(name = "codProcessInstance") Long codProcessInstance,
-                                  @WebParam(name = "transitionName") String transitionName) {
+                                  @WebParam(name = "transitionName") String transitionName,
+                                  @WebParam(name = "username") String username) {
         ProcessInstance processInstance = getProcessInstance(processAbbreviation, codProcessInstance);
         processInstance.executeTransition(transitionName);
     }
