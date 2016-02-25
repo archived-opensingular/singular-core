@@ -7,9 +7,9 @@
 }
 
 
-.logo-default {
-    content:url("/showcase/resources//custom/img/green-logo.png");
+.logo-default::before {
+    content:url("/showcase/resources//custom/img/green-logo-small.png");
     position: absolute;
     height: 33px;
-    top: -6px;
+    top: 15px;
 }

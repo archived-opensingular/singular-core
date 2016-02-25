@@ -6,9 +6,11 @@
     background-color: #c0392b;
 }
 
-.logo-default {
-    content: url("/showcase/resources/custom/img/red-logo.png");
+.logo-default::before {
+    content: url("/showcase/resources/custom/img/red-logo-small.png");
     height: 45px;
-    top: -11px;
-    position: absolute;
+    top: 15px;
+    /*position: absolute;*/
+    /*background: transparent url("/showcase/resources/custom/img/red-logo.png") no-repeat;*/
+    /*width: 137px;*/
 }
