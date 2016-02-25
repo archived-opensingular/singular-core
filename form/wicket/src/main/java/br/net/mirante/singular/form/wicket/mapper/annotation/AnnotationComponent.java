@@ -1,22 +1,10 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-import static com.google.common.collect.Sets.newHashSet;
 
-import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
-        import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.component.BFModalWindow;
-import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
-import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
-import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
-import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
+import java.io.Serializable;
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -32,10 +20,24 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import java.io.Serializable;
-import java.util.Date;
+import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
+import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.component.BFModalWindow;
+import br.net.mirante.singular.form.wicket.model.AbstractSInstanceModel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
+import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
+import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 /**
  * This is the visual component of an annotated field on screen.
@@ -200,9 +202,14 @@ public class AnnotationComponent extends Panel {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("annotation.js")));
         response.render(CssReferenceHeaderItem.forReference(resourceRef("annotation.css")));
-        response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),
-                        "updateAnnotation_"+this.getMarkupId()+"_"+ new Date().getTime()
-        ));
+        if (!((WebRequest)RequestCycle.get().getRequest()).isAjax()) {
+            response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),
+                    "updateAnnotation_" + this.getMarkupId() + "_" + new Date().getTime()
+            ));
+        } else {
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.appendJavaScript(generateUpdateJS());
+        }
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -220,7 +227,7 @@ public class AnnotationComponent extends Panel {
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
                     " "+!context.annotation().editable()+" "+
-                ");\n" +
+                "); console.log('teste'); \n" +
                 "});\n";
     }
 
@@ -234,6 +241,10 @@ public class AnnotationComponent extends Panel {
         }
         keepOpened = false;
         this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
+    }
+
+    public void onAjaxUpdate() {
+
     }
 
     private static class AnnotationModalWindow extends BFModalWindow{

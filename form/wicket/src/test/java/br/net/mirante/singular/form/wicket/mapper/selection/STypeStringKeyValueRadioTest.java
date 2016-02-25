@@ -1,9 +1,5 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.extractProperty;
-
 import java.util.List;
 
 import org.apache.wicket.markup.html.form.RadioChoice;
@@ -21,8 +17,11 @@ import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findTag;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 
 public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
 
@@ -72,29 +71,31 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         form = driver.newFormTester("test-form", false);
     }
 
-    @Test public void rendersARadioChoiceWithInformedLabels(){
+    @Test
+    public void rendersARadioChoiceWithInformedLabels() {
         setupPage();
         buildPage();
 
-        List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
+        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly("IMG", "TXT", "BIN");
+                .containsOnly("1", "2", "3");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-.containsOnly("Imagem", "Texto", "Binário");
+                .containsOnly("Imagem", "Texto", "Binário");
     }
 
-    @Test public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection(){
+    @Test
+    public void rendersARadioChoiceWithInformedOptionsRegardlessOfSelection() {
         setupPage();
         page.getCurrentInstance().getDescendant(tipoDeMedia).setValue("TXT");
         buildPage();
 
-        List<RadioChoice> inputs = (List)findTag(form.getForm(), RadioChoice.class);
+        List<RadioChoice> inputs = (List) findTag(form.getForm(), RadioChoice.class);
         assertThat(inputs).hasSize(1);
         assertThat(extractProperty("value").from(inputs.get(0).getChoices()))
-                .containsOnly("IMG", "TXT", "BIN");
+                .containsOnly("1", "2", "3");
         assertThat(extractProperty("selectLabel").from(inputs.get(0).getChoices()))
-.containsOnly("Imagem", "Texto", "Binário");
-        assertThat(inputs.get(0).getValue()).isEqualTo("TXT");
+                .containsOnly("Imagem", "Texto", "Binário");
+        assertThat(inputs.get(0).getValue()).isEqualTo("2");
     }
 }
