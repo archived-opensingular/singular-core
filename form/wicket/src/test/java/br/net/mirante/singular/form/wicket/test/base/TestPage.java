@@ -2,6 +2,7 @@ package br.net.mirante.singular.form.wicket.test.base;
 
 import java.util.function.Supplier;
 
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebPage;
@@ -86,7 +87,7 @@ public class TestPage extends WebPage {
         BSGrid bodyContainer = new BSGrid("body-container");
         add(bodyContainer);
         WicketBuildContext ctx = new WicketBuildContext(container.newColInRow(), bodyContainer, new MInstanceRootModel(currentInstance));
-        if(annotationEnabled) ctx.annotation(WicketBuildContext.AnnotationMode.EDIT);
+        if(annotationEnabled) ctx.annotation(AnnotationMode.EDIT);
         singularFormContext.getUIBuilder().build(ctx, viewMode);
         return container;
     }

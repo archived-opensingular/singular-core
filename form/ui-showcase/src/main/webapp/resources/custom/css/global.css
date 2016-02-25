@@ -9,9 +9,11 @@
     }
 }
 
-.logo-default {
+.logo-default::before {
     content: url("/singular-static/resources/singular/img/brand.png");
     height: 15px;
-    top: 5px;
-    position: absolute;
+    top: 15px;
+    /*position: absolute;*/
+    /*background: transparent url("/singular-static/resources/singular/img/brand.png") no-repeat;*/
+    /*width: 109px;*/
 }

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -47,7 +48,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
     private final String typeName;
     private ViewMode viewMode = ViewMode.EDITION;
 
-    private WicketBuildContext.AnnotationMode annotation = WicketBuildContext.AnnotationMode.NONE;
+    private AnnotationMode annotation = AnnotationMode.NONE;
     private ExampleDataDTO currentModel;
 
     private SingularFormPanel<String> singularFormPanel;
@@ -63,7 +64,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
                        StringValue annotation) {
         super(id, false, true);
         if (!viewMode.isNull()) {   this.viewMode = ViewMode.valueOf(viewMode.toString());  }
-        if (!annotation.isNull()) {   this.annotation = WicketBuildContext.AnnotationMode.valueOf(annotation.toString());  }
+        if (!annotation.isNull()) {   this.annotation = AnnotationMode.valueOf(annotation.toString());  }
         this.typeName = type.toString();
         this.key = key.toString();
     }
@@ -121,7 +122,7 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
             }
 
             @Override
-            public WicketBuildContext.AnnotationMode annotation() {    return annotation;    }
+            public AnnotationMode annotation() {    return annotation;    }
         };
 
         return singularFormPanel;

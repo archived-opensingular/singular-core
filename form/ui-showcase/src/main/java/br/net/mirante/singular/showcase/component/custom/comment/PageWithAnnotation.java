@@ -6,6 +6,7 @@ import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 
 public class PageWithAnnotation {
 
@@ -15,7 +16,7 @@ public class PageWithAnnotation {
          * para montar a página.
          * Este pode ser tanto em modo de leitura como em modo de escrita
          */
-        ctx.annotation(WicketBuildContext.AnnotationMode.EDIT);
+        ctx.annotation(AnnotationMode.EDIT);
     }
 
 
