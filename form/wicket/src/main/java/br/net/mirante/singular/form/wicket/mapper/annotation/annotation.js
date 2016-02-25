@@ -33,7 +33,9 @@ if( window.Annotation == undefined){
             if(this.is_blank()) {   this.this_component.hide(); }
             if(this.is_blank() && this.readOnly) {   this.toggle_container.hide(); }
             if(this.this_component.is(':visible') ){
+                this.close_overlaping_boxes(this.this_component);
                 this.adjust_height_position();
+                //this.this_component.fadeIn();
             }
         },
 
@@ -93,12 +95,12 @@ if( window.Annotation == undefined){
             }
         },
 
-        close_overlaping_boxes: function(){
+        close_overlaping_boxes: function( notChange){
             var thiz = this;
             var base = thiz.box_bounds(thiz.this_component);
             $(".sannotation-snipet-box:visible").each(function(i,e){
                 var bound = thiz.box_bounds($(e));
-                if(bound.start < base.end && bound.end > base.start){
+                if(! $(e).is(notChange) && bound.start < base.end && bound.end > base.start){
                     $(e).fadeOut();
                 }
             });
