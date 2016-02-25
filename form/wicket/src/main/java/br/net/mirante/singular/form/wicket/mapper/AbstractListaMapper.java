@@ -18,6 +18,7 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
 import br.net.mirante.singular.form.wicket.model.SInstanceItemListaModel;
+import br.net.mirante.singular.form.wicket.repeater.PathInstanceItemReuseStrategy;
 import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -70,6 +71,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         public ElementsView(String id, IModel<SList<SInstance>> model) {
             super(id, model);
+            setItemReuseStrategy(new PathInstanceItemReuseStrategy());
         }
 
         @Override

@@ -72,12 +72,12 @@ public class MOptionsConfig {
                 options = newOptions;
                 optionsKeyInstanceMap = HashBiMap.create(options.size());
                 optionsKeylabelMap = new LinkedHashMap<>(options.size());
-                for (br.net.mirante.singular.form.mform.SInstance SInstance : options) {
+                for (br.net.mirante.singular.form.mform.SInstance instance : options) {
                     /* ignora silenciosamente valores duplicados */
-                    if (!optionsKeyInstanceMap.inverse().containsKey(SInstance)) {
-                        String key = newUniqueKey(SInstance);
-                        optionsKeyInstanceMap.put(key, SInstance);
-                        optionsKeylabelMap.put(key, SInstance.getSelectLabel());
+                    if (!optionsKeyInstanceMap.inverse().containsKey(instance)) {
+                        String key = newUniqueKey(instance);
+                        optionsKeyInstanceMap.put(key, instance);
+                        optionsKeylabelMap.put(key, instance.getSelectLabel());
                     }
                 }
             }
@@ -87,8 +87,7 @@ public class MOptionsConfig {
         }
     }
 
-    private String newUniqueKey(SInstance SInstance){
-        if(SInstance.getValue() != null) return String.valueOf(SInstance.getValue()); //TODO: this should be re-evaluated
+    private String newUniqueKey(SInstance ins) {
         keySeed = keySeed.add(BigInteger.ONE);
         return String.valueOf(keySeed);
     }
