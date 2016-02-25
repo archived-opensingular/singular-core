@@ -398,8 +398,8 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             WicketFormProcessing.onFormPrepare(modalBody, currentInstance, false);
             context.initContainerBehavior();
 
-            target.add(ctx.getExternalContainer());
-            target.add(containerExterno);
+            target.add(ctx.getExternalContainer().setOutputMarkupId(true));
+            target.add(containerExterno.setOutputMarkupId(true));
 
             show(target);
         }
