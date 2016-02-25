@@ -4,9 +4,11 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
+import br.net.mirante.singular.pet.module.util.ServerProperties;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.pet.module.wicket.view.template.Template;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,13 @@ public abstract class AbstractFormPage extends Template {
     @Override
     protected Content getContent(String id) {
         FormPageUtil.URLParams param = FormPageUtil.readParameters(getRequest());
+
+        if (param.type.isEmpty()
+                && param.formId.isEmpty()) {
+            String urlServidorSingular = ServerProperties.getProperty(ServerProperties.SINGULAR_SERVIDOR_ENDERECO);
+            throw new RedirectToUrlException(urlServidorSingular);
+        }
+
         return new AbstractFormContent(id, param.type, param.formId, param.viewMode, param.annotationMode) {
 
 
