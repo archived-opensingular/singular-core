@@ -20,6 +20,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -135,7 +136,7 @@ public abstract class AbstractFormContent extends Content {
 
 
         };
-        return button;
+        return button.add(visibleOnlyInEditionBehaviour());
     }
 
     private Component buildSaveButton() {
@@ -153,7 +154,7 @@ public abstract class AbstractFormContent extends Content {
 
 
         };
-        return button;
+        return button.add(visibleOnlyInEditionBehaviour());
     }
 
 
@@ -181,7 +182,7 @@ public abstract class AbstractFormContent extends Content {
                 save();
             }
         };
-        return button;
+        return button.add(visibleOnlyInAnnotationBehaviour());
     }
 
     private void processAnnotations(SInstance instancia) {
@@ -216,7 +217,7 @@ public abstract class AbstractFormContent extends Content {
             }
 
         };
-        return button;
+        return button.add(visibleOnlyInEditionBehaviour());
     }
 
     @SuppressWarnings("rawtypes")
@@ -243,7 +244,7 @@ public abstract class AbstractFormContent extends Content {
             }
         };
 
-        return button;
+        return button.add(visibleOnlyInEditionBehaviour());
     }
 
     private Component buildConfirmationModal() {
@@ -275,6 +276,28 @@ public abstract class AbstractFormContent extends Content {
                 });
 
         return enviarModal;
+    }
+
+    protected Behavior visibleOnlyInEditionBehaviour() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+
+                component.setVisible(viewMode.isEdition());
+            }
+        };
+    }
+
+    protected Behavior visibleOnlyInAnnotationBehaviour() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+
+                component.setVisible(annotationMode.editable());
+            }
+        };
     }
 
     protected abstract String getFormXML(IModel<?> model);
