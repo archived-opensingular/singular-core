@@ -108,8 +108,11 @@ public class FormPageUtil {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             byte[] buffer = new byte[8192];
             int len;
-            while ((len = in.read(buffer)) > 0)
+            while ((len = in.read(buffer)) > 0) {
                 baos.write(buffer, 0, len);
+            }
+            in.close();
+            baos.close();
             return new String(baos.toByteArray(), ENCODING);
         } catch (IOException e) {
             throw new SingularServerException(e.getMessage(), e);
