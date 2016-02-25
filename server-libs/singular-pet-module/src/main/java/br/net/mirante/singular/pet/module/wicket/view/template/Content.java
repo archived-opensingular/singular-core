@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -50,6 +51,11 @@ public abstract class Content extends Panel {
         }
         add(toolbar = new RepeatingView("toolbarItems"));
 
+    }
+
+
+    protected StringResourceModel getMessage(String prop) {
+        return new StringResourceModel(prop.trim(), this, null);
     }
 
     public MarkupContainer addToolbarItem(IFunction<String, Component> toolbarItem) {
