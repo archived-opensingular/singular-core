@@ -103,7 +103,7 @@ public class AnnotationComponent extends Panel {
         });
     }
 
-    private static Label createApprovalLabel(final MInstanciaValorModel model) {
+    protected static Label createApprovalLabel(final MInstanciaValorModel model) {
         return new Label("approval_field", new Model(){
             public Serializable getObject() {
                 if(Boolean.TRUE.equals(model.getObject())){
@@ -182,7 +182,7 @@ public class AnnotationComponent extends Panel {
         };
     }
 
-    private static String title(AbstractSInstanceModel referenced) {
+    protected static String title(AbstractSInstanceModel referenced) {
         if(StringUtils.isNoneBlank(annotated(referenced).label())) return annotated(referenced).label();
         String label = labelOf(referenced);
         if(StringUtils.isNoneBlank(label))  return String.format("Comentários sobre %s", label);
@@ -217,7 +217,7 @@ public class AnnotationComponent extends Panel {
     }
 
 
-    private String generateUpdateJS() {
+    protected String generateUpdateJS() {
         if(referencedComponent == null) return "";
         return "$(function(){\n" +
                 "Annotation.create_or_update(" +
@@ -243,103 +243,105 @@ public class AnnotationComponent extends Panel {
         this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
     }
 
-    public void onAjaxUpdate() {
+}
 
+class AnnotationModalWindow extends BFModalWindow{
+
+    private MInstanciaValorModel textModel, approvedModel ;
+    private WicketBuildContext context;
+    private AnnotationComponent parentComponent;
+    private AbstractSInstanceModel referenced;
+
+    public AnnotationModalWindow(String id,
+                                 MInstanceRootModel model,
+                                 AbstractSInstanceModel referenced,
+                                 WicketBuildContext context,
+                                 AnnotationComponent parentComponent
+    ) {
+        super(id);
+        this.referenced = referenced;
+        setDefaultModel(model);
+        textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"text"));
+        approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"isApproved"));
+        this.context = context;
+        this.parentComponent = parentComponent;
+        this.setSize(BSModalBorder.Size.NORMAL);
+
+        this.setBody(createBody());
+
+        this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
+                createOkButton(parentComponent)
+        );
+        this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                createCancelButton()
+        );
     }
 
-    private static class AnnotationModalWindow extends BFModalWindow{
+    private BSContainer createBody() {
+        BSContainer modalBody = new BSContainer("bogoMips");
+        createFields(modalBody);
+        return modalBody;
+    }
 
-        private MInstanciaValorModel textModel, approvedModel ;
-        private WicketBuildContext context;
-        private AnnotationComponent parentComponent;
-        private AbstractSInstanceModel referenced;
-
-        public AnnotationModalWindow(String id,
-                                     MInstanceRootModel model,
-                                     AbstractSInstanceModel referenced,
-                                     WicketBuildContext context,
-                                     AnnotationComponent parentComponent
-        ) {
-            super(id);
-            this.referenced = referenced;
-            setDefaultModel(model);
-            textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"text"));
-            approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"isApproved"));
-            this.context = context;
-            this.parentComponent = parentComponent;
-            this.setSize(BSModalBorder.Size.NORMAL);
-
-            this.setBody(createBody());
-
-            this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
-                    createOkButton(parentComponent)
-            );
-            this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
-                    createCancelButton()
-            );
+    private void createFields(BSContainer modalBody) {
+        if(context.annotation().editable()){
+            createCommentField(modalBody);
+            createApprovedField(modalBody);
+        }else{
+            modalBody.appendTag("pre", true, "", new Label("modalText",textModel));
+            modalBody.appendTag("div", true, "", AnnotationComponent.createApprovalLabel(approvedModel));
         }
+    }
 
-        private BSContainer createBody() {
-            BSContainer modalBody = new BSContainer("bogoMips");
-            createFields(modalBody);
-            return modalBody;
-        }
-
-        private void createFields(BSContainer modalBody) {
-            if(context.annotation().editable()){
-                createCommentField(modalBody);
-                createApprovedField(modalBody);
-            }else{
-                modalBody.appendTag("pre", true, "", new Label("modalText",textModel));
-                modalBody.appendTag("div", true, "", createApprovalLabel(approvedModel));
-            }
-        }
-
-        private void createCommentField(BSContainer modalBody) {
-            TextArea modalText = new TextArea<>("modalText", textModel);
-            modalText.add(new Behavior(){
-                public void bind( Component component ){
-                    super.bind( component );
-                    component.add(
+    private void createCommentField(BSContainer modalBody) {
+        TextArea modalText = new TextArea<>("modalText", textModel);
+        modalText.add(new Behavior(){
+            public void bind( Component component ){
+                super.bind( component );
+                component.add(
                         AttributeModifier.replace( "onkeydown",
-                                    Model.of( "window.Annotation.update_comment_box(event);")));
-                }
-            });
-            modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
-                    modalText);
-        }
+                                Model.of( "window.Annotation.update_comment_box(event);")));
+            }
+        });
+        modalBody.appendTag("textarea", true, "style='width: 100%;height: 60vh;' cols='15' ",
+                modalText);
+    }
 
-        private void createApprovedField(BSContainer modalBody) {
-            modalBody.appendTag("label", true, "class=\"control-label\"",
-                    new Label("approvalLabel",$m.ofValue("Aprovado?")));
-            modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
-                            "data-on-color=\"info\" data-on-text=\"Sim\" "+
-                            "data-off-color=\"danger\" data-off-text=\"Não\" ",
-                    new CheckBox("modalApproval",approvedModel));
-        }
+    private void createApprovedField(BSContainer modalBody) {
 
-        public void show(AjaxRequestTarget target) {
-            this.setTitleText($m.ofValue(title(referenced)));
+        String approved = getString("singular.annotation.approved");
+        String yes = getString("singular.annotation.yes");
+        String no = getString("singular.annotation.no");
 
-            super.show(target);
-        }
+        modalBody.appendTag("label", true, "class=\"control-label\"",
+                new Label("approvalLabel",$m.ofValue(approved)));
+        modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
+                        "data-on-color=\"info\" data-on-text=\""+ yes +"\" "+
+                        "data-off-color=\"danger\" data-off-text=\""+no+"\" ",
+                new CheckBox("modalApproval",approvedModel));
+    }
 
-        private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
-            return new ActionAjaxButton("btn") {
-                protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                    target.add(parentComponent);
-                    AnnotationModalWindow.this.hide(target);
-                    target.appendJavaScript(parentComponent.generateUpdateJS());
-                }
-            };
-        }
+    public void show(AjaxRequestTarget target) {
+        this.setTitleText($m.ofValue(AnnotationComponent.title(referenced)));
 
-        private ActionAjaxLink<Void> createCancelButton() {
-            return new ActionAjaxLink<Void>("btn-cancelar") {
-                protected void onAction(AjaxRequestTarget target) {
-                    AnnotationModalWindow.this.hide(target);
-                }
-            };
-        }
+        super.show(target);
+    }
+
+    private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
+        return new ActionAjaxButton("btn") {
+            protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                target.add(parentComponent);
+                AnnotationModalWindow.this.hide(target);
+                target.appendJavaScript(parentComponent.generateUpdateJS());
+            }
+        };
+    }
+
+    private ActionAjaxLink<Void> createCancelButton() {
+        return new ActionAjaxLink<Void>("btn-cancelar") {
+            protected void onAction(AjaxRequestTarget target) {
+                AnnotationModalWindow.this.hide(target);
+            }
+        };
     }
 }
