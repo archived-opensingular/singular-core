@@ -20,6 +20,7 @@ public abstract class AbstractFormPage extends Template {
         return false;
     }
 
+
     @Override
     protected Content getContent(String id) {
         FormPageUtil.URLParams param = FormPageUtil.readParameters(getRequest());
