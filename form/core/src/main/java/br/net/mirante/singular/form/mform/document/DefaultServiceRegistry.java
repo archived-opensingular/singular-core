@@ -1,8 +1,5 @@
 package br.net.mirante.singular.form.mform.document;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +10,10 @@ import com.google.common.collect.ImmutableMap;
 
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
 
-final class DefaultServiceRegistry implements ServiceRegistry {
+public final class DefaultServiceRegistry implements ServiceRegistry {
 
     private Map<String, Pair> servicesByName = newHashMap();
     private Map<Class<?>, List<RefService<?>>> servicesByClass = newHashMap();
