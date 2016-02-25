@@ -12,7 +12,6 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.lambda.IFunction;
 
@@ -45,14 +44,11 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
 
         experiencias
                 .withMiniumSizeOf(1)
-                .withView(new MListMasterDetailView()
-                        .col(desc.getNomeComercial())
-                        .col(desc.getComposicao(), customDisplayFunction)
-                        .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
+                // .withView(new MListMasterDetailView()
+                // .col(desc.getNomeComercial())
+                // .col(desc.getComposicao(), customDisplayFunction)
+                // .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
                 .as(AtrBasic::new)
-.label("Descrição do Produto");
-
+                .label("Descrição do Produto");
     }
-
-
 }

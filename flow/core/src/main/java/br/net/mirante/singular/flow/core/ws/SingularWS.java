@@ -1,5 +1,7 @@
 package br.net.mirante.singular.flow.core.ws;
 
+import java.util.Objects;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -57,6 +59,7 @@ public class SingularWS {
     }
 
     private ProcessInstance getProcessInstance(String processAbbreviation, Long codProcessInstance) {
-        return Flow.getProcessDefinitionWith(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
+        ProcessInstance processInstance = Flow.getProcessDefinitionWith(processAbbreviation).getDataService().retrieveInstance(codProcessInstance.intValue());
+        return Objects.requireNonNull(processInstance);
     }
 }
