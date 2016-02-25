@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.panel;
 import java.io.Serializable;
 import java.util.Objects;
 
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.feedback.FencedFeedbackPanel;
@@ -45,7 +46,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
     /**
      * Permite apresentar anotações em conjunto.
      */
-    private WicketBuildContext.AnnotationMode annotation = WicketBuildContext.AnnotationMode.NONE;
+    private AnnotationMode annotation = AnnotationMode.NONE;
 
     private RefSDocumentFactory documentFactoryRef;
 
@@ -114,7 +115,7 @@ public abstract class SingularFormPanel<KEY extends Serializable> extends Panel 
         getSingularFormContext().getUIBuilder().build(ctx, getViewMode());
     }
 
-    public WicketBuildContext.AnnotationMode annotation(){return annotation;};
+    public AnnotationMode annotation(){return annotation;};
 
 //    public void enableAnnotation() {this.annotationEnabled = true;}
 //    public void disableAnnotation() {this.annotationEnabled = false;}

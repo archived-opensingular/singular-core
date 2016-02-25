@@ -1,9 +1,8 @@
 package br.net.mirante.singular.showcase.component.custom.comment;
 
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.showcase.component.CaseBase;
 import br.net.mirante.singular.showcase.component.ResourceRef;
-import br.net.mirante.singular.showcase.component.custom.MaterialDesignInputMapper;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -15,13 +14,13 @@ public class CaseAnnotation extends CaseBase implements Serializable {
         setDescriptionHtml("Anotações e comentários associados a elementos de um form");
         final Optional<ResourceRef> pageWithAnnotation = ResourceRef.forSource(
                 PageWithAnnotation.class);
-        if(pageWithAnnotation.isPresent()) {
+        if (pageWithAnnotation.isPresent()) {
             getAditionalSources().add(pageWithAnnotation.get());
         }
     }
 
     @Override
-    public WicketBuildContext.AnnotationMode annotation() {
-        return WicketBuildContext.AnnotationMode.EDIT;
+    public AnnotationMode annotation() {
+        return AnnotationMode.EDIT;
     }
 }

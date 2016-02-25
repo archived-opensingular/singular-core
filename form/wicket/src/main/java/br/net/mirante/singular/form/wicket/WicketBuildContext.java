@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket;
 import java.io.Serializable;
 import java.util.*;
 
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ObjectUtils;
@@ -62,11 +63,7 @@ public class WicketBuildContext implements Serializable {
 
     private MView view;
 
-    public enum AnnotationMode {NONE, EDIT, READ_ONLY;
 
-        public boolean editable(){  return this.equals(EDIT);   }
-        public boolean enabled(){  return !this.equals(NONE);   }
-    }
 
     public AnnotationMode annotation(){ return annotation; }
     public void annotation(AnnotationMode mode){

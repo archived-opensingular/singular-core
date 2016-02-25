@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -125,7 +126,7 @@ public class ItemCasePanel extends Panel implements SingularWicketContainer<Item
             }
 
             @Override
-            public WicketBuildContext.AnnotationMode annotation(){ return caseBase.getObject().annotation(); }
+            public AnnotationMode annotation(){ return caseBase.getObject().annotation(); }
         };
 
         return singularFormPanel;
