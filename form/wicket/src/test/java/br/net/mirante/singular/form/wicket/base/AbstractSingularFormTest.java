@@ -16,6 +16,7 @@ import org.apache.wicket.util.visit.IVisitor;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
@@ -68,7 +69,9 @@ public abstract class AbstractSingularFormTest {
     protected Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
         return findOnForm(FormComponent.class, form, fc -> IMInstanciaAwareModel
                 .optionalCast(fc.getDefaultModel())
-                .map((ins) -> type.equals(ins.getMInstancia().getType()))
+                .map(IMInstanciaAwareModel::getMInstancia)
+                .map(SInstance::getType)
+                .map(type::equals)
                 .orElse(false));
     }
 

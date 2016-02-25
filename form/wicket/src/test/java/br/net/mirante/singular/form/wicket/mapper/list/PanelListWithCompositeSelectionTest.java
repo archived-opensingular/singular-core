@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.list;
+package br.net.mirante.singular.form.wicket.mapper.list;
 
 
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import org.apache.wicket.markup.html.form.AbstractSingleSelectChoice;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,11 +14,13 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 
 
-public class PanelListWithSelectionTest extends AbstractSingularFormTest {
+public class PanelListWithCompositeSelectionTest extends AbstractSingularFormTest {
 
     STypeComposite<?> compositeSelection;
 
@@ -26,6 +29,7 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
 
         final STypeLista<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addCampoListaOfComposto("mockList", "mockTypeComposite");
         mockList.asAtrBasic().label("Mock Type Composite");
+        mockList.withView(MPanelListaView::new);
 
         final STypeComposite mockTypeCompostite = mockList.getTipoElementos();
 
@@ -47,13 +51,10 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
     @Test
     public void testAddItem() {
 
-        final Button addButton = findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+        final Button addButton = findAddButton();
 
         Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
-
 
         wicketTester.executeAjaxEvent(addButton, "click");
         stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
@@ -72,9 +73,7 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
     @Test
     public void testRemoveItem() {
 
-        final Button addButton = findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+        final Button addButton = findAddButton();
 
         Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
@@ -96,9 +95,7 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
     @Test
     public void testAddItemAndFillOptions() {
 
-        final Button addButton = findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+        final Button addButton = findAddButton();
 
         Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
@@ -121,9 +118,7 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
     @Test
     public void testAddItemFillOptionsAndThenAddOtherItem() {
 
-        final Button addButton = findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+        final Button addButton = findAddButton();
 
         Stream<FormComponent> stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
         Assert.assertTrue(stream.collect(Collectors.toList()).isEmpty());
@@ -132,14 +127,14 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
         stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
         Assert.assertTrue(stream.collect(Collectors.toList()).size() == 1);
 
-        AbstractSingleSelectChoice choice = (AbstractSingleSelectChoice) findFormComponentsByType(formTester.getForm(), compositeSelection)
+        final DropDownChoice choice = (DropDownChoice) findFormComponentsByType(formTester.getForm(), compositeSelection)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o select composto"));
 
-        formTester.select(getFormRelativePath(choice), 0);
-        formTester.submit();
+        int index = 0;
 
-        String value = choice.getValue();
+        String value = (String) ((SelectOption) choice.getChoices().get(index)).getValue();
+        formTester.select(getFormRelativePath(choice), index);
 
         wicketTester.executeAjaxEvent(addButton, "click");
         stream = findFormComponentsByType(formTester.getForm(), compositeSelection);
@@ -149,4 +144,10 @@ public class PanelListWithSelectionTest extends AbstractSingularFormTest {
 
     }
 
+
+    private Button findAddButton() {
+        return findOnForm(Button.class, formTester.getForm(), b -> b.getClass().getName().contains("AddButton"))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Não foi possivel encontrar o botão de adicionar"));
+    }
 }
