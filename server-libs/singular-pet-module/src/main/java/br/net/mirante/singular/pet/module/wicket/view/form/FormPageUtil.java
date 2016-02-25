@@ -46,22 +46,18 @@ public class FormPageUtil {
         StringValue formId = request.getRequestParameters().getParameterValue(MODEL_KEY);
         StringValue viewMode = request.getRequestParameters().getParameterValue(VIEW_MODE);
         StringValue annotationMode = request.getRequestParameters().getParameterValue(ANNOTATION_MODE);
-        urLparams.type = decompress(Optional.ofNullable(type).orElse(StringValue.valueOf("")).toString());
-        urLparams.formId = Optional.ofNullable(formId).orElse(StringValue.valueOf("")).toString();
+        urLparams.type = decompress(type.toString());
+        urLparams.formId = formId.toString();
         urLparams.viewMode = Optional
                 .ofNullable(
                         keyMapViewMode
-                                .get(Optional
-                                        .ofNullable(viewMode)
-                                        .orElse(StringValue.valueOf(""))
+                                .get(viewMode
                                         .toString()))
                 .orElse(ViewMode.EDITION);
         urLparams.annotationMode = Optional
                 .ofNullable(
                         keyMapAnnotationMode
-                                .get(Optional
-                                        .ofNullable(annotationMode)
-                                        .orElse(StringValue.valueOf(""))
+                                .get(annotationMode
                                         .toString()))
                 .orElse(AnnotationMode.NONE);
         return urLparams;
@@ -73,6 +69,10 @@ public class FormPageUtil {
 
     public static String buildUrl(String baseURL, String type, Object formId, ViewMode mode) {
         return buildUrl(baseURL, type, String.valueOf(formId), mode, null);
+    }
+
+    public static String buildUrl(String baseURL, String type, Object formId, ViewMode mode, AnnotationMode annotationMode) {
+        return buildUrl(baseURL, type, String.valueOf(formId), mode, annotationMode);
     }
 
     public static String buildUrl(String baseURL, String type, String formId, ViewMode mode, AnnotationMode annotationMode) {
@@ -103,6 +103,10 @@ public class FormPageUtil {
 
     private static String decompress(String value) {
         try {
+            if (value == null) {
+                return null;
+            }
+
             byte[] bytes = Base64.getDecoder().decode(value.getBytes(ENCODING));
             InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

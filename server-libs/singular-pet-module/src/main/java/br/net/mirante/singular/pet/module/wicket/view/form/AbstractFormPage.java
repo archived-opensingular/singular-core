@@ -26,8 +26,8 @@ public abstract class AbstractFormPage extends Template {
     protected Content getContent(String id) {
         FormPageUtil.URLParams param = FormPageUtil.readParameters(getRequest());
 
-        if (param.type.isEmpty()
-                && param.formId.isEmpty()) {
+        if (param.type == null
+                && param.formId == null) {
             String urlServidorSingular = ServerProperties.getProperty(ServerProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
