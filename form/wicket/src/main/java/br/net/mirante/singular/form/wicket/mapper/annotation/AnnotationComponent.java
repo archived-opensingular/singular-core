@@ -328,7 +328,7 @@ class AnnotationModalWindow extends BFModalWindow{
     }
 
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
-        return new ActionAjaxButton("btn") {
+        return new ActionAjaxButton("btn-ok") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 target.add(parentComponent);
                 AnnotationModalWindow.this.hide(target);

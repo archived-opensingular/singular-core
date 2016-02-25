@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.hepers;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -37,7 +38,12 @@ public class TestFinders {
         }
         return Optional.empty();
     }
-    
+
+    public static List<Component> findTag(MarkupContainer container, String id, Class<? extends Component> tag) {
+        List<Component> tags = findTag(container, tag);
+        return tags.stream().filter((c) -> c.getId().equals(id)).collect(Collectors.toList());
+    }
+
     public static List<Component> findTag(MarkupContainer container, Class<? extends Component> tag) {
         List<Component> result = Lists.newArrayList();
         findTag(tag, result, container);
