@@ -1,10 +1,11 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
 
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.pet.module.wicket.PetSession;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -12,8 +13,17 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.pet.module.wicket.PetSession;
+import de.alpharogroup.wicket.js.addon.toastr.Position;
+import de.alpharogroup.wicket.js.addon.toastr.ShowMethod;
+import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrSettings;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 
 public abstract class Content extends Panel {
@@ -64,6 +74,46 @@ public abstract class Content extends Panel {
 
     public PetSession getPetSession() {
         return PetSession.get();
+    }
+
+    protected void addToastrSuccessMessage(String messageKey) {
+        addToastrMessage(messageKey, ToastrType.SUCCESS);
+    }
+
+    protected void addToastrErrorMessage(String messageKey) {
+        addToastrMessage(messageKey, ToastrType.ERROR);
+    }
+
+    protected void addToastrWarningMessage(String messageKey) {
+        addToastrMessage(messageKey, ToastrType.WARNING);
+    }
+
+    protected void addToastrInfoMessage(String messageKey) {
+        addToastrMessage(messageKey, ToastrType.INFO);
+    }
+
+    private void addToastrMessage(String messageKey, ToastrType toastrType) {
+        ToastrSettings settings = getDefaultSettings();
+        settings.getToastrType().setValue(toastrType);
+        settings.getNotificationTitle().setValue(getString(messageKey));
+        ToastJsGenerator generator = new ToastJsGenerator(settings);
+
+        if (!((WebRequest)RequestCycle.get().getRequest()).isAjax()) {
+            add($b.onReadyScript((ISupplier<CharSequence>) () -> generator.generateJs(settings, null)));
+        } else {
+            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+            target.appendJavaScript(generator.generateJs(settings, null));
+        }
+
+    }
+
+    private ToastrSettings getDefaultSettings() {
+        ToastrSettings settings = ToastrSettings.builder().build();
+        settings.getPositionClass().setValue(Position.TOP_FULL_WIDTH);
+        settings.getShowMethod().setValue(ShowMethod.SLIDE_DOWN);
+        settings.getNotificationContent().setValue("");
+        settings.getCloseButton().setValue(true);
+        return settings;
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {

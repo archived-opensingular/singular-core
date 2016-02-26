@@ -62,16 +62,6 @@ public abstract class AbstractFormContent extends Content {
         add(buildForm());
     }
 
-    @Override
-    protected IModel<?> getContentTitlelModel() {
-        return new ResourceModel("label.content.title");
-    }
-
-    @Override
-    protected IModel<?> getContentSubtitlelModel() {
-        return new ResourceModel("label.content.title");
-    }
-
     private Form<?> buildForm() {
         Form<?> form = new Form<>("save-form");
         form.setMultiPart(true);
@@ -212,6 +202,7 @@ public abstract class AbstractFormContent extends Content {
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 saveForm(getCurrentInstance());
+                addToastrSuccessMessage("label.teste");
                 backToCrudPage(this);
             }
 
