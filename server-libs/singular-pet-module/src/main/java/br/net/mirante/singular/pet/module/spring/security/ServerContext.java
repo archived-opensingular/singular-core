@@ -2,6 +2,7 @@ package br.net.mirante.singular.pet.module.spring.security;
 
 import br.net.mirante.singular.pet.module.config.ConfigProperties;
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
+import org.apache.wicket.request.Request;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +24,10 @@ public enum ServerContext {
         } else {
             this.contextPath = path;
         }
+    }
+
+    public static ServerContext getContextFromRequest(Request request) {
+        return getContextFromRequest((HttpServletRequest) request.getContainerRequest());
     }
 
     public static ServerContext getContextFromRequest(HttpServletRequest request) {
