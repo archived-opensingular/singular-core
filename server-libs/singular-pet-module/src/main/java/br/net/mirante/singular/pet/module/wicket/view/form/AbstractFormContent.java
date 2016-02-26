@@ -1,5 +1,21 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
@@ -15,20 +31,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
-import java.util.Optional;
 
 
 public abstract class AbstractFormContent extends Content {
@@ -149,6 +151,7 @@ public abstract class AbstractFormContent extends Content {
             @Override
             protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                 setFormXML(getFormModel(), xml.toStringExato());
+                getCurrentInstance().getObject().getDocument().persistFiles();
                 AbstractFormContent.this.saveForm(getCurrentInstance());
             }
 
@@ -207,6 +210,7 @@ public abstract class AbstractFormContent extends Content {
                 MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
                 setFormXML(getFormModel(), rootXml.toStringExato());
                 processAnnotations(getCurrentInstance().getObject());
+                getCurrentInstance().getObject().getDocument().persistFiles();
                 saveForm(getFormModel());
                 backToCrudPage(this);
             }
