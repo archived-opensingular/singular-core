@@ -10,6 +10,10 @@ import java.util.List;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
+import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -152,7 +156,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         assertThat(currentAnnotation(annotated2).approved()).isNull();
     }
 
-    @Test public void itLoadsDataFromPersistedAnnotationsOntoScreen(){
+    @Test public void itLoadsDataFromAnnotationsOntoScreen(){
         setupPage();
 
         SIComposite current = page.getCurrentInstance();
@@ -180,6 +184,54 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
                 .isEqualTo("It is funny how hard it is to come up with these texts");
         assertThat(checkBox.getValue())
                 .isEqualTo("false");
+    }
+
+    @Test public void itLoadsPersistedDataFromAnnotationsOntoScreen(){
+        setupPage();
+
+        SIComposite current = page.getCurrentInstance();
+
+        SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("The past will haunt ya.");
+
+        FormSerialized persisted = FormSerializationUtil.toSerializedObject(current.as(AtrAnnotation::new).persistentAnnotations());
+        SList backup = (SList) FormSerializationUtil.toInstance(persisted);
+
+        annotation1.setText("What's up doc?");
+
+        current.as(AtrAnnotation::new).loadAnnotations(backup);
+
+        buildPage();
+
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
+                .isEqualTo("The past will haunt ya.");
+
+    }
+
+    @Test public void itLoadsPersistedAnnotationsForEmptyFields(){
+        setupPage();
+
+        SIComposite old = (SIComposite) SDocumentFactory.empty()
+                .createInstance(new RefType() {
+            @Override
+            protected SType<?> retrieve() {
+                return baseCompositeField;
+            }
+        });
+
+        SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("The past will haunt ya.");
+        FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
+        SList backup = (SList) FormSerializationUtil.toInstance(persisted);
+
+        SIComposite current = page.getCurrentInstance();
+        current.as(AtrAnnotation::new).loadAnnotations(backup);
+
+        buildPage();
+
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
+                .isEqualTo("The past will haunt ya.");
+
     }
 
     private SIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {

@@ -227,7 +227,7 @@ public class AnnotationComponent extends Panel {
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
                     " "+!context.annotation().editable()+" "+
-                "); console.log('teste'); \n" +
+                "); \n" +
                 "});\n";
     }
 
