@@ -1,8 +1,10 @@
 package br.net.mirante.singular.exemplos.canabidiol;
 
+import org.apache.commons.lang3.BooleanUtils;
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
@@ -10,7 +12,6 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import org.apache.commons.lang3.BooleanUtils;
 
 public class SPackagePeticaoCanabidiol extends SPackage {
 
@@ -37,7 +38,8 @@ public class SPackagePeticaoCanabidiol extends SPackage {
         pb.createTipo(STypeProdutos.class);
 
         final STypeComposite<?> canabis = pb.createTipoComposto(TIPO);
-        canabis.as(AtrBasic.class).label("Peticionamento de Canabidiol");
+        canabis.as(AtrBasic::new).label("Peticionamento de Canabidiol");
+
         {
             final STypePessoa paciente = canabis.addCampo("paciente", STypePessoa.class);
             paciente
