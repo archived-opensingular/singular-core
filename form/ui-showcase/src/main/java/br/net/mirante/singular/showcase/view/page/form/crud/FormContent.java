@@ -106,13 +106,27 @@ public class FormContent extends Content implements SingularWicketContainer<Crud
 
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
 
+                SInstance instance = loadOrCreateInstance(singularFormConfig, refType);
+                loadAnnotationsIfNeeded(instance);
+
+                return instance;
+            }
+
+            private SInstance loadOrCreateInstance(SFormConfig<String> singularFormConfig, RefType refType) {
                 String xml = currentModel.getXml();
+                SInstance instance;
                 if (StringUtils.isBlank(xml)) {
-                    return singularFormConfig.getDocumentFactory().createInstance(refType);
+                    instance = singularFormConfig.getDocumentFactory().createInstance(refType);
                 } else {
-                    SInstance instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+                    instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+                }
+                return instance;
+            }
+
+            private void loadAnnotationsIfNeeded(SInstance instance) {
+                String annotationsXml = currentModel.getAnnnotations();
+                if (StringUtils.isNotBlank(annotationsXml)) {
                     MformPersistenciaXML.annotationLoadFromXml(instance, currentModel.getAnnnotations());
-                    return instance;
                 }
             }
 
