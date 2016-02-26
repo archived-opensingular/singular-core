@@ -8,6 +8,7 @@ import br.net.mirante.singular.pet.module.util.ServerProperties;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.pet.module.wicket.view.template.Template;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +23,20 @@ public abstract class AbstractFormPage extends Template {
         return false;
     }
 
+    protected abstract FormPageConfig parseParameters(Request request);
+
 
     @Override
     protected Content getContent(String id) {
-        FormPageUtil.URLParams param = FormPageUtil.readParameters(getRequest());
+        FormPageConfig config = parseParameters(getRequest());
 
-        if (param.type == null
-                && param.formId == null) {
+        if (config.type == null
+                && config.formId == null) {
             String urlServidorSingular = ServerProperties.getProperty(ServerProperties.SINGULAR_SERVIDOR_ENDERECO);
             throw new RedirectToUrlException(urlServidorSingular);
         }
 
-        return new AbstractFormContent(id, param.type, param.formId, param.viewMode, param.annotationMode) {
+        return new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
 
 
             @Override
@@ -78,7 +81,6 @@ public abstract class AbstractFormPage extends Template {
         };
     }
 
-
     protected abstract String getFormXML(IModel<?> model);
 
     protected abstract void setFormXML(IModel<?> model, String xml);
@@ -94,5 +96,12 @@ public abstract class AbstractFormPage extends Template {
     protected abstract String getAnnotationsXML(IModel<?> model);
 
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
+
+    public static class FormPageConfig {
+        public ViewMode viewMode = ViewMode.VISUALIZATION;
+        public AnnotationMode annotationMode = AnnotationMode.NONE;
+        public String formId;
+        public String type;
+    }
 
 }
