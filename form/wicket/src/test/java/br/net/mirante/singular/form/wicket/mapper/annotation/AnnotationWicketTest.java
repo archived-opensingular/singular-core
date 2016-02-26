@@ -8,6 +8,8 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 
 import java.util.List;
 
+import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -20,10 +22,6 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
@@ -109,7 +107,6 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
 
         form = driver.newFormTester("test-form", false);
 
-        List<TextArea> textAreas = (List)findTag(form.getForm(), TextArea.class);
         Component modalText = findFirstComponentWithId(driver.getLastRenderedPage(), "modalText");
         assertThat(modalText).isNotNull();
         form.setValue(modalText, "Something to comment or not. Who knows.");
@@ -161,40 +158,28 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         SIComposite current = page.getCurrentInstance();
         SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
 
-        System.out.println(iNotAnnotated.getCampo(annotated4.getSimpleName()).getId());
-        SIAnnotation annotation2 = newAnnotation(
-                            current.getCampo(annotated1.getSimpleName()).getId(),
-                            "It is funny how hard it is to come up with these texts",
-                            false),
-                    annotation4 = newAnnotation(
-                            iNotAnnotated.getCampo(annotated4.getSimpleName()).getId(),
-                            "But I never give up. I keep on trying.",
-                            true);
-
-//        current.as(AtrAnnotation::new).loadAnnotations(Lists.newArrayList(annotation2, annotation4));
+        SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
+        annotation1.setText("It is funny how hard it is to come up with these texts");
+        annotation1.setApproved(false);
 
         buildPage();
 
-        List<Label> texts = (List)findTag(form.getForm(), "comment_field", Label.class);
-        Label text1 = texts.get(0), text2 = texts.get(1), text4 = texts.get(2);
-        List<Label> checks = (List)findTag(form.getForm(), "approval_field", Label.class);
-        Label check1 = checks.get(0), check2 = checks.get(1), check4 = checks.get(2);
+        assertThat(driver.getTagByWicketId("comment_field").getValue())
+                .isEqualTo("It is funny how hard it is to come up with these texts");
+        assertThat(driver.getTagByWicketId("approval_field").getValue())
+                .isEqualTo("Rejeitado");
 
-        driver.assertContains("It is funny how hard it is to come up with these texts");
+        List<Component> tags = getOpenModalButtons();
+        driver.executeAjaxEvent(tags.get(0), "onclick");
 
-//        driver.getTagByWicketId("comment_field")
-
-        System.out.println(text1);
-        System.out.println(check1);
-
-//        assertThat(check1.getValue()).isEqualTo("false");
-//        assertThat(text1.getValue())
-//                .isEqualTo("It is funny how hard it is to come up with these texts");
-//        assertThat(check4.getValue()).isEqualTo("true");
-//        assertThat(text4.getValue())
-//                .isEqualTo("But I never give up. I keep on trying.");
-
-
+        TextArea modalText = (TextArea) findFirstComponentWithId(driver.getLastRenderedPage(),
+                                                                        "modalText");
+        CheckBox checkBox = (CheckBox) findFirstComponentWithId(driver.getLastRenderedPage(),
+                                                                        "modalApproval");
+        assertThat(modalText.getValue())
+                .isEqualTo("It is funny how hard it is to come up with these texts");
+        assertThat(checkBox.getValue())
+                .isEqualTo("false");
     }
 
     private SIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
