@@ -211,7 +211,7 @@ public abstract class AbstractFormContent extends Content {
                 setFormXML(getFormModel(), rootXml.toStringExato());
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                saveForm(getFormModel());
+                saveForm(getCurrentInstance());
                 backToCrudPage(this);
             }
 
