@@ -14,6 +14,7 @@ import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -202,14 +203,7 @@ public class AnnotationComponent extends Panel {
         super.renderHead(response);
         response.render(JavaScriptReferenceHeaderItem.forReference(resourceRef("annotation.js")));
         response.render(CssReferenceHeaderItem.forReference(resourceRef("annotation.css")));
-        if (!((WebRequest)RequestCycle.get().getRequest()).isAjax()) {
-            response.render(JavaScriptContentHeaderItem.forScript(generateUpdateJS(),
-                    "updateAnnotation_" + this.getMarkupId() + "_" + new Date().getTime()
-            ));
-        } else {
-            AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-            target.appendJavaScript(generateUpdateJS());
-        }
+        response.render(OnDomReadyHeaderItem.forScript(generateUpdateJS()));
     }
 
     private PackageResourceReference resourceRef(String resourceName) {
@@ -219,16 +213,14 @@ public class AnnotationComponent extends Panel {
 
     protected String generateUpdateJS() {
         if(referencedComponent == null) return "";
-        return "$(function(){\n" +
-                "Annotation.create_or_update(" +
+        return "Annotation.create_or_update(" +
                     "'#"+referencedComponent.getMarkupId()+"', " +
                     "'#"+this.getMarkupId()+"'," +
                     "'#"+openModalButton.getMarkupId()+"'," +
                     "`"+textModel.getObject()+"`, " +
                     " "+approvedModel.getObject()+", " +
                     " "+!context.annotation().editable()+" "+
-                "); \n" +
-                "});\n";
+                "); \n" ;
     }
 
 
