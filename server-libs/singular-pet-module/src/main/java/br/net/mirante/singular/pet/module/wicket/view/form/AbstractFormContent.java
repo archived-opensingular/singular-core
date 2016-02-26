@@ -203,7 +203,7 @@ public abstract class AbstractFormContent extends Content {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 saveForm(getFormModel());
 
-                addToastrSuccessMessage("label.teste");
+                addToastrSuccessMessage("message.success");
                 backToCrudPage(this);
             }
 
