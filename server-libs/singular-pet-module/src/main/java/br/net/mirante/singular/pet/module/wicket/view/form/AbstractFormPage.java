@@ -38,6 +38,15 @@ public abstract class AbstractFormPage extends Template {
 
         return new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
 
+            @Override
+            protected IModel<?> getContentTitlelModel() {
+                return AbstractFormPage.this.getContentTitlelModel();
+            }
+
+            @Override
+            protected IModel<?> getContentSubtitlelModel() {
+                return AbstractFormPage.this.getContentSubtitlelModel();
+            }
 
             @Override
             protected String getFormXML(IModel<?> model) {
@@ -80,6 +89,10 @@ public abstract class AbstractFormPage extends Template {
             }
         };
     }
+
+    protected abstract IModel<?> getContentTitlelModel();
+
+    protected abstract IModel<?> getContentSubtitlelModel();
 
     protected abstract String getFormXML(IModel<?> model);
 
