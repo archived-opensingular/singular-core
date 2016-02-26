@@ -1,0 +1,16 @@
+Essa pasta contem os arquivos necessários para a configuracao do SSO em desenvolvimento:
+
+standalone.xml
+server.keystore
+
+Esses arquivos devem substituir os arquivos já existentes em:
+
+<wildfly-home>/standalone/configuration/
+
+
+As alterações nesse arquivo são referentes a configuração do ssl no wildfly.
+
+A versão do wildfly a ser utilizada é a 9.0.1-final
+
+Importar server.crt no cacerts do java
+keytool -import -keystore cacerts -file server.crt -alias localhost -storepass changeit

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+    <session-config>
+        <cookie-config>
+            <path>/sso/analise</path>
+        </cookie-config>
+    </session-config>
+    <context-root>/sso/analise</context-root>
+</jboss-web>
