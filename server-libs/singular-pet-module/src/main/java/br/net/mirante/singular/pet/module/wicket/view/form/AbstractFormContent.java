@@ -247,7 +247,8 @@ public abstract class AbstractFormContent extends Content {
                 processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 saveForm(getCurrentInstance());
-                addToastrSuccessMessage("label.teste");
+
+                addToastrSuccessMessage("message.success");
                 backToCrudPage(this);
             }
 
