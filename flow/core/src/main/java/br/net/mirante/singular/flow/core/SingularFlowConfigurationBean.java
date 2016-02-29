@@ -3,7 +3,6 @@ package br.net.mirante.singular.flow.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -65,7 +64,7 @@ public abstract class SingularFlowConfigurationBean {
     }
     
     public final String getProcessGroupCod() {
-        Objects.requireNonNull(processGroupCod);
+//        Objects.requireNonNull(processGroupCod);
         if (processGroupCod == null) {
             throw new SingularFlowException("Não foi definido o ProcessGroupCod");
         }

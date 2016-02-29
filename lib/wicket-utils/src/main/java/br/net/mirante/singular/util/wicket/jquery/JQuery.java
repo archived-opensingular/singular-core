@@ -1,14 +1,14 @@
 package br.net.mirante.singular.util.wicket.jquery;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.*;
-
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 
+import br.net.mirante.singular.util.StreamUtils;
 import br.net.mirante.singular.util.wicket.util.JavaScriptUtils;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$L;
 
 public class JQuery {
 
@@ -34,10 +34,11 @@ public class JQuery {
     }
 
     public static StringBuilder $(Component component, Component... moreComponents) {
-        String selector = Stream.concat(Stream.of(component), Stream.of(moreComponents))
-            .filter($L.notNull())
-            .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
-            .collect(Collectors.joining(","));
+        final Component[] allComponents = ArrayUtils.add(moreComponents, component);
+        final String selector = StreamUtils.fromArray(allComponents, stream -> stream
+                .filter($L.notNull())
+                .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
+                .collect(Collectors.joining(",")));
         return $(selector);
     }
 
