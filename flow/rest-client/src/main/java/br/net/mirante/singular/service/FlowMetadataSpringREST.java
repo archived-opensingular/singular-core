@@ -101,7 +101,7 @@ class FlowMetadataSpringREST implements IFlowMetadataService{
     public String addOtherParameters(String... params){
         if(params != null) {
             return StreamUtils
-                    .fromArray(params, stream -> stream
+                    .getFromArray(params, stream -> stream
                             .map(param -> "&" + param + "={" + param + "}")
                             .collect(Collectors.joining()));
         } else {

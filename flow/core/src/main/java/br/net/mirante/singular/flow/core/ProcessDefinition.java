@@ -411,7 +411,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return as entidades persistentes.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
-        return StreamUtils.fromArray(task, s -> s.map(this::getEntityTaskDefinition).collect(Collectors.toList()));
+        return StreamUtils.getFromArray(task, s -> s.map(this::getEntityTaskDefinition).collect(Collectors.toList()));
     }
 
     /**

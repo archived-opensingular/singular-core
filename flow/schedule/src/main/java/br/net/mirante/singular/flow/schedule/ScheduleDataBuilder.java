@@ -2,6 +2,7 @@ package br.net.mirante.singular.flow.schedule;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 
@@ -45,18 +46,22 @@ public class ScheduleDataBuilder {
     public static IScheduleData buildWeekly(int hours, int minutes, Integer... dayOfWeek) {
         Preconditions.checkArgument(dayOfWeek.length > 0, "any dayOfWeek provided");
 
-        String[] weekDaysNames = new String[] {"domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"};
+        String[] weekDaysNames = new String[]{"domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"};
 
-        String daysDescription = Arrays.stream(dayOfWeek)
-                .map((day) -> weekDaysNames[day]).collect(Collectors.joining(","));
-        String description = "Semanal: " + daysDescription
-                + " às " + hours + ':' + (minutes < 10 ? "0" : "") + minutes + "h";
+        try (Stream<Integer> dayOfWeekStream = Arrays.stream(dayOfWeek)) {
 
-        String cronExpression = generateCronExpression("0", Integer.toString(minutes),
-                Integer.toString(hours), "*", "*", Arrays.stream(dayOfWeek).map(Object::toString)
-                        .collect(Collectors.joining(",")), "");
+            String daysDescription = dayOfWeekStream.map((day) -> weekDaysNames[day]).collect(Collectors.joining(","));
+            String description = "Semanal: " + daysDescription
+                    + " às " + hours + ':' + (minutes < 10 ? "0" : "") + minutes + "h";
 
-        return new ScheduleDataImpl(cronExpression, description);
+            try (Stream<Integer> dayOfWeekStream2 = Arrays.stream(dayOfWeek)) {
+
+                String cronExpression = generateCronExpression("0", Integer.toString(minutes),
+                        Integer.toString(hours), "*", "*", dayOfWeekStream2.map(Object::toString)
+                                .collect(Collectors.joining(",")), "");
+                return new ScheduleDataImpl(cronExpression, description);
+            }
+        }
     }
 
     /**
@@ -74,15 +79,19 @@ public class ScheduleDataBuilder {
                     Integer.toString(dayOfMonth), "*", "?", "");
             return new ScheduleDataImpl(cronExpression, description);
         } else {
-            String monthsDescription = Arrays.stream(months).map(Object::toString).collect(Collectors.joining(","));
-            String description = "Mensal: todo dia " + dayOfMonth
-                    + " às " + hours + ':' + (minutes < 10 ? "0" : "") + minutes + "h"
-                    + " nos meses: " + monthsDescription;
 
-            String cronExpression = generateCronExpression("0", Integer.toString(minutes),
-                    Integer.toString(hours), Integer.toString(dayOfMonth), monthsDescription, "?", "");
+            try (Stream<Integer> stream = Arrays.stream(months)) {
 
-            return new ScheduleDataImpl(cronExpression, description);
+                String monthsDescription = stream.map(Object::toString).collect(Collectors.joining(","));
+                String description = "Mensal: todo dia " + dayOfMonth
+                        + " às " + hours + ':' + (minutes < 10 ? "0" : "") + minutes + "h"
+                        + " nos meses: " + monthsDescription;
+
+                String cronExpression = generateCronExpression("0", Integer.toString(minutes),
+                        Integer.toString(hours), Integer.toString(dayOfMonth), monthsDescription, "?", "");
+
+                return new ScheduleDataImpl(cronExpression, description);
+            }
         }
     }
 

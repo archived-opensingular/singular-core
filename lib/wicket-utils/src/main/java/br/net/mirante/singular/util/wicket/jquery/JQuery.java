@@ -35,7 +35,7 @@ public class JQuery {
 
     public static StringBuilder $(Component component, Component... moreComponents) {
         final Component[] allComponents = ArrayUtils.add(moreComponents, component);
-        final String selector = StreamUtils.fromArray(allComponents, stream -> stream
+        final String selector = StreamUtils.getFromArray(allComponents, stream -> stream
                 .filter($L.notNull())
                 .map(it -> (it instanceof Page) ? "document" : "#" + it.getMarkupId())
                 .collect(Collectors.joining(",")));
