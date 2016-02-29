@@ -17,6 +17,7 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
@@ -24,7 +25,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -90,7 +90,16 @@ public abstract class AbstractFormContent extends Content {
             int index = 0;
             for (MTransition t : trans) {
                 String btnId = "flow-btn" + index;
-                buildFlowTransitionButton(btnId, container, modalContainer, t.getName(), singularFormPanel.getRootInstance());
+                buildFlowTransitionButton(
+                        btnId,
+                        container,
+                        modalContainer,
+                        t.getName(),
+                        (IReadOnlyModel<SInstance>) () -> Optional
+                                .ofNullable(singularFormPanel)
+                                .map(SingularFormPanel::getRootInstance)
+                                .map(IModel::getObject)
+                                .orElse(null));
             }
         } else {
             container.setVisible(false);
