@@ -3,6 +3,9 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.HashMap;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
+import br.net.mirante.singular.util.wicket.resource.Icone;
+import br.net.mirante.singular.util.wicket.resource.IconeView;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -55,7 +58,20 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         public void buildView() {
             final BSGrid grid = createCompositeGrid(ctx);
             buildFields(ctx, grid.newRow());
-            ctx.getRootContext().updateAnnotations(grid);
+            if(ctx.getRootContext().annotation().enabled() && instance.as(AtrAnnotation::new).isAnnotated()){
+
+                BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
+                toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
+
+                BSContainer icon = new BSContainer<>("_toggle_icon_");
+                icon.appendTag("i", true, "", new Label("_x_",$m.ofValue()));
+
+                toggleContainer.appendTag("a",true,
+                        "href='javascript:;' class='btn btn-circle btn-icon-only'", icon);
+
+                grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
+                ctx.getRootContext().updateAnnotations(grid);
+            }
         }
 
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
