@@ -43,15 +43,15 @@ import br.net.mirante.singular.showcase.component.interaction.CaseInteractionExi
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionRequired;
 import br.net.mirante.singular.showcase.component.interaction.CaseInteractionVisible;
 import br.net.mirante.singular.showcase.component.layout.CaseFineTunningGrid;
-import br.net.mirante.singular.showcase.component.layout.CaseGridList;
-import br.net.mirante.singular.showcase.component.layout.CaseGridListMinimumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseGridTable;
-import br.net.mirante.singular.showcase.component.layout.CaseGridTableMinimiumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseMasterDetail;
-import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailButtons;
-import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailColumns;
-import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailMiniumAndMaximum;
-import br.net.mirante.singular.showcase.component.layout.CaseMasterDetailNested;
+import br.net.mirante.singular.showcase.component.layout.CaseListByFormDefault;
+import br.net.mirante.singular.showcase.component.layout.CaseListByFormMinimumAndMaximum;
+import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailButtons;
+import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailColumns;
+import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailDefault;
+import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailMiniumAndMaximum;
+import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailNested;
+import br.net.mirante.singular.showcase.component.layout.CaseListByTableDefault;
+import br.net.mirante.singular.showcase.component.layout.CaseListByTableMinimiumAndMaximum;
 import br.net.mirante.singular.showcase.component.layout.CaseSimpleGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseTabs;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
@@ -98,15 +98,15 @@ public class ShowCaseTable {
         group("Layout", Icone.GRID)
             .addCase(CaseSimpleGrid.class)
             .addCase(CaseFineTunningGrid.class)
-            .addCase(CaseGridList.class)
-            .addCase(CaseGridTable.class)
-            .addCase(CaseMasterDetail.class)
-            .addCase(CaseMasterDetailColumns.class)
-            .addCase(CaseMasterDetailButtons.class)
-            .addCase(CaseMasterDetailNested.class)
-            .addCase(CaseGridListMinimumAndMaximum.class)
-            .addCase(CaseGridTableMinimiumAndMaximum.class)
-            .addCase(CaseMasterDetailMiniumAndMaximum.class)
+            .addCase(CaseListByFormDefault.class)
+            .addCase(CaseListByTableDefault.class)
+            .addCase(CaseListByMasterDetailDefault.class)
+            .addCase(CaseListByMasterDetailColumns.class)
+            .addCase(CaseListByMasterDetailButtons.class)
+            .addCase(CaseListByMasterDetailNested.class)
+            .addCase(CaseListByFormMinimumAndMaximum.class)
+            .addCase(CaseListByTableMinimiumAndMaximum.class)
+            .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
             .addCase(CaseTabs.class)
         ;
         group("Validation", Icone.BAN)

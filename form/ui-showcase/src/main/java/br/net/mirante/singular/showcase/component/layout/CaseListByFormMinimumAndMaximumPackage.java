@@ -1,21 +1,21 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseMasterDetailColumnsPackage extends SPackage {
+public class CaseListByFormMinimumAndMaximumPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-
         STypeComposite<?> testForm = pb.createTipoComposto("testForm");
 
         final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
@@ -27,12 +27,12 @@ public class CaseMasterDetailColumnsPackage extends SPackage {
         final STypeString atividades = experiencia.addCampoString("atividades");
 
         {
-            //@destacar:bloco
-            experiencias.withView(new MListMasterDetailView()
-                    .col(empresa, "Empresa em que trabalhou") // Desta forma, será utilizado rótulo personalizado para esta coluna.
-                    .col(dtInicioExperiencia) //Nos demais, a coluna terá o mesmo rótulo do tipo que a define.
-                    .col(dtFimExperiencia))
-            //@destacar:fim
+            experiencias
+                    //@destacar:bloco
+                    .withMiniumSizeOf(1)
+                    .withMaximumSizeOf(3)
+                     //@destacar:fim
+                    .withView(MPanelListaView::new)
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")
