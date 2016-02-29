@@ -64,10 +64,23 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
                 toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
 
                 BSContainer icon = new BSContainer<>("_toggle_icon_");
-                icon.appendTag("i", true, "", new Label("_x_",$m.ofValue()));
+                if(instance.as(AtrAnnotation::new).hasAnnotation()) {
+                    icon.appendTag("i", true, "class='fa fa-comment-o'", new Label("_x_", $m.ofValue()));
+                }else{
+                    icon.appendTag("i", true, "class='fa fa-plus'", new Label("_x_", $m.ofValue()));
+                }
+
+                String colorCSS = "btn-default";
+                if(instance.as(AtrAnnotation::new).hasAnnotation()) {
+                    if(instance.as(AtrAnnotation::new).annotation().getApproved()) {
+                        colorCSS = "btn-info";
+                    }else{
+                        colorCSS = "btn-danger";
+                    }
+                }
 
                 toggleContainer.appendTag("a",true,
-                        "href='javascript:;' class='btn btn-circle btn-icon-only'", icon);
+                        "href='javascript:;' class='btn btn-circle btn-icon-only "+colorCSS+"'", icon);
 
                 grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
                 ctx.getRootContext().updateAnnotations(grid);
