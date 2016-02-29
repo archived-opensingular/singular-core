@@ -1,14 +1,22 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
 import br.net.mirante.singular.flow.core.MTransition;
-import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.util.xml.MElement;
+import br.net.mirante.singular.form.wicket.component.SingularButton;
+import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.pet.module.util.ServerProperties;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.pet.module.wicket.view.template.Template;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
+import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.flow.RedirectToUrlException;
@@ -53,13 +61,13 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected List<MTransition> currentTaskTransitions(String formId) {
-                return AbstractFormPage.this.currentTaskTransitions(formId);
+            protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
+                AbstractFormPage.this.buildFlowTransitionButton(buttonId, buttonContainer, modalContainer, transitionName, instanceModel);
             }
 
             @Override
-            protected void executeTransition(String transitionName, IModel<?> currentInstance) {
-                AbstractFormPage.this.executeTransition(transitionName, currentInstance);
+            protected List<MTransition> currentTaskTransitions(String formId) {
+                return AbstractFormPage.this.currentTaskTransitions(formId);
             }
 
             @Override
@@ -102,6 +110,66 @@ public abstract class AbstractFormPage extends Template {
                 AbstractFormPage.this.setAnnotationsXML(model, xml);
             }
         };
+    }
+
+    protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
+        BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel);
+        buildFlowButton(buttonId, buttonContainer, transitionName, instanceModel, modal);
+    }
+
+    private void buildFlowButton(String buttonId, BSContainer buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
+        TemplatePanel tp = buttonContainer
+                .newTemplateTag(
+                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId + "'>\n" + transitionName + "\n</button>\n");
+        tp.add(new SingularButton(buttonId) {
+
+            @Override
+            public IModel<? extends SInstance> getCurrentInstance() {
+                return instanceModel;
+            }
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                confirmarAcaoFlowModal.show(target);
+            }
+        });
+    }
+
+    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
+        TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
+                "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n"
+                        + "<div wicket:id='flow-msg'/>\n"
+                        + "</div>\n");
+        BSModalBorder confirmarAcaoFlowModal = new BSModalBorder("flow-modal" + buttonId, getMessage("label.button.confirm"));
+        tpModal.add(confirmarAcaoFlowModal);
+        confirmarAcaoFlowModal
+                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        confirmarAcaoFlowModal.hide(target);
+                    }
+                })
+                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
+                    @Override
+                    public IModel<? extends SInstance> getCurrentInstance() {
+                        return instanceModel;
+                    }
+
+                    @Override
+                    protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
+                        setFormXML(getFormModel(), xml.toStringExato());
+                        AbstractFormPage.this.executeTransition(transitionName, getFormModel());
+                        target.appendJavaScript("; window.close();");
+                    }
+
+                    @Override
+                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                        confirmarAcaoFlowModal.hide(target);
+                        target.add(form);
+                    }
+                });
+        confirmarAcaoFlowModal.add(new Label("flow-msg", String.format("Tem certeza que deseja %s ?", transitionName)));
+        return confirmarAcaoFlowModal;
     }
 
     protected abstract List<MTransition> currentTaskTransitions(String formId);

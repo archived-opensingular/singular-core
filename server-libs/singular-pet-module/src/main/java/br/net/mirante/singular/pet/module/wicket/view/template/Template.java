@@ -15,6 +15,7 @@ import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import java.util.Collections;
@@ -81,6 +82,10 @@ public abstract class Template extends PetModulePage {
         if (skin.isPresent()) {
             response.render(skin.get().ref);
         }
+    }
+
+    protected StringResourceModel getMessage(String prop) {
+        return new StringResourceModel(prop.trim(), this, null);
     }
 
     protected boolean withTopAction() {

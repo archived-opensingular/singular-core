@@ -16,7 +16,6 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +38,7 @@ public abstract class AbstractFormContent extends Content {
 
 
     protected final BSModalBorder enviarModal = new BSModalBorder("enviar-modal", getMessage("label.title.send"));
-    protected final BSModalBorder confirmarAcaoFlowModal = new BSModalBorder("flow-modal", getMessage("label.button.confirm"));
+    protected final BSContainer modalContainer = new BSContainer("modals");
     protected final String formId;
     protected final String typeName;
     protected IModel<String> msgFlowModel = new Model<String>();
@@ -79,7 +78,7 @@ public abstract class AbstractFormContent extends Content {
         form.add(buildValidateButton());
         form.add(buildCancelButton());
         form.add(buildConfirmationModal());
-        form.add(buildFlowConfirmationModal());
+        form.add(modalContainer);
         return form;
     }
 
@@ -90,7 +89,8 @@ public abstract class AbstractFormContent extends Content {
         if (CollectionUtils.isNotEmpty(trans)) {
             int index = 0;
             for (MTransition t : trans) {
-                buildFlowTransitionButton(container, t.getName(), index++);
+                String btnId = "flow-btn" + index;
+                buildFlowTransitionButton(btnId, container, modalContainer, t.getName(), singularFormPanel.getRootInstance());
             }
         } else {
             container.setVisible(false);
@@ -99,26 +99,8 @@ public abstract class AbstractFormContent extends Content {
         return container;
     }
 
-    private void buildFlowTransitionButton(BSContainer container, String transitionName, Integer index) {
-        String btnId = "flow-btn" + index;
-        TemplatePanel tp = container
-                .newTemplateTag(
-                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + btnId + "'>\n" + transitionName + "\n</button>\n");
-        tp.add(new SingularButton(btnId) {
+    protected abstract void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel);
 
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
-            }
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                msgFlowModel.setObject(String.format("Tem certeza que deseja %s ?", transitionName));
-                transitionNameModel.setObject(transitionName);
-                confirmarAcaoFlowModal.show(target);
-            }
-        });
-    }
 
     protected abstract List<MTransition> currentTaskTransitions(String formId);
 
@@ -319,36 +301,6 @@ public abstract class AbstractFormContent extends Content {
         return enviarModal;
     }
 
-    private Component buildFlowConfirmationModal() {
-        confirmarAcaoFlowModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-btn") {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        confirmarAcaoFlowModal.hide(target);
-                    }
-                })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
-                    @Override
-                    public IModel<? extends SInstance> getCurrentInstance() {
-                        return singularFormPanel.getRootInstance();
-                    }
-
-                    @Override
-                    protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                        setFormXML(getFormModel(), xml.toStringExato());
-                        AbstractFormContent.this.executeTransition(transitionNameModel.getObject(), getFormModel());
-                        target.appendJavaScript("; window.close();");
-                    }
-
-                    @Override
-                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                        confirmarAcaoFlowModal.hide(target);
-                        target.add(form);
-                    }
-                });
-        confirmarAcaoFlowModal.add(new Label("flow-msg", msgFlowModel));
-        return confirmarAcaoFlowModal;
-    }
 
     protected Behavior visibleOnlyInEditionBehaviour() {
         return new Behavior() {
@@ -371,8 +323,6 @@ public abstract class AbstractFormContent extends Content {
             }
         };
     }
-
-    protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
 
     protected abstract String getFormXML(IModel<?> model);
 
