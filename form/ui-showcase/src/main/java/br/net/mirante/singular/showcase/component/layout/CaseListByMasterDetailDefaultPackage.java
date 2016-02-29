@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseMasterDetailMiniumAndMaximumPackage extends SPackage {
+public class CaseListByMasterDetailDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
@@ -27,12 +27,10 @@ public class CaseMasterDetailMiniumAndMaximumPackage extends SPackage {
         final STypeString atividades = experiencia.addCampoString("atividades");
 
         {
-            experiencias
             //@destacar:bloco
-                    .withMiniumSizeOf(1)
-                    .withMaximumSizeOf(3)
-                            //@destacar:fim
+            experiencias
                     .withView(MListMasterDetailView::new)
+            //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                     .as(AtrBasic::new).label("Data inicial")

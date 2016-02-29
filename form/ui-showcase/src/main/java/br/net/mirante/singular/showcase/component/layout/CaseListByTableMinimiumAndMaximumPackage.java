@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridTableMinimiumAndMaximumPackage extends SPackage {
+public class CaseListByTableMinimiumAndMaximumPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

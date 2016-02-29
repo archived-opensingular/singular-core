@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseMasterDetailPackage extends SPackage {
+public class CaseListByMasterDetailButtonsPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
@@ -28,8 +28,10 @@ public class CaseMasterDetailPackage extends SPackage {
 
         {
             //@destacar:bloco
-            experiencias
-                    .withView(MListMasterDetailView::new)
+            experiencias.withView(new MListMasterDetailView()
+                    //.disableNew() // o botão de adicionar pode ser desabilitado também.
+                    .disableDelete()
+                    .disableEdit())
             //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
