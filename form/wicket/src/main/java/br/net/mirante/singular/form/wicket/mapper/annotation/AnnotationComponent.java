@@ -252,7 +252,8 @@ public class AnnotationComponent extends Panel {
 
     private static String buttonColor(AtrAnnotation annotatedInstance) {
         if(annotatedInstance.hasAnnotation()) {
-            if(annotatedInstance.annotation().getApproved()) {  return "btn-info";
+            if(annotatedInstance.annotation().getApproved() != null &&
+                    annotatedInstance.annotation().getApproved()) {  return "btn-info";
             }else{  return "btn-danger";    }
         }
         return "btn-default";
