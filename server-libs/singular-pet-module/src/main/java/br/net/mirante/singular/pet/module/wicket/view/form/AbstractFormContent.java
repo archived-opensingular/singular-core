@@ -103,7 +103,7 @@ public abstract class AbstractFormContent extends Content {
         String btnId = "flow-btn" + index;
         TemplatePanel tp = container
                 .newTemplateTag(
-                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + btnId + "'>" + transitionName + "</button>");
+                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + btnId + "'>\n" + transitionName + "\n</button>\n");
         tp.add(new SingularButton(btnId) {
 
             @Override
