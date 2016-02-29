@@ -61,6 +61,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                             + "        <div wicket:id='_r'></div>"
                             + "      </li>"
                             + "    </ul>");
+                    list.add($b.onConfigure(c -> c.setVisible(!listaModel.getObject().isEmpty())));
                     list.add(new PanelElementsView("_e", listaModel, ctx.getUiBuilderWicket(), ctx, view, form));
                     content.add($b.attrAppender("style", "padding: 15px 15px 10px 15px", ";"));
 

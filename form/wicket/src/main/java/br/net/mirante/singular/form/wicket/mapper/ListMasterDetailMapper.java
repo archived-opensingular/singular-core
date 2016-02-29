@@ -222,9 +222,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
         builder.appendActionColumn($m.ofValue(""), actionColumn -> {
             if (viewMode.isEdition() && view.isDeleteElementsEnabled()) {
                 actionColumn.appendAction(new ActionConfig<>()
-                                .iconeModel(Model.of(Icone.MINUS))
+                                .iconeModel(Model.of(Icone.MINUS), Model.of(MapperCommons.ICON_STYLE))
                                 .buttonModel(Model.of("red"))
-                                .style($m.ofValue("padding:5px 3px;")),
+                                .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                         (target, rowModel) -> {
                             SList<?> sList = ((SList<?>) model.getObject());
                             sList.remove(sList.indexOf(rowModel.getObject()));
@@ -234,9 +234,9 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
             final Icone openModalIcon = viewMode.isEdition() && view.isEditElementEnabled() ? Icone.PENCIL_SQUARE : Icone.EYE;
             actionColumn.appendAction(
                     new ActionConfig<>()
-                            .iconeModel(Model.of(openModalIcon))
+                            .iconeModel(Model.of(openModalIcon), Model.of(MapperCommons.ICON_STYLE))
                             .buttonModel(Model.of("blue-madison"))
-                            .style($m.ofValue("padding:5px 3px;")),
+                            .style($m.ofValue(MapperCommons.BUTTON_STYLE)),
                     (target, rowModel) -> {
                         modal.showExisting(target, rowModel, ctx);
                     });
@@ -264,7 +264,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_add'"
                         + " class='btn btn-success btn-sm pull-right'"
-                        + " style='padding:5px 3px 1px;'><i class='" + Icone.PLUS + "'></i>"
+                        + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                         + "</button>")
                 .add(new AjaxLink<Void>("_add") {
                     @Override
