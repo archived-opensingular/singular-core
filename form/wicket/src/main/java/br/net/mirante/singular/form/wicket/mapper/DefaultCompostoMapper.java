@@ -3,6 +3,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 import java.util.HashMap;
 import java.util.Optional;
 
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
@@ -23,6 +24,8 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.BSCol;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
+
+import static br.net.mirante.singular.form.wicket.mapper.annotation.AnnotationComponent.appendAnnotationToggleButton;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -55,8 +58,17 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         public void buildView() {
             final BSGrid grid = createCompositeGrid(ctx);
             buildFields(ctx, grid.newRow());
-            ctx.getRootContext().updateAnnotations(grid);
+            if(renderAnnotations()){
+                appendAnnotationToggleButton(grid, instance);
+                ctx.getRootContext().updateAnnotations(grid);
+            }
         }
+
+        private boolean renderAnnotations() {
+            return ctx.getRootContext().annotation().enabled() &&
+                    instance.as(AtrAnnotation::new).isAnnotated();
+        }
+
 
         protected BSGrid createCompositeGrid(WicketBuildContext ctx) {
             final BSContainer<?> parentCol = ctx.getContainer();

@@ -5,6 +5,8 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import java.io.Serializable;
 import java.util.Date;
 
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -233,6 +235,36 @@ public class AnnotationComponent extends Panel {
         }
         keepOpened = false;
         this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
+    }
+
+    public static void appendAnnotationToggleButton(BSGrid grid, SIComposite instance) {
+        BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
+        toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
+
+        AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
+
+        toggleContainer.appendTag("a",true,
+                "href='javascript:;' class='btn btn-circle btn-icon-only "+
+                        buttonColor(annotatedInstance) +"'", createIcon(annotatedInstance));
+
+        grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
+    }
+
+    private static String buttonColor(AtrAnnotation annotatedInstance) {
+        if(annotatedInstance.hasAnnotation()) {
+            if(annotatedInstance.annotation().getApproved() != null &&
+                    annotatedInstance.annotation().getApproved()) {  return "btn-info";
+            }else{  return "btn-danger";    }
+        }
+        return "btn-default";
+    }
+
+    private static BSContainer createIcon(AtrAnnotation annotatedInstance) {
+        BSContainer icon = new BSContainer<>("_toggle_icon_");
+        String iconClass = "class='fa fa-plus'";
+        if(annotatedInstance.hasAnnotation()) { iconClass = "class='fa fa-comment-o'";  }
+        icon.appendTag("i", true, iconClass, new Label("_i_", $m.ofValue()));
+        return icon;
     }
 
 }

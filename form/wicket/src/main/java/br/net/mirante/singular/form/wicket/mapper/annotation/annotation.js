@@ -35,7 +35,6 @@ if( window.Annotation == undefined){
             if(this.this_component.is(':visible') ){
                 this.close_overlaping_boxes(this.this_component);
                 this.adjust_height_position();
-                //this.this_component.fadeIn();
             }
         },
 
@@ -47,11 +46,17 @@ if( window.Annotation == undefined){
 
         is_blank : function () {    return this.approved == null;   },
 
-        create_show_button : function(){
-            return $('<a>')
-                .addClass('btn btn-circle btn-icon-only '+this.define_button_color())
-                .attr('href','javascript:;')
-                .append($('<i>').addClass(this.define_button_icon()))
+        create_toggle_container: function(){
+            var thiz = this;
+            var toggle_container = this.target_component.find('.annotation-toggle-container');
+            console.log(toggle_container);
+            toggle_container.find('a').removeClass('btn-default btn-info btn-danger');
+            toggle_container.find('a').addClass(this.define_button_color());
+            toggle_container.find('i').removeClass();
+            toggle_container.find('i').addClass(this.define_button_icon());
+            toggle_container.off("click");
+            toggle_container.click(function(){thiz.toggle_button_on_click()})
+            return toggle_container;
         },
 
         define_button_color: function() {
@@ -65,14 +70,8 @@ if( window.Annotation == undefined){
             return 'fa fa-comment-o';
         },
 
-        create_toggle_container: function(){
-            var thiz = this;
-            return $('<div>').attr('style','position:absolute;top:15px;right: 15px;')
-                        .append(this.create_show_button())
-                        .click(function(){thiz.toggle_button_on_click()})
-        },
-
         adjust_height_position: function(){
+            console.log('adjust_height_position',this.this_component, this.target_component);
             this.this_component.css('position','absolute')
             var target_offset = this.target_component.parent().offset()['top'],
                 this_offset = this.this_component.parent().offset()['top'];
