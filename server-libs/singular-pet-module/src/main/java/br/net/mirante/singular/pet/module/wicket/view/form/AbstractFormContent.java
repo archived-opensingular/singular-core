@@ -1,21 +1,6 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
-
+import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
@@ -30,15 +15,35 @@ import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractFormContent extends Content {
 
 
     protected final BSModalBorder enviarModal = new BSModalBorder("enviar-modal", getMessage("label.title.send"));
-    protected final String key;
+    protected final BSModalBorder confirmarAcaoFlowModal = new BSModalBorder("flow-modal", getMessage("label.button.confirm"));
+    protected final String formId;
     protected final String typeName;
+    protected IModel<String> msgFlowModel = new Model<String>();
+    protected IModel<String> transitionNameModel = new Model<String>();
     protected ViewMode viewMode = ViewMode.EDITION;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SingularFormPanel<String> singularFormPanel;
@@ -47,13 +52,12 @@ public abstract class AbstractFormContent extends Content {
     @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
 
-
     public AbstractFormContent(String idWicket, String type, String formId, ViewMode viewMode, AnnotationMode annotationMode) {
         super(idWicket, false, true);
         this.viewMode = viewMode;
         this.annotationMode = annotationMode;
         this.typeName = type;
-        this.key = formId;
+        this.formId = formId;
     }
 
     @Override
@@ -63,18 +67,60 @@ public abstract class AbstractFormContent extends Content {
     }
 
     private Form<?> buildForm() {
+        loadOrCreateFormModel(formId, typeName, viewMode, annotationMode);
         Form<?> form = new Form<>("save-form");
         form.setMultiPart(true);
         form.add(buildSingularBasePanel());
         form.add(buildSendButton());
         form.add(buildSaveButton());
         form.add(buildSaveAnnotationButton());
+        form.add(buildFlowButtons());
         form.add(buildSaveWithoutValidateButton());
         form.add(buildValidateButton());
         form.add(buildCancelButton());
         form.add(buildConfirmationModal());
+        form.add(buildFlowConfirmationModal());
         return form;
     }
+
+    private Component buildFlowButtons() {
+        BSContainer container = new BSContainer("custom-buttons");
+        container.setVisible(true);
+        List<MTransition> trans = currentTaskTransitions(formId);
+        if (CollectionUtils.isNotEmpty(trans)) {
+            int index = 0;
+            for (MTransition t : trans) {
+                buildFlowTransitionButton(container, t.getName(), index++);
+            }
+        } else {
+            container.setVisible(false);
+            container.setEnabled(false);
+        }
+        return container;
+    }
+
+    private void buildFlowTransitionButton(BSContainer container, String transitionName, Integer index) {
+        String btnId = "flow-btn" + index;
+        TemplatePanel tp = container
+                .newTemplateTag(
+                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + btnId + "'>" + transitionName + "</button>");
+        tp.add(new SingularButton(btnId) {
+
+            @Override
+            public IModel<? extends SInstance> getCurrentInstance() {
+                return singularFormPanel.getRootInstance();
+            }
+
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                msgFlowModel.setObject(String.format("Tem certeza que deseja %s ?", transitionName));
+                transitionNameModel.setObject(transitionName);
+                confirmarAcaoFlowModal.show(target);
+            }
+        });
+    }
+
+    protected abstract List<MTransition> currentTaskTransitions(String formId);
 
 
     private SingularFormPanel buildSingularBasePanel() {
@@ -82,7 +128,6 @@ public abstract class AbstractFormContent extends Content {
 
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                loadOrCreateFormModel(key, typeName, viewMode, annotationMode);
                 RefType refType = singularFormConfig.getTypeLoader().loadRefTypeOrException(typeName);
                 String xml = getFormXML(getFormModel());
                 if (StringUtils.isBlank(xml)) {
@@ -273,6 +318,37 @@ public abstract class AbstractFormContent extends Content {
         return enviarModal;
     }
 
+    private Component buildFlowConfirmationModal() {
+        confirmarAcaoFlowModal
+                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-btn") {
+                    @Override
+                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                        confirmarAcaoFlowModal.hide(target);
+                    }
+                })
+                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
+                    @Override
+                    public IModel<? extends SInstance> getCurrentInstance() {
+                        return singularFormPanel.getRootInstance();
+                    }
+
+                    @Override
+                    protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
+                        setFormXML(getFormModel(), xml.toStringExato());
+                        AbstractFormContent.this.executeTransition(transitionNameModel.getObject(), getFormModel());
+                        target.appendJavaScript("; window.close();");
+                    }
+
+                    @Override
+                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                        confirmarAcaoFlowModal.hide(target);
+                        target.add(form);
+                    }
+                });
+        confirmarAcaoFlowModal.add(new Label("flow-msg", msgFlowModel));
+        return confirmarAcaoFlowModal;
+    }
+
     protected Behavior visibleOnlyInEditionBehaviour() {
         return new Behavior() {
             @Override
@@ -294,6 +370,8 @@ public abstract class AbstractFormContent extends Content {
             }
         };
     }
+
+    protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
 
     protected abstract String getFormXML(IModel<?> model);
 

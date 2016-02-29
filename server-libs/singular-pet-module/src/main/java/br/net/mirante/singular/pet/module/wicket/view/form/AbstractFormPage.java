@@ -1,5 +1,7 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
+import br.net.mirante.singular.flow.core.MTransition;
+import br.net.mirante.singular.flow.core.ProcessInstance;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
@@ -12,6 +14,8 @@ import org.apache.wicket.request.Request;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public abstract class AbstractFormPage extends Template {
 
@@ -46,6 +50,16 @@ public abstract class AbstractFormPage extends Template {
             @Override
             protected IModel<?> getContentSubtitlelModel() {
                 return AbstractFormPage.this.getContentSubtitlelModel();
+            }
+
+            @Override
+            protected List<MTransition> currentTaskTransitions(String formId) {
+                return AbstractFormPage.this.currentTaskTransitions(formId);
+            }
+
+            @Override
+            protected void executeTransition(String transitionName, IModel<?> currentInstance) {
+                AbstractFormPage.this.executeTransition(transitionName, currentInstance);
             }
 
             @Override
@@ -89,6 +103,10 @@ public abstract class AbstractFormPage extends Template {
             }
         };
     }
+
+    protected abstract List<MTransition> currentTaskTransitions(String formId);
+
+    protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
 
     protected abstract IModel<?> getContentTitlelModel();
 
