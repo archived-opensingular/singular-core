@@ -26,7 +26,9 @@ import org.apache.wicket.util.resource.AbstractResourceStreamWriter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSWellBorder;
 import br.net.mirante.singular.util.wicket.upload.SFileUploadField;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
@@ -46,7 +48,13 @@ public class FileUploadPanel extends Panel {
     /**
      * Componente de upload do wicket
      */
-    private final SFileUploadField uploadField = new SFileUploadField("fileUpload");
+    private final SFileUploadField uploadField = new SFileUploadField("fileUpload") {
+        @Override
+        protected void onConfigure() {
+            super.onConfigure();
+            setVisible(viewMode.isEdition());
+        }
+    };
 
     /**
      * Markup do botão de escolha
@@ -54,9 +62,22 @@ public class FileUploadPanel extends Panel {
     private final WebMarkupContainer chooseFieldButton = new WebMarkupContainer("choose");
 
     /**
+     * Agrupa os componentes, dinamicamente pode ser um inputgroup
+     */
+    private final WebMarkupContainer panelWrapper = new WebMarkupContainer("panelWrapper") {
+        @Override
+        protected void onInitialize() {
+            super.onInitialize();
+            if (viewMode.isEdition()) {
+                add($b.classAppender("input-group"));
+            }
+        }
+    };
+
+    /**
      * Markup do field que mostra o link para download
      */
-    private final WebMarkupContainer fileDummyField = new WebMarkupContainer("fileDummyField");
+    private final WebMarkupContainer fileDummyField;
 
     /**
      * DownloadLink, escreve o arquivo do SIAttachment.
@@ -103,19 +124,21 @@ public class FileUploadPanel extends Panel {
         }
     };
 
+    private final ViewMode viewMode;
+
     /**
      * Construdor do Panel, todos os parametros são obrigatorios
      *
      * @param id    do compoente
      * @param model que contem o SIAttachment
      */
-    public FileUploadPanel(String id, IModel<SIAttachment> model) {
+    public FileUploadPanel(String id, IModel<SIAttachment> model, ViewMode viewMode) {
         super(id);
         this.model = model;
+        this.viewMode = viewMode;
         uploadField.setModel(new WrapperAwareModel(model));
-        add(uploadField, chooseFieldButton, removeFileButton, fileDummyField
-                .add(downloadLink
-                        .add(fileName)));
+        fileDummyField = buildFileDummyField("fileDummyField");
+        add(uploadField, panelWrapper.add(chooseFieldButton, removeFileButton, fileDummyField.add(downloadLink.add(fileName))));
     }
 
     /**
@@ -130,6 +153,16 @@ public class FileUploadPanel extends Panel {
         removeFileButton.setOutputMarkupId(true);
         fileName.add($b.onConfigure(c -> c.add($b.attr("title", c.getDefaultModel()))));
         configureBehaviours();
+    }
+
+    private WebMarkupContainer buildFileDummyField(String id) {
+        if (viewMode.isEdition()) {
+            WebMarkupContainer field = new WebMarkupContainer(id);
+            field.add($b.classAppender("form-control"));
+            return field;
+        } else {
+            return BSWellBorder.small(id);
+        }
     }
 
     /**
@@ -158,9 +191,8 @@ public class FileUploadPanel extends Panel {
                         chooseFieldButton.getMarkupId(true), uploadField.getMarkupId(true))));
             }
         });
-        fileDummyField.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData())));
-        chooseFieldButton.add($b.onConfigure(c -> c.setVisible(model.getObject().isEmptyOfData())));
-        removeFileButton.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData())));
+        chooseFieldButton.add($b.onConfigure(c -> c.setVisible(model.getObject().isEmptyOfData() && viewMode.isEdition())));
+        removeFileButton.add($b.onConfigure(c -> c.setVisible(!model.getObject().isEmptyOfData() && viewMode.isEdition())));
     }
 
     /**

@@ -3,9 +3,8 @@
 <body>
 <wicket:panel>
     <input type="file" wicket:id="fileUpload" style="display:none;"/>
-
-    <div class="input-group">
-        <div class="form-control" style="white-space: nowrap;">
+    <div wicket:id="panelWrapper">
+        <div style="white-space: nowrap;">
             <div wicket:id="fileDummyField">
                 <i class="fa fa-file"></i>&nbsp;
                 <a wicket:id="downloadLink"><span wicket:id="fileName"></span></a>

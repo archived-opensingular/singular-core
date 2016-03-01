@@ -55,13 +55,13 @@ public class SIAttachment extends SIComposite {
     }
 
     public IAttachmentRef getAttachmentRef() {
-        String id = getFileId();
-        if (id == null) {
+        final String hash = getFileHashSHA1();
+        if (hash == null) {
             return null;
         }
-        IAttachmentRef ref = getAttachmentHandler().getAttachment(id);
+        final IAttachmentRef ref = getAttachmentHandler().getAttachment(hash);
         if (ref == null) {
-            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de id=" + id + " e nome=" + getFileName()));
+            throw new RuntimeException(errorMsg("Não foi encontrado o arquivo de hash=" + hash + " e nome=" + getFileName()));
         }
         return ref;
     }
