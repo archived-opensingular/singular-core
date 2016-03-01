@@ -133,8 +133,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .obrigatorio()
                     .as(AtrBasic::new)
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
-                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal")
-                    .as(AtrAnnotation::new).setAnnotated();
+                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);

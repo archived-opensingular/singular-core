@@ -7,6 +7,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
+import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.model.SInstanceCampoModel;
 import br.net.mirante.singular.form.wicket.panel.BSPanelGrid;
@@ -39,7 +40,17 @@ public class TabMapper extends DefaultCompostoMapper {
         };
 
         for (MTabView.MTab tab : tabView.getTabs()) {
-            panel.addTab(tab.getId(), tab.getTitulo(), tab.getNomesTipo());
+            String iconCsss = "";
+            if(ctx.getRootContext().annotation().enabled()){
+                for(String name :tab.getNomesTipo()){
+                    SInstance field = instance.getCampo(name);
+                    if(field != null && field.getType().as(AtrAnnotation::new).isAnnotated()){
+                        iconCsss = "fa fa-comment";
+                    }
+
+                }
+            }
+            panel.addTab(tab.getId(), tab.getTitulo(), iconCsss, tab.getNomesTipo());
         }
 
         ctx.getContainer().newTag("div", panel);

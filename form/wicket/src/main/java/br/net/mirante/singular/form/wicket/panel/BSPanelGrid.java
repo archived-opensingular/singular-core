@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
@@ -31,8 +32,8 @@ public abstract class BSPanelGrid extends Panel {
         super(id);
     }
 
-    public void addTab(String id, String headerText, List<String> subtree) {
-        tabMap.put(id, new BSTab(headerText, subtree));
+    public void addTab(String id, String headerText, String iconClass,  List<String> subtree) {
+        tabMap.put(id, new BSTab(headerText, iconClass, subtree));
     }
 
     @Override
@@ -79,6 +80,9 @@ public abstract class BSPanelGrid extends Panel {
                 };
 
                 link.add(new Label("header-text", tab.getHeaderText()));
+                Label label = new Label("header-icon", "");
+                label.add(new AttributeModifier("class",tab.iconClass()));
+                link.add(label);
 
                 item.add(link);
             }
@@ -103,10 +107,12 @@ public abstract class BSPanelGrid extends Panel {
     private static final class BSTab implements Serializable {
         private String headerText;
         private List<String> subtree;
+        private String iconClass;
 
-        public BSTab(String headerText, List<String> subtree) {
+        public BSTab(String headerText, String iconClass, List<String> subtree) {
             this.headerText = headerText;
             this.subtree = subtree;
+            this.iconClass = iconClass;
         }
 
         public String getHeaderText() {
@@ -116,5 +122,7 @@ public abstract class BSPanelGrid extends Panel {
         public List<String> getSubtree() {
             return subtree;
         }
+
+        public String iconClass() { return iconClass; }
     }
 }
