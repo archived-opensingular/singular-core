@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 
+@SuppressWarnings("serial")
 public abstract class AbstractDispatcherPage extends WebPage {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractDispatcherPage.class);
@@ -36,9 +37,7 @@ public abstract class AbstractDispatcherPage extends WebPage {
                 if (task instanceof MTaskUserExecutable) {
                     ITaskPageStrategy pageStrategy = ((MTaskUserExecutable) task).getExecutionPage();
                     if (pageStrategy instanceof PetServerTaskPageStrategy) {
-                        if (pageStrategy != null) {
-                            ref = (SingularWebRef) pageStrategy.getPageFor(ti, null);
-                        }
+                        ref = (SingularWebRef) pageStrategy.getPageFor(ti, null);
                     } else {
                         logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                     }
