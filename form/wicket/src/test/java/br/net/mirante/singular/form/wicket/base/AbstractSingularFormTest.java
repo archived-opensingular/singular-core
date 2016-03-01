@@ -66,6 +66,10 @@ public abstract class AbstractSingularFormTest {
         return found.stream();
     }
 
+    protected Stream<FormComponent> findFormComponentsByType(SType type) {
+        return findFormComponentsByType(formTester.getForm(), type);
+    }
+
     protected Stream<FormComponent> findFormComponentsByType(Form form, SType type) {
         return findOnForm(FormComponent.class, form, fc -> IMInstanciaAwareModel
                 .optionalCast(fc.getDefaultModel())

@@ -55,6 +55,7 @@ public abstract class WicketFormUtils {
         return Boolean.TRUE.equals(container.getMetaData(KEY_IS_CELL_CONTAINER));
     }
     public static void setCellContainer(Component component, MarkupContainer container) {
+        container.setOutputMarkupId(true);
         component.setMetaData(KEY_CELL_CONTAINER, container);
     }
     public static Optional<MarkupContainer> findCellContainer(Component component) {
