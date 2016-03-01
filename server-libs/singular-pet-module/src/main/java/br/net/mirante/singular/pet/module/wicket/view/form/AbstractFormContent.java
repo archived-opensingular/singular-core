@@ -1,5 +1,22 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
@@ -20,21 +37,6 @@ import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.List;
-import java.util.Optional;
 
 public abstract class AbstractFormContent extends Content {
 
@@ -301,6 +303,7 @@ public abstract class AbstractFormContent extends Content {
                     @Override
                     protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                         setFormXML(getFormModel(), xml.toStringExato());
+                        getCurrentInstance().getObject().getDocument().persistFiles();
                         AbstractFormContent.this.send(getCurrentInstance(), xml);
                         target.appendJavaScript("; window.close();");
                     }
