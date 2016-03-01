@@ -6,22 +6,22 @@ import br.net.mirante.singular.pet.module.spring.security.ServerContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PetServerMetaDataValue {
+public class PetServerContextMetaDataValue {
 
-    public static final PetServerMetaDataKey KEY = new PetServerMetaDataKey(PetServerMetaDataKey.class.getName(), PetServerMetaDataValue.class);
+    public static final PetServerMetaDataKey KEY = new PetServerMetaDataKey(PetServerMetaDataKey.class.getName(), PetServerContextMetaDataValue.class);
 
     private List<ServerContext> contexts = new ArrayList<>(2);
 
-    PetServerMetaDataValue() {
+    PetServerContextMetaDataValue() {
 
     }
 
-    public PetServerMetaDataValue analise() {
+    public PetServerContextMetaDataValue analise() {
         contexts.add(ServerContext.ANALISE);
         return this;
     }
 
-    public PetServerMetaDataValue peticionamento() {
+    public PetServerContextMetaDataValue peticionamento() {
         contexts.add(ServerContext.PETICIONAMENTO);
         return this;
     }
@@ -31,10 +31,10 @@ public class PetServerMetaDataValue {
     }
 
 
-    public static class PetServerMetaDataKey extends MetaDataRef<PetServerMetaDataValue> {
+    public static class PetServerMetaDataKey extends MetaDataRef<PetServerContextMetaDataValue> {
 
 
-        private PetServerMetaDataKey(String name, Class<PetServerMetaDataValue> valueClass) {
+        private PetServerMetaDataKey(String name, Class<PetServerContextMetaDataValue> valueClass) {
             super(name, valueClass);
         }
     }
