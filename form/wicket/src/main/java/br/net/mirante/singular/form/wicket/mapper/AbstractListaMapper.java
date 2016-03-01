@@ -33,8 +33,8 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_add'"
                         + " class='btn btn-success btn-sm " + (footer ? "" : "pull-right") + "'"
-                        + " style='padding:5px 3px 1px;"
-                        + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i class='" + Icone.PLUS + "'></i>"
+                        + " style='" + MapperCommons.BUTTON_STYLE +";"
+                        + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
                         + "</button>"
         ).add(btn);
 
@@ -48,9 +48,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_inserir_'"
                         + " class='btn btn-success btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.PLUS + "'></i>"
+                        + " style='"+ MapperCommons.BUTTON_STYLE +";margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
                         + "</button>")
-                .add(btn);
+        .add(btn);
         return btn;
     }
 
@@ -61,7 +61,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
                         + "<button"
                         + " wicket:id='_remover_'"
                         + " class='btn btn-danger btn-sm'"
-                        + " style='padding:5px 3px 1px;margin-top:3px;'><i class='" + Icone.MINUS + "'></i>"
+                        + " style='padding:5px 3px 1px;margin-top:3px;'><i style='"+MapperCommons.ICON_STYLE+"'class='" + Icone.MINUS + "'></i>"
                         + "</button>")
                 .add(btn);
         return btn;

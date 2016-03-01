@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseGridListPackage extends SPackage {
+public class CaseListByFormDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

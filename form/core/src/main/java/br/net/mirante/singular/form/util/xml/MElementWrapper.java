@@ -1,11 +1,11 @@
 package br.net.mirante.singular.form.util.xml;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -384,7 +384,7 @@ public class MElementWrapper extends MElement implements EWrapper {
         } else {
             novo = d.createElementNS(namespaceURI, qualifiedName);
 
-            if (!namespaceURI.equals(parent.getNamespaceURI())) {
+            if (namespaceURI != null && !namespaceURI.equals(parent.getNamespaceURI())) {
                 int posPrefixo = qualifiedName.indexOf(':');
                 if ((posPrefixo == -1)) {
                     novo.setAttribute("xmlns", namespaceURI);

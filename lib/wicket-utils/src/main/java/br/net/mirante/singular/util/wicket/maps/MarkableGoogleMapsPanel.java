@@ -1,5 +1,6 @@
 package br.net.mirante.singular.util.wicket.maps;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,11 +16,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.template.PackageTextTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 public class MarkableGoogleMapsPanel<T> extends Panel {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarkableGoogleMapsPanel.class);
     private static final String PANEL_SCRIPT = "MarkableGoogleMapsPanel.js";
     private static final String METADATA_JSON = "MarkableGoogleMapsPanelMetadata.json";
     private static final Integer DEFAULT_ZOOM = 4;
@@ -62,8 +66,13 @@ public class MarkableGoogleMapsPanel<T> extends Panel {
         properties.put("readOnly", isReadOnly());
 
         metadataJSON.interpolate(properties);
-
         metadadosModel.setObject(metadataJSON.getString());
+
+        try {
+            metadataJSON.close();
+        } catch (IOException e) {
+            LOGGER.error("Erro ao fechar stream", e);
+        }
     }
 
     @Override

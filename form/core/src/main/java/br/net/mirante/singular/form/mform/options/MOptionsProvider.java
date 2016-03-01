@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.mform.options;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
-import br.net.mirante.singular.form.mform.SISimple;
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
-
 import java.io.Serializable;
 import java.util.Collection;
+
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SISimple;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 /**
  * This interface represents the providers which will load options that
@@ -51,7 +51,7 @@ public interface MOptionsProvider extends Serializable {
     }
 
     @SuppressWarnings("rawtypes")
-    public default void addNotPresentElementsOfList(SList listValue, SList<? extends SInstance> defaultOptions) {
+    public default void addNotPresentElementsOfList(SList<?> listValue, SList<? extends SInstance> defaultOptions) {
         for (SInstance selectedValueInstance : listValue.getAllChildren()) {
             addNotPresentElement(defaultOptions, selectedValueInstance);
         }

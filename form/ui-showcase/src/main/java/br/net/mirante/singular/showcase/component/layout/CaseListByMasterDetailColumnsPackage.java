@@ -1,17 +1,17 @@
 package br.net.mirante.singular.showcase.component.layout;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 
-public class CaseMasterDetailButtonsPackage extends SPackage {
+public class CaseListByMasterDetailColumnsPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
@@ -29,9 +29,9 @@ public class CaseMasterDetailButtonsPackage extends SPackage {
         {
             //@destacar:bloco
             experiencias.withView(new MListMasterDetailView()
-                    //.disableNew() // o botão de adicionar pode ser desabilitado também.
-                    .disableDelete()
-                    .disableEdit())
+                    .col(empresa, "Empresa em que trabalhou") // Desta forma, será utilizado rótulo personalizado para esta coluna.
+                    .col(dtInicioExperiencia) //Nos demais, a coluna terá o mesmo rótulo do tipo que a define.
+                    .col(dtFimExperiencia))
             //@destacar:fim
                     .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia

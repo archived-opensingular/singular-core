@@ -1,11 +1,5 @@
 package br.net.mirante.singular.service;
 
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_DIAGRAM;
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_HAS_ACCESS;
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_DEFINITION_WITH_ACCESS;
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.PATH_PROCESS_INSTANCE_HAS_ACCESS;
-import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.generateGroupToken;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -24,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 
 import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
+import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.*;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataService;
+import br.net.mirante.singular.util.StreamUtils;
 
 class FlowMetadataSpringREST implements IFlowMetadataService{
 
@@ -97,9 +93,20 @@ class FlowMetadataSpringREST implements IFlowMetadataService{
         }
         return null;
     }
-    
-    public String getConnectionURL(String path, String...params) {
-        return connectionURL + path + "?groupToken="+groupToken + Arrays.stream(params).map(param -> "&"+param+"={"+param+"}").collect(Collectors.joining());
+
+    public String getConnectionURL(String path, String... params) {
+        return connectionURL + path + "?groupToken=" + groupToken + addOtherParameters(params);
+    }
+
+    public String addOtherParameters(String... params){
+        if(params != null) {
+            return StreamUtils
+                    .getFromArray(params, stream -> stream
+                            .map(param -> "&" + param + "={" + param + "}")
+                            .collect(Collectors.joining()));
+        } else {
+            return null;
+        }
     }
     
 }
