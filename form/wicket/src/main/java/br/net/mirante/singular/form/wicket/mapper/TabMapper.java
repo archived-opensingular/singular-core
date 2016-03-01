@@ -44,8 +44,18 @@ public class TabMapper extends DefaultCompostoMapper {
             if(ctx.getRootContext().annotation().enabled()){
                 for(String name :tab.getNomesTipo()){
                     SInstance field = instance.getCampo(name);
-                    if(field != null && field.getType().as(AtrAnnotation::new).isAnnotated()){
-                        iconCsss = "fa fa-comment";
+                    if(field != null){
+                        AtrAnnotation annotatedField = field.as(AtrAnnotation::new);
+                        if(annotatedField.hasAnnotationOnTree()){
+                            iconCsss = "fa fa-comment";
+                            if(annotatedField.hasAnyRefusal()){
+                                iconCsss+= " sannotation-color-danger";
+                            }else{
+                                iconCsss+= " sannotation-color-info";
+                            }
+                        }else if(ctx.getRootContext().annotation().editable() && annotatedField.isAnnotated()) {
+                            iconCsss = "fa fa-comment-o";
+                        }
                     }
 
                 }
