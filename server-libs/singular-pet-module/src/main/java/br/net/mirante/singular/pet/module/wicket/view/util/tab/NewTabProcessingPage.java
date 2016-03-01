@@ -1,4 +1,4 @@
-package br.net.mirante.singular.pet.module.wicket.view.util;
+package br.net.mirante.singular.pet.module.wicket.view.util.tab;
 
 import br.net.mirante.singular.lambda.IConsumer;
 import org.apache.wicket.Component;

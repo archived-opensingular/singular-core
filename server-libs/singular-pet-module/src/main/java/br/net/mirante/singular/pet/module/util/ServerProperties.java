@@ -20,7 +20,7 @@ public class ServerProperties {
         // essas configurações, esse código será removido
         mapa.put(SINGULAR_WS_ENDERECO, "http://localhost:8080/canabidiol/SingularWS?wsdl");
         mapa.put(SINGULAR_SERVIDOR_ENDERECO, "http://localhost:8080/singular/peticionamento");
-        mapa.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento/form");
+        mapa.put(SINGULAR_MODULE_FORM_ENDERECO, "/peticionamento");
     }
 
     public static String getProperty(String property) {
