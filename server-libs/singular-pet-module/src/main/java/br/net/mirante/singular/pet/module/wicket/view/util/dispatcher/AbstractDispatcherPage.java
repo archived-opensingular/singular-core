@@ -48,12 +48,11 @@ public abstract class AbstractDispatcherPage extends WebPage {
             if (ref == null || ref.getPageClass() == null) {
                 Constructor c = getDefaultFormPageClass().getConstructor(AbstractFormPage.FormPageConfig.class);
                 destination = (WebPage) c.newInstance(config);
-            } else if (ref.getPageClass().isAssignableFrom(AbstractFormPage.class)) {
+            } else if (AbstractFormPage.class.isAssignableFrom(ref.getPageClass())) {
                 Constructor c = ref.getPageClass().getConstructor(AbstractFormPage.FormPageConfig.class);
                 destination = (WebPage) c.newInstance(config);
             } else {
                 destination = ref.getPageClass().newInstance();
-
             }
             setResponsePage(destination);
         } catch (Exception e) {
