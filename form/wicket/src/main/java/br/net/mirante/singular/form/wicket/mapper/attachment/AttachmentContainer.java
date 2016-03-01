@@ -46,6 +46,7 @@ import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
  *
  */
 @SuppressWarnings({"serial", "rawtypes"})
+@Deprecated
 class AttachmentContainer extends BSContainer {
     public static String PARAM_NAME = "FILE-UPLOAD";
     private UploadBehavior uploader;
