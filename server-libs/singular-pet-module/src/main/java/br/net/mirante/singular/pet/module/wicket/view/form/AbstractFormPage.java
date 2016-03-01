@@ -18,29 +18,31 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.Request;
 import org.apache.wicket.request.flow.RedirectToUrlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.List;
 
 public abstract class AbstractFormPage extends Template {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFormPage.class);
 
+    protected FormPageConfig config;
+
+    public AbstractFormPage(FormPageConfig config) {
+        this.config = config;
+    }
 
     @Override
     protected boolean withMenu() {
         return false;
     }
 
-    protected abstract FormPageConfig parseParameters(Request request);
-
 
     @Override
     protected Content getContent(String id) {
-        FormPageConfig config = parseParameters(getRequest());
 
         if (config.type == null
                 && config.formId == null) {
@@ -196,7 +198,7 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
 
-    public static class FormPageConfig {
+    public static class FormPageConfig implements Serializable {
         public ViewMode viewMode = ViewMode.VISUALIZATION;
         public AnnotationMode annotationMode = AnnotationMode.NONE;
         public String formId;
