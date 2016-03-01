@@ -1,22 +1,22 @@
 package br.net.mirante.singular.form.mform.options;
 
-import java.util.Arrays;
 import java.util.Collection;
 
-import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
+import br.net.mirante.singular.util.StreamUtils;
 
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     private final SList<? extends SInstance> opcoes;
 
-    public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Collection<? extends Object> lista) {
+    public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Collection<?> lista) {
         this.opcoes = tipoOpcoes.novaLista();
         if (lista != null) {
-            init(tipoOpcoes, lista.toArray(new Object[0]));
+            init(tipoOpcoes, lista.toArray(new Object[lista.size()]));
         }
     }
 
@@ -32,15 +32,15 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
             throwEmpryListError();
         }
         if(tipoOpcoes instanceof STypeSimple){
-            Arrays.stream(lista).forEach(o -> {
+            StreamUtils.fromArray(lista, stream -> stream.forEach(o -> {
                 if (o instanceof SInstance) {
                     opcoes.addElement(o);
                 } else {
                     opcoes.addValor(o);
                 }
-            });
-        } else if(tipoOpcoes instanceof MSelectionableType){
-            Arrays.stream(lista).forEach(o -> opcoes.addElement(o)); //TODO: Fabs : also for collections
+            }));
+        } else if (tipoOpcoes instanceof MSelectionableType) {
+            StreamUtils.fromArray(lista, stream -> stream.forEach(opcoes::addElement));//TODO: Fabs : also for collections
         }
     }
 

@@ -27,6 +27,7 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
 import br.net.mirante.singular.form.mform.event.IMInstanceListener;
 import br.net.mirante.singular.form.mform.event.MInstanceEventType;
 import br.net.mirante.singular.form.mform.event.MInstanceListeners;
+import br.net.mirante.singular.util.StreamUtils;
 
 /**
  * <p>
@@ -150,14 +151,15 @@ public class SDocument {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        MTypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
+        StreamUtils.autoClose(MTypes.streamDescendants(getRoot().getType(), true), stream -> stream.forEach(tipo -> {
             // init dependencies
             final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
-                for (SType<?> dependency : func.get())
+                for (SType<?> dependency : func.get()) {
                     dependency.getDependentTypes().add(tipo);
+                }
             }
-        });
+        }));
     }
 
     /**

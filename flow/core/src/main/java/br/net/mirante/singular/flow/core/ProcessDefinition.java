@@ -1,7 +1,6 @@
 package br.net.mirante.singular.flow.core;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +13,10 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.MoreObjects;
 
 import br.net.mirante.singular.flow.core.builder.ITaskDefinition;
 import br.net.mirante.singular.flow.core.entity.IEntityCategory;
@@ -34,11 +37,7 @@ import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService
 import br.net.mirante.singular.flow.core.variable.VarDefinitionMap;
 import br.net.mirante.singular.flow.core.variable.VarService;
 import br.net.mirante.singular.flow.core.view.Lnk;
-
-import com.google.common.base.MoreObjects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import br.net.mirante.singular.util.StreamUtils;
 
 /**
  * <p>
@@ -412,7 +411,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return as entidades persistentes.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
-        return Arrays.stream(task).map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
+        return StreamUtils.getFromArray(task, s -> s.map(this::getEntityTaskDefinition).collect(Collectors.toList()));
     }
 
     /**
@@ -426,7 +425,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return as entidades persistentes.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(Collection<? extends ITaskDefinition> tasks) {
-        return tasks.stream().map(t -> getEntityTaskDefinition(t)).collect(Collectors.toList());
+        return tasks.stream().map(this::getEntityTaskDefinition).collect(Collectors.toList());
     }
 
     /**
