@@ -18,6 +18,7 @@ import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -312,7 +313,8 @@ class AnnotationModalWindow extends BFModalWindow{
             createCommentField(modalBody);
             createApprovedField(modalBody);
         }else{
-            modalBody.appendTag("pre", true, "", new Label("modalText",textModel));
+            MultiLineLabel modalText = new MultiLineLabel("modalText", textModel);
+            modalBody.appendTag("div", true, "class='sannotation-text-comment'", modalText);
             modalBody.appendTag("div", true, "", AnnotationComponent.createApprovalLabel(approvedModel));
         }
     }

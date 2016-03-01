@@ -18,3 +18,7 @@
     background: white;
     width: 350px;
 }
+
+.sannotation-text-comment {
+    font-style: italic;
+}
