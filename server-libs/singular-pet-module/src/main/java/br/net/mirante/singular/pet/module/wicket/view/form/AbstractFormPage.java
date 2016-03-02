@@ -30,18 +30,20 @@ public abstract class AbstractFormPage extends Template {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractFormPage.class);
 
+    protected FormPageConfig config;
+
+    public AbstractFormPage(FormPageConfig config) {
+        this.config = config;
+    }
 
     @Override
     protected boolean withMenu() {
         return false;
     }
 
-    protected abstract FormPageConfig parseParameters(Request request);
-
 
     @Override
     protected Content getContent(String id) {
-        FormPageConfig config = parseParameters(getRequest());
 
         if (config.type == null
                 && config.formId == null) {
@@ -209,7 +211,7 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract boolean hasProcess();
 
-    public static class FormPageConfig {
+    public static class FormPageConfig implements Serializable {
         public ViewMode viewMode = ViewMode.VISUALIZATION;
         public AnnotationMode annotationMode = AnnotationMode.NONE;
         public String formId;

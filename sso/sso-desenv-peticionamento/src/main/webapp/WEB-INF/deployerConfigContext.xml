@@ -36,13 +36,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:jee="http://www.springframework.org/schema/jee"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-
-       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.2.xsd">
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
     <!--
@@ -54,7 +50,7 @@
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
             <list>
-                <ref bean="ldapAuthenticationHandler"/>
+                <ref bean="hardCoded"/>
             </list>
         </constructor-arg>
 
@@ -184,50 +180,6 @@
               p:sessionCountWarnThreshold="100000"/>
     </util:list>
 
+    <bean id="hardCoded" class="br.net.mirante.singular.sso.HarCodedAuthHandler"/>
 
-    <bean id="ldapAuthenticationHandler" class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          c:authenticator-ref="authenticator">
-
-    </bean>
-
-    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-          c:resolver-ref="dnResolver" c:handler-ref="authHandler"
-          p:entryResolver-ref="entryResolver"/>
-
-    <!-- Active Directory UPN format. -->
-    <bean id="dnResolver" class="org.ldaptive.auth.FormatDnResolver"
-          c:format="%s@miranteinfo.com"/>
-
-    <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-          p:connectionFactory-ref="pooledLdapConnectionFactory"/>
-
-    <bean id="pooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
-          p:connectionPool-ref="connectionPool"/>
-
-    <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
-          init-method="initialize" p:poolConfig-ref="ldapPoolConfig"
-          p:blockWaitTime="1000" p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy" p:connectionFactory-ref="connectionFactory"/>
-
-    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
-          p:minPoolSize="1" p:maxPoolSize="6"
-          p:validateOnCheckOut="true"
-          p:validatePeriodically="false"
-          p:validatePeriod="15"/>
-
-    <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="connectionConfig"/>
-
-    <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:ldapUrl="ldap://10.0.0.10:389/" p:connectTimeout="2000"
-            />
-
-    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-          p:prunePeriod="5000" p:idleTime="1000"/>
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator"/>
-
-    <bean id="entryResolver"
-          class="org.jasig.cas.authentication.support.UpnSearchEntryResolver"
-          p:baseDn="OU=Mirante User,DC=miranteinfo,DC=com"/>
 </beans>

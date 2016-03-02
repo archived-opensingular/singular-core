@@ -1,10 +1,10 @@
-package br.net.mirante.singular.pet.module.wicket.view.form;
+package br.net.mirante.singular.pet.module.wicket.view.util.dispatcher;
 
 import org.springframework.util.StringUtils;
 
-public class FormPageUtil {
+public class DispatcherPageUtil {
 
-    public static final String FORM_PAGE_PATH = "/form";
+    public static final String DISPATCHER_PAGE_PATH = "/";
     public static final String ACTION_ID = "a";
     public static final String FORM_ID = "k";
     private static final String ENCODING = "UTF-8";

@@ -31,6 +31,8 @@ import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.pet.module.flow.metadata.PetServerContextMetaData;
+import br.net.mirante.singular.pet.module.wicket.PetSession;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
@@ -92,17 +94,20 @@ public abstract class AbstractFormContent extends Content {
         if (CollectionUtils.isNotEmpty(trans)) {
             int index = 0;
             for (MTransition t : trans) {
-                String btnId = "flow-btn" + index;
-                buildFlowTransitionButton(
-                        btnId,
-                        container,
-                        modalContainer,
-                        t.getName(),
-                        (IReadOnlyModel<SInstance>) () -> Optional
-                                .ofNullable(singularFormPanel)
-                                .map(SingularFormPanel::getRootInstance)
-                                .map(IModel::getObject)
-                                .orElse(null));
+                if (t.getMetaDataValue(PetServerContextMetaData.KEY) != null
+                        && t.getMetaDataValue(PetServerContextMetaData.KEY).isEnabledOn(PetSession.get().getServerContext())) {
+                    String btnId = "flow-btn" + index;
+                    buildFlowTransitionButton(
+                            btnId,
+                            container,
+                            modalContainer,
+                            t.getName(),
+                            (IReadOnlyModel<SInstance>) () -> Optional
+                                    .ofNullable(singularFormPanel)
+                                    .map(SingularFormPanel::getRootInstance)
+                                    .map(IModel::getObject)
+                                    .orElse(null));
+                }
             }
         } else {
             container.setVisible(false);
@@ -303,6 +308,7 @@ public abstract class AbstractFormContent extends Content {
                     @Override
                     protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                         setFormXML(getFormModel(), xml.toStringExato());
+                        getCurrentInstance().getObject().getDocument().persistFiles();
                         AbstractFormContent.this.send(getCurrentInstance(), xml);
                         atualizarContentWorklist(target);
                         addToastrSuccessMessageWorklist("message.send.success");
