@@ -1,11 +1,18 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
-import br.net.mirante.singular.pet.module.wicket.PetModulePage;
-import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
+import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -18,13 +25,10 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import br.net.mirante.singular.pet.module.wicket.PetModulePage;
+import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
+import br.net.mirante.singular.pet.module.wicket.view.util.ToastrHelper;
+import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 public abstract class Template extends PetModulePage {
 
@@ -50,6 +54,8 @@ public abstract class Template extends PetModulePage {
         }
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
+
+        add(buildReloadFunction());
     }
 
     protected Menu configureMenu(String id) {
@@ -67,6 +73,7 @@ public abstract class Template extends PetModulePage {
     @Override
     public void renderHead(IHeaderResponse response) {
         super.renderHead(response);
+        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
         response.render(CssHeaderItem.forReference(new PackageResourceReference(Template.class, "Template.css")));
         if (withSideBar()) {
             addQuickSidebar(response);
@@ -148,4 +155,72 @@ public abstract class Template extends PetModulePage {
             });
         }
     }
+
+    private Behavior buildReloadFunction() {
+        return new AbstractDefaultAjaxBehavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                super.renderHead(component, response);
+                String js =
+                      " Singular = Singular || {}; "
+                    + " Singular.reloadContent = function () { "
+                    + "     Wicket.Ajax.get({u: '%s' }); "
+                    + " } ";
+
+                response.render(OnDomReadyHeaderItem.forScript(String.format(js, getCallbackUrl())));
+            }
+
+            @Override
+            protected void respond(AjaxRequestTarget target) {
+                getPage().visitChildren((component, visit) -> {
+                    if (component.getId().equals("tabela")) {
+                        target.add(component);
+                        visit.stop();
+                    }
+                });
+            }
+
+        };
+    }
+
+    public void addToastrSuccessMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.SUCCESS, messageKey, args);
+    }
+
+    public void addToastrErrorMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.ERROR, messageKey, args);
+    }
+
+    public void addToastrWarningMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.WARNING, messageKey, args);
+    }
+
+    public void addToastrInfoMessage(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessage(ToastrType.INFO, messageKey, args);
+    }
+
+    public void addToastrSuccessMessageWorklist(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessageWorklist(ToastrType.SUCCESS, messageKey, args);
+    }
+
+    public void addToastrErrorMessageWorklist(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessageWorklist(ToastrType.ERROR, messageKey, args);
+    }
+
+    public void addToastrWarningMessageWorklist(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessageWorklist(ToastrType.WARNING, messageKey, args);
+    }
+
+    protected void addToastrInfoMessageWorklist(String messageKey, String... args) {
+        new ToastrHelper(this).
+                addToastrMessageWorklist(ToastrType.INFO, messageKey, args);
+    }
+
 }

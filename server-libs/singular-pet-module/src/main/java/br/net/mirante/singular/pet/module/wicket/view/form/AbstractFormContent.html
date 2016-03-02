@@ -15,14 +15,11 @@
                         <wicket:message key="label.button.save"/>
                     </button>
                     <wicket:container wicket:id="custom-buttons"/>
-                    <button type="submit" class="btn yellow" wicket:id="save-whitout-validate-btn">
-                        <wicket:message key="label.button.save.whitout.validate"/>
-                    </button>
                     <button type="submit" class="btn red" wicket:id="validate-btn">
                         <wicket:message key="label.button.validate"/>
                     </button>
-                    <button type="submit" class="btn" wicket:id="cancel-btn" onclick="window.close()">
-                        <wicket:message key="label.button.cancel"/>
+                    <button type="submit" class="btn" wicket:id="close-btn">
+                        <wicket:message key="label.button.close"/>
                     </button>
 
                 </div>
@@ -31,6 +28,10 @@
 
                 <div wicket:id="enviar-modal" class="portlet-body form">
                     <wicket:message key="label.confirm.message"/>
+                </div>
+
+                <div wicket:id="close-modal" class="portlet-body form">
+                    <wicket:message key="label.close.message"/>
                 </div>
 
             </form>
