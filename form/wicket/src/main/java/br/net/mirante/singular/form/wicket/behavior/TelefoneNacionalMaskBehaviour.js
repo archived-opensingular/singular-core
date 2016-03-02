@@ -1,7 +1,7 @@
 ;
 "use strict";
 
-var Singular = Singular || {};
+window.Singular = window.Singular || {};
 
 Singular.applyTelefoneNacionalMask = function (id) {
 
