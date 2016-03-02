@@ -1,5 +1,17 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.util.xml.MElement;
@@ -13,17 +25,6 @@ import br.net.mirante.singular.pet.module.wicket.view.template.Template;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.flow.RedirectToUrlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.List;
 
 public abstract class AbstractFormPage extends Template {
 
@@ -111,6 +112,11 @@ public abstract class AbstractFormPage extends Template {
             protected void setAnnotationsXML(IModel<?> model, String xml) {
                 AbstractFormPage.this.setAnnotationsXML(model, xml);
             }
+
+            @Override
+            protected boolean hasProcess() {
+                return AbstractFormPage.this.hasProcess();
+            }
         };
     }
 
@@ -122,8 +128,8 @@ public abstract class AbstractFormPage extends Template {
     private void buildFlowButton(String buttonId, BSContainer buttonContainer, String transitionName, IModel<? extends SInstance> instanceModel, BSModalBorder confirmarAcaoFlowModal) {
         TemplatePanel tp = buttonContainer
                 .newTemplateTag(
-                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId + "'>\n" + transitionName + "\n</button>\n");
-        tp.add(new SingularButton(buttonId) {
+                        tt -> "<button  type='submit' class='btn purple' wicket:id='" + buttonId + "'>\n <span wicket:id='flowButtonLabel' /> \n</button>\n");
+        SingularButton singularButton = new SingularButton(buttonId) {
 
             @Override
             public IModel<? extends SInstance> getCurrentInstance() {
@@ -134,7 +140,9 @@ public abstract class AbstractFormPage extends Template {
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 confirmarAcaoFlowModal.show(target);
             }
-        });
+        };
+        singularButton.add(new Label("flowButtonLabel", transitionName).setRenderBodyOnly(true));
+        tp.add(singularButton);
     }
 
     private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
@@ -161,7 +169,10 @@ public abstract class AbstractFormPage extends Template {
                     protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                         setFormXML(getFormModel(), xml.toStringExato());
                         AbstractFormPage.this.executeTransition(transitionName, getFormModel());
-                        target.appendJavaScript("; window.close();");
+                        target.appendJavaScript("Singular.atualizarContentWorklist();");
+                        addToastrSuccessMessageWorklist("message.action.success", transitionName);
+
+                        target.appendJavaScript("window.close();");
                     }
 
                     @Override
@@ -197,6 +208,8 @@ public abstract class AbstractFormPage extends Template {
     protected abstract String getAnnotationsXML(IModel<?> model);
 
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
+
+    protected abstract boolean hasProcess();
 
     public static class FormPageConfig implements Serializable {
         public ViewMode viewMode = ViewMode.VISUALIZATION;

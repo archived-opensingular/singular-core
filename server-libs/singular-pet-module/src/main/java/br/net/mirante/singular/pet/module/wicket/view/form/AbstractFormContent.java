@@ -1,10 +1,10 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import java.util.List;
 import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +50,7 @@ public abstract class AbstractFormContent extends Content {
     protected ViewMode viewMode = ViewMode.EDITION;
     protected AnnotationMode annotationMode = AnnotationMode.NONE;
     protected SingularFormPanel<String> singularFormPanel;
+    private final BSModalBorder closeModal = construirCloseModal();
 
     @Inject
     @Named("formConfigWithDatabase")
@@ -78,11 +79,11 @@ public abstract class AbstractFormContent extends Content {
         form.add(buildSaveButton());
         form.add(buildSaveAnnotationButton());
         form.add(buildFlowButtons());
-        form.add(buildSaveWithoutValidateButton());
         form.add(buildValidateButton());
-        form.add(buildCancelButton());
+        form.add(buildCloseButton());
         form.add(buildConfirmationModal());
         form.add(modalContainer);
+        form.add(closeModal);
         return form;
     }
 
@@ -151,11 +152,6 @@ public abstract class AbstractFormContent extends Content {
         return singularFormPanel;
     }
 
-
-    private void backToCrudPage(Component componentContext) {
-        System.out.println(" Voltar para pagina alalalalla");
-    }
-
     private Component buildSendButton() {
         final Component button = new SingularButton("send-btn") {
             @Override
@@ -171,26 +167,34 @@ public abstract class AbstractFormContent extends Content {
 
 
         };
-        return button.add(visibleOnlyInEditionBehaviour());
+        return button.add(visibleOnlyIfDraftInEditionBehaviour());
     }
 
     private Component buildSaveButton() {
-        final Component button = new SingularSaveButton("save-btn") {
+        final Component button = new SingularButton("save-btn") {
             @Override
             public IModel<? extends SInstance> getCurrentInstance() {
                 return singularFormPanel.getRootInstance();
             }
 
             @Override
-            protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                setFormXML(getFormModel(), xml.toStringExato());
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                super.onSubmit(target, form);
+                MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
+                setFormXML(getFormModel(), rootXml.toStringExato());
+                processAnnotations(getCurrentInstance().getObject());
                 getCurrentInstance().getObject().getDocument().persistFiles();
-                AbstractFormContent.this.saveForm(getCurrentInstance());
+                saveForm(getCurrentInstance());
+
+                addToastrSuccessMessage("message.success");
+                atualizarContentWorklist(target);
             }
-
-
         };
         return button.add(visibleOnlyInEditionBehaviour());
+    }
+
+    protected void atualizarContentWorklist(AjaxRequestTarget target) {
+        target.appendJavaScript("Singular.atualizarContentWorklist();");
     }
 
 
@@ -201,21 +205,22 @@ public abstract class AbstractFormContent extends Content {
                 return singularFormPanel.getRootInstance();
             }
 
-            protected void save() {
+            protected void save(AjaxRequestTarget target) {
                 getCurrentInstance().getObject().getDocument().persistFiles();
                 processAnnotations(getCurrentInstance().getObject());
                 saveForm(getFormModel());
-                backToCrudPage(this);
+                atualizarContentWorklist(target);
             }
 
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
+                save(target);
+                addToastrSuccessMessage("message.success");
             }
 
             @Override
             protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                save();
+                save(target);
             }
         };
         return button.add(visibleOnlyInAnnotationBehaviour());
@@ -234,39 +239,32 @@ public abstract class AbstractFormContent extends Content {
         return MformPersistenciaXML.toStringXML(annotatedInstance.persistentAnnotations());
     }
 
-    private Component buildSaveWithoutValidateButton() {
-        final Component button = new SingularButton("save-whitout-validate-btn") {
-
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                super.onSubmit(target, form);
-                MElement rootXml = MformPersistenciaXML.toXML(getCurrentInstance().getObject());
-                setFormXML(getFormModel(), rootXml.toStringExato());
-                processAnnotations(getCurrentInstance().getObject());
-                getCurrentInstance().getObject().getDocument().persistFiles();
-                saveForm(getCurrentInstance());
-
-                addToastrSuccessMessage("message.success");
-                backToCrudPage(this);
-            }
-
-            @Override
-            public IModel<? extends SInstance> getCurrentInstance() {
-                return singularFormPanel.getRootInstance();
-            }
-
-        };
-        return button.add(visibleOnlyInEditionBehaviour());
-    }
-
     @SuppressWarnings("rawtypes")
-    protected AjaxLink<?> buildCancelButton() {
-        return new AjaxLink("cancel-btn") {
+    protected AjaxLink<?> buildCloseButton() {
+        return new AjaxLink("close-btn") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                backToCrudPage(this);
+                closeModal.show(target);
             }
         };
+    }
+
+    protected BSModalBorder construirCloseModal() {
+        BSModalBorder closeModal = new BSModalBorder("close-modal", getMessage("label.title.close.draft"));
+        closeModal.addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-close-btn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                closeModal.hide(target);
+            }
+        });
+        closeModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new AjaxButton("close-btn") {
+            @Override
+            protected String getOnClickScript() {
+                return "window.close()";
+            }
+        });
+
+        return closeModal;
     }
 
     protected Component buildValidateButton() {
@@ -275,6 +273,13 @@ public abstract class AbstractFormContent extends Content {
             @Override
             protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form,
                                                IModel<? extends SInstance> instanceModel) {
+                addToastrSuccessMessage("message.validation.success");
+            }
+
+            @Override
+            protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+                super.onValidationError(target, form, instanceModel);
+                addToastrErrorMessage("message.validation.error");
             }
 
             @Override
@@ -288,7 +293,7 @@ public abstract class AbstractFormContent extends Content {
 
     private Component buildConfirmationModal() {
         enviarModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.cancel", new AjaxButton("cancel-btn") {
+                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.close", new AjaxButton("cancel-btn") {
                     @Override
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         enviarModal.hide(target);
@@ -305,6 +310,8 @@ public abstract class AbstractFormContent extends Content {
                         setFormXML(getFormModel(), xml.toStringExato());
                         getCurrentInstance().getObject().getDocument().persistFiles();
                         AbstractFormContent.this.send(getCurrentInstance(), xml);
+                        atualizarContentWorklist(target);
+                        addToastrSuccessMessageWorklist("message.send.success");
                         target.appendJavaScript("; window.close();");
                     }
 
@@ -312,12 +319,12 @@ public abstract class AbstractFormContent extends Content {
                     protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
                         enviarModal.hide(target);
                         target.add(form);
+                        addToastrErrorMessage("message.send.error");
                     }
                 });
 
         return enviarModal;
     }
-
 
     protected Behavior visibleOnlyInEditionBehaviour() {
         return new Behavior() {
@@ -326,6 +333,17 @@ public abstract class AbstractFormContent extends Content {
                 super.onConfigure(component);
 
                 component.setVisible(viewMode.isEdition());
+            }
+        };
+    }
+
+    protected Behavior visibleOnlyIfDraftInEditionBehaviour() {
+        return new Behavior() {
+            @Override
+            public void onConfigure(Component component) {
+                super.onConfigure(component);
+
+                component.setVisible(!hasProcess() && viewMode.isEdition());
             }
         };
     }
@@ -357,5 +375,5 @@ public abstract class AbstractFormContent extends Content {
 
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
 
-
+    protected abstract boolean hasProcess();
 }
