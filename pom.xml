@@ -6,7 +6,7 @@
     <groupId>br.net.mirante</groupId>
     <artifactId>singular</artifactId>
 
-    <version>0.5.15</version>
+    <version>0.5.16-SNAPSHOT</version>
     <name>[projeto-raiz :: singular]</name>
     <packaging>pom</packaging>
 
