@@ -1,6 +1,7 @@
 package br.net.mirante.singular.flow.core;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,6 @@ import br.net.mirante.singular.flow.core.service.IProcessDefinitionEntityService
 import br.net.mirante.singular.flow.core.variable.VarDefinitionMap;
 import br.net.mirante.singular.flow.core.variable.VarService;
 import br.net.mirante.singular.flow.core.view.Lnk;
-import br.net.mirante.singular.util.StreamUtils;
 
 /**
  * <p>
@@ -411,7 +411,7 @@ public abstract class ProcessDefinition<I extends ProcessInstance>
      * @return as entidades persistentes.
      */
     public final List<IEntityTaskDefinition> getEntityTaskDefinition(ITaskDefinition... task) {
-        return StreamUtils.getFromArray(task, s -> s.map(this::getEntityTaskDefinition).collect(Collectors.toList()));
+        return Arrays.stream(task).map(this::getEntityTaskDefinition).collect(Collectors.toList());
     }
 
     /**
