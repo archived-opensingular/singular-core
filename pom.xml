@@ -7,7 +7,7 @@
     <groupId>br.net.mirante</groupId>
     <artifactId>singular-server</artifactId>
 
-    <version>0.0.3</version>
+    <version>0.0.4-SNAPSHOT</version>
     <name>[projeto-raiz :: singular-server]</name>
     <packaging>pom</packaging>
 
@@ -144,7 +144,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <skipTests>false</skipTests>
-        <singular.version>0.5.14</singular.version>
+        <singular.version>0.5.15-SNAPSHOT</singular.version>
         <wicket.version>7.1.0</wicket.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <spring.version>4.2.4.RELEASE</spring.version>
