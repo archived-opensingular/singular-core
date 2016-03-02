@@ -54,12 +54,12 @@ public abstract class AbstractFormPage extends Template {
 
             @Override
             protected IModel<?> getContentTitlelModel() {
-                return AbstractFormPage.this.getContentTitlelModel();
+                return AbstractFormPage.this.getContentTitleModel();
             }
 
             @Override
             protected IModel<?> getContentSubtitlelModel() {
-                return AbstractFormPage.this.getContentSubtitlelModel();
+                return AbstractFormPage.this.getContentSubtitleModel();
             }
 
             @Override
@@ -178,9 +178,9 @@ public abstract class AbstractFormPage extends Template {
 
     protected abstract void executeTransition(String transitionName, IModel<?> currentInstance);
 
-    protected abstract IModel<?> getContentTitlelModel();
+    protected abstract IModel<?> getContentTitleModel();
 
-    protected abstract IModel<?> getContentSubtitlelModel();
+    protected abstract IModel<?> getContentSubtitleModel();
 
     protected abstract String getFormXML(IModel<?> model);
 
