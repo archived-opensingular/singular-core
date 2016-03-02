@@ -20,7 +20,6 @@ import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.authorization.AccessLevel;
 import static br.net.mirante.singular.flow.core.service.IFlowMetadataREST.*;
 import br.net.mirante.singular.flow.core.service.IFlowMetadataService;
-import br.net.mirante.singular.util.StreamUtils;
 
 class FlowMetadataSpringREST implements IFlowMetadataService{
 
@@ -100,10 +99,10 @@ class FlowMetadataSpringREST implements IFlowMetadataService{
 
     public String addOtherParameters(String... params){
         if(params != null) {
-            return StreamUtils
-                    .getFromArray(params, stream -> stream
-                            .map(param -> "&" + param + "={" + param + "}")
-                            .collect(Collectors.joining()));
+            return Arrays
+                    .stream(params)
+                    .map(param -> "&" + param + "={" + param + "}")
+                            .collect(Collectors.joining());
         } else {
             return null;
         }
