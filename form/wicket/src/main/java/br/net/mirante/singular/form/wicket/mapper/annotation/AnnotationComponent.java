@@ -18,6 +18,7 @@ import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -137,6 +138,18 @@ public class AnnotationComponent extends Panel {
 
     private ActionAjaxButton createOpenModalButton(final BFModalWindow annotationModal) {
         return new ActionAjaxButton("open_modal") {
+            @Override
+            protected void onInitialize() {
+                super.onInitialize();
+                Label open_icon = new Label("open_icon");
+                if(context.getRootContext().annotation().editable()){
+                    open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-pencil")));
+                }else{
+                    open_icon.add(new AttributeModifier("class",  $m.ofValue("fa fa-expand")));
+                }
+                add(open_icon);
+            }
+
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 keepOpened = true;
                 annotationModal.show(target);
@@ -312,7 +325,8 @@ class AnnotationModalWindow extends BFModalWindow{
             createCommentField(modalBody);
             createApprovedField(modalBody);
         }else{
-            modalBody.appendTag("pre", true, "", new Label("modalText",textModel));
+            MultiLineLabel modalText = new MultiLineLabel("modalText", textModel);
+            modalBody.appendTag("div", true, "class='sannotation-text-comment'", modalText);
             modalBody.appendTag("div", true, "", AnnotationComponent.createApprovalLabel(approvedModel));
         }
     }

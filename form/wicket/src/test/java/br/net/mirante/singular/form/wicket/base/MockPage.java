@@ -2,8 +2,10 @@ package br.net.mirante.singular.form.wicket.base;
 
 import java.util.Optional;
 
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
@@ -20,33 +22,62 @@ import br.net.mirante.singular.form.mform.document.ServiceRegistry;
 import br.net.mirante.singular.form.mform.document.TypeLoader;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
+import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 
 public abstract class MockPage extends WebPage {
 
-    private SFormConfig<String> mockFormConfig = new MockFormConfig();
+    public SFormConfig<String> mockFormConfig = new MockFormConfig();
+
+    private Form<?> form = new Form("form");
+
+    private SingularFormPanel<String> singularFormPanel = new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
+        @Override
+        protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
+            final Optional<SType<?>> mockType = mockFormConfig.getTypeLoader().loadType("mockType");
+            if (mockType.isPresent()) {
+                if (mockType.get() instanceof STypeComposite) {
+                    populateType((STypeComposite) mockType.get());
+                }
+            }
+            return mockFormConfig.getDocumentFactory().createInstance(new RefType() {
+                @Override
+                protected SType<?> retrieve() {
+                    return mockType.get();
+                }
+            });
+        }
+    };
+
+    private SingularValidationButton singularValidationButton = new SingularValidationButton("validate-btn") {
+        @Override
+        protected void onValidationSuccess(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
+
+        }
+
+        @Override
+        public IModel<? extends SInstance> getCurrentInstance() {
+            return singularFormPanel.getRootInstance();
+        }
+    };
 
     public MockPage() {
-        add(new Form("form").add(new SingularFormPanel<String>("singularFormPanel", mockFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                final Optional<SType<?>> mockType = mockFormConfig.getTypeLoader().loadType("mockType");
-                if (mockType.isPresent()) {
-                    if (mockType.get() instanceof STypeComposite) {
-                        populateType((STypeComposite) mockType.get());
-                    }
-                }
-                return mockFormConfig.getDocumentFactory().createInstance(new RefType() {
-                    @Override
-                    protected SType<?> retrieve() {
-                        return mockType.get();
-                    }
-                });
-            }
-        }));
+        add(form.add(singularFormPanel, singularValidationButton));
     }
 
     protected abstract void populateType(STypeComposite<?> mockType);
+
+    public Form<?> getForm() {
+        return form;
+    }
+
+    public SingularFormPanel<String> getSingularFormPanel() {
+        return singularFormPanel;
+    }
+
+    public SingularValidationButton getSingularValidationButton() {
+        return singularValidationButton;
+    }
 }
 
 class MockFormConfig implements SFormConfig<String> {

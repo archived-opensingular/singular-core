@@ -11,6 +11,7 @@ import org.apache.wicket.request.http.WebResponse;
  *
  * @author Fabricio Buzeto
  */
+@Deprecated
 public class WebWrapper {
     private WebResponse _response;
 
