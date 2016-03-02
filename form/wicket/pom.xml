@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.5.15-SNAPSHOT</version>
+        <version>0.5.15</version>
     </parent>
 
     <artifactId>form-wicket</artifactId>
@@ -46,12 +46,12 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-core</artifactId>
-            <version>0.5.15-SNAPSHOT</version>
+            <version>0.5.15</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.5.15-SNAPSHOT</version>
+            <version>0.5.15</version>
         </dependency>
 
         <!--  WICKET DEPENDENCIES -->
