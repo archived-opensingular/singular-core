@@ -10,10 +10,10 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
+import br.net.mirante.singular.form.mform.MInstanceViewState;
 import br.net.mirante.singular.form.mform.MInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
 public class InstanceValidationContext {
@@ -72,16 +72,16 @@ public class InstanceValidationContext {
         }
     }
 
-    protected <I extends SInstance> boolean isEnabledInHierarchy(SInstance instance) {
+    protected boolean isEnabledInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance, true).stream()
-            .map(it -> it.getValorAtributo(SPackageBasic.ATR_ENABLED))
-            .anyMatch(Boolean.FALSE::equals);
+                .map(it -> MInstanceViewState.get(it).isEnabled())
+                .anyMatch(Boolean.FALSE::equals);
     }
 
-    protected <I extends SInstance> boolean isVisibleInHierarchy(SInstance instance) {
+    protected boolean isVisibleInHierarchy(SInstance instance) {
         return !MInstances.listAscendants(instance, true).stream()
-            .map(it -> it.getValorAtributo(SPackageBasic.ATR_VISIVEL))
-            .anyMatch(Boolean.FALSE::equals);
+                .map(it -> MInstanceViewState.get(it).isVisible())
+                .anyMatch(Boolean.FALSE::equals);
     }
 
     public boolean hasErrorsAboveLevel(ValidationErrorLevel minErrorLevel) {
