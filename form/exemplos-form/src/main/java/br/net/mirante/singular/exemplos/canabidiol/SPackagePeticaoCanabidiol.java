@@ -112,8 +112,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addCampo("prescricao", STypePrescricao.class);
             prescricao
                     .as(AtrBasic::new)
-                    .label("Prescrição Médica")
-                    .as(AtrAnnotation::new).setAnnotated();
+                    .label("Prescrição Médica");
 
             STypeBoolean aceitoTudo = canabis.addCampoBoolean("aceitoTudo");
 
