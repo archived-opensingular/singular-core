@@ -5,6 +5,7 @@ import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import java.io.Serializable;
 
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -46,6 +47,7 @@ import br.net.mirante.singular.util.wicket.util.WicketUtils;
 public class AnnotationComponent extends Panel {
     private final AbstractSInstanceModel referenced;
     private Component referencedComponent;
+    BSContainer mainGrid;
     private final WicketBuildContext context;
     private MInstanciaValorModel textModel, approvedModel;
     private MInstanceRootModel model;
@@ -276,6 +278,9 @@ public class AnnotationComponent extends Panel {
         return icon;
     }
 
+    public void setMainGrid(BSContainer mainGrid) {
+        this.mainGrid = mainGrid;
+    }
 }
 
 class AnnotationModalWindow extends BFModalWindow{
@@ -364,7 +369,8 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
         return new ActionAjaxButton("btn-ok") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                target.add(parentComponent);
+//                target.add(parentComponent);
+                target.add(parentComponent.mainGrid);
                 AnnotationModalWindow.this.hide(target);
                 target.appendJavaScript(parentComponent.generateUpdateJS());
             }

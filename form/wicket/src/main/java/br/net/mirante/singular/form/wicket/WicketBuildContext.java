@@ -63,8 +63,6 @@ public class WicketBuildContext implements Serializable {
 
     private MView view;
 
-
-
     public AnnotationMode annotation(){ return annotation; }
     public void annotation(AnnotationMode mode){
         Objects.requireNonNull(mode);
@@ -92,15 +90,6 @@ public class WicketBuildContext implements Serializable {
     }
 
     public Optional<Component> getAnnotationTargetFor(SInstance target){
-//        for(Component c : annotationsTargetBuffer){
-//            IModel<?> m = c.getDefaultModel();
-//            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance) {
-//                SInstance i = (SInstance) m.getObject();
-//                if (i.getId().equals(target.getId())) {
-//                    return Optional.of(c);
-//                }
-//            }
-//        }
         Component component = annotationsTargetBuffer.get(target.getId());
         if(component != null) return Optional.of(component);
         return Optional.empty();
