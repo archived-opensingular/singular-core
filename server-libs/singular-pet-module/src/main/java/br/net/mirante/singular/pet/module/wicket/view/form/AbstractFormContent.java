@@ -245,9 +245,19 @@ public abstract class AbstractFormContent extends Content {
         return new AjaxLink("close-btn") {
             @Override
             public void onClick(AjaxRequestTarget target) {
-                closeModal.show(target);
+                if (isReadOnly()) {
+                    atualizarContentWorklist(target);
+                    target.appendJavaScript("window.close()");
+                } else {
+                    closeModal.show(target);
+                }
             }
         };
+    }
+
+    private boolean isReadOnly() {
+        return viewMode == ViewMode.VISUALIZATION
+                && annotationMode != AnnotationMode.EDIT;
     }
 
     protected BSModalBorder construirCloseModal() {
@@ -261,7 +271,8 @@ public abstract class AbstractFormContent extends Content {
         closeModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new AjaxButton("close-btn") {
             @Override
             protected String getOnClickScript() {
-                return "window.close()";
+                return " Singular.atualizarContentWorklist();"
+                        + "window.close();";
             }
         });
 

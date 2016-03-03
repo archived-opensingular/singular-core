@@ -166,7 +166,7 @@ public abstract class Template extends PetModulePage {
                     + " Singular.reloadContent = function () { "
                     + "     Singular.atualizarContadores(); "
                     + "     Wicket.Ajax.get({u: '%s' }); "
-                    + " } ";
+                    + " }; ";
 
                 response.render(OnDomReadyHeaderItem.forScript(String.format(js, getCallbackUrl())));
             }
