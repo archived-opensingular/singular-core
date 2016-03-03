@@ -58,12 +58,10 @@ public class WicketBuildContext implements Serializable {
     private ViewMode viewMode;
     private AnnotationMode annotation = AnnotationMode.NONE;
     private HashMap<Integer, AnnotationComponent> annotations = newHashMap();
-    private List<Component> annotationsTargetBuffer = newArrayList();
+    private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
 
     private MView view;
-
-
 
     public AnnotationMode annotation(){ return annotation; }
     public void annotation(AnnotationMode mode){
@@ -78,11 +76,8 @@ public class WicketBuildContext implements Serializable {
         Integer id = c.referenced().getMInstancia().getId();
         annotations.put(id, c);
     }
-    public void updateAnnotations(Component c){
-        if(c.getDefaultModel() != null && c.getDefaultModel().getObject() != null &&
-                c.getDefaultModel().getObject() instanceof SInstance){
-            SInstance target = (SInstance) c.getDefaultModel().getObject();
-
+    public void updateAnnotations(Component c, SInstance target){
+        if(target != null){
             for(WicketBuildContext ctx : contextChain()){
                 if(ctx.annotations.containsKey(target.getId())){
                     ctx.annotations.get(target.getId()).setReferencedComponent(c);
@@ -90,20 +85,13 @@ public class WicketBuildContext implements Serializable {
                 }
             }
 
-            annotationsTargetBuffer.add(c);
+            annotationsTargetBuffer.put(target.getId(),c);
         }
     }
 
     public Optional<Component> getAnnotationTargetFor(SInstance target){
-        for(Component c : annotationsTargetBuffer){
-            IModel<?> m = c.getDefaultModel();
-            if(m != null && m.getObject() != null && m.getObject() instanceof SInstance) {
-                SInstance i = (SInstance) m.getObject();
-                if (i.getId().equals(target.getId())) {
-                    return Optional.of(c);
-                }
-            }
-        }
+        Component component = annotationsTargetBuffer.get(target.getId());
+        if(component != null) return Optional.of(component);
         return Optional.empty();
     }
 

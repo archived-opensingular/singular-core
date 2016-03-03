@@ -164,7 +164,48 @@ public class STypeAnnotationTest {
         assertThat(asAnnotation(instance, annotated1).annotation().getApproved()).isNull();
     }
 
+    @Test public void aNewInstanceHasNoAnnotationsOrChilds(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isFalse();
+    }
+
+    @Test public void itsOwnAnnotationCountsAsChild(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        instance.as(AtrAnnotation::new).annotation().setText("anything");
+        assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isTrue();
+    }
+
+    @Test public void returnsIfAnyOfItsChildHasAnnotations(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        asAnnotation(instance, annotated1).annotation().setText("anything");
+        assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isTrue();
+    }
+
+    @Test public void anEmptyInstanceHasNoRefusals(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isFalse();
+    }
+
+    @Test public void anApprovedInstanceIsnNotRefused(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        instance.as(AtrAnnotation::new).annotation().setApproved(true);
+        assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isFalse();
+    }
+
+    @Test public void anRejectedInstanceIsnRefused(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        instance.as(AtrAnnotation::new).annotation().setApproved(false);
+        assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isTrue();
+    }
+
+    @Test public void returnsIfAnyOfItsChildIsRefused(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        asAnnotation(instance, annotated1).annotation().setApproved(false);
+        assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isTrue();
+    }
+
     private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {
         return instance.getDescendant(field).as(AtrAnnotation::new);
     }
+
 }

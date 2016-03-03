@@ -179,4 +179,34 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     public void clear() {   annotation().clear();    }
+
+    public boolean hasAnnotationOnTree() {
+        if(hasAnnotation()) return true;
+        if(target() instanceof SIComposite){
+            return hasAnnotationsOnChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnnotationsOnChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).hasAnnotationOnTree()) return true;
+        }
+        return false;
+    }
+
+    public boolean hasAnyRefusal() {
+        if(hasAnnotation() && !annotation().getApproved()){    return true;}
+        if(target() instanceof SIComposite){
+            return hasAnyRefusalOnChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnyRefusalOnChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).hasAnyRefusal()) return true;
+        }
+        return false;
+    }
 }

@@ -22,3 +22,11 @@
 .sannotation-text-comment {
     font-style: italic;
 }
+
+.sannotation-color-danger {
+    color:#ed6b75;
+}
+
+.sannotation-color-info {
+    color:rgb(51, 122, 183);
+}

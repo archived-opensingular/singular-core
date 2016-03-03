@@ -121,7 +121,9 @@ public interface ControlsFieldComponentMapper extends IWicketComponentMapper {
         }
 
         if(ctx.annotation().enabled()){
-            ctx.updateAnnotations(input);
+            if(input.getDefaultModel() != null){
+                ctx.updateAnnotations(input, (SInstance) input.getDefaultModel().getObject());
+            }
         }
 
         if ((input instanceof LabeledWebMarkupContainer) && (((LabeledWebMarkupContainer) input).getLabel() == null)) {

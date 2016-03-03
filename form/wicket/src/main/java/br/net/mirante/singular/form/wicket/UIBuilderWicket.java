@@ -157,6 +157,8 @@ class AnnotationBuilder {
     private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class.getName());
 
     private UIBuilderWicket parent;
+    private WicketBuildContext mainCtx;
+    private BSRow mainGrid;
 
     AnnotationBuilder(UIBuilderWicket parent){
         this.parent = parent;
@@ -164,13 +166,14 @@ class AnnotationBuilder {
 
     public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
         final BSContainer<?> parentCol = ctx.getContainer();
-        BSRow superRow = parentCol.newGrid().newRow();
+        mainGrid = parentCol.newGrid().newRow();
+        mainGrid.setOutputMarkupId(true);
 
-        superRow.setCssClass("sannotation-form-row");
-        WicketBuildContext mainCtx = createMainColumn(ctx, superRow);
+        mainGrid.setCssClass("sannotation-form-row");
+        mainCtx = createMainColumn(ctx, mainGrid);
         executeMainMapper(viewMode, mapper, mainCtx);
 
-        BSGrid annotationColumn = createAnnotationColumn(superRow);
+        BSGrid annotationColumn = createAnnotationColumn(mainGrid);
         mainCtx.setAnnotationContainer(annotationColumn);
         addAnnotationsFor(ctx, annotationColumn, (SInstance) ctx.getCurrentInstance());
     }
@@ -207,6 +210,7 @@ class AnnotationBuilder {
                 if(target.isPresent()){
                     component.setReferencedComponent(target.get());
                 }
+                component.setMainGrid(mainGrid);
                 ctx.add(component);
                 return component;
             });
