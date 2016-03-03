@@ -219,6 +219,17 @@ public abstract class AbstractFormPage extends Template {
     protected abstract String getIdentifier();
 
     public static class FormPageConfig implements Serializable {
+
+        public FormPageConfig() {
+        }
+
+        public FormPageConfig(String type, String formId, AnnotationMode annotationMode, ViewMode viewMode) {
+            this.type = type;
+            this.formId = formId;
+            this.annotationMode = annotationMode;
+            this.viewMode = viewMode;
+        }
+
         public ViewMode viewMode = ViewMode.VISUALIZATION;
         public AnnotationMode annotationMode = AnnotationMode.NONE;
         public String formId;
