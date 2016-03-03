@@ -293,16 +293,20 @@ class AnnotationModalWindow extends BFModalWindow{
                                  MInstanceRootModel model,
                                  AbstractSInstanceModel referenced,
                                  WicketBuildContext context,
-                                 AnnotationComponent parentComponent
-    ) {
+                                 AnnotationComponent parentComponent) {
         super(id);
-        this.referenced = referenced;
         setDefaultModel(model);
-        textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"text"));
-        approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(model,"isApproved"));
+        this.referenced = referenced;
         this.context = context;
         this.parentComponent = parentComponent;
         this.setSize(BSModalBorder.Size.NORMAL);
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        textModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"text"));
+        approvedModel = new MInstanciaValorModel<>(new SInstanceCampoModel<>(getDefaultModel(),"isApproved"));
 
         this.setBody(createBody());
 
