@@ -167,6 +167,7 @@ class AnnotationBuilder {
     public void build(WicketBuildContext ctx, ViewMode viewMode, IWicketComponentMapper mapper) {
         final BSContainer<?> parentCol = ctx.getContainer();
         mainGrid = parentCol.newGrid().newRow();
+        mainGrid.setOutputMarkupId(true);
 
         mainGrid.setCssClass("sannotation-form-row");
         mainCtx = createMainColumn(ctx, mainGrid);
