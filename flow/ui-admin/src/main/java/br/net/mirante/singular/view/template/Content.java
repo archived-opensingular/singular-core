@@ -64,8 +64,8 @@ public abstract class Content extends Panel {
     protected void onInitialize() {
         super.onInitialize();
         queue(new FeedbackPanel("feedback"));
-        add(new Label("contentTitle", getContentTitlelModel()));
-        add(new Label("contentSubtitle", getContentSubtitlelModel()));
+        add(new Label("contentTitle", getContentTitleModel()));
+        add(new Label("contentSubtitle", getContentSubtitleModel()));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(getBreadcrumbLinks("_BreadcrumbLinks"));
@@ -135,7 +135,7 @@ public abstract class Content extends Panel {
         return fragment;
     }
     
-    protected abstract IModel<?> getContentTitlelModel();
+    protected abstract IModel<?> getContentTitleModel();
 
-    protected abstract IModel<?> getContentSubtitlelModel();
+    protected abstract IModel<?> getContentSubtitleModel();
 }

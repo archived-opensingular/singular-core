@@ -95,12 +95,12 @@ class ListContent extends Content implements SingularWicketContainer<ListContent
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return new ResourceModel("label.content.subtitle");
     }
 }
