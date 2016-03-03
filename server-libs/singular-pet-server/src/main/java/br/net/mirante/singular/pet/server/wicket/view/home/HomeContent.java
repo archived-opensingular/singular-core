@@ -16,12 +16,12 @@ public class HomeContent extends Content {
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return $m.ofValue("Página inicial");
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue("Página inicial");
     }
 }

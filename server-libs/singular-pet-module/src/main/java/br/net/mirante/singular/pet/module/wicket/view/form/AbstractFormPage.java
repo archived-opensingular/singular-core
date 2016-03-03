@@ -54,12 +54,12 @@ public abstract class AbstractFormPage extends Template {
         return new AbstractFormContent(id, config.type, config.formId, config.viewMode, config.annotationMode) {
 
             @Override
-            protected IModel<?> getContentTitlelModel() {
+            protected IModel<?> getContentTitleModel() {
                 return AbstractFormPage.this.getContentTitleModel();
             }
 
             @Override
-            protected IModel<?> getContentSubtitlelModel() {
+            protected IModel<?> getContentSubtitleModel() {
                 return AbstractFormPage.this.getContentSubtitleModel();
             }
 

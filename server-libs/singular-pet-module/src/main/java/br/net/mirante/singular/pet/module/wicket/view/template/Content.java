@@ -40,8 +40,8 @@ public abstract class Content extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        add(new Label("contentTitle", getContentTitlelModel()));
-        add(new Label("contentSubtitle", getContentSubtitlelModel()));
+        add(new Label("contentTitle", getContentTitleModel()));
+        add(new Label("contentSubtitle", getContentSubtitleModel()));
         WebMarkupContainer breadcrumb = new WebMarkupContainer("breadcrumb");
         add(breadcrumb);
         breadcrumb.add(new WebMarkupContainer("breadcrumbDashboard").add(
@@ -115,7 +115,7 @@ public abstract class Content extends Panel {
         return new WebMarkupContainer(id);
     }
 
-    protected abstract IModel<?> getContentTitlelModel();
+    protected abstract IModel<?> getContentTitleModel();
 
-    protected abstract IModel<?> getContentSubtitlelModel();
+    protected abstract IModel<?> getContentSubtitleModel();
 }
