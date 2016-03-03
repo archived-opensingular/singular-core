@@ -1,6 +1,7 @@
 package br.net.mirante.singular.util.wicket.menu;
 
-import br.net.mirante.singular.util.wicket.resource.Icone;
+import java.util.regex.Pattern;
+
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -9,8 +10,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.component.IRequestablePage;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import java.util.regex.Pattern;
-
+import br.net.mirante.singular.util.wicket.resource.Icone;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 public class MetronicMenuItem extends AbstractMenuItem {
@@ -20,6 +20,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
     private Class<? extends IRequestablePage> responsePageClass;
     private String menuItemUrl;
     private String href;
+    private WebMarkupContainer helper = new WebMarkupContainer("helper");
 
     public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
                             PageParameters parameters) {
@@ -74,6 +75,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
         }
 
         anchor.add(new Label("title", title));
+        anchor.add(helper);
         anchor.add(iconMarkup);
 
         menuItem.add(anchor);
@@ -98,5 +100,8 @@ public class MetronicMenuItem extends AbstractMenuItem {
         return false;
     }
 
+    public WebMarkupContainer getHelper() {
+        return helper;
+    }
 }
 

@@ -62,7 +62,11 @@ public class DashboardContent extends Content {
 
     @Override
     protected IModel<?> getContentSubtitlelModel() {
-        return new ResourceModel("label.content.subtitle");
+        if (processDefinitionCode == null) {
+            return new ResourceModel("label.content.subtitle");
+        } else {
+            return $m.ofValue();
+        }
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
@@ -76,7 +80,7 @@ public class DashboardContent extends Content {
 
             breadCrumb.add(createActiveBreadCrumbLink(breadCrumb.newChildId(),
                     urlFor(DashboardPage.class, pageParameters).toString(),
-                    getString("breadcrumb.dashboard")));
+                    getString("breadcrumb.statistics")));
             breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(),
                     urlFor(ProcessosPage.class, pageParameters).toString(),
                     getString("breadcrumb.instances")));

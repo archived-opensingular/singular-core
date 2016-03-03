@@ -1,12 +1,12 @@
 package br.net.mirante.singular.form.mform.options;
 
-import java.util.Collection;
-
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.util.StreamUtils;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
@@ -27,20 +27,20 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
         }
     }
 
-    private void init(SType<?> tipoOpcoes, Object[] lista){
+    private void init(SType<?> tipoOpcoes, Object[] lista) {
         if (lista.length == 0) {
             throwEmpryListError();
         }
-        if(tipoOpcoes instanceof STypeSimple){
-            StreamUtils.fromArray(lista, stream -> stream.forEach(o -> {
+        if (tipoOpcoes instanceof STypeSimple) {
+            Arrays.stream(lista).forEach(o -> {
                 if (o instanceof SInstance) {
                     opcoes.addElement(o);
                 } else {
                     opcoes.addValor(o);
                 }
-            }));
+            });
         } else if (tipoOpcoes instanceof MSelectionableType) {
-            StreamUtils.fromArray(lista, stream -> stream.forEach(opcoes::addElement));//TODO: Fabs : also for collections
+            Arrays.stream(lista).forEach(opcoes::addElement);//TODO: Fabs : also for collections
         }
     }
 
@@ -50,10 +50,11 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     /**
      * Add a new element to the Provider optionlist with value o.
+     *
      * @param o Value to be set (MSelectionableInstance.setValor) on the element
      * @return this
      */
-    public MFixedOptionsSimpleProvider add(Object o){
+    public MFixedOptionsSimpleProvider add(Object o) {
         SInstance e = opcoes.addNovo();
         e.setValue(o);
         return this;
@@ -61,13 +62,14 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
     /**
      * Add a new element to the Provider optionlist with the key values informed.
-     * @param value to be set (MSelectionableInstance.hydrate) on the element
+     *
+     * @param value       to be set (MSelectionableInstance.hydrate) on the element
      * @param selectLabel
      * @return this
      */
-    public MFixedOptionsSimpleProvider add(Object value, String selectLabel){
+    public MFixedOptionsSimpleProvider add(Object value, String selectLabel) {
         SInstance instancia = opcoes.addNovo();
-        MSelectionableInstance e = (MSelectionableInstance)instancia;
+        MSelectionableInstance e = (MSelectionableInstance) instancia;
         e.setSelectLabel(selectLabel);
         instancia.setValue(value);
         return this;

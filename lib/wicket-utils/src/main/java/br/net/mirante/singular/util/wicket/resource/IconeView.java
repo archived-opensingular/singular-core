@@ -9,18 +9,25 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 public class IconeView extends WebMarkupContainer {
 
     public IconeView(String id) {
-        this(id, $m.ofValue(), null);
+        this(id, $m.ofValue(), null, null);
     }
-    public IconeView(String id, IModel<Icone> model, IModel<String> style) {
+
+    public IconeView(String id, IModel<Icone> model, IModel<String> style, IModel<String> styleClass) {
         super(id, model);
+
         add($b.classAppender($m.get(() -> {
             if (getModelObject() != null) {
                 return getModelObject().getCssClass();
             }
             return false;
         }), $m.isNullOrEmpty(getModel())));
-        if(style != null) {
+
+        if (style != null) {
             add($b.attrAppender("style", style, ";"));
+        }
+
+        if (styleClass != null) {
+            add($b.classAppender(styleClass));
         }
     }
 

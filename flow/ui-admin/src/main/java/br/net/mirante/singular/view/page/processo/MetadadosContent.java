@@ -133,7 +133,7 @@ public class MetadadosContent extends Content implements SingularWicketContainer
         
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(DashboardPage.class, pageParameters).toString(),
-            getString("breadcrumb.dashboard")));
+            getString("breadcrumb.statistics")));
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(ProcessosPage.class, pageParameters).toString(),
             getString("breadcrumb.instances")));
