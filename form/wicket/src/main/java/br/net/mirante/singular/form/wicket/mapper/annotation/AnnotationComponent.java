@@ -3,10 +3,8 @@ package br.net.mirante.singular.form.wicket.mapper.annotation;
 import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -14,7 +12,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptContentHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,8 +21,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -250,7 +245,7 @@ public class AnnotationComponent extends Panel {
         this.add(WicketUtils.$b.attrAppender("class", "portlet box sannotation-snipet-box", ""));
     }
 
-    public static void appendAnnotationToggleButton(BSGrid grid, SIComposite instance) {
+    public static BSContainer appendAnnotationToggleButton(BSContainer grid, SIComposite instance) {
         BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
         toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
 
@@ -261,6 +256,7 @@ public class AnnotationComponent extends Panel {
                         buttonColor(annotatedInstance) +"'", createIcon(annotatedInstance));
 
         grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
+        return toggleContainer;
     }
 
     private static String buttonColor(AtrAnnotation annotatedInstance) {

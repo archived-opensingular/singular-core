@@ -57,10 +57,12 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
 
         public void buildView() {
             final BSGrid grid = createCompositeGrid(ctx);
-            buildFields(ctx, grid.newRow());
+            BSRow row = grid.newRow();
+            buildFields(ctx, row);
             if(renderAnnotations()){
-                appendAnnotationToggleButton(grid, instance);
-                ctx.getRootContext().updateAnnotations(grid);
+                ctx.getRootContext().updateAnnotations(
+                        appendAnnotationToggleButton(row, instance),
+                        instance);
             }
         }
 

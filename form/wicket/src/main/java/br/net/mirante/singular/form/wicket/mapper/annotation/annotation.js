@@ -48,8 +48,7 @@ if( window.Annotation == undefined){
 
         create_toggle_container: function(){
             var thiz = this;
-            var toggle_container = this.target_component.find('.annotation-toggle-container');
-            console.log(toggle_container);
+            var toggle_container = this.target_component;//.find('.annotation-toggle-container');
             toggle_container.find('a').removeClass('btn-default btn-info btn-danger');
             toggle_container.find('a').addClass(this.define_button_color());
             toggle_container.find('i').removeClass();
@@ -71,7 +70,6 @@ if( window.Annotation == undefined){
         },
 
         adjust_height_position: function(){
-            console.log('adjust_height_position',this.this_component, this.target_component);
             this.this_component.css('position','absolute')
             var target_offset = this.target_component.parent().offset()['top'],
                 this_offset = this.this_component.parent().offset()['top'];
@@ -80,6 +78,7 @@ if( window.Annotation == undefined){
         },
 
         toggle_button_on_click: function(){
+            console.log('toggle', this)
             this.adjust_height_position();
             if(this.is_blank()){
                 this.open_modal[0].click();
@@ -117,6 +116,7 @@ if( window.Annotation == undefined){
                                                   comment, approved, readOnly){
         var this_component = $(this_id)
         var target_component = $(target_id)
+        console.log('before', target_component);
         if(this_component && this_component.data('ctl')){
             var ctl = this_component.data('ctl');
             ctl.init(target_id, this_id, open_modal_id, comment, approved, readOnly);

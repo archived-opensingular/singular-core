@@ -67,7 +67,7 @@ public abstract class BSPanelGrid extends Panel {
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         activeTab = tab;
                         buildTabContent();
-                        updateTab(tab.getSubtree());
+                        updateTab(tab, newArrayList(tabMap.values()));
 
                         target.appendJavaScript("$('.nav-tabs li').removeClass('active');");
                         target.appendJavaScript("$('.nav-tabs li[data-tab-name=\"" + id + "\"]').addClass('active');");
@@ -89,7 +89,7 @@ public abstract class BSPanelGrid extends Panel {
         };
     }
 
-    public abstract void updateTab(List<String> subtree);
+    public abstract void updateTab(BSTab tab, List<BSTab> tabs);
 
     public Collection<Component> toUpdadeOnTab(){   return newArrayList(); }
 
@@ -104,7 +104,7 @@ public abstract class BSPanelGrid extends Panel {
         return container;
     }
 
-    private static final class BSTab implements Serializable {
+    public static final class BSTab implements Serializable {
         private String headerText;
         private List<String> subtree;
         private String iconClass;
@@ -124,5 +124,6 @@ public abstract class BSPanelGrid extends Panel {
         }
 
         public String iconClass() { return iconClass; }
+        public void iconClass(String css) { iconClass = css; }
     }
 }
