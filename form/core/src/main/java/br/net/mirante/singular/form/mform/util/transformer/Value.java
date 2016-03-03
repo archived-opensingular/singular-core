@@ -1,10 +1,5 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -14,6 +9,11 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Essa classe utilitaria realiza uma serie de operacoes sobre os valores guardados pelos MTIpos
@@ -31,14 +31,12 @@ public class Value {
     }
 
     /**
-     * @param current
-     *            instancia a partir da qual será buscada a instancia mais
-     *            proxima do tipo simples tipo
-     * @param tipo
-     *            um tipo simples
+     * @param current instancia a partir da qual será buscada a instancia mais
+     *                proxima do tipo simples tipo
+     * @param tipo    um tipo simples
      * @param <T>
      * @return false se o valor do tipo simples for nulo ou se o tipo não for
-     *         encontrado a partir da instancia current informada
+     * encontrado a partir da instancia current informada
      */
     public static <T> boolean notNull(SInstance current, STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.of(current, tipo) != null;
@@ -75,6 +73,7 @@ public class Value {
 
     /**
      * Retorna o valor de uma instancia simples
+     *
      * @param instanciaSimples
      * @param <T>
      * @return
@@ -156,8 +155,7 @@ public class Value {
      * Extrai para objetos serializáveis todos os dados de uma MIinstancia
      * recursivamente
      *
-     * @param value
-     *            MIinstancia a partir da qual se deseja extrair os dados
+     * @param value MIinstancia a partir da qual se deseja extrair os dados
      * @return Objetos serializáveis representando os dados da MInstancia
      */
     public static Object dehydrate(SInstance value) {
@@ -177,33 +175,6 @@ public class Value {
             }
         }
         return null;
-    }
-
-    /**
-     * Remove um espiríto maligno (valores serializaveis) de um corpo puro e
-     * inocente (MIinstancia) e de toda sua descendência.
-     *
-     * @param innocentVessel
-     * @return
-     */
-    public static Soul exorcize(SInstance innocentVessel){
-        Soul s = new Soul();
-        s.value = dehydrate(innocentVessel);
-        return s;
-    }
-
-    /**
-     * Realiza um ritual para encarnar um espirito maligno em um pobre corpo
-     * inocente.
-     *
-     * @param pureVessel
-     *            A pobre vitma do ritual
-     * @param evilSpirit
-     *            A alma do espírito realmente extraída a partir do método
-     *            exorcize
-     */
-    public static void possess(SInstance pureVessel, Soul evilSpirit) {
-        hydrate(pureVessel, evilSpirit.value);
     }
 
     private static void toMap(Map<String, Object> value, SInstance instancia) {
@@ -229,10 +200,6 @@ public class Value {
 
     public <T> boolean notNull(STypeSimple<? extends SISimple<T>, T> tipo) {
         return Value.notNull(instancia, tipo);
-    }
-
-    public static class Soul {
-        private Object value;
     }
 
 }
