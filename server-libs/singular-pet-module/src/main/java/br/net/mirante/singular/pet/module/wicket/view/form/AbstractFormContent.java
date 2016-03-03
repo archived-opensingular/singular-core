@@ -40,6 +40,7 @@ import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public abstract class AbstractFormContent extends Content {
 
+    private static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
 
     protected final BSModalBorder enviarModal = new BSModalBorder("enviar-modal", getMessage("label.title.send"));
     protected final BSContainer modalContainer = new BSContainer("modals");
@@ -311,7 +312,11 @@ public abstract class AbstractFormContent extends Content {
                         getCurrentInstance().getObject().getDocument().persistFiles();
                         AbstractFormContent.this.send(getCurrentInstance(), xml);
                         atualizarContentWorklist(target);
-                        addToastrSuccessMessageWorklist("message.send.success");
+                        if (getIdentifier() == null) {
+                            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
+                        } else {
+                            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
+                        }
                         target.appendJavaScript("; window.close();");
                     }
 
@@ -376,4 +381,6 @@ public abstract class AbstractFormContent extends Content {
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
 
     protected abstract boolean hasProcess();
+
+    protected abstract String getIdentifier();
 }

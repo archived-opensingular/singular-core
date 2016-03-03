@@ -117,6 +117,11 @@ public abstract class AbstractFormPage extends Template {
             protected boolean hasProcess() {
                 return AbstractFormPage.this.hasProcess();
             }
+
+            @Override
+            protected String getIdentifier() {
+                return AbstractFormPage.this.getIdentifier();
+            }
         };
     }
 
@@ -210,6 +215,8 @@ public abstract class AbstractFormPage extends Template {
     protected abstract void setAnnotationsXML(IModel<?> model, String xml);
 
     protected abstract boolean hasProcess();
+
+    protected abstract String getIdentifier();
 
     public static class FormPageConfig implements Serializable {
 

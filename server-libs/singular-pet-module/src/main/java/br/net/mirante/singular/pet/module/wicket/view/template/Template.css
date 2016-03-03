@@ -5,3 +5,8 @@
 .table.table-unstyled th {
     border-bottom: 0;
 }
+
+.toast-message a {
+    text-decoration: underline;
+    color: lightgray;
+}
