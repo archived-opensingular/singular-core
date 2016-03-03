@@ -49,7 +49,7 @@ public class BSActionPanel<T> extends Panel {
         }
 
         if (actionConfig.link.get(ICONE_ID) == null) {
-            actionConfig.link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle));
+            actionConfig.link.add(new IconeView(ICONE_ID, actionConfig.iconeModel, actionConfig.iconeStyle, actionConfig.iconeClass));
         }
 
         if (actionConfig.labelModel != null) {
@@ -120,6 +120,7 @@ public class BSActionPanel<T> extends Panel {
         protected IModel<?> labelModel = $m.ofValue("");
         protected IModel<Icone> iconeModel;
         protected IModel<String> iconeStyle;
+        protected IModel<String> iconeClass;
         protected IModel<String> stripeModel;
         protected MarkupContainer link;
         protected IModel<String> buttonModel = $m.ofValue("black");
@@ -133,13 +134,17 @@ public class BSActionPanel<T> extends Panel {
         }
 
         public ActionConfig<T> iconeModel(IModel<Icone> iconeModel) {
-            this.iconeModel = iconeModel;
-            return this;
+            return iconeModel(iconeModel, null, null);
         }
 
         public ActionConfig<T> iconeModel(IModel<Icone> iconeModel, IModel<String> iconeStyle) {
+            return iconeModel(iconeModel, iconeStyle, null);
+        }
+
+        public ActionConfig<T> iconeModel(IModel<Icone> iconeModel, IModel<String> iconeStyle, IModel<String> iconeClass) {
             this.iconeModel = iconeModel;
             this.iconeStyle = iconeStyle;
+            this.iconeClass = iconeClass;
             return this;
         }
 
@@ -173,4 +178,6 @@ public class BSActionPanel<T> extends Panel {
             return this;
         }
     }
+
+
 }
