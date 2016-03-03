@@ -122,7 +122,7 @@ public class ProcessosContent extends Content implements SingularWicketContainer
         
         breadCrumb.add(createBreadCrumbLink(breadCrumb.newChildId(), 
             urlFor(DashboardPage.class, new PageParameters()).toString(), 
-            getString("breadcrumb.dashboard")));
+            getString("breadcrumb.statistics")));
         return breadCrumb;
     }
 
