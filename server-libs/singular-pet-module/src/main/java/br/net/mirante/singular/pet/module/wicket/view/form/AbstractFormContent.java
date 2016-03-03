@@ -91,7 +91,7 @@ public abstract class AbstractFormContent extends Content {
         BSContainer container = new BSContainer("custom-buttons");
         container.setVisible(true);
         List<MTransition> trans = currentTaskTransitions(formId);
-        if (CollectionUtils.isNotEmpty(trans)) {
+        if (CollectionUtils.isNotEmpty(trans) && (ViewMode.EDITION.equals(viewMode) || AnnotationMode.EDIT.equals(annotationMode))) {
             int index = 0;
             for (MTransition t : trans) {
                 if (t.getMetaDataValue(PetServerContextMetaData.KEY) != null
