@@ -58,7 +58,7 @@ public abstract class AbstractFormContent extends Content {
     private SFormConfig<String> singularFormConfig;
 
     public AbstractFormContent(String idWicket, String type, String formId, ViewMode viewMode, AnnotationMode annotationMode) {
-        super(idWicket, false, true);
+        super(idWicket, false, false);
         this.viewMode = viewMode;
         this.annotationMode = annotationMode;
         this.typeName = type;
