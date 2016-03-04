@@ -89,7 +89,7 @@ public abstract class PetApplication extends AuthenticatedWebApplication
 
     @Override
     public RuntimeConfigurationType getConfigurationType() {
-        if (System.getProperty("singular.pet.server.deployment") != null) {
+        if ("false".equals(System.getProperty("singular.development"))) {
             return RuntimeConfigurationType.DEPLOYMENT;
         } else {
             return RuntimeConfigurationType.DEVELOPMENT;
