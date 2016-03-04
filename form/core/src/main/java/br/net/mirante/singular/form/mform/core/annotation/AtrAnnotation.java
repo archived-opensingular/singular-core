@@ -209,4 +209,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
         }
         return false;
     }
+
+    public boolean isOrHasAnnotatedChild() {
+        if(isAnnotated()) return true;
+        if(target() instanceof SIComposite){
+            return hasAnnotatedChildren((SIComposite) target());
+        }
+        return false;
+    }
+
+    private boolean hasAnnotatedChildren(SIComposite parent) {
+        for(SInstance si: parent.getAllFields()){
+            if(si.as(AtrAnnotation::new).isOrHasAnnotatedChild()) return true;
+        }
+        return false;
+    }
 }
