@@ -27,7 +27,7 @@
                                 <div  class="can-have-error form-group form-group-sm">
                                     <label class="control-label singular-form-required">
                                         Tipo</label>
-                                    <select class="form-control" ></select>
+                                    <select class="form-control" wicket:id="field_options" />
                                 </div>
                             </div>
                             <div class="col-sm-12">
@@ -44,12 +44,18 @@
                             <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
                                 <span wicket:id="field_name" />
                             </div>
+                            <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
+                                <span wicket:id="field_type" />
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="form-actions noborder">
                     <button type="button" class="btn blue" >
                         Salvar
+                    </button>
+                    <button type="button" class="btn green" wicket:id="preview_btn" >
+                        Visualizar
                     </button>
                     <button type="button" class="btn" >
                         Cancelar
