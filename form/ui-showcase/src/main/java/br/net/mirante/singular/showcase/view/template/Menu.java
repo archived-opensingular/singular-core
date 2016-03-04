@@ -3,6 +3,7 @@ package br.net.mirante.singular.showcase.view.template;
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
 import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
+import br.net.mirante.singular.showcase.view.page.prototype.PrototypePage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
@@ -30,6 +31,7 @@ public class Menu extends Panel {
 
         menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", ListPage.class));
         menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", CrudPage.class));
+        menu.addItem(new MetronicMenuItem(Icone.PENCIL, "Protótipo", PrototypePage.class));
 
         final ShowCaseTable showCaseTable = new ShowCaseTable();
         final Collection<ShowCaseTable.ShowCaseGroup> groups = showCaseTable.getGroups();
