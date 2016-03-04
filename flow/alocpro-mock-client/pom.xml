@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.5.16-SNAPSHOT</version>
+        <version>0.5.17-SNAPSHOT</version>
     </parent>
 
     <artifactId>flow-alocpro-mock-client</artifactId>
@@ -17,7 +17,7 @@
     	<dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.5.16-SNAPSHOT</version>
+            <version>0.5.17-SNAPSHOT</version>
         </dependency>
     	
     	<!-- Spring -->
