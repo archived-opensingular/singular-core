@@ -130,7 +130,7 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .withCustomMapper(AceitoTudoMapper::new)
                     .addInstanceValidator(validatable -> {
                         SIBoolean instance = validatable.getInstance();
-                        if (instance.getValue() != Boolean.TRUE) {
+                        if (!Boolean.TRUE.equals(instance.getValue())) {
                             validatable.error("Campo obrigatório");
                         }
                     })
