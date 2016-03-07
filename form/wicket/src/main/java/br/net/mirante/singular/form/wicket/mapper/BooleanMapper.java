@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.feedback.ErrorLevelFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
@@ -24,7 +26,7 @@ public class BooleanMapper implements IWicketComponentMapper {
     public void buildView(WicketBuildContext ctx) {
 
         final IModel<? extends SInstance> model = ctx.getModel();
-        final BSControls formGroup = ctx.getContainer().newComponent(BSControls::new);
+        final BSControls formGroup = ctx.getContainer().newFormGroup();
         final AtributoModel<String> labelModel = new AtributoModel<>(model, SPackageBasic.ATR_LABEL);
 
         switch (ctx.getViewMode()) {
@@ -42,6 +44,7 @@ public class BooleanMapper implements IWicketComponentMapper {
         final CheckBox input = new CheckBox(model.getObject().getNome(), new MInstanciaValorModel<>(model));
         formGroup.appendCheckbox(input, buildLabel("_", labelModel));
         input.add(DisabledClassBehavior.getInstance());
+        formGroup.appendFeedback(formGroup, new ErrorLevelFeedbackMessageFilter(FeedbackMessage.WARNING));
         ctx.configure(this, input);
     }
 
