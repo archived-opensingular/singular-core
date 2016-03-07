@@ -64,8 +64,8 @@ public abstract class AbstractFormPage extends Template {
             }
 
             @Override
-            protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
-                AbstractFormPage.this.buildFlowTransitionButton(buttonId, buttonContainer, modalContainer, transitionName, instanceModel);
+            protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
+                AbstractFormPage.this.buildFlowTransitionButton(buttonId, buttonContainer, modalContainer, transitionName, instanceModel, viewMode);
             }
 
             @Override
@@ -125,8 +125,8 @@ public abstract class AbstractFormPage extends Template {
         };
     }
 
-    protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
-        BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel);
+    protected void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
+        BSModalBorder modal = buildFlowConfirmationModal(buttonId, modalContainer, transitionName, instanceModel, viewMode);
         buildFlowButton(buttonId, buttonContainer, transitionName, instanceModel, modal);
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractFormPage extends Template {
         tp.add(singularButton);
     }
 
-    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel) {
+    private BSModalBorder buildFlowConfirmationModal(String buttonId, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode) {
         TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
                 "<div wicket:id='flow-modal" + buttonId + "' class='portlet-body form'>\n"
                         + "<div wicket:id='flow-msg'/>\n"
@@ -163,8 +163,9 @@ public abstract class AbstractFormPage extends Template {
                     protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                         confirmarAcaoFlowModal.hide(target);
                     }
-                })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
+                });
+
+        confirmarAcaoFlowModal.addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn", ViewMode.EDITION.equals(viewMode)) {
                     @Override
                     public IModel<? extends SInstance> getCurrentInstance() {
                         return instanceModel;

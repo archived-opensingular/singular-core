@@ -107,7 +107,8 @@ public abstract class AbstractFormContent extends Content {
                                     .ofNullable(singularFormPanel)
                                     .map(SingularFormPanel::getRootInstance)
                                     .map(IModel::getObject)
-                                    .orElse(null));
+                                    .orElse(null),
+                            viewMode);
                 }
             }
         } else {
@@ -117,7 +118,7 @@ public abstract class AbstractFormContent extends Content {
         return container;
     }
 
-    protected abstract void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel);
+    protected abstract void buildFlowTransitionButton(String buttonId, BSContainer buttonContainer, BSContainer modalContainer, String transitionName, IModel<? extends SInstance> instanceModel, ViewMode viewMode);
 
 
     protected abstract List<MTransition> currentTaskTransitions(String formId);
