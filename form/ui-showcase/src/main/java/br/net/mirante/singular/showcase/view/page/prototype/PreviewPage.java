@@ -1,5 +1,8 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.showcase.view.template.Template;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -12,15 +15,15 @@ import java.util.List;
  */
 public class PreviewPage extends Template {
 
-    private List<PrototypeContent.Field> fields;
+    private MInstanceRootModel<SIComposite> model;
 
-    public PreviewPage(List<PrototypeContent.Field> fields){
-        this.fields = fields;
+    public PreviewPage(MInstanceRootModel<SIComposite>  model){
+        this.model = model;
     }
 
     @Override
     protected Content getContent(String id) {
-        return new PreviewContent(id, fields);
+        return new PreviewContent(id,model);
     }
 
     @Override

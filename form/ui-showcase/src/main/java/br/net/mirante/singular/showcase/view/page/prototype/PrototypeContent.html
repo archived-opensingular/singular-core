@@ -4,52 +4,7 @@
     <div class="portlet light">
         <div class="portlet-body form">
             <form wicket:id="prototype_form" >
-                <div id="singular_panel739">
-                    <div class="form-body" >
-                        <div class="row">
-                            <div id="id1740" class=" col-md-12">
-                                <h3 id="id__title741">Nome do Form</h3>
-                                <input type="text" class="form-control" >
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr />
-                        </div>
-                        <div class="row">
-                            <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
-                                <div  class="can-have-error form-group form-group-sm">
-                                    <label class="control-label singular-form-required">
-                                        Campo</label>
-                                    <input wicket:id="field_name" type="text" class="form-control" >
-                                </div>
-                            </div>
-                            <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
-                                <div  class="can-have-error form-group form-group-sm">
-                                    <label class="control-label singular-form-required">
-                                        Tipo</label>
-                                    <select class="form-control" wicket:id="field_options" />
-                                </div>
-                            </div>
-                            <div class="col-sm-12">
-                                <button type="button" wicket:id="add_btn" class="btn green" >
-                                    Adicionar
-                                </button>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <hr />
-                        </div>
-
-                        <div class="row" wicket:id="field_list" >
-                            <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
-                                <span wicket:id="field_name" />
-                            </div>
-                            <div class=" col-xs-4 col-sm-4 col-md-3 col-lg-4">
-                                <span wicket:id="field_type" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div wicket:id="singular-panel"></div>
                 <div class="form-actions noborder">
                     <button type="button" class="btn blue" >
                         Salvar

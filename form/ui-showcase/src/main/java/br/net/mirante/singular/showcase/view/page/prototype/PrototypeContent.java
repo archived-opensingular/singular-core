@@ -1,11 +1,17 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
+import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.page.form.FormVO;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
@@ -37,9 +43,14 @@ public class PrototypeContent extends Content {
 
     private static final SDictionary dictionary = SDictionary.create();
 
-    private IModel<List<Field>> fieldsModel;
-    private DropDownChoice<SelectOption> typeField;
-    private TextField nameField;
+    @Inject @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
+
+    static {
+        dictionary.loadPackage(SPackagePrototype.class);
+    }
+
+    private MInstanceRootModel<SIComposite> model;
 
     public PrototypeContent(String id) {
         super(id);
@@ -49,79 +60,40 @@ public class PrototypeContent extends Content {
     protected void onInitialize() {
         super.onInitialize();
 
-        fieldsModel = Model.of((Collection) newArrayList());
+        Form newItemForm = new Form("prototype_form");
 
-        final Form newItemForm = new Form("prototype_form");
-
-        newItemForm.add(nameField = new TextField("field_name", Model.of("")));
-
-        newItemForm.add(typeField = createFieldTypeChoices());
-
-        newItemForm.add(new ActionAjaxButton("add_btn") {
+        queue(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
             @Override
-            protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                fieldsModel.getObject().add(new Field(
-                        (String) nameField.getModel().getObject(),
-                        (String) typeField.getModel().getObject().getValue()));
-                target.add(newItemForm);
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
+                SIComposite currentInstance = (SIComposite) SDocumentFactory.empty().createInstance(new RefType() {
+                    protected SType<?> retrieve() {
+                        return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
+                    }
+                });
+                model = new MInstanceRootModel<SIComposite>(currentInstance);
+
+                return currentInstance;
             }
         });
+
         newItemForm.add(new ActionAjaxButton("preview_btn"){
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                setResponsePage(new PreviewPage(fieldsModel.getObject()));
+                setResponsePage(new PreviewPage(model));
             }
         });
         queue(newItemForm);
-        queue(createFieldList());
-    }
-
-    private ListView createFieldList() {
-        return new ListView<Field>("field_list", fieldsModel) {
-                @Override
-                protected void populateItem(ListItem<Field> item) {
-                    item.add(new Label("field_name", item.getModelObject().fieldName));
-                    item.add(new Label("field_type", item.getModelObject().typeName));
-                }
-            };
-    }
-
-    private DropDownChoice<SelectOption> createFieldTypeChoices() {
-        List<SelectOption> options = newArrayList(
-                new SelectOption("Texto",dictionary.getType(STypeString.class).getName()),
-                new SelectOption("Data",dictionary.getType(STypeData.class).getName())
-        );
-
-        ChoiceRenderer choiceRenderer = new ChoiceRenderer("selectLabel", "value");
-        return new DropDownChoice<>("field_options", options.get(0), options, choiceRenderer);
     }
 
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return new ResourceModel("label.content.title");
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return new ResourceModel("label.content.title");
     }
 
-    public static class Field implements Serializable {
-        final public String fieldName, typeName;
-
-        Field(String fieldName, SType type){
-            this.fieldName = fieldName;
-            this.typeName = type.getName();
-        }
-
-        Field(String fieldName, String typeName){
-            this.fieldName = fieldName;
-            this.typeName = typeName;
-        }
-
-        SType type(){
-            return dictionary.getType(typeName);
-        }
-    }
 }
