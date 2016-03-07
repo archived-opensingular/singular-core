@@ -37,7 +37,7 @@ public class PreviewContent extends Content {
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return SDocumentFactory.empty().createInstance(new RefType(){
                     protected SType<?> retrieve() {
-                        return new TypeBuilder().createRootType(PreviewContent.this.model.getObject());
+                        return new TypeBuilder(PreviewContent.this.model.getObject()).createRootType();
                     }
                 });
             }
@@ -57,18 +57,26 @@ public class PreviewContent extends Content {
 }
 
 class TypeBuilder {
-    public STypeComposite<? extends SIComposite> createRootType(SIComposite metaInformation) {
-        PackageBuilder pkg = createPackage();
-        final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
-        SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
-        addChildFieldsIfAny(root, children);
-        return root;
+
+    private SIComposite metaInformation;
+    private final PackageBuilder pkg;
+
+    TypeBuilder(SIComposite metaInformation){
+        this.metaInformation = metaInformation;
+        pkg = createPackage();
     }
 
     private PackageBuilder createPackage() {
         SDictionary dictionary = SDictionary.create();
         dictionary.loadPackage(SPackagePrototype.class);
         return dictionary.createNewPackage("com.mirante.singular.preview");
+    }
+
+    public STypeComposite<? extends SIComposite> createRootType() {
+        final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
+        SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
+        addChildFieldsIfAny(root, children);
+        return root;
     }
 
     private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SList children) {
