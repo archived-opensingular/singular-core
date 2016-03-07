@@ -52,7 +52,7 @@ public class ComponentContent extends Content implements SingularWicketContainer
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         if (showCaseItem != null) {
             return $m.ofValue(showCaseItem.getComponentName());
         } else {
@@ -61,7 +61,7 @@ public class ComponentContent extends Content implements SingularWicketContainer
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue("");
     }
 }

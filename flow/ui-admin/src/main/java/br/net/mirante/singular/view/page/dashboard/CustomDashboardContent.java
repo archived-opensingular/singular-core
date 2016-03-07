@@ -41,7 +41,7 @@ public class CustomDashboardContent extends Content {
     }
 
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         if (dashboard != null) {
             return $m.property(dashboard, "name");
         } else {
@@ -50,7 +50,7 @@ public class CustomDashboardContent extends Content {
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return Model.of("");
     }
 

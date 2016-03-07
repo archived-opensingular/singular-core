@@ -112,10 +112,16 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                     .addCampo("prescricao", STypePrescricao.class);
             prescricao
                     .as(AtrBasic::new)
-                    .label("Prescrição Médica")
+                    .label("Prescrição Médica");
+
+
+            STypeComposite<?> termoResponsabilidade = canabis
+                    .addCampoComposto("termoResponsabilidade");
+
+            termoResponsabilidade
                     .as(AtrAnnotation::new).setAnnotated();
 
-            STypeBoolean aceitoTudo = canabis.addCampoBoolean("aceitoTudo");
+            STypeBoolean aceitoTudo = termoResponsabilidade.addCampoBoolean("aceitoTudo");
 
             aceitoTudo
                     .withCustomMapper(AceitoTudoMapper::new)
@@ -127,15 +133,16 @@ public class SPackagePeticaoCanabidiol extends SPackage {
                             "2- Este produto é de uso estritamente pessoal e intransferível, sendo proibida a sua entrega a terceiros, doação, venda ou qualquer outra utilização diferente da indicada.\n" +
                             "3- Que a cópia do Ofício emitido pela Anvisa deve ser mantida junto ao PRODUTO, sempre que em trânsito, dentro ou fora do Brasil. ");
 
-            STypeAttachment termoResponsabilidade = canabis
-                    .addCampo("termoResponsabilidade", STypeAttachment.class);
+            STypeAttachment anexoTermoResponsabilidade = termoResponsabilidade
+                    .addCampo("anexoTermoResponsabilidade", STypeAttachment.class);
 
-            termoResponsabilidade
+            anexoTermoResponsabilidade
                     .as(AtrCore::new)
                     .obrigatorio()
                     .as(AtrBasic::new)
                     .label("Termo de Responsabilidade (Prescritor/Paciente/Responsável Legal)")
-                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal");
+                    .subtitle("Deve ser anexado o termo preenchido e assinado pelo prescritor e paciente/responsável legal")
+                    .as(AtrAnnotation::new).setAnnotated();
 
             // config tabs
             MTabView tabbed = canabis.setView(MTabView::new);
@@ -151,7 +158,6 @@ public class SPackagePeticaoCanabidiol extends SPackage {
             tabbed.addTab("prescricao", "Prescrição")
                     .add(prescricao);
             tabbed.addTab("termo", "Termo de Responsabilidade")
-                    .add(aceitoTudo)
                     .add(termoResponsabilidade);
         }
     }

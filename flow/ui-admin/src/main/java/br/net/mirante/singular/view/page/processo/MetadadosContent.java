@@ -144,12 +144,12 @@ public class MetadadosContent extends Content implements SingularWicketContainer
     }
     
     @Override
-    protected IModel<?> getContentTitlelModel() {
+    protected IModel<?> getContentTitleModel() {
         return $m.ofValue(processDefinition.getNome());
     }
 
     @Override
-    protected IModel<?> getContentSubtitlelModel() {
+    protected IModel<?> getContentSubtitleModel() {
         return $m.ofValue();
     }
 }
