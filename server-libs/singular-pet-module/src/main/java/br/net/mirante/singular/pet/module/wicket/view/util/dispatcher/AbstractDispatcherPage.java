@@ -1,5 +1,21 @@
 package br.net.mirante.singular.pet.module.wicket.view.util.dispatcher;
 
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
+
+import java.lang.reflect.Constructor;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
@@ -7,22 +23,33 @@ import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.module.flow.PetServerTaskPageStrategy;
 import br.net.mirante.singular.pet.module.flow.SingularWebRef;
+import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.pet.module.wicket.view.form.AbstractFormPage;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.request.Request;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Constructor;
+import br.net.mirante.singular.pet.module.wicket.view.template.Template;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDispatcherPage extends WebPage {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractDispatcherPage.class);
 
+    private final WebMarkupContainer bodyContainer = new WebMarkupContainer("body");
+
     public AbstractDispatcherPage() {
+        this.add(bodyContainer);
+        bodyContainer.add(new HeaderResponseContainer("scripts", "scripts"));
+        add(new SingularJSBehavior());
         AbstractFormPage.FormPageConfig config = parseParameters(getRequest());
-        dispatch(config);
+        if (config != null) {
+            dispatch(config);
+        } else {
+            closeAndReloadParent();
+        }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
     }
 
     protected abstract AbstractFormPage.FormPageConfig parseParameters(Request request);
@@ -54,6 +81,7 @@ public abstract class AbstractDispatcherPage extends WebPage {
             } else {
                 destination = ref.getPageClass().newInstance();
             }
+            configureReload(destination);
             setResponsePage(destination);
         } catch (Exception e) {
             closeAndReloadParent();
@@ -62,8 +90,20 @@ public abstract class AbstractDispatcherPage extends WebPage {
         }
     }
 
+    protected void configureReload(WebPage destination) {
+        destination.add(new Behavior() {
+            @Override
+            public void renderHead(Component component, IHeaderResponse response) {
+                response.render(JavaScriptReferenceHeaderItem.forReference(new PackageResourceReference(Template.class, "singular.js")));
+            }
+        });
+        destination.add($b.onReadyScript(() -> " Singular.atualizarContentWorklist(); "));
+    }
+
     private void closeAndReloadParent() {
-        //TODO
+        add($b.onReadyScript(() ->
+                " Singular.atualizarContentWorklist(); " +
+                        " window.close(); "));
     }
 
     protected abstract TaskInstance loadCurrentTaskByFormId(String formID);

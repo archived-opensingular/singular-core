@@ -12,7 +12,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
-import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -26,6 +25,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.pet.module.wicket.PetModulePage;
+import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import br.net.mirante.singular.pet.module.wicket.view.util.ToastrHelper;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
@@ -55,7 +55,7 @@ public abstract class Template extends PetModulePage {
         queue(configureContent("_Content"));
         queue(new Footer("_Footer"));
 
-        add(buildReloadFunction());
+        add(new SingularJSBehavior());
     }
 
     protected Menu configureMenu(String id) {
@@ -154,34 +154,6 @@ public abstract class Template extends PetModulePage {
                 }
             });
         }
-    }
-
-    private Behavior buildReloadFunction() {
-        return new AbstractDefaultAjaxBehavior() {
-            @Override
-            public void renderHead(Component component, IHeaderResponse response) {
-                super.renderHead(component, response);
-                String js =
-                      " Singular = Singular || {}; "
-                    + " Singular.reloadContent = function () { "
-                    + "     Singular.atualizarContadores(); "
-                    + "     Wicket.Ajax.get({u: '%s' }); "
-                    + " }; ";
-
-                response.render(OnDomReadyHeaderItem.forScript(String.format(js, getCallbackUrl())));
-            }
-
-            @Override
-            protected void respond(AjaxRequestTarget target) {
-                getPage().visitChildren((component, visit) -> {
-                    if (component.getId().equals("tabela")) {
-                        target.add(component);
-                        visit.stop();
-                    }
-                });
-            }
-
-        };
     }
 
     public void addToastrSuccessMessage(String messageKey, String... args) {
