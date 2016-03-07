@@ -148,7 +148,7 @@ public abstract class MInstances {
     public static <CA extends SInstance & ICompositeInstance> Optional<CA> findCommonAncestor(SInstance node, SType<?> targetType) {
         for (MEscopo type = targetType; type != null; type = type.getEscopoPai()) {
             for (SInstance ancestor = node; ancestor != null; ancestor = ancestor.getParent()) {
-                if (ancestor.getType() == type) {
+                if (ancestor.getType() == type && ancestor instanceof ICompositeInstance) {
                     return Optional.of((CA) ancestor);
                 }
             }

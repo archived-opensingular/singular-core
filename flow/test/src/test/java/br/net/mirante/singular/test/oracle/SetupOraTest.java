@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("oracle")
-public class SetupOralTest extends SetupTest {
+public class SetupOraTest extends SetupTest {
 
     @BeforeClass
     public static void configProperites() {
