@@ -204,6 +204,11 @@ public class STypeAnnotationTest {
         assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isTrue();
     }
 
+    @Test public void returnsIfHasAnAnnotatedChild(){
+        SIComposite instance = baseCompositeField.novaInstancia();
+        assertThat(instance.as(AtrAnnotation::new).isOrHasAnnotatedChild()).isTrue();
+    }
+
     private AtrAnnotation asAnnotation(SIComposite instance, STypeComposite<? extends SIComposite> field) {
         return instance.getDescendant(field).as(AtrAnnotation::new);
     }

@@ -32,15 +32,7 @@ public class TabMapper extends DefaultCompostoMapper {
         BSPanelGrid panel = new BSPanelGrid("panel") {
             @Override
             public void updateTab(BSTab tab, List<BSTab> tabs) {
-//                updateTabIcons(tabs);
                 renderTab(tab.getSubtree(), this, ctx);
-            }
-
-            private void updateTabIcons(List<BSTab> tabs) {
-                for(BSTab t : tabs){
-                    t.iconClass(defineTabIconCss(ctx, (SIComposite) ctx.getModel().getObject(),
-                            t.getSubtree()));
-                }
             }
 
             public Collection<Component> toUpdadeOnTab(){
@@ -81,7 +73,8 @@ public class TabMapper extends DefaultCompostoMapper {
                         }else{
                             iconCSS+= " sannotation-color-info";
                         }
-                    }else if(ctx.getRootContext().annotation().editable() && annotatedField.isAnnotated()) {
+                    }else if(ctx.getRootContext().annotation().editable() &&
+                            annotatedField.isOrHasAnnotatedChild()) {
                         iconCSS = "fa fa-comment-o";
                     }
                 }
