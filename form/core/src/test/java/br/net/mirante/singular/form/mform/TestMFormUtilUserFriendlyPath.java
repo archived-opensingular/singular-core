@@ -1,5 +1,6 @@
 package br.net.mirante.singular.form.mform;
 
+import br.net.mirante.singular.form.mform.core.SIString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,12 @@ public class TestMFormUtilUserFriendlyPath {
         evento = _evento.novaInstancia();
         alertas = evento.findNearest(_alertas).get();
         alertas.addNovo();
+    }
+
+    @Test
+    public void testFindNearestFromSimpleTypeInstanceToSameInstance(){
+        SInstance descricao = evento.findNearest(_descricao).get();
+        Assert.assertEquals(descricao.findNearest(_descricao).get(), descricao);
     }
 
     @Test
