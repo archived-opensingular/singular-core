@@ -2,7 +2,6 @@ package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
@@ -38,22 +37,38 @@ public class PreviewContent extends Content {
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return SDocumentFactory.empty().createInstance(new RefType(){
                     protected SType<?> retrieve() {
-                        SDictionary dictionary = SDictionary.create();
-                        PackageBuilder pkg = dictionary.createNewPackage("com.mirante.singular.preview");
-                        final STypeComposite<? extends SIComposite> root =
-                                createRootType(pkg);
-                        return root;
+                        return new TypeBuilder().createRootType(PreviewContent.this.model.getObject());
                     }
                 });
             }
         });
     }
 
-    private STypeComposite<? extends SIComposite> createRootType(PackageBuilder pkg) {
+    @Override
+    protected IModel<?> getContentTitleModel() {
+        return new ResourceModel("label.content.title");
+    }
+
+    @Override
+    protected IModel<?> getContentSubtitleModel() {
+        return new ResourceModel("label.content.title");
+    }
+
+}
+
+class TypeBuilder {
+    public STypeComposite<? extends SIComposite> createRootType(SIComposite metaInformation) {
+        PackageBuilder pkg = createPackage();
         final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
-        SList children = (SList) model.getObject().getCampo(SPackagePrototype.CHILDREN);
+        SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
         addChildFieldsIfAny(root, children);
         return root;
+    }
+
+    private PackageBuilder createPackage() {
+        SDictionary dictionary = SDictionary.create();
+        dictionary.loadPackage(SPackagePrototype.class);
+        return dictionary.createNewPackage("com.mirante.singular.preview");
     }
 
     private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SList children) {
@@ -69,15 +84,4 @@ public class PreviewContent extends Content {
         SType<?> typeOfField = root.getDictionary().getType(type);
         root.addCampo(name, typeOfField).asAtrBasic().label(name);
     }
-
-    @Override
-    protected IModel<?> getContentTitleModel() {
-        return new ResourceModel("label.content.title");
-    }
-
-    @Override
-    protected IModel<?> getContentSubtitleModel() {
-        return new ResourceModel("label.content.title");
-    }
-
 }
