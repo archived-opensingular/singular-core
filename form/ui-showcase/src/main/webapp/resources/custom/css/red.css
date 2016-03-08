@@ -7,11 +7,17 @@
 }
 
 .page-header.navbar .top-menu .navbar-nav > li.dropdown.open  .dropdown-toggle{
-    background: #e25454 !important;;
+    background: #e25454 !important;
+    height: 74px;
 }
 
 .page-header.navbar .top-menu .navbar-nav > li.dropdown > .dropdown-toggle:hover {
     background-color: #e25454 !important;
+    height: 74px;
+}
+
+.page-header.navbar .page-top {
+    height: 70px;
 }
 
 @media (max-width: 767px) {
@@ -42,6 +48,10 @@
 
 a , th {
     color: #E26A6A;
+}
+
+a:hover{
+    color: #e25454;
 }
 
 .btn  {
