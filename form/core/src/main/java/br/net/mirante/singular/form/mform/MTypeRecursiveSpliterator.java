@@ -10,33 +10,40 @@ public class MTypeRecursiveSpliterator implements Spliterator<SType<?>> {
     public MTypeRecursiveSpliterator(SType<?> root, boolean includeRoot) {
         if (includeRoot)
             this.deque.add(root);
-//        else
-//            this.deque.addAll(MTypes.containedTypes(root));
 
         Collection possibleTypes = MTypes.containedTypes(root);
         Collection<SType> newTypes = newArrayList();
         do {
-            for(SType  t: (Collection<SType>)possibleTypes){
-                if(!this.deque.contains(t)){
-                    this.deque.add(t);
-                    newTypes.add(t);
-                }
-            }
-            Collection<SType> childTypes = newArrayList();
-            for(SType t: newTypes){
-                childTypes.addAll(MTypes.containedTypes(t));
-            }
+            addTypesNotYetPresent(possibleTypes, newTypes);
+            Collection<SType> childTypes = createNewPossibleTypesToInspect(newTypes);
             newTypes = newArrayList();
             possibleTypes = childTypes;
         }while(!possibleTypes.isEmpty());
     }
+
+    private Collection<SType> createNewPossibleTypesToInspect(Collection<SType> newTypes) {
+        Collection<SType> childTypes = newArrayList();
+        for(SType t: newTypes){
+            childTypes.addAll(MTypes.containedTypes(t));
+        }
+        return childTypes;
+    }
+
+    private void addTypesNotYetPresent(Collection<SType> possibleTypes, Collection<SType> newTypes) {
+        for(SType  t: possibleTypes){
+            if(!this.deque.contains(t)){
+                this.deque.add(t);
+                newTypes.add(t);
+            }
+        }
+    }
+
     @Override
     public boolean tryAdvance(Consumer<? super SType<?>> action) {
         if (deque.isEmpty())
             return false;
 
         final SType<?> node = deque.removeFirst();
-//        deque.addAll(MTypes.containedTypes(node));
         action.accept(node);
         return true;
     }
