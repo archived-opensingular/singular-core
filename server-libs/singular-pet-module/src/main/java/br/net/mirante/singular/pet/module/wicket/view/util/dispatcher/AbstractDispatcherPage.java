@@ -20,6 +20,7 @@ import br.net.mirante.singular.flow.core.ITaskPageStrategy;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
 import br.net.mirante.singular.flow.core.TaskInstance;
+import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.module.flow.PetServerTaskPageStrategy;
 import br.net.mirante.singular.pet.module.flow.SingularWebRef;
@@ -68,7 +69,7 @@ public abstract class AbstractDispatcherPage extends WebPage {
                     } else {
                         logger.warn("Atividade atual possui uma estratégia de página não suportada. A página default será utilizada.");
                     }
-                } else {
+                } else if (!ViewMode.VISUALIZATION.equals(config.viewMode)) {
                     throw new SingularServerException("Página invocada para uma atividade que não é do tipo MTaskUserExecutable");
                 }
             }
