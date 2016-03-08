@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
     <!-- DATA SOURCE CONFIGURATION -->
-    <bean name="dataSourceSingular" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.h2.Driver"/>
         <property name="url" value="jdbc:h2:file:./singulardb;AUTO_SERVER=TRUE;mode=MSSQLServer;CACHE_SIZE=2048;MULTI_THREADED=1"/>
         <property name="username" value="sa"/>
