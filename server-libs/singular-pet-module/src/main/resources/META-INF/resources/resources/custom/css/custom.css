@@ -2,3 +2,51 @@
 CSS PARA OVERRIDE
 DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
 */
+
+/**
+* Configuração custon para o plugin jQuery, toastr
+**/
+
+@media (max-width: 768px) {
+    #toast-container {
+        padding-top: 142px;
+    }
+}
+
+@media (min-width: 768px) {
+    #toast-container {
+        padding-top: 70px;
+    }
+}
+
+#toast-container.toast-top-center > div {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.toast-top-center {
+    left: 25%;
+    margin-left: auto;
+}
+
+.toast-success {
+    background-color: #1BBC9B;
+}
+
+.toast-info {
+    background-color: #5C9BD1;
+}
+
+.toast-error {
+    background-color: #E35B5A;
+}
+
+.toast-warning {
+    background-color: #F7CA18;
+}
+
+.toast-message a {
+    color: #FAFAFA !important;
+    font-weight: bold;
+}

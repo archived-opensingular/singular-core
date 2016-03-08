@@ -1,7 +1,5 @@
 package br.net.mirante.singular.pet.module.wicket.view.util;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
 import java.text.MessageFormat;
 
 import org.apache.wicket.Component;
@@ -12,6 +10,7 @@ import org.json.JSONStringer;
 import org.json.JSONWriter;
 
 import br.net.mirante.singular.lambda.ISupplier;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import de.alpharogroup.wicket.js.addon.core.StringTextType;
 import de.alpharogroup.wicket.js.addon.core.StringTextValue;
 import de.alpharogroup.wicket.js.addon.core.ValueEnum;
@@ -89,7 +88,9 @@ public class ToastrHelper {
 
     private ToastrSettings getDefaultSettings() {
         ToastrSettings settings = ToastrSettings.builder().build();
-        settings.getPositionClass().setValue(Position.TOP_FULL_WIDTH);
+        settings.getPositionClass().setValue(Position.TOP_CENTER);
+        settings.getTimeOut().setValue(5000);
+        settings.getExtendedTimeOut().setValue(3000);
         settings.getShowMethod().setValue(ShowMethod.SLIDE_DOWN);
         settings.getNotificationContent().setValue("");
         settings.getCloseButton().setValue(true);
