@@ -8,6 +8,8 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
 
 import java.util.Optional;
 
+import static com.google.common.collect.Lists.newArrayList;
+
 /**
  * Created by nuk on 07/03/16.
  */
@@ -48,13 +50,16 @@ public class SPackagePrototype  extends SPackage {
         STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addCampoListaOf(FIELDS, fieldType);
         fields.asAtrBasic().label("Campos");
-//        fields.withExists(
-//                (instance) -> {
-//                    Optional<String> optType = instance.findNearestValue(type, String.class);
-//                    if(!optType.isPresent()) return false;
-//                    return optType.get().equals(typeName(pb,STypeComposite.class));
-//                } )
-//                .asAtrBasic().dependsOn(type);;
+        fields.withExists(
+                (instance) -> {
+                    Optional<String> optType = instance.findNearestValue(type, String.class);
+                    if(!optType.isPresent()) return false;
+                    return optType.get().equals(typeName(pb,STypeComposite.class));
+                } )
+                .asAtrBasic().dependsOn(() -> {
+                    return newArrayList(type);
+                })
+        ;
 
     }
 
