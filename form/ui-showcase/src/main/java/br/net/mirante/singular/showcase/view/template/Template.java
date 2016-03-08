@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import br.net.mirante.singular.showcase.view.skin.SkinOptions;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -14,13 +13,18 @@ import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authroles.authorization.strategies.role.Roles;
 import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.event.IEvent;
-import org.apache.wicket.markup.head.*;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.CssReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import br.net.mirante.singular.showcase.view.skin.SkinOptions;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -31,8 +35,14 @@ public abstract class Template extends WebPage {
     private SkinOptions option;
 
     static {
-        SkinOptions.addSkin(new SkinOptions.Skin("Red", CssReferenceHeaderItem.forUrl("resources/custom/css/red.css")));
-        SkinOptions.addSkin(new SkinOptions.Skin("Green",CssReferenceHeaderItem.forUrl("resources/custom/css/green.css")));
+        SkinOptions.addSkin(new SkinOptions.Skin("Vermelho",
+                CssReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"),
+                CssReferenceHeaderItem.forUrl("resources/custom/css/red.css")));
+        SkinOptions.addSkin(new SkinOptions.Skin("Verde",
+                CssReferenceHeaderItem.forUrl("/singular-static/resources/metronic/layout4/css/themes/default.css"),
+                CssReferenceHeaderItem.forUrl("resources/custom/css/green.css")));
+        SkinOptions.addSkin(new SkinOptions.Skin("Anvisa",
+                CssReferenceHeaderItem.forUrl("/singular-static/resources/anvisa/anvisa.css")));
     }
 
     @Override
@@ -66,7 +76,9 @@ public abstract class Template extends WebPage {
 
     private void setSkin(IHeaderResponse response) {
         Optional<SkinOptions.Skin> skin = option.currentSkin();
-        if(skin.isPresent()){   response.render(skin.get().ref);    }
+        if (skin.isPresent()) {
+            skin.get().refs.forEach(response::render);
+        }
     }
 
     protected boolean withTopAction() {
