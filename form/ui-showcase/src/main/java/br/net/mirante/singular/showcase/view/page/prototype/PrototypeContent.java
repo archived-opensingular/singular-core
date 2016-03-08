@@ -1,12 +1,16 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import java.util.UUID;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.string.StringValue;
 
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -15,8 +19,11 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
+import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.template.Content;
@@ -35,14 +42,21 @@ public class PrototypeContent extends Content {
     @Inject
     private PrototypeDAO prototypeDAO;
 
+    private Long idPrototype;
+    private Prototype prototype;
+
     static {
         dictionary.loadPackage(SPackagePrototype.class);
     }
 
     private MInstanceRootModel<SIComposite> model;
+    private SingularFormPanel<String> singularFormPanel;
 
-    public PrototypeContent(String id) {
+    public PrototypeContent(String id, StringValue idValue) {
         super(id);
+        if (!idValue.isEmpty()) {
+            idPrototype = idValue.toLong();
+        }
     }
 
     @Override
@@ -51,25 +65,14 @@ public class PrototypeContent extends Content {
 
         Form newItemForm = new Form("prototype_form");
 
-        queue(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
-            @Override
-            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                SIComposite currentInstance = (SIComposite) SDocumentFactory.empty().createInstance(new RefType() {
-                    protected SType<?> retrieve() {
-                        return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
-                    }
-                });
-                model = new MInstanceRootModel<>(currentInstance);
-
-                return currentInstance;
-            }
-        });
+        queue(buildSingularFormPanel());
 
         newItemForm.add(new ActionAjaxButton("save-btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                Prototype prototype = new Prototype();
-                prototype.setName("Legal");
+                SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
+                prototype.setName(instance.getValorString(SPackagePrototype.NAME_FIELD));
+                prototype.setXml(MformPersistenciaXML.toXML(instance).toStringExato());
                 prototypeDAO.save(prototype);
             }
         });
@@ -90,6 +93,43 @@ public class PrototypeContent extends Content {
         queue(newItemForm);
     }
 
+    private SingularFormPanel<String> buildSingularFormPanel() {
+        singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
+            @Override
+            protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
+                loadOrbuildModel();
+
+                SIComposite currentInstance = loadOrCreateInstance(new RefType() {
+                    protected SType<?> retrieve() {
+                        return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
+                    }
+                });
+                model = new MInstanceRootModel<>(currentInstance);
+
+                return currentInstance;
+            }
+
+            private SIComposite loadOrCreateInstance(RefType refType) {
+                String xml = prototype.getXml();
+                SInstance instance;
+                if (StringUtils.isBlank(xml)) {
+                    instance = singularFormConfig.getDocumentFactory().createInstance(refType);
+                } else {
+                    instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+                }
+                return (SIComposite) instance;
+            }
+        };
+        return singularFormPanel;
+    }
+
+    private void loadOrbuildModel() {
+        if (idPrototype == null) {
+            prototype = new Prototype();
+        } else {
+            prototype = prototypeDAO.findById(idPrototype);
+        }
+    }
 
     @Override
     protected IModel<?> getContentTitleModel() {

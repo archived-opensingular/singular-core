@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
@@ -27,17 +28,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
-import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SDictionary;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.context.SFormConfig;
+import br.net.mirante.singular.form.mform.document.RefType;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
-import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
+import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.SingularWicketContainer;
-import br.net.mirante.singular.showcase.view.page.form.crud.FormPage;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTableBuilder;
@@ -51,8 +56,8 @@ import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
 public class PrototypeListContent extends Content
         implements SingularWicketContainer<PrototypeListContent, Void> {
 
-
     private final static Logger LOGGER = LoggerFactory.getLogger(PrototypeListContent.class);
+    private static final SDictionary dictionary = SDictionary.create();
 
     private BSDataTable<Prototype, String> listTable;
     private List<Prototype> dataList = new LinkedList<>();
@@ -60,10 +65,17 @@ public class PrototypeListContent extends Content
     private final BFModalBorder deleteModal  = new BFModalBorder("deleteModal");
     private final BFModalBorder viewXmlModal = new BFModalBorder("viewXmlModal");
 
+    @Inject @Named("formConfigWithDatabase")
+    private SFormConfig<String> singularFormConfig;
+
     @Inject
     private PrototypeDAO prototypeDAO;
 
     private Prototype selectedPrototype;
+
+    static {
+        dictionary.loadPackage(SPackagePrototype.class);
+    }
 
     public PrototypeListContent(String id) {
         super(id, false, true);
@@ -124,76 +136,41 @@ public class PrototypeListContent extends Content
         BSDataTableBuilder<Prototype, String, IColumn<Prototype, String>> builder = new BSDataTableBuilder<>(createDataProvider());
         builder
                 .appendPropertyColumn(getMessage("label.table.column.name"),
-                        "name", Prototype::getName);
-//                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-//                        .appendAction(getMessage("label.table.column.edit"),
-//                                Icone.PENCIL_SQUARE,
-//                                (target, model) -> {
-//                                    setResponsePage(FormPage.class,
-//                                            new PageParameters()
-//                                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-//                                                    .add(FormPage.MODEL_KEY, model.getObject().getKey())
-//                                                    .add(FormPage.VIEW_MODE, ViewMode.EDITION));
-//                                }))
-//                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-//                        .appendAction(getMessage("label.table.column.visualizar"),
-//                                Icone.EYE,
-//                                (target, model) -> {
-//                                    setResponsePage(FormPage.class,
-//                                            new PageParameters()
-//                                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-//                                                    .add(FormPage.MODEL_KEY, model.getObject().getKey())
-//                                                    .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
-//                                }));
-//        addAnnotationColumnIfNeeded(builder);
-//        addAnnotationEditColumnIfNeeded(builder);
-//        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-//                .appendAction(getMessage("label.table.column.delete"),
-//                        Icone.MINUS, this::deleteSelected))
-//                .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-//                        .appendAction(getMessage("label.table.column.visualizar.xml"),
-//                                Icone.EYE, this::viewXml))
-//                .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
+                        "name", Prototype::getName)
+                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.edit"),
+                                Icone.PENCIL_SQUARE,
+                                (target, model) -> {
+                                    setResponsePage(PrototypePage.class,
+                                            new PageParameters()
+                                                    .add(PrototypePage.ID, model.getObject().getId()));
+                                }))
+                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.visualizar"),
+                                Icone.EYE,
+                                (target, model) -> {
+                                    setResponsePage(new PreviewPage(getMInstance(model.getObject())));
+                                }));
+        builder.appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.delete"),
+                        Icone.MINUS, this::deleteSelected))
+                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
+                        .appendAction(getMessage("label.table.column.visualizar.xml"),
+                                Icone.EYE, this::viewXml))
+                .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
         return builder.build("data-list");
     }
 
-//    private void addAnnotationColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
-//        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
-//                    @Override
-//                    public String getCssClass() {
-//                        return hasAnnotations() ? "" : "hidden";
-//                    }
-//                }
-//                        .appendAction(getMessage("label.table.column.analisar"),
-//                                Icone.COMMENT,
-//                                (target, model) -> {
-//                                    setResponsePage(FormPage.class,
-//                                            new PageParameters()
-//                                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-//                                                    .add(FormPage.MODEL_KEY, model.getObject().getKey())
-//                                                    .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
-//                                                    .add(FormPage.ANNOTATION, AnnotationMode.EDIT));
-//                                })
-//        );
-//    }
-//
-//    private void addAnnotationEditColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
-//        builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
-//                    @Override
-//                    public String getCssClass() {   return hasAnnotations() ? "" : "hidden";}
-//                }
-//                        .appendAction(getMessage("label.table.column.exigencia"),
-//                                Icone.PENCIL,
-//                                (target, model) -> {
-//                                    setResponsePage(FormPage.class,
-//                                            new PageParameters()
-//                                                    .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-//                                                    .add(FormPage.MODEL_KEY, model.getObject().getKey())
-//                                                    .add(FormPage.VIEW_MODE, ViewMode.EDITION)
-//                                                    .add(FormPage.ANNOTATION, AnnotationMode.READ_ONLY));
-//                                })
-//        );
-//    }
+    private MInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {
+        String xml = prototype.getXml();
+        RefType refType = new RefType() {
+            protected SType<?> retrieve() {
+                return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
+            }
+        };
+        SIComposite instance = MformPersistenciaXML.fromXML(refType, xml, singularFormConfig.getDocumentFactory());
+        return new MInstanceRootModel<>(instance);
+    }
 
     private BaseDataProvider<Prototype, String> createDataProvider() {
         return new BaseDataProvider<Prototype, String>() {
@@ -216,26 +193,19 @@ public class PrototypeListContent extends Content
         deleteModal.show(target);
     }
 
-//    private void viewXml(AjaxRequestTarget target, IModel<Prototype> model) {
-//
-//        final String xmlPersistencia = model.getObject().getXml();
-//        final String xmlTabulado = getXmlTabulado(xmlPersistencia);
-//        final String definicao = getDefinicao(model.getObject().getType());
-//
-//        final BSTabPanel xmlTabs = new BSTabPanel("xmlTabs");
-//        xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlTabulado)));
-//        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
-//        xmlTabs.addTab(getString("label.definicao"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(definicao)));
-//        if(hasAnnotations()){
-//            String xmlAnnotations = getXmlTabulado(model.getObject().getAnnnotations());
-//            xmlTabs.addTab(getString("label.xml.anotacao"),
-//                    new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlAnnotations)));
-//        }
-//
-//        viewXmlModal.addOrReplace(xmlTabs);
-//        viewXmlModal.show(target);
-//        viewXmlModal.setSize(BFModalBorder.Size.LARGE);
-//    }
+    private void viewXml(AjaxRequestTarget target, IModel<Prototype> model) {
+
+        final String xmlPersistencia = model.getObject().getXml();
+        final String xmlTabulado = getXmlTabulado(xmlPersistencia);
+
+        final BSTabPanel xmlTabs = new BSTabPanel("xmlTabs");
+        xmlTabs.addTab(getString("label.xml.tabulado"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlTabulado)));
+        xmlTabs.addTab(getString("label.xml.persistencia"), new BOutputPanel(BSTabPanel.getTabPanelId(), $m.ofValue(xmlPersistencia)));
+
+        viewXmlModal.addOrReplace(xmlTabs);
+        viewXmlModal.show(target);
+        viewXmlModal.setSize(BFModalBorder.Size.LARGE);
+    }
 
     private String getXmlTabulado(String xmlString) {
         if (StringUtils.isNotEmpty(xmlString)) {

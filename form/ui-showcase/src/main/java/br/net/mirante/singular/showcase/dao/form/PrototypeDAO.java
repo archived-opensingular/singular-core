@@ -3,15 +3,14 @@ package br.net.mirante.singular.showcase.dao.form;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
+@Transactional(readOnly = true)
 public class PrototypeDAO {
 
     @Inject
@@ -31,9 +30,12 @@ public class PrototypeDAO {
         session().delete(prototype);
     }
 
-    @Transactional
     @SuppressWarnings("unchecked")
     public List<Prototype> listAll() {
         return session().createCriteria(Prototype.class).list();
+    }
+
+    public Prototype findById(Long id) {
+        return (Prototype) session().get(Prototype.class, id);
     }
 }

@@ -15,6 +15,7 @@ public class SPackagePrototype  extends SPackage {
                                 META_FORM = "MetaForm",
                                 META_FORM_COMPLETE = PACOTE + "." + META_FORM,
                                 CHILDREN = "children";
+    public static final String NAME_FIELD = "name";
 
 
     public SPackagePrototype() {
@@ -24,7 +25,7 @@ public class SPackagePrototype  extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createTipoComposto(META_FORM);
-        meta.addCampoString("name").asAtrBasic().label("Nome");
+        meta.addCampoString(NAME_FIELD).asAtrBasic().label("Nome");
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addCampoListaOfComposto(CHILDREN, "field");

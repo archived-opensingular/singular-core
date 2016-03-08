@@ -13,9 +13,12 @@ import org.wicketstuff.annotation.mount.MountPath;
  */
 @MountPath("prototype/edit")
 public class PrototypePage extends Template {
+    protected static String ID = "id";
+
     @Override
     protected Content getContent(String id) {
-        return new PrototypeContent(id);
+        StringValue idValue = getPageParameters().get(ID);
+        return new PrototypeContent(id, idValue);
     }
 
     @Override
