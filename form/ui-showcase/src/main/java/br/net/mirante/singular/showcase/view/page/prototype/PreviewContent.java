@@ -79,6 +79,12 @@ class TypeBuilder {
         return root;
     }
 
+    private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root,
+                                     SIComposite descriptor) {
+        SList children = (SList) descriptor.getCampo(SPackagePrototype.CHILDREN);
+        addChildFieldsIfAny(root, children);
+    }
+
     private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SList children) {
         if(!children.isEmptyOfData()){
             for(SIComposite f: (List<SIComposite>)children.getValores()){
@@ -87,9 +93,16 @@ class TypeBuilder {
         }
     }
 
-    private void addField(STypeComposite<? extends SIComposite> root, SIComposite f) {
-        String name = f.getValorString("name"), type = f.getValorString("type");
+    private void addField(STypeComposite<? extends SIComposite> root,
+                                            SIComposite descriptor) {
+        String name = descriptor.getValorString("name"),
+                type = descriptor.getValorString("type");
         SType<?> typeOfField = root.getDictionary().getType(type);
-        root.addCampo(name, typeOfField).asAtrBasic().label(name);
+        SType<?> fieldType = root.addCampo(name, typeOfField);
+        fieldType.asAtrBasic().label(name);
+        if(typeOfField instanceof STypeComposite){
+            SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
+            addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
+        }
     }
 }
