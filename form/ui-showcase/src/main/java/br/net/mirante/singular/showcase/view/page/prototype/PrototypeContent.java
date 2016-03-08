@@ -1,40 +1,26 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.ResourceModel;
+
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
-import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
-import br.net.mirante.singular.showcase.view.page.form.FormVO;
+import br.net.mirante.singular.showcase.dao.form.Prototype;
+import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
 import br.net.mirante.singular.showcase.view.template.Content;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
-import br.net.mirante.singular.util.wicket.util.WicketUtils;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.*;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created by nuk on 03/03/16.
@@ -45,6 +31,9 @@ public class PrototypeContent extends Content {
 
     @Inject @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
+
+    @Inject
+    private PrototypeDAO prototypeDAO;
 
     static {
         dictionary.loadPackage(SPackagePrototype.class);
@@ -70,16 +59,32 @@ public class PrototypeContent extends Content {
                         return dictionary.getType(SPackagePrototype.META_FORM_COMPLETE);
                     }
                 });
-                model = new MInstanceRootModel<SIComposite>(currentInstance);
+                model = new MInstanceRootModel<>(currentInstance);
 
                 return currentInstance;
             }
         });
 
-        newItemForm.add(new ActionAjaxButton("preview_btn"){
+        newItemForm.add(new ActionAjaxButton("save-btn") {
+            @Override
+            protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                Prototype prototype = new Prototype();
+                prototype.setName("Legal");
+                prototypeDAO.save(prototype);
+            }
+        });
+
+        newItemForm.add(new ActionAjaxButton("preview_btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 setResponsePage(new PreviewPage(model));
+            }
+        });
+
+        newItemForm.add(new ActionAjaxButton("cancel-btn") {
+            @Override
+            protected void onAction(AjaxRequestTarget target, Form<?> form) {
+                setResponsePage(new PrototypeListPage());
             }
         });
         queue(newItemForm);
