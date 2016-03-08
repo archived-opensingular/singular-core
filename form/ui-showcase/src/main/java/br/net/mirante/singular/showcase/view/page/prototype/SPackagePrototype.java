@@ -19,6 +19,8 @@ public class SPackagePrototype  extends SPackage {
                                 META_FORM = "MetaForm",
                                 META_FORM_COMPLETE = PACOTE + "." + META_FORM,
                                 CHILDREN = "children",
+                                NAME = "name",
+                                TYPE = "type",
                                 FIELDS = "fields";
     public static final String NAME_FIELD = "name";
 
@@ -39,11 +41,11 @@ public class SPackagePrototype  extends SPackage {
 
         STypeComposite<SIComposite> fieldType = childFields.getTipoElementos();
 
-        fieldType.addCampoString("name")
+        fieldType.addCampoString(NAME)
                 .asAtrBasic().label("Nome")
                 .getTipo().asAtrBootstrap().colPreference(2);
         ;
-        STypeString type = fieldType.addCampoString("type");
+        STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
                 .getTipo().asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());

@@ -43,7 +43,7 @@ public class PrototypeContent extends Content {
     private PrototypeDAO prototypeDAO;
 
     private Long idPrototype;
-    private Prototype prototype;
+    protected Prototype prototype;
 
     static {
         dictionary.loadPackage(SPackagePrototype.class);
@@ -97,7 +97,7 @@ public class PrototypeContent extends Content {
         singularFormPanel = new SingularFormPanel<String>("singular-panel", singularFormConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
-                loadOrbuildModel();
+                loadOrBuildModel();
 
                 SIComposite currentInstance = loadOrCreateInstance(new RefType() {
                     protected SType<?> retrieve() {
@@ -123,7 +123,7 @@ public class PrototypeContent extends Content {
         return singularFormPanel;
     }
 
-    private void loadOrbuildModel() {
+    protected void loadOrBuildModel() {
         if (idPrototype == null) {
             prototype = new Prototype();
         } else {
