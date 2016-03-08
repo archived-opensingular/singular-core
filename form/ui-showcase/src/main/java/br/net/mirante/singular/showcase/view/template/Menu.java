@@ -1,18 +1,19 @@
 package br.net.mirante.singular.showcase.view.template;
 
+import java.util.Collection;
+
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import br.net.mirante.singular.showcase.component.ShowCaseTable;
+import br.net.mirante.singular.showcase.view.page.ComponentPage;
 import br.net.mirante.singular.showcase.view.page.form.ListPage;
 import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
-import br.net.mirante.singular.showcase.view.page.prototype.PrototypePage;
+import br.net.mirante.singular.showcase.view.page.prototype.PrototypeListPage;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenu;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuGroup;
 import br.net.mirante.singular.util.wicket.menu.MetronicMenuItem;
 import br.net.mirante.singular.util.wicket.resource.Icone;
-import br.net.mirante.singular.showcase.view.page.ComponentPage;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
-import java.util.Collection;
 
 public class Menu extends Panel {
 
@@ -31,7 +32,7 @@ public class Menu extends Panel {
 
         menu.addItem(new MetronicMenuItem(Icone.HOME, "Início", ListPage.class));
         menu.addItem(new MetronicMenuItem(Icone.ROCKET, "Demo", CrudPage.class));
-        menu.addItem(new MetronicMenuItem(Icone.PENCIL, "Protótipo", PrototypePage.class));
+        menu.addItem(new MetronicMenuItem(Icone.PENCIL, "Protótipo", PrototypeListPage.class));
 
         final ShowCaseTable showCaseTable = new ShowCaseTable();
         final Collection<ShowCaseTable.ShowCaseGroup> groups = showCaseTable.getGroups();
