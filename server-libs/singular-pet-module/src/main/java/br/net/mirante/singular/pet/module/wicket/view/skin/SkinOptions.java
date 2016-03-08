@@ -1,18 +1,18 @@
 package br.net.mirante.singular.pet.module.wicket.view.skin;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.CssReferenceHeaderItem;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.request.http.WebRequest;
-import org.apache.wicket.request.http.WebResponse;
-
 import javax.servlet.http.Cookie;
+
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.http.WebRequest;
+import org.apache.wicket.request.http.WebResponse;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -27,13 +27,12 @@ public class SkinOptions implements Serializable{
 
     public static class Skin implements Serializable{
         public final String name;
-        public final CssHeaderItem ref;
+        public final List<CssHeaderItem> refs;
 
-        public Skin(String name, CssHeaderItem ref){
+        public Skin(String name, CssHeaderItem... refs){
             this.name = name;
-            this.ref = ref;
+            this.refs = Arrays.asList(refs);
         }
-
         public String name() {return name ;}
 
         public String toString() {  return name();}
