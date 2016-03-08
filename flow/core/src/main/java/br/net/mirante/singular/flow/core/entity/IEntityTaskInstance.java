@@ -44,7 +44,8 @@ public interface IEntityTaskInstance extends IEntityByCod<Integer> {
     List<? extends IEntityProcessInstance> getChildProcesses();
 
     default boolean isActive() {
-        return getEndDate() == null;
+        return getEndDate() == null
+                || getTask().getType().isEnd();
     }
 
     default boolean isFinished() {
