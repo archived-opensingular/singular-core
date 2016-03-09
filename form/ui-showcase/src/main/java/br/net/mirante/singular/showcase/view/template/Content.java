@@ -5,9 +5,6 @@ import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import javax.inject.Inject;
 
 import br.net.mirante.singular.showcase.wicket.UIAdminWicketFilterContext;
-import br.net.mirante.singular.util.wicket.toastr.ToastrHelper;
-import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
-
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -55,26 +52,6 @@ public abstract class Content extends Panel {
         if (withInfoLink) {
             infoLink.add(getInfoLink("_InfoLink"));
         }
-    }
-
-    public void addToastrSuccessMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
-                addToastrMessage(ToastrType.SUCCESS, messageKey, args);
-    }
-
-    public void addToastrErrorMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
-                addToastrMessage(ToastrType.ERROR, messageKey, args);
-    }
-
-    public void addToastrWarningMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
-                addToastrMessage(ToastrType.WARNING, messageKey, args);
-    }
-
-    public void addToastrInfoMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
-                addToastrMessage(ToastrType.INFO, messageKey, args);
     }
 
     protected WebMarkupContainer getBreadcrumbLinks(String id) {
