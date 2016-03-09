@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.test;
+package br.net.mirante.singular.form.wicket;
 
 import java.util.function.Supplier;
 

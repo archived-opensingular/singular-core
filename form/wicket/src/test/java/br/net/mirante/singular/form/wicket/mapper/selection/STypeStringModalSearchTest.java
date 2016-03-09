@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 

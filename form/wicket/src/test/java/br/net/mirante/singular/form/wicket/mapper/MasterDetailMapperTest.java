@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
-import br.net.mirante.singular.form.wicket.test.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 

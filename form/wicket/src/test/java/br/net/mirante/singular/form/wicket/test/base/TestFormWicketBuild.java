@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.test.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
