@@ -15,6 +15,7 @@
 
     <modules>
         <module>commons</module>
+        <module>wicket-test</module>
         <module>wicket-utils</module>
         <module>ws-client</module>
     </modules>

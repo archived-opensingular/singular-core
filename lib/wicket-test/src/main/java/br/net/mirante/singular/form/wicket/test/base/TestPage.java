@@ -2,7 +2,6 @@ package br.net.mirante.singular.form.wicket.test.base;
 
 import java.util.function.Supplier;
 
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebPage;
@@ -18,6 +17,7 @@ import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.SingularFormConfigWicketImpl;
 import br.net.mirante.singular.form.wicket.SingularFormContextWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSGrid;
