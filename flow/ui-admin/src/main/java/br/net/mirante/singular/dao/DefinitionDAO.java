@@ -52,7 +52,9 @@ public class DefinitionDAO extends BaseDAO{
         String hql = "select pd.cod as cod, pd.name as nome, pd.key as sigla, "
             + "cd.name as categoria, trim(str(cd.cod)) as codGrupo, cast((select count(pv) from ProcessVersionEntity pv where pv.processDefinition.cod = pd.cod) as long) as version, "
             + "count(distinct pi) as quantidade, "
-            + "cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long) as tempoMedio "
+            + "cast(avg((" +
+                " dateDiffInDays(current_date(), pi.beginDate)" +
+                ")) as long) as tempoMedio "
             + "from ProcessDefinitionEntity pd join pd.category cd left join pd.processInstances pi "
             + "where pi.endDate is null and pd.key in(:processCodeWithAccess) "
             + "group by pd.cod, pd.name, pd.key, cd.name, cd.cod "
@@ -72,7 +74,7 @@ public class DefinitionDAO extends BaseDAO{
                 hql+=" count(distinct pi)";
                 break;
             case "time":
-                hql+=" cast(avg(((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as long)";
+                hql+=" cast(avg((dateDiffInDays(current_date(), pi.beginDate ))) as long)";
                 break;
             default:
                 break;

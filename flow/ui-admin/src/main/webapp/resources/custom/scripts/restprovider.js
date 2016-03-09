@@ -8,7 +8,7 @@ restprovider = (function ($) {
                 },
                 url: "rest/delegate",
                 data: JSON.stringify(portletContext),
-                type: "POST",
+                method: "POST",
                 success: function (data) {
                     onSucess(data);
                 },
