@@ -34,6 +34,7 @@ public class SPackagePrototype  extends SPackage {
                                 CHILDREN = "children",
                                 NAME = "name",
                                 TYPE = "type",
+                                IS_LIST = "isList",
                                 FIELDS = "fields";
     public static final String NAME_FIELD = "name";
 
@@ -62,6 +63,8 @@ public class SPackagePrototype  extends SPackage {
         type.asAtrBasic().label("Tipo")
                 .getTipo().asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
+
+        fieldType.addCampoBoolean(IS_LIST).asAtrBasic().label("Múltiplo");
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addCampoListaOf(FIELDS, fieldType);

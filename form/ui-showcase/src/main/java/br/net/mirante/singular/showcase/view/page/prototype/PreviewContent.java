@@ -1,6 +1,8 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -88,6 +90,7 @@ class TypeBuilder {
         final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
         SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
         addChildFieldsIfAny(root, children);
+        pkg.debug();
         return root;
     }
 
@@ -107,11 +110,25 @@ class TypeBuilder {
 
     private void addField(STypeComposite<? extends SIComposite> root,
                                             SIComposite descriptor) {
-        String name = descriptor.getValorString("name"),
-                type = descriptor.getValorString("type");
+        String  name = descriptor.getValorString(SPackagePrototype.NAME),
+                type = descriptor.getValorString(SPackagePrototype.TYPE);
+
+        Boolean isList = descriptor.getValorBoolean(SPackagePrototype.IS_LIST);
         SType<?> typeOfField = root.getDictionary().getType(type);
-        SType<?> fieldType = root.addCampo(name, typeOfField);
-        fieldType.asAtrBasic().label(name);
+        SType<?> fieldType;
+        if(isList){
+            if(typeOfField instanceof STypeComposite){
+                fieldType = root.addCampoListaOfComposto(name,"sub"+name);
+            }else{
+                fieldType = root.addCampoListaOf(name,typeOfField);
+            }
+            fieldType.asAtrBasic().label(name);
+            fieldType.withView(MTableListaView::new);
+            fieldType = ((STypeLista) fieldType).getTipoElementos();
+        }else{
+            fieldType = root.addCampo(name, typeOfField);
+            fieldType.asAtrBasic().label(name);
+        }
         if(typeOfField instanceof STypeComposite){
             SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
