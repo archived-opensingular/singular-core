@@ -24,7 +24,7 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import br.net.mirante.singular.pet.module.wicket.PetModulePage;
 import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
-import br.net.mirante.singular.pet.module.wicket.view.util.ToastrHelper;
+import br.net.mirante.singular.pet.module.wicket.view.util.SingularToastrHelper;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
@@ -156,42 +156,42 @@ public abstract class Template extends PetModulePage {
     }
 
     public void addToastrSuccessMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessage(ToastrType.SUCCESS, messageKey, args);
     }
 
     public void addToastrErrorMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessage(ToastrType.ERROR, messageKey, args);
     }
 
     public void addToastrWarningMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessage(ToastrType.WARNING, messageKey, args);
     }
 
     public void addToastrInfoMessage(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessage(ToastrType.INFO, messageKey, args);
     }
 
     public void addToastrSuccessMessageWorklist(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessageWorklist(ToastrType.SUCCESS, messageKey, args);
     }
 
     public void addToastrErrorMessageWorklist(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessageWorklist(ToastrType.ERROR, messageKey, args);
     }
 
     public void addToastrWarningMessageWorklist(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessageWorklist(ToastrType.WARNING, messageKey, args);
     }
 
     protected void addToastrInfoMessageWorklist(String messageKey, String... args) {
-        new ToastrHelper(this).
+        new SingularToastrHelper(this).
                 addToastrMessageWorklist(ToastrType.INFO, messageKey, args);
     }
 
