@@ -1,11 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
-
 import java.io.Serializable;
 
-import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.BSRow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -22,8 +18,10 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
 
+import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
@@ -37,6 +35,8 @@ import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxLink;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$b;
+import static br.net.mirante.singular.util.wicket.util.Shortcuts.$m;
 import br.net.mirante.singular.util.wicket.util.WicketUtils;
 
 /**
@@ -353,15 +353,16 @@ class AnnotationModalWindow extends BFModalWindow{
     private void createApprovedField(BSContainer modalBody) {
 
         String approved = getString("singular.annotation.approved");
-        String yes = getString("singular.annotation.yes");
-        String no = getString("singular.annotation.no");
 
         modalBody.appendTag("label", true, "class=\"control-label\"",
-                new Label("approvalLabel",$m.ofValue(approved)));
-        modalBody.appendTag("input", true, "type=\"checkbox\" class=\"make-switch\" "+
-                        "data-on-color=\"info\" data-on-text=\""+ yes +"\" "+
-                        "data-off-color=\"danger\" data-off-text=\""+no+"\" ",
-                new CheckBox("modalApproval",approvedModel));
+                new Label("approvalLabel", $m.ofValue(approved)));
+
+        CheckBox modalApproval = new CheckBox("modalApproval", approvedModel);
+        modalBody.appendTag("input", true, "type='checkbox' class='make-switch' data-on-color='info' data-off-color='danger'", modalApproval);
+
+        modalApproval.add($b.attr("data-on-text", new ResourceModel("singular.annotation.yes")));
+        modalApproval.add($b.attr("data-off-text", new ResourceModel("singular.annotation.no")));
+
     }
 
     public void show(AjaxRequestTarget target) {
