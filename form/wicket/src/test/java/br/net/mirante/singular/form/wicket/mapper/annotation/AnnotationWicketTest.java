@@ -9,22 +9,17 @@ import static org.fest.assertions.api.Assertions.extractProperty;
 import java.util.List;
 
 import br.net.mirante.singular.form.mform.*;
-import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotationList;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.mform.io.FormSerializationUtil;
 import br.net.mirante.singular.form.mform.io.FormSerialized;
 import br.net.mirante.singular.util.wicket.ajax.ActionAjaxButton;
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import com.google.common.collect.Lists;
 
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
