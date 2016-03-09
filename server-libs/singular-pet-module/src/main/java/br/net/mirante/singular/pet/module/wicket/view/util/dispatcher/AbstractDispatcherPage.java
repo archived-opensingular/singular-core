@@ -1,7 +1,5 @@
 package br.net.mirante.singular.pet.module.wicket.view.util.dispatcher;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
-
 import java.lang.reflect.Constructor;
 
 import org.apache.wicket.Component;
@@ -24,9 +22,11 @@ import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.pet.module.exception.SingularServerException;
 import br.net.mirante.singular.pet.module.flow.PetServerTaskPageStrategy;
 import br.net.mirante.singular.pet.module.flow.SingularWebRef;
+import br.net.mirante.singular.pet.module.wicket.SingularHeaderResponseDecorator;
 import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
 import br.net.mirante.singular.pet.module.wicket.view.form.AbstractFormPage;
 import br.net.mirante.singular.pet.module.wicket.view.template.Template;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings("serial")
 public abstract class AbstractDispatcherPage extends WebPage {
@@ -37,6 +37,7 @@ public abstract class AbstractDispatcherPage extends WebPage {
 
     public AbstractDispatcherPage() {
         this.add(bodyContainer);
+        getApplication().setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
         bodyContainer.add(new HeaderResponseContainer("scripts", "scripts"));
         add(new SingularJSBehavior());
         AbstractFormPage.FormPageConfig config = parseParameters(getRequest());

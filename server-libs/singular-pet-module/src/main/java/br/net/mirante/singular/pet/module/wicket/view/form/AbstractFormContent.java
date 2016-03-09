@@ -1,10 +1,10 @@
 package br.net.mirante.singular.pet.module.wicket.view.form;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -228,7 +228,7 @@ public abstract class AbstractFormContent extends Content {
         return button.add(visibleOnlyInAnnotationBehaviour());
     }
 
-    private void processAnnotations(SInstance instancia) {
+    protected void processAnnotations(SInstance instancia) {
         AtrAnnotation annotatedInstance = instancia.as(AtrAnnotation::new);
         List<SIAnnotation> allAnnotations = annotatedInstance.allAnnotations();
         if (!allAnnotations.isEmpty()) {

@@ -2,6 +2,7 @@ package br.net.mirante.singular.pet.module.wicket.view.form;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import br.net.mirante.singular.flow.core.MTransition;
 import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
 import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
@@ -174,6 +176,10 @@ public abstract class AbstractFormPage extends Template {
                     @Override
                     protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
                         setFormXML(getFormModel(), xml.toStringExato());
+                        if (AbstractFormPage.this.config.annotationMode.editable()) {
+                            Optional<String> xmlAnnotation = MformPersistenciaXML.annotationToXmlString(getCurrentInstance().getObject());
+                            setAnnotationsXML(getFormModel(), xmlAnnotation.orElse(null));
+                        }
                         AbstractFormPage.this.executeTransition(transitionName, getFormModel());
                         target.appendJavaScript("Singular.atualizarContentWorklist();");
                         addToastrSuccessMessageWorklist("message.action.success", transitionName);
