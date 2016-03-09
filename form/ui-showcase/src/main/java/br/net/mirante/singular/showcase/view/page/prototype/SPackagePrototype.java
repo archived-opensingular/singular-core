@@ -1,10 +1,23 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDataHora;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeFormula;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
+import br.net.mirante.singular.form.mform.core.STypeMonetario;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
+import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
+import br.net.mirante.singular.form.mform.util.comuns.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
+import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
+import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
 import java.util.Optional;
 
@@ -67,10 +80,23 @@ public class SPackagePrototype  extends SPackage {
     }
 
     private void populateOptions(PackageBuilder pb, MFixedOptionsSimpleProvider provider) {
+        provider.add(typeName(pb, STypeAnoMes.class), "Ano/Mês");
+        provider.add(typeName(pb, STypeBoolean.class), "Booleano");
+        provider.add(typeName(pb, STypeComposite.class), "Composto");
+        provider.add(typeName(pb, STypeCEP.class), "CEP");
+        provider.add(typeName(pb, STypeCPF.class), "CPF");
+        provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
+        provider.add(typeName(pb, STypeData.class), "Data");
+        provider.add(typeName(pb, STypeDataHora.class), "Data/Hora");
+        provider.add(typeName(pb, STypeEMail.class), "Email");
+        provider.add(typeName(pb, STypeFormula.class), "Formula");
+        provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
+        provider.add(typeName(pb, STypeMonetario.class), "Monetário");
+        provider.add(typeName(pb, STypeNomePessoa.class), "Nome Pessoa");
+        provider.add(typeName(pb, STypeInteger.class), "Número");
+        provider.add(typeName(pb, STypeDecimal.class), "Número Decimal");
         provider.add(typeName(pb, STypeString.class), "Texto");
-        provider.add(typeName(pb, STypeData.class),"Data");
-        provider.add(typeName(pb, STypeCPF.class),"CPF");
-        provider.add(typeName(pb, STypeComposite.class),"Composto");
+        provider.add(typeName(pb, STypeTelefoneNacional.class), "Telefone Nacional");
     }
 
     private String typeName(PackageBuilder pb, Class<? extends SType> typeClass) {
