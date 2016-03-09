@@ -37,7 +37,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>0.5.18</version>
+            <version>0.5.19-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
