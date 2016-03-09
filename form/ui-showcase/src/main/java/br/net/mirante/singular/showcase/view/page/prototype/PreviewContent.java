@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
@@ -15,6 +16,8 @@ import org.apache.wicket.model.ResourceModel;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -72,6 +75,7 @@ class TypeBuilder {
 
     private SIComposite metaInformation;
     private final PackageBuilder pkg;
+    private long id;
 
     TypeBuilder(SIComposite metaInformation){
         this.metaInformation = metaInformation;
@@ -110,11 +114,21 @@ class TypeBuilder {
         String name = descriptor.getValorString("name"),
                 type = descriptor.getValorString("type");
         SType<?> typeOfField = root.getDictionary().getType(type);
-        SType<?> fieldType = root.addCampo(name, typeOfField);
+        SType<?> fieldType = root.addCampo(generateJavaIdentifier(name), typeOfField);
         fieldType.asAtrBasic().label(name);
         if(typeOfField instanceof STypeComposite){
             SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
         }
+    }
+
+    private String generateJavaIdentifier(String name) {
+        String javaIdentifier = SingularUtil.convertToJavaIdentity(name, true);
+        if (javaIdentifier.isEmpty()) {
+            javaIdentifier = "id" + id++;
+        } else {
+            javaIdentifier += id++;
+        }
+        return javaIdentifier;
     }
 }
