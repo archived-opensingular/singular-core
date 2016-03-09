@@ -21,6 +21,7 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -35,6 +36,11 @@ public class SPackagePrototype  extends SPackage {
                                 CHILDREN = "children",
                                 NAME = "name",
                                 TYPE = "type",
+                                TAMANHO_CAMPO = "tamanhoCampo",
+                                OBRIGATORIO = "obrigatorio",
+                                TAMANHO_MAXIMO = "tamanhoMaximo",
+                                TAMANHO_INTEIRO_MAXIMO = "tamanhoInteiroMaximo",
+                                TAMANHO_DECIMAL_MAXIMO = "tamanhoDecimalMaximo",
                                 FIELDS = "fields";
     public static final String NAME_FIELD = "name";
 
@@ -63,9 +69,45 @@ public class SPackagePrototype  extends SPackage {
         ;
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
-                .as(AtrCore::new).obrigatorio()
+                .getTipo().asAtrCore().obrigatorio()
                 .getTipo().asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
+
+        fieldType.addCampoInteger(TAMANHO_CAMPO)
+                .asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
+                .getTipo().asAtrBootstrap().colPreference(2);
+
+        fieldType.addCampoBoolean(OBRIGATORIO)
+                .withRadioView()
+                .asAtrBasic().label("Obrigatório")
+                .getTipo().asAtrBootstrap().colPreference(2);
+
+        fieldType.addCampoInteger(TAMANHO_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Máximo")
+                .visivel(
+                    (instance) -> {
+                        Optional<String> optType = instance.findNearestValue(type, String.class);
+                        if(!optType.isPresent()) return false;
+                        return optType.get().equals(typeName(pb, STypeInteger.class));
+                    }
+                );
+
+        Predicate<SInstance> ifDecimalPredicate = (instance) -> {
+            Optional<String> optType = instance.findNearestValue(type, String.class);
+            if (!optType.isPresent()) return false;
+            return optType.get().equals(typeName(pb, STypeDecimal.class));
+        };
+
+        fieldType.addCampoInteger(TAMANHO_INTEIRO_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Inteiro Máximo")
+                .visivel(ifDecimalPredicate);
+
+        fieldType.addCampoInteger(TAMANHO_DECIMAL_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Decimal Máximo")
+                .visivel(ifDecimalPredicate);
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addCampoListaOf(FIELDS, fieldType);

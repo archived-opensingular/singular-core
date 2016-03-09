@@ -17,7 +17,6 @@ import org.apache.wicket.model.ResourceModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -111,11 +110,33 @@ class TypeBuilder {
 
     private void addField(STypeComposite<? extends SIComposite> root,
                                             SIComposite descriptor) {
-        String name = descriptor.getValorString("name"),
-                type = descriptor.getValorString("type");
+        String name = descriptor.getValorString(SPackagePrototype.NAME),
+                type = descriptor.getValorString(SPackagePrototype.TYPE);
+        Integer tamanhoCampo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_CAMPO),
+                tamanhoMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_MAXIMO),
+                tamanhoInteiroMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO),
+                tamanhoDecimalMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO);
+        Boolean obrigatorio = descriptor.getValorBoolean(SPackagePrototype.OBRIGATORIO);
+
         SType<?> typeOfField = root.getDictionary().getType(type);
         SType<?> fieldType = root.addCampo(generateJavaIdentifier(name), typeOfField);
         fieldType.asAtrBasic().label(name);
+        if (tamanhoCampo != null) {
+            fieldType.asAtrBootstrap().colPreference(tamanhoCampo);
+        }
+        if (tamanhoMaximo != null) {
+            fieldType.asAtrBasic().tamanhoMaximo(tamanhoMaximo);
+        }
+        if (tamanhoInteiroMaximo != null) {
+            fieldType.asAtrBasic().tamanhoInteiroMaximo(tamanhoInteiroMaximo);
+        }
+        if (tamanhoDecimalMaximo != null) {
+            fieldType.asAtrBasic().tamanhoDecimalMaximo(tamanhoDecimalMaximo);
+        }
+        if (obrigatorio != null) {
+            fieldType.asAtrCore().obrigatorio(obrigatorio);
+        }
+
         if(typeOfField instanceof STypeComposite){
             SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
