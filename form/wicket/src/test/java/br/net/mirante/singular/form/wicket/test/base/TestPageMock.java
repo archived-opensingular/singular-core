@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.base;
+package br.net.mirante.singular.form.wicket.test.base;
 
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Test;

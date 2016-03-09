@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -17,7 +18,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 
 public class MasterDetailWithTableListWithStringTest extends AbstractSingularFormTest {
 

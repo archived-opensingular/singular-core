@@ -8,6 +8,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -15,7 +16,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.wicket.base.AbstractSingularFormTest;
+import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
 
 public class PanelListWithSimpleSelectionTest extends AbstractSingularFormTest {
