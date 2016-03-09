@@ -118,8 +118,9 @@ public class SPackagePrototype  extends SPackage {
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
                 fieldType.addCampoListaOf(FIELDS, fieldType);
-        fields.asAtrBasic().label("Campos");
-        fields.withExists(
+        fields.asAtrBasic().label("Campos")
+            .getTipo().withView(MListMasterDetailView::new)
+            .withExists(
                 (instance) -> {
                     Optional<String> optType = instance.findNearestValue(type, String.class);
                     if(!optType.isPresent()) return false;
