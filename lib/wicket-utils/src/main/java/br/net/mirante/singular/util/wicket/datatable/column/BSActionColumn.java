@@ -58,7 +58,7 @@ public class BSActionColumn<T, S> extends BSAbstractColumn<T, S> {
     }
 
     public final BSActionColumn<T, S> appendAction(IModel<?> labelModel, IModel<Icone> iconeModel, IBSAction<T> action) {
-        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel), action));
+        actions.add(new ActionItem<>(new ActionConfig().labelModel(labelModel).iconeModel(iconeModel, null,  $m.ofValue("fa-lg")), action));
         return this;
     }
 

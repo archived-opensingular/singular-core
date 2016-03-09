@@ -92,9 +92,9 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testValueFromKey() {
-        String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta1);
-        String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta2);
-        String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta3);
+        String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta1);
+        String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta2);
+        String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta3);
         Assert.assertNotNull(keyFromOption1);
         Assert.assertNotNull(keyFromOption2);
         Assert.assertNotNull(keyFromOption3);
@@ -109,9 +109,9 @@ public class TestMoptionsConfigTipoLista {
 
     @Test
     public void testeLabelFromKey() {
-        String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta1);
-        String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta2);
-        String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOptions(opcaoAlerta3);
+        String keyFromOption1 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta1);
+        String keyFromOption2 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta2);
+        String keyFromOption3 = listaAlertas.getOptionsConfig().getKeyFromOption(opcaoAlerta3);
         String label1 = listaAlertas.getOptionsConfig().getLabelFromKey(keyFromOption1);
         String label2 = listaAlertas.getOptionsConfig().getLabelFromKey(keyFromOption2);
         String label3 = listaAlertas.getOptionsConfig().getLabelFromKey(keyFromOption3);
@@ -130,7 +130,7 @@ public class TestMoptionsConfigTipoLista {
     @Test
     public void testKeyValueMapping(){
         for(SInstance instancia : _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas)){
-            String key = listaAlertas.getOptionsConfig().getKeyFromOptions(instancia);
+            String key = listaAlertas.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, listaAlertas.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(listaAlertas.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
         }

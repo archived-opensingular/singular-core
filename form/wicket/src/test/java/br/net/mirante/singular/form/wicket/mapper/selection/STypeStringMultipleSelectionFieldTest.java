@@ -92,7 +92,7 @@ public class STypeStringMultipleSelectionFieldTest extends SelectionFieldBaseTes
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectBaseType.novaInstancia();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

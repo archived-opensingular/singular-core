@@ -48,7 +48,7 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testValueFromKey() {
-        String keyFromOption = descricao.getOptionsConfig().getKeyFromOptions(opcaoDescricao);
+        String keyFromOption = descricao.getOptionsConfig().getKeyFromOption(opcaoDescricao);
         Assert.assertNotNull(keyFromOption);
         Assert.assertEquals(descricao, descricao.getOptionsConfig().getValueFromKey(keyFromOption));
         Assert.assertEquals(opcaoDescricao.getValue(), descricao.getValue());
@@ -56,7 +56,7 @@ public class TestMoptionsConfigTipoSimples {
 
     @Test
     public void testeLabelFromKey() {
-        String keyFromOption = descricao.getOptionsConfig().getKeyFromOptions(opcaoDescricao);
+        String keyFromOption = descricao.getOptionsConfig().getKeyFromOption(opcaoDescricao);
         String label = descricao.getOptionsConfig().getLabelFromKey(keyFromOption);
         Assert.assertEquals(opcaoDescricao.getSelectLabel(), label);
     }
@@ -71,7 +71,7 @@ public class TestMoptionsConfigTipoSimples {
     @Test
     public void testKeyValueMapping() {
         for (SInstance instancia : _descricao.getProviderOpcoes().listAvailableOptions(descricao)) {
-            String key = descricao.getOptionsConfig().getKeyFromOptions(instancia);
+            String key = descricao.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, descricao.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(descricao.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
         }
