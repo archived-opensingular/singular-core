@@ -7,6 +7,9 @@ import br.net.mirante.singular.form.mform.document.SDocumentFactory;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.template.Content;
+
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 
@@ -22,11 +25,14 @@ public class PreviewContent extends Content {
     @Inject @Named("formConfigWithDatabase")
     private SFormConfig<String> singularFormConfig;
 
+    private Page backPage;
+
     private MInstanceRootModel<SIComposite> model;
 
-    public PreviewContent(String id, MInstanceRootModel<SIComposite> model) {
+    public PreviewContent(String id, MInstanceRootModel<SIComposite> model, Page backpage) {
         super(id);
         this.model = model;
+        this.backPage = backpage;
     }
 
     @Override
@@ -40,6 +46,12 @@ public class PreviewContent extends Content {
                         return new TypeBuilder(PreviewContent.this.model.getObject()).createRootType();
                     }
                 });
+            }
+        });
+        queue(new Link("cancel-btn") {
+            @Override
+            public void onClick() {
+                setResponsePage(backPage);
             }
         });
     }

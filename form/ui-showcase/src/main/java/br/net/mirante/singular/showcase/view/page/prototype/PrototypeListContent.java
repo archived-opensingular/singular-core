@@ -137,28 +137,29 @@ public class PrototypeListContent extends Content
         builder
                 .appendPropertyColumn(getMessage("label.table.column.name"),
                         "name", Prototype::getName)
-                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.edit"),
-                                Icone.PENCIL_SQUARE,
-                                (target, model) -> {
-                                    setResponsePage(PrototypePage.class,
-                                            new PageParameters()
-                                                    .add(PrototypePage.ID, model.getObject().getId()));
-                                }))
-                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.visualizar"),
-                                Icone.EYE,
-                                (target, model) -> {
-                                    setResponsePage(new PreviewPage(getMInstance(model.getObject())));
-                                }));
-        builder.appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-                .appendAction(getMessage("label.table.column.delete"),
-                        Icone.MINUS, this::deleteSelected))
-                .appendColumn(new BSActionColumn<Prototype, String>($m.ofValue(""))
-                        .appendAction(getMessage("label.table.column.visualizar.xml"),
-                                Icone.EYE, this::viewXml))
+                .appendColumn(buildActionColumn())
                 .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
         return builder.build("data-list");
+    }
+
+    public BSActionColumn<Prototype, String> buildActionColumn() {
+        return new BSActionColumn<Prototype, String>($m.ofValue(""))
+                .appendAction(getMessage("label.table.column.edit"),
+                    Icone.PENCIL_SQUARE,
+                    (target, model) -> {
+                        setResponsePage(PrototypePage.class,
+                                new PageParameters()
+                                        .add(PrototypePage.ID, model.getObject().getId()));
+                })
+                .appendAction(getMessage("label.table.column.visualizar"),
+                    Icone.EYE,
+                    (target, model) -> {
+                        setResponsePage(new PreviewPage(getMInstance(model.getObject()), PrototypeListContent.this.getPage()));
+                    })
+                .appendAction(getMessage("label.table.column.delete"),
+                    Icone.MINUS, this::deleteSelected)
+                .appendAction(getMessage("label.table.column.visualizar.xml"),
+                    Icone.EYE, this::viewXml);
     }
 
     private MInstanceRootModel<SIComposite> getMInstance(Prototype prototype) {

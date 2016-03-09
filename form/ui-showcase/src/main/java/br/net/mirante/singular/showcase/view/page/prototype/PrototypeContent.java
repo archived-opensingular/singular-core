@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -72,15 +73,22 @@ public class PrototypeContent extends Content {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
                 prototype.setName(instance.getValorString(SPackagePrototype.NAME_FIELD));
-                prototype.setXml(MformPersistenciaXML.toXML(instance).toStringExato());
+                prototype.setXml(getXmlFromInstance(instance));
                 prototypeDAO.save(prototype);
+                addToastrSuccessMessage("message.save.success");
+            }
+
+            private String getXmlFromInstance(SIComposite instance) {
+                return Optional.ofNullable(MformPersistenciaXML.toXML(instance))
+                        .map(MElement::toStringExato)
+                        .orElse(null);
             }
         });
 
         newItemForm.add(new ActionAjaxButton("preview_btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                setResponsePage(new PreviewPage(model));
+                setResponsePage(new PreviewPage(model, PrototypeContent.this.getPage()));
             }
         });
 
