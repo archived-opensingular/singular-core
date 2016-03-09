@@ -39,12 +39,6 @@
             <artifactId>singular-commons</artifactId>
             <version>0.5.18-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>de.alpharogroup</groupId>
-            <artifactId>wicket-toastr</artifactId>
-            <version>7.1.0</version>
-        </dependency>
     </dependencies>
 
 
