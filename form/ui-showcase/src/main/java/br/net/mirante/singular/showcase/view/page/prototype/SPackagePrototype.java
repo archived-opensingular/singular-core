@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeDataHora;
@@ -45,7 +46,8 @@ public class SPackagePrototype  extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createTipoComposto(META_FORM);
-        meta.addCampoString(NAME_FIELD).asAtrBasic().label("Nome");
+        meta.addCampoString(NAME_FIELD).asAtrBasic().label("Nome")
+            .as(AtrCore::new).obrigatorio();
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addCampoListaOfComposto(CHILDREN, "field");
@@ -56,10 +58,12 @@ public class SPackagePrototype  extends SPackage {
 
         fieldType.addCampoString(NAME)
                 .asAtrBasic().label("Nome")
+                .as(AtrCore::new).obrigatorio()
                 .getTipo().asAtrBootstrap().colPreference(2);
         ;
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
+                .as(AtrCore::new).obrigatorio()
                 .getTipo().asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
 
