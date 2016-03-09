@@ -28,7 +28,9 @@ public class PesquisaDAO extends BaseDAO{
 
     public List<Map<String, String>> retrieveMeanTimeByProcess(Period period, String processCode, Set<String> processCodeWithAccess) {
         Query hqlQuery = getSession().createQuery("select pd.key as SIGLA, pd.name as NOME, "
-            + "trim(str(avg(((cast(pi.endDate as double)) - (cast(pi.beginDate as double)))))) as MEAN "
+            + "trim(str(avg((" +
+                " dateDiffInDays(pi.endDate,pi.beginDate)" +
+                ")))) as MEAN "
             + "from ProcessInstanceEntity pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null "
             + (period != null ? "and pi.beginDate >= :startPeriod and pi.endDate <= :endPeriod " : "")
@@ -77,7 +79,9 @@ public class PesquisaDAO extends BaseDAO{
 
     private List<Map<String, String>> retrieveMeanTimeByTasks(Period period, String processCode, int max) {
         Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, pd.cod as COD, pd.name as NOME_DEFINICAO, "
-            + " avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
+            + " avg((" +
+                "  dateDiffInDays(ti.endDate, ti.beginDate)" +
+                ")) as MEAN "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
             + "and ti.task.type <> :taskEnd "
@@ -93,7 +97,9 @@ public class PesquisaDAO extends BaseDAO{
 
     @SuppressWarnings("rawtypes")
     private Map<String, String> retrieveMeanTimeByOthers(Period period, String processCode, int max) {
-        Query hqlQuery = getSession().createQuery("select pd.name as NOME_DEFINICAO, avg(((cast(ti.endDate as double)) - (cast(ti.beginDate as double)))) as MEAN "
+        Query hqlQuery = getSession().createQuery("select pd.name as NOME_DEFINICAO, avg((" +
+                " dateDiffInDays(ti.endDate, ti.beginDate)" +
+                ")) as MEAN "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is not null and pi.endDate >= :startPeriod and pd.key = :processCode "
             + "and ti.task.type <> :taskEnd "
@@ -117,7 +123,10 @@ public class PesquisaDAO extends BaseDAO{
 
     public List<Map<String, String>> retrieveStatsByActiveTask(String processCode) {
         Query hqlQuery = getSession().createQuery("select ti.task.name as NOME, count(distinct pi.cod) as QUANTIDADE, "
-            + "avg(((cast(current_date() as double)) - (cast(ti.beginDate as double))) * (24 * 60 * 60)) / (24 * 60 * 60) as TEMPO "
+            + "avg((" +
+                "  dateDiffInDays(current_date(),ti.beginDate)" +
+
+                ") * (24 * 60 * 60)) / (24 * 60 * 60) as TEMPO "
             + "from TaskInstanceEntity ti join ti.processInstance pi join pi.processVersion pv join pv.processDefinition pd "
             + "where pi.endDate is null and ti.endDate is null and pd.key = :processCode "
             + "group by ti.task.name order by QUANTIDADE desc");

@@ -123,7 +123,9 @@ public class InstanceDAO extends BaseDAO{
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveAllDelayedBySigla(String processCode, BigDecimal media) {
         Query hqlQuery = getSession().createQuery("select pi.description as DESCRICAO, "
-            + " trim(str((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as DIAS from ProcessInstanceEntity pi "
+            + " trim(str(" +
+                        " dateDiffInDays(current_date(), pi.beginDate as double)" +
+                        ")) as DIAS from ProcessInstanceEntity pi "
             + "join pi.processVersion pv join pv.processDefinition pd "
             + " where pi.endDate is null and pd.key = :processCode "
             + " and ((cast(current_date() as double)) - (cast(pi.beginDate as double))) > :media "
@@ -144,7 +146,9 @@ public class InstanceDAO extends BaseDAO{
 
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         Query hqlQuery = getSession().createQuery("select '"+processCode+"' as processCode, cast(count(pi) as integer) as amount, "
-            + " cast(avg((cast(current_date() as double)) - (cast(pi.beginDate as double))) as integer) as averageTimeInDays from ProcessInstanceEntity pi "
+            + " cast(avg(" +
+                " dateDiffInDays(current_date(),pi.beginDate)" +
+                ") as integer) as averageTimeInDays from ProcessInstanceEntity pi "
             + "join pi.processVersion pv join pv.processDefinition pd  "
             + " where pi.endDate is null  "
             + (processCode != null ?" and pd.key = :processCode": ""));
