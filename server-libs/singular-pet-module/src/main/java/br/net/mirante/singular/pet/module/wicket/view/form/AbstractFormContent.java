@@ -9,7 +9,6 @@ import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.component.SingularButton;
-import br.net.mirante.singular.form.wicket.component.SingularSaveButton;
 import br.net.mirante.singular.form.wicket.component.SingularValidationButton;
 import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -18,7 +17,6 @@ import br.net.mirante.singular.pet.module.flow.metadata.PetServerContextMetaData
 import br.net.mirante.singular.pet.module.wicket.PetSession;
 import br.net.mirante.singular.pet.module.wicket.view.template.Content;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
-import br.net.mirante.singular.util.wicket.bootstrap.layout.TemplatePanel;
 import br.net.mirante.singular.util.wicket.modal.BSModalBorder;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -39,9 +37,7 @@ import java.util.Optional;
 
 public abstract class AbstractFormContent extends Content {
 
-    private static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
 
-    //    protected final BSModalBorder enviarModal = new BSModalBorder("enviar-modal", getMessage("label.title.send"));
     protected final BSContainer modalContainer = new BSContainer("modals");
     protected final String formId;
     protected final String typeName;
@@ -75,7 +71,7 @@ public abstract class AbstractFormContent extends Content {
         form.setMultiPart(true);
         form.add(buildSingularBasePanel());
         form.add(modalContainer);
-        BSModalBorder enviarModal = buildConfirmationModal(modalContainer);
+        BSModalBorder enviarModal = buildConfirmationModal(modalContainer, getInstanceModel());
         form.add(buildSendButton(enviarModal));
         form.add(buildSaveButton());
         form.add(buildSaveAnnotationButton());
@@ -84,6 +80,14 @@ public abstract class AbstractFormContent extends Content {
         form.add(buildCloseButton());
         form.add(closeModal);
         return form;
+    }
+
+    private IReadOnlyModel<SInstance> getInstanceModel() {
+        return (IReadOnlyModel<SInstance>) () -> Optional
+                .ofNullable(singularFormPanel)
+                .map(SingularFormPanel::getRootInstance)
+                .map(IModel::getObject)
+                .orElse(null);
     }
 
     private Component buildFlowButtons() {
@@ -101,11 +105,7 @@ public abstract class AbstractFormContent extends Content {
                             container,
                             modalContainer,
                             t.getName(),
-                            (IReadOnlyModel<SInstance>) () -> Optional
-                                    .ofNullable(singularFormPanel)
-                                    .map(SingularFormPanel::getRootInstance)
-                                    .map(IModel::getObject)
-                                    .orElse(null),
+                            getInstanceModel(),
                             viewMode);
                 }
             }
@@ -302,49 +302,7 @@ public abstract class AbstractFormContent extends Content {
         return button.add(visibleOnlyInEditionBehaviour());
     }
 
-    protected BSModalBorder buildConfirmationModal(BSContainer modalContainer) {
-        TemplatePanel tpModal = modalContainer.newTemplateTag(tt ->
-                "<div wicket:id='send-modal' class='portlet-body form'>\n"
-                        + "<wicket:message key=\"label.confirm.message\"/>\n"
-                        + "</div>\n");
-        BSModalBorder enviarModal = new BSModalBorder("send-modal", getMessage("label.title.send"));
-        enviarModal
-                .addButton(BSModalBorder.ButtonStyle.EMPTY, "label.button.close", new AjaxButton("cancel-btn") {
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        enviarModal.hide(target);
-                    }
-                })
-                .addButton(BSModalBorder.ButtonStyle.DANGER, "label.button.confirm", new SingularSaveButton("confirm-btn") {
-                    @Override
-                    public IModel<? extends SInstance> getCurrentInstance() {
-                        return singularFormPanel.getRootInstance();
-                    }
-
-                    @Override
-                    protected void handleSaveXML(AjaxRequestTarget target, MElement xml) {
-                        setFormXML(getFormModel(), xml.toStringExato());
-                        getCurrentInstance().getObject().getDocument().persistFiles();
-                        AbstractFormContent.this.send(getCurrentInstance(), xml);
-                        atualizarContentWorklist(target);
-                        if (getIdentifier() == null) {
-                            addToastrSuccessMessageWorklist("message.send.success", URL_PATH_ACOMPANHAMENTO);
-                        } else {
-                            addToastrSuccessMessageWorklist("message.send.success.identifier", getIdentifier(), URL_PATH_ACOMPANHAMENTO);
-                        }
-                        target.appendJavaScript("; window.close();");
-                    }
-
-                    @Override
-                    protected void onValidationError(AjaxRequestTarget target, Form<?> form, IModel<? extends SInstance> instanceModel) {
-                        enviarModal.hide(target);
-                        target.add(form);
-                        addToastrErrorMessage("message.send.error");
-                    }
-                });
-        tpModal.add(enviarModal);
-        return enviarModal;
-    }
+    protected abstract BSModalBorder buildConfirmationModal(BSContainer modalContainer, IModel<? extends SInstance> instanceModel);
 
     protected Behavior visibleOnlyInEditionBehaviour() {
         return new Behavior() {
