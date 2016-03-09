@@ -123,10 +123,12 @@ public class InstanceDAO extends BaseDAO{
     @SuppressWarnings("unchecked")
     public List<Map<String, String>> retrieveAllDelayedBySigla(String processCode, BigDecimal media) {
         Query hqlQuery = getSession().createQuery("select pi.description as DESCRICAO, "
-            + " trim(str((cast(current_date() as double)) - (cast(pi.beginDate as double)))) as DIAS from ProcessInstanceEntity pi "
+            + " trim(str(" +
+                        " dateDiffInDays(current_date(), pi.beginDate)" +
+                        ")) as DIAS from ProcessInstanceEntity pi "
             + "join pi.processVersion pv join pv.processDefinition pd "
             + " where pi.endDate is null and pd.key = :processCode "
-            + " and ((cast(current_date() as double)) - (cast(pi.beginDate as double))) > :media "
+            + " and (dateDiffInDays(current_date(), pi.beginDate)) > :media "
             );
         hqlQuery.setParameter("processCode", processCode);
         hqlQuery.setParameter("media", media.doubleValue());
@@ -144,7 +146,9 @@ public class InstanceDAO extends BaseDAO{
 
     public StatusDTO retrieveActiveInstanceStatus(String processCode) {
         Query hqlQuery = getSession().createQuery("select '"+processCode+"' as processCode, cast(count(pi) as integer) as amount, "
-            + " cast(avg((cast(current_date() as double)) - (cast(pi.beginDate as double))) as integer) as averageTimeInDays from ProcessInstanceEntity pi "
+            + " cast(avg(" +
+                " dateDiffInDays(current_date(),pi.beginDate)" +
+                ") as integer) as averageTimeInDays from ProcessInstanceEntity pi "
             + "join pi.processVersion pv join pv.processDefinition pd  "
             + " where pi.endDate is null  "
             + (processCode != null ?" and pd.key = :processCode": ""));
@@ -212,15 +216,21 @@ public class InstanceDAO extends BaseDAO{
                     + (processCode != null ? " and pd.key = :processCode" : ""));
             } else if(move){
                 hqlQuery =getSession().createQuery(
-                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate1 then coalesce(pi.endDate,current_date()) else :endDate1 end) as double) - cast(pi.beginDate as double))),0) as TEMPO, "
-                    + "coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate2 then coalesce(pi.endDate,current_date()) else :endDate2 end) as double) - cast(pi.beginDate as double))),0) as TEMPO2 "
+                    "select coalesce(avg(" +
+                            "dateDiffInDays((case when coalesce(pi.endDate,current_date()) < :endDate1 then coalesce(pi.endDate,current_date()) else :endDate1 end), pi.beginDate)" +
+                            "),0) as TEMPO, "
+                    + "coalesce(avg(" +
+                            "dateDiffInDays((case when coalesce(pi.endDate,current_date()) < :endDate2 then coalesce(pi.endDate,current_date()) else :endDate2 end),pi.beginDate)" +
+                            "),0) as TEMPO2 "
                     + "from ProcessInstanceEntity pi "
                     + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
                     + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
                     + (processCode != null ? " and pd.key = :processCode" : ""));
             } else {
                 hqlQuery =getSession().createQuery(
-                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end) as double) - cast(pi.beginDate as double))),0) as TEMPO "
+                    "select coalesce(avg(" +
+                            "dateDiffInDays((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end), pi.beginDate)" +
+                            "),0) as TEMPO "
                         + "from ProcessInstanceEntity pi "
                         + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
                         + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "
@@ -235,7 +245,9 @@ public class InstanceDAO extends BaseDAO{
                     + (processCode != null ? " and pd.key = :processCode" : ""));
             } else {
                 hqlQuery =getSession().createQuery(
-                    "select coalesce(avg((cast((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end) as double) - cast(pi.beginDate as double))),0) as TEMPO "
+                    "select coalesce(avg(" +
+                            "dateDiffInDays((case when coalesce(pi.endDate,current_date()) < :endDate then coalesce(pi.endDate,current_date()) else :endDate end), pi.beginDate)" +
+                            "),0) as TEMPO "
                     + "from ProcessInstanceEntity pi "
                     + (processCode != null?"join pi.processVersion pv join pv.processDefinition pd ":"")
                     + "where pi.beginDate < :beginDate and (pi.endDate is null or pi.endDate > :endDate) "

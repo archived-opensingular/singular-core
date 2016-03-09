@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.base;
+package br.net.mirante.singular.form.wicket.test.base;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +14,11 @@ import org.apache.wicket.util.tester.WicketTester;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.junit.Before;
-import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
-import junit.framework.Assert;
 
 
 public abstract class AbstractSingularFormTest {
@@ -41,12 +39,6 @@ public abstract class AbstractSingularFormTest {
             }
         });
         formTester = wicketTester.newFormTester("form");
-    }
-
-    @Test
-    public void asserRendering() {
-        wicketTester.assertRenderedPage(MockPage.class);
-        Assert.assertNotNull(formTester);
     }
 
     protected String getFormRelativePath(FormComponent<?> c) {

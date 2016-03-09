@@ -1,11 +1,12 @@
 package br.net.mirante.singular.showcase.wicket;
 
-import br.net.mirante.singular.showcase.view.page.form.ListPage;
-import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import java.util.Locale;
+
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
+import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
@@ -17,7 +18,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import java.util.Locale;
+import br.net.mirante.singular.showcase.view.page.form.ListPage;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
 public class ShowcaseApplication extends AuthenticatedWebApplication
         implements ApplicationContextAware {
@@ -58,6 +61,8 @@ public class ShowcaseApplication extends AuthenticatedWebApplication
             ctx = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         }
         new AnnotatedMountScanner().scanPackage("br.net.mirante.singular.showcase.view.page.**").mount(this);
+
+        setHeaderResponseDecorator(r -> new JavaScriptFilteredIntoFooterHeaderResponse(r, SingularTemplate.JAVASCRIPT_CONTAINER));
     }
 
     @Override

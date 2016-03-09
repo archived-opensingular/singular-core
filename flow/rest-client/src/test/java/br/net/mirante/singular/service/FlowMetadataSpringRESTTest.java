@@ -15,7 +15,7 @@ public class FlowMetadataSpringRESTTest {
         final String result2 = flowMetadataSpringREST.addOtherParameters();
         Assert.assertEquals(result2, "");
 
-        final String result3 = flowMetadataSpringREST.addOtherParameters(null);
+        final String result3 = flowMetadataSpringREST.addOtherParameters((String[])null);
         Assert.assertEquals(result3, null);
     }
 }

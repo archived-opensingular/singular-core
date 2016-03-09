@@ -155,7 +155,9 @@ public class SDocument {
             final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (SType<?> dependency : func.get()) {
-                    dependency.getDependentTypes().add(tipo);
+                    if(!dependency.getDependentTypes().contains(tipo)) {
+                        dependency.getDependentTypes().add(tipo);
+                    }
                 }
             }
         });

@@ -21,7 +21,7 @@
 
     <!-- HIBERNATE CONFIGURATION -->
     <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSourceSingular"/>
+        <property name="dataSource" ref="dataSource"/>
         <!-- Incluir o pacote quando tiver um -->
         <property name="packagesToScan" value="br.net.mirante.singular.showcase.dao.form" />
 
@@ -39,7 +39,7 @@
     <tx:annotation-driven proxy-target-class="true"/>
     <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
-        <property name="dataSource" ref="dataSourceSingular"/>
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
 </beans>

@@ -133,42 +133,6 @@ public class MBPMUtil {
         throw new SingularFlowException(task.getTaskType() + " não tratado");
     }
 
-    public static String convertToJavaIdentity(String original, boolean normalize) {
-        return convertToJavaIdentity(original, false, normalize);
-    }
-
-    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
-        if (normalize) {
-            original = normalize(original);
-        }
-        StringBuilder sb = new StringBuilder(original.length());
-        boolean nextUpper = false;
-        for (char c : original.toCharArray()) {
-            if (sb.length() == 0) {
-                if (Character.isJavaIdentifierStart(c)) {
-                    if (firstCharacterUpperCase) {
-                        sb.append(Character.toUpperCase(c));
-                    } else {
-                        sb.append(Character.toLowerCase(c));
-                    }
-                }
-            } else if (Character.isJavaIdentifierPart(c)) {
-                if (nextUpper) {
-                    c = Character.toUpperCase(c);
-                    nextUpper = false;
-                }
-                sb.append(c);
-            } else if (Character.isWhitespace(c)) {
-                nextUpper = true;
-            }
-        }
-        return sb.toString();
-    }
-
-    public static String normalize(String original) {
-        return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
-    }
-
     public static byte[] getFlowImage(ProcessDefinition<?> processDefinition) {
         return FlowRendererFactory.generateImageFor(processDefinition);
     }

@@ -9,10 +9,13 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.view.MTabView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
+import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
+import br.net.mirante.singular.form.validation.ValidationError;
+import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
 public class SPackagePeticaoCanabidiol extends SPackage {
 
@@ -125,8 +128,12 @@ public class SPackagePeticaoCanabidiol extends SPackage {
 
             aceitoTudo
                     .withCustomMapper(AceitoTudoMapper::new)
-                    .as(AtrCore::new)
-                    .obrigatorio()
+                    .addInstanceValidator(validatable -> {
+                        SIBoolean instance = validatable.getInstance();
+                        if (!Boolean.TRUE.equals(instance.getValue())) {
+                            validatable.error("Campo obrigatório");
+                        }
+                    })
                     .as(AtrBasic::new)
                     .label("Eu, paciente/responsável legal, informo que estou ciente que:\n\n" +
                             "1- Este produto não possui registro no Brasil, portanto não possui a sua segurança e eficácia avaliada e comprovada pela Anvisa, podendo causar reações adversas inesperadas ao paciente.\n" +

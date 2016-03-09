@@ -1,178 +1,24 @@
-<!DOCTYPE html>
-<!--
-Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.5
-Version: 4.1.0
-Author: KeenThemes
-Website: http://www.keenthemes.com/
-Contact: support@keenthemes.com
-Follow: www.twitter.com/keenthemes
-Like: www.facebook.com/keenthemes
-Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
-License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
--->
-<!--[if IE 8]>
-<html lang="en" class="ie8 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
-<!--[if IE 9]>
-<html lang="en" class="ie9 no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd"> <![endif]-->
-<!--[if !IE]><!-->
-<html lang="en" class="no-js" xmlns:wicket="http://git-wip-us.apache.org/repos/asf/wicket/repo?p=wicket.git;a=blob_plain;f=wicket-core/src/main/resources/META-INF/wicket-1.5.xsd">
-<!--<![endif]-->
-<!-- BEGIN HEAD -->
-<head>
-    <meta charset="utf-8"/>
-    <title>
-        <wicket:message key="label.page.title.global"/> | <wicket:container wicket:id="pageTitle"/>
-    </title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <meta content="" name="description"/>
-    <meta content="" name="author"/>
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <!--<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>-->
-    <link href="/singular-static/resources/metronic/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/uniform/css/uniform.default.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/jquery-multi-select/css/multi-select.css" rel="stylesheet" type="text/css"/>
-
-    <link href="/singular-static/resources/metronic/global/plugins/ion.rangeslider/css/normalize.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/ion.rangeslider/css/ion.rangeSlider.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinHTML5.css" rel="stylesheet" type="text/css"/>
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN PAGE LEVEL PLUGIN STYLES -->
-    <link href="/singular-static/resources/metronic/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/global/plugins/morris/morris.css" rel="stylesheet" type="text/css">
-    <!-- END PAGE LEVEL PLUGIN STYLES -->
-    <!-- BEGIN THEME STYLES -->
-    <!-- DOC: To use 'rounded corners' style just load 'components-rounded.css' stylesheet instead of 'components.css' in the below style tag -->
-    <link href="/singular-static/resources/metronic/global/css/components-md.css" id="style_components" rel="stylesheet" type="text/css"/>
-    <!--<link href="/singular-static/resources/metronic/global/css/components-rounded.css" id="style_components_rounded" rel="stylesheet" type="text/css"/>-->
-    <link href="/singular-static/resources/metronic/global/css/plugins-md.css" rel="stylesheet" type="text/css"/>
-
-    <link href="/singular-static/resources/metronic/layout4/css/layout.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/metronic/layout4/css/themes/default.css" rel="stylesheet" type="text/css" id="style_color"/>
-    <!-- END THEME STYLES -->
-    <!-- BEGIN PAGE STYLES -->
-
-    <!-- File Upload Plugin -->
-    <link href="/singular-static/resources/metronic/global/plugins/jquery-file-upload/css/jquery.fileupload.css" rel="stylesheet" type="text/css"/>
-
-    <!-- END PAGE STYLES -->
-    <link rel="shortcut icon" href="/singular-static/resources/singular/img/favicon.png"/>
-
-    <link href="resources/custom/css/global.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/singular/plugins/syntaxHighlighter/css/shCore.css" rel="stylesheet" type="text/css"/>
-    <link href="/singular-static/resources/singular/plugins/syntaxHighlighter/css/shThemeDefault.css" rel="stylesheet" type="text/css"/>
-
-    <style type="text/css">
-        div.blocking_overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 10051;
-            opacity: .0;
-            background: #fff no-repeat center center;
-        }
-    </style>
-
-    <script>
-        var enableAJAXPageBlock = true;
-    </script>
-</head>
-<!-- END HEAD -->
-<!-- BEGIN BODY -->
-<!-- DOC: Apply "page-header-fixed-mobile" and "page-footer-fixed-mobile" class to body element to force fixed header or footer in mobile devices -->
-<!-- DOC: Apply "page-sidebar-closed" class to the body and "page-sidebar-menu-closed" class to the sidebar menu element to hide the sidebar by default -->
-<!-- DOC: Apply "page-sidebar-hide" class to the body to make the sidebar completely hidden on toggle -->
-<!-- DOC: Apply "page-sidebar-closed-hide-logo" class to the body element to make the logo hidden on sidebar toggle -->
-<!-- DOC: Apply "page-sidebar-hide" class to body element to completely hide the sidebar on sidebar toggle -->
-<!-- DOC: Apply "page-sidebar-fixed" class to have fixed sidebar -->
-<!-- DOC: Apply "page-footer-fixed" class to the body element to have fixed footer -->
-<!-- DOC: Apply "page-sidebar-reversed" class to put the sidebar on the right side -->
-<!-- DOC: Apply "page-full-width" class to the body element to have full width page without the sidebar menu -->
-<body wicket:id="pageBody" class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
-<!-- BEGIN HEADER -->
-<wicket:container wicket:id="_Header"/>
-<!-- END HEADER -->
-<div class="clearfix"></div>
-<!-- BEGIN CONTAINER -->
-<div class="page-container">
-    <!-- BEGIN SIDEBAR -->
-    <wicket:container wicket:id="_Menu"/>
-    <!-- END SIDEBAR -->
-    <!-- BEGIN CONTENT -->
-    <wicket:container wicket:id="_Content"/>
-    <!-- END CONTENT -->
-</div>
-<!-- END CONTAINER -->
-<!-- BEGIN FOOTER -->
-<wicket:container wicket:id="_Footer"/>
-<!-- END FOOTER -->
-<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
-<!-- BEGIN CORE PLUGINS -->
-<!--[if lt IE 9]>
-<script src="/singular-static/resources/metronic/global/plugins/respond.min.js"></script>
-<script src="/singular-static/resources/metronic/global/plugins/excanvas.min.js"></script>
-<![endif]-->
-<script src="/singular-static/resources/metronic/global/plugins/jquery.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery-migrate.min.js" type="text/javascript"></script>
-<!-- IMPORTANT! Load jquery-ui.min.js before bootstrap.min.js to fix bootstrap tooltip conflict with jquery ui tooltip -->
-<script src="/singular-static/resources/metronic/global/plugins/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
-<!--<script src="/singular-static/resources/metronic/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>-->
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap/js/bootstrap.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery.cokie.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/uniform/jquery.uniform.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.pt-BR.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-select/js/bootstrap-select.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery-multi-select/js/jquery.multi-select.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/singular/plugins/jquery-maskmoney/dist/jquery.maskMoney.min.js" type="text/javascript"></script>
-
-<!-- END CORE PLUGINS -->
-<!-- BEGIN PAGE LEVEL PLUGINS -->
-<script src="/singular-static/resources/metronic/global/plugins/datatables/datatables.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/morris/morris.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/morris/raphael-min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/amcharts/amcharts/amcharts.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/amcharts/amcharts/serial.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/amcharts/amcharts/pie.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/amcharts/amcharts/themes/light.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootstrap-maxlength/bootstrap-maxlength.min.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js" type="text/javascript" ></script>
-<script src="/singular-static/resources/metronic/global/plugins/bootbox/bootbox.min.js" type="text/javascript" ></script>
-<!-- File Upload Plugin -->
-<script src="/singular-static/resources/metronic/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/global/plugins/jquery-file-upload/js/jquery.fileupload.js" type="text/javascript"></script>
-
-<script src="/singular-static/resources/singular/plugins/syntaxHighlighter/js/shCore.js" type="text/javascript"></script>
-<script src="/singular-static/resources/singular/plugins/syntaxHighlighter/js/shBrushJava.js" type="text/javascript"></script>
-<script src="/singular-static/resources/singular/plugins/syntaxHighlighter/js/shBrushJScript.js" type="text/javascript"></script>
-<script src="/singular-static/resources/singular/plugins/syntaxHighlighter/js/shBrushXml.js" type="text/javascript"></script>
-
-<!-- END PAGE LEVEL PLUGINS -->
-<!-- BEGIN PAGE LEVEL SCRIPTS -->
-<script src="/singular-static/resources/metronic/global/scripts/app.js" type="text/javascript"></script>
-<script src="/singular-static/resources/metronic/layout4/scripts/layout.js" type="text/javascript"></script>
-
-<!-- END PAGE LEVEL SCRIPTS -->
+<html xmlns:wicket="http://wicket.apache.org">
+<body>
+<wicket:extend>
+    <div wicket:id="pageBody" >
+        <div wicket:id="_Header"/>
+        <div class="clearfix"></div>
+        <div class="page-container">
+            <div wicket:id="_Menu"/>
+            <div wicket:id="_Content"/>
+        </div>
+        <div wicket:id="_Footer"/>
+        <div id='blocking_overlay' class='blocking_overlay' style='display:none;'
+             onclick='this.getElementsByTagName("a")[0].focus(); return false;'>
+            <a href='#' tabindex='-1' onkeydown='return false;'></a>
+        </div>
+    </div>
+</wicket:extend>
 <script>
     jQuery(document).ready(function () {
 
-        Wicket.Event.subscribe('/ajax/call/beforeSend', function(evt, attrs, jqXHR, settings) {
+        Wicket.Event.subscribe('/ajax/call/beforeSend', function (evt, attrs, jqXHR, settings) {
             if (enableAJAXPageBlock) {
                 $('#blocking_overlay').show();
                 window.blocking_overlay_timeoutId = setTimeout(function () {
@@ -181,7 +27,7 @@ License: You must have a valid license purchased only from themeforest(the above
                 }, 1200);
             }
         });
-        Wicket.Event.subscribe('/ajax/call/complete', function(evt, attrs, jqXHR, textStatus) {
+        Wicket.Event.subscribe('/ajax/call/complete', function (evt, attrs, jqXHR, textStatus) {
             if (enableAJAXPageBlock) {
                 $('#blocking_overlay').hide();
                 $('#blocking_overlay').css('opacity', '0.0');
@@ -190,19 +36,12 @@ License: You must have a valid license purchased only from themeforest(the above
                     clearTimeout(window.blocking_overlay_timeoutId);
                 }
             }
+
+            $('[data-toggle="tooltip"]').tooltip();
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
-<!-- END JAVASCRIPTS -->
-
-<div id='blocking_overlay' class='blocking_overlay' style='display:none;' onclick='this.getElementsByTagName("a")[0].focus(); return false;'>
-    <a href='#' tabindex='-1' onkeydown='return false;'></a>
-</div>
 </body>
-<!-- END BODY -->
-<!-- Validação de  -->
-<!--[if IE 8]> </html> <![endif]-->
-<!--[if IE 9]> </html> <![endif]-->
-<!--[if !IE]><!-->
 </html>
-<!--<![endif]-->
