@@ -1,6 +1,7 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
@@ -58,7 +59,7 @@ public class SPackagePrototype  extends SPackage {
         STypeLista<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addCampoListaOfComposto(CHILDREN, "field");
 
-        childFields.asAtrBasic().label("Campos");
+        childFields.withView(MListMasterDetailView::new).asAtrBasic().label("Campos");
 
         STypeComposite<SIComposite> fieldType = childFields.getTipoElementos();
 
@@ -75,7 +76,7 @@ public class SPackagePrototype  extends SPackage {
 
         fieldType.addCampoInteger(TAMANHO_CAMPO)
                 .asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
-                .getTipo().asAtrBootstrap().colPreference(2);
+                .getTipo().asAtrBootstrap().colPreference(3);
 
         fieldType.addCampoBoolean(OBRIGATORIO)
                 .withRadioView()
