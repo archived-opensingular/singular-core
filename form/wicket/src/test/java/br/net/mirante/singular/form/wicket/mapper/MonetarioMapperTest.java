@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static org.junit.Assert.*;
 
 public class MonetarioMapperTest extends MapperBaseTest {

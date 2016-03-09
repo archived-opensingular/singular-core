@@ -14,8 +14,8 @@ import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
-import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 

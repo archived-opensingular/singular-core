@@ -21,7 +21,7 @@ import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.FileSystemAttachmentHandler;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.wicket.test.helpers.TestPackage;
+import br.net.mirante.singular.form.wicket.helpers.TestPackage;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
