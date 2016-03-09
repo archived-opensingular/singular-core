@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.helpers;
+package br.net.mirante.singular.form.wicket.test.helpers;
 
 import java.util.Iterator;
 import java.util.List;

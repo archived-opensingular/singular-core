@@ -1,4 +1,4 @@
-package br.net.mirante.singular.form.wicket.helpers;
+package br.net.mirante.singular.form.wicket.test.helpers;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;

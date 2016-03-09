@@ -1,8 +1,8 @@
 package br.net.mirante.singular.form.wicket.mapper.annotation;
 
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
-import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
+import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.test.helpers.TestFinders.findTag;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.extractProperty;
 
@@ -24,7 +24,7 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.SIAnnotation;
 import br.net.mirante.singular.form.mform.core.annotation.STypeAnnotation;
-import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
+import br.net.mirante.singular.form.wicket.test.AbstractWicketFormTest;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
 
