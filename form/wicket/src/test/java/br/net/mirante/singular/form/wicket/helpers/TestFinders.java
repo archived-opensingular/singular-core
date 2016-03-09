@@ -16,8 +16,6 @@ public class TestFinders {
 
     public static Optional<String> findId(MarkupContainer container, String leafName) {
         Iterator<Component> it = container.iterator();
-//        System.out.println(container);
-//        System.out.println(container.getId());
         while (it.hasNext()) {
             Optional<String> found = findInComponent(leafName, it.next());
             if (found.isPresent()) {

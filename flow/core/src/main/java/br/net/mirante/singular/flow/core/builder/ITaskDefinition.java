@@ -1,6 +1,6 @@
 package br.net.mirante.singular.flow.core.builder;
 
-import br.net.mirante.singular.flow.core.MBPMUtil;
+import br.net.mirante.singular.commons.base.SingularUtil;
 
 @FunctionalInterface
 public interface ITaskDefinition {
@@ -8,7 +8,7 @@ public interface ITaskDefinition {
     String getName();
 
     default String getKey() {
-        return MBPMUtil.convertToJavaIdentity(getName(), true).toUpperCase();
+        return SingularUtil.convertToJavaIdentity(getName(), true).toUpperCase();
     }
 
     default boolean isNameEquals(String name) {

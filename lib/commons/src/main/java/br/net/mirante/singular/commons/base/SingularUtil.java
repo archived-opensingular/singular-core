@@ -1,6 +1,7 @@
 package br.net.mirante.singular.commons.base;
 
 import java.security.MessageDigest;
+import java.text.Normalizer;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -16,5 +17,41 @@ public final class SingularUtil {
         sha1Digest.update(bytes);
 
         return Hex.encodeHexString(sha1Digest.digest());
+    }
+
+    public static String convertToJavaIdentity(String original, boolean normalize) {
+        return convertToJavaIdentity(original, false, normalize);
+    }
+
+    public static String convertToJavaIdentity(String original, boolean firstCharacterUpperCase, boolean normalize) {
+        if (normalize) {
+            original = normalize(original);
+        }
+        StringBuilder sb = new StringBuilder(original.length());
+        boolean nextUpper = false;
+        for (char c : original.toCharArray()) {
+            if (sb.length() == 0) {
+                if (Character.isJavaIdentifierStart(c)) {
+                    if (firstCharacterUpperCase) {
+                        sb.append(Character.toUpperCase(c));
+                    } else {
+                        sb.append(Character.toLowerCase(c));
+                    }
+                }
+            } else if (Character.isJavaIdentifierPart(c)) {
+                if (nextUpper) {
+                    c = Character.toUpperCase(c);
+                    nextUpper = false;
+                }
+                sb.append(c);
+            } else if (Character.isWhitespace(c)) {
+                nextUpper = true;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String normalize(String original) {
+        return Normalizer.normalize(original, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
 }
