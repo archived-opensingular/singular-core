@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.wicket.mapper.attachment;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findFirstComponentWithId;
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findFirstComponentWithId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 import java.io.FileOutputStream;
@@ -24,7 +24,7 @@ import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
-import br.net.mirante.singular.form.wicket.hepers.TestPackage;
+import br.net.mirante.singular.form.wicket.helpers.TestPackage;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
 import br.net.mirante.singular.form.wicket.test.base.TestPage;
