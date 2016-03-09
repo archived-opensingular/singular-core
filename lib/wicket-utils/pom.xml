@@ -61,6 +61,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>de.alpharogroup</groupId>
+            <artifactId>wicket-toastr</artifactId>
+            <version>7.1.0</version>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
