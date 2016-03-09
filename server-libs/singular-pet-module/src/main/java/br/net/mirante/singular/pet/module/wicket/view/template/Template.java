@@ -11,7 +11,6 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -22,7 +21,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.pet.module.wicket.PetModulePage;
 import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import br.net.mirante.singular.pet.module.wicket.view.util.SingularToastrHelper;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -39,17 +37,10 @@ public abstract class Template extends PetModulePage {
     }
 
     @Override
-    public List<JavaScriptHeaderItem> getDefaultJavaScriptsUrls() {
-        final List<JavaScriptHeaderItem> defaultJavaScriptsUrls = super.getDefaultJavaScriptsUrls();
-        defaultJavaScriptsUrls.add(JavaScriptHeaderItem.forUrl("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.js"));
-        return defaultJavaScriptsUrls;
-    }
-
-    @Override
     public List<CssHeaderItem> getDefaultCSSUrls() {
         final List<CssHeaderItem> defaultCSSUrls = super.getDefaultCSSUrls();
         defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/singular/fonts/google/open-sans.css"));
-        defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css"));
+        defaultCSSUrls.add(CssHeaderItem.forUrl("resources/custom/css/custom.css"));
         return defaultCSSUrls;
     }
 
