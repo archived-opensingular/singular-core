@@ -3,12 +3,12 @@ package br.net.mirante.singular.flow.core.builder;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.flow.core.DashboardView;
 import br.net.mirante.singular.flow.core.FlowMap;
 import br.net.mirante.singular.flow.core.IExecutionDateStrategy;
 import br.net.mirante.singular.flow.core.IRoleChangeListener;
 import br.net.mirante.singular.flow.core.ITaskPredicate;
-import br.net.mirante.singular.flow.core.MBPMUtil;
 import br.net.mirante.singular.flow.core.MProcessRole;
 import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskEnd;
@@ -85,7 +85,7 @@ public abstract class FlowBuilder<DEF extends ProcessDefinition<?>, MAPA extends
     public BUILDER_PAPEL addRoleDefinition(String description,
         UserRoleSettingStrategy<? extends ProcessInstance> userRoleSettingStrategy,
         boolean automaticUserAllocation) {
-        return addRoleDefinition(description, MBPMUtil.convertToJavaIdentity(description, true), userRoleSettingStrategy, automaticUserAllocation);
+        return addRoleDefinition(description, SingularUtil.convertToJavaIdentity(description, true), userRoleSettingStrategy, automaticUserAllocation);
     }
 
     public BUILDER_PAPEL addRoleDefinition(String description, String abbreviation,

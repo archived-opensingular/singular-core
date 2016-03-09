@@ -1,5 +1,6 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
+import br.net.mirante.singular.commons.base.SingularUtil;
 import br.net.mirante.singular.form.mform.*;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
@@ -11,6 +12,7 @@ import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
 import br.net.mirante.singular.showcase.view.template.Content;
 
 import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -40,7 +42,8 @@ public class PreviewContent extends Content {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        queue(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
+        Form enclosing = new Form("just-a-form");
+        enclosing.add(new SingularFormPanel<String>("singular-panel", singularFormConfig) {
             @Override
             protected SInstance createInstance(SFormConfig<String> singularFormConfig) {
                 return SDocumentFactory.empty().createInstance(new RefType(){
@@ -50,6 +53,7 @@ public class PreviewContent extends Content {
                 });
             }
         });
+        queue(enclosing);
         queue(new Link("cancel-btn") {
             @Override
             public void onClick() {
@@ -74,6 +78,7 @@ class TypeBuilder {
 
     private SIComposite metaInformation;
     private final PackageBuilder pkg;
+    private long id;
 
     TypeBuilder(SIComposite metaInformation){
         this.metaInformation = metaInformation;
@@ -89,8 +94,8 @@ class TypeBuilder {
     public STypeComposite<? extends SIComposite> createRootType() {
         final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
         SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
+        root.asAtrBasic().label(metaInformation.getValorString(SPackagePrototype.NAME));
         addChildFieldsIfAny(root, children);
-        pkg.debug();
         return root;
     }
 
@@ -110,28 +115,61 @@ class TypeBuilder {
 
     private void addField(STypeComposite<? extends SIComposite> root,
                                             SIComposite descriptor) {
-        String  name = descriptor.getValorString(SPackagePrototype.NAME),
+        String name = descriptor.getValorString(SPackagePrototype.NAME),
                 type = descriptor.getValorString(SPackagePrototype.TYPE);
+        Integer tamanhoCampo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_CAMPO),
+                tamanhoMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_MAXIMO),
+                tamanhoInteiroMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO),
+                tamanhoDecimalMaximo = descriptor.getValorInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO);
+        Boolean obrigatorio = descriptor.getValorBoolean(SPackagePrototype.OBRIGATORIO),
+                isList = descriptor.getValorBoolean(SPackagePrototype.IS_LIST);
 
-        Boolean isList = descriptor.getValorBoolean(SPackagePrototype.IS_LIST);
         SType<?> typeOfField = root.getDictionary().getType(type);
-        SType<?> fieldType;
+
+		SType<?> fieldType;
+        String genName = generateJavaIdentifier(name);
         if(isList){
             if(typeOfField instanceof STypeComposite){
-                fieldType = root.addCampoListaOfComposto(name,"sub"+name);
+                fieldType = root.addCampoListaOfComposto(genName,"sub_"+genName);
             }else{
-                fieldType = root.addCampoListaOf(name,typeOfField);
+                fieldType = root.addCampoListaOf(genName,typeOfField);
             }
             fieldType.asAtrBasic().label(name);
             fieldType.withView(MTableListaView::new);
             fieldType = ((STypeLista) fieldType).getTipoElementos();
         }else{
-            fieldType = root.addCampo(name, typeOfField);
+            fieldType = root.addCampo(genName, typeOfField);
             fieldType.asAtrBasic().label(name);
         }
+
+		if (tamanhoCampo != null) {
+            fieldType.asAtrBootstrap().colPreference(tamanhoCampo);
+        }
+        if (tamanhoMaximo != null) {
+            fieldType.asAtrBasic().tamanhoMaximo(tamanhoMaximo);
+        }
+        if (tamanhoInteiroMaximo != null) {
+            fieldType.asAtrBasic().tamanhoInteiroMaximo(tamanhoInteiroMaximo);
+        }
+        if (tamanhoDecimalMaximo != null) {
+            fieldType.asAtrBasic().tamanhoDecimalMaximo(tamanhoDecimalMaximo);
+        }
+        if (obrigatorio != null) {
+            fieldType.asAtrCore().obrigatorio(obrigatorio);
+        }
+
         if(typeOfField instanceof STypeComposite){
             SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
         }
+    }
+	private String generateJavaIdentifier(String name) {
+        String javaIdentifier = SingularUtil.convertToJavaIdentity(name, true);
+        if (javaIdentifier.isEmpty()) {
+            javaIdentifier = "id" + id++;
+        } else {
+            javaIdentifier += id++;
+        }
+        return javaIdentifier;
     }
 }
