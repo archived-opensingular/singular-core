@@ -1,17 +1,15 @@
 package br.net.mirante.singular.pet.module.wicket;
 
-import br.net.mirante.singular.pet.module.wicket.listener.SingularServerContextListener;
-import br.net.mirante.singular.util.wicket.page.error.Error403Page;
+import java.util.Locale;
+
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.Session;
-import org.apache.wicket.authorization.strategies.CompoundAuthorizationStrategy;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
-import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -19,7 +17,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 
-import java.util.Locale;
+import br.net.mirante.singular.pet.module.wicket.listener.SingularServerContextListener;
+import br.net.mirante.singular.util.wicket.page.error.Error403Page;
 
 public abstract class PetApplication extends AuthenticatedWebApplication
         implements ApplicationContextAware {
@@ -40,7 +39,6 @@ public abstract class PetApplication extends AuthenticatedWebApplication
 
         getRequestCycleListeners().add(new SingularServerContextListener());
 
-        setHeaderResponseDecorator(new SingularHeaderResponseDecorator());
         Locale.setDefault(new Locale("pt", "BR"));
 
         getApplicationSettings().setAccessDeniedPage(Error403Page.class);
@@ -62,14 +60,11 @@ public abstract class PetApplication extends AuthenticatedWebApplication
         }
 
         new AnnotatedMountScanner().scanPackage("br.net.mirante").mount(this);
+
         for (String packageName : getPackagesToScan()){
             new AnnotatedMountScanner().scanPackage(packageName).mount(this);
         }
 
-
-        /* Desabiltando jquery */
-        getJavaScriptLibrarySettings()
-                .setJQueryReference(new JavaScriptResourceReference(PetApplication.class, "empty.js"));
     }
 
     @Override

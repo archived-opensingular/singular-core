@@ -1,9 +1,9 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
-import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import br.net.mirante.singular.util.wicket.template.SkinOptions;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 

@@ -1,6 +1,6 @@
 package br.net.mirante.singular.pet.module.wicket;
 
-import org.apache.wicket.markup.html.WebPage;
+import br.net.mirante.singular.util.wicket.template.SingularTemplate;
 
-public class PetModulePage extends WebPage {
+public class PetModulePage extends SingularTemplate {
 }

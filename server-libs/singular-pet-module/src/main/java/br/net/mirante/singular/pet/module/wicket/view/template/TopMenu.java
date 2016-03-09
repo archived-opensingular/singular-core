@@ -1,8 +1,7 @@
 package br.net.mirante.singular.pet.module.wicket.view.template;
 
-import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
-import br.net.mirante.singular.pet.module.wicket.PetSession;
-import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
+import java.util.Optional;
+
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.StatelessLink;
@@ -10,8 +9,10 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
-import java.util.Optional;
-
+import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
+import br.net.mirante.singular.pet.module.wicket.PetSession;
+import br.net.mirante.singular.util.wicket.template.SkinOptions;
+import br.net.mirante.singular.util.wicket.template.SkinOptions.Skin;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
@@ -45,38 +46,30 @@ public class TopMenu extends Panel {
         logout.add($b.attr("href", SecurityUtil.getLogoutPath()));
         queue(logout);
 
-        queue(buildDefaultSkinLink());
         queue(buildSkinOptions());
     }
 
-    protected StatelessLink buildDefaultSkinLink() {
-        return new StatelessLink("clear_skin") {
-            public void onClick() {
-                option.clearSelection();
-                refreshPage();
-            }
-        };
-    }
-
     protected ListView buildSkinOptions() {
-        return new ListView("skin_options", SkinOptions.options()) {
+        return new ListView<Skin>("skin_options", option.options()) {
             @Override
             protected void populateItem(ListItem item) {
-                final SkinOptions.Skin skin = (SkinOptions.Skin) item.getModel().getObject();
+                final Skin skin = (Skin) item.getModel().getObject();
                 item.add(buildSelectSkinLink(skin));
-                item.queue(new Label("label", skin.name));
+                item.queue(new Label("label", skin.getName()));
             }
         };
     }
 
-    private StatelessLink buildSelectSkinLink(final SkinOptions.Skin skin) {
+    private StatelessLink buildSelectSkinLink(final Skin skin) {
         return new StatelessLink("change_action") {
             public void onClick() {
-                option.selectSkin( skin);
+                option.selectSkin(skin);
                 refreshPage();
             }
         };
     }
 
-    private void refreshPage() {    setResponsePage(getPage()); }
+    private void refreshPage() {
+        setResponsePage(getPage());
+    }
 }

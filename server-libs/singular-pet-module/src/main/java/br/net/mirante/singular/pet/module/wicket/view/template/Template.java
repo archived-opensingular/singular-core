@@ -3,7 +3,6 @@ package br.net.mirante.singular.pet.module.wicket.view.template;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
@@ -12,9 +11,9 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
@@ -23,7 +22,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 
 import br.net.mirante.singular.pet.module.wicket.PetModulePage;
 import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.pet.module.wicket.view.skin.SkinOptions;
 import br.net.mirante.singular.pet.module.wicket.view.util.ToastrHelper;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
@@ -31,20 +29,36 @@ import de.alpharogroup.wicket.js.addon.toastr.ToastrType;
 
 public abstract class Template extends PetModulePage {
 
-    protected SkinOptions option;
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
+
+    @Override
+    protected void initSkins() {
+        super.initSkins();
+        skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
+    }
+
+    @Override
+    public List<JavaScriptHeaderItem> getDefaultJavaScriptsUrls() {
+        final List<JavaScriptHeaderItem> defaultJavaScriptsUrls = super.getDefaultJavaScriptsUrls();
+        defaultJavaScriptsUrls.add(JavaScriptHeaderItem.forUrl("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.js"));
+        return defaultJavaScriptsUrls;
+    }
+
+    @Override
+    public List<CssHeaderItem> getDefaultCSSUrls() {
+        final List<CssHeaderItem> defaultCSSUrls = super.getDefaultCSSUrls();
+        defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/singular/fonts/google/open-sans.css"));
+        defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/metronic/global/plugins/bootstrap-toastr/toastr.min.css"));
+        return defaultCSSUrls;
+    }
 
     @Override
     protected void onInitialize() {
         super.onInitialize();
 
-        this.option = SkinOptions.op();
-
-        add(configurePageTitle("pageTitle"));
         add(new WebMarkupContainer("pageBody")
                 .add($b.attrAppender("class", "page-full-width", " ", $m.ofValue(!withMenu()))));
 //        queue(new HeaderResponseContainer("css", "css"));
-        queue(new HeaderResponseContainer("scripts", "scripts"));
         queue(configureHeader("_Header"));
         if (withMenu()) {
             queue(configureMenu("_Menu"));
@@ -62,7 +76,7 @@ public abstract class Template extends PetModulePage {
     }
 
     protected Header configureHeader(String id) {
-        return new Header(id, withMenu(), withTopAction(), withSideBar(), option);
+        return new Header(id, withMenu(), withTopAction(), withSideBar(), getSkinOptions());
     }
 
     protected Label configurePageTitle(String id) {
@@ -79,14 +93,6 @@ public abstract class Template extends PetModulePage {
         }
         for (String script : initializerJavascripts) {
             response.render(OnDomReadyHeaderItem.forScript(script));
-        }
-        setSkin(response);
-    }
-
-    private void setSkin(IHeaderResponse response) {
-        Optional<SkinOptions.Skin> skin = option.currentSkin();
-        if (skin.isPresent()) {
-            skin.get().refs.forEach(response::render);
         }
     }
 
@@ -106,6 +112,7 @@ public abstract class Template extends PetModulePage {
         return true;
     }
 
+    @Override
     protected String getPageTitleLocalKey() {
         return "label.page.title.local";
     }
