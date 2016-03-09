@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
-import static br.net.mirante.singular.form.wicket.hepers.TestFinders.findId;
+import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
