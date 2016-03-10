@@ -219,7 +219,7 @@ public class CrudContent extends Content
                     Icone.MINUS, this::deleteSelected))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.visualizar.xml"),
-                    Icone.EYE, this::viewXml))
+                    Icone.CODE, this::viewXml))
             .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
         return builder.build("data-list");
     }

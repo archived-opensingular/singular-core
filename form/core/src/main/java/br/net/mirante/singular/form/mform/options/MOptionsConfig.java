@@ -100,11 +100,18 @@ public class MOptionsConfig {
         return optionsKeylabelMap.get(key);
     }
 
-    public String getKeyFromOptions(SInstance option) {
+    public String getKeyFromOption(SInstance option) {
         if (option == null) {
             return null;
         }
         return getOptions().inverse().get(option);
+    }
+
+    public String getLabelFromOption(SInstance option) {
+        if (option == null) {
+            return null;
+        }
+        return getLabelFromKey(getOptions().inverse().get(option));
     }
 
     /**

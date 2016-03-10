@@ -95,7 +95,7 @@ public class STypeStringSelectionFromProviderFieldTest extends SelectionFieldBas
     private Object getSelectKeyFromValue(String value) {
         SIString mvalue = selectType.novaInstancia();
         mvalue.setValue(value);
-        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOptions(mvalue);
+        return page.getCurrentInstance().getCampo("favoriteFruit").getOptionsConfig().getKeyFromOption(mvalue);
     }
 
 }

@@ -165,7 +165,7 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     }
 
     private Object getSelectKeyFromMInstancia(SInstance instancia) {
-        return getInstanciaSelect().getOptionsConfig().getKeyFromOptions(instancia);
+        return getInstanciaSelect().getOptionsConfig().getKeyFromOption(instancia);
     }
 
     private SInstance getInstanciaSelect() {
