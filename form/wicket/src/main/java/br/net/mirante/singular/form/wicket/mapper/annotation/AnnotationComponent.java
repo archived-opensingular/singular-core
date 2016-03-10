@@ -163,17 +163,17 @@ public class AnnotationComponent extends Panel {
 
                 thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente apagar este comentário?")));
 
-                this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Apagar"),
+                this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn"){
                         protected void onAction(AjaxRequestTarget target, Form<?> form){
                             ((SIAnnotation)model.getObject()).clear();
-                            target.add(AnnotationComponent.this);
+                            target.add(AnnotationComponent.this.mainGrid);
                             target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
                             thiz.hide(target);
                         }
                     }
                 );
-                this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                     new ActionAjaxLink("cancelDeleteBtn"){
                         protected void onAction(AjaxRequestTarget target) {
                             thiz.hide(target);
@@ -281,6 +281,10 @@ public class AnnotationComponent extends Panel {
     public void setMainGrid(BSContainer mainGrid) {
         this.mainGrid = mainGrid;
     }
+
+    void setKeepOpened(boolean keepOpened) {
+        this.keepOpened = keepOpened;
+    }
 }
 
 class AnnotationModalWindow extends BFModalWindow{
@@ -311,12 +315,14 @@ class AnnotationModalWindow extends BFModalWindow{
 
         this.setBody(createBody());
 
-        this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
+        this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                 createOkButton(parentComponent)
         );
-        this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+        this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                 createCancelButton()
         );
+
+        this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
     }
 
     private BSContainer createBody() {
@@ -374,7 +380,6 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
         return new ActionAjaxButton("btn-ok") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-//                target.add(parentComponent);
                 target.add(parentComponent.mainGrid);
                 AnnotationModalWindow.this.hide(target);
                 target.appendJavaScript(parentComponent.generateUpdateJS());
@@ -385,6 +390,7 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxLink<Void> createCancelButton() {
         return new ActionAjaxLink<Void>("btn-cancelar") {
             protected void onAction(AjaxRequestTarget target) {
+                parentComponent.setKeepOpened(false);
                 AnnotationModalWindow.this.hide(target);
             }
         };
