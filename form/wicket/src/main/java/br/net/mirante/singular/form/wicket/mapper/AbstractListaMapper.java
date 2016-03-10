@@ -32,7 +32,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         cell.newTemplateTag(t -> ""
                         + "<button"
                         + " wicket:id='_add'"
-                        + " class='btn btn-success btn-sm " + (footer ? "" : "pull-right") + "'"
+                        + " class='btn blue btn-sm " + (footer ? "" : "pull-right") + "'"
                         + " style='" + MapperCommons.BUTTON_STYLE +";"
                         + (footer ? "margin-top:3px;margin-right:7px;" : "") + "'><i style='"+MapperCommons.ICON_STYLE+"' class='" + Icone.PLUS + "'></i>"
                         + "</button>"
