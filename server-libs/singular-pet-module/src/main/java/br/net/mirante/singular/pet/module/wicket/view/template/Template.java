@@ -31,12 +31,6 @@ public abstract class Template extends PetModulePage {
     private List<String> initializerJavascripts = Collections.singletonList("App.init();");
 
     @Override
-    protected void initSkins() {
-        super.initSkins();
-        skinOptions.addSkin("Anvisa", CssHeaderItem.forUrl("/singular-static/resources/singular/themes/anvisa.css"));
-    }
-
-    @Override
     public List<CssHeaderItem> getDefaultCSSUrls() {
         final List<CssHeaderItem> defaultCSSUrls = super.getDefaultCSSUrls();
         defaultCSSUrls.add(CssHeaderItem.forUrl("/singular-static/resources/singular/fonts/google/open-sans.css"));
