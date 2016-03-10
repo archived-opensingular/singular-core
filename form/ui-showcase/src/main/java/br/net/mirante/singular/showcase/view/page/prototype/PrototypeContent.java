@@ -24,6 +24,7 @@ import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.wicket.model.MInstanceRootModel;
 import br.net.mirante.singular.form.wicket.panel.SingularFormPanel;
+import br.net.mirante.singular.form.wicket.util.WicketFormProcessing;
 import br.net.mirante.singular.showcase.dao.form.ExampleDataDTO;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
 import br.net.mirante.singular.showcase.dao.form.PrototypeDAO;
@@ -72,7 +73,7 @@ public class PrototypeContent extends Content {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
-                prototype.setName(instance.getValorString(SPackagePrototype.NAME_FIELD));
+                prototype.setName(instance.getValorString(SPackagePrototype.NAME));
                 prototype.setXml(getXmlFromInstance(instance));
                 prototypeDAO.save(prototype);
                 addToastrSuccessMessage("message.save.success");
@@ -88,7 +89,11 @@ public class PrototypeContent extends Content {
         newItemForm.add(new ActionAjaxButton("preview_btn") {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-                setResponsePage(new PreviewPage(model, PrototypeContent.this.getPage()));
+                if (WicketFormProcessing.onFormSubmit(form, Optional.of(target), singularFormPanel.getRootInstance(), true)) {
+                    setResponsePage(new PreviewPage(model, PrototypeContent.this.getPage()));
+                } else {
+                    addToastrWarningMessage("message.error.form");
+                }
             }
         });
 

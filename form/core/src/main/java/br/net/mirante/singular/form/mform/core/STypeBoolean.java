@@ -12,6 +12,9 @@ import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
 @MInfoTipo(nome = "Boolean", pacote = SPackageCore.class)
 public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
 
+    public static final String YES_LABEL = "Sim";
+    public static final String NO_LABEL = "Não";
+
     public STypeBoolean() {
         super(SIBoolean.class, Boolean.class);
     }
@@ -51,7 +54,7 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
      */
     @Override
     public STypeBoolean withRadioView() {
-        withSelectionFromProvider(newBooleanProvider("Sim", "Não"));
+        withSelectionFromProvider(newBooleanProvider(YES_LABEL, NO_LABEL));
         return (STypeBoolean) super.withView(MBooleanRadioView::new);
     }
 
@@ -84,5 +87,13 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
         v.labelFalse(labelFalse);
         v.labelTrue(labelTrue);
         return (STypeBoolean) super.withView(v);
+    }
+
+    public String toStringDisplay(Boolean valor) {
+        if (valor) {
+            return YES_LABEL;
+        } else {
+            return NO_LABEL;
+        }
     }
 }

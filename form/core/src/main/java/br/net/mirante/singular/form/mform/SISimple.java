@@ -77,7 +77,12 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     public String getDisplayString() {
-        return getType().toStringDisplay(getValue());
+        if (getType().getProviderOpcoes() != null) {
+            String key = getOptionsConfig().getKeyFromOption(this);
+            return getOptionsConfig().getLabelFromKey(key);
+        } else {
+            return getType().toStringDisplay(getValue());
+        }
     }
 
     public String toStringPersistencia() {

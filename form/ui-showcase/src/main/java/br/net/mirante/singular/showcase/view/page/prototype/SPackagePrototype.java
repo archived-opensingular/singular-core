@@ -1,6 +1,8 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
 import br.net.mirante.singular.form.mform.*;
+import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeDataHora;
@@ -20,23 +22,32 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created by nuk on 07/03/16.
  */
-public class SPackagePrototype  extends SPackage {
+public class SPackagePrototype extends SPackage {
 
-    public static final String  PACOTE = "mform.prototype",
-                                META_FORM = "MetaForm",
-                                META_FORM_COMPLETE = PACOTE + "." + META_FORM,
-                                CHILDREN = "children",
-                                NAME = "name",
-                                TYPE = "type",
-                                FIELDS = "fields";
+    public static final String PACOTE = "mform.prototype",
+            META_FORM = "MetaForm",
+            META_FORM_COMPLETE = PACOTE + "." + META_FORM,
+            CHILDREN = "children",
+            NAME = "name",
+            TYPE = "type",
+            IS_LIST = "isList",
+            TAMANHO_CAMPO = "tamanhoCampo",
+            OBRIGATORIO = "obrigatorio",
+            TAMANHO_MAXIMO = "tamanhoMaximo",
+            TAMANHO_INTEIRO_MAXIMO = "tamanhoInteiroMaximo",
+            TAMANHO_DECIMAL_MAXIMO = "tamanhoDecimalMaximo",
+            FIELDS = "fields";
     public static final String NAME_FIELD = "name";
 
+    private STypeInteger tamanhoCampo;
+    private STypeBoolean obrigatorio;
 
     public SPackagePrototype() {
         super(PACOTE);
@@ -45,7 +56,8 @@ public class SPackagePrototype  extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         final STypeComposite<?> meta = pb.createTipoComposto(META_FORM);
-        meta.addCampoString(NAME_FIELD).asAtrBasic().label("Nome");
+        meta.addCampoString(NAME_FIELD).asAtrBasic().label("Nome")
+                .as(AtrCore::new).obrigatorio();
 
         STypeLista<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addCampoListaOfComposto(CHILDREN, "field");
@@ -54,28 +66,31 @@ public class SPackagePrototype  extends SPackage {
 
         STypeComposite<SIComposite> fieldType = childFields.getTipoElementos();
 
-        fieldType.addCampoString(NAME)
-                .asAtrBasic().label("Nome")
-                .getTipo().asAtrBootstrap().colPreference(2);
-        ;
+        STypeString nome = fieldType.addCampoString(NAME);
+        nome.asAtrBasic().label("Nome")
+                .as(AtrCore::new).obrigatorio()
+                .getTipo().asAtrBootstrap().colPreference(4);
+
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
+                .getTipo().asAtrCore().obrigatorio()
                 .getTipo().asAtrBootstrap().colPreference(2);
         populateOptions(pb, type.withSelection());
 
-        STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
-                fieldType.addCampoListaOf(FIELDS, fieldType);
-        fields.asAtrBasic().label("Campos");
-        fields.withExists(
-                (instance) -> {
-                    Optional<String> optType = instance.findNearestValue(type, String.class);
-                    if(!optType.isPresent()) return false;
-                    return optType.get().equals(typeName(pb,STypeComposite.class));
-                } )
-                .asAtrBasic().dependsOn(() -> {
-                    return newArrayList(type);
-                })
-        ;
+        fieldType.addCampoBoolean(IS_LIST)
+                .asAtrBasic().label("Múltiplo")
+                .getTipo().asAtrBootstrap().colPreference(1);
+
+        addAttributeFields(pb, fieldType, type);
+
+        childFields.withView(new MListMasterDetailView()
+                .col(nome)
+                .col(type)
+                .col(tamanhoCampo)
+                .col(obrigatorio)
+        );
+
+        addFields(pb, fieldType, type);
 
     }
 
@@ -101,5 +116,60 @@ public class SPackagePrototype  extends SPackage {
 
     private String typeName(PackageBuilder pb, Class<? extends SType> typeClass) {
         return pb.getDicionario().getType(typeClass).getName();
+    }
+
+    private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
+        tamanhoCampo = fieldType.addCampoInteger(TAMANHO_CAMPO);
+        tamanhoCampo.asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
+                .getTipo().asAtrBootstrap().colPreference(3);
+
+        obrigatorio = fieldType.addCampoBoolean(OBRIGATORIO);
+        obrigatorio.withRadioView()
+                .asAtrBasic().label("Obrigatório")
+                .getTipo().asAtrBootstrap().colPreference(1);
+
+        fieldType.addCampoInteger(TAMANHO_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Máximo")
+                .visivel(
+                        (instance) -> {
+                            Optional<String> optType = instance.findNearestValue(type, String.class);
+                            if (!optType.isPresent()) return false;
+                            return optType.get().equals(typeName(pb, STypeInteger.class));
+                        }
+                );
+
+        Predicate<SInstance> ifDecimalPredicate = (instance) -> {
+            Optional<String> optType = instance.findNearestValue(type, String.class);
+            if (!optType.isPresent()) return false;
+            return optType.get().equals(typeName(pb, STypeDecimal.class));
+        };
+
+        fieldType.addCampoInteger(TAMANHO_INTEIRO_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Inteiro Máximo")
+                .visivel(ifDecimalPredicate);
+
+        fieldType.addCampoInteger(TAMANHO_DECIMAL_MAXIMO)
+                .asAtrBootstrap().colPreference(2)
+                .getTipo().asAtrBasic().label("Tamanho Decimal Máximo")
+                .visivel(ifDecimalPredicate);
+    }
+
+    private void addFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
+        STypeLista<STypeComposite<SIComposite>, SIComposite> fields =
+                fieldType.addCampoListaOf(FIELDS, fieldType);
+        fields.asAtrBasic().label("Campos")
+                .getTipo().withView(MListMasterDetailView::new)
+                .withExists(
+                        (instance) -> {
+                            Optional<String> optType = instance.findNearestValue(type, String.class);
+                            if (!optType.isPresent()) return false;
+                            return optType.get().equals(typeName(pb, STypeComposite.class));
+                        })
+                .asAtrBasic().dependsOn(() -> {
+            return newArrayList(type);
+        })
+        ;
     }
 }
