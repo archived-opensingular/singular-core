@@ -1,13 +1,13 @@
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.options.MOptionsProvider;
 
 @MInfoTipo(nome = "Boolean", pacote = SPackageCore.class)
 public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
@@ -89,8 +89,11 @@ public class STypeBoolean extends STypeSimple<SIBoolean, Boolean> {
         return (STypeBoolean) super.withView(v);
     }
 
+    @Override
     public String toStringDisplay(Boolean valor) {
-        if (valor) {
+        if (valor == null) {
+            return null;
+        } else if (valor) {
             return YES_LABEL;
         } else {
             return NO_LABEL;
