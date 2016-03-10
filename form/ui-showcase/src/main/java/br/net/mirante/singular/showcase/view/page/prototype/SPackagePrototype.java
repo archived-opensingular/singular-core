@@ -46,6 +46,8 @@ public class SPackagePrototype extends SPackage {
             FIELDS = "fields";
     public static final String NAME_FIELD = "name";
 
+    private STypeInteger tamanhoCampo;
+    private STypeBoolean obrigatorio;
 
     public SPackagePrototype() {
         super(PACOTE);
@@ -60,15 +62,15 @@ public class SPackagePrototype extends SPackage {
         STypeLista<STypeComposite<SIComposite>, SIComposite> childFields =
                 meta.addCampoListaOfComposto(CHILDREN, "field");
 
-        childFields.withView(MListMasterDetailView::new).asAtrBasic().label("Campos");
+        childFields.asAtrBasic().label("Campos");
 
         STypeComposite<SIComposite> fieldType = childFields.getTipoElementos();
 
-        fieldType.addCampoString(NAME)
-                .asAtrBasic().label("Nome")
+        STypeString nome = fieldType.addCampoString(NAME);
+        nome.asAtrBasic().label("Nome")
                 .as(AtrCore::new).obrigatorio()
                 .getTipo().asAtrBootstrap().colPreference(2);
-        ;
+
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
                 .getTipo().asAtrCore().obrigatorio()
@@ -80,6 +82,13 @@ public class SPackagePrototype extends SPackage {
                 .getTipo().asAtrBootstrap().colPreference(2);
 
         addAttributeFields(pb, fieldType, type);
+
+        childFields.withView(new MListMasterDetailView()
+                .col(nome)
+                .col(type)
+                .col(tamanhoCampo)
+                .col(obrigatorio)
+        );
 
         addFields(pb, fieldType, type);
 
@@ -110,12 +119,12 @@ public class SPackagePrototype extends SPackage {
     }
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
-        fieldType.addCampoInteger(TAMANHO_CAMPO)
-                .asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
+        tamanhoCampo = fieldType.addCampoInteger(TAMANHO_CAMPO);
+        tamanhoCampo.asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
                 .getTipo().asAtrBootstrap().colPreference(3);
 
-        fieldType.addCampoBoolean(OBRIGATORIO)
-                .withRadioView()
+        obrigatorio = fieldType.addCampoBoolean(OBRIGATORIO);
+        obrigatorio.withRadioView()
                 .asAtrBasic().label("Obrigatório")
                 .getTipo().asAtrBootstrap().colPreference(2);
 

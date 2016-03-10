@@ -73,7 +73,7 @@ public class PrototypeContent extends Content {
             @Override
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
                 SIComposite instance = (SIComposite) singularFormPanel.getRootInstance().getObject();
-                prototype.setName(instance.getValorString(SPackagePrototype.NAME_FIELD));
+                prototype.setName(instance.getValorString(SPackagePrototype.NAME));
                 prototype.setXml(getXmlFromInstance(instance));
                 prototypeDAO.save(prototype);
                 addToastrSuccessMessage("message.save.success");

@@ -77,12 +77,11 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
 
     @Override
     public String getDisplayString() {
-        String value = getType().toStringDisplay(getValue());
         if (getType().getProviderOpcoes() != null) {
             String key = getOptionsConfig().getKeyFromOptions(this);
             return getOptionsConfig().getLabelFromKey(key);
         } else {
-            return value;
+            return getType().toStringDisplay(getValue());
         }
     }
 
