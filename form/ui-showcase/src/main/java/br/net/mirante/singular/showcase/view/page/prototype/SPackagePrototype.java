@@ -69,7 +69,7 @@ public class SPackagePrototype extends SPackage {
         STypeString nome = fieldType.addCampoString(NAME);
         nome.asAtrBasic().label("Nome")
                 .as(AtrCore::new).obrigatorio()
-                .getTipo().asAtrBootstrap().colPreference(2);
+                .getTipo().asAtrBootstrap().colPreference(4);
 
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
@@ -79,7 +79,7 @@ public class SPackagePrototype extends SPackage {
 
         fieldType.addCampoBoolean(IS_LIST)
                 .asAtrBasic().label("Múltiplo")
-                .getTipo().asAtrBootstrap().colPreference(2);
+                .getTipo().asAtrBootstrap().colPreference(1);
 
         addAttributeFields(pb, fieldType, type);
 
@@ -126,7 +126,7 @@ public class SPackagePrototype extends SPackage {
         obrigatorio = fieldType.addCampoBoolean(OBRIGATORIO);
         obrigatorio.withRadioView()
                 .asAtrBasic().label("Obrigatório")
-                .getTipo().asAtrBootstrap().colPreference(2);
+                .getTipo().asAtrBootstrap().colPreference(1);
 
         fieldType.addCampoInteger(TAMANHO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
