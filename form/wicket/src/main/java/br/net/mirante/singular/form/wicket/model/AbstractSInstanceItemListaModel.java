@@ -4,7 +4,7 @@ import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 
 public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
@@ -26,15 +26,15 @@ public abstract class AbstractSInstanceItemListaModel<I extends SInstance>
     @Override
     @SuppressWarnings("unchecked")
     public I getObject() {
-        SList<I> iLista = getRootTarget();
+        SIList<I> iLista = getRootTarget();
         if (getIndex() >= iLista.size())
             return null;
         return (I) iLista.get(getIndex());
     }
 
     @SuppressWarnings("unchecked")
-    public SList<I> getRootTarget() {
-        return (SList<I>) ((rootTarget instanceof IModel<?>)
+    public SIList<I> getRootTarget() {
+        return (SIList<I>) ((rootTarget instanceof IModel<?>)
             ? ((IModel<?>) rootTarget).getObject()
             : rootTarget);
     }

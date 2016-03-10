@@ -17,7 +17,7 @@ public abstract class TestCaseForm extends TestCase {
         SInstance raiz = registro.getDocument().getRoot();
         if (caminho == null) {
             esperadoFull = raiz.getNome();
-        } else if (raiz instanceof SList) {
+        } else if (raiz instanceof SIList) {
             esperadoFull = raiz.getNome() + caminho;
         } else {
             esperadoFull = raiz.getNome() + "." + caminho;

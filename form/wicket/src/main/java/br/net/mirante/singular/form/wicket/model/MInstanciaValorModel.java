@@ -6,7 +6,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IObjectClassAwareModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
@@ -37,9 +37,9 @@ public class MInstanciaValorModel<T>
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void setObject(T object) {
         SInstance target = getTarget();
-        if (target instanceof SList) {
-            ((SList) target).clear();
-            ((List) object).forEach(((SList) target)::addValor);
+        if (target instanceof SIList) {
+            ((SIList) target).clear();
+            ((List) object).forEach(((SIList) target)::addValor);
         } else {
             target.setValue(object);
         }

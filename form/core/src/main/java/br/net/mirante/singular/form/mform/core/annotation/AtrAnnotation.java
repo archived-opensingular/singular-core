@@ -1,13 +1,8 @@
 package br.net.mirante.singular.form.mform.core.annotation;
 
-import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import br.net.mirante.singular.form.mform.AtrRef;
 import br.net.mirante.singular.form.mform.MAtributoEnabled;
@@ -15,9 +10,8 @@ import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 import static com.google.common.collect.Lists.newArrayList;
 
@@ -140,7 +134,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * @return All annotations on this instance and its children.
      */
     public List<SIAnnotation> allAnnotations() {
-        SList sList = persistentAnnotations();
+        SIList sList = persistentAnnotations();
         if(sList == null) return newArrayList();
         return sList.getValores();
     }
@@ -151,19 +145,19 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * is referring to.
      * @param annotations to be loaded into the instance.
      */
-    public void loadAnnotations(SList annotations) {
+    public void loadAnnotations(SIList annotations) {
         target().getDocument().setAnnotations(annotations);
     }
 
     /**
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
-    public SList persistentAnnotations() {
+    public SIList persistentAnnotations() {
         return ((SInstance)getAlvo()).getDocument().annotations();
     }
 
-    private SList newAnnotationList() {
-        return (SList) annotationListType().novaInstancia();
+    private SIList newAnnotationList() {
+        return (SIList) annotationListType().novaInstancia();
     }
 
     private STypeAnnotationList annotationListType() {

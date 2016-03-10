@@ -20,7 +20,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         STypeLista<STypeString, SIString> nomes = pb.createTipoListaOf("nomes", STypeString.class);
 
-        SList<SIString> lista = (SList<SIString>) nomes.novaInstancia();
+        SIList<SIString> lista = (SIList<SIString>) nomes.novaInstancia();
         lista.addValor("Paulo");
         assertLista(lista, new String[] { "Paulo" });
         lista.addValor("Joao");
@@ -38,7 +38,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         assertLista(lista, new String[] { "Paulo", "Maria" });
         assertException(() -> lista.remove(10), IndexOutOfBoundsException.class);
 
-        SList<SIInteger> listaInt = (SList<SIInteger>) dicionario.getType(STypeInteger.class).novaLista();
+        SIList<SIInteger> listaInt = (SIList<SIInteger>) dicionario.getType(STypeInteger.class).novaLista();
         listaInt.addValor(10);
         assertLista(listaInt, new Integer[] { 10 });
         listaInt.addValor("20");
@@ -51,7 +51,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
     }
 
-    private static void assertLista(SList<?> lista, Object[] valoresEsperados) {
+    private static void assertLista(SIList<?> lista, Object[] valoresEsperados) {
         assertEqualsList(lista.getValue(), valoresEsperados);
     }
 
@@ -63,7 +63,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
         tipoPedidos.getTipoElementos().addCampoString("descricao");
         tipoPedidos.getTipoElementos().addCampoInteger("qtd");
 
-        SList<SIComposite> pedidos = (SList<SIComposite>) tipoPedidos.novaInstancia();
+        SIList<SIComposite> pedidos = (SIList<SIComposite>) tipoPedidos.novaInstancia();
         SIComposite pedido;
         assertException(() -> pedidos.addValor("Paulo"), "SIComposite só suporta valores de mesmo tipo");
         pedido = pedidos.addNovo();
@@ -107,7 +107,7 @@ public class TestMPacoteCoreTipoLista extends TestCaseForm {
 
         STypeLista<STypeFormula, SIFormula> tipoFormulas = pb.createTipoListaOf("formulas", STypeFormula.class);
 
-        SList<SIFormula> formulas = (SList<SIFormula>) tipoFormulas.novaInstancia();
+        SIList<SIFormula> formulas = (SIList<SIFormula>) tipoFormulas.novaInstancia();
 
         SIFormula formula = formulas.addNovo();
         formula.setSciptJS("XXX");

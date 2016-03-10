@@ -1,6 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.SIString;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,7 @@ public class TestMFormUtilUserFriendlyPath {
 
     private SIComposite evento;
 
-    private SList<SIComposite> alertas;
+    private SIList<SIComposite> alertas;
 
     @Before
     public void setUp() {

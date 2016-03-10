@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.MTypes;
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -57,7 +57,7 @@ public class SDocument {
 
     private SDocumentFactory documentFactory;
 
-    private SList annotations;
+    private SIList annotations;
 
     public SDocument() {}
 
@@ -314,7 +314,7 @@ public class SDocument {
         return null;
     }
 
-    public void setAnnotations(SList annotations) {
+    public void setAnnotations(SIList annotations) {
         this.annotations = annotations;
     }
 
@@ -322,13 +322,13 @@ public class SDocument {
         return root.getDictionary();
     }
 
-    private SList newAnnotationList() {
+    private SIList newAnnotationList() {
         if (getRootRefType().isPresent()) {
             RefType refTypeAnnotation = getRootRefType().get().createSubReference(STypeAnnotationList.class);
             if (getDocumentFactoryRef() != null) {
-                return (SList) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
+                return (SIList) getDocumentFactoryRef().get().createInstance(refTypeAnnotation);
             }
-            return (SList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
+            return (SIList) SDocumentFactory.empty().createInstance(refTypeAnnotation);
         }
         return dictionary().newInstance(STypeAnnotationList.class);
     }
@@ -342,7 +342,7 @@ public class SDocument {
         if(annotations == null) setAnnotations(newAnnotationList());
     }
 
-    public SList annotations() { return annotations; }
+    public SIList annotations() { return annotations; }
 }
 
 /**

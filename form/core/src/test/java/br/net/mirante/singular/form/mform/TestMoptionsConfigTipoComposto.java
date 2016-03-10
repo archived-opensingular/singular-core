@@ -106,7 +106,7 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testSelectLabel() {
-        SList lista = _periodo.getProviderOpcoes().listAvailableOptions(periodo);
+        SIList lista = _periodo.getProviderOpcoes().listAvailableOptions(periodo);
         SInstance instancia1 = lista.get(0);
         Assert.assertEquals(label1, instancia1.getSelectLabel());
         SInstance instancia2 = lista.get(0);

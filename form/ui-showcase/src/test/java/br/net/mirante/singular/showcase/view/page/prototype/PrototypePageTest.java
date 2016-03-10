@@ -8,10 +8,8 @@ import br.net.mirante.singular.form.mform.io.MformPersistenciaXML;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.showcase.SpringWicketTester;
 import br.net.mirante.singular.showcase.dao.form.Prototype;
-import br.net.mirante.singular.showcase.view.page.form.crud.CrudPage;
 import br.net.mirante.singular.showcase.view.template.Content;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +54,7 @@ public class PrototypePageTest {
 
     @Test public void rendersPrototypeOnScreen(){
 
-        SList campo = (SList) currentInstance.getCampo(SPackagePrototype.CHILDREN);
+        SIList campo = (SIList) currentInstance.getCampo(SPackagePrototype.CHILDREN);
         assertThat(campo).isNotNull();
 
         SIComposite field = (SIComposite) campo.addNovo();

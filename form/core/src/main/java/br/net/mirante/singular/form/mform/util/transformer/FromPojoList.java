@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 
@@ -45,8 +45,8 @@ public class FromPojoList<T> extends FromPojo<T> {
     }
 
     @Override
-    public SList<?> build() {
-        SList<?> lista = target.novaLista();
+    public SIList<?> build() {
+        SIList<?> lista = target.novaLista();
         for (T pojo : pojoList) {
             SIComposite instancia = target.novaInstancia();
             for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {

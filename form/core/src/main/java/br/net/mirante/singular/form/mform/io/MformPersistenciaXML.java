@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.ICompositeInstance;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -122,8 +122,8 @@ public class MformPersistenciaXML {
                     fromXML(instc.getCampo(campo.getSimpleName()), xmlFilho);
                 }
             }
-        } else if (instancia instanceof SList) {
-            SList<?> lista = (SList<?>) instancia;
+        } else if (instancia instanceof SIList) {
+            SIList<?> lista = (SIList<?>) instancia;
             String nomeFilhos = lista.getType().getTipoElementos().getSimpleName();
             for (MElement xmlFilho : xml.getElements(nomeFilhos)) {
                 SInstance filho = lista.addNovo();
@@ -232,7 +232,7 @@ public class MformPersistenciaXML {
 
         SDocument document = instance.getDocument();
         RefType refAnnotation = document.getRootRefType().get().createSubReference(STypeAnnotationList.class);
-        SList<SIAnnotation> iAnnotations = (SList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
+        SIList<SIAnnotation> iAnnotations = (SIList<SIAnnotation>) MformPersistenciaXML.fromXML(refAnnotation, xmlAnnotations,
                 document.getDocumentFactoryRef().get());
 
         instance.as(AtrAnnotation::new).loadAnnotations(iAnnotations);
@@ -275,8 +275,8 @@ public class MformPersistenciaXML {
                 }
             }
             return registro;
-        } else if (instancia instanceof SList) {
-            SList<?> lista = (SList<?>) instancia;
+        } else if (instancia instanceof SIList) {
+            SIList<?> lista = (SIList<?>) instancia;
             if (lista.isEmpty()) {
                 return null;
             }

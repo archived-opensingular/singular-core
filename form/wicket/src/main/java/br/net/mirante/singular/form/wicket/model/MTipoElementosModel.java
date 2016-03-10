@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.wicket.model;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
@@ -25,8 +25,8 @@ public class MTipoElementosModel
 
     @SuppressWarnings("unchecked")
     public static SType<SInstance> getTipoElementos(Object obj) {
-        if (obj instanceof SList<?>)
-            return ((SList<SInstance>) obj).getTipoElementos();
+        if (obj instanceof SIList<?>)
+            return ((SIList<SInstance>) obj).getTipoElementos();
         if (obj instanceof STypeLista<?, ?>)
             return ((STypeLista<SType<SInstance>, SInstance>) obj).getTipoElementos();
         if (obj instanceof IModel<?>)

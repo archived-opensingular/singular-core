@@ -1,7 +1,7 @@
 package br.net.mirante.singular.exemplos;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class SelectBuilder {
 
-    public static SList<?> buildEstados(STypeComposite<?> tipoOpcoes) {
+    public static SIList<?> buildEstados(STypeComposite<?> tipoOpcoes) {
         return estados(tipoOpcoes);
     }
 
-    private static SList estados(STypeComposite<?> select) {
-        SList estados = select.novaLista();
+    private static SIList estados(STypeComposite<?> select) {
+        SIList estados = select.novaLista();
         estados.addElement(create(select, "AC", "Acre"));
         estados.addElement(create(select, "AL", "Alagoas"));
         estados.addElement(create(select, "AP", "Amapá"));
@@ -72,7 +72,7 @@ public class SelectBuilder {
                 .collect(Collectors.toList());
     }
 
-    public static SList<? extends SInstance> buildMunicipiosFiltrado(STypeComposite<?> tipoOpcoes, String uf, SList<? extends SInstance> lista) {
+    public static SIList<? extends SInstance> buildMunicipiosFiltrado(STypeComposite<?> tipoOpcoes, String uf, SIList<? extends SInstance> lista) {
         buildMunicipiosFiltrado(tipoOpcoes, uf).forEach(si -> lista.addElement(si));
         return lista;
     }

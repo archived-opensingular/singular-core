@@ -10,7 +10,7 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -43,9 +43,9 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         tipoDeMedia.withRadioView();
         tipoDeMedia.withSelectionFromProvider(new MOptionsProvider() {
             @Override
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
                 STypeString type = dicionario.getType(STypeString.class);
-                SList<?> r = type.novaLista();
+                SIList<?> r = type.novaLista();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
                 r.addElement(newElement(type, "BIN", "Binário"));

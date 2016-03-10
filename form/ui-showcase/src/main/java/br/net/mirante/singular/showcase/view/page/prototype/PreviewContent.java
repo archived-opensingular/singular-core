@@ -17,7 +17,6 @@ import org.apache.wicket.model.ResourceModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import java.text.Normalizer;
 import java.util.List;
 
 /**
@@ -90,18 +89,18 @@ class TypeBuilder {
 
     public STypeComposite<? extends SIComposite> createRootType() {
         final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
-        SList children = (SList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
+        SIList children = (SIList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
         addChildFieldsIfAny(root, children);
         return root;
     }
 
     private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root,
                                      SIComposite descriptor) {
-        SList children = (SList) descriptor.getCampo(SPackagePrototype.CHILDREN);
+        SIList children = (SIList) descriptor.getCampo(SPackagePrototype.CHILDREN);
         addChildFieldsIfAny(root, children);
     }
 
-    private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SList children) {
+    private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SIList children) {
         if(!children.isEmptyOfData()){
             for(SIComposite f: (List<SIComposite>)children.getValores()){
                 addField(root, f);
@@ -117,7 +116,7 @@ class TypeBuilder {
         SType<?> fieldType = root.addCampo(generateJavaIdentifier(name), typeOfField);
         fieldType.asAtrBasic().label(name);
         if(typeOfField instanceof STypeComposite){
-            SList children = (SList) descriptor.getCampo(SPackagePrototype.FIELDS);
+            SIList children = (SIList) descriptor.getCampo(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
         }
     }

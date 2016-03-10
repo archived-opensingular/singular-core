@@ -26,8 +26,8 @@ public class TestMoptionsConfigTipoLista {
     private STypeComposite<SIComposite> _alerta;
     private STypeData _alerta_data;
     private SIComposite evento;
-    private SList<SIComposite> alertas;
-    private SList listaAlertas;
+    private SIList<SIComposite> alertas;
+    private SIList listaAlertas;
     private SInstance opcaoAlerta1;
     private SInstance opcaoAlerta2;
     private SInstance opcaoAlerta3;
@@ -53,7 +53,7 @@ public class TestMoptionsConfigTipoLista {
         evento = _raiz.novaInstancia();
 
         //alertas
-        listaAlertas = (SList) evento.getCampo(_alertas.getSimpleName());
+        listaAlertas = (SIList) evento.getCampo(_alertas.getSimpleName());
 
         _alerta.withSelectionFromProvider(_alerta_data, new MOptionsCompositeProvider() {
             @Override
@@ -75,7 +75,7 @@ public class TestMoptionsConfigTipoLista {
             }
         });
 
-        SList listaOpcoes = _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas);
+        SIList listaOpcoes = _alerta.getProviderOpcoes().listAvailableOptions(listaAlertas);
         opcaoAlerta1 = listaOpcoes.get(0);
         opcaoAlerta2 = listaOpcoes.get(1);
         opcaoAlerta3 = listaOpcoes.get(2);
