@@ -14,8 +14,10 @@
             <a href='#' tabindex='-1' onkeydown='return false;'></a>
         </div>
     </div>
-</wicket:extend>
 <script>
+
+    var enableAJAXPageBlock = true;
+
     jQuery(document).ready(function () {
 
         Wicket.Event.subscribe('/ajax/call/beforeSend', function (evt, attrs, jqXHR, settings) {
@@ -43,5 +45,6 @@
         $('[data-toggle="tooltip"]').tooltip();
     });
 </script>
+</wicket:extend>
 </body>
 </html>
