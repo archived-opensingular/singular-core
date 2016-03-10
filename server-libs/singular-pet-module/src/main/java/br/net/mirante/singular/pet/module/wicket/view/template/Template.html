@@ -28,6 +28,8 @@
                     App.startPageLoading({animate: true});
                 }, 1200);
             }
+
+            toastr.clear();
         });
         Wicket.Event.subscribe('/ajax/call/complete', function (evt, attrs, jqXHR, textStatus) {
             if (enableAJAXPageBlock) {
