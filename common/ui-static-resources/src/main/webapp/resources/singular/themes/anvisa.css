@@ -532,3 +532,7 @@ body.page-md {
 .page-spinner-bar > div,
 .block-spinner-bar > div {
   background: #6fa7d7; }
+
+.scroll-to-top {
+  bottom: 30px;
+}
