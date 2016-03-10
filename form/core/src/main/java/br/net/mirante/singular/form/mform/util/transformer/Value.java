@@ -3,7 +3,7 @@ package br.net.mirante.singular.form.mform.util.transformer;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
@@ -53,13 +53,13 @@ public class Value {
 
     public static <T> boolean notNull(SInstance current, STypeLista tipo) {
         if (current != null && tipo != null) {
-            SList instanciaLista = (SList) getInstance(current, tipo);
+            SIList instanciaLista = (SIList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
         }
         return false;
     }
 
-    public static <T> boolean notNull(SList instanciaLista) {
+    public static <T> boolean notNull(SIList instanciaLista) {
         return instanciaLista != null && !instanciaLista.isEmpty();
     }
 
@@ -90,11 +90,29 @@ public class Value {
             return Value.notNull((SIComposite) instancia);
         } else if (instancia instanceof SISimple) {
             return Value.notNull((SISimple) instancia);
-        } else if (instancia instanceof SList) {
-            return Value.notNull((SList) instancia);
+        } else if (instancia instanceof SIList) {
+            return Value.notNull((SIList) instancia);
         } else {
             throw new SingularFormException("Tipo de instancia não suportado", instancia);
         }
+    }
+
+    /**
+     * Retorna o valor de uma instancia filha simples a partir da instancia
+     * composta informada
+     *
+     * @param instanciaComposta
+     * @param path
+     * @return
+     */
+    public static <T> T of(SInstance instanciaComposta, String path) {
+        if (instanciaComposta instanceof SIComposite) {
+            SInstance campo = ((SIComposite) instanciaComposta).getCampo(path);
+            if (campo instanceof SISimple) {
+                return Value.of((SISimple<T>) campo);
+            }
+        }
+        return null;
     }
 
     /**
@@ -130,8 +148,8 @@ public class Value {
                 fromMap((Map<String, Object>) value, (SIComposite) instancia);
             } else if (instancia instanceof SISimple) {
                 ((SISimple) instancia).setValue(value);
-            } else if (instancia instanceof SList) {
-                fromList((List<Object>) value, (SList) instancia);
+            } else if (instancia instanceof SIList) {
+                fromList((List<Object>) value, (SIList) instancia);
             } else {
                 throw new SingularFormException("Tipo de instancia não suportado: " + instancia.getClass().getName());
             }
@@ -144,7 +162,7 @@ public class Value {
         }
     }
 
-    private static void fromList(List<Object> list, SList sList) {
+    private static void fromList(List<Object> list, SIList sList) {
         for (Object o : list) {
             SInstance novo = sList.addNovo();
             hydrate(novo, o);
@@ -166,7 +184,7 @@ public class Value {
                 return map;
             } else if (value instanceof SISimple) {
                 return ((SISimple) value).getValue();
-            } else if (value instanceof SList) {
+            } else if (value instanceof SIList) {
                 List<Object> list = new ArrayList<>();
                 toList(list, (SInstance) value);
                 return list;
@@ -187,8 +205,8 @@ public class Value {
     }
 
     private static void toList(List<Object> value, SInstance instancia) {
-        if (instancia instanceof SList<?>) {
-            for (SInstance i : ((SList<?>) instancia).getValores()) {
+        if (instancia instanceof SIList<?>) {
+            for (SInstance i : ((SIList<?>) instancia).getValores()) {
                 value.add(dehydrate(i));
             }
         }

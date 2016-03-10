@@ -12,17 +12,17 @@ import java.util.stream.Stream;
 
 import static com.google.common.collect.Lists.newArrayList;
 
-public class SList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
+public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
     private List<E> valores;
 
     private SType<E> tipoElementos;
 
-    public SList() {}
+    public SIList() {}
 
-    static <I extends SInstance> SList<I> of(SType<I> tipoElementos) {
+    static <I extends SInstance> SIList<I> of(SType<I> tipoElementos) {
         //        MILista<I> lista = new MILista<>();
-        SList<I> lista = (SList<I>) tipoElementos.getDictionary().getType(STypeLista.class).novaInstancia();
+        SIList<I> lista = (SIList<I>) tipoElementos.getDictionary().getType(STypeLista.class).novaInstancia();
         lista.setType(tipoElementos.getDictionary().getType(STypeLista.class));
         lista.tipoElementos = tipoElementos;
         return lista;
@@ -107,7 +107,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
         return addInterno(instancia);
     }
 
-    public SList<E> addValores(Collection<?> valores) {
+    public SIList<E> addValores(Collection<?> valores) {
         for (Object valor : valores)
             addValor(valor);
         return this;
@@ -170,11 +170,11 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
 
     @Override
     public void setValue(Object obj) {
-        if(obj instanceof SList){
+        if(obj instanceof SIList){
             clearInstance();
-            valores = newArrayList(((SList)obj).valores);
-            tipoElementos = ((SList)obj).tipoElementos;
-            ((SList) obj).getValue().clear();
+            valores = newArrayList(((SIList)obj).valores);
+            tipoElementos = ((SIList)obj).tipoElementos;
+            ((SIList) obj).getValue().clear();
         }else{
             throw new RuntimeException("SList só suporta valores de mesmo tipo");
         }
@@ -275,7 +275,7 @@ public class SList<E extends SInstance> extends SInstance implements Iterable<E>
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SList<?> other = (SList<?>) obj;
+        SIList<?> other = (SIList<?>) obj;
         if (size() != other.size()) {
             return false;
         } else if (!getType().equals(other.getType())) {

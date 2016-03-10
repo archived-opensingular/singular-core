@@ -6,7 +6,7 @@ import java.util.Collection;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
@@ -29,41 +29,41 @@ public interface MOptionsProvider extends Serializable {
      * @param selectedValueInstance : Current isntance used to select the options.
      * @return list of options from the expected {@link SInstance} type.
      */
-    default public SList<? extends SInstance> listAvailableOptions(MSelectionableInstance selectedValueInstance) {
-        SList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance);
+    default public SIList<? extends SInstance> listAvailableOptions(MSelectionableInstance selectedValueInstance) {
+        SIList<? extends SInstance> defaultOptions = listOptions((SInstance) selectedValueInstance);
         checkForDanglingValues((SInstance) selectedValueInstance, defaultOptions);
         return defaultOptions;
     }
 
-    public default void checkForDanglingValues(SInstance selectedValueInstance, SList<? extends SInstance> defaultOptions) {
+    public default void checkForDanglingValues(SInstance selectedValueInstance, SIList<? extends SInstance> defaultOptions) {
         Object value = selectedValueInstance.getValue();
         if (value == null) return;
         if (value instanceof Collection && ((Collection<?>) value).isEmpty()) return;
         addNotPresentElement(selectedValueInstance, defaultOptions);
     }
 
-    public default void addNotPresentElement(SInstance selectedValueInstance, SList<? extends SInstance> defaultOptions) {
-        if (selectedValueInstance instanceof SList) {
-            addNotPresentElementsOfList((SList) selectedValueInstance, defaultOptions);
+    public default void addNotPresentElement(SInstance selectedValueInstance, SIList<? extends SInstance> defaultOptions) {
+        if (selectedValueInstance instanceof SIList) {
+            addNotPresentElementsOfList((SIList) selectedValueInstance, defaultOptions);
         } else {
             addNotPresentElement(defaultOptions, selectedValueInstance);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    public default void addNotPresentElementsOfList(SList<?> listValue, SList<? extends SInstance> defaultOptions) {
+    public default void addNotPresentElementsOfList(SIList<?> listValue, SIList<? extends SInstance> defaultOptions) {
         for (SInstance selectedValueInstance : listValue.getAllChildren()) {
             addNotPresentElement(defaultOptions, selectedValueInstance);
         }
     }
 
-    public default void addNotPresentElement(SList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
+    public default void addNotPresentElement(SIList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
         if (!containsValue(defaultOptions, selectedValueInstance)) {
             addNewValueUpfront(defaultOptions, selectedValueInstance);
         }
     }
 
-    public default boolean containsValue(SList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
+    public default boolean containsValue(SIList<? extends SInstance> defaultOptions, SInstance selectedValueInstance) {
         if (!Value.notNull(selectedValueInstance)) {
             return true;
         }
@@ -75,7 +75,7 @@ public interface MOptionsProvider extends Serializable {
         return false;
     }
 
-    public default void addNewValueUpfront(SList<? extends SInstance> defaultOptions, SInstance value) {
+    public default void addNewValueUpfront(SIList<? extends SInstance> defaultOptions, SInstance value) {
         MSelectionableInstance newValue = (MSelectionableInstance) defaultOptions.addNovoAt(0);
         MSelectionableInstance currentValue = (MSelectionableInstance) value;
         if (currentValue instanceof SIComposite) {
@@ -97,5 +97,5 @@ public interface MOptionsProvider extends Serializable {
      * @param optionsInstance : Current isntance used to select the options.
      * @return list of options from the expected {@link SInstance} type.
      */
-    public SList<? extends SInstance> listOptions(SInstance optionsInstance);
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance);
 }

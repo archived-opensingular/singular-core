@@ -190,7 +190,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         annotation1.setText("The past will haunt ya.");
 
         FormSerialized persisted = FormSerializationUtil.toSerializedObject(current.as(AtrAnnotation::new).persistentAnnotations());
-        SList backup = (SList) FormSerializationUtil.toInstance(persisted);
+        SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
         annotation1.setText("What's up doc?");
 
@@ -217,7 +217,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         SIAnnotation annotation1 = old.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
         annotation1.setText("The past will haunt ya.");
         FormSerialized persisted = FormSerializationUtil.toSerializedObject(old.as(AtrAnnotation::new).persistentAnnotations());
-        SList backup = (SList) FormSerializationUtil.toInstance(persisted);
+        SIList backup = (SIList) FormSerializationUtil.toInstance(persisted);
 
         SIComposite current = page.getCurrentInstance();
         current.as(AtrAnnotation::new).loadAnnotations(backup);

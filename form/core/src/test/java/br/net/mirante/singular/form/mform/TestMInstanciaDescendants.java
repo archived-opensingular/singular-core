@@ -28,12 +28,12 @@ public class TestMInstanciaDescendants {
         endereco.getDescendant(pacote.enderecoCidade).setValue("Guará II");
         endereco.getDescendant(pacote.enderecoEstado).setValue("DF");
 
-        SList<SIString> telefones = contato.getDescendant(pacote.telefones);
+        SIList<SIString> telefones = contato.getDescendant(pacote.telefones);
         telefones.addValor("8888-8888");
         telefones.addValor("9999-8888");
         telefones.addValor("9999-9999");
 
-        SList<SIString> emails = contato.getDescendant(pacote.emails);
+        SIList<SIString> emails = contato.getDescendant(pacote.emails);
         emails.addValor("fulano@detal.com");
 
         Assert.assertEquals(

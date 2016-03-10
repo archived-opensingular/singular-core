@@ -39,7 +39,7 @@ public class TestSDocument extends TestCaseForm {
         tipoComposto.addCampoString("nome");
         tipoComposto.addCampoListaOf("dependentes", STypeString.class);
 
-        SList<SIComposite> pessoas = tipoLista.novaInstancia(SIComposite.class);
+        SIList<SIComposite> pessoas = tipoLista.novaInstancia(SIComposite.class);
         assertFilhos(pessoas, 0);
 
         SIComposite pessoa = pessoas.addNovo();

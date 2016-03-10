@@ -76,12 +76,12 @@ public interface ICompositeInstance {
      *         ainda.
      */
     @SuppressWarnings("unchecked")
-    public default <T extends SInstance> SList<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
-        SList<?> lista = getFieldList(path);
+    public default <T extends SInstance> SIList<T> getFieldList(String path, Class<T> typeOfInstanceElements) {
+        SIList<?> lista = getFieldList(path);
         if (lista == null) {
             return null;
         } else if (typeOfInstanceElements.isAssignableFrom(lista.getTipoElementos().getClasseInstancia())) {
-            return (SList<T>) lista;
+            return (SIList<T>) lista;
         }
         throw new RuntimeException(
             "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getTipoElementos().getClasseInstancia().getName()
@@ -96,13 +96,13 @@ public interface ICompositeInstance {
      * @return Null se o campo no path indicado não tiver sido instanciado
      *         ainda.
      */
-    public default SList<?> getFieldList(String path) {
+    public default SIList<?> getFieldList(String path) {
         SInstance instancia = getCampo(path);
-        if (instancia != null && !(instancia instanceof SList)) {
+        if (instancia != null && !(instancia instanceof SIList)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
-                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SList.class.getName());
+                + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIList.class.getName());
         }
-        return (SList<?>) instancia;
+        return (SIList<?>) instancia;
     }
 
     public default String getValorString(String pathCampo) {

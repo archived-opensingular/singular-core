@@ -11,7 +11,7 @@ import org.junit.Test;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -87,7 +87,7 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated2).annotation().setApproved(true);
         asAnnotation(instance, annotated4).annotation().setText("ukwatapheya");
 
-        SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        SIList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
         assertThat(persistent.getTipoElementos()).isInstanceOf(STypeAnnotation.class);
         assertThat(extractProperty("text").from(persistent.getValores()))
@@ -107,14 +107,14 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-        SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        SIList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
-        SList deserialized = (SList) FormSerializationUtil.toInstance(serialized);
+        SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
 
         SIComposite justCreated = baseCompositeField.novaInstancia();
 
         justCreated.as(AtrAnnotation::new).loadAnnotations(deserialized);
-        SList anotherPersistent = justCreated.as(AtrAnnotation::new).persistentAnnotations();
+        SIList anotherPersistent = justCreated.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(extractProperty("text").from(anotherPersistent.getValores()))
                 .containsOnly("Abacate");
     }
@@ -131,12 +131,12 @@ public class STypeAnnotationTest {
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
-        SList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        SIList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
-        SList deserialized = (SList) FormSerializationUtil.toInstance(serialized);
+        SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
         asAnnotation(instance, annotated1).clear();
         instance.as(AtrAnnotation::new).loadAnnotations(deserialized);
-        SList anotherPersistent = instance.as(AtrAnnotation::new).persistentAnnotations();
+        SIList anotherPersistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
     }
 

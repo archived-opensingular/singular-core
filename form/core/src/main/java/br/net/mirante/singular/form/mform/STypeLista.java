@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  * @author Daniel C. Bordin
  */
 @MInfoTipo(nome = "MTipoLista", pacote = SPackageCore.class)
-public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<SList<I>> implements ICompositeType {
+public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<SIList<I>> implements ICompositeType {
 
     private E tipoElementos;
     private Integer minimumSize;
@@ -26,7 +26,7 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
         // O cast na linha abaixo parece redundante, mas é necessário para
         // contornar um erro de compilação do JDK 8.0.60. Talvez no futuro
         // possa ser retirada
-        super((Class<? extends SList<I>>) (Class<? extends SInstance>) SList.class);
+        super((Class<? extends SIList<I>>) (Class<? extends SInstance>) SIList.class);
     }
 
     @Override
@@ -50,22 +50,22 @@ public class STypeLista<E extends SType<I>, I extends SInstance> extends SType<S
      * </pre>
      */
     @SuppressWarnings("unchecked")
-    public <T extends SInstance> SList<T> novaInstancia(Class<T> classOfElements) {
-        SList<?> nova = novaInstancia();
+    public <T extends SInstance> SIList<T> novaInstancia(Class<T> classOfElements) {
+        SIList<?> nova = novaInstancia();
         if (!classOfElements.isAssignableFrom(getTipoElementos().getClasseInstancia())) {
             throw new RuntimeException("As instancias da lista são do tipo " + getTipoElementos().getClasseInstancia().getName()
                     + ", que não é compatível com o solicitado " + classOfElements.getName());
         }
-        return (SList<T>) nova;
+        return (SIList<T>) nova;
     }
 
     @Override
-    SList<I> newInstance(SDocument owner) {
+    SIList<I> newInstance(SDocument owner) {
         if (tipoElementos == null) {
             throw new RuntimeException("Não é possível instanciar o tipo '" + getName()
                     + "' pois o tipo da lista (o tipo de seus elementos) não foram definidos");
         }
-        SList<I> lista = new SList<>();
+        SIList<I> lista = new SIList<>();
         lista.setType(this);
         lista.setDocument(owner);
         return lista;

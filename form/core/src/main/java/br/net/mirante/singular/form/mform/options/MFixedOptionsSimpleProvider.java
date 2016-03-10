@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
@@ -11,7 +11,7 @@ import java.util.Collection;
 @SuppressWarnings("serial")
 public class MFixedOptionsSimpleProvider implements MOptionsProvider {
 
-    private final SList<? extends SInstance> opcoes;
+    private final SIList<? extends SInstance> opcoes;
 
     public MFixedOptionsSimpleProvider(SType<?> tipoOpcoes, Collection<?> lista) {
         this.opcoes = tipoOpcoes.novaLista();
@@ -76,7 +76,7 @@ public class MFixedOptionsSimpleProvider implements MOptionsProvider {
     }
 
     @Override
-    public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
+    public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
         return opcoes;
     }
 

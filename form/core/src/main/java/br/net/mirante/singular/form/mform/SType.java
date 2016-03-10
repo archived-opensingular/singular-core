@@ -479,8 +479,8 @@ public class SType<I extends SInstance> extends MEscopoBase implements MAtributo
         return newInstance(this, owner);
     }
 
-    public SList<?> novaLista() {
-        return SList.of(this);
+    public SIList<?> novaLista() {
+        return SIList.of(this);
     }
 
     private I newInstance(SType<?> original, SDocument owner) {

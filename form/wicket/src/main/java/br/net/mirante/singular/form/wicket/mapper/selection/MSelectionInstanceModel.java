@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.options.MOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
@@ -23,8 +23,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     @SuppressWarnings("unchecked")
     public T getObject() {
         SInstance target = getTarget();
-        if (getTarget() instanceof SList) {
-            SList list = (SList) getTarget();
+        if (getTarget() instanceof SIList) {
+            SIList list = (SIList) getTarget();
             return (T) list.getAllChildren()
                     .stream()
                     .map(c -> getSimpleSelection(c, list.getOptionsConfig()))
@@ -72,8 +72,8 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
 
     private void setListValueAt(SInstance instance,
                                 Collection<SelectOption> data) {
-        if (data != null && instance instanceof SList) {
-            SList<?> list = (SList<?>) instance;
+        if (data != null && instance instanceof SIList) {
+            SIList<?> list = (SIList<?>) instance;
             list.clear();
             for (SelectOption o : data) {
                 SInstance element = list.addNovo();

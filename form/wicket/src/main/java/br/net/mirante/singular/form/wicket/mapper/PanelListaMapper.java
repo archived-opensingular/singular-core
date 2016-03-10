@@ -8,7 +8,7 @@ import org.apache.wicket.model.IModel;
 import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
@@ -29,8 +29,8 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     public void buildView(WicketBuildContext ctx) {
 
-        final IModel<SList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
-        final SList<?> iLista = listaModel.getObject();
+        final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
+        final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
         final MView view = ctx.getView();
         final BSContainer<?> parentCol = ctx.getContainer();
@@ -79,7 +79,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         private final UIBuilderWicket wicketBuilder;
 
         private PanelElementsView(String id,
-                                  IModel<SList<SInstance>> model,
+                                  IModel<SIList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
                                   MView view,

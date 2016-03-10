@@ -11,7 +11,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SingularFormException;
 
 /**
@@ -27,7 +27,7 @@ public class MOptionsConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MOptionsConfig.class);
     private BiMap<String, SInstance> optionsKeyInstanceMap;
     private LinkedHashMap<String, String> optionsKeylabelMap;
-    private SList<? extends SInstance> options;
+    private SIList<? extends SInstance> options;
     private MSelectionableInstance instancia;
 
     public MOptionsConfig(MSelectionableInstance instancia) {
@@ -35,8 +35,8 @@ public class MOptionsConfig {
     }
 
     protected MOptionsProvider getOptionsProvider() {
-        if (instancia instanceof SList) {
-            return ((SList) instancia).getTipoElementos().getProviderOpcoes();
+        if (instancia instanceof SIList) {
+            return ((SIList) instancia).getTipoElementos().getProviderOpcoes();
         }
         return instancia.getType().getProviderOpcoes();
     }
@@ -58,7 +58,7 @@ public class MOptionsConfig {
     private void reloadOptionsFromProvider() {
         MOptionsProvider provider = getOptionsProvider();
         if (provider != null) {
-            SList<? extends SInstance> newOptions;
+            SIList<? extends SInstance> newOptions;
             try {
                 newOptions = provider.listAvailableOptions(instancia);
             } catch (Exception e) {

@@ -13,7 +13,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper;
@@ -26,7 +26,7 @@ import br.net.mirante.singular.util.wicket.resource.Icone;
 
 public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
-    protected static AddButton appendAddButton(final IModel<SList<SInstance>> mLista, final Form<?> form,
+    protected static AddButton appendAddButton(final IModel<SIList<SInstance>> mLista, final Form<?> form,
                                                final BSContainer<?> cell, boolean footer) {
         AddButton btn = new AddButton("_add", form, mLista);
         cell.newTemplateTag(t -> ""
@@ -69,7 +69,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     protected static abstract class ElementsView extends RefreshingView<SInstance> {
 
-        public ElementsView(String id, IModel<SList<SInstance>> model) {
+        public ElementsView(String id, IModel<SIList<SInstance>> model) {
             super(id, model);
             setItemReuseStrategy(new PathInstanceItemReuseStrategy());
         }
@@ -77,20 +77,20 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @Override
         protected Iterator<IModel<SInstance>> getItemModels() {
             List<IModel<SInstance>> list = new ArrayList<>();
-            SList<SInstance> sList = getModelObject();
+            SIList<SInstance> sList = getModelObject();
             for (int i = 0; i < sList.size(); i++)
                 list.add(new SInstanceItemListaModel<>(getDefaultModel(), i));
             return list.iterator();
         }
 
         @SuppressWarnings("unchecked")
-        public SList<SInstance> getModelObject() {
-            return (SList<SInstance>) getDefaultModelObject();
+        public SIList<SInstance> getModelObject() {
+            return (SIList<SInstance>) getDefaultModelObject();
         }
 
         @SuppressWarnings("unchecked")
-        public IModel<SList<SInstance>> getModel() {
-            return (IModel<SList<SInstance>>) getDefaultModel();
+        public IModel<SIList<SInstance>> getModel() {
+            return (IModel<SIList<SInstance>>) getDefaultModel();
         }
 
         @Override
@@ -108,11 +108,11 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected static class InserirButton extends ActionAjaxButton {
-        private final IModel<SList<SInstance>> modelLista;
+        private final IModel<SIList<SInstance>> modelLista;
         private final Item<SInstance> item;
         private final ElementsView elementsView;
 
-        private InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SList<SInstance>> mLista, Item<SInstance> item) {
+        private InserirButton(String id, ElementsView elementsView, Form<?> form, IModel<SIList<SInstance>> mLista, Item<SInstance> item) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             this.elementsView = elementsView;
@@ -123,7 +123,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final int index = item.getIndex();
-            SList<SInstance> lista = modelLista.getObject();
+            SIList<SInstance> lista = modelLista.getObject();
             lista.addNovoAt(index);
             List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
             for (Component child : elementsView) {
@@ -153,7 +153,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
             final int index = item.getIndex();
-            SList<SInstance> lista = elementsView.getModelObject();
+            SIList<SInstance> lista = elementsView.getModelObject();
             lista.remove(index);
             List<SInstanceItemListaModel<?>> itemModels = new ArrayList<>();
             for (Component child : elementsView) {
@@ -171,9 +171,9 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
     }
 
     protected static final class AddButton extends ActionAjaxButton {
-        private final IModel<SList<SInstance>> modelLista;
+        private final IModel<SIList<SInstance>> modelLista;
 
-        private AddButton(String id, Form<?> form, IModel<SList<SInstance>> mLista) {
+        private AddButton(String id, Form<?> form, IModel<SIList<SInstance>> mLista) {
             super(id, form);
             this.setDefaultFormProcessing(false);
             modelLista = mLista;
@@ -181,7 +181,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
         @Override
         protected void onAction(AjaxRequestTarget target, Form<?> form) {
-            final SList<SInstance> lista = modelLista.getObject();
+            final SIList<SInstance> lista = modelLista.getObject();
             if (lista.getType().getMaximumSize() != null && lista.getType().getMaximumSize() == lista.size()) {
                 target.appendJavaScript(";bootbox.alert('A Quantidade máxima de valores foi atingida.');");
             } else {
@@ -193,7 +193,7 @@ public abstract class AbstractListaMapper implements IWicketComponentMapper {
 
     }
 
-    protected void addMinimumSize(SType<?> currentType, SList<?> list) {
+    protected void addMinimumSize(SType<?> currentType, SIList<?> list) {
         if (currentType instanceof STypeLista && list.isEmpty()) {
             final STypeLista tl = (STypeLista) currentType;
             if (tl.getMinimumSize() != null) {

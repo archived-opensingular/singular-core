@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.basic.view;
 
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.options.MOptionsProvider;
@@ -16,8 +16,8 @@ class ViewRuleTypeListOfTypeSimpleSelectionOf extends ViewRule {
 
     @Override @SuppressWarnings("rawtypes")
     public MView apply(SInstance listInstance) {
-        if (listInstance instanceof SList) {
-            SList<?> listType = (SList<?>) listInstance;
+        if (listInstance instanceof SIList) {
+            SIList<?> listType = (SIList<?>) listInstance;
             SType<?> elementType = listType.getTipoElementos();
             if (elementType instanceof MSelectionableType) {
                 MSelectionableType type = (MSelectionableType) elementType;

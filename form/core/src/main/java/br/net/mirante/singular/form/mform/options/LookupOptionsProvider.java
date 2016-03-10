@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform.options;
 
 import br.net.mirante.singular.commons.base.SingularException;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.document.SDocument;
 
@@ -32,7 +32,7 @@ public class LookupOptionsProvider implements MOptionsProvider {
     }
 
     @Override
-    public SList<? extends SInstance> listOptions(SInstance instance) {
+    public SIList<? extends SInstance> listOptions(SInstance instance) {
         SDocument document = instance.getDocument();
         MOptionsProvider provider = whichProvider(document);
         return provider.listAvailableOptions(instance);

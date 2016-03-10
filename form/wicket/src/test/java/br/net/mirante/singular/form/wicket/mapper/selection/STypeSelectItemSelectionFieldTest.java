@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
@@ -45,8 +45,8 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     private MOptionsProvider newProviderFrom(SIComposite... compostos) {
         return new MOptionsProvider() {
             @Override
-            public SList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                SList lista = selectType.novaLista();
+            public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
+                SIList lista = selectType.novaLista();
                 for (SIComposite composto : compostos) {
                     SInstance instancia = lista.addNovo();
                     Object value = Value.dehydrate(composto);

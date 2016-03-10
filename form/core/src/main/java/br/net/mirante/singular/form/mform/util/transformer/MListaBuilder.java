@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 
@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
  */
 public class MListaBuilder<T extends STypeComposite> {
 
-    private SList<?> sList;
+    private SIList<?> sList;
     private T mTipo;
 
     /**
@@ -34,7 +34,7 @@ public class MListaBuilder<T extends STypeComposite> {
         return new MCompostoValueSetter(novaInstancia, this);
     }
 
-    public SList<?> getList() {
+    public SIList<?> getList() {
         return sList;
     }
 
@@ -61,7 +61,7 @@ public class MListaBuilder<T extends STypeComposite> {
             return _lb.add();
         }
 
-        public SList<?> getList() {
+        public SIList<?> getList() {
             return _lb.getList();
         }
     }

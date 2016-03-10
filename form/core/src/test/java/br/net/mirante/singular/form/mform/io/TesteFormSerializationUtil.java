@@ -27,7 +27,7 @@ import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -97,7 +97,7 @@ public class TesteFormSerializationUtil {
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListSimples() {
-        SList<SIString> instancia = (SList<SIString>) createSerializableTestInstance("teste.enderecos",
+        SIList<SIString> instancia = (SIList<SIString>) createSerializableTestInstance("teste.enderecos",
                 pacote -> pacote.createTipoListaOf("enderecos", STypeString.class));
         instancia.addValor("A1");
         instancia.addValor("A2");
@@ -112,7 +112,7 @@ public class TesteFormSerializationUtil {
     @Test
     @SuppressWarnings("unchecked")
     public void testTipoListComposto() {
-        SList<SIComposite> instancia = (SList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
+        SIList<SIComposite> instancia = (SIList<SIComposite>) createSerializableTestInstance("teste.enderecos", pacote -> {
             STypeComposite<SIComposite> endereco = pacote.createTipoListaOfNovoTipoComposto("enderecos", "endereco").getTipoElementos();
             endereco.addCampoString("rua");
             endereco.addCampoString("bairro");

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -93,7 +93,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         composicao.withSelectionFromProvider(
                 optionsInstance -> {
-                    SList<?> lista = composicao.novaLista();
+                    SIList<?> lista = composicao.novaLista();
                     String value = composicoes.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
                         lista.addValor(value);
@@ -121,7 +121,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         enderecoFabricante.withSelectionFromProvider(
                 optionsInstance -> {
-                    SList<?> lista = enderecoFabricante.novaLista();
+                    SIList<?> lista = enderecoFabricante.novaLista();
                     String value = enderecos.get(Value.of(optionsInstance, nomeComercial));
                     if (value != null) {
                         lista.addValor(value);

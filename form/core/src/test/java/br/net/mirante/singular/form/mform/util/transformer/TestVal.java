@@ -1,14 +1,14 @@
 package br.net.mirante.singular.form.mform.util.transformer;
 
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
@@ -39,9 +39,9 @@ public class TestVal {
     private STypeComposite<SIComposite> _alerta;
     private STypeData _alerta_data;
     private SIComposite evento;
-    private SList<SIComposite> alertas;
+    private SIList<SIComposite> alertas;
     private Map<String, Object> valorEsperado = new LinkedHashMap<>();
-    private SList listaAlertas;
+    private SIList listaAlertas;
     private SIComposite alerta3;
     private SIComposite alertaVazio;
     private SIComposite alerta2;
@@ -88,7 +88,7 @@ public class TestVal {
         periodo.setValor(_dataFinal, DT_FINAL);
         ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_dataFinal.getSimpleName(), DT_FINAL);
         //alertas
-        listaAlertas = (SList) periodo.getCampo(_alertas.getSimpleName());
+        listaAlertas = (SIList) periodo.getCampo(_alertas.getSimpleName());
         ((Map<String, Object>) valorEsperado.get(_periodo.getSimpleName())).put(_alertas.getSimpleName(), new ArrayList<Map<String, Date>>());
 
         //Alerta Data 1
@@ -176,14 +176,15 @@ public class TestVal {
 
     @Test
     public void testNullSafe() {
-        Value.of((SISimple)null);
-        Value.of(null, null);
-        Value.notNull((SList) null);
+        Value.of((SISimple) null);
+        Value.of(null, (String) null);
+        Value.of(null, (STypeSimple) null);
+        Value.notNull((SIList) null);
         Value.notNull((SInstance) null, (STypeSimple) null);
         Value.notNull((SInstance) null, (STypeComposite) null);
         Value.notNull((SInstance) null, (STypeLista) null);
-        Value.dehydrate((SIComposite)null);
-        Value.hydrate((SIComposite)null, null);
+        Value.dehydrate((SIComposite) null);
+        Value.hydrate((SIComposite) null, null);
     }
 
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-form</artifactId>
-        <version>0.5.19-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>form-ui-showcase</artifactId>
@@ -85,17 +85,17 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-core</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>exemplos-form</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.6.0-SNAPSHOT</version>
         </dependency>
 
 

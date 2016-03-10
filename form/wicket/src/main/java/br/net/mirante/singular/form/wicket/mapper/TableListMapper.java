@@ -13,7 +13,7 @@ import com.google.common.base.Strings;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SList;
+import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.SingularFormException;
@@ -45,12 +45,12 @@ public class TableListMapper extends AbstractListaMapper {
             throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", (SInstance) ctx.getCurrentInstance());
         }
 
-        if (ctx.getCurrentInstance() instanceof SList) {
+        if (ctx.getCurrentInstance() instanceof SIList) {
 
-            final IModel<SList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
+            final IModel<SIList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
             final MTableListaView view = (MTableListaView) ctx.getView();
             final boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
-            final SList<SInstance> iLista = list.getObject();
+            final SIList<SInstance> iLista = list.getObject();
             final SType<?> currentType = ctx.getCurrentInstance().getType();
 
             addMinimumSize(currentType, iLista);
@@ -66,7 +66,7 @@ public class TableListMapper extends AbstractListaMapper {
         }
     }
 
-    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SList<SInstance>> list,
+    private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtrBasic().getLabel());
@@ -82,7 +82,7 @@ public class TableListMapper extends AbstractListaMapper {
 
     }
 
-    private void builContent(BSContainer<?> content, Form<?> form, IModel<SList<SInstance>> list,
+    private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
                              WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
 
         final String markup = ""
@@ -158,7 +158,7 @@ public class TableListMapper extends AbstractListaMapper {
         private final ViewMode           viewMode;
         private final UIBuilderWicket    wicketBuilder;
 
-        private TableElementsView(String id, IModel<SList<SInstance>> model, WicketBuildContext ctx, Form<?> form) {
+        private TableElementsView(String id, IModel<SIList<SInstance>> model, WicketBuildContext ctx, Form<?> form) {
             super(id, model);
             this.wicketBuilder = ctx.getUiBuilderWicket();
             this.ctx = ctx;
