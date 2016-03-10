@@ -167,7 +167,7 @@ public class AnnotationComponent extends Panel {
                     new ActionAjaxButton("deleteBtn"){
                         protected void onAction(AjaxRequestTarget target, Form<?> form){
                             ((SIAnnotation)model.getObject()).clear();
-                            target.add(AnnotationComponent.this);
+                            target.add(AnnotationComponent.this.mainGrid);
                             target.appendJavaScript(AnnotationComponent.this.generateUpdateJS());
                             thiz.hide(target);
                         }
@@ -374,7 +374,6 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxButton createOkButton(final AnnotationComponent parentComponent) {
         return new ActionAjaxButton("btn-ok") {
             protected void onAction(AjaxRequestTarget target, Form<?> form) {
-//                target.add(parentComponent);
                 target.add(parentComponent.mainGrid);
                 AnnotationModalWindow.this.hide(target);
                 target.appendJavaScript(parentComponent.generateUpdateJS());
