@@ -6,7 +6,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>singular-flow</artifactId>
-        <version>0.5.19-SNAPSHOT</version>
+        <version>0.5.19</version>
     </parent>
 
     <artifactId>flow-ui-admin</artifactId>
@@ -101,32 +101,32 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>wicket-utils</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>form-wicket</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-core</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-rest-client</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-persistence</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>flow-bam-client</artifactId>
-            <version>0.5.19-SNAPSHOT</version>
+            <version>0.5.19</version>
         </dependency>
 
         <!-- HIBERNATE -->
