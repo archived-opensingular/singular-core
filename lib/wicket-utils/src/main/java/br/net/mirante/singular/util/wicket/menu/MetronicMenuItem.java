@@ -20,6 +20,7 @@ public class MetronicMenuItem extends AbstractMenuItem {
     private Class<? extends IRequestablePage> responsePageClass;
     private String menuItemUrl;
     private String href;
+    private String target;
     private WebMarkupContainer helper = new WebMarkupContainer("helper");
 
     public MetronicMenuItem(Icone icon, String title, Class<? extends IRequestablePage> responsePageClass,
@@ -40,13 +41,20 @@ public class MetronicMenuItem extends AbstractMenuItem {
         add(buildMenuItem());
     }
 
+    public MetronicMenuItem(Icone icon, String title, String href, String target) {
+        this(icon, title);
+        this.href = href;
+        this.target = target;
+        add(buildMenuItem());
+    }
+
     public MetronicMenuItem(Icone icon, String title) {
         super("menu-item");
         this.icon = icon;
         this.title = title;
     }
 
-    private WebMarkupContainer buildMenuItem() {
+    protected WebMarkupContainer buildMenuItem() {
 
         menuItem = new WebMarkupContainer("menu-item");
 
@@ -55,6 +63,9 @@ public class MetronicMenuItem extends AbstractMenuItem {
         if (href != null) {
             anchor = new WebMarkupContainer("anchor");
             anchor.add($b.attr("href", href));
+            if (target != null) {
+                anchor.add($b.attr("target", target));
+            }
             this.menuItemUrl = href;
         } else if (responsePageClass != null) {
             anchor = new BookmarkablePageLink("anchor", responsePageClass, parameters) {
