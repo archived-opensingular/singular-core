@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.mform.core.STypeMonetario;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
@@ -95,6 +96,7 @@ public class SPackagePrototype extends SPackage {
     }
 
     private void populateOptions(PackageBuilder pb, MFixedOptionsSimpleProvider provider) {
+        provider.add(typeName(pb, STypeAttachment.class), "Anexo");
         provider.add(typeName(pb, STypeAnoMes.class), "Ano/Mês");
         provider.add(typeName(pb, STypeBoolean.class), "Booleano");
         provider.add(typeName(pb, STypeComposite.class), "Composto");
@@ -104,7 +106,6 @@ public class SPackagePrototype extends SPackage {
         provider.add(typeName(pb, STypeData.class), "Data");
         provider.add(typeName(pb, STypeDataHora.class), "Data/Hora");
         provider.add(typeName(pb, STypeEMail.class), "Email");
-        provider.add(typeName(pb, STypeFormula.class), "Formula");
         provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
         provider.add(typeName(pb, STypeMonetario.class), "Monetário");
         provider.add(typeName(pb, STypeNomePessoa.class), "Nome Pessoa");
