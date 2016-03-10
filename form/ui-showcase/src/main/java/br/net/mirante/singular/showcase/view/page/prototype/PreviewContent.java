@@ -24,6 +24,7 @@ import org.apache.wicket.model.ResourceModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by nuk on 04/03/16.
@@ -177,8 +178,12 @@ class TypeBuilder {
         }
     }
 
-    private Boolean isList(SIComposite descriptor) {
-        return descriptor.getValorBoolean(SPackagePrototype.IS_LIST);
+    private boolean isList(SIComposite descriptor) {
+        return notNull(descriptor.getValorBoolean(SPackagePrototype.IS_LIST), false);
+    }
+
+    private boolean notNull(Boolean v, boolean defaultValue) {
+        return v == null ? defaultValue : v;
     }
 
     private Boolean obrigatorio(SIComposite descriptor) {
