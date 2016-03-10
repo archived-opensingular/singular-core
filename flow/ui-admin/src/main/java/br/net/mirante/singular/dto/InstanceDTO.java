@@ -5,6 +5,7 @@ import java.util.Date;
 import br.net.mirante.singular.flow.core.dto.IInstanceDTO;
 import br.net.mirante.singular.util.FormatUtil;
 
+
 public class InstanceDTO implements IInstanceDTO {
 
     private Integer cod;
