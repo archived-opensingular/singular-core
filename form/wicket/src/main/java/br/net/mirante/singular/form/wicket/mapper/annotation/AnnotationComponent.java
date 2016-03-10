@@ -163,7 +163,7 @@ public class AnnotationComponent extends Panel {
 
                 thiz.setBody(new Label("alert",$m.ofValue("Deseja realmente apagar este comentário?")));
 
-                this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("Apagar"),
+                this.addButton(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Apagar"),
                     new ActionAjaxButton("deleteBtn"){
                         protected void onAction(AjaxRequestTarget target, Form<?> form){
                             ((SIAnnotation)model.getObject()).clear();
@@ -173,7 +173,7 @@ public class AnnotationComponent extends Panel {
                         }
                     }
                 );
-                this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+                this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                     new ActionAjaxLink("cancelDeleteBtn"){
                         protected void onAction(AjaxRequestTarget target) {
                             thiz.hide(target);
@@ -281,6 +281,10 @@ public class AnnotationComponent extends Panel {
     public void setMainGrid(BSContainer mainGrid) {
         this.mainGrid = mainGrid;
     }
+
+    void setKeepOpened(boolean keepOpened) {
+        this.keepOpened = keepOpened;
+    }
 }
 
 class AnnotationModalWindow extends BFModalWindow{
@@ -311,12 +315,14 @@ class AnnotationModalWindow extends BFModalWindow{
 
         this.setBody(createBody());
 
-        this.addButton(BSModalBorder.ButtonStyle.PRIMARY, $m.ofValue("OK"),
+        this.addButton(BSModalBorder.ButtonStyle.BLUE, $m.ofValue("OK"),
                 createOkButton(parentComponent)
         );
-        this.addLink(BSModalBorder.ButtonStyle.DANGER, $m.ofValue("Cancelar"),
+        this.addLink(BSModalBorder.ButtonStyle.EMPTY, $m.ofValue("Cancelar"),
                 createCancelButton()
         );
+
+        this.setCloseIconCallback(target -> parentComponent.setKeepOpened(false));
     }
 
     private BSContainer createBody() {
@@ -384,6 +390,7 @@ class AnnotationModalWindow extends BFModalWindow{
     private ActionAjaxLink<Void> createCancelButton() {
         return new ActionAjaxLink<Void>("btn-cancelar") {
             protected void onAction(AjaxRequestTarget target) {
+                parentComponent.setKeepOpened(false);
                 AnnotationModalWindow.this.hide(target);
             }
         };
