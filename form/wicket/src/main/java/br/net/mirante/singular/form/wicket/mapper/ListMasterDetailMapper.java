@@ -263,7 +263,7 @@ public class ListMasterDetailMapper implements IWicketComponentMapper {
                 .newTemplateTag(t -> ""
                         + "<button"
                         + " wicket:id='_add'"
-                        + " class='btn btn-success btn-sm pull-right'"
+                        + " class='btn blue btn-sm pull-right'"
                         + " style='" + MapperCommons.BUTTON_STYLE + "'><i style='" + MapperCommons.ICON_STYLE + "' class='" + Icone.PLUS + "'></i>"
                         + "</button>")
                 .add(new AjaxLink<Void>("_add") {

@@ -1,6 +1,17 @@
 package br.net.mirante.singular.showcase.view.page.prototype;
 
-import br.net.mirante.singular.form.mform.*;
+import static com.google.common.collect.Lists.newArrayList;
+
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import br.net.mirante.singular.form.mform.PackageBuilder;
+import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInstance;
+import br.net.mirante.singular.form.mform.SPackage;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.STypeComposite;
+import br.net.mirante.singular.form.mform.STypeLista;
 import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
@@ -12,6 +23,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
 import br.net.mirante.singular.form.mform.core.STypeMonetario;
 import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.options.MFixedOptionsSimpleProvider;
 import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
 import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
@@ -20,11 +32,6 @@ import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
 import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
-
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * Created by nuk on 07/03/16.
@@ -69,7 +76,7 @@ public class SPackagePrototype extends SPackage {
         STypeString nome = fieldType.addCampoString(NAME);
         nome.asAtrBasic().label("Nome")
                 .as(AtrCore::new).obrigatorio()
-                .getTipo().asAtrBootstrap().colPreference(4);
+.getTipo().asAtrBootstrap().colPreference(3);
 
         STypeString type = fieldType.addCampoString(TYPE);
         type.asAtrBasic().label("Tipo")
@@ -78,8 +85,9 @@ public class SPackagePrototype extends SPackage {
         populateOptions(pb, type.withSelection());
 
         fieldType.addCampoBoolean(IS_LIST)
-                .asAtrBasic().label("Múltiplo")
-                .getTipo().asAtrBootstrap().colPreference(1);
+                .withRadioView()
+                .withDefaultValueIfNull(false)
+                .asAtrBasic().label("Múltiplo").getTipo().asAtrBootstrap().colPreference(2);
 
         addAttributeFields(pb, fieldType, type);
 
@@ -95,6 +103,7 @@ public class SPackagePrototype extends SPackage {
     }
 
     private void populateOptions(PackageBuilder pb, MFixedOptionsSimpleProvider provider) {
+        provider.add(typeName(pb, STypeAttachment.class), "Anexo");
         provider.add(typeName(pb, STypeAnoMes.class), "Ano/Mês");
         provider.add(typeName(pb, STypeBoolean.class), "Booleano");
         provider.add(typeName(pb, STypeComposite.class), "Composto");
@@ -104,7 +113,6 @@ public class SPackagePrototype extends SPackage {
         provider.add(typeName(pb, STypeData.class), "Data");
         provider.add(typeName(pb, STypeDataHora.class), "Data/Hora");
         provider.add(typeName(pb, STypeEMail.class), "Email");
-        provider.add(typeName(pb, STypeFormula.class), "Formula");
         provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");
         provider.add(typeName(pb, STypeMonetario.class), "Monetário");
         provider.add(typeName(pb, STypeNomePessoa.class), "Nome Pessoa");
@@ -120,13 +128,11 @@ public class SPackagePrototype extends SPackage {
 
     private void addAttributeFields(PackageBuilder pb, STypeComposite<SIComposite> fieldType, STypeString type) {
         tamanhoCampo = fieldType.addCampoInteger(TAMANHO_CAMPO);
-        tamanhoCampo.asAtrBasic().label("Tamanho do Campo").tamanhoMaximo(12)
-                .getTipo().asAtrBootstrap().colPreference(3);
+        tamanhoCampo.asAtrBasic().label("Colunas").tamanhoMaximo(12)
+                .getTipo().asAtrBootstrap().colPreference(2);
 
         obrigatorio = fieldType.addCampoBoolean(OBRIGATORIO);
-        obrigatorio.withRadioView()
-                .asAtrBasic().label("Obrigatório")
-                .getTipo().asAtrBootstrap().colPreference(1);
+        obrigatorio.withRadioView().asAtrBasic().label("Obrigatório").getTipo().asAtrBootstrap().colPreference(2);
 
         fieldType.addCampoInteger(TAMANHO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
@@ -147,12 +153,14 @@ public class SPackagePrototype extends SPackage {
 
         fieldType.addCampoInteger(TAMANHO_INTEIRO_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic().label("Tamanho Inteiro Máximo")
+                .getTipo().asAtrBasic()
+                .label("Tamanho Inteiro")
                 .visivel(ifDecimalPredicate);
 
         fieldType.addCampoInteger(TAMANHO_DECIMAL_MAXIMO)
                 .asAtrBootstrap().colPreference(2)
-                .getTipo().asAtrBasic().label("Tamanho Decimal Máximo")
+                .getTipo().asAtrBasic()
+                .label("Tamanho Decimal")
                 .visivel(ifDecimalPredicate);
     }
 
