@@ -249,12 +249,12 @@ public class AnnotationComponent extends Panel {
 
     public static BSContainer appendAnnotationToggleButton(BSContainer grid, SIComposite instance) {
         BSContainer toggleContainer = new BSContainer<>("_toggle_btn_");
-        toggleContainer.setInnerStyle("position:absolute;top:15px;right: 15px;");
+        toggleContainer.setInnerStyle("position:absolute;top:23px;right: 17px;");
 
         AtrAnnotation annotatedInstance = instance.as(AtrAnnotation::new);
 
         toggleContainer.appendTag("a",true,
-                "href='javascript:;' class='btn btn-circle btn-icon-only "+
+                "href='javascript:;' style='padding-top: 7px; height: 27px; width: 27px;' class='btn btn-circle btn-icon-only "+
                         buttonColor(annotatedInstance) +"'", createIcon(annotatedInstance));
 
         grid.appendTag("div",true,"class='annotation-toggle-container'",toggleContainer);
