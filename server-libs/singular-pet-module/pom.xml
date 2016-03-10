@@ -7,7 +7,7 @@
     <parent>
         <groupId>br.net.mirante</groupId>
         <artifactId>server-libs</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>singular-pet-module</artifactId>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>br.net.mirante</groupId>
             <artifactId>singular-commons</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
