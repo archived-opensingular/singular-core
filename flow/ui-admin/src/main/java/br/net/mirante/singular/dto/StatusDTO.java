@@ -15,7 +15,7 @@ public class StatusDTO implements IStatusDTO {
     }
 
     public StatusDTO(String processCode, Integer amount, Integer averageTimeInDays, Integer openedInstancesLast30Days,
-            Integer finishedInstancesLast30Days) {
+                     Integer finishedInstancesLast30Days) {
         this.processCode = processCode;
         this.amount = amount;
         this.averageTimeInDays = averageTimeInDays;
@@ -35,7 +35,7 @@ public class StatusDTO implements IStatusDTO {
 
     @Override
     public Integer getAmount() {
-        return amount;
+        return abs(amount);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class StatusDTO implements IStatusDTO {
 
     @Override
     public Integer getAverageTimeInDays() {
-        return averageTimeInDays;
+        return abs(averageTimeInDays);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class StatusDTO implements IStatusDTO {
 
     @Override
     public Integer getOpenedInstancesLast30Days() {
-        return openedInstancesLast30Days;
+        return abs(openedInstancesLast30Days);
     }
 
     @Override
@@ -65,11 +65,18 @@ public class StatusDTO implements IStatusDTO {
 
     @Override
     public Integer getFinishedInstancesLast30Days() {
-        return finishedInstancesLast30Days;
+        return abs(finishedInstancesLast30Days);
     }
 
     @Override
     public void setFinishedInstancesLast30Days(Integer finishedInstancesLast30Days) {
         this.finishedInstancesLast30Days = finishedInstancesLast30Days;
+    }
+
+    private Integer abs(Integer i) {
+        if (i != null) {
+            return Math.abs(i);
+        }
+        return 0;
     }
 }
