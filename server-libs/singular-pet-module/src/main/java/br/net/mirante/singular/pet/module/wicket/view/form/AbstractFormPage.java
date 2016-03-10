@@ -29,7 +29,7 @@ import java.util.Optional;
 
 public abstract class AbstractFormPage extends Template {
 
-    private static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
+    protected static final String URL_PATH_ACOMPANHAMENTO = "/singular/peticionamento/acompanhamento";
     private static final Logger logger = LoggerFactory.getLogger(AbstractFormPage.class);
 
     protected FormPageConfig config;
