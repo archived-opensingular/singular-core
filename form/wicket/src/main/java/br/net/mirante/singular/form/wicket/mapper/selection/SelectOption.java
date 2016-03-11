@@ -9,8 +9,9 @@ import org.apache.wicket.model.IModel;
 
 /**
  * This class represents a SelectOption used on DropDowns, Checklists, Radios and etc.
+ *
+ * //TODO está faltando o tipo parametrico, analisar o motivo.
  */
-@SuppressWarnings({"serial", "rawtypes"})
 public class SelectOption implements IModel {
 
     private String selectLabel;
