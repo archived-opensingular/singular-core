@@ -51,8 +51,8 @@ public class ToastrHelper {
     protected ToastrSettings getDefaultSettings() {
         ToastrSettings settings = ToastrSettings.builder().build();
         settings.getPositionClass().setValue(Position.TOP_CENTER);
-        settings.getTimeOut().setValue(5000);
-        settings.getExtendedTimeOut().setValue(3000);
+        settings.getTimeOut().setValue(0);
+        settings.getExtendedTimeOut().setValue(0);
         settings.getShowMethod().setValue(ShowMethod.SLIDE_DOWN);
         settings.getNotificationContent().setValue("");
         settings.getCloseButton().setValue(true);
