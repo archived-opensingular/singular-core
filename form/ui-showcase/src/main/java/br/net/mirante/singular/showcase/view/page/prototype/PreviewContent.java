@@ -157,7 +157,7 @@ class TypeBuilder {
         if (javaIdentifier.isEmpty()) {
             return "id" + id;
         }
-        return javaIdentifier;
+        return javaIdentifier + id;
     }
 
     private void addAttributesIfAny(SIComposite descriptor, SType<?> fieldType) {
