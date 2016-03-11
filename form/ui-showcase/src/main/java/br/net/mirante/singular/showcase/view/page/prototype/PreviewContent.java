@@ -24,7 +24,7 @@ import org.apache.wicket.model.ResourceModel;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Created by nuk on 04/03/16.
@@ -161,20 +161,17 @@ class TypeBuilder {
     }
 
     private void addAttributesIfAny(SIComposite descriptor, SType<?> fieldType) {
-        if (tamanhoCampo(descriptor) != null) {
-            fieldType.asAtrBootstrap().colPreference(tamanhoCampo(descriptor));
-        }
-        if (tamanhoMaximo(descriptor) != null) {
-            fieldType.asAtrBasic().tamanhoMaximo(tamanhoMaximo(descriptor));
-        }
-        if (tamanhoInteiroMaximo(descriptor) != null) {
-            fieldType.asAtrBasic().tamanhoInteiroMaximo(tamanhoInteiroMaximo(descriptor));
-        }
-        if (tamanhoDecimalMaximo(descriptor) != null) {
-            fieldType.asAtrBasic().tamanhoDecimalMaximo(tamanhoDecimalMaximo(descriptor));
-        }
-        if (obrigatorio(descriptor) != null) {
-            fieldType.asAtrCore().obrigatorio(obrigatorio(descriptor));
+        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_CAMPO), fieldType.asAtrBootstrap()::colPreference);
+        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
+        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
+        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
+        addAttributeIfExists(descriptor.getValorBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::obrigatorio);
+
+    }
+
+    private <T> void addAttributeIfExists(T valor, Consumer<T> attributeConsumer) {
+        if (valor != null) {
+            attributeConsumer.accept(valor);
         }
     }
 
@@ -184,26 +181,6 @@ class TypeBuilder {
 
     private boolean notNull(Boolean v, boolean defaultValue) {
         return v == null ? defaultValue : v;
-    }
-
-    private Boolean obrigatorio(SIComposite descriptor) {
-        return descriptor.getValorBoolean(SPackagePrototype.OBRIGATORIO);
-    }
-
-    private Integer tamanhoDecimalMaximo(SIComposite descriptor) {
-        return descriptor.getValorInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO);
-    }
-
-    private Integer tamanhoInteiroMaximo(SIComposite descriptor) {
-        return descriptor.getValorInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO);
-    }
-
-    private Integer tamanhoMaximo(SIComposite descriptor) {
-        return descriptor.getValorInteger(SPackagePrototype.TAMANHO_MAXIMO);
-    }
-
-    private Integer tamanhoCampo(SIComposite descriptor) {
-        return descriptor.getValorInteger(SPackagePrototype.TAMANHO_CAMPO);
     }
 
     private void addCompositeFieldsIfNeeded(SIComposite descriptor,
