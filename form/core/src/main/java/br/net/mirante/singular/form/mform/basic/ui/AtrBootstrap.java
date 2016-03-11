@@ -10,7 +10,9 @@ import br.net.mirante.singular.form.mform.core.SPackageBootstrap;
 
 public class AtrBootstrap extends MTranslatorParaAtributo {
 
-    public AtrBootstrap() {}
+    public AtrBootstrap() {
+    }
+
     public AtrBootstrap(MAtributoEnabled alvo) {
         super(alvo);
     }
@@ -41,6 +43,11 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
 
     public AtrBootstrap colLg(Integer valor) {
         getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
+        return this;
+    }
+
+    public AtrBootstrap onNewRow(Boolean valor) {
+        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_ON_NEW_ROW, valor);
         return this;
     }
 
@@ -82,5 +89,13 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
 
     public Integer getColLg(Integer defaultValue) {
         return ObjectUtils.defaultIfNull(getColLg(), defaultValue);
+    }
+
+    public Boolean getOnNewRow(Boolean defaultValue) {
+        return ObjectUtils.defaultIfNull(getOnNewRow(), defaultValue);
+    }
+
+    public Boolean getOnNewRow() {
+        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
     }
 }

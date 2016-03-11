@@ -52,6 +52,7 @@ import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailM
 import br.net.mirante.singular.showcase.component.layout.CaseListByMasterDetailNested;
 import br.net.mirante.singular.showcase.component.layout.CaseListByTableDefault;
 import br.net.mirante.singular.showcase.component.layout.CaseListByTableMinimiumAndMaximum;
+import br.net.mirante.singular.showcase.component.layout.CaseRowControlGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseSimpleGrid;
 import br.net.mirante.singular.showcase.component.layout.CaseTabs;
 import br.net.mirante.singular.showcase.component.map.CaseGoogleMaps;
@@ -107,6 +108,7 @@ public class ShowCaseTable {
             .addCase(CaseListByFormMinimumAndMaximum.class)
             .addCase(CaseListByTableMinimiumAndMaximum.class)
             .addCase(CaseListByMasterDetailMiniumAndMaximum.class)
+            .addCase(CaseRowControlGrid.class)
             .addCase(CaseTabs.class)
         ;
         group("Validation", Icone.BAN)
