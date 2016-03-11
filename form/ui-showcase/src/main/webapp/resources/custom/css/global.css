@@ -17,3 +17,7 @@
     /*background: transparent url("/singular-static/resources/singular/img/brand.png") no-repeat;*/
     /*width: 109px;*/
 }
+
+.radio-list {
+    min-height: 30px;
+}
