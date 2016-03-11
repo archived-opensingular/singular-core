@@ -50,3 +50,7 @@ DECLARE ESSE CSS NA SUA APLICAÇÃO NO MESMO CAMINHO RELATIVO
     color: #FAFAFA !important;
     font-weight: bold;
 }
+
+.radio-list {
+    min-height: 30px;
+}
