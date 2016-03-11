@@ -11,18 +11,18 @@ import org.wicketstuff.annotation.mount.MountPath;
 @SuppressWarnings("serial")
 public class FormPage extends Template {
     protected static final String TYPE_NAME = "type",
-                                  MODEL_KEY = "key",
-                                  VIEW_MODE = "viewMode",
-                                  ANNOTATION = "annotation";
+            MODEL_ID                        = "id",
+            VIEW_MODE                       = "viewMode",
+            ANNOTATION                      = "annotation";
 
     @Override
     protected Content getContent(String id) {
         StringValue type = getPageParameters().get(TYPE_NAME),
-                    key = getPageParameters().get(MODEL_KEY),
-                    viewMode = getPageParameters().get(VIEW_MODE),
-                    annotation = getPageParameters().get(ANNOTATION);
-        ;
-        return new FormContent(id,type, key, viewMode, annotation);
+                idExampleData = getPageParameters().get(MODEL_ID),
+                viewMode = getPageParameters().get(VIEW_MODE),
+                annotation = getPageParameters().get(ANNOTATION);
+
+        return new FormContent(id, type, idExampleData, viewMode, annotation);
     }
 
     @Override

@@ -1,21 +1,17 @@
 package br.net.mirante.singular.showcase.view.page.form.crud;
 
-import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import br.net.mirante.singular.form.wicket.WicketBuildContext;
-import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -42,6 +38,7 @@ import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.util.xml.MElement;
 import br.net.mirante.singular.form.util.xml.MParser;
 import br.net.mirante.singular.form.wicket.component.BFModalBorder;
+import br.net.mirante.singular.form.wicket.enums.AnnotationMode;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.feedback.SFeedbackPanel;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
@@ -62,6 +59,7 @@ import br.net.mirante.singular.util.wicket.modal.BSModalBorder.Size;
 import br.net.mirante.singular.util.wicket.output.BOutputPanel;
 import br.net.mirante.singular.util.wicket.resource.Icone;
 import br.net.mirante.singular.util.wicket.tab.BSTabPanel;
+import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;
 
 @SuppressWarnings("serial")
 public class CrudContent extends Content
@@ -70,7 +68,6 @@ public class CrudContent extends Content
     private final static Logger LOGGER = LoggerFactory.getLogger(CrudContent.class);
 
     private BSDataTable<ExampleDataDTO, String> listTable;
-    private List<ExampleDataDTO>                dataList = new LinkedList<>();
     private FormVO                              selectedTemplate;
 
     private final BFModalBorder deleteModal  = new BFModalBorder("deleteModal");
@@ -157,16 +154,10 @@ public class CrudContent extends Content
 
             @Override
             protected void onSelectionChanged(SelectOption newSelection) {
-                FormVO value = (FormVO) newSelection.getValue();
-                selectedTemplate = value;
-                updateDataList();
+                selectedTemplate = (FormVO) newSelection.getValue();
             }
 
         };
-    }
-
-    private void updateDataList() {
-        dataList = dao.list(selectedTemplate.getTypeName());
     }
 
     private MarkupContainer setUpInsertButton() {
@@ -187,21 +178,22 @@ public class CrudContent extends Content
     }
 
     private BSDataTable<ExampleDataDTO, String> setupDataTable() {
-        updateDataList();
         BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder = new BSDataTableBuilder<>(createDataProvider());
         builder
-            .appendPropertyColumn(getMessage("label.table.column.key"),
-                "key", ExampleDataDTO::getKey)
+            .appendPropertyColumn(getMessage("label.table.column.id"),
+                    "id", ExampleDataDTO::getId)
+            .appendPropertyColumn(getMessage("label.table.column.dt.edicao"),
+                    "editionDate", ExampleDataDTO::getEditionDate)
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
-                .appendAction(getMessage("label.table.column.edit"),
-                    Icone.PENCIL_SQUARE,
-                    (target, model) -> {
-                        setResponsePage(FormPage.class,
-                            new PageParameters()
-                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
-                                .add(FormPage.VIEW_MODE, ViewMode.EDITION));
-                    }))
+                    .appendAction(getMessage("label.table.column.edit"),
+                            Icone.PENCIL_SQUARE,
+                            (target, model) -> {
+                                setResponsePage(FormPage.class,
+                                        new PageParameters()
+                                                .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
+                                                .add(FormPage.MODEL_ID, model.getObject().getId())
+                                                .add(FormPage.VIEW_MODE, ViewMode.EDITION));
+                            }))
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.visualizar"),
                     Icone.EYE,
@@ -209,7 +201,7 @@ public class CrudContent extends Content
                         setResponsePage(FormPage.class,
                             new PageParameters()
                                 .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                                .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                                .add(FormPage.MODEL_ID, model.getObject().getId())
                                 .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION));
                     }));
         addAnnotationColumnIfNeeded(builder);
@@ -220,7 +212,7 @@ public class CrudContent extends Content
             .appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue(""))
                 .appendAction(getMessage("label.table.column.visualizar.xml"),
                     Icone.CODE, this::viewXml))
-            .setRowsPerPage(Long.MAX_VALUE); //TODO: proper pagination
+            .setRowsPerPage(10);
         return builder.build("data-list");
     }
 
@@ -228,7 +220,7 @@ public class CrudContent extends Content
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
                     @Override
                     public String getCssClass() {
-                        return hasAnnotations() ? "" : "hidden";
+                        return (hasAnnotations() ? " " : " hidden ") + super.getCssClass();
                     }
                 }
             .appendAction(getMessage("label.table.column.analisar"),
@@ -237,7 +229,7 @@ public class CrudContent extends Content
                     setResponsePage(FormPage.class,
                         new PageParameters()
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                            .add(FormPage.MODEL_ID, model.getObject().getId())
                             .add(FormPage.VIEW_MODE, ViewMode.VISUALIZATION)
                             .add(FormPage.ANNOTATION, AnnotationMode.EDIT));
                 })
@@ -247,7 +239,9 @@ public class CrudContent extends Content
     private void addAnnotationEditColumnIfNeeded(BSDataTableBuilder<ExampleDataDTO, String, IColumn<ExampleDataDTO, String>> builder) {
         builder.appendColumn(new BSActionColumn<ExampleDataDTO, String>($m.ofValue("")){
                     @Override
-                    public String getCssClass() {   return hasAnnotations() ? "" : "hidden";}
+                    public String getCssClass() {
+                        return (hasAnnotations() ? " " : " hidden ") + super.getCssClass();
+                    }
                 }
             .appendAction(getMessage("label.table.column.exigencia"),
                 Icone.PENCIL,
@@ -255,7 +249,7 @@ public class CrudContent extends Content
                     setResponsePage(FormPage.class,
                         new PageParameters()
                             .add(FormPage.TYPE_NAME, selectedTemplate.getTypeName())
-                            .add(FormPage.MODEL_KEY, model.getObject().getKey())
+                            .add(FormPage.MODEL_ID, model.getObject().getId())
                             .add(FormPage.VIEW_MODE, ViewMode.EDITION)
                             .add(FormPage.ANNOTATION, AnnotationMode.READ_ONLY));
                 })
@@ -266,7 +260,7 @@ public class CrudContent extends Content
         boolean hasAnntations = false;
         if(selectedTemplate.getType() != null && selectedTemplate.getType() instanceof STypeComposite){
             STypeComposite<?> type = (STypeComposite<?>) selectedTemplate.getType();
-            for(SType<?> i : (Collection<SType<?>>)type.getFields()){
+            for(SType<?> i : type.getFields()){
                 hasAnntations |= i.as(AtrAnnotation::new).isAnnotated();
             }
         }
@@ -278,13 +272,13 @@ public class CrudContent extends Content
 
             @Override
             public long size() {
-                return dataList.size();
+                return dao.count(selectedTemplate.getTypeName());
             }
 
             @Override
             public Iterator<? extends ExampleDataDTO> iterator(int first, int count,
                 String sortProperty, boolean ascending) {
-                return dataList.iterator();
+                return dao.list(selectedTemplate.getTypeName(), first, count, Optional.ofNullable(sortProperty), ascending).iterator();
             }
         };
     }
@@ -338,7 +332,6 @@ public class CrudContent extends Content
     }
 
     private void updateListTableFromModal(AjaxRequestTarget target) {
-        updateDataList();
         target.add(listTable);
     }
 
