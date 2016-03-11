@@ -1,15 +1,18 @@
 package br.net.mirante.singular.pet.module.wicket.listener;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.request.flow.RedirectToUrlException;
+
+import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
 import br.net.mirante.singular.pet.module.spring.security.ServerContext;
 import br.net.mirante.singular.pet.module.wicket.PetSession;
 import br.net.mirante.singular.util.wicket.page.error.Error403Page;
-import org.apache.wicket.core.request.handler.IPageClassRequestHandler;
-import org.apache.wicket.request.IRequestHandler;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
-import org.apache.wicket.request.cycle.RequestCycle;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Listener para impedir que páginas de um contexto do wicket sejam acessadas por uma sessão
@@ -30,12 +33,9 @@ public class SingularServerContextListener extends AbstractRequestCycleListener 
     }
 
     private void resetLogin(RequestCycle cycle){
-        cycle.getOriginalResponse().reset();
-        PetSession.get().invalidate();
-        HttpServletRequest request = (HttpServletRequest) cycle.getRequest().getContainerRequest();
-        HttpServletResponse response = (HttpServletResponse) cycle.getResponse().getContainerResponse();
-        response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
-        response.setHeader("Location", request.getRequestURL().toString());
+        final Url url = cycle.getUrlRenderer().getBaseUrl();
+        final String redirectURL = url.getProtocol() + "://" + url.getHost() + ":" + url.getPort() + SecurityUtil.getLogoutPath();
+        throw new RedirectToUrlException(redirectURL);
     }
 
     private void redirect403(RequestCycle cycle) {
