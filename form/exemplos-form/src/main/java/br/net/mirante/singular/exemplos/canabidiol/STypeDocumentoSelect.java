@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@SInfoType(name = "STypeDocumentoSelect", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDocumentoSelect extends STypeString {
 
     @Override

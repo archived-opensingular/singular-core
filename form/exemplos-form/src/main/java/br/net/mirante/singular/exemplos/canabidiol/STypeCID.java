@@ -18,7 +18,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.exemplos.canabidiol.model.SubCategoriaCID;
 
-@SInfoType(name = "STypeCID", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeCID extends STypeComposite<SIComposite> {
 
     @Inject // queria injetar :(

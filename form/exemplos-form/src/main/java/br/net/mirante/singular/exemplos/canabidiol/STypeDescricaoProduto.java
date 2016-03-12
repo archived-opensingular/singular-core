@@ -16,7 +16,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@SInfoType(name = "STypeDescricaoProduto", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
 

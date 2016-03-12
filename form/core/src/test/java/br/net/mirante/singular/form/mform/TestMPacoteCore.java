@@ -3,7 +3,9 @@ package br.net.mirante.singular.form.mform;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoA;
+import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoB;
 import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoComCargaInterna;
+import br.net.mirante.singular.form.mform.TestMPacoteCore.TestPacoteA.TestTipoX;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -115,7 +117,8 @@ public class TestMPacoteCore extends TestCaseForm {
             Assert.assertEquals(valorFinalEsperado, instancia.getValue());
 
             assertException(() -> instancia.getType().convert(valor, instancia.getType().getValueClass()),
-                    "não consegue converter", "Deveria dar erro de conversão");
+ "não consegue converter",
+                    "Deveria dar erro de conversão");
         }
     }
 
@@ -205,6 +208,13 @@ public class TestMPacoteCore extends TestCaseForm {
         assertEquals("C", tipoX.getAttributeValue("teste.XXXXX.atTeste"));
     }
 
+    public void testDefaultNameForType() {
+        SDictionary dicionario = SDictionary.create();
+        assertEquals("TestTipoA", dicionario.getType(TestTipoA.class).getNameSimple());
+        assertEquals("TestTipoB", dicionario.getType(TestTipoB.class).getNameSimple());
+        assertEquals("TX", dicionario.getType(TestTipoX.class).getNameSimple());
+    }
+
     public static final class TestPacoteA extends SPackage {
 
         static final AtrRef<STypeInteger, SIInteger, Integer> ATR_XX = new AtrRef<>(TestPacoteA.class, "xx", STypeInteger.class,
@@ -222,6 +232,8 @@ public class TestMPacoteCore extends TestCaseForm {
             pb.createType(TestTipoA.class);
             pb.createType("TestTipoAA", TestTipoA.class);
             pb.createType(TestTipoComCargaInterna.class);
+            pb.createType(TestTipoB.class);
+            pb.createType(TestTipoX.class);
         }
 
         @SInfoType(name = "TestTipoA", spackage = TestPacoteA.class)
@@ -239,6 +251,13 @@ public class TestMPacoteCore extends TestCaseForm {
             }
         }
 
+        @SInfoType(spackage = TestPacoteA.class)
+        public static final class TestTipoB extends STypeInteger {
+        }
+
+        @SInfoType(name = "TX", spackage = TestPacoteA.class)
+        public static final class TestTipoX extends STypeInteger {
+        }
     }
 
     public static final class TestPacoteB extends SPackage {

@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
-@SInfoType(name = "STypeContato", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeContato extends STypeComposite<SIComposite> {
 
 

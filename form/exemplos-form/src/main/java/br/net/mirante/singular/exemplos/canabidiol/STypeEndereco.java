@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 
-@SInfoType(name = "STypeEndereco", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeEndereco extends STypeComposite<SIComposite> {
 
 

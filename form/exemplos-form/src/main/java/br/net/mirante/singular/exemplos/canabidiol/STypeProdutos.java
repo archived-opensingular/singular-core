@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.lambda.IFunction;
 
-@SInfoType(name = "STypeProdutos", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeProdutos extends STypeComposite<SIComposite> {
 
 
@@ -49,6 +49,6 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
                 // .col(desc.getComposicao(), customDisplayFunction)
                 // .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
                 .as(AtrBasic::new)
-                .label("Descrição do Produto");
+.label("Descrição do Produto");
     }
 }

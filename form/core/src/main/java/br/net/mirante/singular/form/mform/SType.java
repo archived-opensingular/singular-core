@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
@@ -89,6 +90,9 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     protected SType(String simpleName, Class<SType> superTypeClass, Class<? extends I> instanceClass) {
         if (simpleName == null) {
             simpleName = getInfoType().name();
+            if (StringUtils.isEmpty(simpleName)) {
+                simpleName = getClass().getSimpleName();
+            }
         }
         SFormUtil.validateSimpleName(simpleName);
         this.nameSimple = simpleName;
