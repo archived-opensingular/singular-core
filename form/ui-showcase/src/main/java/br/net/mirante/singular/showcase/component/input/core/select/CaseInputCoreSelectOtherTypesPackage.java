@@ -3,7 +3,7 @@ package br.net.mirante.singular.showcase.component.input.core.select;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PackageBuilder;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import org.joda.time.DateTime;
 
@@ -17,7 +17,7 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         //Select de Datas
-        STypeData tipoData = tipoMyForm.addFieldData("inicio");
+        STypeDate tipoData = tipoMyForm.addFieldData("inicio");
         tipoData.withSelectionOf(new Date(), DateTime.parse("2015-11-20").toDate());
         tipoData.withSelectView();
 
@@ -27,7 +27,7 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         tipoInteiro.withSelectView();
         
         //Select with composite Dates
-        STypeData finishField = tipoMyForm.addFieldData("finish");
+        STypeDate finishField = tipoMyForm.addFieldData("finish");
         finishField
                 .withSelection()
                 .add(DateTime.now().toDate(),"Today")

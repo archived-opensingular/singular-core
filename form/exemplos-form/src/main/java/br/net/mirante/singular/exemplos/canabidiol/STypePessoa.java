@@ -10,7 +10,7 @@ import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@SInfoType(name = "MTipoPaciente", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypePaciente", spackage = SPackagePeticaoCanabidiol.class)
 public class STypePessoa extends STypeComposite<SIComposite> {
 
     public static final String LABEL_TIPO_DOCUMENTO = "Documento de Identificação Oficial";

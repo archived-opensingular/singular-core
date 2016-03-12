@@ -4,8 +4,8 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class SIData extends SIComparable<Date> {
-    public SIData() {
+public class SIDate extends SIComparable<Date> {
+    public SIDate() {
     }
 
     public Date getDate() {

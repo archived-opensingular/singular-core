@@ -3,9 +3,9 @@ package br.net.mirante.singular.exemplos.canabidiol;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
@@ -16,7 +16,7 @@ import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@SInfoType(name = "MTipoDescricaoProduto", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypeDescricaoProduto", spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
 
@@ -63,7 +63,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
 
         nomeComercial
                 .withSelection()
-                .add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
+.add(1, "Cibdex Hemp CBD Complex 1oz (Gotas) – Fabricante: Cibdex Inc.")
                 .add(2, "Cibdex Hemp CBD Complex 2oz (Gotas) – Fabricante: Cibdex Inc.")
                 .add(3, "Cibdex Hemp CBD Complex (Cápsulas) – Fabricante: Cibdex Inc.")
                 .add(4, "Hemp CBD Oil 2000mg Canabidiol - 240mL - Fabricante: Bluebird Botanicals")
@@ -82,7 +82,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
-                .label("Composição")
+.label("Composição")
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
                 .as(AtrBootstrap::new)
@@ -109,7 +109,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
-                .label("Endereço do fabricante")
+.label("Endereço do fabricante")
 
                 .visivel(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) < 8)
                 .dependsOn(nomeComercial)
@@ -131,7 +131,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
         );
 
 
-        STypeComposite<?> outroMedicamento = this.addFieldComposite("outro");
+        STypeComposite<?> outroMedicamento = addFieldComposite("outro");
         outroMedicamento
                 .as(AtrCore::new)
                 .as(AtrBasic::new)
@@ -155,7 +155,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
-                .label("Composição")
+.label("Composição")
                 .as(AtrBootstrap::new)
                 .colPreference(6);
 
@@ -164,7 +164,7 @@ public class STypeDescricaoProduto extends STypeComposite<SIComposite> {
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> Value.of(instancia, nomeComercial) != null && Value.of(instancia, nomeComercial) == 8)
                 .as(AtrBasic::new)
-                .label("Endereço do Fabricante")
+.label("Endereço do Fabricante")
                 .as(AtrBootstrap::new)
                 .colPreference(12);
 

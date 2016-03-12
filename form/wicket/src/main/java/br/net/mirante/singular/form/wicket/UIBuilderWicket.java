@@ -34,7 +34,7 @@ import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDateHour;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
@@ -128,7 +128,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
                 .register(STypeString.class,                                            StringMapper::new)
                 .register(STypeString.class,     SViewSelectionBySearchModal.class,       SelectModalBuscaMapper::new)
                 .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)
-                .register(STypeData.class,                                              DateMapper::new)
+                .register(STypeDate.class,                                              DateMapper::new)
                 .register(STypeYearMonth.class,                                            YearMonthMapper::new)
                 .register(STypeDecimal.class,                                           DecimalMapper::new)
                 .register(STypeMonetary.class,                                         MonetarioMapper::new)

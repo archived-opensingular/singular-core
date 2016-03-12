@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.commons.lang3.BooleanUtils;
 
-@SInfoType(name = "MTipoPrescricao", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypePrescricao", spackage = SPackagePeticaoCanabidiol.class)
 public class STypePrescricao extends STypeComposite<SIComposite> {
 
     @Override

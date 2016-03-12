@@ -20,7 +20,7 @@ import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -91,7 +91,7 @@ public class SPackageBasic extends SPackage {
         pb.addAttribute(STypeInteger.class, ATR_TAMANHO_MAXIMO);
         pb.addAttribute(STypeInteger.class, ATR_TAMANHO_EDICAO);
 
-        pb.addAttribute(STypeData.class, ATR_TAMANHO_EDICAO, 10);
+        pb.addAttribute(STypeDate.class, ATR_TAMANHO_EDICAO, 10);
 
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_INTEIRO_MAXIMO, 9);
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_DECIMAL_MAXIMO, 2);

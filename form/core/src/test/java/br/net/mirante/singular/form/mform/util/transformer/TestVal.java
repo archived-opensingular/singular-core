@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,11 +33,11 @@ public class TestVal {
     private STypeComposite<? extends SIComposite> _raiz;
     private STypeString _descricao;
     private STypeComposite<SIComposite> _periodo;
-    private STypeData _dataInicial;
-    private STypeData _dataFinal;
+    private STypeDate _dataInicial;
+    private STypeDate _dataFinal;
     private STypeList<STypeComposite<SIComposite>, SIComposite> _alertas;
     private STypeComposite<SIComposite> _alerta;
-    private STypeData _alerta_data;
+    private STypeDate _alerta_data;
     private SIComposite evento;
     private SIList<SIComposite> alertas;
     private Map<String, Object> valorEsperado = new LinkedHashMap<>();
@@ -57,11 +57,11 @@ public class TestVal {
         _raiz = pb.createCompositeType("_raiz");
         _descricao = _raiz.addField("descricao", STypeString.class);
         _periodo = _raiz.addFieldComposite("periodo");
-        _dataInicial = _periodo.addField("dataInicial", STypeData.class);
-        _dataFinal = _periodo.addField("dataFinal", STypeData.class);
+        _dataInicial = _periodo.addField("dataInicial", STypeDate.class);
+        _dataFinal = _periodo.addField("dataFinal", STypeDate.class);
         _alertas = _periodo.addFieldListOfComposite("alertas", "alerta");
         _alerta = _alertas.getElementsType();
-        _alerta_data = _alerta.addField("data", STypeData.class);
+        _alerta_data = _alerta.addField("data", STypeDate.class);
 
         _raiz.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");

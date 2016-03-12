@@ -30,7 +30,7 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.validation.IInstanceValidator;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
 
-@SInfoType(name = "MTipo", spackage = SPackageCore.class)
+@SInfoType(name = "SType", spackage = SPackageCore.class)
 public class SType<I extends SInstance> extends SScopeBase implements SAttributeEnabled {
 
     private static final Logger LOGGER = Logger.getLogger(SType.class.getName());
@@ -612,7 +612,7 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
         } else if (isEqualsStart(name, SPackageCore.NOME)) {
             String v = name.substring(SPackageCore.NOME.length() + 1);
             if (aggressive) {
-                if (isEqualsStart(v, "MTipo")) {
+                if (isEqualsStart(v, "SType")) {
                     v = v.substring(6);
                 }
             }

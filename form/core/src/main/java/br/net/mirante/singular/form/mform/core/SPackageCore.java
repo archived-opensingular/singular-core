@@ -59,7 +59,7 @@ public class SPackageCore extends SPackage {
         pb.createType(STypeString.class);
         pb.createType(STypeInteger.class);
         pb.createType(STypeBoolean.class);
-        pb.createType(STypeData.class);
+        pb.createType(STypeDate.class);
         pb.createType(STypeDecimal.class);
         pb.createType(STypeMonetary.class);
         pb.createType(STypeDateHour.class);

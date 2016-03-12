@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.mform;
 
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
-@SInfoType(name = "MTipoCode", spackage = SPackageCore.class)
+@SInfoType(name = "STypeCode", spackage = SPackageCore.class)
 public class STypeCode<I extends SICode<V>, V> extends SType<I> {
 
     private Class<V> codeClass;

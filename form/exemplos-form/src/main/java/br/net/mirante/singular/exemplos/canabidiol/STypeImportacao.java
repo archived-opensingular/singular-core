@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@SInfoType(name = "MTipoImportacao", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypeImportacao", spackage = SPackagePeticaoCanabidiol.class)
 public class STypeImportacao extends STypeComposite<SIComposite> {
 
 

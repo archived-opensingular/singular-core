@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
@@ -32,12 +32,12 @@ public class TestViewMapperRegistry {
     public void testBuscaHierarquiaTipo() {
         mapper.register(STypeSimple.class, () -> "A");
         mapper.register(STypeString.class, () -> "B");
-        mapper.register(STypeData.class, () -> "C");
+        mapper.register(STypeDate.class, () -> "C");
 
         assertResult("A", STypeInteger.class, SView.class);
         assertResult("B", STypeString.class, SView.class);
         assertResult("B", STypeCPF.class, SView.class);
-        assertResult("C", STypeData.class, SView.class);
+        assertResult("C", STypeDate.class, SView.class);
         assertResult(null, STypeComposite.class, SView.class);
     }
 
@@ -47,27 +47,27 @@ public class TestViewMapperRegistry {
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeString.class, ViewX.class, () -> "D");
         mapper.register(STypeCNPJ.class, ViewX.class, () -> "E");
-        mapper.register(STypeData.class, () -> "C");
+        mapper.register(STypeDate.class, () -> "C");
 
         assertResult("A", STypeInteger.class, SView.class);
         assertResult("B", STypeString.class, SView.class);
         assertResult("B", STypeCPF.class, SView.class);
         assertResult("B", STypeCNPJ.class, SView.class);
-        assertResult("C", STypeData.class, SView.class);
+        assertResult("C", STypeDate.class, SView.class);
         assertResult(null, STypeComposite.class, SView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
         assertResult("D", STypeCPF.class, ViewX.class);
         assertResult("E", STypeCNPJ.class, ViewX.class);
-        assertResult("C", STypeData.class, ViewX.class);
+        assertResult("C", STypeDate.class, ViewX.class);
         assertResult(null, STypeComposite.class, ViewX.class);
 
         assertResult("A", STypeInteger.class, ViewY.class);
         assertResult("B", STypeString.class, ViewY.class);
         assertResult("B", STypeCPF.class, ViewY.class);
         assertResult("B", STypeCNPJ.class, ViewY.class);
-        assertResult("C", STypeData.class, ViewY.class);
+        assertResult("C", STypeDate.class, ViewY.class);
         assertResult(null, STypeComposite.class, ViewY.class);
     }
 
@@ -77,27 +77,27 @@ public class TestViewMapperRegistry {
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeString.class, ViewY.class, () -> "D");
         mapper.register(STypeCNPJ.class, ViewY.class, () -> "E");
-        mapper.register(STypeData.class, () -> "C");
+        mapper.register(STypeDate.class, () -> "C");
 
         assertResult("A", STypeInteger.class, SView.class);
         assertResult("B", STypeString.class, SView.class);
         assertResult("B", STypeCPF.class, SView.class);
         assertResult("B", STypeCNPJ.class, SView.class);
-        assertResult("C", STypeData.class, SView.class);
+        assertResult("C", STypeDate.class, SView.class);
         assertResult(null, STypeComposite.class, SView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
         assertResult("D", STypeCPF.class, ViewX.class);
         assertResult("E", STypeCNPJ.class, ViewX.class);
-        assertResult("C", STypeData.class, ViewX.class);
+        assertResult("C", STypeDate.class, ViewX.class);
         assertResult(null, STypeComposite.class, ViewX.class);
 
         assertResult("A", STypeInteger.class, ViewY.class);
         assertResult("D", STypeString.class, ViewY.class);
         assertResult("D", STypeCPF.class, ViewY.class);
         assertResult("E", STypeCNPJ.class, ViewY.class);
-        assertResult("C", STypeData.class, ViewY.class);
+        assertResult("C", STypeDate.class, ViewY.class);
         assertResult(null, STypeComposite.class, ViewY.class);
     }
 

@@ -19,7 +19,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.SIString;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
@@ -641,7 +641,7 @@ public class SPackagePeticaoGGTOX extends SPackage {
             final STypeComposite<SIComposite> type;
             final STypeString laboratorio, protocolo, purezaProdutoTestado, unidadeMedida, especies,
                     linhagem, veiculo, fluoresceina, testeRealizado;
-            final STypeData inicio, fim;
+            final STypeDate inicio, fim;
             final Alteracao alteracao;
 
             class Alteracao {
@@ -737,8 +737,8 @@ public class SPackagePeticaoGGTOX extends SPackage {
                 return f;
             }
 
-            private STypeData createDateField(String fieldName, String label, int colPreference) {
-                STypeData f = type.addFieldData(fieldName);
+            private STypeDate createDateField(String fieldName, String label, int colPreference) {
+                STypeDate f = type.addFieldData(fieldName);
                 f.as(AtrBasic::new).label(label).as(AtrBootstrap::new).colPreference(colPreference);
                 return f;
             }

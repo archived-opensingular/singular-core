@@ -14,7 +14,7 @@ import br.net.mirante.singular.form.mform.document.SDocument;
  *
  * @author Daniel C. Bordin
  */
-@SInfoType(name = "MTipoLista", spackage = SPackageCore.class)
+@SInfoType(name = "STypeList", spackage = SPackageCore.class)
 public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SIList<I>> implements ICompositeType {
 
     private E elementsType;
@@ -41,7 +41,7 @@ public class STypeList<E extends SType<I>, I extends SInstance> extends SType<SI
      * instancia informado. Se o tipo do conteudo não for compatível dispara
      * exception.
      * <p>
-     * 
+     *
      * <pre>
      * MTipoLista&lt;MTipoString> tipoLista = ...
      *

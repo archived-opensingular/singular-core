@@ -13,7 +13,7 @@ import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 
 
-@SInfoType(name = "MTipoMedico", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypeMedico", spackage = SPackagePeticaoCanabidiol.class)
 public class STypeMedico extends STypeComposite<SIComposite> {
 
     @Override

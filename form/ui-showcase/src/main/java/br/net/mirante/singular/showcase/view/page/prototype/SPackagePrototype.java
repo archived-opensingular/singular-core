@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDateHour;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeFormula;
@@ -110,7 +110,7 @@ public class SPackagePrototype extends SPackage {
         provider.add(typeName(pb, STypeCEP.class), "CEP");
         provider.add(typeName(pb, STypeCPF.class), "CPF");
         provider.add(typeName(pb, STypeCNPJ.class), "CNPJ");
-        provider.add(typeName(pb, STypeData.class), "Data");
+        provider.add(typeName(pb, STypeDate.class), "Data");
         provider.add(typeName(pb, STypeDateHour.class), "Data/Hora");
         provider.add(typeName(pb, STypeEMail.class), "Email");
         provider.add(typeName(pb, STypeLatitudeLongitude.class), "Latitude/Longitude");

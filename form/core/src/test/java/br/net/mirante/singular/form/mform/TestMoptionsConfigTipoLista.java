@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.util.transformer.SListBuilder;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -24,7 +24,7 @@ public class TestMoptionsConfigTipoLista {
     private STypeComposite<? extends SIComposite> _raiz;
     private STypeList<STypeComposite<SIComposite>, SIComposite> _alertas;
     private STypeComposite<SIComposite> _alerta;
-    private STypeData _alerta_data;
+    private STypeDate _alerta_data;
     private SIComposite evento;
     private SIList<SIComposite> alertas;
     private SIList listaAlertas;
@@ -43,7 +43,7 @@ public class TestMoptionsConfigTipoLista {
 
         _alertas = _raiz.addFieldListOfComposite("alertas", "alerta");
         _alerta = _alertas.getElementsType();
-        _alerta_data = _alerta.addField("data", STypeData.class);
+        _alerta_data = _alerta.addField("data", STypeDate.class);
 
         _raiz.asAtrBasic().label("Evento");
         _alertas.asAtrBasic().label("Alertas");

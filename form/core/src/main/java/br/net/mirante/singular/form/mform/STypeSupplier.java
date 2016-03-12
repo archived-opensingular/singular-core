@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 
-@SInfoType(name = "MTipoSupplier", spackage = SPackageBasic.class)
+@SInfoType(name = "STypeSupplier", spackage = SPackageBasic.class)
 public class STypeSupplier<V> extends STypeCode<SISupplier<V>, Supplier<V>> {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

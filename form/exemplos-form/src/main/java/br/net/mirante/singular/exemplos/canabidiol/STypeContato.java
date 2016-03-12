@@ -7,11 +7,10 @@ import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.core.AtrCore;
-import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
-@SInfoType(name = "MTipoContato", spackage = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "STypeContato", spackage = SPackagePeticaoCanabidiol.class)
 public class STypeContato extends STypeComposite<SIComposite> {
 
 
@@ -40,7 +39,7 @@ public class STypeContato extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(2);
 
-        email = this.addFieldEmail("email");
+        email = addFieldEmail("email");
         email
                 .as(AtrCore::new)
                 .obrigatorio()

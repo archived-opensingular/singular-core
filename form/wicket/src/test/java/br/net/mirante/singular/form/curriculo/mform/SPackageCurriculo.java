@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.basic.view.SViewTab;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
@@ -41,7 +41,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
         final STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
         final STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
-        final STypeData dtNasc = informacoesPessoais.addFieldData("dataNascimento", true);
+        final STypeDate dtNasc = informacoesPessoais.addFieldData("dataNascimento", true);
         {
             informacoesPessoais
                 .as(AtrBasic::new).label("Informações Pessoais");
@@ -159,7 +159,7 @@ public class SPackageCurriculo extends SPackage {
         final STypeComposite<?> certificacao = certificacoes.getElementsType();
         final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
         final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeData validadeCertificacao = certificacao.addFieldData("validade");
+        final STypeDate validadeCertificacao = certificacao.addFieldData("validade");
         final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes

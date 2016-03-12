@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.options.SSelectionableSimpleType;
 
 @SuppressWarnings("rawtypes")
-@SInfoType(name = "MTipoSimples", spackage = SPackageCore.class)
+@SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
 public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         extends SType<I>
         implements SSelectionableSimpleType<STypeSimple, TIPO_NATIVO> {

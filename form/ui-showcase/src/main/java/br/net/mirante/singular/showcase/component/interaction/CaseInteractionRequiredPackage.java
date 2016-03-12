@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class CaseInteractionRequiredPackage extends SPackage {
@@ -17,7 +17,7 @@ public class CaseInteractionRequiredPackage extends SPackage {
     public STypeBoolean required;
     public STypeComposite<SIComposite> record;
     public STypeString recordText;
-    public STypeData recordDate;
+    public STypeDate recordDate;
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {

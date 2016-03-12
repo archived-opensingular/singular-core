@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class TestMFormUtilUserFriendlyPath {
@@ -14,11 +14,11 @@ public class TestMFormUtilUserFriendlyPath {
     private STypeComposite<? extends SIComposite> _evento;
     private STypeString _descricao;
     private STypeComposite<SIComposite> _periodo;
-    private STypeData _dataInicial;
-    private STypeData _dataFinal;
+    private STypeDate _dataInicial;
+    private STypeDate _dataFinal;
     private STypeList<STypeComposite<SIComposite>, SIComposite> _alertas;
     private STypeComposite<SIComposite> _alerta;
-    private STypeData _alerta_data;
+    private STypeDate _alerta_data;
 
     private SIComposite evento;
 
@@ -32,11 +32,11 @@ public class TestMFormUtilUserFriendlyPath {
         _evento = pb.createCompositeType("evento");
         _descricao = _evento.addField("descricao", STypeString.class);
         _periodo = _evento.addFieldComposite("periodo");
-        _dataInicial = _periodo.addField("dataInicia", STypeData.class);
-        _dataFinal = _periodo.addField("dataFinal", STypeData.class);
+        _dataInicial = _periodo.addField("dataInicia", STypeDate.class);
+        _dataFinal = _periodo.addField("dataFinal", STypeDate.class);
         _alertas = _periodo.addFieldListOfComposite("alertas", "alerta");
         _alerta = _alertas.getElementsType();
-        _alerta_data = _alerta.addField("data", STypeData.class);
+        _alerta_data = _alerta.addField("data", STypeDate.class);
 
         _evento.asAtrBasic().label("Evento");
         _descricao.asAtrBasic().label("Descrição");

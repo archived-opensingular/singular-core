@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
@@ -26,8 +26,8 @@ public class TestMoptionsConfigTipoComposto {
     private SDictionary _dicionario;
     private STypeComposite<? extends SIComposite> _raiz;
     private STypeComposite<SIComposite> _periodo;
-    private STypeData _dataInicial;
-    private STypeData _dataFinal;
+    private STypeDate _dataInicial;
+    private STypeDate _dataFinal;
     private SIComposite evento;
     private SIComposite periodo;
     private SInstance opcaoPeriodo;
@@ -41,8 +41,8 @@ public class TestMoptionsConfigTipoComposto {
         _raiz = pb.createCompositeType("_raiz");
         _periodo = _raiz.addFieldComposite("periodo");
         STypeString descricao  = _periodo.addFieldString("descricao");
-        _dataInicial = _periodo.addField("dataInicial", STypeData.class);
-        _dataFinal = _periodo.addField("dataFinal", STypeData.class);
+        _dataInicial = _periodo.addField("dataInicial", STypeDate.class);
+        _dataFinal = _periodo.addField("dataFinal", STypeDate.class);
 
 
         _raiz.asAtrBasic().label("Evento");

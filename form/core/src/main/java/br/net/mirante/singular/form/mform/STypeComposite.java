@@ -11,7 +11,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
@@ -23,7 +23,7 @@ import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
 import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
-@SInfoType(name = "MTipoComposto", spackage = SPackageCore.class)
+@SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
 public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         extends SType<TIPO_INSTANCIA>
         implements ICompositeType, SSelectionableCompositeType {
@@ -177,12 +177,12 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return addField(fieldSimpleName, STypeString.class, required);
     }
 
-    public STypeData addFieldData(String fieldSimpleName) {
-        return addField(fieldSimpleName, STypeData.class);
+    public STypeDate addFieldData(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeDate.class);
     }
 
-    public STypeData addFieldData(String fieldSimpleName, boolean required) {
-        return addField(fieldSimpleName, STypeData.class, required);
+    public STypeDate addFieldData(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeDate.class, required);
     }
 
     public STypeBoolean addFieldBoolean(String fieldSimpleName) {

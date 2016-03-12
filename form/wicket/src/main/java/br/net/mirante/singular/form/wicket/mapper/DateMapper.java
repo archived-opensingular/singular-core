@@ -17,7 +17,7 @@ import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
@@ -45,13 +45,13 @@ public class DateMapper implements ControlsFieldComponentMapper {
                     @Override
                     public Date convertToObject(String date, Locale locale) throws ConversionException {
                         try {
-                            SimpleDateFormat sdf = new SimpleDateFormat(STypeData.FORMAT);
+                            SimpleDateFormat sdf = new SimpleDateFormat(STypeDate.FORMAT);
                             sdf.setLenient(false);
                             return sdf.parse(date);
                         } catch (ParseException e) {
                             String msg = String.format(
                                 "Can't parse value '%s' with format '%s'.",
-                                date, STypeData.FORMAT);
+                                date, STypeDate.FORMAT);
                             LOGGER.log(Level.WARNING, msg, e);
                             throw new ConversionException(e);
                         }
@@ -59,7 +59,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
 
                     @Override
                     public String convertToString(Date date, Locale locale) {
-                        return (new SimpleDateFormat(STypeData.FORMAT)).format(date);
+                        return (new SimpleDateFormat(STypeDate.FORMAT)).format(date);
                     }
                 });
             }
@@ -80,7 +80,7 @@ public class DateMapper implements ControlsFieldComponentMapper {
             SInstance instancia = model.getObject();
             if (instancia.getValue() instanceof Date) {
                 Date dt = (Date) instancia.getValue();
-                final SimpleDateFormat formattter = new SimpleDateFormat(STypeData.FORMAT);
+                final SimpleDateFormat formattter = new SimpleDateFormat(STypeDate.FORMAT);
                 return formattter.format(dt);
             }
         }

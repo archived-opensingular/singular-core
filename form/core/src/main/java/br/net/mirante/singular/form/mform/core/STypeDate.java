@@ -12,27 +12,26 @@ import com.google.common.base.Throwables;
 import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
-@SInfoType(name = "DateHour", spackage = SPackageCore.class)
-public class STypeDateHour extends STypeSimple<SIDate, Date> {
+@SInfoType(name = "Date", spackage = SPackageCore.class)
+public class STypeDate extends STypeSimple<SIDate, Date> {
+    private static final Logger LOGGER = Logger.getLogger(SIDate.class.getName());
 
-    private static final Logger LOGGER = Logger.getLogger(STypeDateHour.class.getName());
+    public static final String FORMAT = "dd/MM/yyyy";
 
-    public static final String FORMAT = "dd/MM/yyyy HH:mm";
-
-    public STypeDateHour() {
+    public STypeDate() {
         super(SIDate.class, Date.class);
     }
 
-    protected STypeDateHour(Class<? extends SIDate> classeInstancia) {
-        super(classeInstancia, Date.class);
+    protected STypeDate(Class<? extends SIDate> instanceClass) {
+        super(instanceClass, Date.class);
     }
 
     public Date fromString(String value) {
         try {
             if (Strings.isNullOrEmpty(value)) return null;
-            return (new SimpleDateFormat(FORMAT)).parse(value);
+            return (new SimpleDateFormat(STypeDate.FORMAT)).parse(value);
         } catch (ParseException e) {
-            String msg = String.format("Can't parse value '%s' with format '%s'.", value, FORMAT);
+            String msg = String.format("Can't parse value '%s' with format '%s'.", value, STypeDate.FORMAT);
             LOGGER.log(Level.WARNING, msg, e);
             throw Throwables.propagate(e);
         }
@@ -40,7 +39,10 @@ public class STypeDateHour extends STypeSimple<SIDate, Date> {
 
     @Override
     protected String toStringPersistence(Date originalValue) {
-        return (new SimpleDateFormat(FORMAT)).format(originalValue);
+        if (originalValue != null) {
+            return (new SimpleDateFormat(STypeDate.FORMAT)).format(originalValue);
+        } else {
+            return null;
+        }
     }
-
 }

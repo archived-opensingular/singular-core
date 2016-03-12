@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
@@ -24,7 +24,7 @@ public class CaseListByTableDefaultPackage extends SPackage {
         final STypeComposite<?> certificacao = certificacoes.getElementsType();
         final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
         final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeData validadeCertificacao = certificacao.addFieldData("validade");
+        final STypeDate validadeCertificacao = certificacao.addFieldData("validade");
         final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes
