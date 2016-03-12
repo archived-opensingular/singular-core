@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MInstanceViewState;
-import br.net.mirante.singular.form.mform.MInstances;
+import br.net.mirante.singular.form.mform.SInstanceViewState;
+import br.net.mirante.singular.form.mform.SInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -37,7 +37,7 @@ public class InstanceValidationContext {
     }
 
     public void validateAll() {
-        MInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> validateInstance(new InstanceValidatable<>(inst, errors::add)));
+        SInstances.visitAllChildrenIncludingEmpty(rootInstance, inst -> validateInstance(new InstanceValidatable<>(inst, errors::add)));
     }
     public void validateSingle() {
         validateInstance(new InstanceValidatable<>(rootInstance, errors::add));
@@ -60,7 +60,7 @@ public class InstanceValidationContext {
     }
 
     protected boolean checkRequired(SInstance instance, boolean ignoreDisabledAndInvisible) {
-        if (!Boolean.TRUE.equals(instance.getValorAtributo(SPackageCore.ATR_OBRIGATORIO)))
+        if (!Boolean.TRUE.equals(instance.getAttributeValue(SPackageCore.ATR_REQUIRED)))
             return true;
 
         if (instance instanceof ICompositeInstance) {
@@ -73,14 +73,14 @@ public class InstanceValidationContext {
     }
 
     protected boolean isEnabledInHierarchy(SInstance instance) {
-        return !MInstances.listAscendants(instance, true).stream()
-                .map(it -> MInstanceViewState.get(it).isEnabled())
+        return !SInstances.listAscendants(instance, true).stream()
+                .map(it -> SInstanceViewState.get(it).isEnabled())
                 .anyMatch(Boolean.FALSE::equals);
     }
 
     protected boolean isVisibleInHierarchy(SInstance instance) {
-        return !MInstances.listAscendants(instance, true).stream()
-                .map(it -> MInstanceViewState.get(it).isVisible())
+        return !SInstances.listAscendants(instance, true).stream()
+                .map(it -> SInstanceViewState.get(it).isVisible())
                 .anyMatch(Boolean.FALSE::equals);
     }
 

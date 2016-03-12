@@ -9,7 +9,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.MInstanceViewState;
+import br.net.mirante.singular.form.mform.SInstanceViewState;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
@@ -89,15 +89,15 @@ public final class ConfigureByMInstanciaAttributesBehavior extends Behavior {
     }
 
     protected boolean isInstanceRequired(Component component) {
-        return MInstanceViewState.isInstanceRequired(resolveInstance(component));
+        return SInstanceViewState.isInstanceRequired(resolveInstance(component));
     }
 
     protected boolean isInstanceEnabled(Component component) {
-        return MInstanceViewState.get(resolveInstance(component)).isEnabled();
+        return SInstanceViewState.get(resolveInstance(component)).isEnabled();
     }
 
     protected boolean isInstanceVisible(Component component) {
-        return MInstanceViewState.get(resolveInstance(component)).isVisible();
+        return SInstanceViewState.get(resolveInstance(component)).isVisible();
     }
 
     private static SInstance resolveInstance(Component component) {

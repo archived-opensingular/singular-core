@@ -35,15 +35,15 @@ public class SPackageBootstrap extends SPackage {
         adicionarDefinicaoColuna(pb, ATR_COL_MD_PREFERENCE, "MD");
         adicionarDefinicaoColuna(pb, ATR_COL_LG_PREFERENCE, "LG");
 
-        pb.createTipoAtributo(SType.class, ATR_COL_ON_NEW_ROW);
+        pb.createAttributeIntoType(SType.class, ATR_COL_ON_NEW_ROW);
 
     }
 
     private void adicionarDefinicaoColuna(PackageBuilder pb, AtrRef<?, ?, ?> atrRef, String label) {
         Optional<String> labelOp = Optional.ofNullable(label);
-        pb.createTipoAtributo(atrRef);
-        pb.addAtributo(SType.class, atrRef);
-        pb.getAtributo(atrRef).as(SPackageBasic.aspect()).label(("Largura preferencial " + labelOp.orElse("")).trim());
+        pb.createAttributeType(atrRef);
+        pb.addAttribute(SType.class, atrRef);
+        pb.getAttribute(atrRef).as(SPackageBasic.aspect()).label(("Largura preferencial " + labelOp.orElse("")).trim());
     }
 
 }

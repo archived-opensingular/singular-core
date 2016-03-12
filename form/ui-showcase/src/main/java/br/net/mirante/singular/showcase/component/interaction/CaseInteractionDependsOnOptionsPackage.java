@@ -48,9 +48,9 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        testForm = pb.createTipoComposto("testForm");
-        letter = testForm.addCampoString("letter");
-        word = testForm.addCampoString("word");
+        testForm = pb.createCompositeType("testForm");
+        letter = testForm.addFieldString("letter");
+        word = testForm.addFieldString("word");
 
         letter.as(SPackageBasic.aspect())
             .label("Letter");
@@ -62,9 +62,9 @@ public class CaseInteractionDependsOnOptionsPackage extends SPackage {
         word.withSelectionFromProvider(ins -> {
             String prefix = ins.findNearest(letter).get().getValue();
             return (prefix == null)
-                ? ins.getType().novaLista()
-                : ins.getType().novaLista()
-                    .addValores(Stream.of(WORDS)
+                ? ins.getType().newList()
+                : ins.getType().newList()
+                    .addValues(Stream.of(WORDS)
                         .filter(s -> s.startsWith(prefix))
                         .collect(toList()));
         });

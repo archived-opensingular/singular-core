@@ -27,7 +27,7 @@ public abstract class AbstractSInstanceCampoModel<I extends SInstance>
     @SuppressWarnings("unchecked")
     public I getObject() {
         if(getRootTarget() != null) {
-            return (I) getRootTarget().getCampo(getPropertyExpression());
+            return (I) getRootTarget().getField(getPropertyExpression());
         } else {
             return null;
         }

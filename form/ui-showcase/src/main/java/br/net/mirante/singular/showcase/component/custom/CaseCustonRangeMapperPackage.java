@@ -13,11 +13,11 @@ public class CaseCustonRangeMapperPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeComposite<? extends SIComposite> faixaIdade = testForm.addCampoComposto("faixaIdade");
-        final STypeInteger valorInicial = faixaIdade.addCampoInteger("de");
-        final STypeInteger valorFinal = faixaIdade.addCampoInteger("a");
+        final STypeComposite<? extends SIComposite> faixaIdade = testForm.addFieldComposite("faixaIdade");
+        final STypeInteger valorInicial = faixaIdade.addFieldInteger("de");
+        final STypeInteger valorFinal = faixaIdade.addFieldInteger("a");
 
         faixaIdade.as(AtrBasic::new).label("Faixa de Idade");
         //@destacar

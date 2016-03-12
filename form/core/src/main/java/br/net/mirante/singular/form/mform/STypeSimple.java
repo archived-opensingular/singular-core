@@ -1,35 +1,36 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.options.MSelectionableSimpleType;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.Converter;
 
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.AtrFormula;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SSelectionableSimpleType;
 
 @SuppressWarnings("rawtypes")
-@MInfoTipo(nome = "MTipoSimples", pacote = SPackageCore.class)
+@SInfoType(name = "MTipoSimples", spackage = SPackageCore.class)
 public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         extends SType<I>
-        implements MSelectionableSimpleType<STypeSimple, TIPO_NATIVO> {
+        implements SSelectionableSimpleType<STypeSimple, TIPO_NATIVO> {
 
-    private final Class<TIPO_NATIVO> classeTipoNativo;
+    private final Class<TIPO_NATIVO> valueClass;
 
     private transient Converter converter;
 
-    protected MOptionsProvider optionsProvider;
+    protected SOptionsProvider optionsProvider;
+
     private String selectLabel;
 
     public STypeSimple() {
-        this.classeTipoNativo = null;
+        this.valueClass = null;
     }
 
-    protected STypeSimple(Class<? extends I> classeInstancia, Class<TIPO_NATIVO> classeTipoNativo) {
-        super(classeInstancia);
-        this.classeTipoNativo = classeTipoNativo;
+    protected STypeSimple(Class<? extends I> instanceClass, Class<TIPO_NATIVO> valueClass) {
+        super(instanceClass);
+        this.valueClass = valueClass;
     }
 
     // SELECTION OF BEGIN
@@ -47,124 +48,124 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
 
 
     @Override
-    public MOptionsProvider getProviderOpcoes() {
+    public SOptionsProvider getOptionsProvider() {
         return optionsProvider;
     }
 
     @Override
-    public void setProviderOpcoes(MOptionsProvider p) {
+    public void setOptionsProvider(SOptionsProvider p) {
         optionsProvider = p;
     }
 
 
     /**
-     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
      */
     @SuppressWarnings("unchecked")
     public STypeSimple<I, TIPO_NATIVO> withSelectView() {
-        return (STypeSimple<I, TIPO_NATIVO>) super.withView(MSelecaoPorSelectView::new);
+        return (STypeSimple<I, TIPO_NATIVO>) super.withView(SViewSelectionBySelect::new);
     }
 
     /**
-     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
      */
     @SuppressWarnings("unchecked")
     public STypeSimple<I, TIPO_NATIVO> withRadioView() {
-        return (STypeSimple<I, TIPO_NATIVO>) super.withView(MSelecaoPorRadioView::new);
+        return (STypeSimple<I, TIPO_NATIVO>) super.withView(SViewSelectionByRadio::new);
     }
 
 
     public AtrFormula asFormula() {
-        return MTranslatorParaAtributo.of(this, new AtrFormula());
+        return STranslatorForAttribute.of(this, new AtrFormula());
     }
 
-    public TIPO_NATIVO converter(Object valor) {
-        if (valor == null) {
+    public TIPO_NATIVO convert(Object value) {
+        if (value == null) {
             return null;
-        } else if (classeTipoNativo.isInstance(valor)) {
-            return classeTipoNativo.cast(valor);
-        } else if (valor instanceof String) {
-            return fromString((String) valor);
+        } else if (valueClass.isInstance(value)) {
+            return valueClass.cast(value);
+        } else if (value instanceof String) {
+            return fromString((String) value);
         }
-        return converterNaoNativoNaoString(valor);
+        return convertNotNativeNotString(value);
     }
 
-    protected TIPO_NATIVO converterNaoNativoNaoString(Object valor) {
-        return converterUsandoApache(valor);
+    protected TIPO_NATIVO convertNotNativeNotString(Object value) {
+        return convertUsingApache(value);
     }
 
-    protected String toStringPersistencia(TIPO_NATIVO valorOriginal) {
-        if (valorOriginal == null) {
+    protected String toStringPersistence(TIPO_NATIVO originalValue) {
+        if (originalValue == null) {
             return null;
         }
-        return valorOriginal.toString();
+        return originalValue.toString();
     }
 
-    public TIPO_NATIVO fromStringPersistencia(String valorOriginal) {
-        return converter(valorOriginal, classeTipoNativo);
+    public TIPO_NATIVO fromStringPersistence(String originalValue) {
+        return convert(originalValue, valueClass);
     }
 
-    public String toStringDisplay(TIPO_NATIVO valor) {
-        return toStringPersistencia(valor);
+    public String toStringDisplay(TIPO_NATIVO value) {
+        return toStringPersistence(value);
     }
 
-    public TIPO_NATIVO fromString(String valor) {
+    public TIPO_NATIVO fromString(String value) {
         throw new RuntimeException("Não implementado");
     }
 
     @Override
-    public <T extends Object> T converter(Object valor, Class<T> classeDestino) {
-        if (valor == null) {
+    public <T extends Object> T convert(Object value, Class<T> resultClass) {
+        if (value == null) {
             return null;
-        } else if (classeDestino.isAssignableFrom(classeTipoNativo)) {
-            return classeDestino.cast(converter(valor));
-        } else if (classeDestino.isInstance(valor)) {
-            return classeDestino.cast(valor);
-        } else if (classeDestino.isAssignableFrom(String.class)) {
-            if (classeTipoNativo.isInstance(valor)) {
-                return classeDestino.cast(toStringPersistencia(classeTipoNativo.cast(valor)));
+        } else if (resultClass.isAssignableFrom(valueClass)) {
+            return resultClass.cast(convert(value));
+        } else if (resultClass.isInstance(value)) {
+            return resultClass.cast(value);
+        } else if (resultClass.isAssignableFrom(String.class)) {
+            if (valueClass.isInstance(value)) {
+                return resultClass.cast(toStringPersistence(valueClass.cast(value)));
             }
-            return classeDestino.cast(valor.toString());
+            return resultClass.cast(value.toString());
         } else {
-            Converter converter = ConvertUtils.lookup(valor.getClass(), classeDestino);
+            Converter converter = ConvertUtils.lookup(value.getClass(), resultClass);
             if (converter != null) {
-                return classeDestino.cast(converter.convert(classeDestino, valor));
+                return resultClass.cast(converter.convert(resultClass, value));
             }
         }
 
-        throw createErroConversao(valor, classeDestino);
+        throw createConversionError(value, resultClass);
     }
 
-    protected final TIPO_NATIVO converterUsandoApache(Object valor) {
+    protected final TIPO_NATIVO convertUsingApache(Object value) {
         if (converter == null) {
-            converter = ConvertUtils.lookup(classeTipoNativo);
+            converter = ConvertUtils.lookup(valueClass);
             if (converter == null) {
-                throw createErroConversao(valor);
+                throw createConversionError(value);
             }
         }
-        return classeTipoNativo.cast(converter.convert(classeTipoNativo, valor));
+        return valueClass.cast(converter.convert(valueClass, value));
     }
 
-    public final Class<TIPO_NATIVO> getClasseTipoNativo() {
-        return classeTipoNativo;
+    public final Class<TIPO_NATIVO> getValueClass() {
+        return valueClass;
     }
 
-    protected final RuntimeException createErroConversao(Object valor) {
-        return createErroConversao(valor, null, null, null);
+    protected final RuntimeException createConversionError(Object value) {
+        return createConversionError(value, null, null, null);
     }
 
-    protected final RuntimeException createErroConversao(Object valor, Class<?> tipoDestino) {
-        return createErroConversao(valor, tipoDestino, null, null);
+    protected final RuntimeException createConversionError(Object valor, Class<?> resultClass) {
+        return createConversionError(valor, resultClass, null, null);
     }
 
-    protected final RuntimeException createErroConversao(Object valor, Class<?> tipoDestino, String complemento, Exception e) {
-        String msg = "O tipo '" + getClass().getName() + "' não consegue converter o valor '" + valor + "' do tipo "
-                + valor.getClass().getName();
-        if (tipoDestino != null) {
-            msg += " para o tipo '" + tipoDestino.getName() + "'";
+    protected final RuntimeException createConversionError(Object value, Class<?> resultClass, String complement, Exception e) {
+        String msg = "O tipo '" + getClass().getName() + "' não consegue converter o valor '" + value + "' do tipo "
+                + value.getClass().getName();
+        if (resultClass != null) {
+            msg += " para o tipo '" + resultClass.getName() + "'";
         }
-        if (complemento != null) {
-            msg += complemento;
+        if (complement != null) {
+            msg += complement;
         }
         if (e != null) {
             return new RuntimeException(msg, e);

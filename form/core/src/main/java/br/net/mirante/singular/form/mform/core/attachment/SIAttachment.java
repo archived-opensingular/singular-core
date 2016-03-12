@@ -26,26 +26,26 @@ public class SIAttachment extends SIComposite {
 
     private void setContent(IAttachmentRef ref) {
         if (!Objects.equals(getFileHashSHA1(), ref.getHashSHA1())) {
-            setValor(STypeAttachment.FIELD_HASH_SHA1, ref.getHashSHA1());
+            setValue(STypeAttachment.FIELD_HASH_SHA1, ref.getHashSHA1());
         }
         if (Objects.equals(ref.getId(), ref.getHashSHA1())) {
-            setValor(STypeAttachment.FIELD_FILE_ID, null);
+            setValue(STypeAttachment.FIELD_FILE_ID, null);
         } else {
-            setValor(STypeAttachment.FIELD_FILE_ID, ref.getId());
+            setValue(STypeAttachment.FIELD_FILE_ID, ref.getId());
         }
-        setValor(STypeAttachment.FIELD_SIZE, ref.getSize());
+        setValue(STypeAttachment.FIELD_SIZE, ref.getSize());
     }
 
     public void deleteReference() {
         if (getFileId() != null) {
             getAttachmentService().deleteReference(getFileId());
         }
-        setValor(STypeAttachment.FIELD_FILE_ID, null);
-        setValor(STypeAttachment.FIELD_HASH_SHA1, null);
-        setValor(STypeAttachment.FIELD_SIZE, null);
-        setValor(STypeAttachment.FIELD_NAME, null);
-        setValorAtributo(STypeAttachment.ATR_ORIGINAL_ID, null);
-        setValorAtributo(STypeAttachment.ATR_IS_TEMPORARY, null);
+        setValue(STypeAttachment.FIELD_FILE_ID, null);
+        setValue(STypeAttachment.FIELD_HASH_SHA1, null);
+        setValue(STypeAttachment.FIELD_SIZE, null);
+        setValue(STypeAttachment.FIELD_NAME, null);
+        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, null);
+        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, null);
     }
 
     @Override
@@ -67,23 +67,23 @@ public class SIAttachment extends SIComposite {
     }
 
     public void setFileName(String name) {
-        setValor(STypeAttachment.FIELD_NAME, name);
+        setValue(STypeAttachment.FIELD_NAME, name);
     }
 
     public void setFileHashSHA1(String hash) {
-        setValor(STypeAttachment.FIELD_HASH_SHA1, hash);
+        setValue(STypeAttachment.FIELD_HASH_SHA1, hash);
     }
 
     public void setFileId(String id) {
-        setValor(STypeAttachment.FIELD_FILE_ID, id);
+        setValue(STypeAttachment.FIELD_FILE_ID, id);
     }
 
     public void setOriginalFileId(String id) {
-        setValorAtributo(STypeAttachment.ATR_ORIGINAL_ID, id);
+        setAttributeValue(STypeAttachment.ATR_ORIGINAL_ID, id);
     }
 
     public void setFileSize(Integer size) {
-        setValor(STypeAttachment.FIELD_SIZE, size);
+        setValue(STypeAttachment.FIELD_SIZE, size);
     }
 
     /**
@@ -91,15 +91,15 @@ public class SIAttachment extends SIComposite {
      * arquivo.
      */
     public Integer getFileSize() {
-        return getValorInteger(STypeAttachment.FIELD_SIZE);
+        return getValueInteger(STypeAttachment.FIELD_SIZE);
     }
 
     public String getFileName() {
-        return getValorString(STypeAttachment.FIELD_NAME);
+        return getValueString(STypeAttachment.FIELD_NAME);
     }
 
     public String getFileId() {
-        String id = getValorString(STypeAttachment.FIELD_FILE_ID);
+        String id = getValueString(STypeAttachment.FIELD_FILE_ID);
         if (id == null) {
             return getFileHashSHA1();
         }
@@ -107,11 +107,11 @@ public class SIAttachment extends SIComposite {
     }
 
     public String getOriginalFileId() {
-        return getValorAtributo(STypeAttachment.ATR_ORIGINAL_ID);
+        return getAttributeValue(STypeAttachment.ATR_ORIGINAL_ID);
     }
 
     public String getFileHashSHA1() {
-        return getValorString(STypeAttachment.FIELD_HASH_SHA1);
+        return getValueString(STypeAttachment.FIELD_HASH_SHA1);
     }
 
     public byte[] getContentAsByteArray() {
@@ -125,12 +125,12 @@ public class SIAttachment extends SIComposite {
     }
 
     public SIAttachment setTemporary() {
-        setValorAtributo(STypeAttachment.ATR_IS_TEMPORARY, "true");
+        setAttributeValue(STypeAttachment.ATR_IS_TEMPORARY, "true");
         return this;
     }
 
     public boolean isTemporary() {
-        return getValorAtributo(STypeAttachment.ATR_IS_TEMPORARY) != null;
+        return getAttributeValue(STypeAttachment.ATR_IS_TEMPORARY) != null;
     }
 
 

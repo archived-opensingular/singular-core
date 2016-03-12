@@ -14,51 +14,51 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class SIList<E extends SInstance> extends SInstance implements Iterable<E>, ICompositeInstance {
 
-    private List<E> valores;
+    private List<E> values;
 
-    private SType<E> tipoElementos;
+    private SType<E> elementsType;
 
     public SIList() {}
 
-    static <I extends SInstance> SIList<I> of(SType<I> tipoElementos) {
+    static <I extends SInstance> SIList<I> of(SType<I> elementsType) {
         //        MILista<I> lista = new MILista<>();
-        SIList<I> lista = (SIList<I>) tipoElementos.getDictionary().getType(STypeLista.class).novaInstancia();
-        lista.setType(tipoElementos.getDictionary().getType(STypeLista.class));
-        lista.tipoElementos = tipoElementos;
+        SIList<I> lista = (SIList<I>) elementsType.getDictionary().getType(STypeList.class).newInstance();
+        lista.setType(elementsType.getDictionary().getType(STypeList.class));
+        lista.elementsType = elementsType;
         return lista;
     }
 
     @Override
-    public STypeLista<?, ?> getType() {
-        return (STypeLista<?, ?>) super.getType();
+    public STypeList<?, ?> getType() {
+        return (STypeList<?, ?>) super.getType();
     }
 
     @SuppressWarnings("unchecked")
-    public SType<E> getTipoElementos() {
-        if (tipoElementos == null) {
-            tipoElementos = (SType<E>) getType().getTipoElementos();
+    public SType<E> getElementsType() {
+        if (elementsType == null) {
+            elementsType = (SType<E>) getType().getElementsType();
         }
-        return tipoElementos;
+        return elementsType;
     }
 
     @Override
     public List<Object> getValue() {
-        if (valores == null) {
+        if (values == null) {
             return Collections.emptyList();
         }
-        return valores.stream().map(SInstance::getValue).collect(Collectors.toList());
+        return values.stream().map(SInstance::getValue).collect(Collectors.toList());
     }
 
     @Override
     public void clearInstance() {
-        if (valores != null) {
-            valores.forEach(SInstance::clearInstance);
+        if (values != null) {
+            values.forEach(SInstance::clearInstance);
         }
     }
 
     @Override
-    public final <T> T getValor(String pathCampo, Class<T> classeDestino) {
-        return getValor(new PathReader(pathCampo), classeDestino);
+    public final <T> T getValue(String fieldPath, Class<T> resultClass) {
+        return getValue(new PathReader(fieldPath), resultClass);
     }
 
     @Override
@@ -68,145 +68,145 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
 
     @Override
     public boolean isEmptyOfData() {
-        return isEmpty() || valores.stream().allMatch(SInstance::isEmptyOfData);
+        return isEmpty() || values.stream().allMatch(SInstance::isEmptyOfData);
     }
 
-    public E addNovo() {
-        return addInterno(getTipoElementos().newInstance(getDocument()));
+    public E addNew() {
+        return addInternal(getElementsType().newInstance(getDocument()));
     }
 
-    public E addNovo(Consumer<E> consumer) {
-        E novo = getTipoElementos().newInstance(getDocument());
+    public E addNew(Consumer<E> consumer) {
+        E novo = getElementsType().newInstance(getDocument());
         consumer.accept(novo);
-        return addInterno(novo);
+        return addInternal(novo);
     }
 
     @SuppressWarnings("unchecked")
     public E addElement(Object e) {
         E element = (E) e;
         element.setDocument(getDocument());
-        return addInterno(element);
+        return addInternal(element);
     }
 
     public E addElementAt(int index, E e) {
         E element = e;
         element.setDocument(getDocument());
-        addAtInterno(index, element);
+        addAtInternal(index, element);
         return element;
     }
 
-    public E addNovoAt(int index) {
-        E instancia = getTipoElementos().newInstance(getDocument());
-        addAtInterno(index, instancia);
-        return instancia;
+    public E addNewAt(int index) {
+        E instance = getElementsType().newInstance(getDocument());
+        addAtInternal(index, instance);
+        return instance;
     }
 
-    public E addValor(Object valor) {
-        E instancia = getTipoElementos().newInstance(getDocument());
-        instancia.setValue(valor);
-        return addInterno(instancia);
+    public E addValue(Object value) {
+        E instance = getElementsType().newInstance(getDocument());
+        instance.setValue(value);
+        return addInternal(instance);
     }
 
-    public SIList<E> addValores(Collection<?> valores) {
-        for (Object valor : valores)
-            addValor(valor);
+    public SIList<E> addValues(Collection<?> values) {
+        for (Object valor : values)
+            addValue(valor);
         return this;
     }
 
-    private E addInterno(E instancia) {
-        if (valores == null) {
-            valores = new ArrayList<>();
+    private E addInternal(E instance) {
+        if (values == null) {
+            values = new ArrayList<>();
         }
-        valores.add(instancia);
-        instancia.setParent(this);
-        return instancia;
+        values.add(instance);
+        instance.setParent(this);
+        return instance;
     }
 
-    private void addAtInterno(int index, E instancia) {
-        if (valores == null) {
-            valores = new ArrayList<>();
+    private void addAtInternal(int index, E instance) {
+        if (values == null) {
+            values = new ArrayList<>();
         }
-        valores.add(index, instancia);
-        instancia.setParent(this);
+        values.add(index, instance);
+        instance.setParent(this);
     }
 
     public void clear() {
-        if (valores != null) {
-            valores.clear();
+        if (values != null) {
+            values.clear();
         }
     }
 
     public SInstance get(int index) {
-        if (valores == null) {
-            throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
+        if (values == null) {
+            throw new IndexOutOfBoundsException(errorMsg("A lista " + getName() + " está vazia (index=" + index + ")"));
         }
-        return valores.get(index);
+        return values.get(index);
     }
 
     @Override
-    public SInstance getCampo(String path) {
-        return getCampo(new PathReader(path));
+    public SInstance getField(String path) {
+        return getField(new PathReader(path));
     }
 
     @Override
-    final SInstance getCampoLocal(PathReader leitor) {
-        if (!leitor.isIndice()) {
-            throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
+    final SInstance getFieldLocal(PathReader pathReader) {
+        if (!pathReader.isIndex()) {
+            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        SInstance instancia = isEmpty() ? null : valores.get(leitor.getIndice());
-        if (instancia == null) {
-            MFormUtil.resolverTipoCampo(getType(), leitor);
+        SInstance instance = isEmpty() ? null : values.get(pathReader.getIndex());
+        if (instance == null) {
+            SFormUtil.resolveFieldType(getType(), pathReader);
         }
-        return instancia;
+        return instance;
     }
 
     @Override
-    final SInstance getCampoLocalSemCriar(PathReader leitor) {
-        if (!leitor.isIndice()) {
-            throw new RuntimeException(leitor.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
+    final SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+        if (!pathReader.isIndex()) {
+            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        return isEmpty() ? null : valores.get(leitor.getIndice());
+        return isEmpty() ? null : values.get(pathReader.getIndex());
     }
 
     @Override
     public void setValue(Object obj) {
         if(obj instanceof SIList){
             clearInstance();
-            valores = newArrayList(((SIList)obj).valores);
-            tipoElementos = ((SIList)obj).tipoElementos;
+            values = newArrayList(((SIList)obj).values);
+            elementsType = ((SIList)obj).elementsType;
             ((SIList) obj).getValue().clear();
         }else{
             throw new RuntimeException("SList só suporta valores de mesmo tipo");
         }
     }
     @Override
-    public final void setValor(String pathCampo, Object valor) {
-        setValor(new PathReader(pathCampo), valor);
+    public final void setValue(String fieldPath, Object value) {
+        setValue(new PathReader(fieldPath), value);
     }
 
     @Override
-    void setValor(PathReader leitorPath, Object valor) {
-        if (!leitorPath.isIndice()) {
-            throw new RuntimeException(leitorPath.getTextoErro(this, "Era esperado um indice do elemento (exemplo [1])"));
+    void setValue(PathReader pathReader, Object value) {
+        if (!pathReader.isIndex()) {
+            throw new RuntimeException(pathReader.getErroMsg(this, "Era esperado um indice do elemento (exemplo [1])"));
         }
-        SInstance instancia = get(leitorPath.getIndice());
-        if (leitorPath.isUltimo()) {
-            instancia.setValue(valor);
+        SInstance instance = get(pathReader.getIndex());
+        if (pathReader.isLast()) {
+            instance.setValue(value);
         } else {
-            instancia.setValor(leitorPath.proximo(), valor);
+            instance.setValue(pathReader.next(), value);
         }
     }
 
     public SInstance remove(int index) {
-        if (valores == null) {
-            throw new IndexOutOfBoundsException(errorMsg("A lista " + getNome() + " está vazia (index=" + index + ")"));
+        if (values == null) {
+            throw new IndexOutOfBoundsException(errorMsg("A lista " + getName() + " está vazia (index=" + index + ")"));
         }
-        E child = valores.get(index);
+        E child = values.get(index);
         child.internalOnRemove();
-        return valores.remove(index);
+        return values.remove(index);
     }
 
-    public Object getValorAt(int index) {
+    public Object getValueAt(int index) {
         return get(index).getValue();
     }
 
@@ -219,7 +219,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
      */
     public int indexOf(SInstance supposedChild) {
         for (int i = size() - 1; i != -1; i--) {
-            if (valores.get(i) == supposedChild) {
+            if (values.get(i) == supposedChild) {
                 return i;
             }
         }
@@ -227,41 +227,41 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
     }
 
     public int size() {
-        return (valores == null) ? 0 : valores.size();
+        return (values == null) ? 0 : values.size();
     }
 
     public boolean isEmpty() {
-        return (valores == null) || valores.isEmpty();
+        return (values == null) || values.isEmpty();
     }
 
-    public List<E> getValores() {
-        return (valores == null) ? Collections.emptyList() : valores;
+    public List<E> getValues() {
+        return (values == null) ? Collections.emptyList() : values;
     }
 
     @Override
     public Collection<E> getChildren() {
-        return getValores();
+        return getValues();
     }
 
     @Override
     public Iterator<E> iterator() {
-        return (valores == null) ? Collections.emptyIterator() : valores.iterator();
+        return (values == null) ? Collections.emptyIterator() : values.iterator();
     }
 
     @Override
     public Stream<E> stream() {
-        return getValores().stream();
+        return getValues().stream();
     }
 
     public String toDebug() {
-        return stream().map(SInstance::getDisplayString).collect(Collectors.joining("; "));
+        return stream().map(SInstance::toStringDisplay).collect(Collectors.joining("; "));
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((tipoElementos == null) ? 0 : tipoElementos.hashCode());
+        result = prime * result + ((elementsType == null) ? 0 : elementsType.hashCode());
         for (E e : this)
             result = prime * result + (e == null ? 0 : e.hashCode());
         return result;
@@ -280,7 +280,7 @@ public class SIList<E extends SInstance> extends SInstance implements Iterable<E
             return false;
         } else if (!getType().equals(other.getType())) {
             return false;
-        } else if (!Objects.equals(getTipoElementos(), other.getTipoElementos()))
+        } else if (!Objects.equals(getElementsType(), other.getElementsType()))
             return false;
         for (int i = size() - 1; i != -1; i--) {
             if (!Objects.equals(get(i), other.get(i))) {

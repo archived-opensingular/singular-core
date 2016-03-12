@@ -15,9 +15,9 @@ import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 
 public class TestViewMapperRegistry {
 
@@ -34,11 +34,11 @@ public class TestViewMapperRegistry {
         mapper.register(STypeString.class, () -> "B");
         mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", STypeInteger.class, MView.class);
-        assertResult("B", STypeString.class, MView.class);
-        assertResult("B", STypeCPF.class, MView.class);
-        assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposite.class, MView.class);
+        assertResult("A", STypeInteger.class, SView.class);
+        assertResult("B", STypeString.class, SView.class);
+        assertResult("B", STypeCPF.class, SView.class);
+        assertResult("C", STypeData.class, SView.class);
+        assertResult(null, STypeComposite.class, SView.class);
     }
 
     @Test
@@ -49,12 +49,12 @@ public class TestViewMapperRegistry {
         mapper.register(STypeCNPJ.class, ViewX.class, () -> "E");
         mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", STypeInteger.class, MView.class);
-        assertResult("B", STypeString.class, MView.class);
-        assertResult("B", STypeCPF.class, MView.class);
-        assertResult("B", STypeCNPJ.class, MView.class);
-        assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposite.class, MView.class);
+        assertResult("A", STypeInteger.class, SView.class);
+        assertResult("B", STypeString.class, SView.class);
+        assertResult("B", STypeCPF.class, SView.class);
+        assertResult("B", STypeCNPJ.class, SView.class);
+        assertResult("C", STypeData.class, SView.class);
+        assertResult(null, STypeComposite.class, SView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
@@ -79,12 +79,12 @@ public class TestViewMapperRegistry {
         mapper.register(STypeCNPJ.class, ViewY.class, () -> "E");
         mapper.register(STypeData.class, () -> "C");
 
-        assertResult("A", STypeInteger.class, MView.class);
-        assertResult("B", STypeString.class, MView.class);
-        assertResult("B", STypeCPF.class, MView.class);
-        assertResult("B", STypeCNPJ.class, MView.class);
-        assertResult("C", STypeData.class, MView.class);
-        assertResult(null, STypeComposite.class, MView.class);
+        assertResult("A", STypeInteger.class, SView.class);
+        assertResult("B", STypeString.class, SView.class);
+        assertResult("B", STypeCPF.class, SView.class);
+        assertResult("B", STypeCNPJ.class, SView.class);
+        assertResult("C", STypeData.class, SView.class);
+        assertResult(null, STypeComposite.class, SView.class);
 
         assertResult("A", STypeInteger.class, ViewX.class);
         assertResult("D", STypeString.class, ViewX.class);
@@ -112,10 +112,10 @@ public class TestViewMapperRegistry {
         mapper.register(STypeCNPJ.class, ViewY.class, () -> "F");
         mapper.register(STypeCEP.class, ViewY.class, () -> "G");
 
-        assertResult("B", STypeString.class, MView.class);
-        assertResult("B", STypeCPF.class, MView.class);
-        assertResult("B", STypeCNPJ.class, MView.class);
-        assertResult("B", STypeCEP.class, MView.class);
+        assertResult("B", STypeString.class, SView.class);
+        assertResult("B", STypeCPF.class, SView.class);
+        assertResult("B", STypeCNPJ.class, SView.class);
+        assertResult("B", STypeCEP.class, SView.class);
 
         assertResult("D", STypeString.class, ViewX.class);
         assertResult("D", STypeCPF.class, ViewX.class);
@@ -128,14 +128,14 @@ public class TestViewMapperRegistry {
         assertResult("G", STypeCEP.class, ViewY.class);
     }
 
-    public static class ViewX extends MView {
+    public static class ViewX extends SView {
     }
 
     public static class ViewY extends ViewX {
 
     }
 
-    private void assertResult(String expected, Class<? extends SType> type, Class<? extends MView> view) {
+    private void assertResult(String expected, Class<? extends SType> type, Class<? extends SView> view) {
         try {
             SDictionary dicionario = SDictionary.create();
             assertResult(expected, dicionario.newInstance(type), view.newInstance());
@@ -144,7 +144,7 @@ public class TestViewMapperRegistry {
         }
     }
 
-    private void assertResult(String expected, SInstance instance, MView view) {
+    private void assertResult(String expected, SInstance instance, SView view) {
         assertEquals(expected, mapper.getMapper(instance, view).orElse(null));
 
     }

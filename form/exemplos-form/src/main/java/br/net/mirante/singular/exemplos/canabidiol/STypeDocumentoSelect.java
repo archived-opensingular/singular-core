@@ -2,11 +2,11 @@ package br.net.mirante.singular.exemplos.canabidiol;
 
 import org.apache.wicket.util.string.Strings;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
-@MInfoTipo(nome = "MTipoDocumentoSelect", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(name = "MTipoDocumentoSelect", spackage = SPackagePeticaoCanabidiol.class)
 public class STypeDocumentoSelect extends STypeString {
 
     @Override

@@ -9,7 +9,7 @@ import br.net.mirante.singular.form.mform.core.SPackageCore;
  *
  * @author Fabricio Buzeto
  */
-@MInfoTipo(nome = "Annotation", pacote = SPackageCore.class)
+@SInfoType(name = "Annotation", spackage = SPackageCore.class)
 public class STypeAnnotation extends STypeComposite<SIAnnotation> {
 
     public static final String          FIELD_TEXT          = "text",
@@ -25,13 +25,13 @@ public class STypeAnnotation extends STypeComposite<SIAnnotation> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        addCampoString(FIELD_TEXT);
-        addCampoBoolean(FIELD_APPROVED);
-        addCampoInteger(FIELD_TARGET_ID);
+        addFieldString(FIELD_TEXT);
+        addFieldBoolean(FIELD_APPROVED);
+        addFieldInteger(FIELD_TARGET_ID);
     }
 
     @Override
-    public <T extends Object> T converter(Object valor, Class<T> classeDestino) {
+    public <T extends Object> T convert(Object valor, Class<T> classeDestino) {
         return (T) valor;
     }
 }

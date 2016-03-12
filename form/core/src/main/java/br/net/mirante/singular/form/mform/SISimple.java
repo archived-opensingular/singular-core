@@ -4,13 +4,13 @@ import java.util.Objects;
 
 public class SISimple<TIPO_NATIVO> extends SInstance {
 
-    private TIPO_NATIVO valor;
+    private TIPO_NATIVO value;
 
     protected SISimple() {}
 
     @Override
     public TIPO_NATIVO getValue() {
-        return valor;
+        return value;
     }
 
     @Override
@@ -19,27 +19,27 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     }
 
     @Override
-    public TIPO_NATIVO getValorWithDefault() {
+    public TIPO_NATIVO getValueWithDefault() {
         TIPO_NATIVO v = getValue();
         if (v == null) {
-            return getType().converter(getType().getValorAtributoOrDefaultValueIfNull());
+            return getType().convert(getType().getAttributeValueOrDefaultValueIfNull());
         }
         return v;
     }
 
     @Override
-    final <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
+    final <T extends Object> T getValueWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
         if (!leitor.isEmpty()) {
             throw new RuntimeException("Não ser aplica path a um tipo simples");
         }
-        return getValorWithDefault(classeDestino);
+        return getValueWithDefault(classeDestino);
     }
 
     @Override
     protected void resetValue() {
         setValue(null);
     }
-    
+
     /** Indica que o valor da instância atual é null. */
     public boolean isNull() {
         return getValue() == null;
@@ -54,8 +54,8 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     @Override
     public final void setValue(Object valor) {
         TIPO_NATIVO oldValue = this.getValue();
-        TIPO_NATIVO newValue = getType().converter(valor);
-        this.valor = onSetValor(oldValue, newValue);
+        TIPO_NATIVO newValue = getType().convert(valor);
+        this.value = onSetValor(oldValue, newValue);
         if (getDocument() != null && !Objects.equals(oldValue, newValue)) {
             if (isAttribute()) {
                 getDocument().getInstanceListeners().fireInstanceAttributeChanged(getAttributeOwner(), this, oldValue, newValue);
@@ -76,8 +76,8 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
     }
 
     @Override
-    public String getDisplayString() {
-        if (getType().getProviderOpcoes() != null) {
+    public String toStringDisplay() {
+        if (getType().getOptionsProvider() != null) {
             String key = getOptionsConfig().getKeyFromOption(this);
             return getOptionsConfig().getLabelFromKey(key);
         } else {
@@ -85,11 +85,11 @@ public class SISimple<TIPO_NATIVO> extends SInstance {
         }
     }
 
-    public String toStringPersistencia() {
+    public String toStringPersistence() {
         if (getValue() == null) {
             return null;
         }
-        return getType().toStringPersistencia(getValue());
+        return getType().toStringPersistence(getValue());
     }
 
     @Override

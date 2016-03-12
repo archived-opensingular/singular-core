@@ -1,21 +1,5 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.core.SPackageCore;
-import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.core.STypeDecimal;
-import br.net.mirante.singular.form.mform.core.STypeInteger;
-import br.net.mirante.singular.form.mform.core.STypeMonetario;
-import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.mform.options.MSelectionableCompositeType;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCEP;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
-import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,16 +7,32 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@MInfoTipo(nome = "MTipoComposto", pacote = SPackageCore.class)
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.core.SPackageCore;
+import br.net.mirante.singular.form.mform.core.STypeBoolean;
+import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDecimal;
+import br.net.mirante.singular.form.mform.core.STypeInteger;
+import br.net.mirante.singular.form.mform.core.STypeMonetary;
+import br.net.mirante.singular.form.mform.core.STypeString;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SSelectionableCompositeType;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCEP;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
+import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
+
+@SInfoType(name = "MTipoComposto", spackage = SPackageCore.class)
 public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         extends SType<TIPO_INSTANCIA>
-        implements ICompositeType, MSelectionableCompositeType {
+        implements ICompositeType, SSelectionableCompositeType {
 
     private Map<String, SType<?>> fieldsLocal;
 
     private transient FieldMapOfRecordType fieldsConsolidated;
 
-    private MOptionsProvider optionsProvider;
+    private SOptionsProvider optionsProvider;
 
     private String selectLabel;
 
@@ -41,8 +41,8 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         super((Class<? extends TIPO_INSTANCIA>) SIComposite.class);
     }
 
-    protected STypeComposite(Class<TIPO_INSTANCIA> classeInstancia) {
-        super(classeInstancia);
+    protected STypeComposite(Class<TIPO_INSTANCIA> instanceClass) {
+        super(instanceClass);
     }
 
     @Override
@@ -50,9 +50,10 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return getFields();
     }
 
-    private <I extends SInstance, T extends SType<I>> T addInterno(String localName, T type) {
+    private <I extends SInstance, T extends SType<I>> T addInternal(String localName, T type) {
         if (instanceCount > 0){
-            throw new SingularFormException("O MTipo '"+type.getName()+"' já possui instancias associadas, não é seguro alterar sua definição. ");
+            throw new SingularFormException(
+                    "O MTipo '" + type.getName() + "' já possui instancias associadas, não é seguro alterar sua definição. ");
         }
         if (fieldsLocal == null) {
             fieldsLocal = new LinkedHashMap<>();
@@ -84,68 +85,55 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return fieldsConsolidated;
     }
 
-    /**
-     * Remover essa chamada pois ela é confusa.
-     * Adicionar um campo apenas pelo tipo sem passar um nome impede que a mesma chamada para o mesmo tipo
-     * seja feita novamente pois nesse caso definiria um tipo com o nome repetido.
-     *
-     * @param classeTipo
-     * @param <I>
-     * @param <T>
-     * @return
-     */
-    @Deprecated
-    public <I extends SInstance, T extends SType<I>> T addCampo(Class<T> classeTipo) {
-        T tipo = resolverTipo(classeTipo);
-        return addCampo(tipo.getSimpleName(), classeTipo);
+    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, Class<T> type, boolean required) {
+        T field = addField(fieldSimpleName, type);
+        field.withRequired(required);
+        return field;
     }
 
-    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> tipo, boolean obrigatorio) {
-        T novo = addCampo(nomeCampo, tipo);
-        novo.withObrigatorio(obrigatorio);
-        return novo;
-    }
-
-    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, Class<T> classeTipo) {
-        T novo = extenderType(nomeCampo, classeTipo);
-        return addInterno(nomeCampo, novo);
+    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, Class<T> typeClass) {
+        T novo = extendType(fieldSimpleName, typeClass);
+        return addInternal(fieldSimpleName, novo);
     }
 
     //TODO: FABS : THIS IS UNTESTED
-    public <I extends SInstance, T extends SType<I>> T addCampo(String nomeCampo, T tipoPai) {
-        T novo = extenderType(nomeCampo, tipoPai);
-        return addInterno(nomeCampo, novo);
+    public <I extends SInstance, T extends SType<I>> T addField(String fieldSimpleName, T parentType) {
+        T field = extendType(fieldSimpleName, parentType);
+        return addInternal(fieldSimpleName, field);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeSimplesNovoTipo, Class<T> classeTipoLista) {
-        T tipo = resolverTipo(classeTipoLista);
-        STypeLista<T, I> novo = createTipoListaOf(nomeSimplesNovoTipo, tipo);
-        return addInterno(nomeSimplesNovoTipo, novo);
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String nomeSimplesNovoTipo, Class<T> listTypeClass) {
+        T type = resolveType(listTypeClass);
+        STypeList<T, I> field = createTypeListOf(nomeSimplesNovoTipo, type);
+        return addInternal(nomeSimplesNovoTipo, field);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> addCampoListaOf(String nomeCampo, T tipoElementos) {
-        STypeLista<T, I> novo = createTipoListaOf(nomeCampo, tipoElementos);
-        return addInterno(nomeCampo, novo);
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> addFieldListOf(String fieldSimpleName, T elementsType) {
+        STypeList<T, I> novo = createTypeListOf(fieldSimpleName, elementsType);
+        return addInternal(fieldSimpleName, novo);
     }
 
-    public <I extends SIComposite> STypeLista<STypeComposite<I>, I> addCampoListaOfComposto(String nomeCampo, String nomeNovoTipoComposto) {
-        STypeLista<STypeComposite<I>, I> novo = createTipoListaOfNovoTipoComposto(nomeCampo, nomeNovoTipoComposto);
-        return addInterno(nomeCampo, novo);
+    public <I extends SIComposite> STypeList<STypeComposite<I>, I> addFieldListOfComposite(String fieldSimpleName,
+            String simpleNameNewCompositeType) {
+        STypeList<STypeComposite<I>, I> novo = createListOfNewTypeComposite(fieldSimpleName, simpleNameNewCompositeType);
+        return addInternal(fieldSimpleName, novo);
     }
 
-    public SType<?> getCampo(String nomeCampo) {
-        return getFieldsConsolidated().get(nomeCampo);
+    public SType<?> getField(String fieldSimpleName) {
+        return getFieldsConsolidated().get(fieldSimpleName);
     }
 
     /**
-     * @return todos os campos deste tipo específico, incluindo os campos do tipo pai.
+     * @return todos os campos deste tipo específico, incluindo os campos do
+     *         tipo pai.
      */
     public Collection<SType<?>> getFields() {
         return getFieldsConsolidated().getFields();
     }
 
     /**
-     * @return campos declarados neste tipo específico, não incluindo os campos do tipo pai.
+     * @return campos declarados neste tipo específico, não incluindo os campos
+     *         do tipo pai.
      */
     public Collection<SType<?>> getFieldsLocal() {
         return (fieldsLocal == null) ? Collections.emptyList() : fieldsLocal.values();
@@ -157,91 +145,95 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     // --------------------------------------------------------------------------
 
     @SuppressWarnings("unchecked")
-    public STypeComposite<SIComposite> addCampoComposto(String nomeCampo) {
-        return addCampo(nomeCampo, STypeComposite.class);
+    public STypeComposite<SIComposite> addFieldComposite(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeComposite.class);
     }
 
-    public STypeString addCampoString(String nomeCampo) {
-        return addCampo(nomeCampo, STypeString.class);
+    public STypeString addFieldString(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeString.class);
     }
 
-    public STypeCPF addCampoCPF(String nomeCampo) {
-        return addCampo(nomeCampo, STypeCPF.class);
+    @Deprecated
+    public STypeCPF addFieldCPF(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeCPF.class);
     }
 
-    public STypeCNPJ addCampoCNPJ(String nomeCampo) {
-        return addCampo(nomeCampo, STypeCNPJ.class);
+    @Deprecated
+    public STypeCNPJ addFieldCNPJ(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeCNPJ.class);
     }
 
-    public STypeEMail addCampoEmail(String nomeCampo) {
-        return addCampo(nomeCampo, STypeEMail.class);
+    public STypeEMail addFieldEmail(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeEMail.class);
     }
 
-    public STypeCEP addCampoCEP(String nomeCampo) {
-        return addCampo(nomeCampo, STypeCEP.class);
+    @Deprecated
+    public STypeCEP addFieldCEP(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeCEP.class);
     }
 
-    public STypeString addCampoString(String nomeCampo, boolean obrigatorio) {
-        return addCampo(nomeCampo, STypeString.class, obrigatorio);
+    @Deprecated
+    public STypeString addFieldString(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeString.class, required);
     }
 
-    public STypeData addCampoData(String nomeCampo) {
-        return addCampo(nomeCampo, STypeData.class);
+    public STypeData addFieldData(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeData.class);
     }
 
-    public STypeData addCampoData(String nomeCampo, boolean obrigatorio) {
-        return addCampo(nomeCampo, STypeData.class, obrigatorio);
+    public STypeData addFieldData(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeData.class, required);
     }
 
-    public STypeBoolean addCampoBoolean(String nomeCampo) {
-        return addCampo(nomeCampo, STypeBoolean.class);
+    public STypeBoolean addFieldBoolean(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeBoolean.class);
     }
 
-    public STypeBoolean addCampoBoolean(String nomeCampo, boolean obrigatorio) {
-        return addCampo(nomeCampo, STypeBoolean.class, obrigatorio);
+    public STypeBoolean addFieldBoolean(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeBoolean.class, required);
     }
 
-    public STypeInteger addCampoInteger(String nomeCampo) {
-        return addCampo(nomeCampo, STypeInteger.class);
+    public STypeInteger addFieldInteger(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeInteger.class);
     }
 
-    public STypeInteger addCampoInteger(String nomeCampo, boolean obrigatorio) {
-        return addCampo(nomeCampo, STypeInteger.class, obrigatorio);
+    public STypeInteger addFieldInteger(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeInteger.class, required);
     }
 
-    public STypeDecimal addCampoDecimal(String nomeCampo, boolean obrigatorio) {
-        return addCampo(nomeCampo, STypeDecimal.class, obrigatorio);
+    public STypeDecimal addFieldDecimal(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeDecimal.class, required);
     }
 
-    public STypeDecimal addCampoDecimal(String fieldname) {
-        return addCampoDecimal(fieldname, false);
+    public STypeDecimal addFieldDecimal(String fieldname) {
+        return addFieldDecimal(fieldname, false);
     }
 
-    public STypeMonetario addCampoMonetario(String nomeCampo) {
-        return addCampo(nomeCampo, STypeMonetario.class);
+    public STypeMonetary addFieldMonetary(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeMonetary.class);
     }
 
     /**
-     * Configura o tipo para utilizar a view {@link MSelecaoPorSelectView}
+     * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
      */
     public STypeComposite<TIPO_INSTANCIA> withSelectView() {
-        return (STypeComposite<TIPO_INSTANCIA>) super.withView(MSelecaoPorSelectView::new);
+        return (STypeComposite<TIPO_INSTANCIA>) super.withView(SViewSelectionBySelect::new);
     }
 
     /**
-     * Configura o tipo para utilizar a view {@link MSelecaoPorRadioView}
+     * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
      */
     public STypeComposite<TIPO_INSTANCIA> withRadioView() {
-        return (STypeComposite<TIPO_INSTANCIA>) super.withView(MSelecaoPorRadioView::new);
+        return (STypeComposite<TIPO_INSTANCIA>) super.withView(SViewSelectionByRadio::new);
     }
 
     @Override
-    public MOptionsProvider getProviderOpcoes() {
+    public SOptionsProvider getOptionsProvider() {
         return optionsProvider;
     }
 
     @Override
-    public void setProviderOpcoes(MOptionsProvider p) {
+    public void setOptionsProvider(SOptionsProvider p) {
         optionsProvider = p;
     }
 
@@ -256,8 +248,11 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         this.selectLabel = selectLabel;
     }
 
-    public SType<?> getCampo(STypeString siglaUF) {
-        return getCampo(siglaUF.getSimpleName());
+    // TODO (from Daniel) MArquei como deprecated pois está estranho esse
+    // método. Verificar se há uma solução melhor e refatorar
+    @Deprecated
+    public SType<?> getField(SType<?> field) {
+        return getField(field.getNameSimple());
     }
 
     /**
@@ -307,7 +302,7 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
             if (fields == null) {
                 fields = new LinkedHashMap<>();
             }
-            fields.put(field.getSimpleName(), new FieldRef(field));
+            fields.put(field.getNameSimple(), new FieldRef(field));
         }
 
         public int findIndex(String fieldName) {

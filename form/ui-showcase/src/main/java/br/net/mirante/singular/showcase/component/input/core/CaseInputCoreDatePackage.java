@@ -10,8 +10,8 @@ public class CaseInputCoreDatePackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
-        tipoMyForm.addCampoData("inicio")
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        tipoMyForm.addFieldData("inicio")
                   .as(AtrBasic.class).label("Data Início")
                   .as(AtrBootstrap::new).colPreference(2);
     }

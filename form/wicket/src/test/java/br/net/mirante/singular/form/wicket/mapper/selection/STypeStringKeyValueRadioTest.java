@@ -15,7 +15,7 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.wicket.AbstractWicketFormTest;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
 import br.net.mirante.singular.form.wicket.test.base.TestApp;
@@ -37,15 +37,15 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
         page = new TestPage();
         page.enableAnnotation();
         localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
+        baseCompositeField = localPackage.createCompositeType("group");
 
-        tipoDeMedia = baseCompositeField.addCampoString("tipoDeMedia");
+        tipoDeMedia = baseCompositeField.addFieldString("tipoDeMedia");
         tipoDeMedia.withRadioView();
-        tipoDeMedia.withSelectionFromProvider(new MOptionsProvider() {
+        tipoDeMedia.withSelectionFromProvider(new SOptionsProvider() {
             @Override
             public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
                 STypeString type = dicionario.getType(STypeString.class);
-                SIList<?> r = type.novaLista();
+                SIList<?> r = type.newList();
                 r.addElement(newElement(type, "IMG", "Imagem"));
                 r.addElement(newElement(type, "TXT", "Texto"));
                 r.addElement(newElement(type, "BIN", "Binário"));
@@ -53,7 +53,7 @@ public class STypeStringKeyValueRadioTest extends AbstractWicketFormTest {
             }
 
             private SIString newElement(STypeString type, String id, String label) {
-                SIString e = type.novaInstancia();
+                SIString e = type.newInstance();
                 e.setValue(id);
                 e.setSelectLabel(label);
                 return e;

@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 
-@MInfoTipo(nome = "MTipoPredicate", pacote = SPackageCore.class)
+@SInfoType(name = "MTipoPredicate", spackage = SPackageCore.class)
 public class STypePredicate extends STypeCode<SIPredicate, Predicate<SInstance>> {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

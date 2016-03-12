@@ -26,8 +26,8 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     private final String valorInicialPath, valorFinalPath;
 
     public RangeSliderMapper(STypeInteger valorInicial, STypeInteger valorFinal) {
-        this.valorInicialPath = valorInicial.getSimpleName();
-        this.valorFinalPath = valorFinal.getSimpleName();
+        this.valorInicialPath = valorInicial.getNameSimple();
+        this.valorFinalPath = valorFinal.getNameSimple();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class RangeSliderMapper implements IWicketComponentMapper {
     }
 
     private IModel<? extends SInstance> resolveModel(SIComposite mi, String path) {
-        final SInstance SInstance = mi.getCampo(path);
+        final SInstance SInstance = mi.getField(path);
         final MInstanceRootModel<?> rootModel = new MInstanceRootModel<>(SInstance);
         return new MInstanciaValorModel<>(rootModel);
     }

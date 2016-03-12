@@ -12,9 +12,9 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 
@@ -26,15 +26,15 @@ public class TableListWithSimpleStringTest extends AbstractSingularFormTest {
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> mockList
-                = mockType.addCampoListaOfComposto("mockList", "mockTypeComposite");
-        final STypeComposite<?> mockTypeComposite = mockList.getTipoElementos();
+        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
+                = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
+        final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
-        mockList.withView(MTableListaView::new);
+        mockList.withView(SViewListByTable::new);
         mockList.as(AtrBasic::new)
                 .label("Mock Type Composite");
 
-        simpleString = mockTypeComposite.addCampoString("mockTypeComposite", true);
+        simpleString = mockTypeComposite.addFieldString("mockTypeComposite", true);
 
     }
 

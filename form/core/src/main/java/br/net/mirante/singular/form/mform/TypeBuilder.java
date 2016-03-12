@@ -2,33 +2,36 @@ package br.net.mirante.singular.form.mform;
 
 public class TypeBuilder {
 
-    private final SType<?> tipoAlvo;
-    private final Class<? extends SType<?>> classeAlvo;
-    private boolean carregar;
-    public <X extends SType<?>>TypeBuilder(Class<X> classeAlvo, X tipo) {
-        this.classeAlvo = classeAlvo;
-        this.tipoAlvo = tipo;
-    }
-    
-    public <X extends SType<?>>TypeBuilder(Class<X> classeAlvo) {
-        this.classeAlvo = classeAlvo;
-        this.tipoAlvo = MapaNomeClasseValor.instanciar(classeAlvo);
-        this.carregar = true;
+    private final SType<?> targetType;
+
+    private final Class<? extends SType<?>> targetTypeClass;
+
+    private boolean load;
+
+    public <X extends SType<?>> TypeBuilder(Class<X> targetTypeClass, X targetType) {
+        this.targetTypeClass = targetTypeClass;
+        this.targetType = targetType;
     }
 
-    public SType<?> getTipo() {
-        return tipoAlvo;
+    public <X extends SType<?>> TypeBuilder(Class<X> targetTypeClass) {
+        this.targetTypeClass = targetTypeClass;
+        this.targetType = MapByName.newInstance(targetTypeClass);
+        this.load = true;
     }
-    
-    public Class<? extends SType<?>> getClasseAlvo() {
-        return classeAlvo;
+
+    public SType<?> getType() {
+        return targetType;
     }
-    
+
+    public Class<? extends SType<?>> getTypeClass() {
+        return targetTypeClass;
+    }
+
     public SType<?> configure() {
-        if(carregar){
-            tipoAlvo.onLoadType(this);
+        if (load) {
+            targetType.onLoadType(this);
         }
-        return tipoAlvo;
+        return targetType;
     }
-    
+
 }

@@ -23,14 +23,14 @@ public class STypeCompositeTest {
     @Before public void setup() {
         SDictionary dict = SDictionary.create();
         PackageBuilder pkt = dict.createNewPackage("pkt");
-        baseType = pkt.createTipoComposto("baseType");
-        name = baseType.addCampoString("name");
-        subStuff = baseType.addCampoComposto("subStuff");
-        content = subStuff.addCampoString("content");
+        baseType = pkt.createCompositeType("baseType");
+        name = baseType.addFieldString("name");
+        subStuff = baseType.addFieldComposite("subStuff");
+        content = subStuff.addFieldString("content");
     }
 
     @Test public void setCompositeValue() throws Exception{
-        SIComposite original = baseType.novaInstancia();
+        SIComposite original = baseType.newInstance();
         original.getDescendant(name).setValue("My first name");
         original.getDescendant(content).setValue("My first content");
 

@@ -45,7 +45,7 @@ public class ViewMapperRegistry<T> implements Serializable {
      *            Pode ser null
      * @return 
      */
-    public ViewMapperRegistry<T> register(Class<? extends SType> type, Class<? extends MView> viewType, ISupplier<T> factory) {
+    public ViewMapperRegistry<T> register(Class<? extends SType> type, Class<? extends SView> viewType, ISupplier<T> factory) {
         Objects.requireNonNull(factory);
         List<RegisterEntry<T>> list = registry.get(Objects.requireNonNull(type));
         if (list == null) {
@@ -77,9 +77,9 @@ public class ViewMapperRegistry<T> implements Serializable {
      * @param view
      *            Pode ser null
      */
-    public Optional<T> getMapper(SInstance instance, MView view) {
+    public Optional<T> getMapper(SInstance instance, SView view) {
         Class<? extends SType> type = instance.getType().getClass();
-        if (view.getClass() == MView.class) {
+        if (view.getClass() == SView.class) {
             view = null;
         }
         T mapper = getMapper(type, view);
@@ -89,7 +89,7 @@ public class ViewMapperRegistry<T> implements Serializable {
         return Optional.ofNullable(mapper);
     }
 
-    private T getMapper(Class<?> type, MView view) {
+    private T getMapper(Class<?> type, SView view) {
         RegisterEntry<T> selected = null;
         int score = -1;
         while (type != SType.class) {
@@ -120,17 +120,17 @@ public class ViewMapperRegistry<T> implements Serializable {
      * @author Daniel C. Bordin
      */
     private static final class RegisterEntry<T> implements Serializable {
-        final Class<? extends MView> view;
+        final Class<? extends SView> view;
         final ISupplier<T> factory;
         final int priority;
 
-        RegisterEntry(Class<? extends MView> view, ISupplier<T> factory, int priority) {
+        RegisterEntry(Class<? extends SView> view, ISupplier<T> factory, int priority) {
             this.view = view;
             this.factory = factory;
             this.priority = priority;
         }
 
-        public int scoreFor(MView target) {
+        public int scoreFor(SView target) {
             int score = priority * 100;
             if (target != null) {
                 Class<?> v = view;
@@ -142,7 +142,7 @@ public class ViewMapperRegistry<T> implements Serializable {
             return score;
         }
 
-        public boolean isCompatible(MView target) {
+        public boolean isCompatible(SView target) {
             if (target == null) {
                 return view == null;
             } else if (view != null) {

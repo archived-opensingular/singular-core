@@ -2,8 +2,8 @@ package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import org.apache.wicket.model.IModel;
 
@@ -72,12 +72,12 @@ public class SelectOption implements IModel {
         return hash;
     }
 
-    public void copyValueToInstance(MSelectionableInstance target) {
+    public void copyValueToInstance(SSelectionableInstance target) {
         SInstance source = target.getOptionsConfig().getValueFromKey(String.valueOf(value));
         Value.hydrate((SInstance) target, Value.dehydrate(source));
     }
 
-    public void copyValueToInstance(MSelectionableInstance target, MOptionsConfig provider) {
+    public void copyValueToInstance(SSelectionableInstance target, SOptionsConfig provider) {
         SInstance source = provider.getValueFromKey(String.valueOf(value));
         Value.hydrate((SInstance) target, Value.dehydrate(source));
     }

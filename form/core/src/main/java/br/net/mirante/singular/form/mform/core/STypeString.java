@@ -4,11 +4,11 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
 
-@MInfoTipo(nome = "String", pacote = SPackageCore.class)
+@SInfoType(name = "String", spackage = SPackageCore.class)
 public class STypeString extends STypeSimple<SIString, String> {
 
     public STypeString() {
@@ -20,11 +20,11 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     public boolean getValorAtributoTrim() {
-        return getValorAtributo(SPackageCore.ATR_TRIM);
+        return getAttributeValue(SPackageCore.ATR_TRIM);
     }
 
     public boolean getValorAtributoEmptyToNull() {
-        return getValorAtributo(SPackageCore.ATR_EMPTY_TO_NULL);
+        return getAttributeValue(SPackageCore.ATR_EMPTY_TO_NULL);
     }
 
     public STypeString withValorAtributoTrim(boolean valor) {
@@ -46,17 +46,17 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     /**
-     * Configura o tipo para utilizar a view {@link MTextAreaView} e invoca o initializer 
+     * Configura o tipo para utilizar a view {@link SViewTextArea} e invoca o initializer 
      */
     @SafeVarargs
-    public final STypeString withTextAreaView(Consumer<MTextAreaView>...initializers) {
-        withView(new MTextAreaView(), initializers);
+    public final STypeString withTextAreaView(Consumer<SViewTextArea>...initializers) {
+        withView(new SViewTextArea(), initializers);
         return this;
     }
     
     @Override
-    public String converter(Object valor) {
-        String s = super.converter(valor);
+    public String convert(Object valor) {
+        String s = super.convert(valor);
         if (s != null) {
             if (getValorAtributoEmptyToNull()) {
                 if (getValorAtributoTrim()) {
@@ -72,7 +72,7 @@ public class STypeString extends STypeSimple<SIString, String> {
     }
 
     @Override
-    public String converterNaoNativoNaoString(Object valor) {
+    public String convertNotNativeNotString(Object valor) {
         return valor.toString();
     }
 

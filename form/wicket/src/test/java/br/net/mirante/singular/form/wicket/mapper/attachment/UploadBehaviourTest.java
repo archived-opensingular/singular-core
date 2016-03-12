@@ -63,7 +63,7 @@ public class UploadBehaviourTest extends WebBehaviourBaseTest {
     }
 
     private SIAttachment setupInstance() {
-        return instance = tpackage.attachmentFileField.novaInstancia();
+        return instance = tpackage.attachmentFileField.newInstance();
     }
 
     private WebWrapper createWebWrapper() throws FileUploadException {

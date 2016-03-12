@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.AtrRef;
-import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+import br.net.mirante.singular.form.mform.SAttributeEnabled;
+import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -20,9 +20,9 @@ import static com.google.common.collect.Lists.newArrayList;
  *
  * @author Fabricio Buzeto
  */
-public class AtrAnnotation extends MTranslatorParaAtributo {
+public class AtrAnnotation extends STranslatorForAttribute {
     public AtrAnnotation() {}
-    public AtrAnnotation(MAtributoEnabled alvo) {
+    public AtrAnnotation(SAttributeEnabled alvo) {
         super(alvo);
     }
 
@@ -123,11 +123,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private void atrValue(AtrRef ref, Object value) {
-        getAlvo().setValorAtributo(ref, value);
+        getTarget().setAttributeValue(ref, value);
     }
 
     private <T extends Object> T atrValue(AtrRef<?, ?, T > ref) {
-        return getAlvo().getValorAtributo(ref);
+        return getTarget().getAttributeValue(ref);
     }
 
     /**
@@ -136,7 +136,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     public List<SIAnnotation> allAnnotations() {
         SIList sList = persistentAnnotations();
         if(sList == null) return newArrayList();
-        return sList.getValores();
+        return sList.getValues();
     }
 
     /**
@@ -153,11 +153,11 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
      * @return A ready to persist object containing all annotations from this instance and its children.
      */
     public SIList persistentAnnotations() {
-        return ((SInstance)getAlvo()).getDocument().annotations();
+        return ((SInstance)getTarget()).getDocument().annotations();
     }
 
     private SIList newAnnotationList() {
-        return (SIList) annotationListType().novaInstancia();
+        return (SIList) annotationListType().newInstance();
     }
 
     private STypeAnnotationList annotationListType() {
@@ -169,7 +169,7 @@ public class AtrAnnotation extends MTranslatorParaAtributo {
     }
 
     private SInstance target() {
-        return (SInstance) getAlvo();
+        return (SInstance) getTarget();
     }
 
     public void clear() {   annotation().clear();    }

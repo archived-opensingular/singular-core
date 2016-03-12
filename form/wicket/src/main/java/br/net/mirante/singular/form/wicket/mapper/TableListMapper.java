@@ -19,8 +19,8 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
@@ -41,14 +41,14 @@ public class TableListMapper extends AbstractListaMapper {
     @Override
     public void buildView(WicketBuildContext ctx) {
 
-        if (!(ctx.getView() instanceof MTableListaView)) {
+        if (!(ctx.getView() instanceof SViewListByTable)) {
             throw new SingularFormException("TableListMapper deve ser utilizado com MTableListaView", (SInstance) ctx.getCurrentInstance());
         }
 
         if (ctx.getCurrentInstance() instanceof SIList) {
 
             final IModel<SIList<SInstance>> list = $m.get(() -> (ctx.getCurrentInstance()));
-            final MTableListaView view = (MTableListaView) ctx.getView();
+            final SViewListByTable view = (SViewListByTable) ctx.getView();
             final boolean isEdition = ctx.getViewMode() == null || ctx.getViewMode().isEdition();
             final SIList<SInstance> iLista = list.getObject();
             final SType<?> currentType = ctx.getCurrentInstance().getType();
@@ -67,7 +67,7 @@ public class TableListMapper extends AbstractListaMapper {
     }
 
     private void buildHeader(BSContainer<?> header, Form<?> form, IModel<SIList<SInstance>> list,
-                             WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
         final IModel<String> label = $m.ofValue(ctx.getCurrentInstance().getType().asAtrBasic().getLabel());
 
@@ -76,14 +76,14 @@ public class TableListMapper extends AbstractListaMapper {
         header.appendTag("span", new Label("_title", label));
         header.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-        if (view.isPermiteAdicaoDeLinha() && isEdition) {
+        if (view.isNewEnabled() && isEdition) {
             appendAddButton(list, form, header, false);
         }
 
     }
 
     private void builContent(BSContainer<?> content, Form<?> form, IModel<SIList<SInstance>> list,
-                             WicketBuildContext ctx, MTableListaView view, boolean isEdition) {
+                             WicketBuildContext ctx, SViewListByTable view, boolean isEdition) {
 
         final String markup = ""
                 + " <table class='table table-condensed table-unstyled' style='margin-bottom:0px'>                   "
@@ -103,14 +103,14 @@ public class TableListMapper extends AbstractListaMapper {
         final WebMarkupContainer footer = new WebMarkupContainer("_ft");
         final BSContainer<?> footerBody = new BSContainer<>("_fb");
 
-        final SType<SInstance> tipoElementos = list.getObject().getTipoElementos();
+        final SType<SInstance> tipoElementos = list.getObject().getElementsType();
 
         if (tipoElementos instanceof STypeComposite) {
 
             final STypeComposite<?> sTypeComposite = (STypeComposite<?>) tipoElementos;
             final BSTRow row = tableHeader.newRow();
 
-            if (view.isPermiteInsercaoDeLinha()) {
+            if (view.isInsertEnabled()) {
                 row.newTHeaderCell($m.ofValue(""));
             }
 
@@ -143,7 +143,7 @@ public class TableListMapper extends AbstractListaMapper {
             tableHeader.setVisible(false);
         }
 
-        footer.setVisible(!(view.isPermiteAdicaoDeLinha() && isEdition));
+        footer.setVisible(!(view.isNewEnabled() && isEdition));
 
         template.add(tableHeader)
             .add(trView)
@@ -153,7 +153,7 @@ public class TableListMapper extends AbstractListaMapper {
     private static final class TableElementsView extends ElementsView {
 
         private final WicketBuildContext ctx;
-        private final MView              view;
+        private final SView              view;
         private final Form<?>            form;
         private final ViewMode           viewMode;
         private final UIBuilderWicket    wicketBuilder;
@@ -173,7 +173,7 @@ public class TableListMapper extends AbstractListaMapper {
 
             final BSTRow row = new BSTRow("_r", BSGridSize.MD);
 
-            if ((view instanceof MTableListaView) && (((MTableListaView) view).isPermiteInsercaoDeLinha()))
+            if ((view instanceof SViewListByTable) && (((SViewListByTable) view).isInsertEnabled()))
                 appendInserirButton(this, form, item, row.newCol());
 
             final IModel<SInstance> itemModel = item.getModel();
@@ -184,14 +184,14 @@ public class TableListMapper extends AbstractListaMapper {
                 final STypeComposite<SIComposite> tComposto = (STypeComposite<SIComposite>) composto.getType();
                 for (SType<?> tCampo : tComposto.getFields()) {
                     final SInstanceCampoModel<SInstance> mCampo;
-                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getSimpleName());
+                    mCampo = new SInstanceCampoModel<>(item.getModel(), tCampo.getNameSimple());
                     wicketBuilder.build(ctx.createChild(row.newCol(), true, mCampo), viewMode);
                 }
             } else {
                 wicketBuilder.build(ctx.createChild(row.newCol(), true, itemModel), viewMode);
             }
 
-            if ((view instanceof MTableListaView) && ((MTableListaView) view).isPermiteExclusaoDeLinha()
+            if ((view instanceof SViewListByTable) && ((SViewListByTable) view).isDeleteEnabled()
                     && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, row.newCol());
             }

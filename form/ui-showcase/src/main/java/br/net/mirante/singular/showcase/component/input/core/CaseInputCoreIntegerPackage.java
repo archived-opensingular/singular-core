@@ -11,8 +11,8 @@ public class CaseInputCoreIntegerPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
-        STypeInteger mTipoInteger = tipoMyForm.addCampoInteger("qtd");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        STypeInteger mTipoInteger = tipoMyForm.addFieldInteger("qtd");
         mTipoInteger.as(AtrBasic::new).label("Quantidade");
 
     }

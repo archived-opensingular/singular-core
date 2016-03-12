@@ -85,7 +85,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         protected void buildFields(WicketBuildContext ctx, BSGrid grid) {
             BSRow row = grid.newRow();
             for (SType<?> tCampo : type.getFields()) {
-                final Boolean newRow = tCampo.getValorAtributo(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
+                final Boolean newRow = tCampo.getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
                 if (newRow != null && newRow) {
                     row = grid.newRow();
                 }
@@ -94,7 +94,7 @@ public class DefaultCompostoMapper implements IWicketComponentMapper {
         }
 
         protected SInstanceCampoModel<SInstance> fieldModel(SType<?> tCampo) {
-            return new SInstanceCampoModel<>(model, tCampo.getSimpleName());
+            return new SInstanceCampoModel<>(model, tCampo.getNameSimple());
         }
 
         protected BSCol addLabelIfNeeded(WicketBuildContext ctx, final BSGrid grid) {

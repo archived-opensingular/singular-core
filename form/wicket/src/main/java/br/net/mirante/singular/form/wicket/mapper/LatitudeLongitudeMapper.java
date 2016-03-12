@@ -22,7 +22,7 @@ public class LatitudeLongitudeMapper implements IWicketComponentMapper {
         final IModel<SInstance> latModel = createValorModel(model, STypeLatitudeLongitude.FIELD_LATITUDE);
         final IModel<SInstance> lngModel = createValorModel(model, STypeLatitudeLongitude.FIELD_LONGITUDE);
 
-        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model.getObject().getNome(), latModel, lngModel);
+        final MarkableGoogleMapsPanel<SInstance> googleMapsPanel = new MarkableGoogleMapsPanel<>(model.getObject().getName(), latModel, lngModel);
 
         googleMapsPanel.setReadOnly(ctx.getViewMode().isVisualization());
 

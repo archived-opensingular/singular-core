@@ -6,7 +6,7 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 
@@ -51,7 +51,7 @@ public class Value {
     }
 
 
-    public static <T> boolean notNull(SInstance current, STypeLista tipo) {
+    public static <T> boolean notNull(SInstance current, STypeList tipo) {
         if (current != null && tipo != null) {
             SIList instanciaLista = (SIList) getInstance(current, tipo);
             return Value.notNull(instanciaLista);
@@ -107,7 +107,7 @@ public class Value {
      */
     public static <T> T of(SInstance instanciaComposta, String path) {
         if (instanciaComposta instanceof SIComposite) {
-            SInstance campo = ((SIComposite) instanciaComposta).getCampo(path);
+            SInstance campo = ((SIComposite) instanciaComposta).getField(path);
             if (campo instanceof SISimple) {
                 return Value.of((SISimple<T>) campo);
             }
@@ -158,13 +158,13 @@ public class Value {
 
     private static void fromMap(Map<String, Object> map, SIComposite instancia) {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            hydrate(instancia.getCampo(entry.getKey()), entry.getValue());
+            hydrate(instancia.getField(entry.getKey()), entry.getValue());
         }
     }
 
     private static void fromList(List<Object> list, SIList sList) {
         for (Object o : list) {
-            SInstance novo = sList.addNovo();
+            SInstance novo = sList.addNew();
             hydrate(novo, o);
         }
     }
@@ -199,14 +199,14 @@ public class Value {
         if (instancia instanceof SIComposite) {
             SIComposite item = (SIComposite) instancia;
             for (SInstance i : item.getAllChildren()) {
-                value.put(i.getNome(), dehydrate(i));
+                value.put(i.getName(), dehydrate(i));
             }
         }
     }
 
     private static void toList(List<Object> value, SInstance instancia) {
         if (instancia instanceof SIList<?>) {
-            for (SInstance i : ((SIList<?>) instancia).getValores()) {
+            for (SInstance i : ((SIList<?>) instancia).getValues()) {
                 value.add(dehydrate(i));
             }
         }

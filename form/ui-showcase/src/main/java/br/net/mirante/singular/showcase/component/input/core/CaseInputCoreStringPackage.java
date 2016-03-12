@@ -10,13 +10,13 @@ public class CaseInputCoreStringPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoString("nomeCompleto")
+        tipoMyForm.addFieldString("nomeCompleto")
                 .as(AtrBasic::new).label("Nome Completo")
                 .as(AtrBasic::new).tamanhoMaximo(100);
 
-        tipoMyForm.addCampoString("endereco")
+        tipoMyForm.addFieldString("endereco")
                 .as(AtrBasic::new).label("Endereço")
                 .as(AtrBasic::new).tamanhoMaximo(250);
 

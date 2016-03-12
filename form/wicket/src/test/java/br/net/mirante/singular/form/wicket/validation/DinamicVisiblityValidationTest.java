@@ -17,9 +17,9 @@ public class DinamicVisiblityValidationTest extends AbstractSingularFormTest {
 
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
-        fieldOne = mockType.addCampoString("fieldOne");
+        fieldOne = mockType.addFieldString("fieldOne");
         fieldOne.asAtrCore().obrigatorio(true);
-        fieldTwo = mockType.addCampoString("fieldTwo");
+        fieldTwo = mockType.addFieldString("fieldTwo");
 
         fieldTwo.asAtrBasic().dependsOn(fieldOne);
         fieldTwo.asAtrBasic()

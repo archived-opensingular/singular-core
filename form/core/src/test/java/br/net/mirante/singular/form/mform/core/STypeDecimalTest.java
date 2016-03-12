@@ -19,24 +19,24 @@ public class STypeDecimalTest {
 
     @Test
     public void stringConversions() {
-        assertThat(type.converter(null)).isNull();
-        assertThat(type.converter("")).isNull();
+        assertThat(type.convert(null)).isNull();
+        assertThat(type.convert("")).isNull();
 
-        assertThat(type.converter("0")).isEqualTo(BigDecimal.ZERO);
-        assertThat(type.converter("1")).isEqualTo(BigDecimal.ONE);
-        assertThat(type.converter("-1")).isEqualTo(new BigDecimal("-1"));
-        assertThat(type.converter("1,9")).isEqualTo(new BigDecimal("1.9"));
-        assertThat(type.converter("00000000000001,9")).isEqualTo(new BigDecimal("1.9"));
-        assertThat(type.converter("00.000.000.000.001,9")).isEqualTo(new BigDecimal("1.9"));
-        assertThat(type.converter("-1,9")).isEqualTo(new BigDecimal("-1.9"));
+        assertThat(type.convert("0")).isEqualTo(BigDecimal.ZERO);
+        assertThat(type.convert("1")).isEqualTo(BigDecimal.ONE);
+        assertThat(type.convert("-1")).isEqualTo(new BigDecimal("-1"));
+        assertThat(type.convert("1,9")).isEqualTo(new BigDecimal("1.9"));
+        assertThat(type.convert("00000000000001,9")).isEqualTo(new BigDecimal("1.9"));
+        assertThat(type.convert("00.000.000.000.001,9")).isEqualTo(new BigDecimal("1.9"));
+        assertThat(type.convert("-1,9")).isEqualTo(new BigDecimal("-1.9"));
     }
 
     @Test
     public void numberConversions() {
-        assertThat(type.converter(0L)).isEqualTo(BigDecimal.ZERO);
-        assertThat(type.converter(1L)).isEqualTo(BigDecimal.ONE);
-        assertThat(type.converter(-1L)).isEqualTo(new BigDecimal("-1"));
-        assertThat(type.converter(5.5)).isEqualTo(new BigDecimal("5.5"));
+        assertThat(type.convert(0L)).isEqualTo(BigDecimal.ZERO);
+        assertThat(type.convert(1L)).isEqualTo(BigDecimal.ONE);
+        assertThat(type.convert(-1L)).isEqualTo(new BigDecimal("-1"));
+        assertThat(type.convert(5.5)).isEqualTo(new BigDecimal("5.5"));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class STypeDecimalTest {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage(Matchers.containsString("não consegue converter o valor"));
 
-        type.converter(new File(""));
+        type.convert(new File(""));
     }
 
     @Test
@@ -52,7 +52,7 @@ public class STypeDecimalTest {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage(Matchers.containsString("não consegue converter o valor"));
 
-        type.converter("1XPTO");
+        type.convert("1XPTO");
     }
 
     @Test
@@ -60,6 +60,6 @@ public class STypeDecimalTest {
         thrown.expect(RuntimeException.class);
         thrown.expectMessage(Matchers.containsString("não consegue converter o valor"));
 
-        type.converter("00,000,000,000,001.9");
+        type.convert("00,000,000,000,001.9");
     }
 }

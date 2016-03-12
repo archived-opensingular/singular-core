@@ -18,7 +18,7 @@ public class MultipleCheckMapper extends MultipleSelectMapper {
     protected CheckBoxMultipleChoice<SelectOption> retrieveChoices
         (IModel<? extends SInstance> model, List<SelectOption> opcoesValue) {
         return new CheckBoxMultipleChoice<>(
-            model.getObject().getNome(), 
+            model.getObject().getName(), 
             (IModel) new MSelectionInstanceModel<List<SelectOption>>(model), 
                                         opcoesValue, renderer())
             .setLabelPosition(AbstractChoice.LabelPosition.WRAP_AFTER);

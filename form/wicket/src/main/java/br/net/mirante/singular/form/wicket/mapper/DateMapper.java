@@ -16,7 +16,7 @@ import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.wicket.IAjaxUpdateListener;
 import br.net.mirante.singular.form.wicket.behavior.AjaxUpdateInputBehavior;
@@ -35,9 +35,9 @@ public class DateMapper implements ControlsFieldComponentMapper {
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         @SuppressWarnings("unchecked")
-        TextField<?> comp = new TextField<Date>(model.getObject().getNome(),
+        TextField<?> comp = new TextField<Date>(model.getObject().getName(),
             new MInstanciaValorModel<>(model), Date.class) {
             @Override
             public <C> IConverter<C> getConverter(Class<C> type) {

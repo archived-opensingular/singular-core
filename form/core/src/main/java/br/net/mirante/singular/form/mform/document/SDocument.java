@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.ICompositeInstance;
-import br.net.mirante.singular.form.mform.MInstances;
-import br.net.mirante.singular.form.mform.MTypes;
+import br.net.mirante.singular.form.mform.SInstances;
+import br.net.mirante.singular.form.mform.STypes;
 import br.net.mirante.singular.form.mform.RefService;
 import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
@@ -24,9 +24,9 @@ import br.net.mirante.singular.form.mform.core.attachment.IAttachmentRef;
 import br.net.mirante.singular.form.mform.core.attachment.SIAttachment;
 import br.net.mirante.singular.form.mform.core.attachment.handlers.InMemoryAttachmentPersitenceHandler;
 import br.net.mirante.singular.form.mform.document.ServiceRegistry.Pair;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
-import br.net.mirante.singular.form.mform.event.MInstanceEventType;
-import br.net.mirante.singular.form.mform.event.MInstanceListeners;
+import br.net.mirante.singular.form.mform.event.ISInstanceListener;
+import br.net.mirante.singular.form.mform.event.SInstanceEventType;
+import br.net.mirante.singular.form.mform.event.SInstanceListeners;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ public class SDocument {
 
     private int lastId = 0;
 
-    private MInstanceListeners instanceListeners;
+    private SInstanceListeners instanceListeners;
 
     private DefaultServiceRegistry registry = new DefaultServiceRegistry();
 
@@ -150,9 +150,9 @@ public class SDocument {
             throw new SingularFormException("Não é permitido altera o raiz depois que o mesmo for diferente de null");
         }
         this.root = Objects.requireNonNull(root);
-        MTypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
+        STypes.streamDescendants(getRoot().getType(), true).forEach(tipo -> {
             // init dependencies
-            final Supplier<Collection<SType<?>>> func = tipo.getValorAtributo(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
+            final Supplier<Collection<SType<?>>> func = tipo.getAttributeValue(SPackageBasic.ATR_DEPENDS_ON_FUNCTION);
             if (func != null) {
                 for (SType<?> dependency : func.get()) {
                     if(!dependency.getDependentTypes().contains(tipo)) {
@@ -252,29 +252,29 @@ public class SDocument {
         registry.bindLocalService(serviceName, registerClass, provider);
     }
 
-    public MInstanceListeners getInstanceListeners() {
+    public SInstanceListeners getInstanceListeners() {
         if (this.instanceListeners == null)
-            this.instanceListeners = new MInstanceListeners();
+            this.instanceListeners = new SInstanceListeners();
         return this.instanceListeners;
     }
 
-    public void updateAttributes(IMInstanceListener listener) {
+    public void updateAttributes(ISInstanceListener listener) {
         updateAttributes(getRoot(), listener);
     }
 
-    public void updateAttributes(SInstance root, IMInstanceListener listener) {
+    public void updateAttributes(SInstance root, ISInstanceListener listener) {
         if (listener != null)
-            getInstanceListeners().add(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
+            getInstanceListeners().add(SInstanceEventType.ATTRIBUTE_CHANGED, listener);
 
         try {
-            MInstances.visitAll(root, true, instance -> {
+            SInstances.visitAll(root, true, instance -> {
                 instance.updateExists();
-                instance.updateObrigatorio();
-                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
-                MInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIVEL, SPackageBasic.ATR_VISIBLE_FUNCTION);
+                instance.updateRequired();
+                SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_ENABLED, SPackageBasic.ATR_ENABLED_FUNCTION);
+                SInstances.updateBooleanAttribute(instance, SPackageBasic.ATR_VISIVEL, SPackageBasic.ATR_VISIBLE_FUNCTION);
             });
         } finally {
-            getInstanceListeners().remove(MInstanceEventType.ATTRIBUTE_CHANGED, listener);
+            getInstanceListeners().remove(SInstanceEventType.ATTRIBUTE_CHANGED, listener);
         }
     }
 
@@ -306,7 +306,7 @@ public class SDocument {
 
     public SIAnnotation annotation(Integer id) {
         if(annotations == null) return null;
-        for(SIAnnotation a : (List<SIAnnotation>)annotations.getValores()){
+        for(SIAnnotation a : (List<SIAnnotation>)annotations.getValues()){
             if(id.equals(a.getTargetId())){
                 return a;
             }
@@ -335,7 +335,7 @@ public class SDocument {
 
     public SIAnnotation newAnnotation() {
         createAnnotationsIfNeeded();
-        return (SIAnnotation) annotations.addNovo();
+        return (SIAnnotation) annotations.addNew();
     }
 
     private void createAnnotationsIfNeeded() {

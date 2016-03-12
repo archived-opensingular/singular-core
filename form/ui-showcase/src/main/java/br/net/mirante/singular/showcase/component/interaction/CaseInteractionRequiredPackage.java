@@ -23,13 +23,13 @@ public class CaseInteractionRequiredPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        testForm = pb.createTipoComposto("testForm");
+        testForm = pb.createCompositeType("testForm");
 
-        required = testForm.addCampoBoolean("required");
+        required = testForm.addFieldBoolean("required");
 
-        record = testForm.addCampoComposto("record");
-        recordText = record.addCampoString("text");
-        recordDate = record.addCampoData("date");
+        record = testForm.addFieldComposite("record");
+        recordText = record.addFieldString("text");
+        recordDate = record.addFieldData("date");
 
         required.as(SPackageBasic.aspect()).label("Required");
 

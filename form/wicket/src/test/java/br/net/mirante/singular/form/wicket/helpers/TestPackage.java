@@ -23,9 +23,9 @@ public class TestPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
-        baseType = pb.createTipoComposto("Test");
+        baseType = pb.createCompositeType("Test");
         baseType.as(AtrBasic::new).label("Testing Stuff");
-        attachmentFileField = baseType.addCampo("fileField", STypeAttachment.class);
-        stringField = baseType.addCampoString("something");
+        attachmentFileField = baseType.addField("fileField", STypeAttachment.class);
+        stringField = baseType.addFieldString("something");
     }
 }

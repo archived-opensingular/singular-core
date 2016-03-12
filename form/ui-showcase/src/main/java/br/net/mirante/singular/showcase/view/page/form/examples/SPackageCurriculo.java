@@ -3,25 +3,25 @@ package br.net.mirante.singular.showcase.view.page.form.examples;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCNPJ;
-import br.net.mirante.singular.form.mform.util.comuns.STypeCPF;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCNPJ;
+import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
+import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
-import br.net.mirante.singular.form.mform.util.comuns.STypeNomePessoa;
-import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.comuns.STypePersonName;
 
 public class SPackageCurriculo extends SPackage {
 
@@ -34,22 +34,22 @@ public class SPackageCurriculo extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> curriculo = pb.createTipoComposto("Curriculo");
+        final STypeComposite<?> curriculo = pb.createCompositeType("Curriculo");
         {
             curriculo
                 .as(AtrBasic::new).label("Currículo");
         }
 
-        final STypeComposite<?> informacoesPessoais = curriculo.addCampoComposto("informacoesPessoais");
-        final STypeNomePessoa nome = informacoesPessoais.addCampo("nome", STypeNomePessoa.class, true);
-        final STypeCPF cpf = informacoesPessoais.addCampo("cpf", STypeCPF.class, true);
-        final STypeData dtNasc = informacoesPessoais.addCampoData("dataNascimento", true);
-        final STypeString estadoCivil = informacoesPessoais.addCampoString("estadoCivil", true)
+        final STypeComposite<?> informacoesPessoais = curriculo.addFieldComposite("informacoesPessoais");
+        final STypePersonName nome = informacoesPessoais.addField("nome", STypePersonName.class, true);
+        final STypeCPF cpf = informacoesPessoais.addField("cpf", STypeCPF.class, true);
+        final STypeData dtNasc = informacoesPessoais.addFieldData("dataNascimento", true);
+        final STypeString estadoCivil = informacoesPessoais.addFieldString("estadoCivil", true)
             .withSelectionOf("Solteiro", "Casado", "Separado", "Divorciado", "Viúvo");
 
-        STypeString tipoContato = pb.createTipo("tipoContato", STypeString.class)
+        STypeString tipoContato = pb.createType("tipoContato", STypeString.class)
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
-        final STypeLista<STypeString, SIString> infoPub = informacoesPessoais.addCampoListaOf("infoPub",
+        final STypeList<STypeString, SIString> infoPub = informacoesPessoais.addFieldListOf("infoPub",
                 tipoContato);
         {
             informacoesPessoais
@@ -68,17 +68,17 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBasic::new).label("Estado Civil")
                 .as(AtrBootstrap::new).colPreference(2);
             infoPub
-                .withObrigatorio(true)
-                .withView(MSelecaoMultiplaPorSelectView::new)
+                .withRequired(true)
+                .withView(SMultiSelectionBySelectView::new)
                 .as(AtrBasic::new).label("Informação Pública")
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeComposite<?> contatos = informacoesPessoais.addCampoComposto("contatos");
-        final STypeEMail email = contatos.addCampo("email", STypeEMail.class, true);
-        final STypeTelefoneNacional telFixo = contatos.addCampo("telefoneFixo", STypeTelefoneNacional.class);
-        final STypeTelefoneNacional telFixo2 = contatos.addCampo("telefoneFixo2", STypeTelefoneNacional.class);
-        final STypeTelefoneNacional telCel = contatos.addCampo("telefoneCelular", STypeTelefoneNacional.class);
+        final STypeComposite<?> contatos = informacoesPessoais.addFieldComposite("contatos");
+        final STypeEMail email = contatos.addField("email", STypeEMail.class, true);
+        final STypeTelefoneNacional telFixo = contatos.addField("telefoneFixo", STypeTelefoneNacional.class);
+        final STypeTelefoneNacional telFixo2 = contatos.addField("telefoneFixo2", STypeTelefoneNacional.class);
+        final STypeTelefoneNacional telCel = contatos.addField("telefoneCelular", STypeTelefoneNacional.class);
         {
             contatos
                 .as(AtrBasic::new).label("Contatos");
@@ -96,10 +96,10 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeComposite<?> referencia = curriculo.addCampoComposto("referencia");
-        final STypeBoolean foiIndicado = referencia.addCampoBoolean("foiIndicado");
-        final STypeBoolean refTemNaEmpresa = referencia.addCampoBoolean("conheceColaboradorNaEmpresa");
-        final STypeString refQuemNaEmpresa = referencia.addCampoString("colaboradorContato");
+        final STypeComposite<?> referencia = curriculo.addFieldComposite("referencia");
+        final STypeBoolean foiIndicado = referencia.addFieldBoolean("foiIndicado");
+        final STypeBoolean refTemNaEmpresa = referencia.addFieldBoolean("conheceColaboradorNaEmpresa");
+        final STypeString refQuemNaEmpresa = referencia.addFieldString("colaboradorContato");
         {
             referencia
                 .as(AtrBasic::new).label("Referência");
@@ -115,15 +115,15 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(5);
         }
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addCampoListaOfComposto("formacaoAcademica", "cursoAcademico");
-        final STypeComposite<?> cursoAcademico = formacao.getTipoElementos();
-        final STypeString academicoTipo = cursoAcademico.addCampoString("tipo", true)
+        final STypeList<STypeComposite<SIComposite>, SIComposite> formacao = curriculo.addFieldListOfComposite("formacaoAcademica", "cursoAcademico");
+        final STypeComposite<?> cursoAcademico = formacao.getElementsType();
+        final STypeString academicoTipo = cursoAcademico.addFieldString("tipo", true)
             .withSelectionOf("Graduação", "Pós-Graduação", "Mestrado", "Doutorado");
-        final STypeString academicoNomeCurso = cursoAcademico.addCampoString("nomeCurso", true);
-        final STypeString academicoInstituicao = cursoAcademico.addCampoString("instituicao", true);
-        final STypeCNPJ academicoCNPJ = cursoAcademico.addCampo("cnpj", STypeCNPJ.class, false);
-        final STypeInteger academicoCargaHoraria = cursoAcademico.addCampo("cargaHoraria", STypeInteger.class, true);
-        final STypeAnoMes academicoMesConclusao = cursoAcademico.addCampo("mesConclusao", STypeAnoMes.class, true);
+        final STypeString academicoNomeCurso = cursoAcademico.addFieldString("nomeCurso", true);
+        final STypeString academicoInstituicao = cursoAcademico.addFieldString("instituicao", true);
+        final STypeCNPJ academicoCNPJ = cursoAcademico.addField("cnpj", STypeCNPJ.class, false);
+        final STypeInteger academicoCargaHoraria = cursoAcademico.addField("cargaHoraria", STypeInteger.class, true);
+        final STypeYearMonth academicoMesConclusao = cursoAcademico.addField("mesConclusao", STypeYearMonth.class, true);
         {
             formacao
                 .as(AtrBasic::new).label("Formação Acadêmica");
@@ -146,16 +146,16 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(2);
         }
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = curriculo.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
-        final STypeComposite<?> experiencia = experiencias.getTipoElementos();
-        final STypeAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", STypeAnoMes.class, true);
-        final STypeAnoMes dtFimExperiencia = experiencia.addCampo("fim", STypeAnoMes.class);
-        final STypeString empresa = experiencia.addCampoString("empresa", true);
-        final STypeString cargo = experiencia.addCampoString("cargo", true);
-        final STypeString atividades = experiencia.addCampoString("atividades");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = curriculo.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        final STypeComposite<?> experiencia = experiencias.getElementsType();
+        final STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        final STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
+        final STypeString empresa = experiencia.addFieldString("empresa", true);
+        final STypeString cargo = experiencia.addFieldString("cargo", true);
+        final STypeString atividades = experiencia.addFieldString("atividades");
         {
             experiencias
-                .withView(MPanelListaView::new)
+                .withView(SViewListByForm::new)
                 .as(AtrBasic::new).label("Experiências profissionais");
             dtInicioExperiencia
                 .as(AtrBasic::new).label("Data inicial")
@@ -173,15 +173,15 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBasic::new).label("Atividades Desenvolvidas");
         }
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> certificacoes = curriculo.addCampoListaOfComposto("certificacoes", "certificacao");
-        final STypeComposite<?> certificacao = certificacoes.getTipoElementos();
-        final STypeAnoMes dataCertificacao = certificacao.addCampo("data", STypeAnoMes.class, true);
-        final STypeString entidadeCertificacao = certificacao.addCampoString("entidade", true);
-        final STypeData validadeCertificacao = certificacao.addCampoData("validade");
-        final STypeString nomeCertificacao = certificacao.addCampoString("nome", true);
+        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = curriculo.addFieldListOfComposite("certificacoes", "certificacao");
+        final STypeComposite<?> certificacao = certificacoes.getElementsType();
+        final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
+        final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
+        final STypeData validadeCertificacao = certificacao.addFieldData("validade");
+        final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes
-                .withView(MTableListaView::new)
+                .withView(SViewListByTable::new)
                 .as(AtrBasic::new).label("Certificações");
             certificacao
                 .as(AtrBasic::new).label("Certificação");
@@ -199,7 +199,7 @@ public class SPackageCurriculo extends SPackage {
                 .as(AtrBootstrap::new).colPreference(10);
         }
 
-        final STypeString informacoesAdicionais = curriculo.addCampoString("informacoesAdicionais");
+        final STypeString informacoesAdicionais = curriculo.addFieldString("informacoesAdicionais");
         {
             informacoesAdicionais
                     .withTextAreaView()
@@ -210,7 +210,7 @@ public class SPackageCurriculo extends SPackage {
 
         // Formatação
         // ---------------------------------------------------------------------------------------------
-        MTabView tabbed = curriculo.setView(MTabView::new);
+        SViewTab tabbed = curriculo.setView(SViewTab::new);
         tabbed.addTab("dados", "Dados")
             .add(informacoesPessoais)
             .add(referencia)

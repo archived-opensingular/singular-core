@@ -12,15 +12,15 @@ public class CaseRowControlGridPackage extends SPackage {
     protected void carregarDefinicoes(PackageBuilder pb) {
         super.carregarDefinicoes(pb);
 
-        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        testForm.addCampoString("nome")
+        testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")
                 .as(AtrBootstrap::new).colPreference(4);
-        testForm.addCampoInteger("idade")
+        testForm.addFieldInteger("idade")
                 .as(AtrBasic.class).label("Idade")
                 .as(AtrBootstrap::new).colPreference(1);
-        testForm.addCampoEmail("email")
+        testForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail")
                 .as(AtrBootstrap::new).onNewRow(true)
                 .as(AtrBootstrap::new).colPreference(5);

@@ -8,7 +8,7 @@ import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.context.SFormConfig;
 import br.net.mirante.singular.form.mform.document.RefType;
 import br.net.mirante.singular.form.mform.document.SDocumentFactory;
@@ -98,23 +98,23 @@ class TypeBuilder {
     }
 
     public STypeComposite<? extends SIComposite> createRootType() {
-        final STypeComposite<? extends SIComposite> root = pkg.createTipoComposto("root");
-        SIList children = (SIList) metaInformation.getCampo(SPackagePrototype.CHILDREN);
-        root.asAtrBasic().label(metaInformation.getValorString(SPackagePrototype.NAME));
+        final STypeComposite<? extends SIComposite> root = pkg.createCompositeType("root");
+        SIList children = (SIList) metaInformation.getField(SPackagePrototype.CHILDREN);
+        root.asAtrBasic().label(metaInformation.getValueString(SPackagePrototype.NAME));
         addChildFieldsIfAny(root, children);
         return root;
     }
 
     private void addChildFieldsIfAny(STypeComposite<? extends SIComposite> root, SIList children) {
         if (!children.isEmptyOfData()) {
-            for (SIComposite f : (List<SIComposite>) children.getValores()) {
+            for (SIComposite f : (List<SIComposite>) children.getValues()) {
                 addField(root, f);
             }
         }
     }
 
     private void addField(STypeComposite<? extends SIComposite> root, SIComposite descriptor) {
-        String type = descriptor.getValorString(SPackagePrototype.TYPE);
+        String type = descriptor.getValueString(SPackagePrototype.TYPE);
         SType<?> typeOfField = root.getDictionary().getType(type);
 
         SType<?> fieldType = addFieldType(root, descriptor, typeOfField);
@@ -123,7 +123,7 @@ class TypeBuilder {
     }
 
     private SType<?> addFieldType(STypeComposite<? extends SIComposite> root, SIComposite descriptor, SType<?> typeOfField) {
-        String name = descriptor.getValorString(SPackagePrototype.NAME);
+        String name = descriptor.getValueString(SPackagePrototype.NAME);
         String genName = generateJavaIdentifier(name);
         if (isList(descriptor)) {
             return addListFieldType(root, typeOfField, name, genName);
@@ -133,21 +133,21 @@ class TypeBuilder {
     }
 
     private SType<?> addListFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String name, String genName) {
-        STypeLista fieldType = addAppropriateListFieldType(root, typeOfField, genName);
+        STypeList fieldType = addAppropriateListFieldType(root, typeOfField, genName);
         fieldType.asAtrBasic().label(name);
-        return fieldType.getTipoElementos();
+        return fieldType.getElementsType();
     }
 
-    private STypeLista addAppropriateListFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String genName) {
+    private STypeList addAppropriateListFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String genName) {
         if (typeOfField instanceof STypeComposite) {
-            return root.addCampoListaOfComposto(genName, "sub_" + genName);
+            return root.addFieldListOfComposite(genName, "sub_" + genName);
         } else {
-            return root.addCampoListaOf(genName, typeOfField);
+            return root.addFieldListOf(genName, typeOfField);
         }
     }
 
     private SType<?> addSimpleOrCompositeFieldType(STypeComposite<? extends SIComposite> root, SType<?> typeOfField, String name, String genName) {
-        return root.addCampo(genName, typeOfField)
+        return root.addField(genName, typeOfField)
                 .asAtrBasic().label(name).getTipo();
     }
 
@@ -161,11 +161,11 @@ class TypeBuilder {
     }
 
     private void addAttributesIfAny(SIComposite descriptor, SType<?> fieldType) {
-        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_CAMPO), fieldType.asAtrBootstrap()::colPreference);
-        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
-        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
-        addAttributeIfExists(descriptor.getValorInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
-        addAttributeIfExists(descriptor.getValorBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::obrigatorio);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_CAMPO), fieldType.asAtrBootstrap()::colPreference);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_MAXIMO), fieldType.asAtrBasic()::tamanhoMaximo);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_INTEIRO_MAXIMO), fieldType.asAtrBasic()::tamanhoInteiroMaximo);
+        addAttributeIfExists(descriptor.getValueInteger(SPackagePrototype.TAMANHO_DECIMAL_MAXIMO), fieldType.asAtrBasic()::tamanhoDecimalMaximo);
+        addAttributeIfExists(descriptor.getValueBoolean(SPackagePrototype.OBRIGATORIO), fieldType.asAtrCore()::obrigatorio);
 
     }
 
@@ -176,7 +176,7 @@ class TypeBuilder {
     }
 
     private boolean isList(SIComposite descriptor) {
-        return notNull(descriptor.getValorBoolean(SPackagePrototype.IS_LIST), false);
+        return notNull(descriptor.getValueBoolean(SPackagePrototype.IS_LIST), false);
     }
 
     private boolean notNull(Boolean v, boolean defaultValue) {
@@ -187,7 +187,7 @@ class TypeBuilder {
                                             SType<?> typeOfField,
                                             SType<?> fieldType) {
         if (typeOfField instanceof STypeComposite) {
-            SIList children = (SIList) descriptor.getCampo(SPackagePrototype.FIELDS);
+            SIList children = (SIList) descriptor.getField(SPackagePrototype.FIELDS);
             addChildFieldsIfAny((STypeComposite<? extends SIComposite>) fieldType, children);
         }
     }

@@ -11,19 +11,19 @@ public class CaseInputCoreTextAreaPackage extends SPackage {
     //@formatter:off
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoString("observacao1")
+        tipoMyForm.addFieldString("observacao1")
                 .withTextAreaView()
                 .as(AtrBasic::new).label("Observação (default)");
 
-        tipoMyForm.addCampoString("observacao2")
-            .withTextAreaView(view->view.setLinhas(2))
+        tipoMyForm.addFieldString("observacao2")
+            .withTextAreaView(view->view.setLines(2))
             .as(AtrBasic::new).label("Observação (2 linhas e 500 de limite)")
             .as(AtrBasic::new).tamanhoMaximo(500);
 
-        tipoMyForm.addCampoString("observacao3")
-                .withTextAreaView(view->view.setLinhas(10))
+        tipoMyForm.addFieldString("observacao3")
+                .withTextAreaView(view->view.setLines(10))
                 .as(AtrBasic::new).label("Observação (10 linhas e 5000 de limite)")
                 .as(AtrBasic::new).tamanhoMaximo(5000);
     }

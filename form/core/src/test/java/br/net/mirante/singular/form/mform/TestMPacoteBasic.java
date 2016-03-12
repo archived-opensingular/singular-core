@@ -20,9 +20,9 @@ public class TestMPacoteBasic{
 //        dicionario.debug();
 
         STypeInteger mtInt = dicionario.getType(STypeInteger.class);
-        Assert.assertEquals(Integer.valueOf(1), mtInt.converter("1"));
-        Assert.assertEquals(Integer.valueOf(-1), mtInt.converter("-1"));
-        Assert.assertEquals(Integer.valueOf(10), mtInt.converter("010"));
+        Assert.assertEquals(Integer.valueOf(1), mtInt.convert("1"));
+        Assert.assertEquals(Integer.valueOf(-1), mtInt.convert("-1"));
+        Assert.assertEquals(Integer.valueOf(10), mtInt.convert("010"));
     }
 
     @Test public void tipoDate(){
@@ -30,7 +30,7 @@ public class TestMPacoteBasic{
         dicionario.loadPackage(SPackageBasic.class);
 
         STypeData mData = dicionario.getType(STypeData.class);
-        SIData miData = mData.novaInstancia();
+        SIData miData = mData.newInstance();
         miData.setValue("");
         assertThat(miData.getValue()).isNull();
     }

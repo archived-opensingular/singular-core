@@ -14,7 +14,7 @@ public class TestPageMock {
         MockPage mockPage = new MockPage() {
             @Override
             protected void populateType(STypeComposite<?> mockType) {
-                mockType.addCampoString("mockString");
+                mockType.addFieldString("mockString");
             }
         };
         tester.startPage(mockPage);

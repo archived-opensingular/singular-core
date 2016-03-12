@@ -9,12 +9,12 @@ public class CaseInputCoreDecimalPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoDecimal("decimalPadrao")
+        tipoMyForm.addFieldDecimal("decimalPadrao")
                 .as(AtrBasic.class).label("Número decimal default");
 
-        tipoMyForm.addCampoDecimal("decimalLongo")
+        tipoMyForm.addFieldDecimal("decimalLongo")
                 .as(AtrBasic.class).label("Decimal com 15 inteiros e 10 dígitos")
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(10);

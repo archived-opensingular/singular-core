@@ -34,9 +34,9 @@ public class FromPojo<T> {
     }
 
     public <R extends SInstance> R build() {
-        SIComposite instancia = target.novaInstancia();
+        SIComposite instancia = target.newInstance();
         for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
-            instancia.setValor(e.getKey().getName(), e.getValue().value(pojo));
+            instancia.setValue(e.getKey().getName(), e.getValue().value(pojo));
         }
         return (R)instancia;
     }

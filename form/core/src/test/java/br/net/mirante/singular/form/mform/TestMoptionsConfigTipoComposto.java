@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsCompositeProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsCompositeProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
 public class TestMoptionsConfigTipoComposto {
@@ -38,11 +38,11 @@ public class TestMoptionsConfigTipoComposto {
         _dicionario = SDictionary.create();
         PackageBuilder pb = _dicionario.createNewPackage("teste");
 
-        _raiz = pb.createTipoComposto("_raiz");
-        _periodo = _raiz.addCampoComposto("periodo");
-        STypeString descricao  = _periodo.addCampoString("descricao");
-        _dataInicial = _periodo.addCampo("dataInicial", STypeData.class);
-        _dataFinal = _periodo.addCampo("dataFinal", STypeData.class);
+        _raiz = pb.createCompositeType("_raiz");
+        _periodo = _raiz.addFieldComposite("periodo");
+        STypeString descricao  = _periodo.addFieldString("descricao");
+        _dataInicial = _periodo.addField("dataInicial", STypeData.class);
+        _dataFinal = _periodo.addField("dataFinal", STypeData.class);
 
 
         _raiz.asAtrBasic().label("Evento");
@@ -51,7 +51,7 @@ public class TestMoptionsConfigTipoComposto {
         _dataFinal.asAtrBasic().label("Data final");
 
 
-        _periodo.withSelectionFromProvider(descricao, (MOptionsCompositeProvider)(instancia, lb) -> {
+        _periodo.withSelectionFromProvider(descricao, (SOptionsCompositeProvider)(instancia, lb) -> {
             lb
                     .add()
                     .set(descricao, label1)
@@ -64,11 +64,11 @@ public class TestMoptionsConfigTipoComposto {
         });
 
 
-        evento = _raiz.novaInstancia();
+        evento = _raiz.newInstance();
 
         // perido
-        periodo = (SIComposite) evento.getCampo(_periodo.getSimpleName());
-        opcaoPeriodo = _periodo.getProviderOpcoes().listAvailableOptions(periodo).get(0);
+        periodo = (SIComposite) evento.getField(_periodo.getNameSimple());
+        opcaoPeriodo = _periodo.getOptionsProvider().listAvailableOptions(periodo).get(0);
         Value.hydrate(periodo, Value.dehydrate(opcaoPeriodo));
     }
 
@@ -90,14 +90,14 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testMTipoOpcoes(){
-        for(SInstance instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo)){
             Assert.assertEquals(_periodo, instancia.getType());
         }
     }
 
     @Test
     public void testKeyValueMapping(){
-        for(SInstance instancia : _periodo.getProviderOpcoes().listAvailableOptions(periodo)){
+        for(SInstance instancia : _periodo.getOptionsProvider().listAvailableOptions(periodo)){
             String key = periodo.getOptionsConfig().getKeyFromOption(instancia);
             Assert.assertEquals(instancia, periodo.getOptionsConfig().getValueFromKey(key));
             Assert.assertEquals(periodo.getOptionsConfig().getLabelFromKey(key), instancia.getSelectLabel());
@@ -106,7 +106,7 @@ public class TestMoptionsConfigTipoComposto {
 
     @Test
     public void testSelectLabel() {
-        SIList lista = _periodo.getProviderOpcoes().listAvailableOptions(periodo);
+        SIList lista = _periodo.getOptionsProvider().listAvailableOptions(periodo);
         SInstance instancia1 = lista.get(0);
         Assert.assertEquals(label1, instancia1.getSelectLabel());
         SInstance instancia2 = lista.get(0);

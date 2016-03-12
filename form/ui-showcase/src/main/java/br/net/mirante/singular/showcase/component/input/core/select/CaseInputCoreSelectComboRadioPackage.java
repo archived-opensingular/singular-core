@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.STypeString;
 
 public class CaseInputCoreSelectComboRadioPackage extends SPackage {
@@ -12,11 +12,11 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
     //@formatter:off
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         //@destacar:bloco
         //View por Select
-        STypeString tipoContato1 = tipoMyForm.addCampoString("tipoContato1")
+        STypeString tipoContato1 = tipoMyForm.addFieldString("tipoContato1")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
@@ -26,7 +26,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
         //@destacar:bloco
         //View por Radio
-        STypeString tipoContato2 = tipoMyForm.addCampoString("tipoContato2")
+        STypeString tipoContato2 = tipoMyForm.addFieldString("tipoContato2")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
         //@destacar:fim
 
@@ -36,7 +36,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
 
 
 
-        STypeString tipoContato3 = tipoMyForm.addCampoString("tipoContato3")
+        STypeString tipoContato3 = tipoMyForm.addFieldString("tipoContato3")
                 .withSelectionOf("Endereço", "Email", "Telefone", "Celular", "Fax");
 
 
@@ -47,7 +47,7 @@ public class CaseInputCoreSelectComboRadioPackage extends SPackage {
         //@destacar:bloco
         //View por Radio com layout vertical
         tipoContato3
-                .withView(new MSelecaoPorRadioView().layoutVertical());
+                .withView(new SViewSelectionByRadio().verticalLayout());
         //@destacar:fim
 
     }

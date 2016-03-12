@@ -83,7 +83,7 @@ public final class FormFreemarkerUtil {
             if (((SISimple<?>) obj).isNull()) {
                 return null;
             }
-            return new SimpleScalar(((SISimple<?>) obj).getDisplayString());
+            return new SimpleScalar(((SISimple<?>) obj).toStringDisplay());
         } else if (obj instanceof SIComposite) {
             return new SICompositeTemplateModel((SIComposite) obj);
         } else if (obj instanceof SIList) {
@@ -132,11 +132,11 @@ public final class FormFreemarkerUtil {
 
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
-            SInstance campo = composite.getCampo(key);
+            SInstance campo = composite.getField(key);
             if (campo == null) {
                 return null;
             }
-            return toTemplateModel(composite.getCampo(key));
+            return toTemplateModel(composite.getField(key));
         }
 
         @Override

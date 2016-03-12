@@ -4,7 +4,7 @@ import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class SelectBuilder {
     }
 
     private static SIList estados(STypeComposite<?> select) {
-        SIList estados = select.novaLista();
+        SIList estados = select.newList();
         estados.addElement(create(select, "AC", "Acre"));
         estados.addElement(create(select, "AL", "Alagoas"));
         estados.addElement(create(select, "AP", "Amapá"));
@@ -50,25 +50,25 @@ public class SelectBuilder {
     }
 
     private static SIComposite create(STypeComposite tipo, String id, String label){
-        SIComposite inst = (SIComposite) tipo.novaInstancia();
-        inst.setValor("sigla", id);
-        inst.setValor("nome", label);
+        SIComposite inst = (SIComposite) tipo.newInstance();
+        inst.setValue("sigla", id);
+        inst.setValue("nome", label);
         return inst;
     }
 
 
-    public static Collection<MSelectionableInstance> buildMunicipios(STypeComposite<?> tipoOpcoes) {
+    public static Collection<SSelectionableInstance> buildMunicipios(STypeComposite<?> tipoOpcoes) {
         return cidades(tipoOpcoes);
     }
 
 
-    public static Collection<MSelectionableInstance> buildMunicipiosFiltrado(STypeComposite<?> tipoOpcoes, String uf) {
+    public static Collection<SSelectionableInstance> buildMunicipiosFiltrado(STypeComposite<?> tipoOpcoes, String uf) {
         if (uf == null){
             return new ArrayList<>();
         }
         return buildMunicipios(tipoOpcoes)
                 .stream()
-                .filter(i -> uf.equals(((SIComposite) i).getValor("UF")))
+                .filter(i -> uf.equals(((SIComposite) i).getValue("UF")))
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +77,7 @@ public class SelectBuilder {
         return lista;
     }
 
-    private static void cidades1(STypeComposite<?> select, List<MSelectionableInstance> cidades) {
+    private static void cidades1(STypeComposite<?> select, List<SSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 1100015, "Alta Floresta D'Oeste", "RO"));
         cidades.add(novaCidade(select, 1100379, "Alto Alegre dos Parecis", "RO"));
         cidades.add(novaCidade(select, 1100403, "Alto Paraíso", "RO"));
@@ -746,7 +746,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 2114007, "Zé Doca", "MA"));
     }
 
-    private static void cidades2(STypeComposite<?> select, List<MSelectionableInstance> cidades) {
+    private static void cidades2(STypeComposite<?> select, List<SSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 2200053, "Acauã", "PI"));
         cidades.add(novaCidade(select, 2200103, "Agricolândia", "PI"));
         cidades.add(novaCidade(select, 2200202, "Água Branca", "PI"));
@@ -2326,7 +2326,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 2933604, "Xique-Xique", "BA"));
     }
 
-    private static void cidades3(STypeComposite<?> select, List<MSelectionableInstance> cidades) {
+    private static void cidades3(STypeComposite<?> select, List<SSelectionableInstance> cidades) {
         cidades.add(novaCidade(select, 3100104, "Abadia dos Dourados", "MG"));
         cidades.add(novaCidade(select, 3100203, "Abaeté", "MG"));
         cidades.add(novaCidade(select, 3100302, "Abre Campo", "MG"));
@@ -3997,7 +3997,7 @@ public class SelectBuilder {
         cidades.add(novaCidade(select, 3557154, "Zacarias", "SP"));
     }
 
-    private static void cidades4(STypeComposite<?> select, List<MSelectionableInstance> cidades) {
+    private static void cidades4(STypeComposite<?> select, List<SSelectionableInstance> cidades) {
 
         cidades.add(novaCidade(select, 4100103, "Abatiá", "PR"));
         cidades.add(novaCidade(select, 4100202, "Adrianópolis", "PR"));
@@ -5656,8 +5656,8 @@ public class SelectBuilder {
     }
 
 
-    private static List<MSelectionableInstance> cidades(STypeComposite<?> select) {
-        List<MSelectionableInstance> cidades = new ArrayList<>(5567);
+    private static List<SSelectionableInstance> cidades(STypeComposite<?> select) {
+        List<SSelectionableInstance> cidades = new ArrayList<>(5567);
         cidades1(select, cidades);
         cidades2(select, cidades);
         cidades3(select, cidades);
@@ -5666,10 +5666,10 @@ public class SelectBuilder {
     }
 
     private static SIComposite novaCidade(STypeComposite<?> select, Integer id, String nome, String uf) {
-        SIComposite instance = select.novaInstancia();
-        instance.setValor("id", id);
-        instance.setValor("nome", nome);
-        instance.setValor("UF", uf);
+        SIComposite instance = select.newInstance();
+        instance.setValue("id", id);
+        instance.setValue("nome", nome);
+        instance.setValue("UF", uf);
         return instance;
     }
 }

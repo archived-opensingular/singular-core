@@ -21,14 +21,14 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.Visits;
 
-import br.net.mirante.singular.form.mform.MFormUtil;
-import br.net.mirante.singular.form.mform.MInstances;
+import br.net.mirante.singular.form.mform.SFormUtil;
+import br.net.mirante.singular.form.mform.SInstances;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.document.SDocument;
-import br.net.mirante.singular.form.mform.event.IMInstanceListener;
+import br.net.mirante.singular.form.mform.event.ISInstanceListener;
 import br.net.mirante.singular.form.mform.event.SInstanceEvent;
-import br.net.mirante.singular.form.mform.options.MSelectionableType;
+import br.net.mirante.singular.form.mform.options.SSelectionableType;
 import br.net.mirante.singular.form.validation.IValidationError;
 import br.net.mirante.singular.form.validation.InstanceValidationContext;
 import br.net.mirante.singular.form.validation.ValidationErrorLevel;
@@ -131,7 +131,7 @@ public class WicketFormProcessing {
     private static void refreshComponents(FormComponent<?> formComponent, Optional<AjaxRequestTarget> target, IModel<? extends SInstance> fieldInstance){
 
         // atualizar documento e recuperar os IDs das instancias com atributos alterados
-        final IMInstanceListener.EventCollector eventCollector = new IMInstanceListener.EventCollector();
+        final ISInstanceListener.EventCollector eventCollector = new ISInstanceListener.EventCollector();
         fieldInstance.getObject().getDocument().updateAttributes(eventCollector);
 
         final String indexsKey = getIndexsKey(((IMInstanciaAwareModel) fieldInstance).getMInstancia().getPathFull());
@@ -147,7 +147,7 @@ public class WicketFormProcessing {
             final BiPredicate<Component, SInstance> predicate = (Component c, SInstance ins) -> {
                 SType<?> insTipo = ins.getType();
                 boolean wasUpdated = updatedInstanceIds.contains(ins.getId());
-                boolean hasOptions = (insTipo instanceof MSelectionableType<?>) && ((MSelectionableType<?>) insTipo).hasProviderOpcoes();
+                boolean hasOptions = (insTipo instanceof SSelectionableType<?>) && ((SSelectionableType<?>) insTipo).hasOptionsProvider();
                 boolean dependsOnType = fieldInstance.getObject().getType().getDependentTypes().contains(insTipo);
                 boolean isInTheSameIndexOfList = indexsKey.equals(getIndexsKey(ins.getPathFull()));
                 return wasUpdated || (hasOptions && dependsOnType && isInTheSameIndexOfList);
@@ -199,13 +199,13 @@ public class WicketFormProcessing {
         for (IValidationError error : errors) {
             String message = error.getMessage();
             if (prependFullPathLabel) {
-                final String labelPath = MFormUtil.generateUserFriendlyPath(error.getInstance(), baseInstance.getObject());
+                final String labelPath = SFormUtil.generateUserFriendlyPath(error.getInstance(), baseInstance.getObject());
                 if (StringUtils.isNotBlank(labelPath))
                     message = labelPath + " : " + message;
             }
             Integer instanceId = error.getInstance().getId();
 
-            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> MInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
+            final IModel<? extends SInstance> instanceModel = (IReadOnlyModel<SInstance>) () -> SInstances.streamDescendants(baseInstance.getObject().getDocument().getRoot(), true)
                     .filter(it -> Objects.equals(it.getId(), instanceId))
                     .findFirst()
                     .orElse(null);

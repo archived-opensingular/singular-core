@@ -14,20 +14,20 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
     //@formatter:off
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         //Select de Datas
-        STypeData tipoData = tipoMyForm.addCampoData("inicio");
+        STypeData tipoData = tipoMyForm.addFieldData("inicio");
         tipoData.withSelectionOf(new Date(), DateTime.parse("2015-11-20").toDate());
         tipoData.withSelectView();
 
         //Select de Inteiros
-        STypeInteger tipoInteiro = tipoMyForm.addCampoInteger("qtd");
+        STypeInteger tipoInteiro = tipoMyForm.addFieldInteger("qtd");
         tipoInteiro.withSelectionOf(20, 40, 50);
         tipoInteiro.withSelectView();
         
         //Select with composite Dates
-        STypeData finishField = tipoMyForm.addCampoData("finish");
+        STypeData finishField = tipoMyForm.addFieldData("finish");
         finishField
                 .withSelection()
                 .add(DateTime.now().toDate(),"Today")

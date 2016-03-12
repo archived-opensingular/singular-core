@@ -4,25 +4,25 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 
 
 public class CaseInputCoreBasicPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
-        tipoMyForm.addCampoCNPJ("cnpj")
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
+        tipoMyForm.addFieldCNPJ("cnpj")
                 .as(AtrBasic.class).label("CNPJ");
-        tipoMyForm.addCampoCPF("cpf")
+        tipoMyForm.addFieldCPF("cpf")
                 .as(AtrBasic.class).label("CPF");
-        tipoMyForm.addCampoCEP("cep")
+        tipoMyForm.addFieldCEP("cep")
                 .as(AtrBasic.class).label("CEP");
-        tipoMyForm.addCampoEmail("email")
+        tipoMyForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail");
-        tipoMyForm.addCampoString("descricao")
+        tipoMyForm.addFieldString("descricao")
                 .as(AtrBasic.class).label("Descrição");
-        tipoMyForm.addCampo("telefone", STypeTelefoneNacional.class)
+        tipoMyForm.addField("telefone", STypeTelefoneNacional.class)
                 .as(AtrBasic.class).label("Telefone");
         super.carregarDefinicoes(pb);
     }

@@ -20,7 +20,7 @@ import org.apache.wicket.util.string.Strings;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.wicket.IWicketComponentMapper.HintKey;
 import br.net.mirante.singular.form.wicket.behavior.ConfigureByMInstanciaAttributesBehavior;
@@ -61,7 +61,7 @@ public class WicketBuildContext implements Serializable {
     private HashMap<Integer,Component> annotationsTargetBuffer = newHashMap();
     private BSContainer annotationContainer;
 
-    private MView view;
+    private SView view;
 
     public AnnotationMode annotation(){ return annotation; }
     public void annotation(AnnotationMode mode){
@@ -346,7 +346,7 @@ public class WicketBuildContext implements Serializable {
         return viewMode;
     }
 
-    public MView getView() {
+    public SView getView() {
         return view;
     }
 

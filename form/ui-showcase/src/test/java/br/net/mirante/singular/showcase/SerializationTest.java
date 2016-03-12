@@ -48,14 +48,14 @@ public class SerializationTest {
         ExamplePackage pacote = null;
         for(ShowcaseTypeLoader.TemplateEntry entry: repo.getEntries()){
             if(entry.getType().getName().equals(ExamplePackage.Types.ORDER.name)){
-                pacote = (ExamplePackage) entry.getType().getPacote();
+                pacote = (ExamplePackage) entry.getType().getPackage();
             }
         }
 
         RefType refType = repo.loadRefTypeOrException(pacote.order.getName());
         SIComposite order = (SIComposite) SDocumentFactory.empty().createInstance(refType);
 
-        order.setValor(pacote.orderNumber.getSimpleName(),1);
+        order.setValue(pacote.orderNumber.getNameSimple(),1);
         FormSerializationUtil.toInstance(FormSerializationUtil.toSerializedObject(order));
     }
 

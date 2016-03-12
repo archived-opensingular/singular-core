@@ -15,14 +15,14 @@ public class AtributoModel<T> implements IReadOnlyModel<T> {
 
     public AtributoModel(IModel<?> model, AtrRef<?, ?, T> atrRef) {
         this.model = model;
-        this.nomeCompletoAtributo = atrRef.getNomeCompleto();
-        this.classeValorAtributo = atrRef.getClasseValor();
+        this.nomeCompletoAtributo = atrRef.getNameFull();
+        this.classeValorAtributo = atrRef.getValueClass();
     }
 
     @Override
     public T getObject() {
         if (model instanceof IMInstanciaAwareModel<?>)
-            return ((IMInstanciaAwareModel<?>) model).getMInstancia().getValorAtributo(nomeCompletoAtributo, classeValorAtributo);
+            return ((IMInstanciaAwareModel<?>) model).getMInstancia().getAttributeValue(nomeCompletoAtributo, classeValorAtributo);
 
         return null;
     }

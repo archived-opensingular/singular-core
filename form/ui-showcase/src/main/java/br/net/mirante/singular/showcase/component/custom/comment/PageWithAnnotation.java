@@ -29,7 +29,7 @@ public class PageWithAnnotation {
     }
 
     public void saveAnnotations(SIComposite pedido){
-        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getType().getPacote();
+        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getType().getPackage();
 
         /**
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.

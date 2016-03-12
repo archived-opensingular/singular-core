@@ -4,31 +4,31 @@ import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeData;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 public class CaseListByTableDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addCampoListaOfComposto("certificacoes", "certificacao");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> certificacoes = testForm.addFieldListOfComposite("certificacoes", "certificacao");
         certificacoes.as(AtrBasic::new).label("Certificações");
-        final STypeComposite<?> certificacao = certificacoes.getTipoElementos();
-        final STypeAnoMes dataCertificacao = certificacao.addCampo("data", STypeAnoMes.class, true);
-        final STypeString entidadeCertificacao = certificacao.addCampoString("entidade", true);
-        final STypeData validadeCertificacao = certificacao.addCampoData("validade");
-        final STypeString nomeCertificacao = certificacao.addCampoString("nome", true);
+        final STypeComposite<?> certificacao = certificacoes.getElementsType();
+        final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
+        final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
+        final STypeData validadeCertificacao = certificacao.addFieldData("validade");
+        final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes
-                    .withView(MTableListaView::new)
+                    .withView(SViewListByTable::new)
                     .as(AtrBasic::new).label("Certificações");
             certificacao
                     .as(AtrBasic::new).label("Certificação");

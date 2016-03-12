@@ -30,8 +30,8 @@ import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import br.net.mirante.singular.form.wicket.component.BFModalWindow;
 import br.net.mirante.singular.lambda.IConsumer;
@@ -54,13 +54,13 @@ public class SelectInputModalContainer extends BSContainer {
     private BSControls formGroup;
     private BSContainer modalContainer;
     private IModel<? extends SInstance> model;
-    private MSelecaoPorModalBuscaView view;
+    private SViewSelectionBySearchModal view;
     private Label valueLabel;
     private IModel<String> valueLabelModel;
     private IConsumer<IModel<?>> clearModel = m -> m.setObject(null);
 
     public SelectInputModalContainer(String id, BSControls formGroup, BSContainer modalContainer,
-                                     IModel<? extends SInstance> model, MSelecaoPorModalBuscaView view,
+                                     IModel<? extends SInstance> model, SViewSelectionBySearchModal view,
                                      IModel<String> valueLabelModel) {
         super(id);
         this.formGroup = formGroup;
@@ -78,7 +78,7 @@ public class SelectInputModalContainer extends BSContainer {
 
         Model<String> f = Model.of("");
         this.appendTag("span", true, "class=\"input-group-btn\"", buildSearchButton(
-                model.getObject().getNome() + "_modal", valueModel, f));
+                model.getObject().getName() + "_modal", valueModel, f));
 
         /* input-group-sm precisa ser adicionado aqui por que o form-group atual adiciona o form-group-sm */
         formGroup.appendTag("div", true, "class=\"input-group input-group-sm\"", this);
@@ -86,7 +86,7 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private void createValueInput() {
-        valueLabel = new Label(model.getObject().getNome() + "selection", valueLabelModel);
+        valueLabel = new Label(model.getObject().getName() + "selection", valueLabelModel);
         valueLabel.add($b.attr("readonly", "readonly"));
     }
 
@@ -190,8 +190,8 @@ public class SelectInputModalContainer extends BSContainer {
         for (String field : view.searchFields()) {
             builder.appendPropertyColumn(Model.of(getAdditionalSearchFieldLabel(field)), m -> {
                 final STypeComposite selectType = (STypeComposite) model.getObject().getType();
-                final SType<?> fieldType = selectType.getCampo(field);
-                final MOptionsConfig provider = model.getObject().getOptionsConfig();
+                final SType<?> fieldType = selectType.getField(field);
+                final SOptionsConfig provider = model.getObject().getOptionsConfig();
                 final SInstance instance = provider.getValueFromKey(String.valueOf(m.getValue()));
                 return Value.of(instance, (STypeSimple) fieldType);
             });
@@ -200,7 +200,7 @@ public class SelectInputModalContainer extends BSContainer {
 
     private String getAdditionalSearchFieldLabel(String searchField) {
         STypeComposite selectType = (STypeComposite) model.getObject().getType();
-        SType<?> fieldType = selectType.getCampo(searchField);
+        SType<?> fieldType = selectType.getField(searchField);
         if (!(fieldType instanceof STypeSimple)) {
             throw new SingularFormException(String.format("Search Fields must be a field of MTipoSimples! found: %s ", fieldType == null ? null : fieldType.getClass().getName()));
         }
@@ -277,12 +277,12 @@ public class SelectInputModalContainer extends BSContainer {
     }
 
     private boolean checkFilterAgainstAditionalFields(SelectOption s, String termo) {
-        final MOptionsConfig miProvider = model.getObject().getOptionsConfig();
+        final SOptionsConfig miProvider = model.getObject().getOptionsConfig();
         final SInstance si = miProvider.getValueFromKey(String.valueOf(s.getValue()));
 
         if (SIComposite.class.isAssignableFrom(si.getClass())) {
             for (String field : view.searchFields()) {
-                final Object value = Value.of((SISimple<?>) ((SIComposite) si).getCampo(field));
+                final Object value = Value.of((SISimple<?>) ((SIComposite) si).getField(field));
                 final String nValue = String.valueOf(value).toLowerCase();
                 if (nValue.contains(termo)) {
                     return true;
@@ -301,7 +301,7 @@ public class SelectInputModalContainer extends BSContainer {
         }
 
         @Override
-        protected Object getSimpleSelection(SInstance target, MOptionsConfig provider) {
+        protected Object getSimpleSelection(SInstance target, SOptionsConfig provider) {
             SelectOption v = (SelectOption) super.getSimpleSelection(target, provider);
             if (v.getValue() == null) {
                 return null;

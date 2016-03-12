@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
+import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
 
 public class BooleanRadioMapper extends RadioMapper {
 
@@ -28,9 +28,9 @@ public class BooleanRadioMapper extends RadioMapper {
     
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
         final SInstance mi = model.getObject();
-        Boolean valor = mi.getValor(Boolean.class);
+        Boolean valor = mi.getValue(Boolean.class);
         if(valor != null) {
-            MBooleanRadioView booleanRadioView = (MBooleanRadioView) mi.getType().getView();
+            SViewBooleanByRadio booleanRadioView = (SViewBooleanByRadio) mi.getType().getView();
             if(valor){
                 return booleanRadioView.labelTrue();
             } else {

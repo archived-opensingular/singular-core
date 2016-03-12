@@ -12,9 +12,9 @@ public class CaseFileAttachmentPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        STypeAttachment anexo = tipoMyForm.addCampo("anexo", STypeAttachment.class);
+        STypeAttachment anexo = tipoMyForm.addField("anexo", STypeAttachment.class);
         anexo.as(AtrBasic.class).label("Anexo");
         anexo.as(AtrCore.class).obrigatorio(true);
         anexo.as(AtrBootstrap.class).colPreference(3);

@@ -15,13 +15,13 @@ public class CaseValidationBetweenFieldsPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        STypeInteger valorInicial = tipoMyForm.addCampoInteger("valorInicial");
+        STypeInteger valorInicial = tipoMyForm.addFieldInteger("valorInicial");
         valorInicial.as(AtrBasic::new).label("Valor Inicial");
         valorInicial.as(AtrCore::new).obrigatorio();
 
-        STypeInteger valorFinal = tipoMyForm.addCampoInteger("valorFinal");
+        STypeInteger valorFinal = tipoMyForm.addFieldInteger("valorFinal");
         valorFinal.as(AtrBasic::new).label("Valor Final");
         valorFinal.as(AtrCore::new).obrigatorio();
 

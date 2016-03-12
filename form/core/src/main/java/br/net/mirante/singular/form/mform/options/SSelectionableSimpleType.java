@@ -1,0 +1,59 @@
+package br.net.mirante.singular.form.mform.options;
+
+import br.net.mirante.singular.form.mform.SType;
+
+import java.util.Collection;
+
+@SuppressWarnings({"rawtypes", "unchecked"})
+public interface SSelectionableSimpleType<BASE extends SType, TIPO_NATIVO> extends SSelectionableType<BASE> {
+
+
+    /**
+     * Registers the name of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     *
+     * @param providerName : Name of the {@link SOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
+    default public BASE withSelectionFromProvider(final String providerName) {
+        setOptionsProvider(new LookupOptionsProvider(providerName));
+        return (BASE) this;
+    }
+
+    /**
+     * Registers the class of the provider used to load options for this type.
+     * This provider will be loaded from the SDocument attached to the Minstance
+     * enclosing this type.
+     * @param providerClass : Class of the {@link SOptionsProvider} to be used.
+     * @return <code>this</code>
+     */
+    default public BASE withSelectionFromProvider(Class<? extends SOptionsProvider> providerClass) {
+        setOptionsProvider(new LookupOptionsProvider(providerClass));
+        return (BASE) this;
+    }
+
+    default public BASE withSelectionFromProvider(SOptionsProvider provider) {
+        setOptionsProvider(provider);
+        return (BASE) this;
+    }
+
+
+    default public SFixedOptionsSimpleProvider withSelection() {
+        SFixedOptionsSimpleProvider provider = new SFixedOptionsSimpleProvider((BASE) this, (Collection) null);
+        setOptionsProvider(provider);
+        return (SFixedOptionsSimpleProvider) provider;
+    }
+
+    default public <T extends SType<?>> T withSelectionOf(TIPO_NATIVO... opcoes) {
+        setOptionsProvider(new SFixedOptionsSimpleProvider((SType<?>) this, opcoes));
+        return (T) this;
+    }
+
+    default public <T extends SType<?>> T withSelectionOf(Collection<TIPO_NATIVO> opcoes) {
+        setOptionsProvider(new SFixedOptionsSimpleProvider((SType<?>) this, opcoes));
+        return (T) this;
+    }
+
+
+}

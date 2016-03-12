@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.showcase.dao.form.ExampleFile;
 import br.net.mirante.singular.showcase.dao.form.FileDao;
 
 @SuppressWarnings("serial")
 @Component("filesChoiceProvider")
-public class MFileIdsOptionsProvider implements MOptionsProvider {
+public class MFileIdsOptionsProvider implements SOptionsProvider {
     @Inject
     private FileDao filePersistence;
 
@@ -28,11 +28,11 @@ public class MFileIdsOptionsProvider implements MOptionsProvider {
     public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
         SIList<?> list;
         if (optionsInstance instanceof SIList) {
-            list = ((SIList) optionsInstance).getTipoElementos().novaLista();
+            list = ((SIList) optionsInstance).getElementsType().newList();
         } else {
-            list = optionsInstance.getType().novaLista();
+            list = optionsInstance.getType().newList();
         }
-        files().forEach(f -> list.addValor(f.getId()));
+        files().forEach(f -> list.addValue(f.getId()));
         return list;
     }
     // @destacar:fim

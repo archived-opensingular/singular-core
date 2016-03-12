@@ -13,10 +13,10 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 
@@ -27,25 +27,25 @@ public class MasterDetailWithTableListWithStringTest extends AbstractSingularFor
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> mockMasterDetail
-                = mockType.addCampoListaOfComposto("mockList", "mockTypeMasterDetailComposite");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> mockMasterDetail
+                = mockType.addFieldListOfComposite("mockList", "mockTypeMasterDetailComposite");
 
-        final STypeComposite<SIComposite> mockTypeMasterDetailComposite = mockMasterDetail.getTipoElementos();
+        final STypeComposite<SIComposite> mockTypeMasterDetailComposite = mockMasterDetail.getElementsType();
 
-        mockMasterDetail.withView(MListMasterDetailView::new);
+        mockMasterDetail.withView(SViewListByMasterDetail::new);
         mockMasterDetail.as(AtrBasic::new)
                 .label("Mock Type Master Detail ");
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> mockList
-                = mockTypeMasterDetailComposite.addCampoListaOfComposto("mockList", "mockTypeComposite");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList
+                = mockTypeMasterDetailComposite.addFieldListOfComposite("mockList", "mockTypeComposite");
 
-        final STypeComposite<?> mockTypeComposite = mockList.getTipoElementos();
+        final STypeComposite<?> mockTypeComposite = mockList.getElementsType();
 
-        mockList.withView(MTableListaView::new);
+        mockList.withView(SViewListByTable::new);
         mockList.as(AtrBasic::new)
                 .label("Mock Type Composite");
 
-        simpleString = mockTypeComposite.addCampoString("mockTypeComposite", true);
+        simpleString = mockTypeComposite.addFieldString("mockTypeComposite", true);
 
     }
 

@@ -64,7 +64,7 @@ public class DownloadBehaviourTest extends WebBehaviourBaseTest {
 
     private SIAttachment setupInstance() {
         STypeAttachment tipo = testPackage.attachmentFileField;
-        return tipo.novaInstancia();
+        return tipo.newInstance();
     }
 
     private WebWrapper createWebWrapper() throws FileUploadException {

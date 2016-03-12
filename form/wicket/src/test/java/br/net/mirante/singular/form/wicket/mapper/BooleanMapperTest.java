@@ -32,9 +32,9 @@ public class BooleanMapperTest extends AbstractWicketFormTest {
 
     protected void setupPage() {
         localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
+        baseCompositeField = localPackage.createCompositeType("group");
 
-        field1 = baseCompositeField.addCampoBoolean("aceitaTermos");
+        field1 = baseCompositeField.addFieldBoolean("aceitaTermos");
         field1.asAtrBasic().label("Aceito os termos e condições");
 
         driver = new WicketTester(new TestApp());

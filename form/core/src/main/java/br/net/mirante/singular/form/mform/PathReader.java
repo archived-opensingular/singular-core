@@ -49,7 +49,7 @@ class PathReader {
                     throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio);
                 }
                 trecho = (inicio == 0 && fim == path.length()) ? path : path.substring(inicio, fim);
-                if (!MFormUtil.isNomeSimplesValido(trecho)) {
+                if (!SFormUtil.isValidSimpleName(trecho)) {
                     throw new RuntimeException("Path '" + path + "' inválido na posição " + inicio + " : Não é um nome de campo válido");
                 }
             }
@@ -69,7 +69,7 @@ class PathReader {
         return trecho;
     }
 
-    public PathReader proximo() {
+    public PathReader next() {
         if (trecho == null) {
             throw new RuntimeException("Leitura já está no fim");
         }
@@ -80,7 +80,7 @@ class PathReader {
         return trecho == null;
     }
 
-    public boolean isUltimo() {
+    public boolean isLast() {
         if (trecho == null) {
             throw new RuntimeException("Leitura já está no fim");
         }
@@ -88,21 +88,21 @@ class PathReader {
     }
 
     public boolean isNomeSimplesValido() {
-        return MFormUtil.isNomeSimplesValido(getTrecho());
+        return SFormUtil.isValidSimpleName(getTrecho());
     }
 
-    public boolean isIndice() {
+    public boolean isIndex() {
         if (trecho == null) {
             throw new RuntimeException("Leitura já está no fim");
         }
         return indiceLista;
     }
 
-    public int getIndice() {
+    public int getIndex() {
         return Integer.parseInt(trecho);
     }
 
-    String getTextoErro(SInstance instanciaContexto, String msg) {
+    String getErroMsg(SInstance instanciaContexto, String msg) {
         if (path.length() == trecho.length()) {
             return "Na instancia '" + instanciaContexto.getPathFull() + "' do tipo '" + instanciaContexto.getType().getName()
                     + "' para o path '" + path + "': " + msg;
@@ -111,7 +111,7 @@ class PathReader {
                 + instanciaContexto.getType().getName() + "' referent ao path '" + path + "' ocorreu o erro: " + msg;
     }
 
-    public String getTextoErro(MEscopo escopo, String msg) {
+    public String getTextoErro(SScope escopo, String msg) {
         if (path.length() == trecho.length()) {
             return "No tipo '" + escopo.getName() + "' para o path '" + path + "': " + msg;
         }

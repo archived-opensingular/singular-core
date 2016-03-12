@@ -2,24 +2,24 @@ package br.net.mirante.singular.form.mform;
 
 public interface ITypeContext {
 
-    public <T extends SType<?>> T getTypeOptional(Class<T> classeTipo);
+    public <T extends SType<?>> T getTypeOptional(Class<T> typeClass);
 
-    public default <T extends SType<?>> T getType(Class<T> classeTipo) {
-        T tipoRef = getTypeOptional(classeTipo);
-        if (tipoRef == null) {
-            throw new SingularFormException("Tipo da classe '" + classeTipo.getName() + "' não encontrado");
+    public default <T extends SType<?>> T getType(Class<T> typeClass) {
+        T typeRef = getTypeOptional(typeClass);
+        if (typeRef == null) {
+            throw new SingularFormException("Tipo da classe '" + typeClass.getName() + "' não encontrado");
         }
-        return tipoRef;
+        return typeRef;
     }
 
-    public SType<?> getTypeOptional(String pathNomeCompleto);
+    public SType<?> getTypeOptional(String fullNamePath);
 
-    public default SType<?> getType(String pathNomeCompleto) {
-        SType<?> tipo = getTypeOptional(pathNomeCompleto);
-        if (tipo == null) {
-            throw new SingularFormException("Tipo '" + pathNomeCompleto + "' não encontrado");
+    public default SType<?> getType(String fullNamePath) {
+        SType<?> type = getTypeOptional(fullNamePath);
+        if (type == null) {
+            throw new SingularFormException("Tipo '" + fullNamePath + "' não encontrado");
         }
-        return tipo;
+        return type;
     }
 
 }

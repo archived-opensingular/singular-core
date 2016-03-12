@@ -10,15 +10,15 @@ public class CaseFineTunningGridPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        testForm.addCampoString("nome")
+        testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")
                 .as(AtrBootstrap::new).colLg(7).colMd(8).colSm(9).colXs(12);
-        testForm.addCampoInteger("idade")
+        testForm.addFieldInteger("idade")
                 .as(AtrBasic.class).label("Idade")
                 .as(AtrBootstrap::new).colLg(3).colMd(4).colSm(3).colXs(6);
-        testForm.addCampoEmail("email")
+        testForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail")
                 .as(AtrBootstrap::new).colLg(10).colMd(12).colSm(12).colXs(12);
 

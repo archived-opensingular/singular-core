@@ -18,7 +18,7 @@ public class SQueryTest {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
         $(contato)
             .find(pacote.nome).val("Fulano").end()
@@ -43,13 +43,13 @@ public class SQueryTest {
         SDictionary dicionario = SDictionary.create();
         SPackageTesteContatos pacote = dicionario.loadPackage(SPackageTesteContatos.class);
 
-        SIComposite contato = pacote.contato.novaInstancia();
+        SIComposite contato = pacote.contato.newInstance();
 
         $(contato).find(pacote.enderecos)
-            .each(it -> it.addNovo())
-            .each(it -> it.addNovo())
-            .each(it -> it.addNovo())
-            .each(it -> it.addNovo())
+            .each(it -> it.addNew())
+            .each(it -> it.addNew())
+            .each(it -> it.addNew())
+            .each(it -> it.addNew())
             .each(it -> $(it)
                 .find(pacote.enderecoNumero)
                 .each((num, idx) -> num.setValue(idx)));

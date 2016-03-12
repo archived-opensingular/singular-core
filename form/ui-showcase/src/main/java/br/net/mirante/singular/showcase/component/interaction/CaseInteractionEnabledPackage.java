@@ -23,13 +23,13 @@ public class CaseInteractionEnabledPackage extends SPackage {
 
         super.carregarDefinicoes(pb);
 
-        testForm = pb.createTipoComposto("testForm");
+        testForm = pb.createCompositeType("testForm");
 
-        enabled = testForm.addCampoBoolean("enabled");
+        enabled = testForm.addFieldBoolean("enabled");
 
-        record = testForm.addCampoComposto("record");
-        recordText = record.addCampoString("text");
-        recordDate = record.addCampoData("date");
+        record = testForm.addFieldComposite("record");
+        recordText = record.addFieldString("text");
+        recordDate = record.addFieldData("date");
 
         enabled
                 .as(SPackageBasic.aspect()).label("Enable");

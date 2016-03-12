@@ -11,8 +11,8 @@ import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.wicket.UIBuilderWicket;
 import br.net.mirante.singular.form.wicket.WicketBuildContext;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
@@ -32,7 +32,7 @@ public class PanelListaMapper extends AbstractListaMapper {
         final IModel<SIList<SInstance>> listaModel = $m.get(ctx::getCurrentInstance);
         final SIList<?> iLista = listaModel.getObject();
         final IModel<String> label = $m.ofValue(trimToEmpty(iLista.as(SPackageBasic.aspect()).getLabel()));
-        final MView view = ctx.getView();
+        final SView view = ctx.getView();
         final BSContainer<?> parentCol = ctx.getContainer();
         final ViewMode viewMode = ctx.getViewMode();
         final SType<?> currentType = ctx.getCurrentInstance().getType();
@@ -47,8 +47,8 @@ public class PanelListaMapper extends AbstractListaMapper {
                     heading.appendTag("span", new Label("_title", label));
                     heading.add($b.visibleIf($m.get(() -> !Strings.isNullOrEmpty(label.getObject()))));
 
-                    if ((view instanceof MPanelListaView)
-                            && ((MPanelListaView) view).isPermiteAdicaoDeLinha()
+                    if ((view instanceof SViewListByForm)
+                            && ((SViewListByForm) view).isNewEnabled()
                             && viewMode.isEdition()) {
                         appendAddButton(listaModel, form, heading, false);
                     }
@@ -73,7 +73,7 @@ public class PanelListaMapper extends AbstractListaMapper {
 
     private static final class PanelElementsView extends ElementsView {
 
-        private final MView view;
+        private final SView view;
         private final Form<?> form;
         private final WicketBuildContext ctx;
         private final UIBuilderWicket wicketBuilder;
@@ -82,7 +82,7 @@ public class PanelListaMapper extends AbstractListaMapper {
                                   IModel<SIList<SInstance>> model,
                                   UIBuilderWicket wicketBuilder,
                                   WicketBuildContext ctx,
-                                  MView view,
+                                  SView view,
                                   Form<?> form) {
             super(id, model);
             this.wicketBuilder = wicketBuilder;
@@ -101,13 +101,13 @@ public class PanelListaMapper extends AbstractListaMapper {
 
             final BSGrid btnGrid = row.newCol(1).newGrid();
 
-            if ((view instanceof MPanelListaView) && (((MPanelListaView) view).isPermiteInsercaoDeLinha())
+            if ((view instanceof SViewListByForm) && (((SViewListByForm) view).isInsertEnabled())
                     && viewMode.isEdition()) {
                 appendInserirButton(this, form, item, btnGrid.newColInRow())
                         .add($b.classAppender("pull-right"));
             }
 
-            if ((view instanceof MPanelListaView) && ((MPanelListaView) view).isPermiteExclusaoDeLinha()
+            if ((view instanceof SViewListByForm) && ((SViewListByForm) view).isDeleteEnabled()
                     && viewMode.isEdition()) {
                 appendRemoverButton(this, form, item, btnGrid.newColInRow())
                         .add($b.classAppender("pull-right"));

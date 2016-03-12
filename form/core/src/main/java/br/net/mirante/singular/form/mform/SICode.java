@@ -17,7 +17,7 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public Object getValorWithDefault() {
+    public Object getValueWithDefault() {
         // TODO ??? não sei como implementar isso...
         return getValue();
     }
@@ -40,7 +40,7 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public String getDisplayString() {
-        return getType().getSimpleName();
+    public String toStringDisplay() {
+        return getType().getNameSimple();
     }
 }

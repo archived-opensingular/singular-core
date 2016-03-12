@@ -10,9 +10,9 @@ public class CaseCustomStringMapperPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoString("nomeCompleto")
+        tipoMyForm.addFieldString("nomeCompleto")
                 //@destacar
                 .withCustomMapper(MaterialDesignInputMapper::new)
                 .as(AtrBasic::new).label("Nome Completo");

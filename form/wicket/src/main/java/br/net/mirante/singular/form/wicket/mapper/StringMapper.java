@@ -2,7 +2,7 @@ package br.net.mirante.singular.form.wicket.mapper;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.wicket.behavior.CountDownBehaviour;
 import br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
@@ -21,21 +21,21 @@ import static br.net.mirante.singular.form.wicket.behavior.InputMaskBehavior.Mas
 public class StringMapper implements ControlsFieldComponentMapper {
 
     @Override
-    public Component appendInput(MView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
+    public Component appendInput(SView view, BSContainer bodyContainer, BSControls formGroup, IModel<? extends SInstance> model, IModel<String> labelModel) {
         FormComponent<?> comp;
 
-        formGroup.appendInputText(comp = new TextField<>(model.getObject().getNome(),
+        formGroup.appendInputText(comp = new TextField<>(model.getObject().getName(),
             new MInstanciaValorModel<>(model), String.class).setLabel(labelModel));
 
         Optional<Integer> maxSize = Optional.ofNullable(
-                model.getObject().getValorAtributo(SPackageBasic.ATR_TAMANHO_MAXIMO));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_TAMANHO_MAXIMO));
         if (maxSize.isPresent()) {
             comp.add(StringValidator.maximumLength(maxSize.get()));
             comp.add(new CountDownBehaviour());
         }
 
         Optional<String> basicMask = Optional.ofNullable(
-                model.getObject().getValorAtributo(SPackageBasic.ATR_BASIC_MASK));
+                model.getObject().getAttributeValue(SPackageBasic.ATR_BASIC_MASK));
         if (basicMask.isPresent()) {
             comp.add(new InputMaskBehavior(Masks.valueOf(basicMask.get())));
             comp.setOutputMarkupId(true);
