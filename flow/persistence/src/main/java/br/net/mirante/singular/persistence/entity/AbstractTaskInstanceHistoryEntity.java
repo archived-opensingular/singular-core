@@ -47,6 +47,9 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
     @Column(name = "DT_INICIO_ALOCACAO", nullable = false, updatable = false)
     private Date beginDateAllocation;
 
+    @Column(name = "DT_FIM_ALOCACAO")
+    private Date endDateAllocation;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CO_TIPO_HISTORICO_TAREFA", nullable = false)
     private TASK_HISTORIC_TYPE type;
@@ -84,6 +87,14 @@ public abstract class AbstractTaskInstanceHistoryEntity<USER extends MUser, TASK
 
     public void setBeginDateAllocation(Date beginDateAllocation) {
         this.beginDateAllocation = beginDateAllocation;
+    }
+
+    public Date getEndDateAllocation() {
+        return endDateAllocation;
+    }
+
+    public void setEndDateAllocation(Date endDateAllocation) {
+        this.endDateAllocation = endDateAllocation;
     }
 
     public TASK_HISTORIC_TYPE getType() {
