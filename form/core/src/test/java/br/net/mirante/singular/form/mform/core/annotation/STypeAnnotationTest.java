@@ -32,33 +32,33 @@ public class STypeAnnotationTest {
         dicionario = SDictionary.create();
 
         localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
-        baseCompositeField.addCampoString("notAnnotated");
+        baseCompositeField = localPackage.createCompositeType("group");
+        baseCompositeField.addFieldString("notAnnotated");
 
-        annotated1 = baseCompositeField.addCampoComposto("annotatedGroup1");
-        field11 = annotated1.addCampoString("field11");
+        annotated1 = baseCompositeField.addFieldComposite("annotatedGroup1");
+        field11 = annotated1.addFieldString("field11");
         annotated1.as(AtrAnnotation::new).setAnnotated();
 
-        annotated2 = baseCompositeField.addCampoComposto("annotatedGroup2");
-        annotated2.addCampoString("field121");
-        annotated2.addCampoString("field122");
+        annotated2 = baseCompositeField.addFieldComposite("annotatedGroup2");
+        annotated2.addFieldString("field121");
+        annotated2.addFieldString("field122");
         annotated2.as(AtrAnnotation::new).setAnnotated();
 
-        notAnnotated = baseCompositeField.addCampoComposto("notAnnotatedGroup3");
-        notAnnotated.addCampoString("field13");
-        annotated4 = notAnnotated.addCampoComposto("annotatedSubGroup4");
-        annotated4.addCampoString("field341");
+        notAnnotated = baseCompositeField.addFieldComposite("notAnnotatedGroup3");
+        notAnnotated.addFieldString("field13");
+        annotated4 = notAnnotated.addFieldComposite("annotatedSubGroup4");
+        annotated4.addFieldString("field341");
         annotated4.as(AtrAnnotation::new).setAnnotated();
 
     }
 
     @Test public void aNewInstanceHasNoAnnotations(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         assertThat(instance.as(AtrAnnotation::new).allAnnotations()).isEmpty();
     }
 
     @Test public void returnAllAnnotationsFromInstance(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
         asAnnotation(instance, annotated2).annotation().setText("Avocado");
@@ -69,7 +69,7 @@ public class STypeAnnotationTest {
     }
 
     @Test public void returnAllAnnotationsFromInstanceWithoutEmptyOnes(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
         asAnnotation(instance, annotated2).annotation();
@@ -81,7 +81,7 @@ public class STypeAnnotationTest {
     }
 
     @Test public void returnAllAnnotationsInAPersitentObject(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
         asAnnotation(instance, annotated2).annotation().setApproved(true);
@@ -89,10 +89,10 @@ public class STypeAnnotationTest {
 
         SIList persistent = instance.as(AtrAnnotation::new).persistentAnnotations();
         assertThat(persistent.getType()).isInstanceOf(STypeAnnotationList.class);
-        assertThat(persistent.getTipoElementos()).isInstanceOf(STypeAnnotation.class);
-        assertThat(extractProperty("text").from(persistent.getValores()))
+        assertThat(persistent.getElementsType()).isInstanceOf(STypeAnnotation.class);
+        assertThat(extractProperty("text").from(persistent.getValues()))
                 .containsOnly("Abacate", null, "ukwatapheya");
-        assertThat(extractProperty("approved").from(persistent.getValores()))
+        assertThat(extractProperty("approved").from(persistent.getValues()))
                 .containsOnly(null, true);
     }
 
@@ -111,11 +111,11 @@ public class STypeAnnotationTest {
         FormSerialized serialized = FormSerializationUtil.toSerializedObject(persistent);
         SIList deserialized = (SIList) FormSerializationUtil.toInstance(serialized);
 
-        SIComposite justCreated = baseCompositeField.novaInstancia();
+        SIComposite justCreated = baseCompositeField.newInstance();
 
         justCreated.as(AtrAnnotation::new).loadAnnotations(deserialized);
         SIList anotherPersistent = justCreated.as(AtrAnnotation::new).persistentAnnotations();
-        assertThat(extractProperty("text").from(anotherPersistent.getValores()))
+        assertThat(extractProperty("text").from(anotherPersistent.getValues()))
                 .containsOnly("Abacate");
     }
 
@@ -137,11 +137,11 @@ public class STypeAnnotationTest {
         asAnnotation(instance, annotated1).clear();
         instance.as(AtrAnnotation::new).loadAnnotations(deserialized);
         SIList anotherPersistent = instance.as(AtrAnnotation::new).persistentAnnotations();
-        assertThat(extractProperty("text").from(anotherPersistent.getValores())).containsOnly("Abacate");
+        assertThat(extractProperty("text").from(anotherPersistent.getValues())).containsOnly("Abacate");
     }
 
     @Test public void youCanEreaseAnnotationsFromASingleInstance(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
@@ -153,7 +153,7 @@ public class STypeAnnotationTest {
     }
 
     @Test public void youCanEreaseAnnotationsFromTheMixin(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
 
         asAnnotation(instance, annotated1).annotation().setText("Abacate");
 
@@ -165,47 +165,47 @@ public class STypeAnnotationTest {
     }
 
     @Test public void aNewInstanceHasNoAnnotationsOrChilds(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isFalse();
     }
 
     @Test public void itsOwnAnnotationCountsAsChild(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         instance.as(AtrAnnotation::new).annotation().setText("anything");
         assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isTrue();
     }
 
     @Test public void returnsIfAnyOfItsChildHasAnnotations(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         asAnnotation(instance, annotated1).annotation().setText("anything");
         assertThat(instance.as(AtrAnnotation::new).hasAnnotationOnTree()).isTrue();
     }
 
     @Test public void anEmptyInstanceHasNoRefusals(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isFalse();
     }
 
     @Test public void anApprovedInstanceIsnNotRefused(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         instance.as(AtrAnnotation::new).annotation().setApproved(true);
         assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isFalse();
     }
 
     @Test public void anRejectedInstanceIsnRefused(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         instance.as(AtrAnnotation::new).annotation().setApproved(false);
         assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isTrue();
     }
 
     @Test public void returnsIfAnyOfItsChildIsRefused(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         asAnnotation(instance, annotated1).annotation().setApproved(false);
         assertThat(instance.as(AtrAnnotation::new).hasAnyRefusal()).isTrue();
     }
 
     @Test public void returnsIfHasAnAnnotatedChild(){
-        SIComposite instance = baseCompositeField.novaInstancia();
+        SIComposite instance = baseCompositeField.newInstance();
         assertThat(instance.as(AtrAnnotation::new).isOrHasAnnotatedChild()).isTrue();
     }
 

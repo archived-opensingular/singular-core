@@ -6,9 +6,9 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
 import br.net.mirante.singular.util.wicket.datatable.BSDataTable;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.junit.Test;
@@ -22,28 +22,28 @@ public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
 
     //    MTipoSelectItem selectType;
     protected STypeComposite selectType;
-    protected MSelecaoPorModalBuscaView view;
+    protected SViewSelectionBySearchModal view;
     private STypeSimple nomeUF;
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     SType createSelectionType(STypeComposite group) {
-        selectType = group.addCampoComposto("originUF");
-        selectType.addCampoString("id");
-        nomeUF = selectType.addCampoString("nome");
-        selectType.addCampoInteger("population").as(AtrBasic::new).label("População");
-        selectType.addCampoInteger("areasqrkm").as(AtrBasic::new).label("Área");
-        selectType.addCampoInteger("phonecode").as(AtrBasic::new).label("DDD");
-        selectType.addCampoDecimal("gdp").as(AtrBasic::new).label("PIB");
-        selectType.addCampoDecimal("hdi").as(AtrBasic::new).label("IDH");
-        view = (MSelecaoPorModalBuscaView) selectType.setView(MSelecaoPorModalBuscaView::new);
+        selectType = group.addFieldComposite("originUF");
+        selectType.addFieldString("id");
+        nomeUF = selectType.addFieldString("nome");
+        selectType.addFieldInteger("population").as(AtrBasic::new).label("População");
+        selectType.addFieldInteger("areasqrkm").as(AtrBasic::new).label("Área");
+        selectType.addFieldInteger("phonecode").as(AtrBasic::new).label("DDD");
+        selectType.addFieldDecimal("gdp").as(AtrBasic::new).label("PIB");
+        selectType.addFieldDecimal("hdi").as(AtrBasic::new).label("IDH");
+        view = (SViewSelectionBySearchModal) selectType.setView(SViewSelectionBySearchModal::new);
         return selectType;
     }
 
     @Test
     public void showModalWhenClicked() {
         setupPage();
-        selectType.withSelectionFromProvider(nomeUF, (MOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
+        selectType.withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
         buildPage();
 
         driver.assertContainsNot("Buscar");
@@ -59,7 +59,7 @@ public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
     @Test
     public void showModalWithExtrafields() {
         setupPage();
-        selectType.withSelectionFromProvider(nomeUF, (MOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
+        selectType.withSelectionFromProvider(nomeUF, (SOptionsProvider) inst -> novoProvider(federaldistrict(), goias()));
         view.setAdditionalFields("population", "phonecode");
         buildPage();
 
@@ -80,35 +80,35 @@ public class STypeSelectItemModalSearchTest extends SelectionFieldBaseTest {
         driver.assertContains("62");
     }
 
-    private SIList<?> novoProvider(MSelectionableInstance... selects) {
-        SIList lista = selectType.novaLista();
-        for (MSelectionableInstance s : selects) {
+    private SIList<?> novoProvider(SSelectionableInstance... selects) {
+        SIList lista = selectType.newList();
+        for (SSelectionableInstance s : selects) {
             lista.addElement(s);
         }
         return lista;
     }
 
-    private MSelectionableInstance federaldistrict() {
-        SIComposite df = (SIComposite) selectType.novaInstancia();
-        df.setValor("id", "DF");
-        df.setValor("nome", "Distrito Federal");
-        df.setValor("population", 2852372);
-        df.setValor("areasqrkm", 5802);
-        df.setValor("phonecode", 61);
-        df.setValor("gdp", 189800000000l);
-        df.setValor("hdi", 0.824);
+    private SSelectionableInstance federaldistrict() {
+        SIComposite df = (SIComposite) selectType.newInstance();
+        df.setValue("id", "DF");
+        df.setValue("nome", "Distrito Federal");
+        df.setValue("population", 2852372);
+        df.setValue("areasqrkm", 5802);
+        df.setValue("phonecode", 61);
+        df.setValue("gdp", 189800000000l);
+        df.setValue("hdi", 0.824);
         return df;
     }
 
-    private MSelectionableInstance goias() {
-        SIComposite go = (SIComposite) selectType.novaInstancia();
-        go.setValor("id", "GO");
-        go.setValor("nome", "Goiás");
-        go.setValor("population", 6155998);
-        go.setValor("areasqrkm", 340086);
-        go.setValor("phonecode", 62);
-        go.setValor("gdp", 57091000000l);
-        go.setValor("hdi", 0.735);
+    private SSelectionableInstance goias() {
+        SIComposite go = (SIComposite) selectType.newInstance();
+        go.setValue("id", "GO");
+        go.setValue("nome", "Goiás");
+        go.setValue("population", 6155998);
+        go.setValue("areasqrkm", 340086);
+        go.setValue("phonecode", 62);
+        go.setValue("gdp", 57091000000l);
+        go.setValue("hdi", 0.735);
         return go;
     }
 

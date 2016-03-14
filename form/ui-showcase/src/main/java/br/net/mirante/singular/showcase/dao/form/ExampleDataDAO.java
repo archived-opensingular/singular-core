@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.dao.form;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -8,7 +15,7 @@ import javax.transaction.Transactional;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,6 +30,7 @@ public class ExampleDataDAO {
 
     @Transactional
     public void save(ExampleDataDTO o) {
+        o.setEditionDate(new Date());
         session().saveOrUpdate(o);
     }
 
@@ -32,17 +40,35 @@ public class ExampleDataDAO {
     }
 
     @Transactional @SuppressWarnings("unchecked")
-    public List<ExampleDataDTO> list(String type) {
-        Criteria crit = session().createCriteria(ExampleDataDTO.class);
-        crit.add(Restrictions.eq("type", type));
+    public List<ExampleDataDTO> list(String typeName, int first, int count, Optional<String> sortProperty, boolean asc) {
+
+        final Criteria crit = session().createCriteria(ExampleDataDTO.class);
+
+        crit.add(Restrictions.eq("type", typeName));
+        crit.setFirstResult(first);
+        crit.setMaxResults(count);
+        crit.addOrder(asc ? Order.asc(sortProperty.orElse("id")) : Order.desc(sortProperty.orElse("id")));
+
         return crit.list();
     }
 
+
+    @Transactional @SuppressWarnings("unchecked")
+    public Long count(String type) {
+        final Criteria crit = session().createCriteria(ExampleDataDTO.class);
+
+        crit.add(Restrictions.eq("type", type));
+        crit.setProjection(Projections.count("id"));
+
+        return (Long) crit.uniqueResult();
+    }
+
+
     @Transactional
-    public ExampleDataDTO find(String key, String  type) {
+    public ExampleDataDTO find(Long id, String  type) {
         Criteria crit = session().createCriteria(ExampleDataDTO.class);
         crit.add(Restrictions.eq("type", type));
-        crit.add(Restrictions.eq("key", key));
+        crit.add(Restrictions.eq("id", id));
         return (ExampleDataDTO) crit.uniqueResult();
     }
 }

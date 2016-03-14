@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.mapper.selection;
 
 import java.util.Collection;
@@ -7,7 +12,7 @@ import org.apache.wicket.model.IModel;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SIList;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
 import br.net.mirante.singular.form.wicket.model.IMInstanciaAwareModel;
 
 @SuppressWarnings({"serial", "rawtypes"})
@@ -49,7 +54,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
     }
 
     @SuppressWarnings("unchecked")
-    protected T getSimpleSelection(SInstance target, MOptionsConfig provider) {
+    protected T getSimpleSelection(SInstance target, SOptionsConfig provider) {
         if (target != null) {
             String key = provider.getKeyFromOption(target);
             String label = provider.getLabelFromKey(key);
@@ -62,7 +67,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
         return model.getObject();
     }
 
-    private void setValueAt(SInstance instance, SelectOption object, MOptionsConfig provider) {
+    private void setValueAt(SInstance instance, SelectOption object, SOptionsConfig provider) {
         if (object == null) {
             instance.clearInstance();
         } else if (instance != null) {
@@ -76,7 +81,7 @@ public class MSelectionInstanceModel<T> implements IModel<T>, IMInstanciaAwareMo
             SIList<?> list = (SIList<?>) instance;
             list.clear();
             for (SelectOption o : data) {
-                SInstance element = list.addNovo();
+                SInstance element = list.addNew();
                 setValueAt(element, o, list.getOptionsConfig());
             }
         }

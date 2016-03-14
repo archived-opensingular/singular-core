@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.flow.core;
 
 import java.io.Serializable;
@@ -27,6 +32,9 @@ import br.net.mirante.singular.flow.core.variable.VarInstanceMap;
 import br.net.mirante.singular.flow.core.view.Lnk;
 
 public class TaskInstance {
+
+    public static final String ALOCACAO = "Alocação";
+    public static final String DESALOCACAO = "Desalocação";
 
     private IEntityTaskInstance entityTask;
 
@@ -178,11 +186,13 @@ public class TaskInstance {
             return;
         }
 
+        endLastAllocation();
+
         getPersistenceService().relocateTask(getEntityTaskInstance(), user);
 
         String trimmedRelocationCause = StringUtils.trimToNull(relocationCause);
 
-        String acao = (user == null) ? "Desalocação" : "Alocação";
+        String acao = (user == null) ? DESALOCACAO : ALOCACAO;
         if (author == null) {
             log(acao + " Automática", trimmedRelocationCause, user, null, new Date());
         } else {
@@ -195,6 +205,12 @@ public class TaskInstance {
         }
 
         notifyStateUpdate();
+    }
+
+    public void endLastAllocation() {
+        if (isAllocated()) {
+            getPersistenceService().endLastAllocation(getEntityTaskInstance());
+        }
     }
 
     public void setTargetEndDate(Date targetEndDate) {
@@ -296,5 +312,9 @@ public class TaskInstance {
 
     public void executeTransition(String destino, VarInstanceMap<?> param) {
         FlowEngine.executeTransition(this, destino, param);
+    }
+
+    public boolean isAllocated() {
+        return getAllocatedUser() != null;
     }
 }

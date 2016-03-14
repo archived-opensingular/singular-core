@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.input.core;
 
 import br.net.mirante.singular.form.mform.SPackage;
@@ -9,12 +14,12 @@ public class CaseInputCoreMonetarioPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoMonetario("monetario")
+        tipoMyForm.addFieldMonetary("monetario")
                 .as(AtrBasic.class).label("Monetário default");
 
-        tipoMyForm.addCampoMonetario("monetarioLongo")
+        tipoMyForm.addFieldMonetary("monetarioLongo")
                 .as(AtrBasic.class).label("Monetário com 15 inteiros e 3 decimais")
                 .tamanhoInteiroMaximo(15)
                 .tamanhoDecimalMaximo(3);

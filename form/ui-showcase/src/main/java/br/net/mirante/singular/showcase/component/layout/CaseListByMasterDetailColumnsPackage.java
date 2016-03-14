@@ -1,34 +1,39 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.layout;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 
 public class CaseListByMasterDetailColumnsPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addCampoListaOfComposto("experienciasProfissionais", "experiencia");
-        final STypeComposite<?> experiencia = experiencias.getTipoElementos();
-        final STypeAnoMes dtInicioExperiencia = experiencia.addCampo("inicio", STypeAnoMes.class, true);
-        final STypeAnoMes dtFimExperiencia = experiencia.addCampo("fim", STypeAnoMes.class);
-        final STypeString empresa = experiencia.addCampoString("empresa", true);
-        final STypeString cargo = experiencia.addCampoString("cargo", true);
-        final STypeString atividades = experiencia.addCampoString("atividades");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> experiencias = testForm.addFieldListOfComposite("experienciasProfissionais", "experiencia");
+        final STypeComposite<?> experiencia = experiencias.getElementsType();
+        final STypeYearMonth dtInicioExperiencia = experiencia.addField("inicio", STypeYearMonth.class, true);
+        final STypeYearMonth dtFimExperiencia = experiencia.addField("fim", STypeYearMonth.class);
+        final STypeString empresa = experiencia.addFieldString("empresa", true);
+        final STypeString cargo = experiencia.addFieldString("cargo", true);
+        final STypeString atividades = experiencia.addFieldString("atividades");
 
         {
             //@destacar:bloco
-            experiencias.withView(new MListMasterDetailView()
+            experiencias.withView(new SViewListByMasterDetail()
                     .col(empresa, "Empresa em que trabalhou") // Desta forma, será utilizado rótulo personalizado para esta coluna.
                     .col(dtInicioExperiencia) //Nos demais, a coluna terá o mesmo rótulo do tipo que a define.
                     .col(dtFimExperiencia))

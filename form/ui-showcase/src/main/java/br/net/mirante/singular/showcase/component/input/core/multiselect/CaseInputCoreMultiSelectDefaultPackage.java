@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.input.core.multiselect;
 
 import br.net.mirante.singular.form.mform.SPackage;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -12,7 +17,7 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         addMultiSelection(pb, tipoMyForm, 3);
         addMultiSelection(pb, tipoMyForm, 15);
@@ -21,10 +26,10 @@ public class CaseInputCoreMultiSelectDefaultPackage extends SPackage {
     }
 
     private static void addMultiSelection(PackageBuilder pb, STypeComposite<?> tipoMyForm, int size) {
-        STypeString tipoSelection = pb.createTipo("opcoes" + size, STypeString.class);
+        STypeString tipoSelection = pb.createType("opcoes" + size, STypeString.class);
         tipoSelection.withSelectionOf(createOptions(size));
 
-        STypeLista<STypeString, SIString> multiSelection = tipoMyForm.addCampoListaOf("multiSelection" + size, tipoSelection);
+        STypeList<STypeString, SIString> multiSelection = tipoMyForm.addFieldListOf("multiSelection" + size, tipoSelection);
         multiSelection.as(AtrBasic::new).label("Seleção de " + size);
     }
 

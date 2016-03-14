@@ -43,22 +43,22 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         page.setAsVisualizationView();
         page.enableAnnotation();
         localPackage = dicionario.createNewPackage("test");
-        baseCompositeField = localPackage.createTipoComposto("group");
-        baseCompositeField.addCampoString("notAnnotated");
+        baseCompositeField = localPackage.createCompositeType("group");
+        baseCompositeField.addFieldString("notAnnotated");
 
-        annotated1 = baseCompositeField.addCampoComposto("annotatedGroup1");
-        annotated1.addCampoString("field11");
+        annotated1 = baseCompositeField.addFieldComposite("annotatedGroup1");
+        annotated1.addFieldString("field11");
         annotated1.as(AtrAnnotation::new).setAnnotated();
 
-        annotated2 = baseCompositeField.addCampoComposto("annotatedGroup2");
-        annotated2.addCampoString("field121");
-        annotated2.addCampoString("field122");
+        annotated2 = baseCompositeField.addFieldComposite("annotatedGroup2");
+        annotated2.addFieldString("field121");
+        annotated2.addFieldString("field122");
         annotated2.as(AtrAnnotation::new).setAnnotated();
 
-        notAnnotated = baseCompositeField.addCampoComposto("notAnnotatedGroup3");
-        notAnnotated.addCampoString("field13");
-        annotated4 = notAnnotated.addCampoComposto("annotatedSubGroup4");
-        annotated4.addCampoString("field341");
+        notAnnotated = baseCompositeField.addFieldComposite("notAnnotatedGroup3");
+        notAnnotated.addFieldString("field13");
+        annotated4 = notAnnotated.addFieldComposite("annotatedSubGroup4");
+        annotated4.addFieldString("field341");
         annotated4.as(AtrAnnotation::new).setAnnotated();
 
         page.setIntance(createIntance(() -> baseCompositeField));
@@ -155,7 +155,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
         setupPage();
 
         SIComposite current = page.getCurrentInstance();
-        SIComposite iNotAnnotated = (SIComposite) current.getCampo(notAnnotated.getSimpleName());
+        SIComposite iNotAnnotated = (SIComposite) current.getField(notAnnotated.getNameSimple());
 
         SIAnnotation annotation1 = current.getDescendant(annotated1).as(AtrAnnotation::new).annotation();
         annotation1.setText("It is funny how hard it is to come up with these texts");
@@ -231,7 +231,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
 
     private SIAnnotation newAnnotation(Integer targetId, String text, Boolean isApproved) {
         STypeAnnotation type = dicionario.getType(STypeAnnotation.class);
-        SIAnnotation annotation = type.novaInstancia();
+        SIAnnotation annotation = type.newInstance();
         annotation.setTargetId(targetId);
         annotation.setText(text);
         annotation.setApproved(isApproved);
@@ -239,7 +239,7 @@ public class AnnotationWicketTest extends AbstractWicketFormTest {
     }
 
     private AtrAnnotation currentAnnotation(SType field) {
-        return page.getCurrentInstance().getCampo(field.getSimpleName()).as(AtrAnnotation::new);
+        return page.getCurrentInstance().getField(field.getNameSimple()).as(AtrAnnotation::new);
     }
 
     protected String formField(FormTester form, String leafName) {

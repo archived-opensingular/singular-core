@@ -1,19 +1,24 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import br.net.mirante.singular.form.mform.SIComposite;
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
 import br.net.mirante.singular.form.mform.core.AtrCore;
-import br.net.mirante.singular.form.mform.core.STypeDataHora;
+import br.net.mirante.singular.form.mform.core.STypeDateHour;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 
-@MInfoTipo(nome = "MTipoImportacao", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
@@ -21,7 +26,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        STypeString modalidade = this.addCampoString("modalidadeImportacao");
+        STypeString modalidade = this.addFieldString("modalidadeImportacao");
 
         modalidade
                 .as(AtrCore::new)
@@ -49,7 +54,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
     private void aquisicaoIntermediada(STypeString modalidade, String aquisicaoIntermediada) {
 
-        STypeString naturezaIntermediador = this.addCampoString("naturezaIntermediador");
+        STypeString naturezaIntermediador = this.addFieldString("naturezaIntermediador");
 
         naturezaIntermediador
                 .as(AtrCore::new)
@@ -69,10 +74,10 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                         .add("57862463", "Unidade governamental ligada à área de saúde");
 
         naturezaIntermediador
-                .withView(new MSelecaoPorRadioView().layoutVertical());
+                .withView(new SViewSelectionByRadio().verticalLayout());
 
 
-        this.addCampoString("razaoSocialIntermediador")
+        this.addFieldString("razaoSocialIntermediador")
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
@@ -84,7 +89,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(4);
 
 
-        this.addCampoCNPJ("cnpjIntermediador")
+        this.addFieldCNPJ("cnpjIntermediador")
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)
@@ -96,7 +101,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(3);
 
 
-        this.addCampo("enderecoIntermediador", STypeEndereco.class)
+        this.addField("enderecoIntermediador", STypeEndereco.class)
                 .as(AtrBasic::new)
                 .label("Endereço do Intermediador")
                 // Isso é um bug não sei como descrever
@@ -105,7 +110,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .as(AtrAnnotation::new).setAnnotated();
 
 
-        STypeContato tipoContato = this.addCampo("contato", STypeContato.class);
+        STypeContato tipoContato = this.addField("contato", STypeContato.class);
         tipoContato
                 .as(AtrBasic::new)
                 .label("Contato do Intermediador")
@@ -121,7 +126,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
     private void bagagemAcompanhada(STypeString modalidade, String bagagemAcompanhada) {
 
-        this.addCampoString("nomePassageiro")
+        this.addFieldString("nomePassageiro")
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .as(AtrBasic::new)
@@ -133,7 +138,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(4);
 
 
-        this.addCampoString("passaporte")
+        this.addFieldString("passaporte")
                 .as(AtrCore::new)
                 .obrigatorio(instancia -> bagagemAcompanhada.equals(Value.of(instancia, modalidade)))
                 .as(AtrBasic::new)
@@ -144,7 +149,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(4);
 
-        this.addCampoString("companhiaAerea")
+        this.addFieldString("companhiaAerea")
                 .as(AtrBasic::new)
                 .label("Nome da empresa aérea")
                 // Isso é um bug não sei como descrever
@@ -153,7 +158,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(4);
 
-        this.addCampoString("numeroVoo")
+        this.addFieldString("numeroVoo")
                 .as(AtrBasic::new)
                 .label("Número do vôo")
                 // Isso é um bug não sei como descrever
@@ -163,7 +168,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(4);
 
 
-        this.addCampoString("aeroportoChegada")
+        this.addFieldString("aeroportoChegada")
                 .as(AtrBasic::new)
                 .label("Nome do aeroporto de chegada ao Brasil")
                 // Isso é um bug não sei como descrever
@@ -173,7 +178,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .colPreference(4);
 
 
-        this.addCampo("dataChegada", STypeDataHora.class)
+        this.addField("dataChegada", STypeDateHour.class)
                 .as(AtrBasic::new)
                 .label("Data e Hora da chegada ao Brasil")
                 // Isso é um bug não sei como descrever
@@ -185,7 +190,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
 
     private void licenciamentoImportacao(STypeString modalidade, String licenciamentoImportacao) {
-        this.addCampoString("numeroLI")
+        this.addFieldString("numeroLI")
                 .as(AtrBasic::new)
                 .label("Número do LI")
                 // Isso é um bug não sei como descrever
@@ -198,7 +203,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
 
     private void remessaExpressa(STypeString modalidade, String remessaExpressa) {
 
-        this.addCampoString("rastreadorCourier")
+        this.addFieldString("rastreadorCourier")
                 .as(AtrBasic::new)
                 .label("Número de objeto da empresa de Courrier:\n")
                 // Isso é um bug não sei como descrever
@@ -207,7 +212,7 @@ public class STypeImportacao extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new)
                 .colPreference(4);
 
-        this.addCampoString("awb")
+        this.addFieldString("awb")
                 .as(AtrBasic::new)
                 .label("Número do AWB (Air Way Bill)")
                 // Isso é um bug não sei como descrever

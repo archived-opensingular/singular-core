@@ -160,7 +160,7 @@ class MockTypeLoader extends TypeLoader<String> {
                 if (typeOptional != null) {
                     return typeOptional;
                 } else {
-                    return dictionary.createNewPackage(typeId).createTipoComposto("mockRoot");
+                    return dictionary.createNewPackage(typeId).createCompositeType("mockRoot");
                 }
             }
         });
@@ -172,7 +172,7 @@ class MockTypeLoader extends TypeLoader<String> {
         if (typeOptional != null) {
             return Optional.of(typeOptional);
         } else {
-            return Optional.of(dictionary.createNewPackage(typeId).createTipoComposto("mockRoot"));
+            return Optional.of(dictionary.createNewPackage(typeId).createCompositeType("mockRoot"));
         }
     }
 }

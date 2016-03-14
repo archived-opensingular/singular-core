@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 public class SICode<T> extends SInstance {
@@ -17,7 +22,7 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public Object getValorWithDefault() {
+    public Object getValueWithDefault() {
         // TODO ??? não sei como implementar isso...
         return getValue();
     }
@@ -40,7 +45,7 @@ public class SICode<T> extends SInstance {
     }
 
     @Override
-    public String getDisplayString() {
-        return getType().getSimpleName();
+    public String toStringDisplay() {
+        return getType().getNameSimple();
     }
 }

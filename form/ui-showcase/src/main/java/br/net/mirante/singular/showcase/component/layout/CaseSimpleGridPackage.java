@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.layout;
 
 import br.net.mirante.singular.form.mform.SPackage;
@@ -10,15 +15,15 @@ public class CaseSimpleGridPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        final STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        final STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
-        testForm.addCampoString("nome")
+        testForm.addFieldString("nome")
                 .as(AtrBasic.class).label("Nome")
                 .as(AtrBootstrap::new).colPreference(6);
-        testForm.addCampoInteger("idade")
+        testForm.addFieldInteger("idade")
                 .as(AtrBasic.class).label("Idade")
                 .as(AtrBootstrap::new).colPreference(2);
-        testForm.addCampoEmail("email")
+        testForm.addFieldEmail("email")
                 .as(AtrBasic.class).label("E-mail")
                 .as(AtrBootstrap::new).colPreference(8);
 

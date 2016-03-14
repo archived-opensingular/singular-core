@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.basic.view;
 
 import java.util.HashMap;
@@ -7,7 +12,7 @@ import java.util.TreeSet;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 
 /**
@@ -18,14 +23,14 @@ import br.net.mirante.singular.form.mform.STypeSimple;
  * </p>
  * <p>
  * Essa classe é basicamente de uso interno. Permitie decidir por formas de
- * organizar a interface ({@link MView}) independente de qual tecnologia
+ * organizar a interface ({@link SView}) independente de qual tecnologia
  * (framework) web está sendo utilizada. Ou seja, decide pela organização da
  * tela e cada ao gerador da interface específica implementar os diversos
- * padrões de componentes e disposição ({@link MView}).
+ * padrões de componentes e disposição ({@link SView}).
  * </p>
  *
  * @author Daniel C. Bordin
- * @see MView
+ * @see SView
  */
 public class ViewResolver {
 
@@ -35,8 +40,8 @@ public class ViewResolver {
 
     public ViewResolver() {
         // Registro das regas de escolha de view.
-        addRule(STypeLista.class, MPanelListaView.class);
-        addRule(STypeLista.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
+        addRule(STypeList.class, SViewListByForm.class);
+        addRule(STypeList.class, new ViewRuleTypeListOfTypeSimpleSelectionOf());
         addRule(STypeSimple.class, new ViewRuleTypeSimpleSelectionOf());
         addRule(STypeComposite.class, new ViewRuleTypeSimpleSelectionOf());
     }
@@ -45,7 +50,7 @@ public class ViewResolver {
      * Definie a view default para um dado componente. Essa regra tem menor
      * prioridade em relação com lógica explicitas.
      */
-    public void addRule(Class<? extends SType> type, Class<? extends MView> view) {
+    public void addRule(Class<? extends SType> type, Class<? extends SView> view) {
         addRule(type, 100, new ViewRuleSimple(view));
     }
 
@@ -75,12 +80,12 @@ public class ViewResolver {
      * MView.DEFAULT, se não houver nenhum direcionamento específico e nesse
      * caso então cabe a cada gerador decidir como criar o componente na tela.
      */
-    public static MView resolve(SInstance instance) {
+    public static SView resolve(SInstance instance) {
         return instance.getDictionary().getViewResolver().resolveInternal(instance);
     }
 
-    private MView resolveInternal(SInstance instance) {
-        MView view = instance.getType().getView();
+    private SView resolveInternal(SInstance instance) {
+        SView view = instance.getType().getView();
         if (view != null) {
             return view;
         }
@@ -91,7 +96,7 @@ public class ViewResolver {
             if (list != null) {
                 for (ViewRuleRef rule : list) {
                     if (view == null || rule.getPriority() > priority) {
-                        MView novo = rule.apply(instance);
+                        SView novo = rule.apply(instance);
                         if (novo != null) {
                             view = novo;
                             priority = rule.getPriority();
@@ -101,19 +106,19 @@ public class ViewResolver {
             }
             classType = classType.getSuperclass();
         }
-        return view != null ? view : MView.DEFAULT;
+        return view != null ? view : SView.DEFAULT;
     }
 
     private static class ViewRuleSimple extends ViewRule {
 
-        private final Class<? extends MView> view;
+        private final Class<? extends SView> view;
 
-        ViewRuleSimple(Class<? extends MView> view) {
+        ViewRuleSimple(Class<? extends SView> view) {
             this.view = view;
         }
 
         @Override
-        public MView apply(SInstance instance) {
+        public SView apply(SInstance instance) {
             return newInstance(view);
         }
     }
@@ -138,7 +143,7 @@ public class ViewResolver {
         }
 
         @Override
-        public MView apply(SInstance instance) {
+        public SView apply(SInstance instance) {
             return viewRule.apply(instance);
         }
 

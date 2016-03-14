@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.util.transformer;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -34,9 +39,9 @@ public class FromPojo<T> {
     }
 
     public <R extends SInstance> R build() {
-        SIComposite instancia = target.novaInstancia();
+        SIComposite instancia = target.newInstance();
         for (Map.Entry<SType, FromPojoFiedlBuilder> e : mappings.entrySet()) {
-            instancia.setValor(e.getKey().getName(), e.getValue().value(pojo));
+            instancia.setValue(e.getKey().getName(), e.getValue().value(pojo));
         }
         return (R)instancia;
     }

@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 
-@MInfoTipo(nome = "Formula", pacote = SPackageCore.class)
+@SInfoType(name = "Formula", spackage = SPackageCore.class)
 public class STypeFormula extends STypeComposite<SIFormula> {
 
     public static final String CAMPO_SCRIPT = "script";
@@ -16,8 +21,8 @@ public class STypeFormula extends STypeComposite<SIFormula> {
 
     @Override
     protected void onLoadType(TypeBuilder tb) {
-        addCampoString(CAMPO_SCRIPT);
-        STypeString tipo = addCampoString(CAMPO_TIPO_SCRIPT);
+        addFieldString(CAMPO_SCRIPT);
+        STypeString tipo = addFieldString(CAMPO_TIPO_SCRIPT);
         tipo.withSelectionOf(TipoScript.class);
     }
 

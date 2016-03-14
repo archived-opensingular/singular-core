@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.input.core.select;
 
 import br.net.mirante.singular.form.mform.SPackage;
@@ -10,7 +15,7 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         addSelection(tipoMyForm, 3, true);
         addSelection(tipoMyForm, 3, false);
@@ -19,17 +24,17 @@ public class CaseInputCoreSelectDefaultPackage extends SPackage {
         /*
             Outra forma de definir suas opções é populando o provedor padrão
          */
-        STypeString favvortiteFruit = tipoMyForm.addCampoString("favvortiteFruit");
+        STypeString favvortiteFruit = tipoMyForm.addFieldString("favvortiteFruit");
         favvortiteFruit.as(AtrBasic::new).label("Fruta Favorita");
         favvortiteFruit.withSelection().add("Maçã").add("Laranja").add("Banana").add("Goiaba");
 
     }
 
     private static void addSelection(STypeComposite<?> tipoMyForm, int sizeOptions, boolean required) {
-        STypeString tipoSelection = tipoMyForm.addCampoString("opcoes" + sizeOptions + required);
+        STypeString tipoSelection = tipoMyForm.addFieldString("opcoes" + sizeOptions + required);
 
         tipoSelection.withSelectionOf(createOptions(sizeOptions));
-        tipoSelection.withObrigatorio(required);
+        tipoSelection.withRequired(required);
 
         tipoSelection.as(AtrBasic::new).label("Seleção de " + sizeOptions);
     }

@@ -166,8 +166,8 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
         form.setValue(findId(form.getForm(), "file_id_fileField").get(), "1020304050");
         form.submit("save-btn");
 
-        String attachmentName = pacote.attachmentFileField.getSimpleName();
-        List<SISimple> values = (List) page.getCurrentInstance().getValor(attachmentName);
+        String attachmentName = pacote.attachmentFileField.getNameSimple();
+        List<SISimple> values = (List) page.getCurrentInstance().getValue(attachmentName);
         assertThat(findValueInList(values, "name")).isEqualTo("abacate.png");
         assertThat(findValueInList(values, "hashSHA1")).isEqualTo("1234567890asdfghj");
         assertThat(findValueInList(values, "size")).isEqualTo(1234);
@@ -184,7 +184,7 @@ public class AttachmentFieldTest extends AbstractWicketFormTest {
     @Deprecated
     private Object findValueInList(List<SISimple> list, String propName) {
         for (SISimple m : list) {
-            if (m.getNome().equals(propName))
+            if (m.getName().equals(propName))
                 return m.getValue();
         }
         return null;

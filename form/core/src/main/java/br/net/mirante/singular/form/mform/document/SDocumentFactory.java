@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.document;
 
 import java.util.Objects;
@@ -40,7 +45,7 @@ public abstract class SDocumentFactory {
     }
 
     private final SInstance createIntanceWithoutSetup(RefType rootType) {
-        SInstance instance = Objects.requireNonNull(rootType).get().novaInstancia();
+        SInstance instance = Objects.requireNonNull(rootType).get().newInstance();
         instance.getDocument().setRootRefType(rootType);
         instance.getDocument().setDocumentFactory(this);
         return instance;
@@ -48,7 +53,7 @@ public abstract class SDocumentFactory {
 
     @Deprecated
     public final <T extends SInstance> T createInstance(SType<T> rootType) {
-        T instance = Objects.requireNonNull(rootType).novaInstancia();
+        T instance = Objects.requireNonNull(rootType).newInstance();
         SDocument document = instance.getDocument();
         document.setDocumentFactory(this);
         setupDocument(document);

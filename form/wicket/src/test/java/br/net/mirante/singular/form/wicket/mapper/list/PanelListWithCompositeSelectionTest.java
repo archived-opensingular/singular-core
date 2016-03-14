@@ -14,8 +14,8 @@ import org.junit.Test;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
+import br.net.mirante.singular.form.mform.STypeList;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.wicket.test.base.AbstractSingularFormTest;
 import br.net.mirante.singular.form.wicket.mapper.selection.SelectOption;
@@ -28,16 +28,16 @@ public class PanelListWithCompositeSelectionTest extends AbstractSingularFormTes
     @Override
     protected void populateMockType(STypeComposite<?> mockType) {
 
-        final STypeLista<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addCampoListaOfComposto("mockList", "mockTypeComposite");
+        final STypeList<STypeComposite<SIComposite>, SIComposite> mockList = mockType.addFieldListOfComposite("mockList", "mockTypeComposite");
         mockList.asAtrBasic().label("Mock Type Composite");
-        mockList.withView(MPanelListaView::new);
+        mockList.withView(SViewListByForm::new);
 
-        final STypeComposite mockTypeCompostite = mockList.getTipoElementos();
+        final STypeComposite mockTypeCompostite = mockList.getElementsType();
 
-        compositeSelection = mockTypeCompostite.addCampoComposto("compositeSelection");
+        compositeSelection = mockTypeCompostite.addFieldComposite("compositeSelection");
 
-        final STypeString id = compositeSelection.addCampoString("id");
-        final STypeString description = compositeSelection.addCampoString("description");
+        final STypeString id = compositeSelection.addFieldString("id");
+        final STypeString description = compositeSelection.addFieldString("description");
 
         compositeSelection.withSelectionFromProvider(description, (instancia, lb) -> {
             lb.add().set(id, "a");

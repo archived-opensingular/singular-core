@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collections;
@@ -9,12 +14,12 @@ import java.util.function.Function;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import br.net.mirante.singular.form.mform.io.PersistenceBuilderXML;
-import br.net.mirante.singular.form.mform.options.MOptionsConfig;
-import br.net.mirante.singular.form.mform.options.MSelectionableInstance;
-import br.net.mirante.singular.form.mform.options.MSelectionableType;
+import br.net.mirante.singular.form.mform.options.SOptionsConfig;
+import br.net.mirante.singular.form.mform.options.SSelectionableInstance;
+import br.net.mirante.singular.form.mform.options.SSelectionableType;
 import br.net.mirante.singular.form.util.xml.MElement;
 
-public abstract class SInstance implements MAtributoEnabled, MSelectionableInstance {
+public abstract class SInstance implements SAttributeEnabled, SSelectionableInstance {
 
     private SInstance parent;
 
@@ -22,17 +27,16 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
 
     private SType<?> type;
 
-    private Map<String, SInstance> atributos;
+    private Map<String, SInstance> attributes;
 
     private SDocument document;
 
     private Integer id;
 
     /**
-     * Configurador de opções da instancia
-     * para o provider de opções do tipo
+     * Configurador de opções da instancia para o provider de opções do tipo
      */
-    private MOptionsConfig optionsConfig;
+    private SOptionsConfig optionsConfig;
 
     /** Mapa de bits de flags. Veja {@link InstanceFlags} */
     private int flags;
@@ -43,9 +47,9 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     }
 
     @Override
-    public MOptionsConfig getOptionsConfig() {
+    public SOptionsConfig getOptionsConfig() {
         if (optionsConfig == null){
-            optionsConfig = new MOptionsConfig(this);
+            optionsConfig = new SOptionsConfig(this);
         }
         return optionsConfig;
     }
@@ -64,13 +68,13 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     @Override
     public String getSelectLabel() {
         if (selectLabel == null) {
-            if (getType() instanceof MSelectionableType) {
-                MSelectionableType type = (MSelectionableType) getType();
+            if (getType() instanceof SSelectionableType) {
+                SSelectionableType type = (SSelectionableType) getType();
                 String label =  type.getSelectLabel();
                 Object valor = this.getValue();
                 if (valor instanceof Iterable) {
                     for (SInstance mi : (Iterable<SInstance>)valor) {
-                        if (label.equals(mi.getNome())) {
+                        if (label.equals(mi.getName())) {
                             Object valorCampo = mi.getValue();
                             return valorCampo == null ? "" : valorCampo.toString();
                         }
@@ -150,14 +154,17 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
     }
 
     final void setParent(SInstance pai) {
-        /* exceção adicionada por vinicius nunes, para adicionar uma instancia a outra hierarquia deveria haver
-        * uma chamada para 'destacar' a minstancia da sua hierarquia atual*/
+        /*
+         * exceção adicionada por vinicius nunes, para adicionar uma instancia a
+         * outra hierarquia deveria haver uma chamada para 'destacar' a
+         * minstancia da sua hierarquia atual
+         */
         if (this.parent != null && pai != null){
             throw new SingularFormException(
                     String.format(
-                            " Não é possível adicionar uma MIstancia criada em uma hierarquia à outra." +
-                            " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia." +
-                            " O pai atual é do tipo %s. ",
+" Não é possível adicionar uma MIstancia criada em uma hierarquia à outra."
+                    + " MInstancia adicionada a um objeto do tipo %s já pertence à outra hierarquia de MInstancia."
+                    + " O pai atual é do tipo %s. ",
                             this.getClass().getName(),
                             this.parent.getClass().getName()));
         }
@@ -167,12 +174,12 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    final void setType(SType<?> tipo) {
-        this.type = tipo;
+    final void setType(SType<?> type) {
+        this.type = type;
     }
 
-    public void setValue(Object valor) {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    public void setValue(Object value) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
     public abstract Object getValue();
@@ -201,116 +208,116 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      */
     public abstract boolean isEmptyOfData();
 
-    public Object getValorWithDefault() {
-        return getValorWithDefault(null);
+    public Object getValueWithDefault() {
+        return getValueWithDefault(null);
     }
 
     @SuppressWarnings("unchecked")
-    public final <T extends Object> T getValorWithDefault(Class<T> classeDestino) {
-        if (classeDestino == null) {
+    public final <T extends Object> T getValueWithDefault(Class<T> resultClass) {
+        if (resultClass == null) {
             return (T) getValue();
         }
-        return getType().converter(getValorWithDefault(), classeDestino);
+        return getType().convert(getValueWithDefault(), resultClass);
     }
 
     @SuppressWarnings("unchecked")
-    public final <T extends Object> T getValor(Class<T> classeDestino) {
-        if (classeDestino == null) {
+    public final <T extends Object> T getValue(Class<T> resultClass) {
+        if (resultClass == null) {
             return (T) getValue();
         }
-        return getType().converter(getValue(), classeDestino);
+        return getType().convert(getValue(), resultClass);
     }
 
-    final <T extends Object> T getValor(PathReader leitor, Class<T> classeDestino) {
-        SInstance instancia = this;
+    final <T extends Object> T getValue(PathReader pathReader, Class<T> resultClass) {
+        SInstance instance = this;
         while (true) {
-            if (leitor.isEmpty()) {
-                return instancia.getValor(classeDestino);
+            if (pathReader.isEmpty()) {
+                return instance.getValue(resultClass);
             }
-            SInstance instanciaFilha = instancia.getCampoLocalSemCriar(leitor);
-            if (instanciaFilha == null) {
-                MFormUtil.resolverTipoCampo(instancia.getType(), leitor);
+            SInstance children = instance.getFieldLocalWithoutCreating(pathReader);
+            if (children == null) {
+                SFormUtil.resolveFieldType(instance.getType(), pathReader);
                 return null;
             }
-            instancia = instanciaFilha;
-            leitor = leitor.proximo();
+            instance = children;
+            pathReader = pathReader.next();
         }
     }
 
-    <T extends Object> SInstance getCampoLocalSemCriar(PathReader leitor) {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    <T extends Object> SInstance getFieldLocalWithoutCreating(PathReader pathReader) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
-    <T extends Object> T getValorWithDefaultIfNull(PathReader leitor, Class<T> classeDestino) {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    <T extends Object> T getValueWithDefaultIfNull(PathReader pathReader, Class<T> resultClass) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
-    void setValor(PathReader leitorPath, Object valor) {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    void setValue(PathReader pathReader, Object value) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
-    final SInstance getCampo(PathReader leitor) {
-        SInstance instancia = this;
+    final SInstance getField(PathReader pathReader) {
+        SInstance instance = this;
         while (true) {
-            instancia = instancia.getCampoLocal(leitor);
-            if (leitor.isUltimo()) {
-                return instancia;
-            } else if (!(instancia instanceof ICompositeInstance)) {
-                throw new RuntimeException(leitor.getTextoErro(instancia, "Não suporta leitura de subCampos"));
+            instance = instance.getFieldLocal(pathReader);
+            if (pathReader.isLast()) {
+                return instance;
+            } else if (!(instance instanceof ICompositeInstance)) {
+                throw new RuntimeException(pathReader.getErroMsg(instance, "Não suporta leitura de subCampos"));
             }
-            leitor = leitor.proximo();
+            pathReader = pathReader.next();
         }
     }
 
-    SInstance getCampoLocal(PathReader leitor) {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    SInstance getFieldLocal(PathReader pathReader) {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
-    public String getDisplayString() {
-        throw new RuntimeException(erroMsgMetodoNaoSuportado());
+    public String toStringDisplay() {
+        throw new RuntimeException(erroMsgMethodUnsupported());
     }
 
     @Override
-    public void setValorAtributo(String nomeCompletoAtributo, String subPath, Object valor) {
-        SInstance instanciaAtr = null;
-        if (atributos == null) {
-            atributos = new HashMap<>();
+    public void setAttributeValue(String fullNameAttribute, String subPath, Object value) {
+        SInstance instanceAtr = null;
+        if (attributes == null) {
+            attributes = new HashMap<>();
         } else {
-            instanciaAtr = atributos.get(nomeCompletoAtributo);
+            instanceAtr = attributes.get(fullNameAttribute);
         }
-        if (instanciaAtr == null) {
-            MAtributo tipoAtributo = getType().getAtributoDefinidoHierarquia(nomeCompletoAtributo);
-            instanciaAtr = tipoAtributo.newInstance(getDocument());
-            instanciaAtr.setAsAttribute(this);
-            atributos.put(nomeCompletoAtributo, instanciaAtr);
+        if (instanceAtr == null) {
+            SAttribute attributeType = getType().getAttributeDefinedHierarchy(fullNameAttribute);
+            instanceAtr = attributeType.newInstance(getDocument());
+            instanceAtr.setAsAttribute(this);
+            attributes.put(fullNameAttribute, instanceAtr);
         }
         if (subPath != null) {
-            instanciaAtr.setValor(new PathReader(subPath), valor);
+            instanceAtr.setValue(new PathReader(subPath), value);
         } else {
-            instanciaAtr.setValue(valor);
+            instanceAtr.setValue(value);
         }
     }
 
     @Override
-    public <V extends Object> V getValorAtributo(String nomeCompleto, Class<V> classeDestino) {
-        if (atributos != null) {
-            SInstance inst = atributos.get(nomeCompleto);
+    public <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+        if (attributes != null) {
+            SInstance inst = attributes.get(fullName);
             if (inst != null) {
-                return inst.getValor(classeDestino);
+                return inst.getValue(resultClass);
             }
         }
-        return getType().getValorAtributo(nomeCompleto, classeDestino);
+        return getType().getAttributeValue(fullName, resultClass);
     }
 
-    public Map<String, SInstance> getAtributos() {
-        return atributos == null ? Collections.emptyMap() : atributos;
+    public Map<String, SInstance> getAttributes() {
+        return attributes == null ? Collections.emptyMap() : attributes;
     }
 
     public SInstance getParent() {
         return this.parent;
     }
 
-    public <K extends SInstance> K getIrmao(SType<K> tipoPai) {
+    public <K extends SInstance> K getBrother(SType<K> tipoPai) {
         throw new RuntimeException("implementar");
     }
 
@@ -318,19 +325,19 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         return findAncestor(ancestorType).get();
     }
     public <A extends SInstance & ICompositeInstance> Optional<A> findAncestor(SType<A> ancestorType) {
-        return MInstances.findAncestor(this, ancestorType);
+        return SInstances.findAncestor(this, ancestorType);
     }
     public <A extends SInstance> Optional<A> findNearest(SType<A> targetType) {
-        return MInstances.findNearest(this, targetType);
+        return SInstances.findNearest(this, targetType);
     }
     @SuppressWarnings("unchecked")
     public <V> Optional<V> findNearestValue(SType<?> targetType) {
-        Optional<? extends SInstance> nearest = MInstances.findNearest(this, targetType);
-        return (Optional<V>) nearest.map(it -> it.getValorWithDefault());
+        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
+        return (Optional<V>) nearest.map(it -> it.getValueWithDefault());
     }
     public <V> Optional<V> findNearestValue(SType<?> targetType, Class<V> classeValor) {
-        Optional<? extends SInstance> nearest = MInstances.findNearest(this, targetType);
-        return nearest.map(it -> classeValor.cast(it.getValorWithDefault(classeValor)));
+        Optional<? extends SInstance> nearest = SInstances.findNearest(this, targetType);
+        return nearest.map(it -> classeValor.cast(it.getValueWithDefault(classeValor)));
     }
 
     public boolean isDescentantOf(SInstance ancestor) {
@@ -343,41 +350,41 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
 
     @SuppressWarnings("unchecked")
     public <T extends Object> T as(Class<T> classeAlvo) {
-        if (MTranslatorParaAtributo.class.isAssignableFrom(classeAlvo)) {
-            return (T) MTranslatorParaAtributo.of(this, (Class<MTranslatorParaAtributo>) classeAlvo);
+        if (STranslatorForAttribute.class.isAssignableFrom(classeAlvo)) {
+            return (T) STranslatorForAttribute.of(this, (Class<STranslatorForAttribute>) classeAlvo);
         }
         throw new RuntimeException(
-            "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + MTranslatorParaAtributo.class.getName());
+                "Classe '" + classeAlvo + "' não funciona como aspecto. Deve extender " + STranslatorForAttribute.class.getName());
     }
     public <T> T as(Function<? super SInstance, T> aspectFactory) {
         return aspectFactory.apply(this);
     }
 
-    public boolean isObrigatorio() {
-        return MInstances.attributeValue(this, SPackageCore.ATR_OBRIGATORIO, false);
+    public boolean isRequired() {
+        return SInstances.attributeValue(this, SPackageCore.ATR_REQUIRED, false);
     }
-    public void setObrigatorio(Boolean value) {
-        setValorAtributo(SPackageCore.ATR_OBRIGATORIO, value);
+    public void setRequired(Boolean value) {
+        setAttributeValue(SPackageCore.ATR_REQUIRED, value);
     }
-    public void updateObrigatorio() {
-        MInstances.updateBooleanAttribute(this, SPackageCore.ATR_OBRIGATORIO, SPackageCore.ATR_OBRIGATORIO_FUNCTION);
+    public void updateRequired() {
+        SInstances.updateBooleanAttribute(this, SPackageCore.ATR_REQUIRED, SPackageCore.ATR_OBRIGATORIO_FUNCTION);
     }
     public boolean exists() {
-        return MInstances.attributeValue(this, SPackageCore.ATR_EXISTS, true);
+        return SInstances.attributeValue(this, SPackageCore.ATR_EXISTS, true);
     }
     public void setExists(Boolean value) {
-        setValorAtributo(SPackageCore.ATR_EXISTS, value);
+        setAttributeValue(SPackageCore.ATR_EXISTS, value);
     }
     public void updateExists() {
-        MInstances.updateBooleanAttribute(this, SPackageCore.ATR_EXISTS, SPackageCore.ATR_EXISTS_FUNCTION);
+        SInstances.updateBooleanAttribute(this, SPackageCore.ATR_EXISTS, SPackageCore.ATR_EXISTS_FUNCTION);
         if (!exists())
-            MInstances.visitAll(this, true, SInstance::resetValue);
+            SInstances.visitAll(this, true, SInstance::resetValue);
     }
 
     protected void resetValue() {}
 
-    public String getNome() {
-        return getType().getSimpleName();
+    public String getName() {
+        return getType().getNameSimple();
     }
 
     /**
@@ -398,7 +405,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * @return Null se chamado em uma instância raiz.
      */
     public final String getPathFromRoot() {
-        return MFormUtil.generatePath(this, i -> i.parent == null);
+        return SFormUtil.generatePath(this, i -> i.parent == null);
     }
 
     /**
@@ -417,7 +424,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
      * </pre>
      */
     public final String getPathFull() {
-        return MFormUtil.generatePath(this, i -> i == null);
+        return SFormUtil.generatePath(this, i -> i == null);
     }
 
     public void debug() {
@@ -429,7 +436,7 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         }
     }
 
-    final String erroMsgMetodoNaoSuportado() {
+    final String erroMsgMethodUnsupported() {
         return errorMsg("Método não suportado por " + getClass().getName());
     }
 
@@ -450,9 +457,9 @@ public abstract class SInstance implements MAtributoEnabled, MSelectionableInsta
         onRemove();
         if (getFlag(InstanceFlags.RemovendoInstancia)) {
             throw new SingularFormException(SInstance.class.getName() + " não foi corretamente removido. Alguma classe na hierarquia de "
-                + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
+                    + getClass().getName() + " não chamou super.onRemove() em algum método que sobreescreve onRemove()");
         }
-        this.setParent(null);
+        setParent(null);
         removeChildren();
     }
 

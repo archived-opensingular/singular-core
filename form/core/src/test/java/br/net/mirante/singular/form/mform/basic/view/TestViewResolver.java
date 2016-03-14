@@ -4,11 +4,11 @@ import br.net.mirante.singular.form.mform.SDictionary;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import org.junit.Test;
@@ -25,11 +25,11 @@ public class TestViewResolver {
     private static final String textoTeste = "stringzonamuitolocabemgrandeparaevitarproblemascomarrayoutofboundsnessestestesunitariosaqui";
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private static STypeLista<?, ?> createSimpleList(PackageBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
+    private static STypeList<?, ?> createSimpleList(PackageBuilder pb, String name, Class<? extends STypeSimple<?, ?>> type, int size,
                                                      Function<Integer, Object> valueProvider) {
-        STypeSimple<?, ?> simpleType = pb.createTipo(name, type);
+        STypeSimple<?, ?> simpleType = pb.createType(name, type);
         simpleType.withSelectionOf((Collection) repeate(valueProvider, size));
-        return pb.createTipoListaOf("list" + name, simpleType);
+        return pb.createListTypeOf("list" + name, simpleType);
     }
 
     private static <T> Collection<T> repeate(Function<Integer, T> valueSupplier, int size) {
@@ -47,12 +47,12 @@ public class TestViewResolver {
     }
 
     private static void assertView(Class<?> expectedView, SType<?> newInstance) {
-        assertView(expectedView, newInstance.novaInstancia());
+        assertView(expectedView, newInstance.newInstance());
     }
 
     private static void assertView(Class<?> expectedView, SInstance instance) {
-        MView view = ViewResolver.resolve(instance);
-        if (expectedView == null && view == MView.DEFAULT) {
+        SView view = ViewResolver.resolve(instance);
+        if (expectedView == null && view == SView.DEFAULT) {
             return;
         }
         assertEquals(expectedView, view.getClass());
@@ -65,53 +65,53 @@ public class TestViewResolver {
         assertView(null, STypeInteger.class);
         assertView(null, STypeString.class);
         assertView(null, STypeComposite.class);
-        assertView(MPanelListaView.class, STypeLista.class);
+        assertView(SViewListByForm.class, STypeList.class);
     }
 
     @Test
     public void testTipoSimplesSelectOf() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeSimple<?, ?> tipoInteger = pb.createTipo("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
-        STypeSimple<?, ?> tipoDate = pb.createTipo("Date", STypeData.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10 * i), 2).toArray(new Date[]{}));
-        STypeSimple<?, ?> tipoString = pb.createTipo("String", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
-        STypeSimple<?, ?> tipoStringLarge = pb.createTipo("StringLarge", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 5).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoInteger = pb.createType("Integer", STypeInteger.class).withSelectionOf(repeate(i -> i, 2).toArray(new Integer[]{}));
+        STypeSimple<?, ?> tipoDate = pb.createType("Date", STypeDate.class).withSelectionOf(repeate(i -> new Date(new Date().getTime() + 10 * i), 2).toArray(new Date[]{}));
+        STypeSimple<?, ?> tipoString = pb.createType("String", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 2).toArray(new String[]{}));
+        STypeSimple<?, ?> tipoStringLarge = pb.createType("StringLarge", STypeString.class).withSelectionOf(repeate(i -> textoTeste.substring(i), 5).toArray(new String[]{}));
 
-        assertView(MSelecaoPorSelectView.class, tipoInteger);
-        assertView(MSelecaoPorSelectView.class, tipoDate);
-        assertView(MSelecaoPorSelectView.class, tipoString);
-        assertView(MSelecaoPorSelectView.class, tipoStringLarge);
+        assertView(SViewSelectionBySelect.class, tipoInteger);
+        assertView(SViewSelectionBySelect.class, tipoDate);
+        assertView(SViewSelectionBySelect.class, tipoString);
+        assertView(SViewSelectionBySelect.class, tipoStringLarge);
 
-        tipoInteger.withObrigatorio(true);
-        tipoDate.withObrigatorio(true);
-        tipoString.withObrigatorio(true);
-        tipoStringLarge.withObrigatorio(true);
+        tipoInteger.withRequired(true);
+        tipoDate.withRequired(true);
+        tipoString.withRequired(true);
+        tipoStringLarge.withRequired(true);
 
-        assertView(MSelecaoPorRadioView.class, tipoInteger);
-        assertView(MSelecaoPorRadioView.class, tipoDate);
-        assertView(MSelecaoPorRadioView.class, tipoString);
-        assertView(MSelecaoPorSelectView.class, tipoStringLarge);
+        assertView(SViewSelectionByRadio.class, tipoInteger);
+        assertView(SViewSelectionByRadio.class, tipoDate);
+        assertView(SViewSelectionByRadio.class, tipoString);
+        assertView(SViewSelectionBySelect.class, tipoStringLarge);
     }
 
     @Test
     public void testListTipoSimplesSelectOf() {
         SDictionary dicionario = SDictionary.create();
         PackageBuilder pb = dicionario.createNewPackage("teste");
-        STypeLista<?, ?> listInteger3 = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
-        STypeLista<?, ?> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
-        STypeLista<?, ?> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);
+        STypeList<?, ?> listInteger3 = createSimpleList(pb, "Integer3", STypeInteger.class, 3, i -> 100 + i);
+        STypeList<?, ?> listInteger10 = createSimpleList(pb, "Integer10", STypeInteger.class, 10, i -> 100 + i);
+        STypeList<?, ?> listInteger20 = createSimpleList(pb, "Integer20", STypeInteger.class, 20, i -> 100 + i);
 
-        STypeLista<?, ?> listString3 = createSimpleList(pb, "String3", STypeString.class, 3, i -> textoTeste.substring(i));
-        STypeLista<?, ?> listString10 = createSimpleList(pb, "String10", STypeString.class, 10, i -> textoTeste.substring(i));
-        STypeLista<?, ?> listString20 = createSimpleList(pb, "String20", STypeString.class, 20, i -> textoTeste.substring(i));
+        STypeList<?, ?> listString3 = createSimpleList(pb, "String3", STypeString.class, 3, i -> textoTeste.substring(i));
+        STypeList<?, ?> listString10 = createSimpleList(pb, "String10", STypeString.class, 10, i -> textoTeste.substring(i));
+        STypeList<?, ?> listString20 = createSimpleList(pb, "String20", STypeString.class, 20, i -> textoTeste.substring(i));
 
-        assertView(MSelecaoMultiplaPorCheckView.class, listInteger3);
-        assertView(MSelecaoMultiplaPorSelectView.class, listInteger10);
-        assertView(MSelecaoMultiplaPorPicklistView.class, listInteger20);
+        assertView(SMultiSelectionByCheckboxView.class, listInteger3);
+        assertView(SMultiSelectionBySelectView.class, listInteger10);
+        assertView(SMultiSelectionByPicklistView.class, listInteger20);
 
-        assertView(MSelecaoMultiplaPorCheckView.class, listString3);
-        assertView(MSelecaoMultiplaPorSelectView.class, listString10);
-        assertView(MSelecaoMultiplaPorPicklistView.class, listString20);
+        assertView(SMultiSelectionByCheckboxView.class, listString3);
+        assertView(SMultiSelectionBySelectView.class, listString10);
+        assertView(SMultiSelectionByPicklistView.class, listString20);
     }
 
 }

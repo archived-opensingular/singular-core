@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.core;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;
 
-@MInfoTipo(nome = "Decimal", pacote = SPackageCore.class)
+@SInfoType(name = "Decimal", spackage = SPackageCore.class)
 public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
 
     public STypeDecimal() {
@@ -18,11 +23,11 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
     }
 
     @Override
-    protected BigDecimal converterNaoNativoNaoString(Object valor) {
+    protected BigDecimal convertNotNativeNotString(Object valor) {
         if (valor instanceof Number) {
             return new BigDecimal(valor.toString());
         }
-        throw createErroConversao(valor);
+        throw createConversionError(valor);
     }
 
     @Override
@@ -36,12 +41,12 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
             return new BigDecimal(valor.replaceAll("\\.", "").replaceAll(",", "."));
 
         } catch (Exception e) {
-            throw createErroConversao(valor, BigDecimal.class, null, e);
+            throw createConversionError(valor, BigDecimal.class, null, e);
         }
     }
 
     @Override
-    public BigDecimal fromStringPersistencia(String valor) {
+    public BigDecimal fromStringPersistence(String valor) {
         valor = StringUtils.trimToNull(valor);
         if (valor == null) {
             return null;
@@ -51,7 +56,7 @@ public class STypeDecimal extends STypeSimple<SIBigDecimal, BigDecimal> {
             return new BigDecimal(valor);
 
         } catch (Exception e) {
-            throw createErroConversao(valor, BigDecimal.class, null, e);
+            throw createConversionError(valor, BigDecimal.class, null, e);
         }
     }
 }

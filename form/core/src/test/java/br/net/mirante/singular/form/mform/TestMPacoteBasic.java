@@ -1,7 +1,7 @@
 package br.net.mirante.singular.form.mform;
 
-import br.net.mirante.singular.form.mform.core.SIData;
-import br.net.mirante.singular.form.mform.core.STypeData;
+import br.net.mirante.singular.form.mform.core.SIDate;
+import br.net.mirante.singular.form.mform.core.STypeDate;
 import org.junit.Assert;
 
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
@@ -20,17 +20,17 @@ public class TestMPacoteBasic{
 //        dicionario.debug();
 
         STypeInteger mtInt = dicionario.getType(STypeInteger.class);
-        Assert.assertEquals(Integer.valueOf(1), mtInt.converter("1"));
-        Assert.assertEquals(Integer.valueOf(-1), mtInt.converter("-1"));
-        Assert.assertEquals(Integer.valueOf(10), mtInt.converter("010"));
+        Assert.assertEquals(Integer.valueOf(1), mtInt.convert("1"));
+        Assert.assertEquals(Integer.valueOf(-1), mtInt.convert("-1"));
+        Assert.assertEquals(Integer.valueOf(10), mtInt.convert("010"));
     }
 
     @Test public void tipoDate(){
         SDictionary dicionario = SDictionary.create();
         dicionario.loadPackage(SPackageBasic.class);
 
-        STypeData mData = dicionario.getType(STypeData.class);
-        SIData miData = mData.novaInstancia();
+        STypeDate mData = dicionario.getType(STypeDate.class);
+        SIDate miData = mData.newInstance();
         miData.setValue("");
         assertThat(miData.getValue()).isNull();
     }

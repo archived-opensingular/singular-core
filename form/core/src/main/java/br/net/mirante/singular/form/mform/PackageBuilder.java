@@ -1,211 +1,197 @@
-package br.net.mirante.singular.form.mform;
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
 
-import br.net.mirante.singular.form.mform.core.SPackageCore;
+package br.net.mirante.singular.form.mform;
 
 public class PackageBuilder {
 
-    private final SPackage pacote;
+    private final SPackage sPackage;
 
-    PackageBuilder(SPackage pacote) {
-        this.pacote = pacote;
+    PackageBuilder(SPackage sPackage) {
+        this.sPackage = sPackage;
     }
 
-    public SDictionary getDicionario() {
-        return pacote.getDictionary();
+    public SDictionary getDictionary() {
+        return sPackage.getDictionary();
     }
-    public SPackage getPacote() {
-        return pacote;
-    }
-
-    public <T extends SType<?>> T createTipo(String nome, Class<T> classePai) {
-        return pacote.extenderType(nome, classePai);
+    public SPackage getPackage() {
+        return sPackage;
     }
 
-    final <T extends SType<?>> T createTipo(String nomeSimplesNovoTipo, T tipoPai) {
-        return pacote.extenderType(nomeSimplesNovoTipo, tipoPai);
+    public <T extends SType<?>> T createType(String name, Class<T> parentClass) {
+        return sPackage.extendType(name, parentClass);
     }
 
-    public <T extends SType<?>> T createTipo(Class<T> classeNovoTipo) {
-        getDicionario().getTiposInterno().vericaNaoDeveEstarPresente(classeNovoTipo);
-        TypeBuilder tb = new TypeBuilder(classeNovoTipo);
-        return pacote.registerType(tb, classeNovoTipo);
+    final <T extends SType<?>> T creatType(String simpleNameNewType, T parentType) {
+        return sPackage.extendType(simpleNameNewType, parentType);
+    }
+
+    public <T extends SType<?>> T createType(Class<T> newTypeClass) {
+        getDictionary().getTypesInternal().verifyMustNotBePresent(newTypeClass);
+        TypeBuilder tb = new TypeBuilder(newTypeClass);
+        return sPackage.registerType(tb, newTypeClass);
     }
 
     @SuppressWarnings("unchecked")
-    public STypeComposite<? extends SIComposite> createTipoComposto(String nomeSimplesNovoTipo) {
-        return createTipo(nomeSimplesNovoTipo, STypeComposite.class);
+    public STypeComposite<? extends SIComposite> createCompositeType(String simpleNameNewType) {
+        return createType(simpleNameNewType, STypeComposite.class);
     }
 
-    public <I extends SIComposite> STypeLista<STypeComposite<I>, I> createTipoListaOfNovoTipoComposto(String nomeSimplesNovoTipo, String nomeSimplesNovoTipoComposto) {
-        return pacote.createTipoListaOfNovoTipoComposto(nomeSimplesNovoTipo, nomeSimplesNovoTipoComposto);
+    public <I extends SIComposite> STypeList<STypeComposite<I>, I> createListOfNewCompositeType(String simpleNameNewType,
+            String simpleNameNewCompositeType) {
+        return sPackage.createListOfNewTypeComposite(simpleNameNewType, simpleNameNewCompositeType);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo,
-                                                                                        Class<T> classeTipoLista) {
-        T tipoLista = (T) getDicionario().getType(classeTipoLista);
-        return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoLista);
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(String simpleNameNewType,
+                                                                                        Class<T> elementsTypeClass) {
+        T elementsType = (T) getDictionary().getType(elementsTypeClass);
+        return createListTypeOf(simpleNameNewType, elementsType);
     }
 
-    public <I extends SInstance, T extends SType<I>> STypeLista<T, I> createTipoListaOf(String nomeSimplesNovoTipo, T tipoElementos) {
-        return pacote.createTipoListaOf(nomeSimplesNovoTipo, tipoElementos);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public <T extends SType<?>> void addAtributo(Class<? extends SType> classeTipo, AtrRef<T, ?, ?> atr) {
-        addAtributoInterno(classeTipo, atr);
+    public <I extends SInstance, T extends SType<I>> STypeList<T, I> createListTypeOf(String simpleNameNewType, T elementsType) {
+        return sPackage.createTypeListOf(simpleNameNewType, elementsType);
     }
 
     @SuppressWarnings("rawtypes")
-    public <T extends SType<?>, V extends Object> void addAtributo(Class<? extends SType> classeTipo, AtrRef<T, ?, V> atr, V valorAtributo) {
-        MAtributo atributo = addAtributoInterno(classeTipo, atr);
-        SType<?> tipoAlvo = getDicionario().getType(classeTipo);
-        tipoAlvo.setValorAtributo(atributo, valorAtributo);
+    public <T extends SType<?>> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, ?> atr) {
+        addAttributeInternal(typeClass, atr);
     }
 
     @SuppressWarnings("rawtypes")
-    private <T extends SType<?>> MAtributo addAtributoInterno(Class<? extends SType> classeTipo, AtrRef<T, ?, ?> atr) {
-        SType<?> tipoAlvo = getDicionario().getType(classeTipo);
-
-        MAtributo atributo = findAtributo(atr);
-        tipoAlvo.addAtributo(atributo);
-        return atributo;
+    public <T extends SType<?>, V extends Object> void addAttribute(Class<? extends SType> typeClass, AtrRef<T, ?, V> atr, V attributeValue) {
+        SAttribute attribute = addAttributeInternal(typeClass, atr);
+        SType<?> targetType = getDictionary().getType(typeClass);
+        targetType.setAttributeValue(attribute, attributeValue);
     }
 
-    public MAtributo getAtributo(AtrRef<?, ?, ?> atr) {
-        return findAtributo(atr);
+    @SuppressWarnings("rawtypes")
+    private <T extends SType<?>> SAttribute addAttributeInternal(Class<? extends SType> typeClass, AtrRef<T, ?, ?> atr) {
+        SType<?> targetType = getDictionary().getType(typeClass);
+
+        SAttribute attribute = findAttribute(atr);
+        targetType.addAttribute(attribute);
+        return attribute;
+    }
+
+    public SAttribute getAttribute(AtrRef<?, ?, ?> atr) {
+        return findAttribute(atr);
         // return new AtributoBuilder(null, findAtributo(atr));
     }
 
-    private MAtributo findAtributo(AtrRef<?, ?, ?> atr) {
-        MAtributo atributo = getAtributoOpcional(atr);
-        if (atributo == null) {
-            throw new RuntimeException("O atributo '" + atr.getNomeCompleto() + "' não está definido");
+    private SAttribute findAttribute(AtrRef<?, ?, ?> atr) {
+        SAttribute attribute = getAttributeOptional(atr);
+        if (attribute == null) {
+            throw new RuntimeException("O atributo '" + atr.getNameFull() + "' não está definido");
         }
-        return atributo;
+        return attribute;
     }
 
-    private MAtributo getAtributoOpcional(AtrRef<?, ?, ?> atr) {
-        getDicionario().loadPackage(atr.getClassePacote());
+    private SAttribute getAttributeOptional(AtrRef<?, ?, ?> atr) {
+        getDictionary().loadPackage(atr.getPackageClass());
 
         if (!atr.isBinded()) {
             return null;
         }
-        SType<?> tipo = getDicionario().getTypeOptional(atr.getNomeCompleto());
-        if (tipo != null && !(tipo instanceof MAtributo)) {
-            throw new RuntimeException("O tipo '" + atr.getNomeCompleto() + "' não é um tipo de MAtributo. É " + tipo.getClass().getName());
+        SType<?> type = getDictionary().getTypeOptional(atr.getNameFull());
+        if (type != null && !(type instanceof SAttribute)) {
+            throw new RuntimeException("O tipo '" + atr.getNameFull() + "' não é um tipo de MAtributo. É " + type.getClass().getName());
         }
-        return (MAtributo) tipo;
+        return (SAttribute) type;
     }
 
-    public <T extends SType<?>> MAtributo createTipoAtributo(Class<? extends SType> classeAlvo, AtrRef<T, ?, ?> atr) {
-        T tipoAtributo;
+    public <T extends SType<?>> SAttribute createAttributeIntoType(Class<? extends SType> targetTypeClass, AtrRef<T, ?, ?> atr) {
+        T attributeType;
         if (atr.isSelfReference()) {
-            tipoAtributo = (T) getDicionario().getType((Class) classeAlvo);
+            attributeType = (T) getDictionary().getType((Class) targetTypeClass);
         } else {
-            tipoAtributo = (T) getDicionario().getType((Class) atr.getClasseTipo());
+            attributeType = (T) getDictionary().getType((Class) atr.getTypeClass());
         }
-        SType<?> tipoAlvo = getDicionario().getType(classeAlvo);
-        return createTipoAtributo(tipoAlvo, classeAlvo, atr, tipoAtributo);
+        SType<?> targetType = getDictionary().getType(targetTypeClass);
+        return createAttributeIntoType(targetType, targetTypeClass, atr, attributeType);
     }
 
-    public <T extends SType<?>> MAtributo createTipoAtributo(Class<? extends SType<?>> classeTipoAlvo, String nomeSimplesAtributo, Class<T> classeTipoAtributo) {
-        SType<?> tipoAlvo = getDicionario().getType(classeTipoAlvo);
-        return createTipoAtributo(tipoAlvo, nomeSimplesAtributo, classeTipoAtributo);
-    }
-    
-    public <T extends SType<?>> MAtributo createTipoAtributo(SType<?> tipoAlvo, String nomeSimplesAtributo, Class<T> classeTipoAtributo) {
-        SType<?> tipoAtributo = getDicionario().getType(classeTipoAtributo);
-        return createTipoAtributo(tipoAlvo, nomeSimplesAtributo, tipoAtributo);
+    public <T extends SType<?>> SAttribute createAttributeIntoType(Class<? extends SType<?>> targetTypeClass, String attributeSimpleName,
+            Class<T> attributeTypeClass) {
+        SType<?> targetType = getDictionary().getType(targetTypeClass);
+        return createAttributeIntoType(targetType, attributeSimpleName, attributeTypeClass);
     }
 
-    public MAtributo createTipoAtributo(SType<?> tipoAlvo, String nomeSimplesAtributo, SType<?> tipoAtributo) {
-        if (tipoAlvo.getPacote() == pacote) {
-            return createAtributoInterno(tipoAlvo, nomeSimplesAtributo, false, tipoAtributo);
+    public <T extends SType<?>> SAttribute createAttributeIntoType(SType<?> targetType, String attributeSimpleName,
+            Class<T> attributeTypeClass) {
+        SType<?> attributeType = getDictionary().getType(attributeTypeClass);
+        return createAttributeIntoType(targetType, attributeSimpleName, attributeType);
+    }
+
+    public SAttribute createAttributeIntoType(SType<?> targetType, String attributeSimpleName, SType<?> attributeType) {
+        if (targetType.getPackage() == sPackage) {
+            return createAttributeIntoTypeInternal(targetType, attributeSimpleName, false, attributeType);
         } else {
-            getDicionario().getTiposInterno().vericaNaoDeveEstarPresente(pacote.getName() + "." + nomeSimplesAtributo);
+            getDictionary().getTypesInternal().verifyMustNotBePresent(sPackage.getName() + "." + attributeSimpleName);
 
-            MAtributo atributo = new MAtributo(nomeSimplesAtributo, tipoAtributo, tipoAlvo, false);
-            atributo = pacote.registerType(atributo, null);
-            tipoAlvo.addAtributo(atributo);
+            SAttribute atributo = new SAttribute(attributeSimpleName, attributeType, targetType, false);
+            atributo = sPackage.registerType(atributo, null);
+            targetType.addAttribute(atributo);
             return atributo;
         }
     }
 
-    final <T extends SType<?>> MAtributo createTipoAtributo(SType<?> tipoAlvo, Class<? extends SType> classeAlvo, AtrRef<T, ?, ?> atr,
-                                                            T tipoAtributo) {
-        if (tipoAlvo.getPacote() == pacote) {
-            resolverBind(tipoAlvo, (Class<SType>) classeAlvo, atr, tipoAtributo);
-            return createAtributoInterno(tipoAlvo, atr.getNomeSimples(), atr.isSelfReference(), tipoAtributo);
+    final <T extends SType<?>> SAttribute createAttributeIntoType(SType<?> targetType, Class<? extends SType> classeAlvo,
+            AtrRef<T, ?, ?> atr, T attributeType) {
+        if (targetType.getPackage() == sPackage) {
+            resolveBind(targetType, (Class<SType<?>>) classeAlvo, atr, attributeType);
+            return createAttributeIntoTypeInternal(targetType, atr.getNameSimple(), atr.isSelfReference(), attributeType);
         } else {
-            resolverBind(pacote, (Class<SType>) classeAlvo, atr, tipoAtributo);
-            getDicionario().getTiposInterno().vericaNaoDeveEstarPresente(atr.getNomeCompleto());
+            resolveBind(sPackage, (Class<SType<?>>) classeAlvo, atr, attributeType);
+            getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull());
 
-            MAtributo atributo = new MAtributo(atr.getNomeSimples(), tipoAtributo, tipoAlvo, atr.isSelfReference());
-            atributo = pacote.registerType(atributo, null);
-            tipoAlvo.addAtributo(atributo);
-            return atributo;
+            SAttribute attribute = new SAttribute(atr.getNameSimple(), attributeType, targetType, atr.isSelfReference());
+            attribute = sPackage.registerType(attribute, null);
+            targetType.addAttribute(attribute);
+            return attribute;
         }
 
     }
 
-    private MAtributo createAtributoInterno(SType<?> tipoAlvo, String nomeSimples, boolean selfReference, SType<?> tipoAtributo) {
-        getDicionario().getTiposInterno().vericaNaoDeveEstarPresente(tipoAlvo.getName() + "." + nomeSimples);
+    private SAttribute createAttributeIntoTypeInternal(SType<?> targetType, String attributeSimpleName, boolean selfReference,
+            SType<?> attributeType) {
+        getDictionary().getTypesInternal().verifyMustNotBePresent(targetType.getName() + "." + attributeSimpleName);
 
-        MAtributo novo = tipoAlvo.registerType(new MAtributo(nomeSimples, tipoAtributo, tipoAlvo, selfReference), null);
-        tipoAlvo.addAtributo(novo);
-        return novo;
+        SAttribute attribute = targetType.registerType(new SAttribute(attributeSimpleName, attributeType, targetType, selfReference), null);
+        targetType.addAttribute(attribute);
+        return attribute;
     }
 
-    public <I extends SInstance, T extends SType<I>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr) {
+    public <I extends SInstance, T extends SType<I>> SAttribute createAttributeType(AtrRef<T, ?, ?> atr) {
         if (atr.isSelfReference()) {
             throw new RuntimeException("Não pode ser criado um atributo global que seja selfReference");
         }
-        return createTipoAtributo(atr, getDicionario().getType(atr.getClasseTipo()));
+        return createAttributeType(atr, getDictionary().getType(atr.getTypeClass()));
     }
 
-    private <T extends SType<?>> MAtributo createTipoAtributo(AtrRef<T, ?, ?> atr, T tipoAtributo) {
-        resolverBind(pacote, null, atr, tipoAtributo);
-        getDicionario().getTiposInterno().vericaNaoDeveEstarPresente(atr.getNomeCompleto());
+    private <T extends SType<?>> SAttribute createAttributeType(AtrRef<T, ?, ?> atr, T attributeType) {
+        resolveBind(sPackage, null, atr, attributeType);
+        getDictionary().getTypesInternal().verifyMustNotBePresent(atr.getNameFull());
 
-        MAtributo novo = new MAtributo(atr.getNomeSimples(), tipoAtributo);
-        return pacote.registerType(novo, null);
+        SAttribute attribute = new SAttribute(atr.getNameSimple(), attributeType);
+        return sPackage.registerType(attribute, null);
     }
-    
-    private void resolverBind(MEscopo escopo, Class<SType> classeDono, AtrRef<?, ?, ?> atr, SType tipoAtributo) {
-        if (atr.getClassePacote() == pacote.getClass()) {
-            atr.bind(escopo.getName());
+
+    private void resolveBind(SScope scope, Class<SType<?>> ownerTypeClass, AtrRef<?, ?, ?> atr, SType<?> attributeType) {
+        if (atr.getPackageClass() == sPackage.getClass()) {
+            atr.bind(scope.getName());
         } else {
-            throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNomeSimples() + "' do pacote " + atr.getClassePacote().getName()
- + " durante a construção do pacote " + pacote.getName());
+            throw new RuntimeException("Tentativa de criar o atributo '" + atr.getNameSimple() + "' do pacote "
+                    + atr.getPackageClass().getName() + " durante a construção do pacote " + sPackage.getName());
         }
-        if (!atr.isSelfReference() && !(atr.getClasseTipo().isInstance(tipoAtributo))) {
-            throw new RuntimeException("O atributo " + atr.getNomeCompleto() + " esperava ser do tipo " + atr.getClasseTipo().getName()
-                    + " mas foi associado a uma instância de " + tipoAtributo.getClass().getName());
+        if (!atr.isSelfReference() && !(atr.getTypeClass().isInstance(attributeType))) {
+            throw new RuntimeException("O atributo " + atr.getNameFull() + " esperava ser do tipo " + atr.getTypeClass().getName()
+                    + " mas foi associado a uma instância de " + attributeType.getClass().getName());
         }
     }
 
     public void debug() {
-        getDicionario().debug();
-    }
-
-    public interface ManipuladorAtributo<K> {
-
-        public default K withValorInicial(Object valor) {
-            return with(SPackageCore.ATR_VALOR_INICIAL, valor);
-        }
-
-        public default K withDefaultValueIfNull(Object valor) {
-            return with(SPackageCore.ATR_DEFAULT_IF_NULL, valor);
-        }
-
-        public default K withObrigatorio(Boolean valor) {
-            return with(SPackageCore.ATR_OBRIGATORIO, valor);
-        }
-
-        public default K with(AtrRef<?, ?, ?> atributo, Object valor) {
-            return with(atributo.getNomeSimples(), valor);
-        }
-
-        public K with(String pathAtributo, Object valor);
+        getDictionary().debug();
     }
 }

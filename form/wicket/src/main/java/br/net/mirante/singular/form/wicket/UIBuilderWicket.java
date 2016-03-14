@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket;
 
 import java.util.Collection;
@@ -12,39 +17,39 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.SingularFormException;
-import br.net.mirante.singular.form.mform.basic.view.MBooleanRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MDateTimerView;
-import br.net.mirante.singular.form.mform.basic.view.MListMasterDetailView;
-import br.net.mirante.singular.form.mform.basic.view.MPanelListaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorCheckView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorPicklistView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoMultiplaPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorModalBuscaView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorRadioView;
-import br.net.mirante.singular.form.mform.basic.view.MSelecaoPorSelectView;
-import br.net.mirante.singular.form.mform.basic.view.MTabView;
-import br.net.mirante.singular.form.mform.basic.view.MTableListaView;
-import br.net.mirante.singular.form.mform.basic.view.MTextAreaView;
-import br.net.mirante.singular.form.mform.basic.view.MView;
+import br.net.mirante.singular.form.mform.basic.view.SViewBooleanByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByMasterDetail;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByForm;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByCheckboxView;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionByPicklistView;
+import br.net.mirante.singular.form.mform.basic.view.SMultiSelectionBySelectView;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySearchModal;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionByRadio;
+import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
+import br.net.mirante.singular.form.mform.basic.view.SViewTab;
+import br.net.mirante.singular.form.mform.basic.view.SViewListByTable;
+import br.net.mirante.singular.form.mform.basic.view.SViewTextArea;
+import br.net.mirante.singular.form.mform.basic.view.SView;
 import br.net.mirante.singular.form.mform.basic.view.ViewMapperRegistry;
 import br.net.mirante.singular.form.mform.basic.view.ViewResolver;
 import br.net.mirante.singular.form.mform.context.UIBuilder;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
-import br.net.mirante.singular.form.mform.core.STypeData;
-import br.net.mirante.singular.form.mform.core.STypeDataHora;
+import br.net.mirante.singular.form.mform.core.STypeDate;
+import br.net.mirante.singular.form.mform.core.STypeDateHour;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeLatitudeLongitude;
-import br.net.mirante.singular.form.mform.core.STypeMonetario;
+import br.net.mirante.singular.form.mform.core.STypeMonetary;
 import br.net.mirante.singular.form.mform.core.STypeString;
 import br.net.mirante.singular.form.mform.core.annotation.AtrAnnotation;
 import br.net.mirante.singular.form.mform.core.attachment.STypeAttachment;
-import br.net.mirante.singular.form.mform.util.comuns.STypeAnoMes;
-import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.comuns.STypeYearMonth;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
 import br.net.mirante.singular.form.wicket.mapper.BooleanMapper;
 import br.net.mirante.singular.form.wicket.mapper.DateMapper;
@@ -102,7 +107,7 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     private IWicketComponentMapper resolveMapper(SInstance instancia) {
 
         final UIComponentMapper customMapper = instancia.getType().getCustomMapper();
-        final MView view = ViewResolver.resolve(instancia);
+        final SView view = ViewResolver.resolve(instancia);
 
         if (customMapper != null) {
             if (customMapper instanceof IWicketComponentMapper) {
@@ -120,34 +125,34 @@ public class UIBuilderWicket implements UIBuilder<IWicketComponentMapper> {
     protected ViewMapperRegistry<IWicketComponentMapper> newViewMapperRegistry() {
         //@formatter:off
         return new ViewMapperRegistry<IWicketComponentMapper>()
-                .register(STypeSimple.class,    MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(STypeSimple.class,    MSelecaoPorSelectView.class, SelectMapper::new)
+                .register(STypeSimple.class,    SViewSelectionByRadio.class,            RadioMapper::new)
+                .register(STypeSimple.class,    SViewSelectionBySelect.class, SelectMapper::new)
                 .register(STypeBoolean.class,                                           BooleanMapper::new)
-                .register(STypeBoolean.class,    MBooleanRadioView.class,               BooleanRadioMapper::new)
+                .register(STypeBoolean.class,    SViewBooleanByRadio.class,               BooleanRadioMapper::new)
                 .register(STypeInteger.class,                                           IntegerMapper::new)
                 .register(STypeString.class,                                            StringMapper::new)
-                .register(STypeString.class,     MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(STypeString.class,     MTextAreaView.class,                   TextAreaMapper::new)
-                .register(STypeData.class,                                              DateMapper::new)
-                .register(STypeAnoMes.class,                                            YearMonthMapper::new)
+                .register(STypeString.class,     SViewSelectionBySearchModal.class,       SelectModalBuscaMapper::new)
+                .register(STypeString.class,     SViewTextArea.class,                   TextAreaMapper::new)
+                .register(STypeDate.class,                                              DateMapper::new)
+                .register(STypeYearMonth.class,                                            YearMonthMapper::new)
                 .register(STypeDecimal.class,                                           DecimalMapper::new)
-                .register(STypeMonetario.class,                                         MonetarioMapper::new)
+                .register(STypeMonetary.class,                                         MonetarioMapper::new)
                 .register(STypeAttachment.class,                                        AttachmentMapper::new)
                 .register(STypeLatitudeLongitude.class,                                 LatitudeLongitudeMapper::new)
                 .register(STypeComposite.class,                                          DefaultCompostoMapper::new)
-                .register(STypeComposite.class,   MTabView.class,                        TabMapper::new)
-                .register(STypeComposite.class,   MSelecaoPorRadioView.class,            RadioMapper::new)
-                .register(STypeComposite.class,   MSelecaoPorSelectView.class,           SelectMapper::new)
-                .register(STypeComposite.class,   MSelecaoPorModalBuscaView.class,       SelectModalBuscaMapper::new)
-                .register(STypeLista.class,      MSelecaoMultiplaPorSelectView.class,   MultipleSelectBSMapper::new)
-                .register(STypeLista.class,      MSelecaoMultiplaPorCheckView.class,    MultipleCheckMapper::new)
-                .register(STypeLista.class,      MSelecaoMultiplaPorPicklistView.class, PicklistMapper::new)
-                .register(STypeLista.class,                                             TableListMapper::new)
-                .register(STypeLista.class,      MTableListaView.class,                 TableListMapper::new)
-                .register(STypeLista.class,      MPanelListaView.class,                 PanelListaMapper::new)
-                .register(STypeLista.class,      MListMasterDetailView.class,           ListMasterDetailMapper::new)
-                .register(STypeDataHora.class,                                          DateTimeMapper::new)
-                .register(STypeDataHora.class,   MDateTimerView.class,                  DateTimeMapper::new)
+                .register(STypeComposite.class,   SViewTab.class,                        TabMapper::new)
+                .register(STypeComposite.class,   SViewSelectionByRadio.class,            RadioMapper::new)
+                .register(STypeComposite.class,   SViewSelectionBySelect.class,           SelectMapper::new)
+                .register(STypeComposite.class,   SViewSelectionBySearchModal.class,       SelectModalBuscaMapper::new)
+                .register(STypeList.class,      SMultiSelectionBySelectView.class,   MultipleSelectBSMapper::new)
+                .register(STypeList.class,      SMultiSelectionByCheckboxView.class,    MultipleCheckMapper::new)
+                .register(STypeList.class,      SMultiSelectionByPicklistView.class, PicklistMapper::new)
+                .register(STypeList.class,                                             TableListMapper::new)
+                .register(STypeList.class,      SViewListByTable.class,                 TableListMapper::new)
+                .register(STypeList.class,      SViewListByForm.class,                 PanelListaMapper::new)
+                .register(STypeList.class,      SViewListByMasterDetail.class,           ListMasterDetailMapper::new)
+                .register(STypeDateHour.class,                                          DateTimeMapper::new)
+                .register(STypeDateHour.class,   SViewDateTime.class,                  DateTimeMapper::new)
                 .register(STypeTelefoneNacional.class,                                  TelefoneNacionalMapper::new);
         //@formatter:on
     }

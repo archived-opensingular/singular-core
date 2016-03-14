@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.custom.comment;
 
 import br.net.mirante.singular.form.mform.SIComposite;
@@ -29,7 +34,7 @@ public class PageWithAnnotation {
     }
 
     public void saveAnnotations(SIComposite pedido){
-        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getType().getPacote();
+        CaseAnnotationPackage pacote = (CaseAnnotationPackage) pedido.getType().getPackage();
 
         /**
          * Anotações são armazenadas junto a cada campo onde a mesma está habilitada.

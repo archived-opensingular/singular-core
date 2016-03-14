@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.model;
 
 import java.util.List;
@@ -39,7 +44,7 @@ public class MInstanciaValorModel<T>
         SInstance target = getTarget();
         if (target instanceof SIList) {
             ((SIList) target).clear();
-            ((List) object).forEach(((SIList) target)::addValor);
+            ((List) object).forEach(((SIList) target)::addValue);
         } else {
             target.setValue(object);
         }
@@ -50,9 +55,9 @@ public class MInstanciaValorModel<T>
     public Class<T> getObjectClass() {
         SType<?> mtipo = getTarget().getType();
         if (mtipo instanceof STypeSimple<?, ?>) {
-            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getClasseTipoNativo();
+            return (Class<T>) ((STypeSimple<?, ?>) mtipo).getValueClass();
         }
-        return (Class<T>) mtipo.getClasseInstancia();
+        return (Class<T>) mtipo.getInstanceClass();
     }
 
     @Override

@@ -3,12 +3,12 @@ package br.net.mirante.singular.form.mform;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.util.comuns.STypeTelefoneNacional;
+import br.net.mirante.singular.form.mform.util.brasil.STypeTelefoneNacional;
 
 public class SPackageTesteContatos extends SPackage {
 
     public STypeComposite<?> contato;
-    public STypeLista<STypeComposite<SIComposite>, SIComposite> enderecos;
+    public STypeList<STypeComposite<SIComposite>, SIComposite> enderecos;
     public STypeComposite<?> identificacao;
     public STypeString nome;
     public STypeString sobrenome;
@@ -18,9 +18,9 @@ public class SPackageTesteContatos extends SPackage {
     public STypeString enderecoComplemento;
     public STypeString enderecoCidade;
     public STypeString enderecoEstado;
-    public STypeLista<STypeTelefoneNacional, SIString> telefones;
+    public STypeList<STypeTelefoneNacional, SIString> telefones;
     public STypeTelefoneNacional telefone;
-    public STypeLista<STypeString, SIString> emails;
+    public STypeList<STypeString, SIString> emails;
     public STypeString email;
 
     public SPackageTesteContatos() {
@@ -29,11 +29,11 @@ public class SPackageTesteContatos extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        contato = pb.createTipoComposto("Contato");
+        contato = pb.createCompositeType("Contato");
 
-        identificacao = contato.addCampoComposto("identificacao");
-        nome = identificacao.addCampoString("nome", true);
-        sobrenome = identificacao.addCampoString("sobrenome");
+        identificacao = contato.addFieldComposite("identificacao");
+        nome = identificacao.addFieldString("nome", true);
+        sobrenome = identificacao.addFieldString("sobrenome");
 //        sobrenome.as(MPacoteBasic.aspect())
 //            .visivel(i -> {
 //                boolean visible = i.findAncestor(contato).get().findDescendant(nome).get().getValor() == null;
@@ -42,17 +42,17 @@ public class SPackageTesteContatos extends SPackage {
 //            })
 //            .enabled(i -> defaultString(i.findAncestor(contato).get().findDescendant(nome).get().getValor()).length() > 3);
 
-        enderecos = contato.addCampoListaOfComposto("enderecos", "endereco");
-        endereco = enderecos.getTipoElementos();
-        enderecoLogradouro = endereco.addCampoString("logradouro");
-        enderecoComplemento = endereco.addCampoString("complemento");
-        enderecoNumero = endereco.addCampoInteger("numero");
-        enderecoCidade = endereco.addCampoString("cidade");
-        enderecoEstado = endereco.addCampoString("estado");
+        enderecos = contato.addFieldListOfComposite("enderecos", "endereco");
+        endereco = enderecos.getElementsType();
+        enderecoLogradouro = endereco.addFieldString("logradouro");
+        enderecoComplemento = endereco.addFieldString("complemento");
+        enderecoNumero = endereco.addFieldInteger("numero");
+        enderecoCidade = endereco.addFieldString("cidade");
+        enderecoEstado = endereco.addFieldString("estado");
 
-        telefones = contato.addCampoListaOf("telefones", STypeTelefoneNacional.class);
-        telefone = telefones.getTipoElementos();
-        emails = contato.addCampoListaOf("emails", STypeString.class);
-        email = emails.getTipoElementos();
+        telefones = contato.addFieldListOf("telefones", STypeTelefoneNacional.class);
+        telefone = telefones.getElementsType();
+        emails = contato.addFieldListOf("emails", STypeString.class);
+        email = emails.getElementsType();
     }
 }

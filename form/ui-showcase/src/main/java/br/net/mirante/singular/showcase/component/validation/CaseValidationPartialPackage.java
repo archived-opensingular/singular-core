@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.validation;
 
 import br.net.mirante.singular.form.mform.PackageBuilder;
@@ -11,16 +16,16 @@ public class CaseValidationPartialPackage extends SPackage {
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
 
-        STypeComposite<?> testForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> testForm = pb.createCompositeType("testForm");
 
         //@destacar
-        testForm.addCampoString("obrigatorio_1")
+        testForm.addFieldString("obrigatorio_1")
                 .as(AtrBasic::new).label("Obrigatorio 1")
                 .as(AtrCore::new).obrigatorio();
-        testForm.addCampoInteger("obrigatorio_2")
+        testForm.addFieldInteger("obrigatorio_2")
                 .as(AtrBasic::new).label("Obrigatorio 2")
                 .as(AtrCore::new).obrigatorio();
-        testForm.addCampoString("obrigatorio_3")
+        testForm.addFieldString("obrigatorio_3")
                 .as(AtrBasic::new).label("Obrigatorio 3")
                 .as(AtrCore::new).obrigatorio();
 

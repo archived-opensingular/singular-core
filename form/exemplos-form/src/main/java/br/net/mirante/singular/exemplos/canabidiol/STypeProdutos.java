@@ -1,21 +1,26 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.exemplos.canabidiol;
 
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
-import br.net.mirante.singular.form.mform.MInfoTipo;
 import br.net.mirante.singular.form.mform.SIComposite;
+import br.net.mirante.singular.form.mform.SInfoType;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.form.mform.TypeBuilder;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.core.SIString;
 import br.net.mirante.singular.lambda.IFunction;
 
-@MInfoTipo(nome = "MTipoProdutos", pacote = SPackagePeticaoCanabidiol.class)
+@SInfoType(spackage = SPackagePeticaoCanabidiol.class)
 public class STypeProdutos extends STypeComposite<SIComposite> {
 
 
@@ -23,9 +28,9 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
     protected void onLoadType(TypeBuilder tb) {
         super.onLoadType(tb);
 
-        final STypeLista<STypeDescricaoProduto, SIComposite> experiencias = this.addCampoListaOf("produtos", STypeDescricaoProduto.class);
+        final STypeList<STypeDescricaoProduto, SIComposite> experiencias = this.addFieldListOf("produtos", STypeDescricaoProduto.class);
 
-        STypeDescricaoProduto desc = experiencias.getTipoElementos();
+        STypeDescricaoProduto desc = experiencias.getElementsType();
         String nomeCompletoOutroComposicao = desc.getOutroComposicao().getName();
 
         final IFunction<SInstance, String> customDisplayFunction = (ins) -> {
@@ -33,12 +38,12 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
                 final SType outroComposicao = ins.getDictionary().getType(nomeCompletoOutroComposicao);
                 final Optional<SIString> nearest = ins.findNearest(outroComposicao);
                 if (nearest.isPresent()) {
-                    return nearest.get().getDisplayString();
+                    return nearest.get().toStringDisplay();
                 } else {
                     return StringUtils.EMPTY;
                 }
             } else {
-                return ins.getDisplayString();
+                return ins.toStringDisplay();
             }
         };
 
@@ -49,6 +54,6 @@ public class STypeProdutos extends STypeComposite<SIComposite> {
                 // .col(desc.getComposicao(), customDisplayFunction)
                 // .col(desc.getDescricaoQuantidade(), "Quantidade Solicitada"))
                 .as(AtrBasic::new)
-                .label("Descrição do Produto");
+.label("Descrição do Produto");
     }
 }

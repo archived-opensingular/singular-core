@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform;
 
 import java.util.Collection;
@@ -15,38 +20,38 @@ public interface ICompositeInstance {
 
     public Stream<? extends SInstance> stream();
 
-    public void setValor(String pathCampo, Object valor);
+    public void setValue(String pathCampo, Object valor);
 
-    public default Object getValor(String pathCampo) {
-        return getValor(pathCampo, null);
+    public default Object getValue(String fieldPath) {
+        return getValue(fieldPath, null);
     }
 
-    public <T extends Object> T getValor(String pathCampo, Class<T> classeDestino);
+    public <T extends Object> T getValue(String fieldPath, Class<T> resultClass);
 
-    public default Optional<Object> getValorOpt(String pathCampo) {
-        return getValorOpt(pathCampo, null);
+    public default Optional<Object> getValueOpt(String fieldPath) {
+        return getValueOpt(fieldPath, null);
     }
 
-    public default <T extends Object> Optional<T> getValorOpt(String pathCampo, Class<T> classeDestino) {
-        return Optional.ofNullable(getValor(pathCampo, classeDestino));
+    public default <T extends Object> Optional<T> getValueOpt(String fieldPath, Class<T> resultClass) {
+        return Optional.ofNullable(getValue(fieldPath, resultClass));
     }
 
-    public default boolean isCampoNull(String pathCampo) {
+    public default boolean isFieldNull(String fieldPath) {
         // TODO (de Daniel) Esse metodo precisa ser repensado
-        return getValor(pathCampo) == null;
+        return getValue(fieldPath) == null;
     }
 
-    public SInstance getCampo(String path);
+    public SInstance getField(String path);
 
     public default <T extends SInstance> T getField(String path, Class<T> typeOfInstance) {
-        SInstance instancia = getCampo(path);
+        SInstance instancia = getField(path);
         if (instancia == null) {
             return null;
         } else if (typeOfInstance.isInstance(instancia)) {
             return typeOfInstance.cast(instancia);
         }
         throw new RuntimeException("'" + path + "' + retornou uma instancia do tipo " + instancia.getClass().getName()
-            + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
+                + ", que não é compatível com o tipo solicitado " + typeOfInstance.getName());
     }
 
     /**
@@ -58,7 +63,7 @@ public interface ICompositeInstance {
      *         ainda.
      */
     public default SIComposite getFieldRecord(String path) {
-        SInstance instancia = getCampo(path);
+        SInstance instancia = getField(path);
         if (instancia != null && !(instancia instanceof SIComposite)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
                 + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIComposite.class.getName());
@@ -80,12 +85,12 @@ public interface ICompositeInstance {
         SIList<?> lista = getFieldList(path);
         if (lista == null) {
             return null;
-        } else if (typeOfInstanceElements.isAssignableFrom(lista.getTipoElementos().getClasseInstancia())) {
+        } else if (typeOfInstanceElements.isAssignableFrom(lista.getElementsType().getInstanceClass())) {
             return (SIList<T>) lista;
         }
         throw new RuntimeException(
-            "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getTipoElementos().getClasseInstancia().getName()
-                + ", que não é compatível com o tipo solicitado " + typeOfInstanceElements.getName());
+            "'" + path + "' + retornou uma lista cujos as instancia do tipo " + lista.getElementsType().getInstanceClass().getName()
+                        + ", que não é compatível com o tipo solicitado " + typeOfInstanceElements.getName());
     }
 
     /**
@@ -97,7 +102,7 @@ public interface ICompositeInstance {
      *         ainda.
      */
     public default SIList<?> getFieldList(String path) {
-        SInstance instancia = getCampo(path);
+        SInstance instancia = getField(path);
         if (instancia != null && !(instancia instanceof SIList)) {
             throw new RuntimeException("'" + path + "' retornou um instancia da classe " + instancia.getClass().getName()
                 + " referente ao tipo " + instancia.getType().getName() + " em vez de " + SIList.class.getName());
@@ -105,17 +110,17 @@ public interface ICompositeInstance {
         return (SIList<?>) instancia;
     }
 
-    public default String getValorString(String pathCampo) {
-        return getValor(pathCampo, String.class);
+    public default String getValueString(String fieldPath) {
+        return getValue(fieldPath, String.class);
     }
 
-    public default Integer getValorInteger(String pathCampo) { return getValor(pathCampo, Integer.class);}
+    public default Integer getValueInteger(String fieldPath) { return getValue(fieldPath, Integer.class);}
 
-    public default Boolean getValorBoolean(String pathCampo) { return getValor(pathCampo, Boolean.class);}
+    public default Boolean getValueBoolean(String fieldPath) { return getValue(fieldPath, Boolean.class);}
 
-    public default <T extends Enum<T>> T getValorEnum(String pathCampo, Class<T> enumType) {
+    public default <T extends Enum<T>> T getValueEnum(String fieldPath, Class<T> enumType) {
         // TODO (de Daniel) Esse metodo precisa ser repensado
-        String valor = getValorString(pathCampo);
+        String valor = getValueString(fieldPath);
         if (valor != null) {
             return Enum.valueOf(enumType, valor);
         }
@@ -123,26 +128,26 @@ public interface ICompositeInstance {
     }
 
     public default <D extends SInstance> D getDescendant(SType<D> descendantType) {
-        return MInstances.getDescendant((SInstance) this, descendantType);
+        return SInstances.getDescendant((SInstance) this, descendantType);
     }
     public default <D extends SInstance> Optional<D> findDescendant(SType<D> descendantType) {
-        return MInstances.findDescendant((SInstance) this, descendantType);
+        return SInstances.findDescendant((SInstance) this, descendantType);
     }
     public default <D extends SInstance> List<D> listDescendants(SType<D> descendantType) {
-        return MInstances.listDescendants((SInstance) this, descendantType);
+        return SInstances.listDescendants((SInstance) this, descendantType);
     }
     public default <D extends SInstance, V> List<V> listDescendants(SType<?> descendantType, Function<D, V> function) {
-        return MInstances.listDescendants((SInstance) this, descendantType, function);
+        return SInstances.listDescendants((SInstance) this, descendantType, function);
     }
     @SuppressWarnings("unchecked")
     public default <V> List<V> listDescendantValues(SType<?> descendantType, Class<V> valueType) {
-        return MInstances.listDescendants((SInstance) this, descendantType, node -> (V) node.getValue());
+        return SInstances.listDescendants((SInstance) this, descendantType, node -> (V) node.getValue());
     }
     public default Stream<SInstance> streamDescendants(boolean includeRoot) {
-        return MInstances.streamDescendants((SInstance) this, includeRoot);
+        return SInstances.streamDescendants((SInstance) this, includeRoot);
     }
     public default <D extends SInstance> Stream<D> streamDescendants(SType<D> descendantType, boolean includeRoot) {
-        return MInstances.streamDescendants((SInstance) this, includeRoot, descendantType);
+        return SInstances.streamDescendants((SInstance) this, includeRoot, descendantType);
     }
 
 }

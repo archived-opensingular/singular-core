@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.validation;
 
 import java.util.Optional;
@@ -24,7 +29,7 @@ public class PartialValidationButton extends AjaxButton {
 
     //@destacar:bloco
     protected void addValidationErrors(Form<?> form, SInstance instance) {
-        final SInstance obrigatorio1 = ((SIComposite) instance).getCampo("obrigatorio_1");
+        final SInstance obrigatorio1 = ((SIComposite) instance).getField("obrigatorio_1");
         InstanceValidationContext validationContext = new InstanceValidationContext(obrigatorio1);
         validationContext.validateSingle();
         WicketFormProcessing.associateErrorsToComponents(validationContext, form, new MInstanceRootModel<>(obrigatorio1));

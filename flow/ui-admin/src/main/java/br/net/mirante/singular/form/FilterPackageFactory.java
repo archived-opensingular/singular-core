@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form;
 
 import java.util.List;
@@ -27,7 +32,7 @@ public class FilterPackageFactory {
 
     public SType<?> createFilterPackage() {
         final PackageBuilder builder = SDictionary.create().createNewPackage("FilterPackage");
-        final STypeComposite<? extends SIComposite> filtro = builder.createTipoComposto("filter");
+        final STypeComposite<? extends SIComposite> filtro = builder.createCompositeType("filter");
         appendFilters(filtro);
         return filtro;
     }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.wicket.model;
 
 import org.apache.wicket.model.IDetachable;
@@ -6,7 +11,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.form.mform.STypeLista;
+import br.net.mirante.singular.form.mform.STypeList;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 
 public class MTipoElementosModel
@@ -26,9 +31,9 @@ public class MTipoElementosModel
     @SuppressWarnings("unchecked")
     public static SType<SInstance> getTipoElementos(Object obj) {
         if (obj instanceof SIList<?>)
-            return ((SIList<SInstance>) obj).getTipoElementos();
-        if (obj instanceof STypeLista<?, ?>)
-            return ((STypeLista<SType<SInstance>, SInstance>) obj).getTipoElementos();
+            return ((SIList<SInstance>) obj).getElementsType();
+        if (obj instanceof STypeList<?, ?>)
+            return ((STypeList<SType<SInstance>, SInstance>) obj).getElementsType();
         if (obj instanceof IModel<?>)
             return getTipoElementos(((IModel<?>) obj).getObject());
 

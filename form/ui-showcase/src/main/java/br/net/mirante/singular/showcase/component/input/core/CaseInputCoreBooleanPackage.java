@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.showcase.component.input.core;
 
 import br.net.mirante.singular.form.mform.SPackage;
@@ -9,17 +14,17 @@ public class CaseInputCoreBooleanPackage extends SPackage {
 
     @Override
     protected void carregarDefinicoes(PackageBuilder pb) {
-        STypeComposite<?> tipoMyForm = pb.createTipoComposto("testForm");
+        STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
-        tipoMyForm.addCampoBoolean("aceitaTermos")
+        tipoMyForm.addFieldBoolean("aceitaTermos")
             .asAtrBasic().label("Aceito os termos e condições");
 
-        tipoMyForm.addCampoBoolean("receberNotificacoes")
+        tipoMyForm.addFieldBoolean("receberNotificacoes")
             //@destacar
             .withRadioView()
             .asAtrBasic().label("Receber notificações");
 
-        tipoMyForm.addCampoBoolean("aceitaTermos2")
+        tipoMyForm.addFieldBoolean("aceitaTermos2")
             //@destacar
             .withRadioView("Aceito", "Rejeito")
             .asAtrBasic().label("Aceito os termos e condições");

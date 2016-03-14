@@ -12,7 +12,7 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeComposite;
 import br.net.mirante.singular.form.mform.STypeSimple;
 import br.net.mirante.singular.form.mform.core.STypeString;
-import br.net.mirante.singular.form.mform.options.MOptionsProvider;
+import br.net.mirante.singular.form.mform.options.SOptionsProvider;
 import br.net.mirante.singular.form.mform.util.transformer.Value;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findId;
 import static br.net.mirante.singular.form.wicket.helpers.TestFinders.findTag;
@@ -28,27 +28,27 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     SType createSelectionType(STypeComposite group) {
-        selectType = (STypeComposite) group.addCampoComposto("originUF");
-        idUF = selectType.addCampoString("id");
-        nomeUF = selectType.addCampoString("nome");
+        selectType = (STypeComposite) group.addFieldComposite("originUF");
+        idUF = selectType.addFieldString("id");
+        nomeUF = selectType.addFieldString("nome");
         return selectType;
     }
 
 
     private SIComposite newSelectItem(String id, String descricao) {
-        SIComposite instancia = (SIComposite) selectType.novaInstancia();
-        instancia.setValor("id", id);
-        instancia.setValor("nome", descricao);
+        SIComposite instancia = (SIComposite) selectType.newInstance();
+        instancia.setValue("id", id);
+        instancia.setValue("nome", descricao);
         return instancia;
     }
 
-    private MOptionsProvider newProviderFrom(SIComposite... compostos) {
-        return new MOptionsProvider() {
+    private SOptionsProvider newProviderFrom(SIComposite... compostos) {
+        return new SOptionsProvider() {
             @Override
             public SIList<? extends SInstance> listOptions(SInstance optionsInstance) {
-                SIList lista = selectType.novaLista();
+                SIList lista = selectType.newList();
                 for (SIComposite composto : compostos) {
-                    SInstance instancia = lista.addNovo();
+                    SInstance instancia = lista.addNew();
                     Object value = Value.dehydrate(composto);
                     Value.hydrate(instancia, value);
                 }
@@ -105,8 +105,8 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     public void rendersAnDropDownWithDanglingOptions() {
         setupPage();
         SIComposite value = currentSelectionInstance();
-        value.setValor("id", "GO");
-        value.setValor("nome", "Goias");
+        value.setValue("id", "GO");
+        value.setValue("nome", "Goias");
         selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
         buildPage();
         driver.assertEnabled(formField(form, "originUF"));
@@ -131,19 +131,19 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         SIComposite value = currentSelectionInstance();
-        assertThat(value.getValor(idUF)).isEqualTo("DF");
+        assertThat(value.getValue(idUF)).isEqualTo("DF");
     }
 
     @Test
     public void alsoWorksWhenFieldIsMandatory() {
         setupPage();
         selectType.withSelectionFromProvider(nomeUF, newProviderFrom(newSelectItem("DF", "Distrito Federal"), newSelectItem("SP", "São Paulo")));
-        selectType.withObrigatorio(true);
+        selectType.withRequired(true);
         buildPage();
         form.select(findId(form.getForm(), "originUF").get(), 0);
         form.submit("save-btn");
         SIComposite value = currentSelectionInstance();
-        assertThat(value.getValor(idUF)).isEqualTo("DF");
+        assertThat(value.getValue(idUF)).isEqualTo("DF");
     }
 
     @Test
@@ -169,7 +169,7 @@ public class STypeSelectItemSelectionFieldTest extends SelectionFieldBaseTest {
     }
 
     private SInstance getInstanciaSelect() {
-        return page.getCurrentInstance().getCampo("originUF");
+        return page.getCurrentInstance().getField("originUF");
     }
 
 }

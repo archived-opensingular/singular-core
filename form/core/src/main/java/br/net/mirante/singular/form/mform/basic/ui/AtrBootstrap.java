@@ -1,51 +1,63 @@
+/*
+ * Copyright (c) 2016, Mirante and/or its affiliates. All rights reserved.
+ * Mirante PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ */
+
 package br.net.mirante.singular.form.mform.basic.ui;
 
 import java.util.function.Function;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import br.net.mirante.singular.form.mform.MAtributoEnabled;
-import br.net.mirante.singular.form.mform.MTranslatorParaAtributo;
+import br.net.mirante.singular.form.mform.SAttributeEnabled;
+import br.net.mirante.singular.form.mform.STranslatorForAttribute;
 import br.net.mirante.singular.form.mform.core.SPackageBootstrap;
 
-public class AtrBootstrap extends MTranslatorParaAtributo {
+public class AtrBootstrap extends STranslatorForAttribute {
 
-    public AtrBootstrap() {}
-    public AtrBootstrap(MAtributoEnabled alvo) {
+    public AtrBootstrap() {
+    }
+
+    public AtrBootstrap(SAttributeEnabled alvo) {
         super(alvo);
     }
 
-    public static <A extends MAtributoEnabled> Function<A, AtrBootstrap> factory() {
+    public static <A extends SAttributeEnabled> Function<A, AtrBootstrap> factory() {
         return AtrBootstrap::new;
     }
 
     public AtrBootstrap colPreference(Integer valor) {
-        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colXs(Integer valor) {
-        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colSm(Integer valor) {
-        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colMd(Integer valor) {
-        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE, valor);
         return this;
     }
 
     public AtrBootstrap colLg(Integer valor) {
-        getAlvo().setValorAtributo(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE, valor);
+        return this;
+    }
+
+    public AtrBootstrap onNewRow(Boolean valor) {
+        getTarget().setAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW, valor);
         return this;
     }
 
     public Integer getColPreference() {
-        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_PREFERENCE);
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_PREFERENCE);
     }
 
     public Integer getColPreference(Integer defaultValue) {
@@ -53,7 +65,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColXs() {
-        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_XS_PREFERENCE);
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_XS_PREFERENCE);
     }
 
     public Integer getColXs(Integer defaultValue) {
@@ -61,7 +73,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColSm() {
-        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_SM_PREFERENCE);
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_SM_PREFERENCE);
     }
 
     public Integer getColSm(Integer defaultValue) {
@@ -69,7 +81,7 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColMd() {
-        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_MD_PREFERENCE);
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_MD_PREFERENCE);
     }
 
     public Integer getColMd(Integer defaultValue) {
@@ -77,10 +89,18 @@ public class AtrBootstrap extends MTranslatorParaAtributo {
     }
 
     public Integer getColLg() {
-        return getAlvo().getValorAtributo(SPackageBootstrap.ATR_COL_LG_PREFERENCE);
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_LG_PREFERENCE);
     }
 
     public Integer getColLg(Integer defaultValue) {
         return ObjectUtils.defaultIfNull(getColLg(), defaultValue);
+    }
+
+    public Boolean getOnNewRow(Boolean defaultValue) {
+        return ObjectUtils.defaultIfNull(getOnNewRow(), defaultValue);
+    }
+
+    public Boolean getOnNewRow() {
+        return getTarget().getAttributeValue(SPackageBootstrap.ATR_COL_ON_NEW_ROW);
     }
 }

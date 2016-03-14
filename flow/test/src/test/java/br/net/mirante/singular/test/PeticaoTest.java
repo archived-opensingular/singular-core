@@ -249,7 +249,35 @@ public abstract class PeticaoTest extends TestSupport {
         assertEquals("Papel definido", lastHistories.get(1).getType().getDescription());
         assertEquals(user2, lastHistories.get(2).getAllocatedUser());
         assertEquals("Alocação Automática", lastHistories.get(2).getType().getDescription());
+        assertNotNull(String.format("Descrição: %s não finalizada", lastHistories.get(2).getType().getDescription()), lastHistories.get(2).getEndDateAllocation());
         assertEquals("Papel definido", lastHistories.get(3).getType().getDescription());
+    }
+
+
+    @Test
+    public void allocationHistory() {
+        Actor user1 = testDAO.getSomeUser(1);
+        Actor user2 = testDAO.getSomeUser(2);
+
+        ProcessInstance ip = startInstance();
+        ip.getCurrentTask().relocateTask(null, user1, false, "Primeira...");
+        ip.getCurrentTask().relocateTask(null, user2, false, "Segunda...");
+        ip.getCurrentTask().relocateTask(null, user1, false, "Volta para o inicial...");
+
+        List<TaskInstanceHistoryEntity> lastHistories = testDAO.retrieveLastHistories(3);
+        assertNull(String.format("Descrição: %s Causa: %s finalizada incorretamente",
+                lastHistories.get(0).getType().getDescription(),
+                lastHistories.get(0).getDescription()),
+                lastHistories.get(0).getEndDateAllocation());
+        assertNotNull(String.format("Descrição: %s Causa: %s não finalizada",
+                lastHistories.get(1).getType().getDescription(),
+                lastHistories.get(1).getDescription()),
+                lastHistories.get(1).getEndDateAllocation());
+        assertNotNull(String.format("Descrição: %s Causa: %s não finalizada",
+                lastHistories.get(2).getType().getDescription(),
+                lastHistories.get(2).getDescription()),
+                lastHistories.get(2).getEndDateAllocation());
+
     }
 
     @Test
