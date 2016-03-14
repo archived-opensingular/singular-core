@@ -140,6 +140,7 @@ class FlowEngine {
 
     static TaskInstance executeTransition(TaskInstance tarefaAtual, String transitionName, VarInstanceMap<?> param) {
         MTransition transicao = searchTransition(tarefaAtual, transitionName);
+        tarefaAtual.endLastAllocation();
         return updateState(tarefaAtual.getProcessInstance(), tarefaAtual, transicao, transicao.getDestination(), param);
     }
 

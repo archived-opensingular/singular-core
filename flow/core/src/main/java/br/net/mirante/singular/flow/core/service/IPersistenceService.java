@@ -93,4 +93,6 @@ public interface IPersistenceService<DEFINITION_CATEGORY extends IEntityCategory
 
     List<PROCESS_INSTANCE> retrieveProcessInstancesWith(@NotNull PROCESS_DEF processVersion, @Nullable MUser creatingUser,
             @Nullable Boolean active);
+
+    void endLastAllocation(TASK_INSTANCE entityTaskInstance);
 }

@@ -14,6 +14,8 @@ public interface IEntityTaskInstanceHistory extends IEntityByCod<Integer> {
 
     Date getEndDateAllocation();
 
+    void setEndDateAllocation(Date endDateAllocation);
+
     MUser getAllocatedUser();
 
     MUser getAllocatorUser();
