@@ -1,7 +1,8 @@
 package br.net.mirante.singular.pet.server.spring;
 
-import br.net.mirante.singular.pet.module.spring.security.ServerContext;
-import br.net.mirante.singular.pet.module.wicket.PetApplication;
+import br.net.mirante.singular.pet.commons.spring.security.ServerContext;
+
+import br.net.mirante.singular.pet.commons.wicket.PetApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.web.WebApplicationInitializer;

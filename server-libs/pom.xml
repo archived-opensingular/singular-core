@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>singular-pet-commons</module>
         <module>singular-pet-module</module>
         <module>singular-pet-server</module>
     </modules>

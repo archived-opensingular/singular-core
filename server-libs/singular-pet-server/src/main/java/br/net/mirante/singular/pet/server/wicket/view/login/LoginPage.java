@@ -1,7 +1,6 @@
 package br.net.mirante.singular.pet.server.wicket.view.login;
 
-import br.net.mirante.singular.pet.module.spring.security.SecurityUtil;
-import br.net.mirante.singular.pet.module.wicket.PetApplication;
+import br.net.mirante.singular.pet.commons.spring.security.SecurityUtil;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.devutils.stateless.StatelessComponent;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -11,7 +10,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.protocol.http.WicketFilter;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;

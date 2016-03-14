@@ -1,6 +1,6 @@
 package br.net.mirante.singular.pet.server.wicket.view.home;
 
-import br.net.mirante.singular.pet.module.wicket.view.template.Content;
+import br.net.mirante.singular.pet.commons.wicket.view.template.Content;
 import org.apache.wicket.model.IModel;
 
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$m;

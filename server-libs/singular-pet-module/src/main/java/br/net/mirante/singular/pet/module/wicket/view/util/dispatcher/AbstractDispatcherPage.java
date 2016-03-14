@@ -19,13 +19,13 @@ import br.net.mirante.singular.flow.core.MTask;
 import br.net.mirante.singular.flow.core.MTaskUserExecutable;
 import br.net.mirante.singular.flow.core.TaskInstance;
 import br.net.mirante.singular.form.wicket.enums.ViewMode;
-import br.net.mirante.singular.pet.module.exception.SingularServerException;
-import br.net.mirante.singular.pet.module.flow.PetServerTaskPageStrategy;
-import br.net.mirante.singular.pet.module.flow.SingularWebRef;
-import br.net.mirante.singular.pet.module.wicket.SingularHeaderResponseDecorator;
-import br.net.mirante.singular.pet.module.wicket.view.behavior.SingularJSBehavior;
-import br.net.mirante.singular.pet.module.wicket.view.form.AbstractFormPage;
-import br.net.mirante.singular.pet.module.wicket.view.template.Template;
+import br.net.mirante.singular.pet.commons.exception.SingularServerException;
+import br.net.mirante.singular.pet.commons.flow.PetServerTaskPageStrategy;
+import br.net.mirante.singular.pet.commons.flow.SingularWebRef;
+import br.net.mirante.singular.pet.commons.wicket.view.SingularHeaderResponseDecorator;
+import br.net.mirante.singular.pet.commons.wicket.view.behavior.SingularJSBehavior;
+import br.net.mirante.singular.pet.commons.wicket.view.form.AbstractFormPage;
+import br.net.mirante.singular.pet.commons.wicket.view.template.Template;
 import static br.net.mirante.singular.util.wicket.util.WicketUtils.$b;
 
 @SuppressWarnings("serial")

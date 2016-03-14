@@ -36,8 +36,8 @@
     <dependencies>
         <dependency>
             <groupId>br.net.mirante</groupId>
-            <artifactId>singular-commons</artifactId>
-            <version>0.6.1-SNAPSHOT</version>
+            <artifactId>singular-pet-commons</artifactId>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
