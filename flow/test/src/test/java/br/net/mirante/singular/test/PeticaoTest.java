@@ -1,7 +1,7 @@
 package br.net.mirante.singular.test;
 
 
-import br.net.mirante.singular.definicao.Peticao;
+import br.net.mirante.singular.flow.test.definicao.Peticao;
 import br.net.mirante.singular.flow.core.ExecuteWaitingTasksJob;
 import br.net.mirante.singular.flow.core.Flow;
 import br.net.mirante.singular.flow.core.ProcessDefinitionCache;
@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.DEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.INDEFERIDO;
-import static br.net.mirante.singular.definicao.Peticao.PeticaoTask.PUBLICADO;
+import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.AGUARDANDO_PUBLICACAO;
+import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.DEFERIDO;
+import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.INDEFERIDO;
+import static br.net.mirante.singular.flow.test.definicao.Peticao.PeticaoTask.PUBLICADO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

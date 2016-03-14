@@ -14,7 +14,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import de.alpharogroup.wicket.js.addon.toastr.Position;
 import de.alpharogroup.wicket.js.addon.toastr.ShowMethod;
 import de.alpharogroup.wicket.js.addon.toastr.ToastJsGenerator;

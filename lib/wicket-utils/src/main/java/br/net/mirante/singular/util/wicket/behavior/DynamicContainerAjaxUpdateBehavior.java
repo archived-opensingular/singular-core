@@ -17,8 +17,8 @@ import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 
-import br.net.mirante.singular.lambda.IBiConsumer;
-import br.net.mirante.singular.lambda.ITriConsumer;
+import br.net.mirante.singular.commons.lambda.IBiConsumer;
+import br.net.mirante.singular.commons.lambda.ITriConsumer;
 import br.net.mirante.singular.util.wicket.util.IOnAfterPopulateItemConfigurable;
 
 

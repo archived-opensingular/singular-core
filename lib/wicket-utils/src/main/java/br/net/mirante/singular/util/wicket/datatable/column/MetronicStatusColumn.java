@@ -5,7 +5,7 @@
 
 package br.net.mirante.singular.util.wicket.datatable.column;
 
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.markup.html.basic.Label;

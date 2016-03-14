@@ -19,7 +19,7 @@ import org.apache.wicket.extensions.markup.html.repeater.tree.table.NodeModel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 
 public class BSTreeColumn<T, S> extends AbstractTreeColumn<T, S> {
 

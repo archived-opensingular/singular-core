@@ -15,9 +15,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 
-import br.net.mirante.singular.lambda.IConsumer;
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.IConsumer;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 import br.net.mirante.singular.util.wicket.model.IReadOnlyModel;
 import br.net.mirante.singular.util.wicket.model.ValueModel;
 

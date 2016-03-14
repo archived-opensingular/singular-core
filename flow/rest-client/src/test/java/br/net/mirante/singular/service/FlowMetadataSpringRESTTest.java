@@ -1,5 +1,6 @@
 package br.net.mirante.singular.service;
 
+import br.net.mirante.singular.rest.client.FlowMetadataSpringREST;
 import org.junit.Assert;
 import org.junit.Test;
 

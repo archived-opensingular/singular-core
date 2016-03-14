@@ -14,7 +14,7 @@ import java.util.Optional;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SType;
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 
 /**
  * <p>

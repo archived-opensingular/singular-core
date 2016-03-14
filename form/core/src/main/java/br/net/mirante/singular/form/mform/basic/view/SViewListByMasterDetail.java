@@ -11,7 +11,7 @@ import java.util.List;
 
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.STypeSimple;
-import br.net.mirante.singular.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.IFunction;
 
 public class SViewListByMasterDetail extends AbstractSViewListWithControls<SViewListByMasterDetail> {
 

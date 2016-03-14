@@ -15,8 +15,8 @@ import org.apache.wicket.markup.html.panel.IMarkupSourcingStrategy;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.panel.PanelMarkupSourcingStrategy;
 
-import br.net.mirante.singular.lambda.IFunction;
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.IFunction;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 
 @SuppressWarnings("serial")
 public class TemplatePanel extends Panel {

@@ -9,7 +9,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.model.StringResourceModel;
 
-import br.net.mirante.singular.lambda.ISupplier;
+import br.net.mirante.singular.commons.lambda.ISupplier;
 
 @SuppressWarnings("serial")
 public class MetronicUiBlockerAjaxCallListener extends AjaxCallListener {
