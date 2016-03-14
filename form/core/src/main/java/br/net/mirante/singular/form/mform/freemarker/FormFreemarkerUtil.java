@@ -2,22 +2,36 @@ package br.net.mirante.singular.form.mform.freemarker;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
 
 import br.net.mirante.singular.form.mform.SIComposite;
 import br.net.mirante.singular.form.mform.SIList;
 import br.net.mirante.singular.form.mform.SISimple;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.SingularFormException;
+import br.net.mirante.singular.form.mform.calculation.CalculationContext;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.core.SIBoolean;
+import br.net.mirante.singular.form.mform.core.SIDate;
+import br.net.mirante.singular.form.mform.core.SIDateTime;
+import br.net.mirante.singular.form.mform.core.SINumber;
+import br.net.mirante.singular.form.mform.core.SIString;
+import br.net.mirante.singular.form.mform.core.SITime;
 import br.net.mirante.singular.form.mform.document.SDocument;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
-import freemarker.template.SimpleScalar;
 import freemarker.template.Template;
+import freemarker.template.TemplateBooleanModel;
+import freemarker.template.TemplateDateModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateNumberModel;
+import freemarker.template.TemplateScalarModel;
 import freemarker.template.TemplateSequenceModel;
 
 /**
@@ -32,6 +46,15 @@ public final class FormFreemarkerUtil {
 
     private static Configuration cfg;
     private static FormObjectWrapper wrapper;
+
+    public static SimpleValueCalculation<String> createInstanceCalculation(String stringTemplate) {
+        return new SimpleValueCalculation<String>() {
+            @Override
+            public String calculate(CalculationContext context) {
+                return merge(context.instance(), stringTemplate);
+            }
+        };
+    }
 
     /**
      * Gera uma string resultante do merge do template com os dados contídos no
@@ -80,10 +103,20 @@ public final class FormFreemarkerUtil {
         if (obj == null) {
             return null;
         } else if (obj instanceof SISimple) {
-            if (((SISimple<?>) obj).isNull()) {
-                return null;
+            if (obj instanceof SIString) {
+                return new SSimpleTemplateModel((SISimple<?>) obj);
+            } else if (obj instanceof SINumber) {
+                return new SNumberTemplateModel<>((SINumber<?>) obj);
+            } else if (obj instanceof SIBoolean) {
+                return new SIBooleanTemplateModel((SIBoolean) obj);
+            } else if (obj instanceof SIDate) {
+                return new SIDateTemplateModel((SIDate) obj);
+            } else if (obj instanceof SIDateTime) {
+                return new SIDateTimeTemplateModel((SIDateTime) obj);
+            } else if (obj instanceof SITime) {
+                return new SITimeTemplateModel((SITime) obj);
             }
-            return new SimpleScalar(((SISimple<?>) obj).toStringDisplay());
+            return new SSimpleTemplateModel((SISimple<?>) obj);
         } else if (obj instanceof SIComposite) {
             return new SICompositeTemplateModel((SIComposite) obj);
         } else if (obj instanceof SIList) {
@@ -104,7 +137,120 @@ public final class FormFreemarkerUtil {
         }
     }
 
-    private static class SListTemplateModel implements TemplateSequenceModel {
+    private static abstract class SInstanceTemplateModel<INSTANCE extends SInstance> implements TemplateScalarModel, TemplateHashModel {
+        private final INSTANCE instance;
+
+        public SInstanceTemplateModel(INSTANCE instance) {
+            this.instance = instance;
+        }
+
+        protected INSTANCE getInstance() {
+            return instance;
+        }
+
+        @Override
+        public TemplateModel get(String key) throws TemplateModelException {
+            return null;
+        }
+
+        @Override
+        public boolean isEmpty() throws TemplateModelException {
+            return false;
+        }
+    }
+
+    private static class SSimpleTemplateModel<INSTANCE extends SISimple<?>> extends SInstanceTemplateModel<INSTANCE>
+            implements TemplateScalarModel {
+
+        public SSimpleTemplateModel(INSTANCE instance) {
+            super(instance);
+        }
+
+        @Override
+        public String getAsString() throws TemplateModelException {
+            return StringUtils.defaultString(getInstance().toStringDisplayDefault());
+        }
+    }
+
+    private static class SNumberTemplateModel<INSTANCE extends SINumber<?>> extends SSimpleTemplateModel<INSTANCE>
+            implements TemplateNumberModel {
+
+        public SNumberTemplateModel(INSTANCE instance) {
+            super(instance);
+        }
+
+        @Override
+        public Number getAsNumber() throws TemplateModelException {
+            return (Number) getInstance().getValue();
+        }
+
+    }
+
+    private static class SIBooleanTemplateModel extends SSimpleTemplateModel<SIBoolean> implements TemplateBooleanModel {
+
+        public SIBooleanTemplateModel(SIBoolean instance) {
+            super(instance);
+        }
+
+        @Override
+        public boolean getAsBoolean() throws TemplateModelException {
+            Boolean v = getInstance().getValueWithDefault();
+            return v == null ? false : v;
+        }
+    }
+
+    private static class SIDateTemplateModel extends SSimpleTemplateModel<SIDate> implements TemplateDateModel {
+
+        public SIDateTemplateModel(SIDate instance) {
+            super(instance);
+        }
+
+        @Override
+        public Date getAsDate() throws TemplateModelException {
+            return getInstance().getValue();
+        }
+
+        @Override
+        public int getDateType() {
+            return DATE;
+        }
+    }
+
+    private static class SIDateTimeTemplateModel extends SSimpleTemplateModel<SIDateTime> implements TemplateDateModel {
+
+        public SIDateTimeTemplateModel(SIDateTime instance) {
+            super(instance);
+        }
+
+        @Override
+        public Date getAsDate() throws TemplateModelException {
+            return getInstance().getValue();
+        }
+
+        @Override
+        public int getDateType() {
+            return DATETIME;
+        }
+    }
+
+    private static class SITimeTemplateModel extends SSimpleTemplateModel<SITime> implements TemplateDateModel {
+
+        public SITimeTemplateModel(SITime instance) {
+            super(instance);
+        }
+
+        @Override
+        public Date getAsDate() throws TemplateModelException {
+            return getInstance().getValue();
+        }
+
+        @Override
+        public int getDateType() {
+            return TIME;
+        }
+    }
+
+    private static class SListTemplateModel implements TemplateSequenceModel, TemplateScalarModel {
         private final SIList<?> list;
 
         public SListTemplateModel(SIList<?> list) {
@@ -121,9 +267,14 @@ public final class FormFreemarkerUtil {
         public int size() throws TemplateModelException {
             return list.size();
         }
+
+        @Override
+        public String getAsString() throws TemplateModelException {
+            return StringUtils.defaultString(list.toStringDisplay());
+        }
     }
 
-    private static class SICompositeTemplateModel implements TemplateHashModel {
+    private static class SICompositeTemplateModel implements TemplateHashModel, TemplateScalarModel {
         private final SIComposite composite;
 
         public SICompositeTemplateModel(SIComposite composite) {
@@ -142,6 +293,11 @@ public final class FormFreemarkerUtil {
         @Override
         public boolean isEmpty() throws TemplateModelException {
             return composite.isEmptyOfData();
+        }
+
+        @Override
+        public String getAsString() throws TemplateModelException {
+            return StringUtils.defaultString(composite.toStringDisplay());
         }
     }
 }

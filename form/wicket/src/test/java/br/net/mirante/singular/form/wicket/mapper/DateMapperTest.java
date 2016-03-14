@@ -18,7 +18,7 @@ public class DateMapperTest extends MapperBaseTest {
 
     @Override
     public void appendPackageFields(STypeComposite<? extends SIComposite> form) {
-        form.addFieldData("data");
+        form.addFieldDate("data");
     }
 
     @Override

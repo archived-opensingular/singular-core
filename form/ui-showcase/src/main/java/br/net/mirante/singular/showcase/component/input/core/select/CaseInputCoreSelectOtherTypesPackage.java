@@ -17,7 +17,7 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         STypeComposite<?> tipoMyForm = pb.createCompositeType("testForm");
 
         //Select de Datas
-        STypeDate tipoData = tipoMyForm.addFieldData("inicio");
+        STypeDate tipoData = tipoMyForm.addFieldDate("inicio");
         tipoData.withSelectionOf(new Date(), DateTime.parse("2015-11-20").toDate());
         tipoData.withSelectView();
 
@@ -27,7 +27,7 @@ public class CaseInputCoreSelectOtherTypesPackage extends SPackage {
         tipoInteiro.withSelectView();
         
         //Select with composite Dates
-        STypeDate finishField = tipoMyForm.addFieldData("finish");
+        STypeDate finishField = tipoMyForm.addFieldDate("finish");
         finishField
                 .withSelection()
                 .add(DateTime.now().toDate(),"Today")

@@ -29,7 +29,7 @@ public class STypePessoa extends STypeComposite<SIComposite> {
                 .as(AtrBootstrap::new).colPreference(6);
 
         this
-                .addFieldData("dataNascimento")
+                .addFieldDate("dataNascimento")
                 .as(AtrCore::new)
                 .obrigatorio()
                 .as(AtrBasic::new)

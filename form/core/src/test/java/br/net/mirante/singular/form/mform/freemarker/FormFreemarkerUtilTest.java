@@ -32,7 +32,7 @@ public class FormFreemarkerUtilTest {
         certificadosType = curriculoType.addFieldListOfComposite("certificados", "certificado");
         STypeComposite<SIComposite> certificadoType = certificadosType.getElementsType();
         certificadoType.addFieldString("nome");
-        certificadoType.addFieldData("data");
+        certificadoType.addFieldDate("data");
     }
 
     @Test

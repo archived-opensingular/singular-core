@@ -12,11 +12,11 @@ import br.net.mirante.singular.form.mform.options.SSelectionableSimpleType;
 
 @SuppressWarnings("rawtypes")
 @SInfoType(name = "STypeSimple", spackage = SPackageCore.class)
-public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
+public class STypeSimple<I extends SISimple<VALUE>, VALUE>
         extends SType<I>
-        implements SSelectionableSimpleType<STypeSimple, TIPO_NATIVO> {
+        implements SSelectionableSimpleType<STypeSimple, VALUE> {
 
-    private final Class<TIPO_NATIVO> valueClass;
+    private final Class<VALUE> valueClass;
 
     private transient Converter converter;
 
@@ -28,7 +28,7 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         this.valueClass = null;
     }
 
-    protected STypeSimple(Class<? extends I> instanceClass, Class<TIPO_NATIVO> valueClass) {
+    protected STypeSimple(Class<? extends I> instanceClass, Class<VALUE> valueClass) {
         super(instanceClass);
         this.valueClass = valueClass;
     }
@@ -62,16 +62,16 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
      * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
      */
     @SuppressWarnings("unchecked")
-    public STypeSimple<I, TIPO_NATIVO> withSelectView() {
-        return (STypeSimple<I, TIPO_NATIVO>) super.withView(SViewSelectionBySelect::new);
+    public STypeSimple<I, VALUE> withSelectView() {
+        return (STypeSimple<I, VALUE>) super.withView(SViewSelectionBySelect::new);
     }
 
     /**
      * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
      */
     @SuppressWarnings("unchecked")
-    public STypeSimple<I, TIPO_NATIVO> withRadioView() {
-        return (STypeSimple<I, TIPO_NATIVO>) super.withView(SViewSelectionByRadio::new);
+    public STypeSimple<I, VALUE> withRadioView() {
+        return (STypeSimple<I, VALUE>) super.withView(SViewSelectionByRadio::new);
     }
 
 
@@ -79,7 +79,7 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         return STranslatorForAttribute.of(this, new AtrFormula());
     }
 
-    public TIPO_NATIVO convert(Object value) {
+    public VALUE convert(Object value) {
         if (value == null) {
             return null;
         } else if (valueClass.isInstance(value)) {
@@ -90,26 +90,26 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         return convertNotNativeNotString(value);
     }
 
-    protected TIPO_NATIVO convertNotNativeNotString(Object value) {
+    protected VALUE convertNotNativeNotString(Object value) {
         return convertUsingApache(value);
     }
 
-    protected String toStringPersistence(TIPO_NATIVO originalValue) {
+    protected String toStringPersistence(VALUE originalValue) {
         if (originalValue == null) {
             return null;
         }
         return originalValue.toString();
     }
 
-    public TIPO_NATIVO fromStringPersistence(String originalValue) {
+    public VALUE fromStringPersistence(String originalValue) {
         return convert(originalValue, valueClass);
     }
 
-    public String toStringDisplay(TIPO_NATIVO value) {
+    public String toStringDisplayDefault(VALUE value) {
         return toStringPersistence(value);
     }
 
-    public TIPO_NATIVO fromString(String value) {
+    public VALUE fromString(String value) {
         throw new RuntimeException("Não implementado");
     }
 
@@ -136,7 +136,7 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         throw createConversionError(value, resultClass);
     }
 
-    protected final TIPO_NATIVO convertUsingApache(Object value) {
+    protected final VALUE convertUsingApache(Object value) {
         if (converter == null) {
             converter = ConvertUtils.lookup(valueClass);
             if (converter == null) {
@@ -146,7 +146,7 @@ public class STypeSimple<I extends SISimple<TIPO_NATIVO>, TIPO_NATIVO>
         return valueClass.cast(converter.convert(valueClass, value));
     }
 
-    public final Class<TIPO_NATIVO> getValueClass() {
+    public final Class<VALUE> getValueClass() {
         return valueClass;
     }
 

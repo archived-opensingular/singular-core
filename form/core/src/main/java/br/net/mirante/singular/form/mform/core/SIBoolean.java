@@ -1,6 +1,8 @@
 package br.net.mirante.singular.form.mform.core;
 
-public class SIBoolean extends SIComparable<Boolean> {
+import br.net.mirante.singular.form.mform.SISimple;
+
+public class SIBoolean extends SISimple<Boolean> implements SIComparable<Boolean> {
 
     public SIBoolean() {
     }

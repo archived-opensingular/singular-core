@@ -6,6 +6,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.AtrRef;
+import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.SIPredicate;
 import br.net.mirante.singular.form.mform.SISupplier;
@@ -15,7 +16,6 @@ import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STypeBehavior;
 import br.net.mirante.singular.form.mform.STypePredicate;
 import br.net.mirante.singular.form.mform.STypeSupplier;
-import br.net.mirante.singular.form.mform.PackageBuilder;
 import br.net.mirante.singular.form.mform.core.SIBoolean;
 import br.net.mirante.singular.form.mform.core.SIInteger;
 import br.net.mirante.singular.form.mform.core.SIString;
@@ -53,6 +53,9 @@ public class SPackageBasic extends SPackage {
     public static final AtrRef<STypeBoolean, SIBoolean, Boolean>                   ATR_ANNOTATED                  = new AtrRef<>(SPackageBasic.class, "anotated", STypeBoolean.class, SIBoolean.class, Boolean.class);
     public static final AtrRef<STypeString, SIString, String>                      ATR_ANNOTATION_LABEL           = new AtrRef<>(SPackageBasic.class, "annotation_label", STypeString.class, SIString.class, String.class);
 
+    /** Representação string da instância. Em geral, deverá ser uma string cálculada dinamicamente com base nos dados da instância.  */
+    public static final AtrRef<STypeString, SIString, String>                      ATR_DISPLAY_STRING           = new AtrRef<>(SPackageBasic.class, "displayString", STypeString.class, SIString.class, String.class);
+
     //@formatter:on
 
     public SPackageBasic() {
@@ -85,6 +88,8 @@ public class SPackageBasic extends SPackage {
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATED);
         pb.createAttributeIntoType(SType.class, ATR_ANNOTATION_LABEL);
 
+        pb.createAttributeIntoType(SType.class, ATR_DISPLAY_STRING);
+
         pb.addAttribute(STypeString.class, ATR_TAMANHO_MAXIMO, 100);
         pb.addAttribute(STypeString.class, ATR_TAMANHO_EDICAO, 50);
 
@@ -95,6 +100,9 @@ public class SPackageBasic extends SPackage {
 
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_INTEIRO_MAXIMO, 9);
         pb.addAttribute(STypeDecimal.class, ATR_TAMANHO_DECIMAL_MAXIMO, 2);
+
+        pb.getDictionary().getType(SType.class).asAtrBasic()
+                .displayString(ctx -> ctx.instance().toStringDisplayDefault());
 
         // defina o meta dado do meta dado
         pb.getAttribute(ATR_LABEL).as(AtrBasic.class).label("Label").tamanhoEdicao(30).tamanhoMaximo(50);

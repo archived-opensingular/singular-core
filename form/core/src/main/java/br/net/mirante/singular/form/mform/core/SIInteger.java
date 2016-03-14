@@ -1,6 +1,6 @@
 package br.net.mirante.singular.form.mform.core;
 
-public class SIInteger extends SIComparable<Integer> {
+public class SIInteger extends SINumber<Integer> implements SIComparable<Integer> {
 
     public SIInteger() {
     }

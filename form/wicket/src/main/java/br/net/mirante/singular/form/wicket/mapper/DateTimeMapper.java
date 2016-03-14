@@ -11,7 +11,7 @@ import org.apache.wicket.model.IModel;
 import br.net.mirante.singular.form.mform.SInstance;
 import br.net.mirante.singular.form.mform.basic.view.SViewDateTime;
 import br.net.mirante.singular.form.mform.basic.view.SView;
-import br.net.mirante.singular.form.mform.core.STypeDateHour;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.wicket.mapper.datetime.DateTimeContainer;
 import br.net.mirante.singular.form.wicket.model.MInstanciaValorModel;
 import br.net.mirante.singular.util.wicket.bootstrap.layout.BSContainer;
@@ -35,7 +35,7 @@ public class DateTimeMapper implements ControlsFieldComponentMapper {
 
     @Override
     public String getReadOnlyFormattedText(IModel<? extends SInstance> model) {
-        final SimpleDateFormat format = new SimpleDateFormat(STypeDateHour.FORMAT);
+        final SimpleDateFormat format = new SimpleDateFormat(STypeDateTime.FORMAT);
         if (model.getObject().getValue() instanceof Date) {
             return format.format(model.getObject().getValue());
         }

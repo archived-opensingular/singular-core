@@ -7,8 +7,10 @@ import java.util.function.Supplier;
 
 import br.net.mirante.singular.form.mform.SAttributeEnabled;
 import br.net.mirante.singular.form.mform.SInstance;
-import br.net.mirante.singular.form.mform.SType;
 import br.net.mirante.singular.form.mform.STranslatorForAttribute;
+import br.net.mirante.singular.form.mform.SType;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
+import br.net.mirante.singular.form.mform.freemarker.FormFreemarkerUtil;
 
 public class AtrBasic extends STranslatorForAttribute {
 
@@ -114,9 +116,21 @@ public class AtrBasic extends STranslatorForAttribute {
     public boolean isVisible() {
         return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageBasic.ATR_VISIVEL));
     }
-    
+
     public boolean isEnabled() {
         return !Boolean.FALSE.equals(getTarget().getAttributeValue(SPackageBasic.ATR_ENABLED));
     }
-    
+
+    public AtrBasic displayString(String displayStringTemplate) {
+        return displayString(FormFreemarkerUtil.createInstanceCalculation(displayStringTemplate));
+    }
+
+    public AtrBasic displayString(SimpleValueCalculation<String> valueCalculation) {
+        getTarget().setAttributeCalculation(SPackageBasic.ATR_DISPLAY_STRING, valueCalculation);
+        return this;
+    }
+
+    public String getDisplayString() {
+        return getTarget().getAttributeValue(SPackageBasic.ATR_DISPLAY_STRING);
+    }
 }

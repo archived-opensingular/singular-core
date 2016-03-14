@@ -24,7 +24,7 @@ public class CaseListByTableDefaultPackage extends SPackage {
         final STypeComposite<?> certificacao = certificacoes.getElementsType();
         final STypeYearMonth dataCertificacao = certificacao.addField("data", STypeYearMonth.class, true);
         final STypeString entidadeCertificacao = certificacao.addFieldString("entidade", true);
-        final STypeDate validadeCertificacao = certificacao.addFieldData("validade");
+        final STypeDate validadeCertificacao = certificacao.addFieldDate("validade");
         final STypeString nomeCertificacao = certificacao.addFieldString("nome", true);
         {
             certificacoes

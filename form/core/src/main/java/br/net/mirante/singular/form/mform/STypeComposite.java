@@ -12,6 +12,7 @@ import br.net.mirante.singular.form.mform.basic.view.SViewSelectionBySelect;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
 import br.net.mirante.singular.form.mform.core.STypeBoolean;
 import br.net.mirante.singular.form.mform.core.STypeDate;
+import br.net.mirante.singular.form.mform.core.STypeDateTime;
 import br.net.mirante.singular.form.mform.core.STypeDecimal;
 import br.net.mirante.singular.form.mform.core.STypeInteger;
 import br.net.mirante.singular.form.mform.core.STypeMonetary;
@@ -24,8 +25,8 @@ import br.net.mirante.singular.form.mform.util.brasil.STypeCPF;
 import br.net.mirante.singular.form.mform.util.comuns.STypeEMail;
 
 @SInfoType(name = "STypeComposite", spackage = SPackageCore.class)
-public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
-        extends SType<TIPO_INSTANCIA>
+public class STypeComposite<INSTANCE_TYPE extends SIComposite>
+        extends SType<INSTANCE_TYPE>
         implements ICompositeType, SSelectionableCompositeType {
 
     private Map<String, SType<?>> fieldsLocal;
@@ -38,10 +39,10 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
 
     @SuppressWarnings("unchecked")
     public STypeComposite() {
-        super((Class<? extends TIPO_INSTANCIA>) SIComposite.class);
+        super((Class<? extends INSTANCE_TYPE>) SIComposite.class);
     }
 
-    protected STypeComposite(Class<TIPO_INSTANCIA> instanceClass) {
+    protected STypeComposite(Class<INSTANCE_TYPE> instanceClass) {
         super(instanceClass);
     }
 
@@ -153,11 +154,17 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return addField(fieldSimpleName, STypeString.class);
     }
 
+    public STypeString addFieldString(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeString.class, required);
+    }
+
+    // Não deve estar aqui pois é específico do Brasil
     @Deprecated
     public STypeCPF addFieldCPF(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeCPF.class);
     }
 
+    // Não deve estar aqui pois é específico do Brasil
     @Deprecated
     public STypeCNPJ addFieldCNPJ(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeCNPJ.class);
@@ -167,22 +174,26 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
         return addField(fieldSimpleName, STypeEMail.class);
     }
 
+    // Não deve estar aqui pois é específico do Brasil
     @Deprecated
     public STypeCEP addFieldCEP(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeCEP.class);
     }
 
-    @Deprecated
-    public STypeString addFieldString(String fieldSimpleName, boolean required) {
-        return addField(fieldSimpleName, STypeString.class, required);
-    }
-
-    public STypeDate addFieldData(String fieldSimpleName) {
+    public STypeDate addFieldDate(String fieldSimpleName) {
         return addField(fieldSimpleName, STypeDate.class);
     }
 
-    public STypeDate addFieldData(String fieldSimpleName, boolean required) {
+    public STypeDate addFieldDate(String fieldSimpleName, boolean required) {
         return addField(fieldSimpleName, STypeDate.class, required);
+    }
+
+    public STypeDateTime addFieldDateTime(String fieldSimpleName) {
+        return addField(fieldSimpleName, STypeDateTime.class);
+    }
+
+    public STypeDateTime addFieldDateTime(String fieldSimpleName, boolean required) {
+        return addField(fieldSimpleName, STypeDateTime.class, required);
     }
 
     public STypeBoolean addFieldBoolean(String fieldSimpleName) {
@@ -216,15 +227,15 @@ public class STypeComposite<TIPO_INSTANCIA extends SIComposite>
     /**
      * Configura o tipo para utilizar a view {@link SViewSelectionBySelect}
      */
-    public STypeComposite<TIPO_INSTANCIA> withSelectView() {
-        return (STypeComposite<TIPO_INSTANCIA>) super.withView(SViewSelectionBySelect::new);
+    public STypeComposite<INSTANCE_TYPE> withSelectView() {
+        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionBySelect::new);
     }
 
     /**
      * Configura o tipo para utilizar a view {@link SViewSelectionByRadio}
      */
-    public STypeComposite<TIPO_INSTANCIA> withRadioView() {
-        return (STypeComposite<TIPO_INSTANCIA>) super.withView(SViewSelectionByRadio::new);
+    public STypeComposite<INSTANCE_TYPE> withRadioView() {
+        return (STypeComposite<INSTANCE_TYPE>) super.withView(SViewSelectionByRadio::new);
     }
 
     @Override

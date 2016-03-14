@@ -22,6 +22,7 @@ import br.net.mirante.singular.form.mform.basic.ui.AtrBasic;
 import br.net.mirante.singular.form.mform.basic.ui.AtrBootstrap;
 import br.net.mirante.singular.form.mform.basic.ui.SPackageBasic;
 import br.net.mirante.singular.form.mform.basic.view.SView;
+import br.net.mirante.singular.form.mform.calculation.SimpleValueCalculation;
 import br.net.mirante.singular.form.mform.context.UIComponentMapper;
 import br.net.mirante.singular.form.mform.core.AtrCore;
 import br.net.mirante.singular.form.mform.core.SPackageCore;
@@ -256,21 +257,37 @@ public class SType<I extends SInstance> extends SScopeBase implements SAttribute
     }
 
     @Override
-    public void setAttributeValue(String attributeName, String subPath, Object value) {
-        SInstance instancia = attributesResolved.getCreating(mapName(attributeName));
+    public void setAttributeValue(String attributeFullName, String subPath, Object value) {
+        SInstance instance = attributesResolved.getCreating(mapName(attributeFullName));
         if (subPath != null) {
-            instancia.setValue(new PathReader(subPath), value);
+            instance.setValue(new PathReader(subPath), value);
         } else {
-            instancia.setValue(value);
+            instance.setValue(value);
         }
     }
 
     @Override
-    public <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+    public <V> void setAttributeCalculation(String attributeFullName, String subPath, SimpleValueCalculation<V> valueCalculation) {
+        SInstance instance = attributesResolved.getCreating(mapName(attributeFullName));
+        SInstance.setValueCalculation(instance, subPath, valueCalculation);
+    }
+
+    @Override
+    public final <V extends Object> V getAttributeValue(String fullName, Class<V> resultClass) {
+        return getValueInTheContextOf(null, fullName, resultClass);
+    }
+
+    final <V extends Object> V getValueInTheContextOf(SInstance contextInstance, String fullName, Class<V> resultClass) {
         fullName = mapName(fullName);
         SInstance instance = getAttributeInstanceInternal(fullName);
         if (instance != null) {
-            return (resultClass == null) ? (V) instance.getValue() : instance.getValueWithDefault(resultClass);
+            if (contextInstance != null) {
+                return instance.getValueInTheContextOf(contextInstance, resultClass);
+            } else if (resultClass == null) {
+                return (V) instance.getValue();
+            } else {
+                return instance.getValueWithDefault(resultClass);
+            }
         }
         SAttribute atr = getAttributeDefinedHierarchy(fullName);
         if (resultClass == null) {
